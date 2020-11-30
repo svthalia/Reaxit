@@ -1,0 +1,7 @@
+storage_mode("git")
+type("development") # The default type, can be: appstore, adhoc, enterprise or development
+
+git_url("ssh://git@github.com/svthalia/ThaliApp-passwords.git")
+git_branch("fastlane")
+
+app_identifier(["com.thaliapp"])

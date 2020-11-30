@@ -1,0 +1,76 @@
+---
+name: Build
+on:
+  - pull_request
+
+jobs:
+  build-ios:
+    name: iOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Java for Flutter
+        uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: '1.22.4'
+      
+      - name: Pods cache
+        uses: actions/cache@v2
+        with:
+          path: ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+      
+      - name: Bundle cache
+        uses: actions/cache@v2
+        with:
+          path: ios/vendor/bundle
+          key: ${{ runner.os }}-ios-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-ios-gems-
+      
+      - name: Setup fastlane
+        run: |
+          cd ios
+          sudo gem install fastlane
+          sudo gem update fastlane
+          bundle config path vendor/bundle
+          bundle install
+      
+      - name: Decode secrets
+        env:
+          FIREBASE_CONFIG: ${{ secrets.FIREBASE_CONFIG_PLIST }}
+        run:
+          echo $FIREBASE_CONFIG > $GITHUB_WORKSPACE/ios/GoogleService-Info.plist
+      
+      - name: Build app
+        env:
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_PRIVATE_KEY: ${{ secrets.PASSWORDS_REPO_DEPLOY_KEY }}
+          FASTLANE_APPLE_ID: ${{ secrets.FASTLANE_USER }}
+          FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+          FASTLANE_TEAM_ID: ${{ secrets.FASTLANE_TEAM_ID }}
+          FASTLANE_ITC_TEAM_ID: ${{ secrets.FASTLANE_ITC_TEAM_ID }}
+        run: |
+          flutter build ios --release --no-codesign
+          cd ios
+          bundle exec fastlane deploy_adhoc
+      
+      - name: Upload IPA
+        uses: actions/upload-artifact@v2
+        with:
+          name: ThaliApp.ipa
+          path: ios
