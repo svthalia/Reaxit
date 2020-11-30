@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reaxit/ui/components/menu_drawer.dart';
+import 'package:reaxit/ui/components/cardSection/CardSection.dart';
+
 
 class WelcomeScreen extends StatefulWidget {
   @override
@@ -12,9 +14,14 @@ class WelcomeScreenState extends State<WelcomeScreen> {
     return Scaffold(
       appBar: AppBar(title: Text('Welcome'),),
       drawer: MenuDrawer(),
-      body: Center(
-        child: Text('New Thalia App!'),
-      ),
-    );
+      body: Container(
+          color: const Color(0xffFAFAFA),
+          child:Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [CardSection([])]
+          )
+        )
+      );
   }
 }
