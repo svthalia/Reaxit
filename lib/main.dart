@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reaxit/ui/screens/welcome_screen.dart';
+import 'package:reaxit/ui/screens/login_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Color(0xFFE62272),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: WelcomeScreen(),
+      home: LoginScreen(),
     );
   }
 }
