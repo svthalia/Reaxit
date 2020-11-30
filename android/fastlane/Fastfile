@@ -1,0 +1,79 @@
+if not is_ci?
+  update_fastlane
+end
+skip_docs
+
+default_platform(:android)
+
+def get_next_version_code
+  internal_version = google_play_track_version_codes(track: "internal")
+  alpha_version = google_play_track_version_codes(track: "alpha")
+  beta_version = google_play_track_version_codes(track: "beta")
+  production_version = google_play_track_version_codes(track: "production")
+
+  return [
+    internal_version[0],
+    alpha_version[0],
+    beta_version[0],
+    production_version[0]
+  ].select { |element| element.is_a?(Integer) }.max + 1
+end
+
+platform :android do
+  private_lane :setup_project do
+    if is_ci?
+      sh("yarn install --frozen-lockfile")
+    end
+    sh("yarn jetify")
+  end
+
+  desc "Runs all the tests"
+  lane :test do
+    gradle(task: "test")
+  end
+
+  desc "Runs a build"
+  lane :build do
+    setup_project
+    gradle(task: "clean build")
+  end
+
+  desc "Build release APK"
+  private_lane :assemble_release do
+    gradle(task: "clean assembleRelease", properties: { 'versionCode' => get_next_version_code() })
+  end
+
+  desc "Build release APK and upload"
+  private_lane :release_and_upload do |options|
+    setup_project
+    assemble_release
+    changelog_from_git_commits
+    upload_to_play_store(
+      track: options[:track],
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+
+  desc "Continuous Integration build"
+  lane :deploy_adhoc do
+    setup_project
+    assemble_release
+  end
+
+  desc "Deploy a new alpha version to the Google Play"
+  lane :deploy_internal do
+    release_and_upload(track: "internal")
+  end
+
+  desc "Deploy a new beta version to the Google Play"
+  lane :deploy_beta do
+    release_and_upload(track: "beta")
+  end
+
+  desc "Deploy a new version to the Google Play"
+  lane :deploy_production do |options|
+    release_and_upload(track: "production")
+  end
+end
