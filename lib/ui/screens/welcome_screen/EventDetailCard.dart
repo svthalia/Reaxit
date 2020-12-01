@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reaxit/ui/components/cardSection/CardSection.dart';
 
 class EventDetailCard extends StatelessWidget {
   final String _title;
@@ -13,7 +14,33 @@ class EventDetailCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      child: CardSection([
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Column(
+                  children: [
+                    Text(_title),
+                    Text(_start + ' ' + _end + ' | ' + _location)
+                  ]),
+                Container(
 
+                )
+              ]
+            ),
+            Text(_description),
+            RaisedButton(
+              textColor: Colors.white,
+              color: Colors.black87,
+              child: Text('LOGIN'),
+              onPressed: () {},
+            ),
+          ],
+        )
+      ])
     );
   }
 }

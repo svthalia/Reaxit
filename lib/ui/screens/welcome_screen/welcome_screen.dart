@@ -1,7 +1,9 @@
+
 import 'package:flutter/material.dart';
 import 'package:reaxit/ui/components/menu_drawer.dart';
 import 'package:reaxit/ui/components/cardSection/CardSection.dart';
-
+import 'package:reaxit/ui/screens/welcome_screen/EventDetailCard.dart';
+import 'EventDetailCard.dart';
 
 class WelcomeScreen extends StatefulWidget {
   @override
@@ -19,7 +21,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
           child:Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [CardSection([])]
+            children: [EventDetailCard("Evenement titel", "18:30", "19:30", "Huygens", "Dit is een beschrijving", true)]
           )
         )
       );
