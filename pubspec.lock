@@ -163,6 +163,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.19-nullsafety.2"
+  thalia_api:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "8da7ff0e417affdaf78fe0743b03d7f9e0a56651"
+      url: "https://github.com/jendusseljee/thalia-api-dart.git"
+    source: git
+    version: "1.0.0"
   typed_data:
     dependency: transitive
     description:

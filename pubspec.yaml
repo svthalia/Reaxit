@@ -29,6 +29,8 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
 
+  thalia_api:
+    git: https://github.com/jendusseljee/thalia-api-dart.git
   provider: ^3.0.0
   http: ^0.12.2
 

@@ -64,8 +64,8 @@ class LoginScreenState extends State<LoginScreen> {
                 setState(() {
                   _loading = false;
                 });
-                _showSnackbar(res.message);
-                if (res.success)
+                _showSnackbar(res);
+                if (res == 'success')
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => WelcomeScreen()));
               });
             }
