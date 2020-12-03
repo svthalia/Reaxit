@@ -60,7 +60,7 @@ class LoginScreenState extends State<LoginScreen> {
               setState(() {
                 _loading = true;
               });
-              Provider.of<AuthModel>(context, listen: false).logIn(usernameController.value.text, passwordController.value.text).then((res) {
+              Provider.of<AuthModel>(context, listen: false).logIn().then((res) {
                 setState(() {
                   _loading = false;
                 });

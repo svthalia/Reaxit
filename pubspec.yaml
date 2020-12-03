@@ -33,6 +33,7 @@ dependencies:
     git: https://github.com/jendusseljee/thalia-api-dart.git
   provider: ^3.0.0
   http: ^0.12.2
+  oauth2_client: ^1.6.1
 
 dev_dependencies:
   flutter_test:
