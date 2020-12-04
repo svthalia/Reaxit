@@ -16,9 +16,9 @@ class _MemberListState extends State<MemberList> {
         "http://via.placeholder.com/640x360", "Member", 1999),
     _ListMember(420, "Jen Dusseljee", "http://via.placeholder.com/640x360",
         "Member", 2017),
-    _ListMember(37, "Dirk Doesburg", "http://via.placeholder.com/640x360",
+    _ListMember(370, "Dirk Doesburg", "http://via.placeholder.com/640x360",
         "Member", 2019),
-    _ListMember(69, "Lars 'Lil' cuckboy' van Rhijn",
+    _ListMember(690, "Lars 'Lil' cuckboy' van Rhijn",
         "http://via.placeholder.com/640x360", "Member", 1999),
   ];
 
@@ -82,14 +82,15 @@ class _MemberCard extends StatelessWidget {
                 builder: (context) => MemberDetail(this._member.pk)));
       },
       child: Stack(
-        children: <Container>[
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(this._member.avatar),
+        fit: StackFit.expand,
+        children: [
+          Hero(
+            tag: this._member.pk,
+            child: FadeInImage.assetNetwork(
+                placeholder: 'assets/img/default-avatar.jpg',
+                image: this._member.avatar,
                 fit: BoxFit.cover,
-              ),
-            ),
+                fadeInDuration: const Duration(milliseconds: 300)),
           ),
           Container(
             padding: const EdgeInsets.all(8),

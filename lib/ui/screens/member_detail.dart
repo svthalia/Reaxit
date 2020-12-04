@@ -59,12 +59,16 @@ class _MemberDetailState extends State<MemberDetail> {
                             context: context,
                             builder: (_) => ImageDialog(this._member.avatar));
                       },
-                      child: Stack(children: <Container>[
-                        Container(
-                            decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: NetworkImage(this._member.avatar),
-                                    fit: BoxFit.cover))),
+                      child: Stack(fit: StackFit.expand, children: [
+                        Hero(
+                          tag: this._pk,
+                          child: FadeInImage.assetNetwork(
+                              placeholder: 'assets/img/default-avatar.jpg',
+                              image: this._member.avatar,
+                              fit: BoxFit.cover,
+                              fadeInDuration:
+                                  const Duration(milliseconds: 300)),
+                        ),
                         Container(
                             decoration: BoxDecoration(
                                 color: Colors.black,
