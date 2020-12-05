@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:reaxit/model/auth_model.dart';
+import 'package:reaxit/ui/screens/login_screen.dart';
 
 class MenuDrawer extends StatelessWidget {
   @override
@@ -7,7 +10,9 @@ class MenuDrawer extends StatelessWidget {
       child: ListView(
         children: [
           DrawerHeader(
-            child: Text('Thalia App'),
+            child: Consumer<AuthModel>(
+              builder: (context, auth, child) => Text(auth.name),
+            ),
           ),
           ListTile(
               title: Text('Welcome'),
@@ -29,6 +34,15 @@ class MenuDrawer extends StatelessWidget {
               title: Text('Settings'),
               leading: Icon(Icons.settings),
               onTap: () => {}),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.logout),
+            title: Text('Log out'),
+            onTap: () {
+              Provider.of<AuthModel>(context).logOut();
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+            },
+          )
         ],
       ),
     );

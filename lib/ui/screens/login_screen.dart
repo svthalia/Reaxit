@@ -12,67 +12,19 @@ class LoginScreen extends StatefulWidget {
 class LoginScreenState extends State<LoginScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   bool _loading = false;
+  ImageProvider logo = AssetImage('assets/img/logo.png');
 
   void _showSnackbar(String text) {
-    _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(text), duration: Duration(seconds: 1),));
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(text),
+      duration: Duration(seconds: 1),
+    ));
   }
 
-  Widget _showLoginForm() {
-    TextEditingController usernameController = TextEditingController();
-    TextEditingController passwordController = TextEditingController();
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        TextField(
-          controller: usernameController,
-          decoration: InputDecoration(
-            hintText: 'Username',
-            focusedBorder: UnderlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(vertical: 10),
-            isDense: true
-          ),
-        ),
-        SizedBox(height: 10),
-        TextField(
-          controller: passwordController,
-          enableSuggestions: false,
-          autocorrect: false,
-          obscureText: true,
-          decoration: InputDecoration(
-            hintText: 'Password',
-            focusedBorder: UnderlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(vertical: 10),
-            isDense: true,
-          ),
-        ),
-        SizedBox(height: 40),
-        RaisedButton(
-          textColor: Colors.white,
-          color: Colors.black87,
-          child: Text('LOGIN'),
-          onPressed: () {
-            if (usernameController.value.text == '')
-              _showSnackbar('Missing username.');
-            else if (passwordController.value.text == '')
-              _showSnackbar('Missing password.');
-            else {
-              setState(() {
-                _loading = true;
-              });
-              Provider.of<AuthModel>(context, listen: false).logIn(usernameController.value.text, passwordController.value.text).then((res) {
-                setState(() {
-                  _loading = false;
-                });
-                _showSnackbar(res.message);
-                if (res.success)
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => WelcomeScreen()));
-              });
-            }
-          },
-        ),
-      ],
-    );
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    precacheImage(logo, context);
   }
 
   @override
@@ -86,11 +38,31 @@ class LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image(
-              image: AssetImage('assets/img/logo.png'),
+              image: logo,
               width: 260,
             ),
             SizedBox(height: 50),
-            _loading ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white))) : _showLoginForm(),
+            Center(
+              child: _loading
+                  ? CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white))
+                  : RaisedButton(
+                      textColor: Colors.white,
+                      color: Colors.black87,
+                      child: Text('LOGIN'),
+                      onPressed: () {
+                        setState(() {
+                          _loading = true;
+                        });
+                        Provider.of<AuthModel>(context, listen: false).logIn().then((res) {
+                          setState(() {
+                            _loading = false;
+                          });
+                          _showSnackbar(res);
+                          if (res == 'success') Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => WelcomeScreen()));
+                        });
+                      },
+                    )
+            ),
           ],
         ),
       ),
