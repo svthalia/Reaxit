@@ -17,9 +17,11 @@ class AuthModel extends ChangeNotifier {
   Status _status;
 
   String _name = 'loading';
+  String _pictureUrl = "https://staging.thalia.nu/static/members/images/default-avatar.jpg";
 
   Status get status => _status;
   String get name => _name;
+  String get pictureUrl => _pictureUrl;
 
   AuthModel() {
     _status = Status.INIT;
@@ -52,8 +54,10 @@ class AuthModel extends ChangeNotifier {
 
   Future<void> _loadUserData() async {
     Response response = await _helper.get('https://staging.thalia.nu/api/v1/members/me');
+
     if (response.statusCode == 200) {
       _name = jsonDecode(response.body)['first_name'].toString() + ' ' + jsonDecode(response.body)['last_name'].toString();
+      _pictureUrl = jsonDecode(response.body)['avatar']['small'].toString();
     }
   }
 

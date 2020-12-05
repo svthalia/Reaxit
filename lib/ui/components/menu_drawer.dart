@@ -9,10 +9,56 @@ class MenuDrawer extends StatelessWidget {
     return Drawer(
       child: ListView(
         children: [
-          DrawerHeader(
-            child: Consumer<AuthModel>(
-              builder: (context, auth, child) => Text(auth.name),
-            ),
+          Stack(
+            children: [
+              Container(
+                height: 180,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage('assets/img/huygens.jpg'),
+                        fit: BoxFit.cover,
+                    )
+                ),
+              ),
+              Container(
+                height: 180,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: FractionalOffset.bottomCenter,
+                    end: FractionalOffset.topCenter,
+                    colors: [
+                      Color(0x88000000),
+                      Color(0x00000000)
+                    ]
+                  )
+                ),
+              ),
+              Positioned(
+                left: 20,
+                bottom: 20,
+                child: Consumer<AuthModel>(
+                  builder: (context, auth, child) => Text(auth.name, style: TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.w700),),
+                ),
+              ),
+              Positioned(
+                left: 20,
+                top: 20,
+                child: Consumer<AuthModel>(
+                  builder: (context, auth, child) => Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(auth.pictureUrl),
+                        fit: BoxFit.cover
+                      ),
+                      borderRadius: BorderRadius.circular(50),
+                      boxShadow: [BoxShadow(color: Color(0x88000000), offset: Offset(2, 3), blurRadius: 5, spreadRadius: 3)]
+                    ),
+                  ),
+                ),
+              )
+            ],
           ),
           ListTile(
               title: Text('Welcome'),
