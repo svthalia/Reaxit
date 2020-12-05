@@ -15,9 +15,25 @@ class MenuDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: Icon(Icons.home),
-            title: Text('Welcome'),
-          ),
+              title: Text('Welcome'),
+              leading: Icon(Icons.home),
+              onTap: () => {}),
+          ListTile(
+              title: Text('Calendar'),
+              leading: Icon(Icons.event),
+              onTap: () => {}),
+          ListTile(
+              title: Text('Member list'),
+              leading: Icon(Icons.people),
+              onTap: () => {}),
+          ListTile(
+              title: Text('Photos'),
+              leading: Icon(Icons.photo),
+              onTap: () => {}),
+          ListTile(
+              title: Text('Settings'),
+              leading: Icon(Icons.settings),
+              onTap: () => {}),
           Divider(),
           ListTile(
             leading: Icon(Icons.logout),
