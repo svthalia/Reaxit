@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reaxit/ui/components/CardSection.dart';
+import 'package:reaxit/ui/components/card_section.dart';
 
 class EventDetailCard extends StatelessWidget {
   final String _title;
@@ -7,9 +7,9 @@ class EventDetailCard extends StatelessWidget {
   final String _end;
   final String _location;
   final String _description;
-  final bool registered;
+  final bool _registered;
 
-  EventDetailCard(this._title, this._start, this._end, this._location, this._description, this.registered);
+  EventDetailCard(this._title, this._start, this._end, this._location, this._description, this._registered);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class EventDetailCard extends StatelessWidget {
               margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
               child:
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Column(
@@ -33,10 +33,15 @@ class EventDetailCard extends StatelessWidget {
                         Text(_title),
                         Text(_start + ' - ' + _end + ' | ' + _location, style: TextStyle(color: Colors.grey))
                       ]),
-                    Container(
-
-                    )
-                  ]
+                      Container(
+                        width: 20,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: this._registered ? Color(0xFFE62272) : Colors.grey,
+                        )
+                      )
+                    ]
                 ),
             ),
             Container(
