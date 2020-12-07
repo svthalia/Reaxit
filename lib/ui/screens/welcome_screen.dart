@@ -1,7 +1,8 @@
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:reaxit/providers/events_provider.dart';
 import 'package:reaxit/ui/components/menu_drawer.dart';
-import 'package:reaxit/ui/components/card_section.dart';
 import 'package:reaxit/ui/components/event_detail_card.dart';
 import '../components/event_detail_card.dart';
 
@@ -18,13 +19,20 @@ class WelcomeScreenState extends State<WelcomeScreen> {
       drawer: MenuDrawer(),
       body: Container(
           color: const Color(0xffFAFAFA),
-          child:Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              EventDetailCard("Evenement titel", "18:30", "19:30", "Huygens", "Dit is een beschrijving", false),
-              EventDetailCard("Evenement titel", "18:30", "19:30", "Huygens", "Dit is een beschrijving", true),
-            ]
+          child: Consumer<EventsProvider>(
+            builder: (context, events, child) => Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: events.eventList.map((event) => EventDetailCard(
+                    event.title,
+                    "${event.start.hour.toString()}:${event.start.minute.toString()}",
+                    "${event.end.hour.toString()}:${event.end.minute.toString()}",
+                    event.location,
+                    event.description,
+                    event.registered
+                )
+                ).take(3).toList()
+            )
           )
         )
       );

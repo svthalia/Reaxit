@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:reaxit/model/auth_model.dart';
+import 'package:reaxit/providers/auth_provider.dart';
 
 import 'login_screen.dart';
 import 'welcome_screen.dart';
@@ -8,7 +8,7 @@ import 'welcome_screen.dart';
 class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Consumer<AuthModel>(
+    return Consumer<AuthProvider>(
       builder: (context, auth, child) {
         switch (auth.status) {
           case Status.INIT:

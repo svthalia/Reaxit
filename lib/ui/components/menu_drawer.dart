@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:reaxit/model/auth_model.dart';
+import 'package:reaxit/providers/auth_provider.dart';
 import 'package:reaxit/ui/screens/calendar_screen.dart';
 import 'package:reaxit/ui/screens/login_screen.dart';
 import 'package:reaxit/ui/screens/welcome_screen.dart';
@@ -33,7 +33,7 @@ class MenuDrawer extends StatelessWidget {
               Positioned(
                 left: 20,
                 bottom: 20,
-                child: Consumer<AuthModel>(
+                child: Consumer<AuthProvider>(
                   builder: (context, auth, child) => Text(
                     auth.name,
                     style: TextStyle(
@@ -46,7 +46,7 @@ class MenuDrawer extends StatelessWidget {
               Positioned(
                 left: 20,
                 top: 20,
-                child: Consumer<AuthModel>(
+                child: Consumer<AuthProvider>(
                   builder: (context, auth, child) => Container(
                     width: 80,
                     height: 80,
@@ -108,7 +108,7 @@ class MenuDrawer extends StatelessWidget {
             leading: Icon(Icons.logout),
             title: Text('Log out'),
             onTap: () {
-              Provider.of<AuthModel>(context).logOut();
+              Provider.of<AuthProvider>(context).logOut();
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => LoginScreen()));
             },

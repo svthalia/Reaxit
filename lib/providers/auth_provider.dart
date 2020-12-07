@@ -12,7 +12,7 @@ enum Status {
   INIT, SIGNED_IN, SIGNED_OUT
 }
 
-class AuthModel extends ChangeNotifier {
+class AuthProvider extends ChangeNotifier {
   OAuth2Helper _helper;
   Status _status;
 
@@ -20,10 +20,12 @@ class AuthModel extends ChangeNotifier {
   String _pictureUrl = "https://staging.thalia.nu/static/members/images/default-avatar.jpg";
 
   Status get status => _status;
+  OAuth2Helper get helper => _helper;
+
   String get name => _name;
   String get pictureUrl => _pictureUrl;
 
-  AuthModel() {
+  AuthProvider() {
     _status = Status.INIT;
 
     _init();

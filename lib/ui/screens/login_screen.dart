@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:reaxit/model/auth_model.dart';
+import 'package:reaxit/providers/auth_provider.dart';
 
 import 'welcome_screen.dart';
 
@@ -53,7 +53,7 @@ class LoginScreenState extends State<LoginScreen> {
                         setState(() {
                           _loading = true;
                         });
-                        Provider.of<AuthModel>(context, listen: false).logIn().then((res) {
+                        Provider.of<AuthProvider>(context, listen: false).logIn().then((res) {
                           setState(() {
                             _loading = false;
                           });
