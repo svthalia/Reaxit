@@ -19,25 +19,40 @@ class EventDetailCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: [
-                Column(
+            Container(
+              margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
+              child:
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(_title),
-                    Text(_start + ' ' + _end + ' | ' + _location)
-                  ]),
-                Container(
+                    Column(
+                      children: [
+                        Text(_title),
+                        Text(_start + ' - ' + _end + ' | ' + _location, style: TextStyle(color: Colors.grey))
+                      ]),
+                    Container(
 
-                )
-              ]
+                    )
+                  ]
+                ),
             ),
-            Text(_description),
-            RaisedButton(
-              textColor: Colors.white,
-              color: Colors.black87,
-              child: Text('LOGIN'),
-              onPressed: () {},
+            Container(
+              margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
+              child:
+                Text(_description, style: TextStyle(color: Colors.black87))
             ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FlatButton(
+                  textColor: Colors.grey,
+                  color: Colors.white,
+                  child: Text('MEER INFO'),
+                  onPressed: () {},
+                ),
+            ]
+            )
           ],
         )
       ])
