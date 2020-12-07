@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:reaxit/model/auth_model.dart';
 
 import 'login_screen.dart';
-import 'welcome_screen/welcome_screen.dart';
+import 'welcome_screen.dart';
 
 class SplashScreen extends StatelessWidget {
   @override

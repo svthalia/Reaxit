@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reaxit/ui/components/cardSection/CardSection.dart';
+import 'package:reaxit/ui/components/CardSection.dart';
 
 class EventDetailCard extends StatelessWidget {
   final String _title;
@@ -27,6 +27,8 @@ class EventDetailCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(_title),
                         Text(_start + ' - ' + _end + ' | ' + _location, style: TextStyle(color: Colors.grey))
@@ -43,11 +45,11 @@ class EventDetailCard extends StatelessWidget {
                 Text(_description, style: TextStyle(color: Colors.black87))
             ),
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 FlatButton(
-                  textColor: Colors.grey,
-                  color: Colors.white,
+                  textColor: Colors.white,
+                  color: Color(0xFFE62272),
                   child: Text('MEER INFO'),
                   onPressed: () {},
                 ),
