@@ -20,18 +20,10 @@ class WelcomeScreenState extends State<WelcomeScreen> {
       body: Container(
           color: const Color(0xffFAFAFA),
           child: Consumer<EventsProvider>(
-            builder: (context, events, child) => Column(
+            builder: (context, events, child) => events.loading ? Center(child: CircularProgressIndicator()) : Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: events.eventList.map((event) => EventDetailCard(
-                    event.title,
-                    "${event.start.hour.toString()}:${event.start.minute.toString()}",
-                    "${event.end.hour.toString()}:${event.end.minute.toString()}",
-                    event.location,
-                    event.description,
-                    event.registered
-                )
-                ).take(3).toList()
+                children: events.eventList.map((event) => EventDetailCard(event)).take(3).toList()
             )
           )
         )

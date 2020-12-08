@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:reaxit/models/event.dart';
 import 'package:reaxit/ui/components/card_section.dart';
 
 class EventDetailCard extends StatelessWidget {
@@ -9,7 +11,13 @@ class EventDetailCard extends StatelessWidget {
   final String _description;
   final bool _registered;
 
-  EventDetailCard(this._title, this._start, this._end, this._location, this._description, this._registered);
+  EventDetailCard(Event event)
+      : _title = event.title,
+        _start = DateFormat('HH:mm').format(event.start),
+        _end = DateFormat('HH:mm').format(event.end),
+        _location = event.location,
+        _description = event.description,
+        _registered = event.registered;
 
   @override
   Widget build(BuildContext context) {
