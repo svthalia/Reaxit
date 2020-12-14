@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reaxit/models/event.dart';
-import 'package:reaxit/ui/components/menu_drawer.dart';
 import 'package:reaxit/providers/events_provider.dart';
 
 class EventScreen extends StatefulWidget {
@@ -38,7 +37,6 @@ class EventScreenState extends State<EventScreen> {
         appBar: AppBar(
           title: Text('Event'),
         ),
-        drawer: MenuDrawer(),
         body: Container(
 
         )

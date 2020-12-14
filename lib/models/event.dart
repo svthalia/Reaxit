@@ -7,7 +7,9 @@ class Event {
   final int pk;
   final String title;
   final String description;
+  @JsonKey(fromJson: _dateTimeFromJson)
   final DateTime start;
+  @JsonKey(fromJson: _dateTimeFromJson)
   final DateTime end;
   final String location;
   final String price;
@@ -20,3 +22,5 @@ class Event {
 
   factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
 }
+
+DateTime _dateTimeFromJson(json) => DateTime.parse(json).toLocal();
