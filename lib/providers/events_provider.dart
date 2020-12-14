@@ -31,4 +31,18 @@ class EventsProvider extends ChangeNotifier{
       });
     }
   }
+
+  Future<Event> getEvent(int pk) async {
+    if (_authProvider.status == Status.SIGNED_IN) {
+      _authProvider.helper.get('https://staging.thalia.nu/api/v1/events/1').then((response) {
+        if (response.statusCode == 200) {
+          return Event.fromJson(jsonDecode(response.body));
+        }
+      });
+      return null;
+    }
+    else {
+      return null;
+    }
+  }
 }
