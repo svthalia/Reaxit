@@ -48,7 +48,7 @@ class AuthProvider extends ChangeNotifier {
     AccessTokenResponse token = await _helper.getTokenFromStorage();
     _status = token == null ? Status.SIGNED_OUT : Status.SIGNED_IN;
 
-    if (status == Status.SIGNED_IN)
+    if (_status == Status.SIGNED_IN)
       _loadUserData();
 
     notifyListeners();
@@ -80,6 +80,8 @@ class AuthProvider extends ChangeNotifier {
     }
 
     _loadUserData();
+    _status = Status.SIGNED_IN;
+    notifyListeners();
     return 'success';
   }
 }

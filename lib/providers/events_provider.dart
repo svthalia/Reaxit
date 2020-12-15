@@ -14,7 +14,9 @@ class EventsProvider extends ApiService{
   List<Event> get eventList => _eventList;
 
   Future<void> load () async {
+    print('test1');
     if (authProvider.status == Status.SIGNED_IN) {
+      print('test2');
       status = ApiStatus.LOADING;
       notifyListeners();
 
