@@ -38,33 +38,30 @@ class CalendarScreenState extends State<CalendarScreen> {
       ),
       drawer: MenuDrawer(),
       body: NetworkScrollableWrapper<EventsProvider>(
-        builder: (context, events, child) => Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: groupByMonth(events.eventList)
-                .entries
-                .map(
-                  (monthGroup) => _CalendarMonthCard(
-                    monthGroup.key,
-                    groupByDate(monthGroup.value)
-                        .entries
-                        .map(
-                          (dayGroup) => _CalendarDayCard(
-                            DateFormat(DateFormat.ABBR_WEEKDAY)
-                                .format(dayGroup.key),
-                            dayGroup.key.day,
-                            dayGroup.value
-                                .map((event) => _CalendarEventCard(event))
-                                .toList(),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                )
-                .toList(),
-          ),
+        builder: (context, events, child) => ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(20),
+          children: groupByMonth(events.eventList)
+              .entries
+              .map(
+                (monthGroup) => _CalendarMonthCard(
+                  monthGroup.key,
+                  groupByDate(monthGroup.value)
+                      .entries
+                      .map(
+                        (dayGroup) => _CalendarDayCard(
+                          DateFormat(DateFormat.ABBR_WEEKDAY)
+                              .format(dayGroup.key),
+                          dayGroup.key.day,
+                          dayGroup.value
+                              .map((event) => _CalendarEventCard(event))
+                              .toList(),
+                        ),
+                      )
+                      .toList(),
+                ),
+              )
+              .toList(),
         ),
       ),
     );

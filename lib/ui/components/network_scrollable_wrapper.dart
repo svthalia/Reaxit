@@ -35,10 +35,7 @@ class NetWorkScrollableWrapperState<T extends ApiService>
       }
       return RefreshIndicator(
         onRefresh: () => service.load(),
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: content,
-        ),
+        child: content,
       );
     });
   }
