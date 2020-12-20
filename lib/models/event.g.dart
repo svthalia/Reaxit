@@ -16,15 +16,20 @@ Event _$EventFromJson(Map<String, dynamic> json) {
     json['location'] as String,
     json['price'] as String,
     json['registered'] as bool,
-    json['pizza'] as bool,
+    json['is_pizza_event'] as bool,
     json['registration_allowed'] as bool,
     _dateTimeFromJson(json['registration_start']),
     _dateTimeFromJson(json['registration_end']),
-    json['registration'] == null
+    json['userRegistration'] == null
         ? null
         : UserRegistration.fromJson(
-            json['registration'] as Map<String, dynamic>),
+            json['userRegistration'] as Map<String, dynamic>),
     _dateTimeFromJson(json['cancel_deadline']),
+    json['num_participants'] as int,
+    json['max_participants'] as int,
+    json['no_registration_message'] as String,
+    json['fine'] as String,
+    json['has_fields'] as bool,
   );
 }
 
@@ -37,10 +42,15 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'location': instance.location,
       'price': instance.price,
       'registered': instance.registered,
-      'pizza': instance.pizza,
+      'is_pizza_event': instance.isPizzaEvent,
       'registration_allowed': instance.registrationAllowed,
       'registration_start': instance.registrationStart?.toIso8601String(),
       'registration_end': instance.registrationEnd?.toIso8601String(),
-      'registration': instance.registration,
+      'userRegistration': instance.userRegistration,
       'cancel_deadline': instance.cancelDeadline?.toIso8601String(),
+      'num_participants': instance.numParticipants,
+      'max_participants': instance.maxParticipants,
+      'no_registration_message': instance.noRegistrationMessage,
+      'fine': instance.fine,
+      'has_fields': instance.hasFields,
     };

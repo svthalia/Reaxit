@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:http/http.dart';
 import 'package:reaxit/models/event.dart';
+import 'package:reaxit/models/user_registration.dart';
 import 'package:reaxit/providers/api_service.dart';
 import 'package:reaxit/providers/auth_provider.dart';
 
@@ -39,10 +40,24 @@ class EventsProvider extends ApiService{
     }
   }
 
+  Future<List<UserRegistration>> getEventRegistrations(int pk) async {
+    // TODO: Create this method
+    if (authProvider.status == Status.SIGNED_IN) {
+      var response = await authProvider.helper.get('https://staging.thalia.nu/api/v1/events/$pk/registrations/?status=registered');
+      if (response.statusCode == 200) {
+        List jsonRegistrationList = jsonDecode(response.body);
+        print(jsonRegistrationList);
+        return null;
+      }
+    }
+    return null;
+  }
+
   Future<Event> getEvent(int pk) async {
     if (authProvider.status == Status.SIGNED_IN) {
       var response = await authProvider.helper.get('https://staging.thalia.nu/api/v1/events/$pk');
         if (response.statusCode == 200) {
+          print(response.body.toString());
           return Event.fromJson(jsonDecode(response.body));
         }
       }
