@@ -37,8 +37,32 @@ class EventScreenState extends State<EventScreen> {
         appBar: AppBar(
           title: Text('Event'),
         ),
-        body: Container(
+        body: FutureBuilder<Event>(
+          future: _event,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              Event event = snapshot.data;
+              return Container(
+                child: Column(
+                  children: [
+                    Center(child: Text("Map component placeholder")),
 
+                  ]
+                )
+              );
+            }
+            else if (snapshot.hasError) {
+              return Center(child: Text("An error occurred while fetching event data."));
+            }
+            else {
+              return Material(
+                color: Color(0xFFE62272),
+                child: Center(
+                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white),),
+                ),
+              );
+            }
+          }
         )
     );
   }
