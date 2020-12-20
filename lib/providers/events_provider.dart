@@ -41,7 +41,7 @@ class EventsProvider extends ApiService{
 
   Future<Event> getEvent(int pk) async {
     if (authProvider.status == Status.SIGNED_IN) {
-      var response = await authProvider.helper.get('https://staging.thalia.nu/api/v1/events/1');
+      var response = await authProvider.helper.get('https://staging.thalia.nu/api/v1/events/$pk');
         if (response.statusCode == 200) {
           return Event.fromJson(jsonDecode(response.body));
         }

@@ -2,22 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/ui/components/card_section.dart';
+import 'package:reaxit/ui/screens/event_screen.dart';
 
 class EventDetailCard extends StatelessWidget {
-  final String _title;
-  final String _start;
-  final String _end;
-  final String _location;
-  final String _description;
-  final bool _registered;
+  final Event _event;
 
   EventDetailCard(Event event)
-      : _title = event.title,
-        _start = DateFormat('HH:mm').format(event.start),
-        _end = DateFormat('HH:mm').format(event.end),
-        _location = event.location,
-        _description = event.description,
-        _registered = event.registered;
+      : _event = event;
 
   @override
   Widget build(BuildContext context) {
@@ -38,15 +29,15 @@ class EventDetailCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(_title),
-                        Text(_start + ' - ' + _end + ' | ' + _location, style: TextStyle(color: Colors.grey))
+                        Text(_event.title),
+                        Text(DateFormat('HH:mm').format(_event.start) + ' - ' + DateFormat('HH:mm').format(_event.start) + ' | ' + _event.location, style: TextStyle(color: Colors.grey))
                       ]),
                       Container(
                         width: 20,
                         height: 20,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: this._registered ? Color(0xFFE62272) : Colors.grey,
+                          color: _event.registered ? Color(0xFFE62272) : Colors.grey,
                         )
                       )
                     ]
@@ -55,7 +46,7 @@ class EventDetailCard extends StatelessWidget {
             Container(
               margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
               child:
-                Text(_description, style: TextStyle(color: Colors.black87))
+                Text(_event.description, style: TextStyle(color: Colors.black87))
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -63,8 +54,11 @@ class EventDetailCard extends StatelessWidget {
                 FlatButton(
                   textColor: Colors.white,
                   color: Color(0xFFE62272),
-                  child: Text('MEER INFO'),
-                  onPressed: () {},
+                  child: Text('MORE INFO'),
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => EventScreen(_event.pk)));
+                  },
                 ),
             ]
             )

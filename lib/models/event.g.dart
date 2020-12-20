@@ -11,13 +11,20 @@ Event _$EventFromJson(Map<String, dynamic> json) {
     json['pk'] as int,
     json['title'] as String,
     json['description'] as String,
-    json['start'] == null ? null : DateTime.parse(json['start'] as String).toLocal(),
-    json['end'] == null ? null : DateTime.parse(json['end'] as String).toLocal(),
+    _dateTimeFromJson(json['start']),
+    _dateTimeFromJson(json['end']),
     json['location'] as String,
     json['price'] as String,
     json['registered'] as bool,
     json['pizza'] as bool,
     json['registration_allowed'] as bool,
+    _dateTimeFromJson(json['registration_start']),
+    _dateTimeFromJson(json['registration_end']),
+    json['registration'] == null
+        ? null
+        : UserRegistration.fromJson(
+            json['registration'] as Map<String, dynamic>),
+    _dateTimeFromJson(json['cancel_deadline']),
   );
 }
 
@@ -32,4 +39,8 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'registered': instance.registered,
       'pizza': instance.pizza,
       'registration_allowed': instance.registrationAllowed,
+      'registration_start': instance.registrationStart?.toIso8601String(),
+      'registration_end': instance.registrationEnd?.toIso8601String(),
+      'registration': instance.registration,
+      'cancel_deadline': instance.cancelDeadline?.toIso8601String(),
     };

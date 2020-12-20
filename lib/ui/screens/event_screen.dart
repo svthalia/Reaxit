@@ -31,6 +31,28 @@ class EventScreenState extends State<EventScreen> {
     super.didChangeDependencies();
   }
 
+  Widget _registration_section(Event event) {
+    if (event.registered) {
+      return FlatButton(
+        textColor: Colors.white,
+        color: Color(0xFFE62272),
+        child: Text('Deregister'),
+        onPressed: () {},
+      );
+    }
+    else if (event.registrationAllowed) {
+      return FlatButton(
+        textColor: Colors.white,
+        color: Color(0xFFE62272),
+        child: Text('Register'),
+        onPressed: () {},
+      );
+    }
+    else {
+      return Text("No registration required.");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +68,40 @@ class EventScreenState extends State<EventScreen> {
                 child: Column(
                   children: [
                     Center(child: Text("Map component placeholder")),
+                    Column(
+                      children: [
+                        Text(event.title),
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                Text("From: "),
+                                Text(event.start.toString())
+                              ]
+                            ),
+                            Row(
+                                children: [
+                                  Text("Until: "),
+                                  Text(event.end.toString())
+                                ]
+                            ),
+                            Row(
+                                children: [
+                                  Text("Location: "),
+                                  Text(event.location)
+                                ]
+                            ),
+                            Row(
+                                children: [
+                                  Text("Price: "),
+                                  Text(event.price)
+                                ]
+                            ),
+                          ],
+                        ),
 
+                      ],
+                    ),
                   ]
                 )
               );
