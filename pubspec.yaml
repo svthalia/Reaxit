@@ -33,7 +33,15 @@ dependencies:
   http: ^0.12.2
   oauth2_client: ^1.6.1
   json_annotation: ^3.0.0
+
+  # date/time formatting
   intl: ^0.16.1
+
+  # opening urls
+  url_launcher: ^5.7.10
+
+  # persistent storage 
+  shared_preferences: '>=0.5.12+4 <2.0.0'
 
 dev_dependencies:
   flutter_test:

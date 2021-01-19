@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:reaxit/models/member.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/providers/members_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MemberDetail extends StatefulWidget {
   final int pk;
@@ -14,70 +15,20 @@ class MemberDetail extends StatefulWidget {
 }
 
 class _MemberDetailState extends State<MemberDetail> {
-  // DetailMember _member = DetailMember(
-  //   pk: 37,
-  //   displayName: "Dirk Doesburg",
-  //   avatar: "http://via.placeholder.com/640x360",
-  //   profileDescription: "",
-  //   birthday: "25 September 2001",
-  //   startingYear: 2019,
-  //   programme: "CAOS",
-  //   website: "",
-  //   membershipType: "Member",
-  //   achievements: [
-  //     Achievement(
-  //       name: "Mentor in 2020",
-  //       periods: [
-  //         Period(
-  //           since: DateTime.now(),
-  //           until: DateTime.now(),
-  //           chair: true,
-  //         ),
-  //       ],
-  //     ),
-  //     Achievement(
-  //       name: "Mentor in 2020",
-  //     ),
-  //     Achievement(
-  //       name: "Mentor in 2020",
-  //       periods: [
-  //         Period(
-  //           since: DateTime.now(),
-  //         ),
-  //         Period(
-  //           since: DateTime.now(),
-  //           role: "Intern",
-  //         ),
-  //         Period(
-  //           since: DateTime.now(),
-  //           role: "Secretary",
-  //         ),
-  //         Period(
-  //           since: DateTime.now(),
-  //           role: "Secretary",
-  //         ),
-  //       ],
-  //     ),
-  //   ],
-  //   societies: [
-  //     Achievement(
-  //       name: "Cook's Guild",
-  //       periods: [
-  //         Period(
-  //           since: DateTime.now(),
-  //           chair: true,
-  //         ),
-  //       ],
-  //     )
-  //   ],
-  // );
-
   Future<DetailMember> _member;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
   didChangeDependencies() {
     _member = Provider.of<MembersProvider>(context).getMember(widget.pk);
     super.didChangeDependencies();
+  }
+
+  void _showSnackbar(String text) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(text),
+      duration: Duration(seconds: 1),
+    ));
   }
 
   Widget _fieldLabel(String title) {
@@ -134,7 +85,6 @@ class _MemberDetailState extends State<MemberDetail> {
   List<Widget> _makeFacts(DetailMember member) {
     List<Widget> facts = [];
 
-    // Description (or placeholder).
     facts.add(Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Column(
@@ -146,13 +96,13 @@ class _MemberDetailState extends State<MemberDetail> {
           Padding(
             padding: const EdgeInsets.all(5),
             child: Text(
-              member.profileDescription.isEmpty
-                  ? "This member hasn't created a description yet."
-                  : member.profileDescription,
+              member.profileDescription?.isNotEmpty ?? false
+                  ? member.profileDescription
+                  : "This member hasn't created a description yet.",
               style: TextStyle(
-                fontStyle: member.profileDescription.isEmpty
-                    ? FontStyle.italic
-                    : FontStyle.normal,
+                fontStyle: member.profileDescription?.isNotEmpty ?? false
+                    ? FontStyle.normal
+                    : FontStyle.italic,
               ),
             ),
           ),
@@ -166,8 +116,8 @@ class _MemberDetailState extends State<MemberDetail> {
       endIndent: 20,
     ));
 
-    // Studies and starting year.
-    if (member.programme.isNotEmpty && member.startingYear != null) {
+    if ((member.programme?.isNotEmpty ?? false) &&
+        member.startingYear != null) {
       facts.add(Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Column(
@@ -190,6 +140,7 @@ class _MemberDetailState extends State<MemberDetail> {
                   child: Padding(
                     padding: const EdgeInsets.all(5),
                     child: Text(
+                      // TODO: map to real programme names
                       member.programme,
                       style: TextStyle(fontSize: 18),
                     ),
@@ -217,8 +168,7 @@ class _MemberDetailState extends State<MemberDetail> {
       ));
     }
 
-    // Birthday.
-    if (member.birthday.isNotEmpty) {
+    if (member.birthday?.isNotEmpty ?? false) {
       facts.add(Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Column(
@@ -245,8 +195,7 @@ class _MemberDetailState extends State<MemberDetail> {
       ));
     }
 
-    // Website.
-    if (member.website.isNotEmpty) {
+    if (member.website?.isNotEmpty ?? false) {
       facts.add(Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Column(
@@ -257,9 +206,18 @@ class _MemberDetailState extends State<MemberDetail> {
             SizedBox(height: 3),
             Padding(
               padding: const EdgeInsets.all(5),
-              child: Text(
-                member.birthday,
-                style: TextStyle(fontSize: 18),
+              child: GestureDetector(
+                onTap: () async {
+                  if (await canLaunch(member.website)) {
+                    await launch(member.website);
+                  } else {
+                    _showSnackbar("${member.website} can not be opened.");
+                  }
+                },
+                child: Text(
+                  member.website,
+                  style: TextStyle(fontSize: 18),
+                ),
               ),
             ),
           ],
@@ -273,8 +231,7 @@ class _MemberDetailState extends State<MemberDetail> {
       ));
     }
 
-    // Achievements.
-    if (member.achievements.isNotEmpty) {
+    if (member.achievements?.isNotEmpty ?? false) {
       facts.add(Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Column(
@@ -303,8 +260,7 @@ class _MemberDetailState extends State<MemberDetail> {
       ));
     }
 
-    // Societies.
-    if (member.societies.isNotEmpty) {
+    if (member.societies?.isNotEmpty ?? false) {
       facts.add(Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Column(
@@ -390,6 +346,7 @@ class _MemberDetailState extends State<MemberDetail> {
               ],
             );
           } else if (snapshot.hasError) {
+            // TODO: handle error
             return Center(child: Text("error" + snapshot.error.toString()));
           } else {
             return CustomScrollView(
@@ -398,13 +355,11 @@ class _MemberDetailState extends State<MemberDetail> {
                   expandedHeight: 200,
                   pinned: true,
                   flexibleSpace: FlexibleSpaceBar(
-                    title: Text(
-                      widget.listMember != null
-                          ? widget.listMember.displayName
-                          : "Profile",
-                    ),
+                    title: Text(widget.listMember?.displayName ?? "Profile"),
                     background: GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        // TODO: open image modal
+                      },
                       child: Stack(
                         fit: StackFit.expand,
                         children: [

@@ -66,14 +66,40 @@ class _MemberSearch extends SearchDelegate {
   @override
   Widget buildResults(BuildContext context) {
     return Container(
-      child: Center(child: Text("TODO: search results for: $query")),
+      child: NetworkScrollableWrapper<MembersProvider>(
+        builder: (context, members, child) => GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            crossAxisCount: 3,
+          ),
+          itemCount: members.memberList.length,
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(20),
+          itemBuilder: (context, index) =>
+              MemberCard(members.memberList[index]),
+        ),
+      ),
     );
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
     return Container(
-      child: Center(child: Text("TODO: suggestions (all members) $query")),
+      child: NetworkScrollableWrapper<MembersProvider>(
+        builder: (context, members, child) => GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            crossAxisCount: 3,
+          ),
+          itemCount: members.memberList.length,
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(20),
+          itemBuilder: (context, index) =>
+              MemberCard(members.memberList[index]),
+        ),
+      ),
     );
   }
 }

@@ -43,18 +43,20 @@ class MembersProvider extends ApiService {
 
   Future<DetailMember> getMember(int pk) async {
     if (authProvider.status == Status.SIGNED_IN) {
-      // TODO fill in pk
-      authProvider.helper
-          .get('https://staging.thalia.nu/api/v1/members/me')
-          .then((response) {
-        if (response.statusCode == 200) {
-          return DetailMember.fromJson(jsonDecode(response.body));
-        }
-      });
-      // TODO: handle
-      return null;
+      var response = await authProvider.helper
+          .get('https://staging.thalia.nu/api/v1/members/$pk');
+      if (response.statusCode == 200) {
+        print(response.body.toString());
+        DetailMember m = DetailMember.fromJson(jsonDecode(response.body));
+        print(m);
+        return m;
+      } else if (response.statusCode == 204) {
+        throw ("No result");
+      } else {
+        throw ("Something else");
+      }
     } else {
-      return null;
+      throw ("Not logged in");
     }
   }
 }
