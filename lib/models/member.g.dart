@@ -35,7 +35,7 @@ DetailMember _$DetailMemberFromJson(Map<String, dynamic> json) {
         ? null
         : Avatar.fromJson(json['avatar'] as Map<String, dynamic>),
     json['profile_description'] as String,
-    json['birthday'] as String,
+    _dateTimeFromJson(json['birthday']),
     json['starting_year'] as int,
     json['programme'] as String,
     json['website'] as String,
@@ -57,7 +57,7 @@ Map<String, dynamic> _$DetailMemberToJson(DetailMember instance) =>
       'display_name': instance.displayName,
       'avatar': instance.avatar,
       'profile_description': instance.profileDescription,
-      'birthday': instance.birthday,
+      'birthday': instance.birthday?.toIso8601String(),
       'starting_year': instance.startingYear,
       'programme': instance.programme,
       'website': instance.website,

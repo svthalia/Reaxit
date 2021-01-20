@@ -23,7 +23,8 @@ class DetailMember {
   final String displayName;
   final Avatar avatar;
   final String profileDescription;
-  final String birthday;
+  @JsonKey(fromJson: _dateTimeFromJson)
+  final DateTime birthday;
   final int startingYear;
   final String programme;
   final String website;
@@ -55,7 +56,7 @@ class Period {
   final DateTime until;
   final bool chair;
   final String role;
-  Period(this.since, [this.until = null, this.chair = false, this.role = null]);
+  Period(this.since, this.until, this.chair, this.role);
   factory Period.fromJson(Map<String, dynamic> json) => _$PeriodFromJson(json);
 }
 
@@ -64,7 +65,7 @@ class Achievement {
   final String name;
   final List<Period> periods;
 
-  Achievement(this.name, [this.periods = null]);
+  Achievement(this.name, this.periods);
   factory Achievement.fromJson(Map<String, dynamic> json) =>
       _$AchievementFromJson(json);
 }
@@ -78,4 +79,12 @@ class Avatar {
 
   Avatar(this.full, this.small, this.medium, this.large);
   factory Avatar.fromJson(Map<String, dynamic> json) => _$AvatarFromJson(json);
+}
+
+DateTime _dateTimeFromJson(json) {
+  if (json == null) {
+    return null;
+  } else {
+    return DateTime.parse(json).toLocal();
+  }
 }

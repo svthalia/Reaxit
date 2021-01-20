@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:reaxit/models/member.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/providers/members_provider.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/link.dart';
 
 class MemberDetail extends StatefulWidget {
   final int pk;
@@ -16,19 +16,11 @@ class MemberDetail extends StatefulWidget {
 
 class _MemberDetailState extends State<MemberDetail> {
   Future<DetailMember> _member;
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
   didChangeDependencies() {
     _member = Provider.of<MembersProvider>(context).getMember(widget.pk);
     super.didChangeDependencies();
-  }
-
-  void _showSnackbar(String text) {
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
-      content: Text(text),
-      duration: Duration(seconds: 1),
-    ));
   }
 
   Widget _fieldLabel(String title) {
@@ -140,8 +132,9 @@ class _MemberDetailState extends State<MemberDetail> {
                   child: Padding(
                     padding: const EdgeInsets.all(5),
                     child: Text(
-                      // TODO: map to real programme names
-                      member.programme,
+                      member.programme == "computingscience"
+                          ? "Computing Science"
+                          : "Information Science",
                       style: TextStyle(fontSize: 18),
                     ),
                   ),
@@ -168,7 +161,7 @@ class _MemberDetailState extends State<MemberDetail> {
       ));
     }
 
-    if (member.birthday?.isNotEmpty ?? false) {
+    if (member.birthday != null) {
       facts.add(Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Column(
@@ -180,7 +173,7 @@ class _MemberDetailState extends State<MemberDetail> {
             Padding(
               padding: const EdgeInsets.all(5),
               child: Text(
-                member.birthday,
+                DateFormat("d MMMM y").format(member.birthday),
                 style: TextStyle(fontSize: 18),
               ),
             ),
@@ -206,17 +199,15 @@ class _MemberDetailState extends State<MemberDetail> {
             SizedBox(height: 3),
             Padding(
               padding: const EdgeInsets.all(5),
-              child: GestureDetector(
-                onTap: () async {
-                  if (await canLaunch(member.website)) {
-                    await launch(member.website);
-                  } else {
-                    _showSnackbar("${member.website} can not be opened.");
-                  }
-                },
-                child: Text(
-                  member.website,
-                  style: TextStyle(fontSize: 18),
+              child: Link(
+                uri: Uri.parse(member.website),
+                target: LinkTarget.blank,
+                builder: (context, followLink) => GestureDetector(
+                  onTap: followLink,
+                  child: Text(
+                    member.website,
+                    style: TextStyle(fontSize: 18),
+                  ),
                 ),
               ),
             ),

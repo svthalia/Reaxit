@@ -13,8 +13,8 @@ class MemberCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  MemberDetail(this._member.pk, this._member)),
+            builder: (context) => MemberDetail(this._member.pk, this._member),
+          ),
         );
       },
       child: Stack(

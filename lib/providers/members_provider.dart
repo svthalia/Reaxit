@@ -46,10 +46,7 @@ class MembersProvider extends ApiService {
       var response = await authProvider.helper
           .get('https://staging.thalia.nu/api/v1/members/$pk');
       if (response.statusCode == 200) {
-        print(response.body.toString());
-        DetailMember m = DetailMember.fromJson(jsonDecode(response.body));
-        print(m);
-        return m;
+        return DetailMember.fromJson(jsonDecode(response.body));
       } else if (response.statusCode == 204) {
         throw ("No result");
       } else {
