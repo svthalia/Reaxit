@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 import 'package:reaxit/models/member.dart';
 import 'package:intl/intl.dart';
@@ -283,6 +284,32 @@ class _MemberDetailState extends State<MemberDetail> {
     return facts;
   }
 
+  Widget _showAvatarView(BuildContext context, String avatar) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.9),
+      builder: (context) {
+        return Scaffold(
+          body: Stack(
+            children: [
+              PhotoView(
+                imageProvider: NetworkImage(avatar),
+                heroAttributes: PhotoViewHeroAttributes(tag: widget.pk),
+                backgroundDecoration: BoxDecoration(color: Colors.transparent),
+                minScale: PhotoViewComputedScale.contained * 0.8,
+                maxScale: PhotoViewComputedScale.covered * 1.2,
+              ),
+              CloseButton(
+                color: Theme.of(context).primaryIconTheme.color,
+              ),
+            ],
+          ),
+          backgroundColor: Colors.transparent,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -299,7 +326,7 @@ class _MemberDetailState extends State<MemberDetail> {
                   flexibleSpace: FlexibleSpaceBar(
                     title: Text(member.displayName),
                     background: GestureDetector(
-                      onTap: () {},
+                      onTap: () => _showAvatarView(context, member.avatar.full),
                       child: Stack(
                         fit: StackFit.expand,
                         children: [
@@ -349,7 +376,11 @@ class _MemberDetailState extends State<MemberDetail> {
                     title: Text(widget.listMember?.displayName ?? "Profile"),
                     background: GestureDetector(
                       onTap: () {
-                        // TODO: open image modal
+                        if (widget.listMember?.avatar.full.isNotEmpty ??
+                            false) {
+                          _showAvatarView(
+                              context, widget.listMember.avatar.full);
+                        }
                       },
                       child: Stack(
                         fit: StackFit.expand,

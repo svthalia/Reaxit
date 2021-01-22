@@ -40,6 +40,9 @@ dependencies:
   # opening urls
   url_launcher: ^5.7.10
 
+  # modal photo view
+  photo_view: ^0.10.3
+
   # persistent storage 
   shared_preferences: '>=0.5.12+4 <2.0.0'
 
