@@ -17,6 +17,9 @@ UserRegistration _$UserRegistrationFromJson(Map<String, dynamic> json) {
     json['queue_position'] as int,
     json['payment'] as String,
     json['present'] as bool,
+    json['avatar'] == null
+        ? null
+        : Photo.fromJson(json['avatar'] as Map<String, dynamic>),
   );
 }
 
@@ -31,4 +34,5 @@ Map<String, dynamic> _$UserRegistrationToJson(UserRegistration instance) =>
       'queue_position': instance.queuePosition,
       'payment': instance.payment,
       'present': instance.present,
+      'avatar': instance.avatar,
     };

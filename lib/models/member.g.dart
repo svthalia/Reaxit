@@ -12,7 +12,7 @@ Member _$MemberFromJson(Map<String, dynamic> json) {
     json['display_name'] as String,
     json['avatar'] == null
         ? null
-        : Avatar.fromJson(json['avatar'] as Map<String, dynamic>),
+        : Photo.fromJson(json['avatar'] as Map<String, dynamic>),
     json['profile_description'] as String,
     _dateTimeFromJson(json['birthday']),
     json['starting_year'] as int,
@@ -74,20 +74,4 @@ Map<String, dynamic> _$AchievementToJson(Achievement instance) =>
     <String, dynamic>{
       'name': instance.name,
       'periods': instance.periods,
-    };
-
-Avatar _$AvatarFromJson(Map<String, dynamic> json) {
-  return Avatar(
-    json['full'] as String,
-    json['small'] as String,
-    json['medium'] as String,
-    json['large'] as String,
-  );
-}
-
-Map<String, dynamic> _$AvatarToJson(Avatar instance) => <String, dynamic>{
-      'full': instance.full,
-      'small': instance.small,
-      'medium': instance.medium,
-      'large': instance.large,
     };

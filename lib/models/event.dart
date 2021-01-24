@@ -19,9 +19,11 @@ class Event {
   final bool isPizzaEvent;
   @JsonKey(name: 'registration_allowed')
   final bool registrationAllowed;
-  @JsonKey(name: 'registration_start', fromJson: _dateTimeFromJson, nullable: true)
+  @JsonKey(
+      name: 'registration_start', fromJson: _dateTimeFromJson, nullable: true)
   final DateTime registrationStart;
-  @JsonKey(name: 'registration_end', fromJson: _dateTimeFromJson, nullable: true)
+  @JsonKey(
+      name: 'registration_end', fromJson: _dateTimeFromJson, nullable: true)
   final DateTime registrationEnd;
   @JsonKey(nullable: true)
   final UserRegistration userRegistration;
@@ -37,7 +39,27 @@ class Event {
   @JsonKey(name: 'has_fields')
   final bool hasFields;
 
-  Event(this.pk, this.title, this.description, this.start, this.end, this.location, this.price, this.registered, this.isPizzaEvent, this.registrationAllowed, this.registrationStart, this.registrationEnd, this.userRegistration, this.cancelDeadline, this.numParticipants, this.maxParticipants, this.noRegistrationMessage, this.fine, this.hasFields);
+  Event(
+    this.pk,
+    this.title,
+    this.description,
+    this.start,
+    this.end,
+    this.location,
+    this.price,
+    this.registered,
+    this.isPizzaEvent,
+    this.registrationAllowed,
+    this.registrationStart,
+    this.registrationEnd,
+    this.userRegistration,
+    this.cancelDeadline,
+    this.numParticipants,
+    this.maxParticipants,
+    this.noRegistrationMessage,
+    this.fine,
+    this.hasFields,
+  );
 
   bool registrationRequired() {
     return registrationStart != null || registrationEnd != null;
@@ -52,7 +74,11 @@ class Event {
   }
 
   bool registrationAllowedAndPossible() {
-    return registrationRequired() && (DateTime.now()).isBefore(registrationEnd) && registrationStarted() && registrationAllowed && !isLateCancellation();
+    return registrationRequired() &&
+        (DateTime.now()).isBefore(registrationEnd) &&
+        registrationStarted() &&
+        registrationAllowed &&
+        !isLateCancellation();
   }
 
   bool afterCancelDeadline() {
@@ -65,8 +91,7 @@ class Event {
 DateTime _dateTimeFromJson(json) {
   if (json == null) {
     return null;
-  }
-  else {
+  } else {
     return DateTime.parse(json).toLocal();
   }
 }

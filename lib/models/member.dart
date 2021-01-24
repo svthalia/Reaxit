@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:reaxit/models/photo.dart';
 
 part 'member.g.dart';
 
@@ -6,7 +7,7 @@ part 'member.g.dart';
 class Member {
   final int pk;
   final String displayName;
-  final Avatar avatar;
+  final Photo avatar;
   final String profileDescription;
   @JsonKey(fromJson: _dateTimeFromJson)
   final DateTime birthday;
@@ -52,17 +53,6 @@ class Achievement {
   Achievement(this.name, this.periods);
   factory Achievement.fromJson(Map<String, dynamic> json) =>
       _$AchievementFromJson(json);
-}
-
-@JsonSerializable()
-class Avatar {
-  final String full;
-  final String small;
-  final String medium;
-  final String large;
-
-  Avatar(this.full, this.small, this.medium, this.large);
-  factory Avatar.fromJson(Map<String, dynamic> json) => _$AvatarFromJson(json);
 }
 
 DateTime _dateTimeFromJson(json) {
