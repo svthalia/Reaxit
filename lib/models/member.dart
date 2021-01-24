@@ -3,22 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'member.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class ListMember {
-  final int pk;
-  final int startingYear;
-  final String displayName;
-  final String membershipType;
-  final Avatar avatar;
-
-  const ListMember(this.pk, this.startingYear, this.displayName,
-      this.membershipType, this.avatar);
-
-  factory ListMember.fromJson(Map<String, dynamic> json) =>
-      _$ListMemberFromJson(json);
-}
-
-@JsonSerializable(fieldRename: FieldRename.snake)
-class DetailMember {
+class Member {
   final int pk;
   final String displayName;
   final Avatar avatar;
@@ -32,7 +17,7 @@ class DetailMember {
   final List<Achievement> achievements;
   final List<Achievement> societies;
 
-  const DetailMember(
+  const Member(
     this.pk,
     this.displayName,
     this.avatar,
@@ -46,8 +31,7 @@ class DetailMember {
     this.societies,
   );
 
-  factory DetailMember.fromJson(Map<String, dynamic> json) =>
-      _$DetailMemberFromJson(json);
+  factory Member.fromJson(Map<String, dynamic> json) => _$MemberFromJson(json);
 }
 
 @JsonSerializable()

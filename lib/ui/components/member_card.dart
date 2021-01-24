@@ -3,7 +3,7 @@ import 'package:reaxit/ui/screens/member_detail.dart';
 import 'package:reaxit/models/member.dart';
 
 class MemberCard extends StatelessWidget {
-  final ListMember _member;
+  final Member _member;
   MemberCard(this._member);
 
   @override

@@ -8,7 +8,7 @@ import 'package:url_launcher/link.dart';
 
 class MemberDetail extends StatefulWidget {
   final int pk;
-  final ListMember listMember;
+  final Member listMember;
   MemberDetail(this.pk, [this.listMember]);
 
   @override
@@ -16,7 +16,7 @@ class MemberDetail extends StatefulWidget {
 }
 
 class _MemberDetailState extends State<MemberDetail> {
-  Future<DetailMember> _member;
+  Future<Member> _member;
 
   @override
   didChangeDependencies() {
@@ -75,7 +75,7 @@ class _MemberDetailState extends State<MemberDetail> {
     );
   }
 
-  List<Widget> _makeFacts(DetailMember member) {
+  List<Widget> _makeFacts(Member member) {
     List<Widget> facts = [];
 
     facts.add(Container(
@@ -317,7 +317,7 @@ class _MemberDetailState extends State<MemberDetail> {
         future: _member,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            DetailMember member = snapshot.data;
+            Member member = snapshot.data;
             return CustomScrollView(
               slivers: [
                 SliverAppBar(

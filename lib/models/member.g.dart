@@ -6,29 +6,8 @@ part of 'member.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ListMember _$ListMemberFromJson(Map<String, dynamic> json) {
-  return ListMember(
-    json['pk'] as int,
-    json['starting_year'] as int,
-    json['display_name'] as String,
-    json['membership_type'] as String,
-    json['avatar'] == null
-        ? null
-        : Avatar.fromJson(json['avatar'] as Map<String, dynamic>),
-  );
-}
-
-Map<String, dynamic> _$ListMemberToJson(ListMember instance) =>
-    <String, dynamic>{
-      'pk': instance.pk,
-      'starting_year': instance.startingYear,
-      'display_name': instance.displayName,
-      'membership_type': instance.membershipType,
-      'avatar': instance.avatar,
-    };
-
-DetailMember _$DetailMemberFromJson(Map<String, dynamic> json) {
-  return DetailMember(
+Member _$MemberFromJson(Map<String, dynamic> json) {
+  return Member(
     json['pk'] as int,
     json['display_name'] as String,
     json['avatar'] == null
@@ -51,8 +30,7 @@ DetailMember _$DetailMemberFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$DetailMemberToJson(DetailMember instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$MemberToJson(Member instance) => <String, dynamic>{
       'pk': instance.pk,
       'display_name': instance.displayName,
       'avatar': instance.avatar,

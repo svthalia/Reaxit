@@ -7,9 +7,9 @@ import 'package:reaxit/providers/api_service.dart';
 import 'package:reaxit/providers/auth_provider.dart';
 
 class MembersProvider extends ApiSearchService {
-  List<ListMember> _memberList = [];
+  List<Member> _memberList = [];
 
-  List<ListMember> get memberList => _memberList;
+  List<Member> get memberList => _memberList;
 
   MembersProvider(AuthProvider authProvider) : super(authProvider);
 
@@ -22,9 +22,9 @@ class MembersProvider extends ApiSearchService {
         Response response = await authProvider.helper
             .get('https://staging.thalia.nu/api/v1/members/');
         if (response.statusCode == 200) {
-          List<dynamic> jsonEvents = jsonDecode(response.body)['results'];
-          _memberList = jsonEvents
-              .map((jsonEvent) => ListMember.fromJson(jsonEvent))
+          List<dynamic> jsonMemberList = jsonDecode(response.body)['results'];
+          _memberList = jsonMemberList
+              .map((jsonMember) => Member.fromJson(jsonMember))
               .toList();
           status = ApiStatus.DONE;
         } else if (response.statusCode == 403)
@@ -42,12 +42,12 @@ class MembersProvider extends ApiSearchService {
   }
 
   // TODO: proper error handling of getMember and search
-  Future<DetailMember> getMember(int pk) async {
+  Future<Member> getMember(int pk) async {
     if (authProvider.status == Status.SIGNED_IN) {
       Response response = await authProvider.helper
           .get('https://staging.thalia.nu/api/v1/members/$pk');
       if (response.statusCode == 200) {
-        return DetailMember.fromJson(jsonDecode(response.body));
+        return Member.fromJson(jsonDecode(response.body));
       } else if (response.statusCode == 204) {
         throw ("No result");
       } else {
@@ -59,14 +59,14 @@ class MembersProvider extends ApiSearchService {
   }
 
   @override
-  Future<List<ListMember>> search(String query) async {
+  Future<List<Member>> search(String query) async {
     if (authProvider.status == Status.SIGNED_IN) {
       Response response = await authProvider.helper.get(
           'https://staging.thalia.nu/api/v1/members/?search=${Uri.encodeComponent(query)}');
       if (response.statusCode == 200) {
-        List<dynamic> jsonEvents = jsonDecode(response.body)['results'];
-        return jsonEvents
-            .map((jsonEvent) => ListMember.fromJson(jsonEvent))
+        List<dynamic> jsonMemberList = jsonDecode(response.body)['results'];
+        return jsonMemberList
+            .map((jsonMember) => Member.fromJson(jsonMember))
             .toList();
       } else if (response.statusCode == 204) {
         throw ("No result");
