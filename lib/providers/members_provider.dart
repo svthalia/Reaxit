@@ -6,7 +6,7 @@ import 'package:reaxit/models/member.dart';
 import 'package:reaxit/providers/api_service.dart';
 import 'package:reaxit/providers/auth_provider.dart';
 
-class MembersProvider extends ApiService {
+class MembersProvider extends ApiSearchService {
   List<ListMember> _memberList = [];
 
   List<ListMember> get memberList => _memberList;
@@ -41,12 +41,33 @@ class MembersProvider extends ApiService {
     }
   }
 
+  // TODO: proper error handling of getMember and search
   Future<DetailMember> getMember(int pk) async {
     if (authProvider.status == Status.SIGNED_IN) {
-      var response = await authProvider.helper
+      Response response = await authProvider.helper
           .get('https://staging.thalia.nu/api/v1/members/$pk');
       if (response.statusCode == 200) {
         return DetailMember.fromJson(jsonDecode(response.body));
+      } else if (response.statusCode == 204) {
+        throw ("No result");
+      } else {
+        throw ("Something else");
+      }
+    } else {
+      throw ("Not logged in");
+    }
+  }
+
+  @override
+  Future<List<ListMember>> search(String query) async {
+    if (authProvider.status == Status.SIGNED_IN) {
+      Response response = await authProvider.helper.get(
+          'https://staging.thalia.nu/api/v1/members/?search=${Uri.encodeComponent(query)}');
+      if (response.statusCode == 200) {
+        List<dynamic> jsonEvents = jsonDecode(response.body)['results'];
+        return jsonEvents
+            .map((jsonEvent) => ListMember.fromJson(jsonEvent))
+            .toList();
       } else if (response.statusCode == 204) {
         throw ("No result");
       } else {

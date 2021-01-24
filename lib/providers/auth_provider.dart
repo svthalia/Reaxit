@@ -8,16 +8,15 @@ import 'package:oauth2_client/access_token_response.dart';
 import 'package:oauth2_client/oauth2_helper.dart';
 import 'package:reaxit/api/oauth_client.dart';
 
-enum Status {
-  INIT, SIGNED_IN, SIGNED_OUT
-}
+enum Status { INIT, SIGNED_IN, SIGNED_OUT }
 
 class AuthProvider extends ChangeNotifier {
   OAuth2Helper _helper;
   Status _status;
 
   String _name = 'loading';
-  String _pictureUrl = "https://staging.thalia.nu/static/members/images/default-avatar.jpg";
+  String _pictureUrl =
+      "https://staging.thalia.nu/static/members/images/default-avatar.jpg";
 
   Status get status => _status;
   OAuth2Helper get helper => _helper;
@@ -33,32 +32,31 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> _init() async {
     OAuthClient client = OAuthClient(
-        redirectUri: 'nu.thalia://callback',
-        customUriScheme: 'nu.thalia'
-    );
+        redirectUri: 'nu.thalia://callback', customUriScheme: 'nu.thalia');
 
-    _helper = OAuth2Helper(
-        client,
+    _helper = OAuth2Helper(client,
         grantType: OAuth2Helper.AUTHORIZATION_CODE,
         clientId: '3zlt7pqGVMiUCGxOnKTZEpytDUN7haeFBP2kVkig',
-        clientSecret: 'Chwh1BE3MgfU1OZZmYRV3LU3e3GzpZJ6tiWrqzFY3dPhMlS7VYD3qMm1RC1pPBvg3WaWmJxfRq8bv5ElVOpjRZwabAGOZ0DbuHhW3chAMaNlOmwXixNfUJIKIBzlnr7I',
-        scopes: ['read', 'write', 'members:read', 'activemembers:read']
-    );
+        clientSecret:
+            'Chwh1BE3MgfU1OZZmYRV3LU3e3GzpZJ6tiWrqzFY3dPhMlS7VYD3qMm1RC1pPBvg3WaWmJxfRq8bv5ElVOpjRZwabAGOZ0DbuHhW3chAMaNlOmwXixNfUJIKIBzlnr7I',
+        scopes: ['read', 'write', 'members:read', 'activemembers:read']);
 
     AccessTokenResponse token = await _helper.getTokenFromStorage();
     _status = token == null ? Status.SIGNED_OUT : Status.SIGNED_IN;
 
-    if (_status == Status.SIGNED_IN)
-      _loadUserData();
+    if (_status == Status.SIGNED_IN) _loadUserData();
 
     notifyListeners();
   }
 
   Future<void> _loadUserData() async {
-    Response response = await _helper.get('https://staging.thalia.nu/api/v1/members/me');
+    Response response =
+        await _helper.get('https://staging.thalia.nu/api/v1/members/me');
 
     if (response.statusCode == 200) {
-      _name = jsonDecode(response.body)['first_name'].toString() + ' ' + jsonDecode(response.body)['last_name'].toString();
+      _name = jsonDecode(response.body)['first_name'].toString() +
+          ' ' +
+          jsonDecode(response.body)['last_name'].toString();
       _pictureUrl = jsonDecode(response.body)['avatar']['small'].toString();
     }
   }

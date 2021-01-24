@@ -45,9 +45,9 @@ class MemberCard extends StatelessWidget {
                 end: FractionalOffset.bottomCenter,
                 colors: [
                   Colors.black.withOpacity(0.0),
-                  Colors.black.withOpacity(0.3),
+                  Colors.black.withOpacity(0.5),
                 ],
-                stops: [0.5, 1.0],
+                stops: [0.4, 1.0],
               ),
             ),
           )
