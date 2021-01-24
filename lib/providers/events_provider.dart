@@ -7,24 +7,27 @@ import 'package:reaxit/models/user_registration.dart';
 import 'package:reaxit/providers/api_service.dart';
 import 'package:reaxit/providers/auth_provider.dart';
 
-class EventsProvider extends ApiService{
+class EventsProvider extends ApiSearchService {
   List<Event> _eventList = [];
 
   EventsProvider(AuthProvider authProvider) : super(authProvider);
 
   List<Event> get eventList => _eventList;
 
-  Future<void> load () async {
+  Future<void> load() async {
     if (authProvider.status == Status.SIGNED_IN) {
       status = ApiStatus.LOADING;
       notifyListeners();
 
       try {
-        Response response = await authProvider.helper.get('https://staging.thalia.nu/api/v1/events/');
+        Response response = await authProvider.helper
+            .get('https://staging.thalia.nu/api/v1/events/');
         if (response.statusCode == 200) {
           List<dynamic> jsonEvents = jsonDecode(response.body)['results'];
-          _eventList = jsonEvents.map((jsonEvent) => Event.fromJson(jsonEvent)).toList();
-          _eventList.sort((event1, event2) => (event1.start.difference(event2.start)).inMinutes);
+          _eventList =
+              jsonEvents.map((jsonEvent) => Event.fromJson(jsonEvent)).toList();
+          _eventList.sort((event1, event2) =>
+              (event1.start.difference(event2.start)).inMinutes);
           status = ApiStatus.DONE;
         } else if (response.statusCode == 403)
           status = ApiStatus.NOT_AUTHENTICATED;
@@ -43,7 +46,8 @@ class EventsProvider extends ApiService{
   Future<List<UserRegistration>> getEventRegistrations(int pk) async {
     // TODO: Create this method
     if (authProvider.status == Status.SIGNED_IN) {
-      var response = await authProvider.helper.get('https://staging.thalia.nu/api/v1/events/$pk/registrations/?status=registered');
+      var response = await authProvider.helper.get(
+          'https://staging.thalia.nu/api/v1/events/$pk/registrations/?status=registered');
       if (response.statusCode == 200) {
         List jsonRegistrationList = jsonDecode(response.body);
         print(jsonRegistrationList);
@@ -55,12 +59,34 @@ class EventsProvider extends ApiService{
 
   Future<Event> getEvent(int pk) async {
     if (authProvider.status == Status.SIGNED_IN) {
-      var response = await authProvider.helper.get('https://staging.thalia.nu/api/v1/events/$pk');
-        if (response.statusCode == 200) {
-          print(response.body.toString());
-          return Event.fromJson(jsonDecode(response.body));
-        }
+      var response = await authProvider.helper
+          .get('https://staging.thalia.nu/api/v1/events/$pk');
+      if (response.statusCode == 200) {
+        print(response.body.toString());
+        return Event.fromJson(jsonDecode(response.body));
       }
-      return null;
     }
+    return null;
+  }
+
+  // TODO: proper error handling
+  @override
+  Future<List<Event>> search(String query) async {
+    if (authProvider.status == Status.SIGNED_IN) {
+      Response response = await authProvider.helper.get(
+          'https://staging.thalia.nu/api/v1/events/?search=${Uri.encodeComponent(query)}');
+      if (response.statusCode == 200) {
+        List<dynamic> jsonEvents = jsonDecode(response.body)['results'];
+        return jsonEvents
+            .map((jsonEvent) => Event.fromJson(jsonEvent))
+            .toList();
+      } else if (response.statusCode == 204) {
+        throw ("No result");
+      } else {
+        throw ("Something else");
+      }
+    } else {
+      throw ("Not logged in");
+    }
+  }
 }

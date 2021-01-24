@@ -5,6 +5,7 @@ import 'package:reaxit/models/event.dart';
 import 'package:reaxit/providers/events_provider.dart';
 import 'package:reaxit/ui/components/menu_drawer.dart';
 import 'package:reaxit/ui/components/network_scrollable_wrapper.dart';
+import 'package:reaxit/ui/components/network_search_delegate.dart';
 import 'package:reaxit/ui/screens/event_screen.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -35,6 +36,45 @@ class CalendarScreenState extends State<CalendarScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Calendar'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            tooltip: "Search for events",
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: NetworkSearchDelegate<EventsProvider>(
+                  resultBuilder: (context, eventList, child) => ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(20),
+                    children: groupByMonth(eventList)
+                        .entries
+                        .map(
+                          (monthGroup) => _CalendarMonthCard(
+                            monthGroup.key,
+                            groupByDate(monthGroup.value)
+                                .entries
+                                .map(
+                                  (dayGroup) => _CalendarDayCard(
+                                    DateFormat(DateFormat.ABBR_WEEKDAY)
+                                        .format(dayGroup.key),
+                                    dayGroup.key.day,
+                                    dayGroup.value
+                                        .map((event) =>
+                                            _CalendarEventCard(event))
+                                        .toList(),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+              );
+            },
+          )
+        ],
       ),
       drawer: MenuDrawer(),
       body: NetworkScrollableWrapper<EventsProvider>(
