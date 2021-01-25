@@ -33,6 +33,7 @@ dependencies:
   http: ^0.12.2
   oauth2_client: ^1.6.1
   json_annotation: ^3.0.0
+  flutter_html: ^1.2.0
 
   # date/time formatting
   intl: ^0.16.1
