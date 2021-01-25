@@ -4,7 +4,6 @@ import 'package:reaxit/models/event.dart';
 import 'package:reaxit/providers/events_provider.dart';
 
 class EventScreen extends StatefulWidget {
-
   final int pk;
 
   EventScreen(this.pk);
@@ -14,7 +13,6 @@ class EventScreen extends StatefulWidget {
 }
 
 class EventScreenState extends State<EventScreen> {
-
   Future<Event> _event;
 
   @override
@@ -33,55 +31,86 @@ class EventScreenState extends State<EventScreen> {
 
   static List<Widget> eventDescription(Event event) {
     List<Widget> eventDescriptionList = [
-      Row(
-          children: [
-            Text("From: "),
-            Text(event.start.toString())
-          ]
-      ),
-      Row(
-          children: [
-            Text("Until: "),
-            Text(event.end.toString())
-          ]
-      ),
-      Row(
-          children: [
-            Text("Location: "),
-            Text(event.location)
-          ]
-      ),
-      Row(
-          children: [
-            Text("Price: "),
-            Text(event.price)
-          ]
-      ),
+      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Text(
+          "From: ",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Text(event.start.toString())
+      ]),
+      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Text(
+          "Until: ",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Text(event.end.toString())
+      ]),
+      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Text(
+          "Location: ",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Text(event.location)
+      ]),
+      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Text(
+          "Price: ",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Text(event.price)
+      ]),
     ];
 
     if (event.registrationRequired()) {
-      eventDescriptionList.add(Row(children: [Text("Registration deadline: "), Text(event.registrationEnd.toString())]));
-      eventDescriptionList.add(Row(children: [Text("Cancellation deadline: "), Text(event.cancelDeadline.toString())]));
+      eventDescriptionList.add(
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Text(
+          "Registration deadline: ",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Text(event.registrationEnd.toString())
+      ]));
+      eventDescriptionList.add(
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Text(
+          "Cancellation deadline: ",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Text(event.cancelDeadline.toString())
+      ]));
       String participantText = '${event.numParticipants} registrations';
       if (event.maxParticipants != null) {
         participantText += ' (${event.maxParticipants} max)';
       }
-      eventDescriptionList.add(Row(children: [Text("Number of registrations: "), Text(participantText)]));
+      eventDescriptionList.add(
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Text(
+          "Number of registrations: ",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Text(participantText)
+      ]));
       if (event.userRegistration != null) {
         String registrationState;
         if (event.userRegistration.isLateCancellation) {
           registrationState =
-          'Your registration is cancelled after the cancellation deadline';
+              'Your registration is cancelled after the cancellation deadline';
         } else if (event.userRegistration.isCancelled) {
           registrationState = 'Your registration is cancelled';
         } else if (event.userRegistration.queuePosition == null) {
           registrationState = 'You are registered';
         } else if (event.userRegistration.queuePosition > 0) {
-          registrationState = 'Queue position ${event.userRegistration.queuePosition}';
+          registrationState =
+              'Queue position ${event.userRegistration.queuePosition}';
         } else {
           registrationState = 'Your registration is cancelled';
         }
-        eventDescriptionList.add(Row(children: [Text("Registration status: "), Text(registrationState)]));
+        eventDescriptionList.add(
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Text("Registration status: ",
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          Text(registrationState)
+        ]));
       }
     }
     return eventDescriptionList;
@@ -93,8 +122,7 @@ class EventScreenState extends State<EventScreen> {
     if (!event.registrationRequired()) {
       if (event.noRegistrationMessage != null) {
         text = event.noRegistrationMessage;
-      }
-      else {
+      } else {
         text = "No registration required.";
       }
     } else if (!event.registrationStarted()) {
@@ -103,7 +131,7 @@ class EventScreenState extends State<EventScreen> {
       text = 'Registration is not possible anymore.';
     } else if (event.isLateCancellation()) {
       text =
-        'Registration is not allowed anymore, as you cancelled your registration after the deadline.';
+          'Registration is not allowed anymore, as you cancelled your registration after the deadline.';
     }
 
     if (event.afterCancelDeadline() && !event.isLateCancellation()) {
@@ -111,77 +139,68 @@ class EventScreenState extends State<EventScreen> {
         text += ' ';
       }
       text +=
-        "Cancellation isn't possible anymore without having to pay the full costs of €${event.fine}. Also note that you will be unable to re-register.";
+          "Cancellation isn't possible anymore without having to pay the full costs of €${event.fine}. Also note that you will be unable to re-register.";
     }
 
     return Text(text);
   }
 
   static Widget eventActions(Event event) {
-
     if (event.registrationAllowedAndPossible()) {
       if (event.userRegistration == null ||
           event.userRegistration.isCancelled) {
-        final String text =
-        event.maxParticipants != null &&
-            event.maxParticipants <= event.numParticipants
+        final String text = event.maxParticipants != null &&
+                event.maxParticipants <= event.numParticipants
             ? 'Put me on the waiting list'
             : 'Register';
-        return Column(
-            children: [
-              // TODO: Make terms and conditions clickable
-              Text(
-                  "By registering, you confirm that you have read the terms and conditions, that you understand them and that you agree to be bound by them."),
-              FlatButton(
-                textColor: Colors.white,
-                color: Color(0xFFE62272),
-                child: Text(text),
-                onPressed: () {
-                  // TODO: Register and go to register view
-                },
-              ),
-            ]
-        );
+        return Column(children: [
+          // TODO: Make terms and conditions clickable
+          Text(
+              "By registering, you confirm that you have read the terms and conditions, that you understand them and that you agree to be bound by them."),
+          FlatButton(
+            textColor: Colors.white,
+            color: Color(0xFFE62272),
+            child: Text(text),
+            onPressed: () {
+              // TODO: Register and go to register view
+            },
+          ),
+        ]);
       }
       if (event.userRegistration != null &&
-          !event.userRegistration.isCancelled && event.registrationRequired() &&
+          !event.userRegistration.isCancelled &&
+          event.registrationRequired() &&
           event.registrationStarted()) {
-        if (event.registrationStarted() && event.userRegistration != null &&
-            !event.userRegistration.isCancelled && event.hasFields) {
-          return Column(
-            children: [
-              FlatButton(
-                textColor: Colors.white,
-                color: Color(0xFFE62272),
-                child: Text('Update registration'),
-                onPressed: () {
-                  // TODO: Go to update registration view
-                },
-              ),
-              FlatButton(
+        if (event.registrationStarted() &&
+            event.userRegistration != null &&
+            !event.userRegistration.isCancelled &&
+            event.hasFields) {
+          return Column(children: [
+            FlatButton(
+              textColor: Colors.white,
+              color: Color(0xFFE62272),
+              child: Text('Update registration'),
+              onPressed: () {
+                // TODO: Go to update registration view
+              },
+            ),
+            FlatButton(
                 textColor: Colors.white,
                 color: Color(0xFFE62272),
                 child: Text('Cancel registration'),
                 onPressed: () {
                   // TODO: Cancel registration
-                }
-              )
-            ]
-          );
-        }
-        else {
-          return Column(
-            children: [
-              FlatButton(
-                textColor: Colors.white,
-                color: Color(0xFFE62272),
-                child: Text('Cancel registration'),
-                onPressed: () {
-
-                },
-              ),
-            ]
-          );
+                })
+          ]);
+        } else {
+          return Column(children: [
+            FlatButton(
+              textColor: Colors.white,
+              color: Color(0xFFE62272),
+              child: Text('Cancel registration'),
+              onPressed: () {},
+            ),
+          ]);
         }
       }
     }
@@ -195,39 +214,49 @@ class EventScreenState extends State<EventScreen> {
           title: Text('Event'),
         ),
         body: FutureBuilder<Event>(
-          future: _event,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              Event event = snapshot.data;
-              return Container(
-                child: Column(
-                  children: [
-                    Center(child: Text("Map component placeholder")),
-                    Column(
+            future: _event,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                Event event = snapshot.data;
+                return Container(
+                    child: Column(children: [
+                  Center(child: Text("Map component placeholder")),
+                  Container(
+                    margin: EdgeInsets.only(
+                        left: 20, top: 10, right: 20, bottom: 0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(event.title),
-                        Column(
-                          children: eventDescription(event)
-                        ),
+                        Container(
+                            margin: EdgeInsets.only(
+                                left: 0, top: 0, right: 0, bottom: 10),
+                            child: Text(event.title,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 24))),
+                        Column(children: eventDescription(event)),
+                        eventInfo(event),
                       ],
                     ),
-                  ]
-                )
-              );
-            }
-            else if (snapshot.hasError) {
-              return Center(child: Text("An error occurred while fetching event data."));
-            }
-            else {
-              return Material(
-                color: Color(0xFFE62272),
-                child: Center(
-                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white),),
-                ),
-              );
-            }
-          }
-        )
-    );
+                  ),
+                  Divider(),
+                  
+                ]));
+              } else if (snapshot.hasError) {
+                return Center(
+                    child:
+                        Text("An error occurred while fetching event data."));
+              } else {
+                return Material(
+                  color: Color(0xFFE62272),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  ),
+                );
+              }
+            }));
   }
 }
