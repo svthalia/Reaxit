@@ -242,7 +242,11 @@ class EventScreenState extends State<EventScreen> {
                 return Container(
                     child: Column(children: [
                   Center(child:
-                    Image.network(event.googleMapsUrl)
+                    FadeInImage.assetNetwork(
+                      // TODO: Replace placeholder
+                      placeholder: 'assets/img/huygens.jpg',
+                      image: event.googleMapsUrl,
+                    )
                   ),
                   Container(
                     margin: EdgeInsets.only(
