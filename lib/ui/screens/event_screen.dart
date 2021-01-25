@@ -220,7 +220,9 @@ class EventScreenState extends State<EventScreen> {
                 Event event = snapshot.data;
                 return Container(
                     child: Column(children: [
-                  Center(child: Text("Map component placeholder")),
+                  Center(child:
+                    Image.network(event.googleMapsUrl)
+                  ),
                   Container(
                     margin: EdgeInsets.only(
                         left: 20, top: 10, right: 20, bottom: 0),
@@ -241,7 +243,7 @@ class EventScreenState extends State<EventScreen> {
                     ),
                   ),
                   Divider(),
-                  
+
                 ]));
               } else if (snapshot.hasError) {
                 return Center(

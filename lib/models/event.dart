@@ -38,6 +38,8 @@ class Event {
   final String fine;
   @JsonKey(name: 'has_fields')
   final bool hasFields;
+  @JsonKey(name: 'google_maps_url')
+  final String googleMapsUrl;
 
   Event(
     this.pk,
@@ -59,6 +61,7 @@ class Event {
     this.noRegistrationMessage,
     this.fine,
     this.hasFields,
+    this.googleMapsUrl,
   );
 
   bool registrationRequired() {
