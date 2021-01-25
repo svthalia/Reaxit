@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/providers/events_provider.dart';
@@ -29,94 +31,113 @@ class EventScreenState extends State<EventScreen> {
     super.didChangeDependencies();
   }
 
-  static List<Widget> eventDescription(Event event) {
-    List<Widget> eventDescriptionList = [
-      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(
-          "From: ",
-          style: TextStyle(fontWeight: FontWeight.bold),
+  Widget eventProperties(Event event) {
+    List<TableRow> infoItems = [
+      TableRow(children: [
+        TableCell(
+          child: Text(
+            "From: ",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
-        Text(event.start.toString())
+        TableCell(child: Text(DateFormat('d MMM yyyy, HH:mm').format(event.start)))
       ]),
-      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(
-          "Until: ",
-          style: TextStyle(fontWeight: FontWeight.bold),
+      TableRow(children: [
+        TableCell(
+          child: Text(
+            "Until: ",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
-        Text(event.end.toString())
+        TableCell(child: Text(DateFormat('d MMM yyyy, HH:mm').format(event.end)))
       ]),
-      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(
-          "Location: ",
-          style: TextStyle(fontWeight: FontWeight.bold),
+      TableRow(children: [
+        TableCell(
+          child: Text(
+            "Location: ",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
-        Text(event.location)
+        TableCell(child: Text(event.location))
       ]),
-      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(
-          "Price: ",
-          style: TextStyle(fontWeight: FontWeight.bold),
+      TableRow(children: [
+        TableCell(
+          child: Text(
+            "Price: ",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
-        Text(event.price)
+        TableCell(child: Text('€${event.price}'))
       ]),
     ];
 
     if (event.registrationRequired()) {
-      eventDescriptionList.add(
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(
-          "Registration deadline: ",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        Text(event.registrationEnd.toString())
-      ]));
-      eventDescriptionList.add(
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(
-          "Cancellation deadline: ",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        Text(event.cancelDeadline.toString())
-      ]));
+      infoItems.add(
+          TableRow(children: [
+            TableCell(
+              child: Text(
+                "Registration deadline: ",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            TableCell(child: Text(event.registrationEnd.toString()))
+          ]));
+      infoItems.add(
+          TableRow(children: [
+            TableCell(
+              child: Text(
+                "Cancellation deadline: ",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            TableCell(child: Text(event.cancelDeadline.toString()))
+          ]));
       String participantText = '${event.numParticipants} registrations';
       if (event.maxParticipants != null) {
         participantText += ' (${event.maxParticipants} max)';
       }
-      eventDescriptionList.add(
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(
-          "Number of registrations: ",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        Text(participantText)
-      ]));
+      infoItems.add(
+          TableRow(children: [
+            TableCell(
+              child: Text(
+                "Number of registrations: ",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            TableCell(child: Text(participantText))
+          ]));
       if (event.userRegistration != null) {
         String registrationState;
         if (event.userRegistration.isLateCancellation) {
           registrationState =
-              'Your registration is cancelled after the cancellation deadline';
+          'Your registration is cancelled after the cancellation deadline';
         } else if (event.userRegistration.isCancelled) {
           registrationState = 'Your registration is cancelled';
         } else if (event.userRegistration.queuePosition == null) {
           registrationState = 'You are registered';
         } else if (event.userRegistration.queuePosition > 0) {
           registrationState =
-              'Queue position ${event.userRegistration.queuePosition}';
+          'Queue position ${event.userRegistration.queuePosition}';
         } else {
           registrationState = 'Your registration is cancelled';
         }
-        eventDescriptionList.add(
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text("Registration status: ",
-              style: TextStyle(fontWeight: FontWeight.bold)),
-          Text(registrationState)
-        ]));
+        infoItems.add(
+            TableRow(children: [
+              TableCell(
+                child: Text("Registration status: ",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+              TableCell(child: Text(registrationState))
+            ]));
       }
     }
-    return eventDescriptionList;
+
+    return Table(
+      children: infoItems.toList(),
+    );
   }
 
-  static Widget eventInfo(Event event) {
+  static Widget registrationText(Event event) {
     String text = "";
 
     if (!event.registrationRequired()) {
@@ -237,13 +258,17 @@ class EventScreenState extends State<EventScreen> {
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 24))),
-                        Column(children: eventDescription(event)),
-                        eventInfo(event),
+                        eventProperties(event),
+                        SizedBox(height: 15,),
+                        registrationText(event),
                       ],
                     ),
                   ),
                   Divider(),
-
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Html(data: event.description),
+                  )
                 ]));
               } else if (snapshot.hasError) {
                 return Center(
