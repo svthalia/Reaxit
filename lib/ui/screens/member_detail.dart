@@ -284,7 +284,7 @@ class _MemberDetailState extends State<MemberDetail> {
     return facts;
   }
 
-  Widget _showAvatarView(BuildContext context, String avatar) {
+  void _showAvatarView(BuildContext context, String avatar) {
     showDialog(
       context: context,
       barrierColor: Colors.black.withOpacity(0.9),

@@ -9,10 +9,11 @@ class Album {
   final String title;
   @JsonKey(fromJson: _dateTimeFromJson)
   final DateTime date;
-  final Photo cover;
+  final AlbumPhoto cover;
   final bool hidden;
   final bool shareable;
   final bool accessible;
+  final List<AlbumPhoto> photos;
 
   Album(
     this.pk,
@@ -22,6 +23,7 @@ class Album {
     this.hidden,
     this.shareable,
     this.accessible,
+    this.photos,
   );
 
   factory Album.fromJson(Map<String, dynamic> json) => _$AlbumFromJson(json);

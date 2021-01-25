@@ -13,10 +13,14 @@ Album _$AlbumFromJson(Map<String, dynamic> json) {
     _dateTimeFromJson(json['date']),
     json['cover'] == null
         ? null
-        : Photo.fromJson(json['cover'] as Map<String, dynamic>),
+        : AlbumPhoto.fromJson(json['cover'] as Map<String, dynamic>),
     json['hidden'] as bool,
     json['shareable'] as bool,
     json['accessible'] as bool,
+    (json['photos'] as List)
+        ?.map((e) =>
+            e == null ? null : AlbumPhoto.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
   );
 }
 
@@ -28,4 +32,5 @@ Map<String, dynamic> _$AlbumToJson(Album instance) => <String, dynamic>{
       'hidden': instance.hidden,
       'shareable': instance.shareable,
       'accessible': instance.accessible,
+      'photos': instance.photos,
     };

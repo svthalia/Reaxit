@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reaxit/providers/auth_provider.dart';
+import 'package:reaxit/ui/screens/album_list.dart';
 import 'package:reaxit/ui/screens/calendar_screen.dart';
 import 'package:reaxit/ui/screens/login_screen.dart';
 import 'package:reaxit/ui/screens/welcome_screen.dart';
@@ -96,7 +97,7 @@ class MenuDrawer extends StatelessWidget {
             leading: Icon(Icons.photo),
             onTap: () => Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => WelcomeScreen()),
+              MaterialPageRoute(builder: (context) => AlbumList()),
             ),
           ),
           ListTile(
