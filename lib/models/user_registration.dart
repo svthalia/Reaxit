@@ -3,18 +3,15 @@ import 'package:reaxit/models/photo.dart';
 
 part 'user_registration.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class UserRegistration {
   final int pk;
   final int member;
   final String name;
-  @JsonKey(fromJson: _dateTimeFromJson, name: "registered_on")
+  @JsonKey(fromJson: _dateTimeFromJson)
   final DateTime registeredOn;
-  @JsonKey(name: "is_cancelled")
   final bool isCancelled;
-  @JsonKey(name: "is_late_cancellation", nullable: true)
   final bool isLateCancellation;
-  @JsonKey(name: "queue_position", nullable: true)
   final int queuePosition;
   final String payment;
   final bool present;

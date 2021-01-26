@@ -3,7 +3,7 @@ import 'package:reaxit/models/user_registration.dart';
 
 part 'event.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class Event {
   final int pk;
   final String title;
@@ -13,32 +13,23 @@ class Event {
   @JsonKey(fromJson: _dateTimeFromJson)
   final DateTime end;
   final String location;
+  final String mapLocation;
   final String price;
   final bool registered;
-  @JsonKey(name: 'is_pizza_event')
   final bool isPizzaEvent;
-  @JsonKey(name: 'registration_allowed')
   final bool registrationAllowed;
-  @JsonKey(
-      name: 'registration_start', fromJson: _dateTimeFromJson, nullable: true)
+  @JsonKey(fromJson: _dateTimeFromJson)
   final DateTime registrationStart;
-  @JsonKey(
-      name: 'registration_end', fromJson: _dateTimeFromJson, nullable: true)
+  @JsonKey(fromJson: _dateTimeFromJson)
   final DateTime registrationEnd;
-  @JsonKey(nullable: true)
   final UserRegistration userRegistration;
-  @JsonKey(name: 'cancel_deadline', fromJson: _dateTimeFromJson, nullable: true)
+  @JsonKey(fromJson: _dateTimeFromJson)
   final DateTime cancelDeadline;
-  @JsonKey(name: 'num_participants', nullable: true)
   final int numParticipants;
-  @JsonKey(name: 'max_participants', nullable: true)
   final int maxParticipants;
-  @JsonKey(name: 'no_registration_message', nullable: true)
   final String noRegistrationMessage;
   final String fine;
-  @JsonKey(name: 'has_fields')
   final bool hasFields;
-  @JsonKey(name: 'google_maps_url')
   final String googleMapsUrl;
 
   Event(
@@ -62,6 +53,7 @@ class Event {
     this.fine,
     this.hasFields,
     this.googleMapsUrl,
+    this.mapLocation,
   );
 
   bool registrationRequired() {

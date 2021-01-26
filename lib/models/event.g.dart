@@ -20,10 +20,10 @@ Event _$EventFromJson(Map<String, dynamic> json) {
     json['registration_allowed'] as bool,
     _dateTimeFromJson(json['registration_start']),
     _dateTimeFromJson(json['registration_end']),
-    json['userRegistration'] == null
+    json['user_registration'] == null
         ? null
         : UserRegistration.fromJson(
-            json['userRegistration'] as Map<String, dynamic>),
+            json['user_registration'] as Map<String, dynamic>),
     _dateTimeFromJson(json['cancel_deadline']),
     json['num_participants'] as int,
     json['max_participants'] as int,
@@ -31,6 +31,7 @@ Event _$EventFromJson(Map<String, dynamic> json) {
     json['fine'] as String,
     json['has_fields'] as bool,
     json['google_maps_url'] as String,
+    json['map_location'] as String,
   );
 }
 
@@ -41,13 +42,14 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'start': instance.start?.toIso8601String(),
       'end': instance.end?.toIso8601String(),
       'location': instance.location,
+      'map_location': instance.mapLocation,
       'price': instance.price,
       'registered': instance.registered,
       'is_pizza_event': instance.isPizzaEvent,
       'registration_allowed': instance.registrationAllowed,
       'registration_start': instance.registrationStart?.toIso8601String(),
       'registration_end': instance.registrationEnd?.toIso8601String(),
-      'userRegistration': instance.userRegistration,
+      'user_registration': instance.userRegistration,
       'cancel_deadline': instance.cancelDeadline?.toIso8601String(),
       'num_participants': instance.numParticipants,
       'max_participants': instance.maxParticipants,

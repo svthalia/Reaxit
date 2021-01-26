@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/providers/events_provider.dart';
+import 'package:url_launcher/link.dart';
 
 class EventScreen extends StatefulWidget {
   final int pk;
@@ -40,7 +43,8 @@ class EventScreenState extends State<EventScreen> {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
-        TableCell(child: Text(DateFormat('d MMM yyyy, HH:mm').format(event.start)))
+        TableCell(
+            child: Text(DateFormat('d MMM yyyy, HH:mm').format(event.start)))
       ]),
       TableRow(children: [
         TableCell(
@@ -49,7 +53,8 @@ class EventScreenState extends State<EventScreen> {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
-        TableCell(child: Text(DateFormat('d MMM yyyy, HH:mm').format(event.end)))
+        TableCell(
+            child: Text(DateFormat('d MMM yyyy, HH:mm').format(event.end)))
       ]),
       TableRow(children: [
         TableCell(
@@ -72,63 +77,59 @@ class EventScreenState extends State<EventScreen> {
     ];
 
     if (event.registrationRequired()) {
-      infoItems.add(
-          TableRow(children: [
-            TableCell(
-              child: Text(
-                "Registration deadline: ",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            TableCell(child: Text(event.registrationEnd.toString()))
-          ]));
-      infoItems.add(
-          TableRow(children: [
-            TableCell(
-              child: Text(
-                "Cancellation deadline: ",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            TableCell(child: Text(event.cancelDeadline.toString()))
-          ]));
+      infoItems.add(TableRow(children: [
+        TableCell(
+          child: Text(
+            "Registration deadline: ",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        TableCell(child: Text(event.registrationEnd.toString()))
+      ]));
+      infoItems.add(TableRow(children: [
+        TableCell(
+          child: Text(
+            "Cancellation deadline: ",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        TableCell(child: Text(event.cancelDeadline.toString()))
+      ]));
       String participantText = '${event.numParticipants} registrations';
       if (event.maxParticipants != null) {
         participantText += ' (${event.maxParticipants} max)';
       }
-      infoItems.add(
-          TableRow(children: [
-            TableCell(
-              child: Text(
-                "Number of registrations: ",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            TableCell(child: Text(participantText))
-          ]));
+      infoItems.add(TableRow(children: [
+        TableCell(
+          child: Text(
+            "Number of registrations: ",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        TableCell(child: Text(participantText))
+      ]));
       if (event.userRegistration != null) {
         String registrationState;
         if (event.userRegistration.isLateCancellation) {
           registrationState =
-          'Your registration is cancelled after the cancellation deadline';
+              'Your registration is cancelled after the cancellation deadline';
         } else if (event.userRegistration.isCancelled) {
           registrationState = 'Your registration is cancelled';
         } else if (event.userRegistration.queuePosition == null) {
           registrationState = 'You are registered';
         } else if (event.userRegistration.queuePosition > 0) {
           registrationState =
-          'Queue position ${event.userRegistration.queuePosition}';
+              'Queue position ${event.userRegistration.queuePosition}';
         } else {
           registrationState = 'Your registration is cancelled';
         }
-        infoItems.add(
-            TableRow(children: [
-              TableCell(
-                child: Text("Registration status: ",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-              TableCell(child: Text(registrationState))
-            ]));
+        infoItems.add(TableRow(children: [
+          TableCell(
+            child: Text("Registration status: ",
+                style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+          TableCell(child: Text(registrationState))
+        ]));
       }
     }
 
@@ -240,40 +241,62 @@ class EventScreenState extends State<EventScreen> {
               if (snapshot.hasData) {
                 Event event = snapshot.data;
                 return Container(
-                    child: Column(children: [
-                  Center(child:
-                    FadeInImage.assetNetwork(
-                      // TODO: Replace placeholder
-                      placeholder: 'assets/img/huygens.jpg',
-                      image: event.googleMapsUrl,
-                    )
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(
-                        left: 20, top: 10, right: 20, bottom: 0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Container(
-                            margin: EdgeInsets.only(
-                                left: 0, top: 0, right: 0, bottom: 10),
-                            child: Text(event.title,
+                  child: Column(
+                    children: [
+                      Link(
+                        uri: Uri.parse(
+                            "https://maps.${Platform.isIOS ? 'apple' : 'google'}.com/maps?daddr=${Uri.encodeComponent(event.mapLocation)}"),
+                        builder: (context, followLink) => GestureDetector(
+                          onTap: followLink,
+                          child: Center(
+                            child: FadeInImage.assetNetwork(
+                              // TODO: Replace placeholder
+                              placeholder: 'assets/img/huygens.jpg',
+                              image: event.googleMapsUrl,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(
+                          left: 20,
+                          top: 10,
+                          right: 20,
+                          bottom: 0,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(
+                                left: 0,
+                                top: 0,
+                                right: 0,
+                                bottom: 10,
+                              ),
+                              child: Text(
+                                event.title,
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 24))),
-                        eventProperties(event),
-                        SizedBox(height: 15,),
-                        registrationText(event),
-                      ],
-                    ),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 24,
+                                ),
+                              ),
+                            ),
+                            eventProperties(event),
+                            SizedBox(height: 15),
+                            registrationText(event),
+                          ],
+                        ),
+                      ),
+                      Divider(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Html(data: event.description),
+                      )
+                    ],
                   ),
-                  Divider(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Html(data: event.description),
-                  )
-                ]));
+                );
               } else if (snapshot.hasError) {
                 return Center(
                     child:
