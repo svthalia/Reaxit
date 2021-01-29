@@ -189,7 +189,7 @@ class EventScreenState extends State<EventScreen> {
                   TextSpan(
                     text: "terms and conditions",
                     recognizer: TapGestureRecognizer()..onTap = followLink,
-                    style: TextStyle(color: Theme.of(context).accentColor).
+                    style: TextStyle(color: Theme.of(context).accentColor),
                   ),
                   TextSpan(
                     text:
