@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
@@ -176,9 +177,28 @@ class EventScreenState extends State<EventScreen> {
             ? 'Put me on the waiting list'
             : 'Register';
         return Column(children: [
-          // TODO: Make terms and conditions clickable
-          Text(
-              "By registering, you confirm that you have read the terms and conditions, that you understand them and that you agree to be bound by them."),
+          Link(
+            uri: Uri.parse(
+                "https://staging.thalia.nu/event-registration-terms/"),
+            builder: (context, followLink) => RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: "By registering, you confirm that you have read the ",
+                  ),
+                  TextSpan(
+                    text: "terms and conditions",
+                    recognizer: TapGestureRecognizer()..onTap = followLink,
+                    style: TextStyle(color: Theme.of(context).accentColor).
+                  ),
+                  TextSpan(
+                    text:
+                        ", that you understand them and that you agree to be bound by them.",
+                  ),
+                ],
+              ),
+            ),
+          ),
           FlatButton(
             textColor: Colors.white,
             color: Color(0xFFE62272),

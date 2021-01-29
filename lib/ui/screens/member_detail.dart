@@ -24,16 +24,8 @@ class _MemberDetailState extends State<MemberDetail> {
     super.didChangeDependencies();
   }
 
-  Widget _fieldLabel(String title) {
-    return Text(
-      title,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 13,
-        color: Colors.black54,
-      ),
-    );
-  }
+  Widget _fieldLabel(String title) =>
+      Text(title, style: Theme.of(context).textTheme.subtitle2);
 
   Widget _achievementTile(Achievement achievement, bool first) {
     Widget periodCol;
@@ -77,6 +69,19 @@ class _MemberDetailState extends State<MemberDetail> {
 
   List<Widget> _makeFacts(Member member) {
     List<Widget> facts = [];
+
+    if (member.membershipType == "honorary") {
+      facts.add(Align(
+        alignment: Alignment.topCenter,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child: Text(
+            "Honorary Member",
+            style: Theme.of(context).textTheme.headline6,
+          ),
+        ),
+      ));
+    }
 
     facts.add(Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
