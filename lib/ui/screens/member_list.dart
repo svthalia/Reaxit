@@ -15,28 +15,26 @@ class MemberList extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.search),
             tooltip: "Search for members",
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: NetworkSearchDelegate<MembersProvider>(
-                  resultBuilder: (context, memberList, child) {
-                    return GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                        crossAxisCount: 3,
-                      ),
-                      itemCount: memberList.length,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.all(20),
-                      itemBuilder: (context, index) =>
-                          MemberCard(memberList[index]),
-                    );
-                  },
-                ),
-              );
-            },
-          )
+            onPressed: () => showSearch(
+              context: context,
+              delegate: NetworkSearchDelegate<MembersProvider>(
+                resultBuilder: (context, memberList, child) {
+                  return GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      crossAxisCount: 3,
+                    ),
+                    itemCount: memberList.length,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(20),
+                    itemBuilder: (context, index) =>
+                        MemberCard(memberList[index]),
+                  );
+                },
+              ),
+            ),
+          ),
         ],
       ),
       drawer: MenuDrawer(),

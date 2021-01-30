@@ -289,12 +289,7 @@ class EventScreenState extends State<EventScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Container(
-                          margin: EdgeInsets.only(
-                            left: 0,
-                            top: 0,
-                            right: 0,
-                            bottom: 10,
-                          ),
+                          margin: EdgeInsets.only(bottom: 10),
                           child: Text(
                             event.title,
                             style: TextStyle(

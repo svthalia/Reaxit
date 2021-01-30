@@ -94,7 +94,8 @@ class _AlbumDetailState extends State<AlbumDetail> {
             );
           } else if (snapshot.hasError) {
             // TODO: handle error
-            return Center(child: Text("error" + snapshot.error.toString()));
+            return Center(
+                child: Text("An error occurred while fetching album data."));
           } else {
             return Center(child: CircularProgressIndicator());
           }

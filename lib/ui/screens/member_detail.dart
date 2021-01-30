@@ -16,11 +16,11 @@ class MemberDetail extends StatefulWidget {
 }
 
 class _MemberDetailState extends State<MemberDetail> {
-  Future<Member> _member;
+  Future<Member> _memberFuture;
 
   @override
   didChangeDependencies() {
-    _member = Provider.of<MembersProvider>(context).getMember(widget.pk);
+    _memberFuture = Provider.of<MembersProvider>(context).getMember(widget.pk);
     super.didChangeDependencies();
   }
 
@@ -329,7 +329,7 @@ class _MemberDetailState extends State<MemberDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
-        future: _member,
+        future: _memberFuture,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             Member member = snapshot.data;

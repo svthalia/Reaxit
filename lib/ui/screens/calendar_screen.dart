@@ -17,18 +17,19 @@ class CalendarScreenState extends State<CalendarScreen> {
   Map<String, List<Event>> groupByMonth(List<Event> eventList) {
     return groupBy(eventList, (event) {
       String month = DateFormat(DateFormat.MONTH).format(event.start);
-      if (event.start.year == DateTime.now().year)
+      if (event.start.year == DateTime.now().year) {
         return month;
-      else
+      } else {
         return '$month - ${event.start.year}';
+      }
     });
   }
 
   Map<DateTime, List<Event>> groupByDate(List<Event> eventList) {
     return groupBy(
-        eventList,
-        (event) =>
-            DateTime(event.start.year, event.start.month, event.start.day));
+      eventList,
+      (event) => DateTime(event.start.year, event.start.month, event.start.day),
+    );
   }
 
   @override

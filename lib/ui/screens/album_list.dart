@@ -15,28 +15,26 @@ class AlbumList extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.search),
             tooltip: "Search for albums",
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: NetworkSearchDelegate<PhotosProvider>(
-                  resultBuilder: (context, albumList, child) {
-                    return GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                        crossAxisCount: 2,
-                      ),
-                      itemCount: albumList.length,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.all(20),
-                      itemBuilder: (context, index) =>
-                          AlbumCard(albumList[index]),
-                    );
-                  },
-                ),
-              );
-            },
-          )
+            onPressed: () => showSearch(
+              context: context,
+              delegate: NetworkSearchDelegate<PhotosProvider>(
+                resultBuilder: (context, albumList, child) {
+                  return GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      crossAxisCount: 2,
+                    ),
+                    itemCount: albumList.length,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(20),
+                    itemBuilder: (context, index) =>
+                        AlbumCard(albumList[index]),
+                  );
+                },
+              ),
+            ),
+          ),
         ],
       ),
       drawer: MenuDrawer(),

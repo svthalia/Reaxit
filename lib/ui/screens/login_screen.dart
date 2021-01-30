@@ -15,10 +15,12 @@ class LoginScreenState extends State<LoginScreen> {
   ImageProvider logo = AssetImage('assets/img/logo.png');
 
   void _showSnackbar(String text) {
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
-      content: Text(text),
-      duration: Duration(seconds: 1),
-    ));
+    _scaffoldKey.currentState.showSnackBar(
+      SnackBar(
+        content: Text(text),
+        duration: Duration(seconds: 1),
+      ),
+    );
   }
 
   @override
@@ -44,24 +46,33 @@ class LoginScreenState extends State<LoginScreen> {
             SizedBox(height: 50),
             Center(
               child: _loading
-                  ? CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white))
+                  ? CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    )
                   : RaisedButton(
                       textColor: Colors.white,
                       color: Colors.black87,
                       child: Text('LOGIN'),
                       onPressed: () {
-                        setState(() {
-                          _loading = true;
-                        });
-                        Provider.of<AuthProvider>(context, listen: false).logIn().then((res) {
-                          setState(() {
-                            _loading = false;
-                          });
-                          _showSnackbar(res);
-                          if (res == 'success') Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => WelcomeScreen()));
-                        });
+                        setState(() => _loading = true);
+                        Provider.of<AuthProvider>(context, listen: false)
+                            .logIn()
+                            .then(
+                          (res) {
+                            setState(() => _loading = false);
+                            _showSnackbar(res);
+                            if (res == 'success') {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => WelcomeScreen(),
+                                ),
+                              );
+                            }
+                          },
+                        );
                       },
-                    )
+                    ),
             ),
           ],
         ),
