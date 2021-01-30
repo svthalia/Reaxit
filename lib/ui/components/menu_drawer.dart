@@ -10,62 +10,68 @@ import 'package:reaxit/ui/screens/member_list.dart';
 class MenuDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // TODO: add selected highlight
     return Drawer(
       child: ListView(
+        padding: EdgeInsets.zero,
         children: [
           Stack(
             children: [
               Container(
                 height: 180,
                 decoration: BoxDecoration(
-                    image: DecorationImage(
-                  image: AssetImage('assets/img/huygens.jpg'),
-                  fit: BoxFit.cover,
-                )),
+                  image: DecorationImage(
+                    image: AssetImage('assets/img/huygens.jpg'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
               Container(
                 height: 180,
                 decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: FractionalOffset.bottomCenter,
-                        end: FractionalOffset.topCenter,
-                        colors: [Color(0x88000000), Color(0x00000000)])),
-              ),
-              Positioned(
-                left: 20,
-                bottom: 20,
-                child: Consumer<AuthProvider>(
-                  builder: (context, auth, child) => Text(
-                    auth.name,
-                    style: TextStyle(
-                        fontSize: 24,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700),
+                  gradient: LinearGradient(
+                    begin: FractionalOffset.bottomCenter,
+                    end: FractionalOffset.topCenter,
+                    colors: [Colors.black.withOpacity(0.8), Colors.transparent],
                   ),
                 ),
               ),
               Positioned(
                 left: 20,
-                top: 20,
+                bottom: 15,
+                child: Consumer<AuthProvider>(
+                  builder: (context, auth, child) => Text(
+                    auth.name,
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+              SafeArea(
+                minimum: EdgeInsets.all(20),
                 child: Consumer<AuthProvider>(
                   builder: (context, auth, child) => Container(
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: NetworkImage(auth.pictureUrl),
-                            fit: BoxFit.cover),
-                        borderRadius: BorderRadius.circular(50),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Color(0x88000000),
-                              offset: Offset(2, 3),
-                              blurRadius: 5,
-                              spreadRadius: 3)
-                        ]),
+                      image: DecorationImage(
+                        image: NetworkImage(auth.pictureUrl),
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.circular(40),
+                      boxShadow: [
+                        BoxShadow(
+                          offset: Offset(1, 2),
+                          blurRadius: 8,
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              )
+              ),
             ],
           ),
           ListTile(
@@ -110,8 +116,10 @@ class MenuDrawer extends StatelessWidget {
             title: Text('Log out'),
             onTap: () {
               Provider.of<AuthProvider>(context).logOut();
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()));
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => LoginScreen()),
+              );
             },
           )
         ],

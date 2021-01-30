@@ -252,85 +252,82 @@ class EventScreenState extends State<EventScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Event'),
-        ),
-        body: FutureBuilder<Event>(
-            future: _event,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                Event event = snapshot.data;
-                return Container(
-                  child: Column(
-                    children: [
-                      Link(
-                        uri: Uri.parse(
-                            "https://maps.${Platform.isIOS ? 'apple' : 'google'}.com/maps?daddr=${Uri.encodeComponent(event.mapLocation)}"),
-                        builder: (context, followLink) => GestureDetector(
-                          onTap: followLink,
-                          child: Center(
-                            child: FadeInImage.assetNetwork(
-                              // TODO: Replace placeholder
-                              placeholder: 'assets/img/huygens.jpg',
-                              image: event.googleMapsUrl,
+      appBar: AppBar(
+        title: Text('Event'),
+      ),
+      body: FutureBuilder<Event>(
+        future: _event,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            Event event = snapshot.data;
+            return Container(
+              child: Column(
+                children: [
+                  Link(
+                    uri: Uri.parse(
+                        "https://maps.${Platform.isIOS ? 'apple' : 'google'}.com/maps?daddr=${Uri.encodeComponent(event.mapLocation)}"),
+                    builder: (context, followLink) => GestureDetector(
+                      onTap: followLink,
+                      child: Center(
+                        child: FadeInImage.assetNetwork(
+                          // TODO: Replace placeholder
+                          placeholder: 'assets/img/huygens.jpg',
+                          image: event.googleMapsUrl,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: 20,
+                      top: 10,
+                      right: 20,
+                      bottom: 0,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(
+                            left: 0,
+                            top: 0,
+                            right: 0,
+                            bottom: 10,
+                          ),
+                          child: Text(
+                            event.title,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24,
                             ),
                           ),
                         ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(
-                          left: 20,
-                          top: 10,
-                          right: 20,
-                          bottom: 0,
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(
-                                left: 0,
-                                top: 0,
-                                right: 0,
-                                bottom: 10,
-                              ),
-                              child: Text(
-                                event.title,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24,
-                                ),
-                              ),
-                            ),
-                            eventProperties(event),
-                            SizedBox(height: 15),
-                            registrationText(event),
-                          ],
-                        ),
-                      ),
-                      Divider(),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Html(data: event.description),
-                      )
-                    ],
-                  ),
-                );
-              } else if (snapshot.hasError) {
-                return Center(
-                    child:
-                        Text("An error occurred while fetching event data."));
-              } else {
-                return Material(
-                  color: Color(0xFFE62272),
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        eventProperties(event),
+                        SizedBox(height: 15),
+                        registrationText(event),
+                      ],
                     ),
                   ),
-                );
-              }
-            }));
+                  Divider(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Html(data: event.description),
+                  )
+                ],
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text("An error occurred while fetching event data."),
+            );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      ),
+    );
   }
 }

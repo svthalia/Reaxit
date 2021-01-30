@@ -131,10 +131,10 @@ class _CalendarMonthCard extends StatelessWidget {
 
 class _CalendarDayCard extends StatelessWidget {
   final String _day;
-  final int _day_number;
-  final List<_CalendarEventCard> _event_cards;
+  final int _dayNumber;
+  final List<_CalendarEventCard> _eventCards;
 
-  _CalendarDayCard(this._day, this._day_number, this._event_cards);
+  _CalendarDayCard(this._day, this._dayNumber, this._eventCards);
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +150,7 @@ class _CalendarDayCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  this._day_number.toString(),
+                  this._dayNumber.toString(),
                   style: TextStyle(fontSize: 30),
                 ),
                 Text(this._day),
@@ -161,7 +161,7 @@ class _CalendarDayCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: _event_cards,
+              children: _eventCards,
             ),
           )
         ],
@@ -190,8 +190,10 @@ class _CalendarEventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => EventScreen(this._pk)));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => EventScreen(this._pk)),
+        );
       },
       child: Container(
         padding: const EdgeInsets.all(15),
@@ -212,7 +214,7 @@ class _CalendarEventCard extends StatelessWidget {
               ),
             ),
             Text(
-              this._startTime + ' - ' + this._endTime + ' | ' + this._location,
+              "$_startTime - $_endTime | $_location",
               style: TextStyle(color: Colors.white),
             ),
           ],

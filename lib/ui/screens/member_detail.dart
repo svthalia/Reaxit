@@ -67,23 +67,170 @@ class _MemberDetailState extends State<MemberDetail> {
     );
   }
 
-  List<Widget> _makeFacts(Member member) {
-    List<Widget> facts = [];
+  Divider _factDivider() {
+    return const Divider(
+      height: 3,
+      indent: 20,
+      endIndent: 20,
+    );
+  }
 
-    if (member.membershipType == "honorary") {
-      facts.add(Align(
-        alignment: Alignment.topCenter,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 10),
-          child: Text(
-            "Honorary Member",
-            style: Theme.of(context).textTheme.headline6,
-          ),
+  Widget _honoraryFact() {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 10),
+        child: Text(
+          "Honorary Member",
+          style: Theme.of(context).textTheme.headline6,
         ),
-      ));
-    }
+      ),
+    );
+  }
 
-    facts.add(Container(
+  Widget _societiesFact(Member member) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(height: 5),
+          _fieldLabel("Societies"),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: Column(
+              children: List.generate(
+                member.societies.length,
+                (index) =>
+                    _achievementTile(member.societies[index], index == 0),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _achievementsFact(Member member) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(height: 5),
+          _fieldLabel("Achievements for Thalia"),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: Column(
+              children: List.generate(
+                member.achievements.length,
+                (index) =>
+                    _achievementTile(member.achievements[index], index == 0),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _websiteFact(Member member) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(height: 5),
+          _fieldLabel("Website"),
+          SizedBox(height: 3),
+          Padding(
+            padding: const EdgeInsets.all(5),
+            child: Link(
+              uri: Uri.parse(member.website),
+              target: LinkTarget.blank,
+              builder: (context, followLink) => GestureDetector(
+                onTap: followLink,
+                child: Text(
+                  member.website,
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _birthdayFact(Member member) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(height: 5),
+          _fieldLabel("Birthday"),
+          SizedBox(height: 3),
+          Padding(
+            padding: const EdgeInsets.all(5),
+            child: Text(
+              DateFormat("d MMMM y").format(member.birthday),
+              style: TextStyle(fontSize: 18),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _studiesFact(Member member) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SizedBox(height: 3),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(child: _fieldLabel("Study programme")),
+              Flexible(child: _fieldLabel("Cohort")),
+            ],
+          ),
+          const SizedBox(height: 3),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: Text(
+                    member.programme == "computingscience"
+                        ? "Computing Science"
+                        : "Information Science",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+              ),
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: Text(
+                    member.startingYear.toString(),
+                    style: TextStyle(fontSize: 22),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _descriptionFact(Member member) {
+    return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -106,187 +253,50 @@ class _MemberDetailState extends State<MemberDetail> {
           ),
         ],
       ),
-    ));
+    );
+  }
 
-    facts.add(const Divider(
-      height: 3,
-      indent: 20,
-      endIndent: 20,
-    ));
-
-    if ((member.programme?.isNotEmpty ?? false) &&
-        member.startingYear != null) {
-      facts.add(Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 3),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(child: _fieldLabel("Study programme")),
-                Flexible(child: _fieldLabel("Cohort")),
-              ],
-            ),
-            const SizedBox(height: 3),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Flexible(
-                  child: Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Text(
-                      member.programme == "computingscience"
-                          ? "Computing Science"
-                          : "Information Science",
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ),
-                ),
-                Flexible(
-                  child: Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Text(
-                      member.startingYear.toString(),
-                      style: TextStyle(fontSize: 22),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+  Widget _blackGradient() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.black,
+        gradient: LinearGradient(
+          begin: FractionalOffset.topCenter,
+          end: FractionalOffset.bottomCenter,
+          colors: [
+            Colors.black.withOpacity(0.0),
+            Colors.black.withOpacity(0.3),
           ],
+          stops: [0.5, 1.0],
         ),
-      ));
+      ),
+    );
+  }
 
-      facts.add(const Divider(
-        height: 3,
-        indent: 20,
-        endIndent: 20,
-      ));
-    }
-
-    if (member.birthday != null) {
-      facts.add(Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(height: 5),
-            _fieldLabel("Birthday"),
-            SizedBox(height: 3),
-            Padding(
-              padding: const EdgeInsets.all(5),
-              child: Text(
-                DateFormat("d MMMM y").format(member.birthday),
-                style: TextStyle(fontSize: 18),
-              ),
-            ),
-          ],
-        ),
-      ));
-
-      facts.add(const Divider(
-        height: 3,
-        indent: 20,
-        endIndent: 20,
-      ));
-    }
-
-    if (member.website?.isNotEmpty ?? false) {
-      facts.add(Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(height: 5),
-            _fieldLabel("Website"),
-            SizedBox(height: 3),
-            Padding(
-              padding: const EdgeInsets.all(5),
-              child: Link(
-                uri: Uri.parse(member.website),
-                target: LinkTarget.blank,
-                builder: (context, followLink) => GestureDetector(
-                  onTap: followLink,
-                  child: Text(
-                    member.website,
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ));
-
-      facts.add(const Divider(
-        height: 3,
-        indent: 20,
-        endIndent: 20,
-      ));
-    }
-
-    if (member.achievements?.isNotEmpty ?? false) {
-      facts.add(Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(height: 5),
-            _fieldLabel("Achievements for Thalia"),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: Column(
-                children: List.generate(
-                  member.achievements.length,
-                  (index) =>
-                      _achievementTile(member.achievements[index], index == 0),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ));
-
-      facts.add(const Divider(
-        height: 3,
-        indent: 20,
-        endIndent: 20,
-      ));
-    }
-
-    if (member.societies?.isNotEmpty ?? false) {
-      facts.add(Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(height: 5),
-            _fieldLabel("Societies"),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: Column(
-                children: List.generate(
-                  member.societies.length,
-                  (index) =>
-                      _achievementTile(member.societies[index], index == 0),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ));
-
-      facts.add(const Divider(
-        height: 3,
-        indent: 20,
-        endIndent: 20,
-      ));
-    }
-
-    return facts;
+  List<Widget> _makeFacts(Member member) {
+    return [
+      if (member.membershipType == "honorary") ...[_honoraryFact()],
+      _descriptionFact(member),
+      _factDivider(),
+      if (member.startingYear != null && member.programme?.isNotEmpty ??
+          false) ...[_studiesFact(member), _factDivider()],
+      if (member.birthday != null) ...[
+        _birthdayFact(member),
+        _factDivider(),
+      ],
+      if (member.website?.isNotEmpty ?? false) ...[
+        _websiteFact(member),
+        _factDivider(),
+      ],
+      if (member.achievements?.isNotEmpty ?? false) ...[
+        _achievementsFact(member),
+        _factDivider(),
+      ],
+      if (member.societies?.isNotEmpty ?? false) ...[
+        _societiesFact(member),
+        _factDivider(),
+      ],
+    ];
   }
 
   void _showAvatarView(BuildContext context, String avatar) {
@@ -344,20 +354,7 @@ class _MemberDetailState extends State<MemberDetail> {
                               fadeInDuration: const Duration(milliseconds: 300),
                             ),
                           ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              gradient: LinearGradient(
-                                begin: FractionalOffset.topCenter,
-                                end: FractionalOffset.bottomCenter,
-                                colors: [
-                                  Colors.black.withOpacity(0.0),
-                                  Colors.black.withOpacity(0.3),
-                                ],
-                                stops: [0.5, 1.0],
-                              ),
-                            ),
-                          ),
+                          _blackGradient()
                         ],
                       ),
                     ),
@@ -370,7 +367,9 @@ class _MemberDetailState extends State<MemberDetail> {
             );
           } else if (snapshot.hasError) {
             // TODO: handle error
-            return Center(child: Text("error" + snapshot.error.toString()));
+            return Center(
+                child:
+                    Text("An error has occured while fetching member data."));
           } else {
             return CustomScrollView(
               slivers: [
@@ -381,7 +380,7 @@ class _MemberDetailState extends State<MemberDetail> {
                     title: Text(widget.listMember?.displayName ?? "Profile"),
                     background: GestureDetector(
                       onTap: () {
-                        if (widget.listMember?.avatar.full.isNotEmpty ??
+                        if (widget.listMember?.avatar?.full?.isNotEmpty ??
                             false) {
                           _showAvatarView(
                               context, widget.listMember.avatar.full);
@@ -406,20 +405,7 @@ class _MemberDetailState extends State<MemberDetail> {
                                     fit: BoxFit.cover,
                                   ),
                           ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              gradient: LinearGradient(
-                                begin: FractionalOffset.topCenter,
-                                end: FractionalOffset.bottomCenter,
-                                colors: [
-                                  Colors.black.withOpacity(0.0),
-                                  Colors.black.withOpacity(0.3),
-                                ],
-                                stops: [0.5, 1.0],
-                              ),
-                            ),
-                          ),
+                          _blackGradient(),
                         ],
                       ),
                     ),
@@ -429,7 +415,7 @@ class _MemberDetailState extends State<MemberDetail> {
                   child: Center(
                     child: CircularProgressIndicator(),
                   ),
-                )
+                ),
               ],
             );
           }
