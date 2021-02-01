@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/providers/events_provider.dart';
+import 'package:reaxit/ui/screens/event_registration_screen.dart';
 import 'package:url_launcher/link.dart';
 
 class EventScreen extends StatefulWidget {
@@ -111,7 +112,7 @@ class EventScreenState extends State<EventScreen> {
       ]));
       if (event.userRegistration != null) {
         String registrationState;
-        if (event.userRegistration.isLateCancellation) {
+        if (event.isLateCancellation()) {
           registrationState =
               'Your registration is cancelled after the cancellation deadline';
         } else if (event.userRegistration.isCancelled) {
@@ -168,7 +169,7 @@ class EventScreenState extends State<EventScreen> {
     return Text(text);
   }
 
-  static Widget eventActions(Event event) {
+  static Widget eventActions(Event event, BuildContext context) {
     if (event.registrationAllowedAndPossible()) {
       if (event.userRegistration == null ||
           event.userRegistration.isCancelled) {
@@ -207,7 +208,10 @@ class EventScreenState extends State<EventScreen> {
               color: Color(0xFFE62272),
               child: Text(text),
               onPressed: () {
-                // TODO: Register and go to register view
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EventRegistrationScreen(event)),
+                );
               },
             )
           ),
@@ -304,7 +308,7 @@ class EventScreenState extends State<EventScreen> {
                         ),
                         eventProperties(event),
                         SizedBox(height: 15),
-                        eventActions(event),
+                        eventActions(event, context),
                         registrationText(event),
                       ],
                     ),

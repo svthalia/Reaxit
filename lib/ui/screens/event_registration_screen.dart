@@ -5,33 +5,35 @@ import 'package:reaxit/models/event.dart';
 import 'package:reaxit/providers/events_provider.dart';
 
 class EventRegistrationScreen extends StatefulWidget {
-  final int pk;
+  final Event event;
 
-  EventRegistrationScreen(this.pk);
+  EventRegistrationScreen(this.event);
 
   @override
   State<StatefulWidget> createState() => EventRegistrationScreenState();
 }
 
 class EventRegistrationScreenState extends State<EventRegistrationScreen> {
-  Future<Event> _event;
+  Event _event;
 
   @override
   void initState() {
     super.initState();
+    this._event = widget.event;
   }
 
-  @override
-  void didChangeDependencies() {
-    _event = Provider.of<EventsProvider>(context).getEvent(widget.pk);
-    if (_event == null) {
-      // TODO: Event loading failed
-    }
-    super.didChangeDependencies();
-  }
 
   @override
   Widget build(BuildContext context) {
-
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('Registration'),
+        ),
+        body: Container(
+          child: Column(
+            children: []
+          )
+        )
+    );
   }
 }

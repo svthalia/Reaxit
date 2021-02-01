@@ -22,6 +22,7 @@ class Event {
   final DateTime registrationStart;
   @JsonKey(fromJson: _dateTimeFromJson)
   final DateTime registrationEnd;
+  @JsonKey(fromJson: _userRegistrationFromJson)
   final UserRegistration userRegistration;
   @JsonKey(fromJson: _dateTimeFromJson)
   final DateTime cancelDeadline;
@@ -65,7 +66,7 @@ class Event {
   }
 
   bool isLateCancellation() {
-    return userRegistration != null && userRegistration.isLateCancellation;
+    return userRegistration != null && userRegistration.isLateCancellation != null;
   }
 
   bool registrationAllowedAndPossible() {
@@ -89,4 +90,8 @@ DateTime _dateTimeFromJson(json) {
   } else {
     return DateTime.parse(json).toLocal();
   }
+}
+
+UserRegistration _userRegistrationFromJson(json) {
+  return UserRegistration.fromJson(json);
 }

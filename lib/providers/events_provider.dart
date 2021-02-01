@@ -69,6 +69,16 @@ class EventsProvider extends ApiSearchService {
     return null;
   }
 
+  void register(Event event) async {
+    if (authProvider.status == Status.SIGNED_IN) {
+      var response = await authProvider.helper.post('https://staging.thalia.nu/api/v1/events/${event.pk}');
+      if (response.statusCode == 200) {
+        print(response.body.toString());
+      }
+    }
+    return null;
+  }
+
   // TODO: proper error handling
   @override
   Future<List<Event>> search(String query) async {
