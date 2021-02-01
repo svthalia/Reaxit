@@ -278,8 +278,11 @@ class _MemberDetailState extends State<MemberDetail> {
       if (member.membershipType == "honorary") ...[_honoraryFact()],
       _descriptionFact(member),
       _factDivider(),
-      if (member.startingYear != null && member.programme?.isNotEmpty ??
-          false) ...[_studiesFact(member), _factDivider()],
+      if (member.startingYear != null &&
+          (member.programme?.isNotEmpty ?? false)) ...[
+        _studiesFact(member),
+        _factDivider()
+      ],
       if (member.birthday != null) ...[
         _birthdayFact(member),
         _factDivider(),
