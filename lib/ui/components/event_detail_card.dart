@@ -52,7 +52,7 @@ class EventDetailCard extends StatelessWidget {
                 ),
               ),
               Container(
-                margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                margin: EdgeInsets.only(bottom: 10),
                 child: Text(
                   _event.description,
                   style: TextStyle(color: Colors.black87),

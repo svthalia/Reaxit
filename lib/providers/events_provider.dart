@@ -49,9 +49,12 @@ class EventsProvider extends ApiSearchService {
       var response = await authProvider.helper.get(
           'https://staging.thalia.nu/api/v1/events/$pk/registrations/?status=registered');
       if (response.statusCode == 200) {
-        List jsonRegistrationList = jsonDecode(response.body);
-        print(jsonRegistrationList);
-        return null;
+        List jsonRegistrations = jsonDecode(response.body);
+        print(jsonRegistrations);
+        return jsonRegistrations
+            .map((jsonRegistration) =>
+                UserRegistration.fromJson(jsonRegistration))
+            .toList();
       }
     }
     return null;
