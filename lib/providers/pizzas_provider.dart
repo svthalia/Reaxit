@@ -17,31 +17,17 @@ class PizzasProvider extends ApiService {
   bool get hasOrder => true;
 
   Future<void> load() async {
-    if (authProvider.status == AuthStatus.SIGNED_IN) {
-      status = ApiStatus.LOADING;
+    status = ApiStatus.LOADING;
+    notifyListeners();
+    try {
+      String response = await this.get("/pizzas/");
+      List<dynamic> jsonPizzas = jsonDecode(response);
+      print(jsonPizzas);
+      _pizzaList =
+          jsonPizzas.map((jsonPizza) => Pizza.fromJson(jsonPizza)).toList();
+      status = ApiStatus.DONE;
       notifyListeners();
-
-      try {
-        Response response = await authProvider.helper
-            .get('https://staging.thalia.nu/api/v1/pizzas/');
-        if (response.statusCode == 200) {
-          List<dynamic> jsonPizzaList = jsonDecode(response.body)['results'];
-          _pizzaList = jsonPizzaList
-              .map((jsonPizza) => Pizza.fromJson(jsonPizza))
-              .toList();
-          status = ApiStatus.DONE;
-        } else if (response.statusCode == 403)
-          status = ApiStatus.NOT_AUTHENTICATED;
-        else
-          status = ApiStatus.UNKNOWN_ERROR;
-      } on SocketException catch (_) {
-        status = ApiStatus.NO_INTERNET;
-      } catch (_) {
-        status = ApiStatus.UNKNOWN_ERROR;
-      }
-      // TODO: refactor all providers to use {} in all control statements
-      // TODO: change ApiStatus to lowercase
-
+    } on ApiException catch (_) {
       notifyListeners();
     }
   }

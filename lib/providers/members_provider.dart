@@ -14,8 +14,6 @@ class MembersProvider extends ApiSearchService {
   Future<void> load() async {
     status = ApiStatus.LOADING;
     notifyListeners();
-
-    // one of the problems is that we notify listeners even when not logged in
     try {
       String response = await this.get("/members/");
       List<dynamic> jsonMembers = jsonDecode(response)['results'];
@@ -33,7 +31,7 @@ class MembersProvider extends ApiSearchService {
       String response = await this.get("/members/$pk");
       return Member.fromJson(jsonDecode(response));
     } on ApiException catch (_) {
-      // TODO: handle 404 separately
+      // TODO: handle 404 separately (can probably throw exception to be caught by futurbuilder's snapshot.hasError)
       notifyListeners();
     }
   }
@@ -41,8 +39,11 @@ class MembersProvider extends ApiSearchService {
   @override
   Future<List<Member>> search(String query) async {
     try {
-      String response = await this.get("/members/");
-      return jsonDecode(response)['results']
+      String response = await this.get(
+        "/members/?search=${Uri.encodeComponent(query)}",
+      );
+      List<dynamic> jsonMembers = jsonDecode(response)['results'];
+      return jsonMembers
           .map((jsonMember) => Member.fromJson(jsonMember))
           .toList();
     } on ApiException catch (_) {
