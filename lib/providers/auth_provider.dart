@@ -8,24 +8,24 @@ import 'package:oauth2_client/access_token_response.dart';
 import 'package:oauth2_client/oauth2_helper.dart';
 import 'package:reaxit/api/oauth_client.dart';
 
-enum Status { INIT, SIGNED_IN, SIGNED_OUT }
+enum AuthStatus { INIT, SIGNED_IN, SIGNED_OUT }
 
 class AuthProvider extends ChangeNotifier {
   OAuth2Helper _helper;
-  Status _status;
+  AuthStatus _status;
 
   String _name = 'loading';
   String _pictureUrl =
       "https://staging.thalia.nu/static/members/images/default-avatar.jpg";
 
-  Status get status => _status;
+  AuthStatus get status => _status;
   OAuth2Helper get helper => _helper;
 
   String get name => _name;
   String get pictureUrl => _pictureUrl;
 
   AuthProvider() {
-    _status = Status.INIT;
+    _status = AuthStatus.INIT;
 
     _init();
   }
@@ -42,9 +42,9 @@ class AuthProvider extends ChangeNotifier {
         scopes: ['read', 'write', 'members:read', 'activemembers:read']);
 
     AccessTokenResponse token = await _helper.getTokenFromStorage();
-    _status = token == null ? Status.SIGNED_OUT : Status.SIGNED_IN;
+    _status = token == null ? AuthStatus.SIGNED_OUT : AuthStatus.SIGNED_IN;
 
-    if (_status == Status.SIGNED_IN) _loadUserData();
+    if (_status == AuthStatus.SIGNED_IN) _loadUserData();
 
     notifyListeners();
   }
@@ -63,7 +63,7 @@ class AuthProvider extends ChangeNotifier {
 
   logOut() {
     _helper.disconnect();
-    _status = Status.SIGNED_OUT;
+    _status = AuthStatus.SIGNED_OUT;
   }
 
   Future<String> logIn() async {
@@ -78,7 +78,7 @@ class AuthProvider extends ChangeNotifier {
     }
 
     _loadUserData();
-    _status = Status.SIGNED_IN;
+    _status = AuthStatus.SIGNED_IN;
     notifyListeners();
     return 'success';
   }

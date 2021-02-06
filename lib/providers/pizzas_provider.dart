@@ -14,8 +14,10 @@ class PizzasProvider extends ApiService {
 
   PizzasProvider(AuthProvider authProvider) : super(authProvider);
 
+  bool get hasOrder => true;
+
   Future<void> load() async {
-    if (authProvider.status == Status.SIGNED_IN) {
+    if (authProvider.status == AuthStatus.SIGNED_IN) {
       status = ApiStatus.LOADING;
       notifyListeners();
 
@@ -38,6 +40,7 @@ class PizzasProvider extends ApiService {
         status = ApiStatus.UNKNOWN_ERROR;
       }
       // TODO: refactor all providers to use {} in all control statements
+      // TODO: change ApiStatus to lowercase
 
       notifyListeners();
     }

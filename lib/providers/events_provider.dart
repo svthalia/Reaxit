@@ -15,7 +15,7 @@ class EventsProvider extends ApiSearchService {
   List<Event> get eventList => _eventList;
 
   Future<void> load() async {
-    if (authProvider.status == Status.SIGNED_IN) {
+    if (authProvider.status == AuthStatus.SIGNED_IN) {
       status = ApiStatus.LOADING;
       notifyListeners();
 
@@ -45,7 +45,7 @@ class EventsProvider extends ApiSearchService {
 
   Future<List<UserRegistration>> getEventRegistrations(int pk) async {
     // TODO: Create this method
-    if (authProvider.status == Status.SIGNED_IN) {
+    if (authProvider.status == AuthStatus.SIGNED_IN) {
       var response = await authProvider.helper.get(
           'https://staging.thalia.nu/api/v1/events/$pk/registrations/?status=registered');
       if (response.statusCode == 200) {
@@ -61,7 +61,7 @@ class EventsProvider extends ApiSearchService {
   }
 
   Future<Event> getEvent(int pk) async {
-    if (authProvider.status == Status.SIGNED_IN) {
+    if (authProvider.status == AuthStatus.SIGNED_IN) {
       var response = await authProvider.helper
           .get('https://staging.thalia.nu/api/v1/events/$pk');
       if (response.statusCode == 200) {
@@ -75,7 +75,7 @@ class EventsProvider extends ApiSearchService {
   // TODO: proper error handling
   @override
   Future<List<Event>> search(String query) async {
-    if (authProvider.status == Status.SIGNED_IN) {
+    if (authProvider.status == AuthStatus.SIGNED_IN) {
       Response response = await authProvider.helper.get(
           'https://staging.thalia.nu/api/v1/events/?search=${Uri.encodeComponent(query)}');
       if (response.statusCode == 200) {

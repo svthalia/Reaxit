@@ -14,7 +14,7 @@ class PhotosProvider extends ApiSearchService {
   PhotosProvider(AuthProvider authProvider) : super(authProvider);
 
   Future<void> load() async {
-    if (authProvider.status == Status.SIGNED_IN) {
+    if (authProvider.status == AuthStatus.SIGNED_IN) {
       status = ApiStatus.LOADING;
       notifyListeners();
 
@@ -43,7 +43,7 @@ class PhotosProvider extends ApiSearchService {
 
   // TODO: proper error handling of getMember and search
   Future<Album> getAlbum(int pk) async {
-    if (authProvider.status == Status.SIGNED_IN) {
+    if (authProvider.status == AuthStatus.SIGNED_IN) {
       Response response = await authProvider.helper
           .get('https://staging.thalia.nu/api/v1/photos/albums/$pk');
       if (response.statusCode == 200) {
@@ -60,7 +60,7 @@ class PhotosProvider extends ApiSearchService {
 
   @override
   Future<List<Album>> search(String query) async {
-    if (authProvider.status == Status.SIGNED_IN) {
+    if (authProvider.status == AuthStatus.SIGNED_IN) {
       Response response = await authProvider.helper.get(
           'https://staging.thalia.nu/api/v1/photos/albums/?search=${Uri.encodeComponent(query)}');
       if (response.statusCode == 200) {
