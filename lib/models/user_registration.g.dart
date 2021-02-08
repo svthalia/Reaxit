@@ -26,7 +26,7 @@ UserRegistration _$UserRegistrationFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$UserRegistrationToJson(UserRegistration instance) =>
     <String, dynamic>{
       'pk': instance.pk,
-      'member': instance.member,
+      'member': instance.memberPk,
       'name': instance.name,
       'registered_on': instance.registeredOn?.toIso8601String(),
       'is_cancelled': instance.isCancelled,

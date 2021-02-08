@@ -42,7 +42,6 @@ class EventScreenState extends State<EventScreen> {
         }
       },
     );
-    print("done");
     super.didChangeDependencies();
   }
 

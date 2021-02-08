@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reaxit/providers/pizzas_provider.dart';
+import 'package:reaxit/providers/settings_provider.dart';
 import 'package:reaxit/ui/screens/splash_screen.dart';
 import 'package:reaxit/ui/styles/theme.dart';
 
@@ -44,6 +45,12 @@ class ThaliApp extends StatelessWidget {
             Provider.of<AuthProvider>(context, listen: false),
           ),
           update: (context, auth, pizzas) => PizzasProvider(auth),
+        ),
+        ChangeNotifierProxyProvider<AuthProvider, SettingsProvider>(
+          create: (context) => SettingsProvider(
+            Provider.of<AuthProvider>(context, listen: false),
+          ),
+          update: (context, auth, pizzas) => SettingsProvider(auth),
         ),
       ],
       child: MaterialApp(
