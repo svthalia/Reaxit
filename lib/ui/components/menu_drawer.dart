@@ -4,6 +4,7 @@ import 'package:reaxit/providers/auth_provider.dart';
 import 'package:reaxit/ui/screens/album_list.dart';
 import 'package:reaxit/ui/screens/calendar_screen.dart';
 import 'package:reaxit/ui/screens/login_screen.dart';
+import 'package:reaxit/ui/screens/settings_screen.dart';
 import 'package:reaxit/ui/screens/welcome_screen.dart';
 import 'package:reaxit/ui/screens/member_list.dart';
 
@@ -107,9 +108,13 @@ class MenuDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-              title: Text('Settings'),
-              leading: Icon(Icons.settings),
-              onTap: () => {}),
+            title: Text('Settings'),
+            leading: Icon(Icons.settings),
+            onTap: () => Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => SettingsScreen()),
+            ),
+          ),
           Divider(),
           ListTile(
             leading: Icon(Icons.logout),
