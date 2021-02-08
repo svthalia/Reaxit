@@ -6,8 +6,11 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:reaxit/models/event.dart';
+import 'package:reaxit/models/user_registration.dart';
 import 'package:reaxit/providers/events_provider.dart';
 import 'package:reaxit/ui/screens/event_registration_screen.dart';
+import 'package:reaxit/ui/components/member_card.dart';
+import 'package:reaxit/ui/screens/pizza_screen.dart';
 import 'package:url_launcher/link.dart';
 
 class EventScreen extends StatefulWidget {
@@ -21,6 +24,7 @@ class EventScreen extends StatefulWidget {
 
 class EventScreenState extends State<EventScreen> {
   Future<Event> _event;
+  Future<List<UserRegistration>> _registrations;
 
   @override
   void initState() {
@@ -30,13 +34,19 @@ class EventScreenState extends State<EventScreen> {
   @override
   void didChangeDependencies() {
     _event = Provider.of<EventsProvider>(context).getEvent(widget.pk);
-    if (_event == null) {
-      // TODO: Event loading failed
-    }
+    _event.then(
+      (event) {
+        if (event?.registrationRequired() ?? false) {
+          _registrations = Provider.of<EventsProvider>(context)
+              .getEventRegistrations(event.pk);
+        }
+      },
+    );
+    print("done");
     super.didChangeDependencies();
   }
 
-  Widget eventProperties(Event event) {
+  Widget _makeEventProperties(BuildContext context, Event event) {
     List<TableRow> infoItems = [
       TableRow(children: [
         TableCell(
@@ -140,7 +150,7 @@ class EventScreenState extends State<EventScreen> {
     );
   }
 
-  static Widget registrationText(Event event) {
+  static Widget _makeRegistrationText(BuildContext context, Event event) {
     String text = "";
 
     if (!event.registrationRequired()) {
@@ -166,56 +176,63 @@ class EventScreenState extends State<EventScreen> {
           "Cancellation isn't possible anymore without having to pay the full costs of €${event.fine}. Also note that you will be unable to re-register.";
     }
 
-    return Text(text);
+    if (text.isNotEmpty) {
+      return Text(text);
+    } else {
+      return SizedBox(height: 0);
+    }
   }
 
-  static Widget eventActions(Event event, BuildContext context) {
+  static Widget _makeEventActions(BuildContext context, Event event) {
     if (event.registrationAllowedAndPossible()) {
       if (event.userRegistration == null ||
           event.userRegistration.isCancelled) {
-        final String text = event.maxParticipants != null &&
-                event.maxParticipants <= event.numParticipants
-            ? 'Put me on the waiting list'
-            : 'Register';
-        return Column(children: [
-          Link(
-            uri: Uri.parse(
-                "https://staging.thalia.nu/event-registration-terms/"),
-            builder: (context, followLink) => RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: "By registering, you confirm that you have read the ", style: TextStyle(color: Color.fromRGBO(0, 0, 0, 1)),
-                  ),
-                  TextSpan(
-                    text: "terms and conditions",
-                    recognizer: TapGestureRecognizer()..onTap = followLink,
-                    style: TextStyle(color: Theme.of(context).accentColor),
-                  ),
-                  TextSpan(
-                    text:
-                        ", that you understand them and that you agree to be bound by them.", style: TextStyle(color: Color.fromRGBO(0, 0, 0, 1)),
-                  ),
-                ],
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Link(
+              uri: Uri.parse(
+                  "https://staging.thalia.nu/event-registration-terms/"),
+              builder: (context, followLink) => RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text:
+                          "By registering, you confirm that you have read the ",
+                      style: TextStyle(color: Color.fromRGBO(0, 0, 0, 1)),
+                    ),
+                    TextSpan(
+                      text: "terms and conditions",
+                      recognizer: TapGestureRecognizer()..onTap = followLink,
+                      style: TextStyle(color: Theme.of(context).accentColor),
+                    ),
+                    TextSpan(
+                      text:
+                          ", that you understand them and that you agree to be bound by them.",
+                      style: TextStyle(color: Color.fromRGBO(0, 0, 0, 1)),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          SizedBox(
-              width: double.infinity,
-            child:
             FlatButton(
               textColor: Colors.white,
-              color: Color(0xFFE62272),
-              child: Text(text),
+              color: Theme.of(context).accentColor,
+              child: Text(
+                event.maxParticipants != null &&
+                        event.maxParticipants <= event.numParticipants
+                    ? 'Put me on the waiting list'
+                    : 'Register',
+              ),
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => EventRegistrationScreen(event)),
                 );
               },
-            )
-          ),
-        ]);
+            ),
+          ],
+        );
       }
       if (event.userRegistration != null &&
           !event.userRegistration.isCancelled &&
@@ -225,36 +242,55 @@ class EventScreenState extends State<EventScreen> {
             event.userRegistration != null &&
             !event.userRegistration.isCancelled &&
             event.hasFields) {
-          return Column(children: [
-            FlatButton(
-              textColor: Colors.white,
-              color: Color(0xFFE62272),
-              child: Text('Update registration'),
-              onPressed: () {
-                // TODO: Go to update registration view
-              },
-            ),
-            FlatButton(
+          return Column(
+            children: [
+              FlatButton(
                 textColor: Colors.white,
-                color: Color(0xFFE62272),
+                color: Theme.of(context).accentColor,
+                child: Text('Update registration'),
+                onPressed: () {
+                  // TODO: Go to update registration view
+                },
+              ),
+              FlatButton(
+                textColor: Colors.white,
+                color: Theme.of(context).accentColor,
                 child: Text('Cancel registration'),
                 onPressed: () {
                   // TODO: Cancel registration
-                })
-          ]);
+                },
+              )
+            ],
+          );
         } else {
-          return Column(children: [
-            FlatButton(
-              textColor: Colors.white,
-              color: Color(0xFFE62272),
-              child: Text('Cancel registration'),
-              onPressed: () {},
-            ),
-          ]);
+          return Column(
+            children: [
+              FlatButton(
+                textColor: Colors.white,
+                color: Theme.of(context).accentColor,
+                child: Text('Cancel registration'),
+                onPressed: () {},
+              ),
+            ],
+          );
         }
       }
     }
     return Container();
+  }
+
+  static Widget _makePizzaAction(BuildContext context, Event event) {
+    return FlatButton.icon(
+      icon: Icon(Icons.local_pizza),
+      textColor: Colors.white,
+      label: Text("Pizza"),
+      color: Theme.of(context).accentColor,
+      disabledColor: Theme.of(context).disabledColor,
+      onPressed: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => PizzaScreen()),
+      ),
+    );
   }
 
   @override
@@ -306,10 +342,12 @@ class EventScreenState extends State<EventScreen> {
                             ),
                           ),
                         ),
-                        eventProperties(event),
+                        _makeEventProperties(context, event),
                         SizedBox(height: 15),
-                        eventActions(event, context),
-                        registrationText(event),
+                        _makeEventActions(context, event),
+                        _makeRegistrationText(context, event),
+                        if (event.isPizzaEvent)
+                          _makePizzaAction(context, event),
                       ],
                     ),
                   ),
@@ -317,7 +355,46 @@ class EventScreenState extends State<EventScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Html(data: event.description),
-                  )
+                  ),
+                  if (event.registrationRequired() &&
+                      event.numParticipants == 0) ...[
+                    Divider(),
+                    Text("No registrations yet."),
+                  ],
+                  if (event.registrationRequired() &&
+                      event.numParticipants > 0) ...[
+                    Divider(),
+                    FutureBuilder(
+                      future: _registrations,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                              crossAxisCount: 3,
+                            ),
+                            itemCount: snapshot.data.length,
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            padding: const EdgeInsets.all(20),
+                            itemBuilder: (context, index) =>
+                                MemberCard(snapshot.data[index]),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Center(
+                            child: Text(
+                              "An error occurred while fetching registrations.",
+                            ),
+                          );
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      },
+                    ),
+                  ]
                 ],
               ),
             );

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:reaxit/models/member.dart';
 import 'package:reaxit/models/photo.dart';
 
 part 'user_registration.g.dart';
@@ -6,7 +7,8 @@ part 'user_registration.g.dart';
 @JsonSerializable(fieldRename: FieldRename.snake)
 class UserRegistration {
   final int pk;
-  final int member;
+  @JsonKey(name: 'member')
+  final int memberPk;
   final String name;
   @JsonKey(fromJson: _dateTimeFromJson)
   final DateTime registeredOn;
@@ -19,7 +21,7 @@ class UserRegistration {
 
   UserRegistration(
     this.pk,
-    this.member,
+    this.memberPk,
     this.name,
     this.registeredOn,
     this.isCancelled,
@@ -32,6 +34,9 @@ class UserRegistration {
 
   factory UserRegistration.fromJson(Map<String, dynamic> json) =>
       _$UserRegistrationFromJson(json);
+
+  Member get member => Member(
+      memberPk, name, avatar, null, null, null, null, null, null, null, null);
 }
 
 DateTime _dateTimeFromJson(json) {

@@ -11,14 +11,16 @@ class SplashScreen extends StatelessWidget {
     return Consumer<AuthProvider>(
       builder: (context, auth, child) {
         switch (auth.status) {
-          case Status.INIT:
+          case AuthStatus.INIT:
             return Material(
               color: Color(0xFFE62272),
               child: Center(
-                child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white),),
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
               ),
             );
-          case Status.SIGNED_IN:
+          case AuthStatus.SIGNED_IN:
             return WelcomeScreen();
           default:
             return LoginScreen();
