@@ -14,41 +14,67 @@ class PhotosProvider extends ApiSearchService {
   PhotosProvider(AuthProvider authProvider) : super(authProvider);
 
   Future<void> load() async {
-    status = ApiStatus.LOADING;
-    notifyListeners();
-    try {
-      String response = await this.get("/photos/albums/");
-      List<dynamic> jsonAlbums = jsonDecode(response)['results'];
-      _albumList =
-          jsonAlbums.map((jsonAlbum) => Album.fromJson(jsonAlbum)).toList();
-      status = ApiStatus.DONE;
+    if (authProvider.status == AuthStatus.SIGNED_IN) {
+      status = ApiStatus.LOADING;
       notifyListeners();
-    } on ApiException catch (_) {
+
+      try {
+        Response response = await authProvider.helper
+            .get('https://staging.thalia.nu/api/v1/photos/albums');
+        if (response.statusCode == 200) {
+          List<dynamic> jsonAlbumList = jsonDecode(response.body)['results'];
+          _albumList = jsonAlbumList
+              .map((jsonAlbum) => Album.fromJson(jsonAlbum))
+              .toList();
+          status = ApiStatus.DONE;
+        } else if (response.statusCode == 403)
+          status = ApiStatus.NOT_AUTHENTICATED;
+        else
+          status = ApiStatus.UNKNOWN_ERROR;
+      } on SocketException catch (_) {
+        status = ApiStatus.NO_INTERNET;
+      } catch (_) {
+        status = ApiStatus.UNKNOWN_ERROR;
+      }
+
       notifyListeners();
     }
   }
 
   // TODO: proper error handling of getMember and search
   Future<Album> getAlbum(int pk) async {
-    try {
-      String response = await this.get("/photos/albums/$pk");
-      return Album.fromJson(jsonDecode(response));
-    } on ApiException catch (_) {
-      // TODO: handle 404 separately
-      notifyListeners();
+    if (authProvider.status == AuthStatus.SIGNED_IN) {
+      Response response = await authProvider.helper
+          .get('https://staging.thalia.nu/api/v1/photos/albums/$pk');
+      if (response.statusCode == 200) {
+        return Album.fromJson(jsonDecode(response.body));
+      } else if (response.statusCode == 204) {
+        throw ("No result");
+      } else {
+        throw ("Something else");
+      }
+    } else {
+      throw ("Not logged in");
     }
   }
 
   @override
   Future<List<Album>> search(String query) async {
-    try {
-      String response = await this.get(
-        "/photos/albums/?search=${Uri.encodeComponent(query)}",
-      );
-      List<dynamic> jsonAlbums = jsonDecode(response)['results'];
-      return jsonAlbums.map((jsonAlbum) => Album.fromJson(jsonAlbum)).toList();
-    } on ApiException catch (_) {
-      notifyListeners();
+    if (authProvider.status == AuthStatus.SIGNED_IN) {
+      Response response = await authProvider.helper.get(
+          'https://staging.thalia.nu/api/v1/photos/albums/?search=${Uri.encodeComponent(query)}');
+      if (response.statusCode == 200) {
+        List<dynamic> jsonAlbumList = jsonDecode(response.body)['results'];
+        return jsonAlbumList
+            .map((jsonAlbum) => Album.fromJson(jsonAlbum))
+            .toList();
+      } else if (response.statusCode == 204) {
+        throw ("No result");
+      } else {
+        throw ("Something else");
+      }
+    } else {
+      throw ("Not logged in");
     }
   }
 }
