@@ -226,7 +226,8 @@ class EventScreenState extends State<EventScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => EventRegistrationScreen(event)),
+                  MaterialPageRoute(
+                      builder: (context) => EventRegistrationScreen(event)),
                 );
               },
             ),

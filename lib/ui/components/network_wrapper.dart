@@ -54,7 +54,7 @@ class NetworkWrapper<T extends ApiService> extends StatelessWidget {
       case ApiException.noInternet:
         return 'Not connected to the internet.';
       case ApiException.notAllowed:
-        return 'You are not authenticated.';
+        return 'You are not authorized.';
       case ApiException.notFound:
         return 'Not found.';
       case ApiException.notLoggedIn:
