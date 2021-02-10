@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:reaxit/providers/photos_provider.dart';
 import 'package:reaxit/ui/components/album_card.dart';
 import 'package:reaxit/ui/components/menu_drawer.dart';
-import 'package:reaxit/ui/components/network_scrollable_wrapper.dart';
+import 'package:reaxit/ui/components/network_wrapper.dart';
 import 'package:reaxit/ui/components/network_search_delegate.dart';
 
 class AlbumList extends StatelessWidget {
@@ -38,8 +38,8 @@ class AlbumList extends StatelessWidget {
         ],
       ),
       drawer: MenuDrawer(),
-      body: NetworkScrollableWrapper<PhotosProvider>(
-        builder: (context, photos, child) => GridView.builder(
+      body: NetworkWrapper<PhotosProvider>(
+        builder: (context, photos) => GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,

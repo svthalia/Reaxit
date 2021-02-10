@@ -4,23 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:reaxit/providers/auth_provider.dart';
 
-// TODO: should list building really use ApiStatus.loading? this may be inflexible for providers that offer multiple types of lists or something
-enum ApiStatus {
-  LOADING,
-  DONE,
-  NO_INTERNET,
-  NOT_AUTHENTICATED,
-  UNKNOWN_ERROR,
+enum ApiException {
+  noInternet,
+  notAllowed,
+  notFound,
+  unknownError,
+  notLoggedIn,
 }
-
-class ApiException implements Exception {}
 
 abstract class ApiService extends ChangeNotifier {
   AuthProvider authProvider;
   final String _apiUrl = 'https://staging.thalia.nu/api/v1';
 
-  ApiStatus status;
-
+  /// A helper method that performs a GET request. This
+  /// throws an [ApiException] when something goes wrong.
   Future<String> get(String url) async {
     if (authProvider.status == AuthStatus.SIGNED_IN) {
       try {
@@ -28,27 +25,51 @@ abstract class ApiService extends ChangeNotifier {
         if (response.statusCode == 200) {
           return response.body;
         } else if (response.statusCode == 403) {
-          status = ApiStatus.NOT_AUTHENTICATED;
+          throw ApiException.notAllowed;
+        } else if (response.statusCode == 404) {
+          throw ApiException.notFound;
         } else {
-          status = ApiStatus.UNKNOWN_ERROR;
+          throw ApiException.unknownError;
         }
       } on SocketException catch (_) {
-        status = ApiStatus.NO_INTERNET;
+        throw ApiException.noInternet;
       } catch (_) {
-        status = ApiStatus.UNKNOWN_ERROR;
+        throw ApiException.unknownError;
       }
     } else {
-      status = ApiStatus.NOT_AUTHENTICATED;
+      throw ApiException.notLoggedIn;
     }
-    throw ApiException();
   }
 
-  ApiService(AuthProvider authProvider) {
-    this.authProvider = authProvider;
+  ApiException _error;
+  ApiException get error => _error;
+  bool get hasError => _error != null;
+
+  bool _isLoading;
+  bool get isLoading => _isLoading;
+
+  /// Wrapper around [loadImplementation()] that handles [error] and [isLoding].
+  Future<void> load() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+    try {
+      await loadImplementation();
+    } on ApiException catch (e) {
+      _error = e;
+    }
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  ApiService(this.authProvider) {
     load();
   }
 
-  Future<void> load();
+  /// Loading function that is used in [load()]. Any [ApiExceptions] thrown by
+  /// this are stored in [this.error]. Use this to prepare the service for use,
+  /// e.g. to load a long list.
+  Future<void> loadImplementation();
 }
 
 abstract class ApiSearchService extends ApiService {

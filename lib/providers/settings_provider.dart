@@ -13,31 +13,15 @@ class SettingsProvider extends ApiService {
 
   List<Setting> get settingsList => _settingsList;
 
-  Future<void> load() async {
-    if (authProvider.status == AuthStatus.SIGNED_IN) {
-      status = ApiStatus.LOADING;
-      notifyListeners();
+  @override
+  Future<void> loadImplementation() async {}
 
-      try {
-        Response response = await authProvider.helper
-            .get('https://staging.thalia.nu/api/v1/devices/categories/');
-        if (response.statusCode == 200) {
-          List<dynamic> jsonEvents = jsonDecode(response.body)['results'];
-          print(response.body);
-          this._settingsList =
-              jsonEvents.map((jsonEvent) => Setting.fromJson(jsonEvent)).toList();
-          status = ApiStatus.DONE;
-        } else if (response.statusCode == 403)
-          status = ApiStatus.NOT_AUTHENTICATED;
-        else
-          status = ApiStatus.UNKNOWN_ERROR;
-      } on SocketException catch (_) {
-        status = ApiStatus.NO_INTERNET;
-      } catch (_) {
-        status = ApiStatus.UNKNOWN_ERROR;
-      }
-
-      notifyListeners();
-    }
+  Future<List<Setting>> _getSettings() async {
+    String response = await this.get("/devices/categories/");
+    List<dynamic> jsonSettings = jsonDecode(response)['results'];
+    print(response);
+    return jsonSettings
+        .map((jsonEvent) => Setting.fromJson(jsonEvent))
+        .toList();
   }
 }

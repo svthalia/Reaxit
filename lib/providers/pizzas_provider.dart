@@ -1,8 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:http/http.dart';
 import 'package:reaxit/models/pizza.dart';
+import 'package:reaxit/models/pizza_event.dart';
 import 'package:reaxit/models/pizza_order.dart';
 import 'package:reaxit/providers/api_service.dart';
 import 'package:reaxit/providers/auth_provider.dart';
@@ -12,43 +11,41 @@ class PizzasProvider extends ApiService {
 
   List<Pizza> get pizzaList => _pizzaList;
 
+  PizzaOrder _myOrder;
+  PizzaOrder get myOrder => _myOrder;
+  bool get hasOrder => _myOrder != null;
+
+  PizzaEvent _pizzaEvent;
+  PizzaEvent get pizzaEvent => _pizzaEvent;
+  bool get canOrder =>
+      _pizzaEvent != null &&
+      DateTime.now().isAfter(_pizzaEvent?.start) &&
+      DateTime.now().isBefore(_pizzaEvent?.end);
+
   PizzasProvider(AuthProvider authProvider) : super(authProvider);
 
-  bool get hasOrder => true;
-
-  Future<void> load() async {
-    if (authProvider.status == AuthStatus.SIGNED_IN) {
-      status = ApiStatus.LOADING;
-      notifyListeners();
-
-      try {
-        Response response = await authProvider.helper
-            .get('https://staging.thalia.nu/api/v1/pizzas/');
-        if (response.statusCode == 200) {
-          List<dynamic> jsonPizzaList = jsonDecode(response.body)['results'];
-          _pizzaList = jsonPizzaList
-              .map((jsonPizza) => Pizza.fromJson(jsonPizza))
-              .toList();
-          status = ApiStatus.DONE;
-        } else if (response.statusCode == 403)
-          status = ApiStatus.NOT_AUTHENTICATED;
-        else
-          status = ApiStatus.UNKNOWN_ERROR;
-      } on SocketException catch (_) {
-        status = ApiStatus.NO_INTERNET;
-      } catch (_) {
-        status = ApiStatus.UNKNOWN_ERROR;
-      }
-      // TODO: refactor all providers to use {} in all control statements
-      // TODO: change ApiStatus to lowercase
-
-      notifyListeners();
-    }
+  @override
+  Future<void> loadImplementation() async {
+    _pizzaList = await _getPizzas();
+    _pizzaEvent = await _getPizzaEvent();
+    _myOrder = await _getMyOrder();
+    // TODO: may need to manually handle some errors here...
   }
 
-  Future<PizzaOrder> getMyOrder() {
-    // TODO: retrieve orders
-    throw UnimplementedError();
+  Future<List<Pizza>> _getPizzas() async {
+    String response = await this.get("/pizzas/");
+    List<dynamic> jsonPizzas = jsonDecode(response);
+    return jsonPizzas.map((jsonPizza) => Pizza.fromJson(jsonPizza)).toList();
+  }
+
+  Future<PizzaOrder> _getMyOrder() async {
+    String response = await this.get("/pizzas/orders/me");
+    return PizzaOrder.fromJson(jsonDecode(response));
+  }
+
+  Future<PizzaEvent> _getPizzaEvent() async {
+    String response = await this.get("/pizzas/event");
+    return PizzaEvent.fromJson(jsonDecode(response));
   }
 
   Future<PizzaOrder> orderPizza(Pizza pizza) async {
@@ -57,7 +54,7 @@ class PizzasProvider extends ApiService {
   }
 
   Future<void> cancelOrder(PizzaOrder order) async {
-    // TODO: order pizza
+    // TODO: cancel order, separate cancelMyOrder()?
     throw UnimplementedError();
   }
 
@@ -67,13 +64,7 @@ class PizzasProvider extends ApiService {
   }
 
   Future<PizzaOrder> updateOrder(PizzaOrder order, String payment) async {
-    // TODO: update an order
+    // TODO: update an order, separate or only updateMyOrder()?
     throw UnimplementedError();
   }
 }
-
-// TODO: change provider system:
-// should have an abstract class that does authentication and provides some general networking utilities, (can be used in networkwrapper)
-// and subclasses for lists (can be used in scrollablewrapper)
-// subclass with search
-// Other subclasses/implementations without a single list (pizzas)

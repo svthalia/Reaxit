@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reaxit/models/event.dart';
@@ -22,18 +21,17 @@ class EventRegistrationScreenState extends State<EventRegistrationScreen> {
     this._event = widget.event;
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Registration'),
+      appBar: AppBar(
+        title: Text('Registration'),
+      ),
+      body: Container(
+        child: Column(
+          children: [],
         ),
-        body: Container(
-          child: Column(
-            children: []
-          )
-        )
+      ),
     );
   }
 }

@@ -9,7 +9,7 @@ class PizzaOrder {
   final int pizza;
   final String name;
   final String payment;
-  final String member;
+  final int member;
 
   PizzaOrder(this.pk, this.name, this.pizza, this.payment, this.member);
 

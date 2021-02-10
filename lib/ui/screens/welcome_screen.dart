@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:reaxit/providers/events_provider.dart';
 import 'package:reaxit/ui/components/menu_drawer.dart';
 import 'package:reaxit/ui/components/event_detail_card.dart';
-import 'package:reaxit/ui/components/network_scrollable_wrapper.dart';
+import 'package:reaxit/ui/components/network_wrapper.dart';
 import '../components/event_detail_card.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -18,8 +18,8 @@ class WelcomeScreenState extends State<WelcomeScreen> {
         title: Text('Welcome'),
       ),
       drawer: MenuDrawer(),
-      body: NetworkScrollableWrapper<EventsProvider>(
-        builder: (context, events, child) => ListView(
+      body: NetworkWrapper<EventsProvider>(
+        builder: (context, events) => ListView(
           physics: const AlwaysScrollableScrollPhysics(),
           children: events.eventList
               .map((event) => EventDetailCard(event))

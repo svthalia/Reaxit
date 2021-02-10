@@ -1,7 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:http/http.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/user_registration.dart';
 import 'package:reaxit/providers/api_service.dart';
@@ -14,92 +12,44 @@ class EventsProvider extends ApiSearchService {
 
   List<Event> get eventList => _eventList;
 
-  Future<void> load() async {
-    if (authProvider.status == AuthStatus.SIGNED_IN) {
-      status = ApiStatus.LOADING;
-      notifyListeners();
+  @override
+  Future<void> loadImplementation() async {
+    _eventList = await _getEvents();
+  }
 
-      try {
-        Response response = await authProvider.helper
-            .get('https://staging.thalia.nu/api/v1/events/');
-        if (response.statusCode == 200) {
-          List<dynamic> jsonEvents = jsonDecode(response.body)['results'];
-          _eventList =
-              jsonEvents.map((jsonEvent) => Event.fromJson(jsonEvent)).toList();
-          _eventList.sort((event1, event2) =>
-              (event1.start.difference(event2.start)).inMinutes);
-          status = ApiStatus.DONE;
-        } else if (response.statusCode == 403)
-          status = ApiStatus.NOT_AUTHENTICATED;
-        else
-          status = ApiStatus.UNKNOWN_ERROR;
-      } on SocketException catch (_) {
-        status = ApiStatus.NO_INTERNET;
-      } catch (_) {
-        status = ApiStatus.UNKNOWN_ERROR;
-      }
+  @override
+  Future<List<Event>> search(String query) async {
+    String response = await this.get(
+      "/events/?search=${Uri.encodeComponent(query)}",
+    );
+    List<dynamic> jsonEvents = jsonDecode(response)['results'];
+    return jsonEvents.map((jsonEvent) => Event.fromJson(jsonEvent)).toList();
+  }
 
-      notifyListeners();
-    }
+  Future<List<Event>> _getEvents() async {
+    String response = await this.get("/events/");
+    List<dynamic> jsonEvents = jsonDecode(response)['results'];
+    List<Event> events =
+        jsonEvents.map((jsonEvent) => Event.fromJson(jsonEvent)).toList();
+    events.sort(
+        (event1, event2) => (event1.start.difference(event2.start)).inMinutes);
+    return events;
   }
 
   Future<List<UserRegistration>> getEventRegistrations(int pk) async {
-    // TODO: Create this method
-    if (authProvider.status == AuthStatus.SIGNED_IN) {
-      var response = await authProvider.helper.get(
-          'https://staging.thalia.nu/api/v1/events/$pk/registrations/?status=registered');
-      if (response.statusCode == 200) {
-        List jsonRegistrations = jsonDecode(response.body);
-        print(jsonRegistrations);
-        return jsonRegistrations
-            .map((jsonRegistration) =>
-                UserRegistration.fromJson(jsonRegistration))
-            .toList();
-      }
-    }
-    return null;
+    String response = await this.get(
+      "/events/$pk/registrations/?status=registered",
+    );
+    List<dynamic> jsonRegistrations = jsonDecode(response);
+    return jsonRegistrations
+        .map(
+          (jsonRegistration) => UserRegistration.fromJson(jsonRegistration),
+        )
+        .toList();
   }
 
   Future<Event> getEvent(int pk) async {
-    if (authProvider.status == AuthStatus.SIGNED_IN) {
-      var response = await authProvider.helper
-          .get('https://staging.thalia.nu/api/v1/events/$pk');
-      if (response.statusCode == 200) {
-        print(response.body.toString());
-        return Event.fromJson(jsonDecode(response.body));
-      }
-    }
-    return null;
-  }
-
-  void register(Event event) async {
-    if (authProvider.status == AuthStatus.SIGNED_IN) {
-      var response = await authProvider.helper.post('https://staging.thalia.nu/api/v1/events/${event.pk}');
-      if (response.statusCode == 200) {
-        print(response.body.toString());
-      }
-    }
-    return null;
-  }
-
-  // TODO: proper error handling
-  @override
-  Future<List<Event>> search(String query) async {
-    if (authProvider.status == AuthStatus.SIGNED_IN) {
-      Response response = await authProvider.helper.get(
-          'https://staging.thalia.nu/api/v1/events/?search=${Uri.encodeComponent(query)}');
-      if (response.statusCode == 200) {
-        List<dynamic> jsonEvents = jsonDecode(response.body)['results'];
-        return jsonEvents
-            .map((jsonEvent) => Event.fromJson(jsonEvent))
-            .toList();
-      } else if (response.statusCode == 204) {
-        throw ("No result");
-      } else {
-        throw ("Something else");
-      }
-    } else {
-      throw ("Not logged in");
-    }
+    String response = await this.get("/events/$pk");
+    return Event.fromJson(jsonDecode(response));
   }
 }

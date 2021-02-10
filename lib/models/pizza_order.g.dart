@@ -12,7 +12,7 @@ PizzaOrder _$PizzaOrderFromJson(Map<String, dynamic> json) {
     json['name'] as String,
     json['product'] as int,
     json['payment'] as String,
-    json['member'] as String,
+    json['member'] as int,
   );
 }
 

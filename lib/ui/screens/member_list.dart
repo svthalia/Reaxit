@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:reaxit/providers/members_provider.dart';
 import 'package:reaxit/ui/components/member_card.dart';
 import 'package:reaxit/ui/components/menu_drawer.dart';
-import 'package:reaxit/ui/components/network_scrollable_wrapper.dart';
 import 'package:reaxit/ui/components/network_search_delegate.dart';
+import 'package:reaxit/ui/components/network_wrapper.dart';
 
 class MemberList extends StatelessWidget {
   @override
@@ -38,8 +38,8 @@ class MemberList extends StatelessWidget {
         ],
       ),
       drawer: MenuDrawer(),
-      body: NetworkScrollableWrapper<MembersProvider>(
-        builder: (context, members, child) => GridView.builder(
+      body: NetworkWrapper<MembersProvider>(
+        builder: (context, members) => GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,

@@ -7,6 +7,12 @@ class NetworkSearchDelegate<T extends ApiSearchService> extends SearchDelegate {
   final Widget Function(BuildContext, List<dynamic>, String, Widget)
       suggestionBuilder;
 
+  /// Creates a [SearchDelegate] that uses an [ApiSearchService]'s [search()]
+  /// method.
+  ///
+  /// The [resultBuilder] is used to show results. You can optionally specify a
+  /// [suggestionBuilder] to show something else while the user is typing a query.
+  /// Otherwise, the [resultBuilder] is also applied while the user is typing.
   NetworkSearchDelegate({@required this.resultBuilder, this.suggestionBuilder});
 
   @override
@@ -35,38 +41,24 @@ class NetworkSearchDelegate<T extends ApiSearchService> extends SearchDelegate {
   Widget buildResults(BuildContext context) {
     return Consumer<T>(
       builder: (context, service, child) {
-        Widget content;
-        switch (service.status) {
-          case ApiStatus.NO_INTERNET:
-            content = _showError('Not connected to internet.');
-            break;
-          case ApiStatus.NOT_AUTHENTICATED:
-            content = _showError('You are not authenticated.');
-            break;
-          case ApiStatus.UNKNOWN_ERROR:
-            content = _showError('An unknown error occurred.');
-            break;
-          default:
-            content = FutureBuilder(
-              future: service.search(query),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  if (snapshot.data.isEmpty) {
-                    return _showError("No results");
-                  } else {
-                    return resultBuilder(context, snapshot.data, child);
-                  }
-                } else if (snapshot.hasError) {
-                  return _showError(snapshot.error);
-                } else {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
-            );
-        }
-        return content;
+        return FutureBuilder(
+          future: service.search(query),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data.isEmpty) {
+                return _showError("No results...");
+              } else {
+                return resultBuilder(context, snapshot.data, child);
+              }
+            } else if (snapshot.hasError) {
+              return _showError(_errorText(snapshot.error));
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+        );
       },
     );
   }
@@ -75,46 +67,31 @@ class NetworkSearchDelegate<T extends ApiSearchService> extends SearchDelegate {
   Widget buildSuggestions(BuildContext context) {
     return Consumer<T>(
       builder: (context, service, child) {
-        Widget content;
-        switch (service.status) {
-          case ApiStatus.NO_INTERNET:
-            content = _showError('Not connected to internet.');
-            break;
-          case ApiStatus.NOT_AUTHENTICATED:
-            content = _showError('You are not authenticated.');
-            break;
-          case ApiStatus.UNKNOWN_ERROR:
-            content = _showError('An unknown error occurred.');
-            break;
-          default:
-            content = FutureBuilder(
-              future: service.search(query),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  if (snapshot.data.isEmpty) {
-                    return _showError("No results");
-                  } else {
-                    return suggestionBuilder != null
-                        ? suggestionBuilder(
-                            context, snapshot.data, query, child)
-                        : resultBuilder(context, snapshot.data, child);
-                  }
-                } else if (snapshot.hasError) {
-                  return _showError(snapshot.error);
-                } else {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
-            );
-        }
-        return content;
+        return FutureBuilder(
+          future: service.search(query),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data.isEmpty) {
+                return _showError("No results...");
+              } else {
+                return suggestionBuilder != null
+                    ? suggestionBuilder(context, snapshot.data, query, child)
+                    : resultBuilder(context, snapshot.data, child);
+              }
+            } else if (snapshot.hasError) {
+              return _showError(_errorText(snapshot.error));
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+        );
       },
     );
   }
 
-  Widget _showError(String message) {
+  Widget _showError(String text) {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Center(
@@ -126,10 +103,25 @@ class NetworkSearchDelegate<T extends ApiSearchService> extends SearchDelegate {
               child:
                   Image.asset('assets/img/sad_cloud.png', fit: BoxFit.fitWidth),
             ),
-            Text(message),
+            Text(text),
           ],
         ),
       ),
     );
+  }
+
+  String _errorText(ApiException error) {
+    switch (error) {
+      case ApiException.noInternet:
+        return 'Not connected to the internet.';
+      case ApiException.notAllowed:
+        return 'You are not authenticated.';
+      case ApiException.notFound:
+        return 'Not found.';
+      case ApiException.notLoggedIn:
+        return 'You are not logged in.';
+      default:
+        return 'An unknown error occured.';
+    }
   }
 }

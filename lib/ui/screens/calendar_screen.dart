@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/providers/events_provider.dart';
 import 'package:reaxit/ui/components/menu_drawer.dart';
-import 'package:reaxit/ui/components/network_scrollable_wrapper.dart';
+import 'package:reaxit/ui/components/network_wrapper.dart';
 import 'package:reaxit/ui/components/network_search_delegate.dart';
 import 'package:reaxit/ui/screens/event_screen.dart';
 
@@ -78,8 +78,8 @@ class CalendarScreenState extends State<CalendarScreen> {
         ],
       ),
       drawer: MenuDrawer(),
-      body: NetworkScrollableWrapper<EventsProvider>(
-        builder: (context, events, child) => ListView(
+      body: NetworkWrapper<EventsProvider>(
+        builder: (context, events) => ListView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(20),
           children: groupByMonth(events.eventList)
@@ -145,6 +145,7 @@ class _CalendarDayCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // TODO: fix inconsistent length, probably with flex
           Container(
             padding: const EdgeInsets.only(right: 50),
             child: Column(
