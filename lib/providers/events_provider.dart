@@ -52,4 +52,16 @@ class EventsProvider extends ApiSearchService {
     String response = await this.get("/events/$pk");
     return Event.fromJson(jsonDecode(response));
   }
+
+  Future<void> register(Event event) async {
+    // TODO: add post helper to ApiService (and put, patch)
+    if (authProvider.status == AuthStatus.SIGNED_IN) {
+      var response = await authProvider.helper
+          .post('https://staging.thalia.nu/api/v1/events/${event.pk}');
+      if (response.statusCode == 200) {
+        print(response.body.toString());
+      }
+    }
+    return null;
+  }
 }

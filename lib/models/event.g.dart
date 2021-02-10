@@ -20,7 +20,10 @@ Event _$EventFromJson(Map<String, dynamic> json) {
     json['registration_allowed'] as bool,
     _dateTimeFromJson(json['registration_start']),
     _dateTimeFromJson(json['registration_end']),
-    _userRegistrationFromJson(json['user_registration']),
+    json['user_registration'] == null
+        ? null
+        : UserRegistration.fromJson(
+            json['user_registration'] as Map<String, dynamic>),
     _dateTimeFromJson(json['cancel_deadline']),
     json['num_participants'] as int,
     json['max_participants'] as int,

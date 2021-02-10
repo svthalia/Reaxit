@@ -22,6 +22,16 @@ class EventRegistrationScreenState extends State<EventRegistrationScreen> {
   }
 
   @override
+  void didChangeDependencies() async {
+    _event =
+        await Provider.of<EventsProvider>(context).getEvent(widget.event.pk);
+    if (_event == null) {
+      // TODO: Event loading failed
+    }
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
