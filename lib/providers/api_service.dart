@@ -34,6 +34,8 @@ abstract class ApiService extends ChangeNotifier {
         }
       } on SocketException catch (_) {
         throw ApiException.noInternet;
+      } on ApiException catch (_) {
+        rethrow;
       } catch (_) {
         throw ApiException.unknownError;
       }
@@ -65,6 +67,8 @@ abstract class ApiService extends ChangeNotifier {
         }
       } on SocketException catch (_) {
         throw ApiException.noInternet;
+      } on ApiException catch (_) {
+        rethrow;
       } catch (_) {
         throw ApiException.unknownError;
       }
@@ -95,6 +99,8 @@ abstract class ApiService extends ChangeNotifier {
         }
       } on SocketException catch (_) {
         throw ApiException.noInternet;
+      } on ApiException catch (_) {
+        rethrow;
       } catch (_) {
         throw ApiException.unknownError;
       }
@@ -126,6 +132,8 @@ abstract class ApiService extends ChangeNotifier {
         }
       } on SocketException catch (_) {
         throw ApiException.noInternet;
+      } on ApiException catch (_) {
+        rethrow;
       } catch (_) {
         throw ApiException.unknownError;
       }

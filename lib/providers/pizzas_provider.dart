@@ -17,6 +17,7 @@ class PizzasProvider extends ApiService {
 
   PizzaEvent _pizzaEvent;
   PizzaEvent get pizzaEvent => _pizzaEvent;
+  bool get hasEvent => _pizzaEvent != null;
   bool get canOrder =>
       _pizzaEvent != null &&
       DateTime.now().isAfter(_pizzaEvent?.start) &&
@@ -26,10 +27,12 @@ class PizzasProvider extends ApiService {
 
   @override
   Future<void> loadImplementation() async {
-    _pizzaList = await _getPizzas();
     _pizzaEvent = await _getPizzaEvent();
+    print(_pizzaEvent);
     _myOrder = await _getMyOrder();
-    // TODO: may need to manually handle some errors here...
+    print(_myOrder);
+    _pizzaList = await _getPizzas();
+    print(_pizzaList);
   }
 
   Future<List<Pizza>> _getPizzas() async {
@@ -39,18 +42,39 @@ class PizzasProvider extends ApiService {
   }
 
   Future<PizzaOrder> _getMyOrder() async {
-    String response = await this.get("/pizzas/orders/me");
-    return PizzaOrder.fromJson(jsonDecode(response));
+    try {
+      String response = await this.get("/pizzas/orders/me");
+      return PizzaOrder.fromJson(jsonDecode(response));
+    } on ApiException catch (error) {
+      print(error);
+      if (error == ApiException.notFound) {
+        return null;
+      } else {
+        rethrow;
+      }
+    }
   }
 
   Future<PizzaEvent> _getPizzaEvent() async {
-    String response = await this.get("/pizzas/event");
-    return PizzaEvent.fromJson(jsonDecode(response));
+    try {
+      String response = await this.get("/pizzas/event");
+      return PizzaEvent.fromJson(jsonDecode(response));
+    } on ApiException catch (error) {
+      if (error == ApiException.notFound) {
+        return null;
+      } else {
+        rethrow;
+      }
+    }
   }
 
-  Future<PizzaOrder> orderPizza(Pizza pizza) async {
-    // TODO: order pizza
-    throw UnimplementedError();
+  Future<void> placeOrder(Pizza pizza) async {
+    String body = jsonEncode({'product': pizza.pk});
+    if (hasOrder) {
+      String response = await this.patch("/pizzas/orders/me", body);
+    } else {
+      String response = await this.post("/pizzas/orders/", body);
+    }
   }
 
   Future<void> cancelOrder(PizzaOrder order) async {
