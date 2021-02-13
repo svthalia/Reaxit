@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:reaxit/models/pizza.dart';
 
 part 'pizza_order.g.dart';
 
@@ -6,12 +7,16 @@ part 'pizza_order.g.dart';
 class PizzaOrder {
   final int pk;
   @JsonKey(name: "product")
-  final int pizza;
+  final int pizzaPk;
   final String name;
   final String payment;
   final int member;
+  @JsonKey(ignore: true)
+  Pizza pizza;
 
-  PizzaOrder(this.pk, this.name, this.pizza, this.payment, this.member);
+  PizzaOrder(this.pk, this.name, this.pizzaPk, this.payment, this.member);
+
+  bool get isPaid => (payment?.isNotEmpty ?? false) && payment != 'no_payment';
 
   factory PizzaOrder.fromJson(Map<String, dynamic> json) =>
       _$PizzaOrderFromJson(json);

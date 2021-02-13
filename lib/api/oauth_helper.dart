@@ -9,7 +9,7 @@ class OAuthHelper extends OAuth2Helper {
   static const IMPLICIT_GRANT = OAuth2Helper.IMPLICIT_GRANT;
 
   OAuthHelper(OAuth2Client client,
-      {int grantType = OAuth2Helper.AUTHORIZATION_CODE,
+      {int grantType = AUTHORIZATION_CODE,
       String clientId,
       String clientSecret,
       List<String> scopes})

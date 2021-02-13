@@ -12,12 +12,14 @@ Pizza _$PizzaFromJson(Map<String, dynamic> json) {
     json['name'] as String,
     json['available'] as bool,
     json['price'] as String,
+    json['description'] as String,
   );
 }
 
 Map<String, dynamic> _$PizzaToJson(Pizza instance) => <String, dynamic>{
       'pk': instance.pk,
       'name': instance.name,
+      'description': instance.description,
       'available': instance.available,
       'price': instance.price,
     };

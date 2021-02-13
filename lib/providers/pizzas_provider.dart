@@ -28,11 +28,13 @@ class PizzasProvider extends ApiService {
   @override
   Future<void> loadImplementation() async {
     _pizzaEvent = await _getPizzaEvent();
-    print(_pizzaEvent);
     _myOrder = await _getMyOrder();
-    print(_myOrder);
     _pizzaList = await _getPizzas();
-    print(_pizzaList);
+    if (_myOrder != null) {
+      _myOrder.pizza = _pizzaList.firstWhere(
+        (pizza) => pizza.pk == _myOrder.pizzaPk,
+      );
+    }
   }
 
   Future<List<Pizza>> _getPizzas() async {
@@ -43,10 +45,9 @@ class PizzasProvider extends ApiService {
 
   Future<PizzaOrder> _getMyOrder() async {
     try {
-      String response = await this.get("/pizzas/orders/me");
+      String response = await this.get("/pizzas/orders/me/");
       return PizzaOrder.fromJson(jsonDecode(response));
     } on ApiException catch (error) {
-      print(error);
       if (error == ApiException.notFound) {
         return null;
       } else {
@@ -57,7 +58,7 @@ class PizzasProvider extends ApiService {
 
   Future<PizzaEvent> _getPizzaEvent() async {
     try {
-      String response = await this.get("/pizzas/event");
+      String response = await this.get("/pizzas/event/");
       return PizzaEvent.fromJson(jsonDecode(response));
     } on ApiException catch (error) {
       if (error == ApiException.notFound) {
@@ -71,15 +72,21 @@ class PizzasProvider extends ApiService {
   Future<void> placeOrder(Pizza pizza) async {
     String body = jsonEncode({'product': pizza.pk});
     if (hasOrder) {
-      String response = await this.patch("/pizzas/orders/me", body);
+      await this.patch("/pizzas/orders/me/", body);
+      _myOrder = await _getMyOrder();
+      _myOrder.pizza = pizza;
     } else {
       String response = await this.post("/pizzas/orders/", body);
+      _myOrder = PizzaOrder.fromJson(jsonDecode(response));
+      _myOrder.pizza = pizza;
     }
+    notifyListeners();
   }
 
-  Future<void> cancelOrder(PizzaOrder order) async {
-    // TODO: cancel order, separate cancelMyOrder()?
-    throw UnimplementedError();
+  Future<void> cancelOrder() async {
+    await this.delete("/pizzas/orders/me/");
+    _myOrder = null;
+    notifyListeners();
   }
 
   Future<List<PizzaOrder>> getOrders() async {

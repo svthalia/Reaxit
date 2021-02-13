@@ -52,6 +52,7 @@ abstract class ApiService extends ChangeNotifier {
       try {
         Response response = await authProvider.helper.post(
           _apiUrl + url,
+          headers: {"Content-type": "application/json; charset=utf-8"},
           body: body,
         );
         if (response.statusCode == 200) {
@@ -84,11 +85,39 @@ abstract class ApiService extends ChangeNotifier {
       try {
         Response response = await authProvider.helper.put(
           _apiUrl + url,
+          headers: {"Content-type": "application/json; charset=utf-8"},
           body: body,
         );
         if (response.statusCode == 200) {
           return;
         } else if (response.statusCode == 201) {
+          return;
+        } else if (response.statusCode == 403) {
+          throw ApiException.notAllowed;
+        } else if (response.statusCode == 404) {
+          throw ApiException.notFound;
+        } else {
+          throw ApiException.unknownError;
+        }
+      } on SocketException catch (_) {
+        throw ApiException.noInternet;
+      } on ApiException catch (_) {
+        rethrow;
+      } catch (_) {
+        throw ApiException.unknownError;
+      }
+    } else {
+      throw ApiException.notLoggedIn;
+    }
+  }
+
+  /// A helper method that performs a DELETE request. This
+  /// throws an [ApiException] when something goes wrong.
+  Future<void> delete(String url) async {
+    if (authProvider.status == AuthStatus.SIGNED_IN) {
+      try {
+        Response response = await authProvider.helper.delete(_apiUrl + url);
+        if (response.statusCode == 204) {
           return;
         } else if (response.statusCode == 403) {
           throw ApiException.notAllowed;
@@ -117,6 +146,7 @@ abstract class ApiService extends ChangeNotifier {
       try {
         Response response = await authProvider.helper.patch(
           _apiUrl + url,
+          headers: {"Content-type": "application/json; charset=utf-8"},
           body: body,
         );
         if (response.statusCode == 200) {

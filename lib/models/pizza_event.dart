@@ -14,4 +14,7 @@ class PizzaEvent {
 
   factory PizzaEvent.fromJson(Map<String, dynamic> json) =>
       _$PizzaEventFromJson(json);
+
+  bool hasEnded() => DateTime.now().isAfter(end);
+  bool hasStarted() => DateTime.now().isAfter(start);
 }
