@@ -145,9 +145,9 @@ class _CalendarDayCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // TODO: fix inconsistent length, probably with flex
           Container(
-            padding: const EdgeInsets.only(right: 50),
+            width: 70,
+            alignment: Alignment.topLeft,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
