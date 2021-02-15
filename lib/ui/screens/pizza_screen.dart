@@ -55,7 +55,7 @@ class PizzaScreen extends StatelessWidget {
                               onPressed: () =>
                                   _placeOrder(context, pizzas, pizza),
                               icon: Icon(Icons.shopping_bag),
-                              label: Text("Order"),
+                              label: Text("ORDER"),
                             ),
                           );
                         },
@@ -86,7 +86,7 @@ class PizzaScreen extends StatelessWidget {
                                 onPressed: () =>
                                     _placeOrder(context, pizzas, pizza),
                                 icon: Icon(Icons.shopping_bag),
-                                label: Text("Change"),
+                                label: Text("CHANGE"),
                               ),
                             );
                           },
@@ -248,14 +248,14 @@ class _MyOrderInfoCard extends StatelessWidget {
                     ElevatedButton.icon(
                       onPressed: () => _cancelOrder(context),
                       icon: Icon(Icons.cancel),
-                      label: Text("Cancel order"),
+                      label: Text("CANCEL ORDER"),
                     ),
                   ElevatedButton.icon(
                     onPressed: () {
                       // TODO: Thalia Pay!
                     },
                     icon: Icon(Icons.euro),
-                    label: Text("Thalia Pay: €${_pizzas.myOrder.pizza.price}"),
+                    label: Text("THALIA PAY: €${_pizzas.myOrder.pizza.price}"),
                   ),
                 ],
               ],
