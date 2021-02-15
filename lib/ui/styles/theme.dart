@@ -14,7 +14,7 @@ ColorScheme lightColorScheme = ColorScheme(
   onSurface: Colors.black,
   background: Colors.grey[50],
   onBackground: Colors.black,
-  error: Colors.green,
+  error: Colors.red,
   onError: Colors.white,
   brightness: Brightness.light,
 );
@@ -30,45 +30,88 @@ ColorScheme darkColorScheme = ColorScheme(
   onSurface: Colors.white,
   background: Colors.black,
   onBackground: Colors.white,
-  error: Colors.green,
+  error: Colors.red,
   onError: Colors.white,
   brightness: Brightness.dark,
 );
 
-TextTheme baseTextTheme = GoogleFonts.openSansTextTheme();
-TextTheme oswaldTextTheme = TextTheme().copyWith(
-  headline1: GoogleFonts.oswald(textStyle: baseTextTheme.headline1),
-  headline2: GoogleFonts.oswald(textStyle: baseTextTheme.headline2),
-  headline3: GoogleFonts.oswald(textStyle: baseTextTheme.headline3),
-  headline4: GoogleFonts.oswald(textStyle: baseTextTheme.headline4),
-  headline5: GoogleFonts.oswald(textStyle: baseTextTheme.headline5),
-  headline6: GoogleFonts.oswald(textStyle: baseTextTheme.headline6),
-  subtitle1: GoogleFonts.oswald(textStyle: baseTextTheme.subtitle1),
-  subtitle2: GoogleFonts.oswald(textStyle: baseTextTheme.subtitle2),
-  caption: GoogleFonts.oswald(textStyle: baseTextTheme.caption),
-
-  // bodyText1: GoogleFonts.oswald(textStyle: baseTextTheme.bodyText1),
-  // bodyText2: GoogleFonts.oswald(textStyle: baseTextTheme.bodyText2),
-  // button: GoogleFonts.oswald(textStyle: baseTextTheme.button),
-  // bodyText2: GoogleFonts.oswald(textStyle: baseTextTheme.bodyText2),
+/// TextTheme mostly following material design guidelines.
+///
+/// Generated and modified from:
+/// https://material.io/design/typography/the-type-system.html
+TextTheme generatedTextTheme = TextTheme(
+  headline1: GoogleFonts.oswald(
+    fontSize: 88,
+    fontWeight: FontWeight.w300,
+    letterSpacing: -1.5,
+  ),
+  headline2: GoogleFonts.oswald(
+    fontSize: 55,
+    fontWeight: FontWeight.w300,
+    letterSpacing: -0.5,
+  ),
+  headline3: GoogleFonts.oswald(
+    fontSize: 44,
+    fontWeight: FontWeight.w400,
+  ),
+  headline4: GoogleFonts.oswald(
+    fontSize: 31,
+    fontWeight: FontWeight.w400,
+    letterSpacing: 0.25,
+  ),
+  headline5: GoogleFonts.oswald(
+    // increased fontSize from 22
+    fontSize: 24,
+    fontWeight: FontWeight.w400,
+  ),
+  headline6: GoogleFonts.oswald(
+    // increased fontSize from 18
+    fontSize: 22,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 0.15,
+  ),
+  subtitle1: GoogleFonts.oswald(
+    fontSize: 15,
+    fontWeight: FontWeight.w400,
+    letterSpacing: 0.15,
+  ),
+  subtitle2: GoogleFonts.oswald(
+    fontSize: 13,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 0.1,
+  ),
+  bodyText1: GoogleFonts.openSans(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    letterSpacing: 0.5,
+  ),
+  bodyText2: GoogleFonts.openSans(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    letterSpacing: 0.25,
+  ),
+  button: GoogleFonts.oswald(
+    // switched fontFamily from openSans
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 1.25,
+  ),
+  caption: GoogleFonts.openSans(
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    letterSpacing: 0.4,
+  ),
+  overline: GoogleFonts.openSans(
+    fontSize: 10,
+    fontWeight: FontWeight.w400,
+    letterSpacing: 1.5,
+  ),
 );
 
-ThemeData lightBaseTheme = ThemeData.from(
+ThemeData lightTheme = ThemeData.from(
   colorScheme: lightColorScheme,
-  textTheme: oswaldTextTheme,
-);
-
-ThemeData lightTheme = lightBaseTheme.copyWith(
-  // appBarTheme: lightBaseTheme.appBarTheme.copyWith(
-  //   textTheme: TextTheme(
-  //     headline6: GoogleFonts.oswald(
-  //       textStyle: ThemeData.light().primaryTextTheme.headline6,
-  //       fontSize: 22,
-  //     ),
-  //   ),
-  // ),
+  textTheme: generatedTextTheme,
+).copyWith(
   primaryTextTheme:
-      GoogleFonts.oswaldTextTheme(ThemeData.light().primaryTextTheme),
+      ThemeData.light().primaryTextTheme.merge(generatedTextTheme),
 );
-
-// AppBar a = AppBar());
