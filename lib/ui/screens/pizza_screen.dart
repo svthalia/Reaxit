@@ -217,7 +217,12 @@ class _MyOrderInfoCard extends StatelessWidget {
                   ),
           ),
           Padding(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.only(
+              top: 10,
+              left: 16,
+              right: 16,
+              bottom: 16,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
