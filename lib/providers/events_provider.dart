@@ -54,7 +54,6 @@ class EventsProvider extends ApiSearchService {
   }
 
   Future<void> register(Event event) async {
-    // TODO: add post helper to ApiService (and put, patch)
     if (authProvider.status == AuthStatus.SIGNED_IN) {
       var response = await authProvider.helper
           .post('https://staging.thalia.nu/api/v1/events/${event.pk}');

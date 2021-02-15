@@ -39,15 +39,11 @@ class MenuDrawer extends StatelessWidget {
               ),
               Positioned(
                 left: 20,
-                bottom: 15,
+                bottom: 10,
                 child: Consumer<AuthProvider>(
                   builder: (context, auth, child) => Text(
                     auth.name,
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: Theme.of(context).primaryTextTheme.headline5,
                   ),
                 ),
               ),

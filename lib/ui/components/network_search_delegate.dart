@@ -16,6 +16,13 @@ class NetworkSearchDelegate<T extends ApiSearchService> extends SearchDelegate {
   NetworkSearchDelegate({@required this.resultBuilder, this.suggestionBuilder});
 
   @override
+  ThemeData appBarTheme(BuildContext context) {
+    return super
+        .appBarTheme(context)
+        .copyWith(primaryColor: Theme.of(context).cardColor);
+  }
+
+  @override
   List<Widget> buildActions(BuildContext context) {
     if (query.isNotEmpty) {
       return <Widget>[

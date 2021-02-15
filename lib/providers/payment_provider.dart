@@ -9,7 +9,7 @@ class PhotosProvider extends ApiService {
 
   @override
   Future<void> loadImplementation() async {
-    // TODO:
+    // TODO: get thaliapay info (allowed or not), probably from authprovider
   }
 
   Future<void> makePizzaPayment(PizzaOrder pizzaOrder) async {

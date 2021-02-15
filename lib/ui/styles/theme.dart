@@ -115,3 +115,11 @@ ThemeData lightTheme = ThemeData.from(
   primaryTextTheme:
       ThemeData.light().primaryTextTheme.merge(generatedTextTheme),
 );
+
+ThemeData darkTheme = ThemeData.from(
+  colorScheme: darkColorScheme,
+  textTheme: generatedTextTheme,
+).copyWith(
+  primaryTextTheme: ThemeData.dark().primaryTextTheme.merge(generatedTextTheme),
+  appBarTheme: lightTheme.appBarTheme,
+);
