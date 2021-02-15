@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/models/event.dart';
-import 'package:reaxit/ui/components/card_section.dart';
 import 'package:reaxit/ui/screens/event_screen.dart';
 
 class EventDetailCard extends StatelessWidget {
