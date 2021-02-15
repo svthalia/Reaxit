@@ -2,20 +2,44 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:reaxit/models/pizza.dart';
 import 'package:reaxit/models/pizza_event.dart';
 import 'package:reaxit/providers/api_service.dart';
 import 'package:reaxit/providers/pizzas_provider.dart';
 import 'package:reaxit/ui/components/network_wrapper.dart';
+import 'package:reaxit/ui/screens/pizza_admin_screen.dart';
 
 class PizzaScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pizza'),
-        // TODO: admin button?
-        // add "addScaffold" option to network_wrapper that adds scaffolds for error screens, so that we can move it into the builder
+        title: Text("Pizza"),
+        actions: [
+          Consumer<PizzasProvider>(
+            builder: (context, pizzas, child) {
+              if (pizzas.pizzaEvent?.isAdmin ?? false) {
+                return IconButton(
+                  icon: Icon(Icons.settings),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PizzaAdminScreen(),
+                      ),
+                    );
+                  },
+                );
+              } else {
+                return SizedBox(
+                  width: 0,
+                  height: 0,
+                );
+              }
+            },
+          )
+        ],
       ),
       body: NetworkWrapper<PizzasProvider>(
         builder: (context, pizzas) {

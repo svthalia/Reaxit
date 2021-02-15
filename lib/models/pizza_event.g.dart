@@ -12,7 +12,7 @@ PizzaEvent _$PizzaEventFromJson(Map<String, dynamic> json) {
     json['end'] == null ? null : DateTime.parse(json['end'] as String),
     json['event'] as int,
     json['title'] as String,
-    json['isAdmin'] as bool,
+    json['is_admin'] as bool,
   );
 }
 
@@ -22,5 +22,5 @@ Map<String, dynamic> _$PizzaEventToJson(PizzaEvent instance) =>
       'end': instance.end?.toIso8601String(),
       'event': instance.event,
       'title': instance.title,
-      'isAdmin': instance.isAdmin,
+      'is_admin': instance.isAdmin,
     };

@@ -19,7 +19,7 @@ PizzaOrder _$PizzaOrderFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$PizzaOrderToJson(PizzaOrder instance) =>
     <String, dynamic>{
       'pk': instance.pk,
-      'product': instance.pizza,
+      'product': instance.pizzaPk,
       'name': instance.name,
       'payment': instance.payment,
       'member': instance.member,

@@ -3,7 +3,7 @@ import 'package:reaxit/models/pizza.dart';
 
 part 'pizza_order.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class PizzaOrder {
   final int pk;
   @JsonKey(name: "product")
