@@ -214,14 +214,12 @@ class EventScreenState extends State<EventScreen> {
                 ),
               ),
             ),
-            FlatButton(
-              textColor: Colors.white,
-              color: Theme.of(context).accentColor,
+            ElevatedButton(
               child: Text(
                 event.maxParticipants != null &&
                         event.maxParticipants <= event.numParticipants
-                    ? 'Put me on the waiting list'
-                    : 'Register',
+                    ? 'PUT ME ON THE WAITING LIST'
+                    : 'REGISTER',
               ),
               onPressed: () {
                 Navigator.push(
@@ -244,18 +242,14 @@ class EventScreenState extends State<EventScreen> {
             event.hasFields) {
           return Column(
             children: [
-              FlatButton(
-                textColor: Colors.white,
-                color: Theme.of(context).accentColor,
-                child: Text('Update registration'),
+              ElevatedButton(
+                child: Text('UPDATE REGISTRATION'),
                 onPressed: () {
                   // TODO: Go to update registration view
                 },
               ),
-              FlatButton(
-                textColor: Colors.white,
-                color: Theme.of(context).accentColor,
-                child: Text('Cancel registration'),
+              ElevatedButton(
+                child: Text('CANCEL REGISTRATION'),
                 onPressed: () {
                   // TODO: Cancel registration
                 },
@@ -265,10 +259,8 @@ class EventScreenState extends State<EventScreen> {
         } else {
           return Column(
             children: [
-              FlatButton(
-                textColor: Colors.white,
-                color: Theme.of(context).accentColor,
-                child: Text('Cancel registration'),
+              ElevatedButton(
+                child: Text('CANCEL REGISTRATION'),
                 onPressed: () {},
               ),
             ],
@@ -280,12 +272,9 @@ class EventScreenState extends State<EventScreen> {
   }
 
   static Widget _makePizzaAction(BuildContext context, Event event) {
-    return FlatButton.icon(
+    return ElevatedButton.icon(
       icon: Icon(Icons.local_pizza),
-      textColor: Colors.white,
-      label: Text("Pizza"),
-      color: Theme.of(context).accentColor,
-      disabledColor: Theme.of(context).disabledColor,
+      label: Text("PIZZA"),
       onPressed: () => Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => PizzaScreen()),

@@ -58,20 +58,21 @@ class EventDetailCard extends StatelessWidget {
                   style: TextStyle(color: Colors.black87),
                 ),
               ),
-              Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                FlatButton(
-                  textColor: Colors.white,
-                  color: Color(0xFFE62272),
-                  child: Text('MORE INFO'),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => EventScreen(_event.pk)),
-                    );
-                  },
-                ),
-              ])
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ElevatedButton(
+                    child: Text('MORE INFO'),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EventScreen(_event.pk)),
+                      );
+                    },
+                  ),
+                ],
+              )
             ],
           ),
         ],
