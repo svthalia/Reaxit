@@ -1,0 +1,21 @@
+categories:
+  - title: '🚀 Features'
+    label: 'feature'
+  - title: '🐛 Bugfixes'
+    label: 'bug'
+  - title: '🧰 Chores'
+    label: 'chore'
+  - title: '🛠 Refactoring'
+    label: 'docs'
+  - title: '📖 Documentation changes'
+    label: 'docs'
+  - title: '📦️ Dependency updates'
+    label: 'dependency-update'
+change-template: '- $TITLE (#$NUMBER)'
+exclude-labels:
+  - 'skip-changelog'
+template: |
+  ## 🔖 ThaliApp $NEXT_MINOR_VERSION
+
+  $CHANGES
+

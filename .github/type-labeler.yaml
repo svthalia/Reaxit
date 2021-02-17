@@ -1,0 +1,6 @@
+feature: 'feature/*'
+bug: ['fix/*', 'bug/*']
+chore: 'chore/*'
+refactor: 'refactor/*'
+docs: 'docs/*'
+dependency-update: ['renovate/*', 'dependency/*', 'dependabot/*']
