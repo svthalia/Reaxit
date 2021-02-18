@@ -42,6 +42,7 @@ class PizzaScreen extends StatelessWidget {
         ],
       ),
       body: NetworkWrapper<PizzasProvider>(
+        showWhileLoading: true,
         builder: (context, pizzas) {
           if (!pizzas.hasEvent) {
             return ListView(
@@ -273,7 +274,7 @@ class _MyOrderInfoCard extends StatelessWidget {
                 ],
                 if (!_pizzas.myOrder.isPaid) ...[
                   Divider(),
-                  if (_pizzas.canOrder)
+                  if (_pizzas.canOrder())
                     ElevatedButton.icon(
                       onPressed: () => _cancelOrder(context),
                       icon: Icon(Icons.cancel),
