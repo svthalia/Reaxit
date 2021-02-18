@@ -5,7 +5,7 @@ import 'package:reaxit/models/user_registration.dart';
 import 'package:reaxit/providers/api_service.dart';
 import 'package:reaxit/providers/auth_provider.dart';
 
-class EventsProvider extends ApiSearchService {
+class EventsProvider extends ApiService {
   List<Event> _eventList = [];
 
   EventsProvider(AuthProvider authProvider) : super(authProvider);
@@ -17,15 +17,6 @@ class EventsProvider extends ApiSearchService {
     _eventList = await _getEvents();
   }
 
-  @override
-  Future<List<Event>> search(String query) async {
-    String response = await this.get(
-      "/events/?search=${Uri.encodeComponent(query)}",
-    );
-    List<dynamic> jsonEvents = jsonDecode(response)['results'];
-    return jsonEvents.map((jsonEvent) => Event.fromJson(jsonEvent)).toList();
-  }
-
   Future<List<Event>> _getEvents() async {
     String response = await this.get("/events/");
     List<dynamic> jsonEvents = jsonDecode(response)['results'];
@@ -34,6 +25,14 @@ class EventsProvider extends ApiSearchService {
     events.sort(
         (event1, event2) => (event1.start.difference(event2.start)).inMinutes);
     return events;
+  }
+
+  Future<List<Event>> search(String query) async {
+    String response = await this.get(
+      "/events/?search=${Uri.encodeComponent(query)}",
+    );
+    List<dynamic> jsonEvents = jsonDecode(response)['results'];
+    return jsonEvents.map((jsonEvent) => Event.fromJson(jsonEvent)).toList();
   }
 
   Future<List<UserRegistration>> getEventRegistrations(int pk) async {

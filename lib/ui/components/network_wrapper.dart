@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:reaxit/providers/api_service.dart';
 
 class NetworkWrapper<T extends ApiService> extends StatelessWidget {
-  final Widget Function(BuildContext, T) builder;
+  final Widget Function(BuildContext context, T service) builder;
   final bool showWhileLoading;
 
   /// Creates a widget that uses an [ApiService].

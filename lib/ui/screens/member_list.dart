@@ -18,7 +18,8 @@ class MemberList extends StatelessWidget {
             onPressed: () => showSearch(
               context: context,
               delegate: NetworkSearchDelegate<MembersProvider>(
-                resultBuilder: (context, memberList, child) {
+                search: (members, query) => members.search(query),
+                resultBuilder: (context, members, memberList) {
                   return GridView.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisSpacing: 10,

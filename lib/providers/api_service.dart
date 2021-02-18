@@ -202,9 +202,3 @@ abstract class ApiService extends ChangeNotifier {
   /// e.g. to load a long list.
   Future<void> loadImplementation();
 }
-
-abstract class ApiSearchService extends ApiService {
-  ApiSearchService(AuthProvider authProvider) : super(authProvider);
-
-  Future<List<dynamic>> search(String query);
-}
