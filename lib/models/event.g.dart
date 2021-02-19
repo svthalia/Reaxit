@@ -32,6 +32,7 @@ Event _$EventFromJson(Map<String, dynamic> json) {
     json['has_fields'] as bool,
     json['google_maps_url'] as String,
     json['map_location'] as String,
+    json['is_admin'] as bool,
   );
 }
 
@@ -57,4 +58,5 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'fine': instance.fine,
       'has_fields': instance.hasFields,
       'google_maps_url': instance.googleMapsUrl,
+      'is_admin': instance.isAdmin,
     };
