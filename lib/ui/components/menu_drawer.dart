@@ -7,6 +7,7 @@ import 'package:reaxit/ui/screens/login_screen.dart';
 import 'package:reaxit/ui/screens/settings_screen.dart';
 import 'package:reaxit/ui/screens/welcome_screen.dart';
 import 'package:reaxit/ui/screens/member_list.dart';
+import 'package:url_launcher/link.dart';
 
 class MenuDrawer extends StatelessWidget {
   @override
@@ -122,7 +123,47 @@ class MenuDrawer extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => LoginScreen()),
               );
             },
-          )
+          ),
+          Divider(),
+          AboutListTile(
+            icon: Icon(Icons.info_outline),
+            dense: true,
+            applicationVersion: "v2.0.1",
+            applicationIcon: Image.asset(
+              Theme.of(context).brightness == Brightness.light
+                  ? 'assets/img/logo-t-zwart.png'
+                  : 'assets/img/logo-t-wit.png',
+              width: 80,
+            ),
+            aboutBoxChildren: [
+              Text(
+                "There is an app for everything.",
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+              Divider(),
+              Link(
+                uri: Uri.parse(
+                  "https://github.com/svthalia/Reaxit/releases",
+                ),
+                builder: (context, followLink) => OutlinedButton.icon(
+                  onPressed: followLink,
+                  icon: Icon(Icons.history),
+                  label: Text("Changelog"),
+                ),
+              ),
+              Link(
+                uri: Uri.parse(
+                  "https://github.com/svthalia/Reaxit/issues",
+                ),
+                builder: (context, followLink) => OutlinedButton.icon(
+                  onPressed: followLink,
+                  icon: Icon(Icons.bug_report_outlined),
+                  label: Text("Feedback"),
+                ),
+              ),
+              Divider(),
+            ],
+          ),
         ],
       ),
     );
