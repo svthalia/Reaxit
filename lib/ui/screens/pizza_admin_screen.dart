@@ -40,7 +40,7 @@ class _PizzaAdminScreenState extends State<PizzaAdminScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
-            tooltip: "Search for members",
+            tooltip: "Search for orders",
             onPressed: () => showSearch(
               context: context,
               delegate: NetworkSearchDelegate<PizzasProvider>(
