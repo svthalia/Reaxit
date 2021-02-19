@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:reaxit/models/pizza_order.dart';
 import 'package:reaxit/providers/api_service.dart';
 import 'package:reaxit/providers/pizzas_provider.dart';
@@ -48,7 +49,7 @@ class _PizzaAdminScreenState extends State<PizzaAdminScreen> {
                   return ListView.builder(
                     itemCount: orderList.length,
                     itemBuilder: (context, index) =>
-                        _OrderTile(pizzas, orderList[index]),
+                        _OrderTile(orderList[index]),
                   );
                 },
               ),
@@ -66,7 +67,7 @@ class _PizzaAdminScreenState extends State<PizzaAdminScreen> {
               if (filterPaid && order.isPaid) {
                 return SizedBox(height: 0, width: 0);
               } else {
-                return _OrderTile(pizzas, pizzas.orderList[index]);
+                return _OrderTile(order);
               }
             },
           );
@@ -77,10 +78,9 @@ class _PizzaAdminScreenState extends State<PizzaAdminScreen> {
 }
 
 class _OrderTile extends StatelessWidget {
-  final PizzasProvider pizzas;
   final PizzaOrder order;
 
-  const _OrderTile(this.pizzas, this.order);
+  const _OrderTile(this.order);
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +99,8 @@ class _OrderTile extends StatelessWidget {
                   value: order.payment,
                   onChanged: (payment) async {
                     try {
-                      await pizzas.payOrder(order, payment);
+                      await Provider.of<PizzasProvider>(context)
+                          .payOrder(order, payment);
                       order.payment = payment;
                       // payOrder loads the list again, this is only
                       // temporary so that the value is updated before
