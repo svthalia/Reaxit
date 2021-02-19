@@ -17,6 +17,24 @@ class _PizzaAdminScreenState extends State<PizzaAdminScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: Builder(
+        builder: (context) => FloatingActionButton(
+          onPressed: () {
+            this.setState(() => filterPaid = !filterPaid);
+            Scaffold.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  filterPaid
+                      ? "Showing only unpaid orders"
+                      : "Showing all orders",
+                ),
+                duration: Duration(seconds: 1),
+              ),
+            );
+          },
+          child: Icon(Icons.filter_alt),
+        ),
+      ),
       appBar: AppBar(
         title: Text("Orders"),
         actions: [
@@ -62,7 +80,9 @@ class _PizzaAdminScreenState extends State<PizzaAdminScreen> {
                                           Scaffold.of(context).showSnackBar(
                                             SnackBar(
                                               content: Text(
-                                                "Couldn't mark ${order.displayName}'s order as paid...",
+                                                payment == "no_payment"
+                                                    ? "Couldn't mark ${order.displayName}'s order as not paid..."
+                                                    : "Couldn't mark ${order.displayName}'s order as paid...",
                                               ),
                                               duration: Duration(seconds: 1),
                                             ),

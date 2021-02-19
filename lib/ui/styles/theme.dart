@@ -108,12 +108,17 @@ TextTheme generatedTextTheme = TextTheme(
   ),
 );
 
-ThemeData lightTheme = ThemeData.from(
+ThemeData lightBaseTheme = ThemeData.from(
   colorScheme: lightColorScheme,
   textTheme: generatedTextTheme,
-).copyWith(
+);
+
+ThemeData lightTheme = lightBaseTheme.copyWith(
   primaryTextTheme:
       ThemeData.light().primaryTextTheme.merge(generatedTextTheme),
+  floatingActionButtonTheme: lightBaseTheme.floatingActionButtonTheme.copyWith(
+    foregroundColor: Colors.white,
+  ),
 );
 
 ThemeData darkTheme = ThemeData.from(
