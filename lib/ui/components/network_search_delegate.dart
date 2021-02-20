@@ -93,7 +93,6 @@ class NetworkSearchDelegate<T extends ApiService> extends SearchDelegate {
                     : resultBuilder(context, service, snapshot.data);
               }
             } else if (snapshot.hasError) {
-              print(snapshot.error);
               return _showError(_errorText(snapshot.error));
             } else {
               return Center(
