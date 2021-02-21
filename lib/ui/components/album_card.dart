@@ -21,16 +21,17 @@ class AlbumCard extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          Hero(
-            // TODO: separate hero tags everywhere by type, to prevent shared tag between for example members and albums
-            tag: _album.pk,
-            child: FadeInImage.assetNetwork(
-              placeholder: 'assets/img/default-avatar.jpg',
-              image: _album.cover.full,
-              fit: BoxFit.cover,
-              fadeInDuration: const Duration(milliseconds: 300),
-            ),
-          ),
+          _album.cover != null
+              ? FadeInImage.assetNetwork(
+                  placeholder: 'assets/img/default-avatar.jpg',
+                  image: _album.cover.full,
+                  fit: BoxFit.cover,
+                  fadeInDuration: const Duration(milliseconds: 300),
+                )
+              : Image.asset(
+                  'assets/img/default-avatar.jpg',
+                  fit: BoxFit.cover,
+                ),
           Container(
             padding: const EdgeInsets.all(8),
             child: Column(

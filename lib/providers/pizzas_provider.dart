@@ -133,7 +133,7 @@ class PizzasProvider extends ApiService {
   /// Marks an [order] as paid with payment method [payment].
   Future<void> payOrder(PizzaOrder order, String payment) async {
     String body = jsonEncode({'payment': payment});
-    String response = await this.patch("/pizzas/orders/${order.pk}/", body);
+    await this.patch("/pizzas/orders/${order.pk}/", body);
     load();
   }
 }

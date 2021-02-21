@@ -94,6 +94,7 @@ class _OrderTile extends StatelessWidget {
               ? DropdownButton(
                   items: [DropdownMenuItem(child: Text("Thalia Pay"))],
                   value: order.payment,
+                  onChanged: null,
                 )
               : DropdownButton(
                   value: order.payment,

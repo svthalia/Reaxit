@@ -53,6 +53,7 @@ class EventsProvider extends ApiService {
   }
 
   Future<void> register(Event event) async {
+    // TODO: Make this work, also do client side validation if there are required fields before actually registering.
     if (authProvider.status == AuthStatus.SIGNED_IN) {
       var response = await authProvider.helper
           .post('https://staging.thalia.nu/api/v1/events/${event.pk}');

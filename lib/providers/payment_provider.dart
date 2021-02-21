@@ -4,8 +4,8 @@ import 'package:reaxit/models/pizza_order.dart';
 import 'package:reaxit/providers/api_service.dart';
 import 'package:reaxit/providers/auth_provider.dart';
 
-class PhotosProvider extends ApiService {
-  PhotosProvider(AuthProvider authProvider) : super(authProvider);
+class PaymentProvider extends ApiService {
+  PaymentProvider(AuthProvider authProvider) : super(authProvider);
 
   @override
   Future<void> loadImplementation() async {
@@ -18,6 +18,6 @@ class PhotosProvider extends ApiService {
       "model_name": "pizza_order",
       "payable_pk": pizzaOrder.pk,
     });
-    String response = await this.post("/payments/", body);
+    await this.post("/payments/", body);
   }
 }
