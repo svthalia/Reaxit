@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:reaxit/providers/settings_provider.dart';
+import 'package:reaxit/providers/notifications_provider.dart';
 import 'package:reaxit/providers/theme_mode_provider.dart';
 import 'package:reaxit/ui/components/menu_drawer.dart';
 import 'package:reaxit/models/setting.dart';
@@ -11,11 +11,11 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class SettingsScreenState extends State<SettingsScreen> {
-  List<Setting> _settings;
+  List<Setting> _notification_settings;
 
   @override
   void didChangeDependencies() {
-    _settings = Provider.of<SettingsProvider>(context).settingsList;
+    _notification_settings = Provider.of<NotificationsProvider>(context).settingsList;
     super.didChangeDependencies();
   }
 
@@ -34,7 +34,7 @@ class SettingsScreenState extends State<SettingsScreen> {
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyText1,
           ),
-          _SettingsCard(_settings),
+          _SettingsCard(_notification_settings),
         ],
       ),
     );
@@ -122,6 +122,7 @@ class _SettingsCard extends StatelessWidget {
 
 class _SettingCard extends StatelessWidget {
   final Setting _setting;
+  bool _value = true;
 
   _SettingCard(this._setting);
 
@@ -129,7 +130,7 @@ class _SettingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return SwitchListTile(
       value: true,
-      onChanged: null,
+      onChanged: ,
       title: Text(_setting.name),
       subtitle: (_setting.description?.isNotEmpty ?? false)
           ? Text(_setting.description)
