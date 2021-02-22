@@ -371,19 +371,22 @@ class EventScreenState extends State<EventScreen> {
                     future: _registrations,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        return GridView.builder(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                            crossAxisCount: 3,
-                          ),
-                          itemCount: snapshot.data.length,
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          padding: const EdgeInsets.all(20),
-                          itemBuilder: (context, index) =>
-                              MemberCard(snapshot.data[index]),
-                        );
+                        // TODO: transform to grid of registrations,
+                        // probably by changing the whole screen to a SliverGrid
+                        // return GridView.builder(
+                        //   gridDelegate:
+                        //       SliverGridDelegateWithFixedCrossAxisCount(
+                        //     crossAxisSpacing: 10,
+                        //     mainAxisSpacing: 10,
+                        //     crossAxisCount: 3,
+                        //   ),
+                        //   itemCount: snapshot.data.length,
+                        //   physics: const AlwaysScrollableScrollPhysics(),
+                        //   padding: const EdgeInsets.all(20),
+                        //   itemBuilder: (context, index) =>
+                        //       MemberCard(snapshot.data[index]),
+                        // );
+                        return Text("TODO");
                       } else if (snapshot.hasError) {
                         return Center(
                           child: Text(
