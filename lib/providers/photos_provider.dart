@@ -18,7 +18,7 @@ class PhotosProvider extends ApiService {
 
   Future<List<Album>> _getAlbums() async {
     String response = await this.get("/photos/albums/");
-    List<dynamic> jsonAlbums = jsonDecode(response)['results'];
+    List<dynamic> jsonAlbums = jsonDecode(response);
     return jsonAlbums.map((jsonAlbum) => Album.fromJson(jsonAlbum)).toList();
   }
 
@@ -26,7 +26,7 @@ class PhotosProvider extends ApiService {
     String response = await this.get(
       "/photos/albums/?search=${Uri.encodeComponent(query)}",
     );
-    List<dynamic> jsonAlbums = jsonDecode(response)['results'];
+    List<dynamic> jsonAlbums = jsonDecode(response);
     return jsonAlbums.map((jsonAlbum) => Album.fromJson(jsonAlbum)).toList();
   }
 

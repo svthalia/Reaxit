@@ -19,7 +19,7 @@ class EventsProvider extends ApiService {
 
   Future<List<Event>> _getEvents() async {
     String response = await this.get("/events/");
-    List<dynamic> jsonEvents = jsonDecode(response)['results'];
+    List<dynamic> jsonEvents = jsonDecode(response);
     List<Event> events =
         jsonEvents.map((jsonEvent) => Event.fromJson(jsonEvent)).toList();
     events.sort(
@@ -31,7 +31,7 @@ class EventsProvider extends ApiService {
     String response = await this.get(
       "/events/?search=${Uri.encodeComponent(query)}",
     );
-    List<dynamic> jsonEvents = jsonDecode(response)['results'];
+    List<dynamic> jsonEvents = jsonDecode(response);
     return jsonEvents.map((jsonEvent) => Event.fromJson(jsonEvent)).toList();
   }
 

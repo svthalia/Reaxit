@@ -89,7 +89,7 @@ class PizzasProvider extends ApiService {
   Future<List<PizzaOrder>> _getOrders() async {
     if (_pizzaEvent?.isAdmin ?? false) {
       String response = await this.get("/pizzas/orders/");
-      List<dynamic> jsonOrders = jsonDecode(response)['results'];
+      List<dynamic> jsonOrders = jsonDecode(response);
       return jsonOrders.map<PizzaOrder>((jsonOrder) {
         PizzaOrder order = PizzaOrder.fromJson(jsonOrder);
         order.pizza = _pizzaList.firstWhere(

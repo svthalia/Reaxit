@@ -17,7 +17,7 @@ class MembersProvider extends ApiService {
 
   Future<List<Member>> _getMembers() async {
     String response = await this.get("/members/");
-    List<dynamic> jsonMembers = jsonDecode(response)['results'];
+    List<dynamic> jsonMembers = jsonDecode(response);
     return jsonMembers
         .map((jsonMember) => Member.fromJson(jsonMember))
         .toList();
@@ -27,7 +27,7 @@ class MembersProvider extends ApiService {
     String response = await this.get(
       "/members/?search=${Uri.encodeComponent(query)}",
     );
-    List<dynamic> jsonMembers = jsonDecode(response)['results'];
+    List<dynamic> jsonMembers = jsonDecode(response);
     return jsonMembers
         .map((jsonMember) => Member.fromJson(jsonMember))
         .toList();
