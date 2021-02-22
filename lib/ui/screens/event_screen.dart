@@ -199,7 +199,6 @@ class EventScreenState extends State<EventScreen> {
                     TextSpan(
                       text:
                           "By registering, you confirm that you have read the ",
-                      style: TextStyle(color: Color.fromRGBO(0, 0, 0, 1)),
                     ),
                     TextSpan(
                       text: "terms and conditions",
@@ -209,7 +208,6 @@ class EventScreenState extends State<EventScreen> {
                     TextSpan(
                       text:
                           ", that you understand them and that you agree to be bound by them.",
-                      style: TextStyle(color: Color.fromRGBO(0, 0, 0, 1)),
                     ),
                   ],
                 ),
