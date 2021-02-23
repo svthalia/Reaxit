@@ -41,7 +41,7 @@ dependencies:
   intl: ^0.16.1
 
   # opening urls
-  url_launcher: ^5.7.10
+  url_launcher: ^6.0.0
 
   # modal photo view
   photo_view: ^0.10.3
