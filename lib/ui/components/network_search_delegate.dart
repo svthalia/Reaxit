@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reaxit/providers/api_service.dart';
 
+// TODO: Maybe we can things better by having the search (optionally) only be executed on query changes. That way, we do less requests, and can eliminate some problems with statful widgets inside search. We would need to listen for query changes, and store the search future.
 class NetworkSearchDelegate<T extends ApiService> extends SearchDelegate {
   final Widget Function(BuildContext context, T service, List<dynamic> list)
       resultBuilder;

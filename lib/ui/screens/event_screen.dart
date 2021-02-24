@@ -25,7 +25,7 @@ class EventScreen extends StatefulWidget {
 
 class EventScreenState extends State<EventScreen> {
   Future<Event> _event;
-  Future<List<UserRegistration>> _registrations;
+  Future<List<Registration>> _registrations;
 
   @override
   void initState() {
