@@ -33,7 +33,7 @@ class Registration {
   );
 
   factory Registration.fromJson(Map<String, dynamic> json) =>
-      _$UserRegistrationFromJson(json);
+      _$RegistrationFromJson(json);
 
   Member get member => Member(
       memberPk, name, avatar, null, null, null, null, null, null, null, null);

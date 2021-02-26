@@ -22,7 +22,7 @@ Map<String, dynamic> _$PizzaOrderToJson(PizzaOrder instance) =>
       'pk': instance.pk,
       'product': instance.pizzaPk,
       'name': instance.name,
-      'payment': instance.payment,
       'member': instance.member,
       'display_name': instance.displayName,
+      'payment': instance.payment,
     };

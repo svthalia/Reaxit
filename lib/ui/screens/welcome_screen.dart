@@ -21,6 +21,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
       drawer: MenuDrawer(),
       body: NetworkWrapper<EventsProvider>(
         builder: (context, events) => ListView(
+            padding: const EdgeInsets.all(20),
             physics: const AlwaysScrollableScrollPhysics(),
             children: new List<Widget>.from(events.eventList
                 .map((event) => EventDetailCard(event))
