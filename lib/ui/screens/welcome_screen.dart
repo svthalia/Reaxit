@@ -4,6 +4,7 @@ import 'package:reaxit/ui/components/menu_drawer.dart';
 import 'package:reaxit/ui/components/event_detail_card.dart';
 import 'package:reaxit/ui/components/network_wrapper.dart';
 import '../components/event_detail_card.dart';
+import 'calendar_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
   @override
@@ -20,12 +21,22 @@ class WelcomeScreenState extends State<WelcomeScreen> {
       drawer: MenuDrawer(),
       body: NetworkWrapper<EventsProvider>(
         builder: (context, events) => ListView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          children: events.eventList
-              .map((event) => EventDetailCard(event))
-              .take(3)
-              .toList(),
-        ),
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: new List<Widget>.from(events.eventList
+                .map((event) => EventDetailCard(event))
+                .take(3)
+                .toList())
+              ..addAll([
+                Column(children: [
+                  TextButton(
+                    child: Text('SHOW THE ENTIRE AGENDA'),
+                    onPressed: () => Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => CalendarScreen()),
+                    ),
+                  )
+                ])
+              ])),
       ),
     );
   }
