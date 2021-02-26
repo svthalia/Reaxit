@@ -8,9 +8,8 @@ import 'package:reaxit/ui/components/network_search_delegate.dart';
 
 class EventAdminScreen extends StatefulWidget {
   final int pk;
-  final Event event;
 
-  EventAdminScreen(this.pk, [this.event]);
+  EventAdminScreen(this.pk);
 
   @override
   _EventAdminScreenState createState() => _EventAdminScreenState();

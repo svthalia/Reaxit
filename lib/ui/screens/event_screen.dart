@@ -164,8 +164,8 @@ class EventScreenState extends State<EventScreen> {
     } else if (!event.registrationAllowedAndPossible()) {
       text = 'Registration is not possible anymore.';
     } else if (event.isLateCancellation()) {
-      text =
-          'Registration is not allowed anymore, as you cancelled your registration after the deadline.';
+      text = 'Registration is not allowed anymore, as you '
+          'cancelled your registration after the deadline.';
     }
 
     if (event.afterCancelDeadline() && !event.isLateCancellation()) {
@@ -173,7 +173,8 @@ class EventScreenState extends State<EventScreen> {
         text += ' ';
       }
       text +=
-          "Cancellation isn't possible anymore without having to pay the full costs of €${event.fine}. Also note that you will be unable to re-register.";
+          "Cancellation isn't possible anymore without having to pay the full "
+          "costs of €${event.fine}. Also note that you will be unable to re-register.";
     }
 
     if (text.isNotEmpty) {
@@ -301,8 +302,7 @@ class EventScreenState extends State<EventScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              EventAdminScreen(event.pk, event),
+                          builder: (context) => EventAdminScreen(event.pk),
                         ),
                       );
                     },
@@ -313,7 +313,8 @@ class EventScreenState extends State<EventScreen> {
               children: [
                 Link(
                   uri: Uri.parse(
-                      "https://maps.${Platform.isIOS ? 'apple' : 'google'}.com/maps?daddr=${Uri.encodeComponent(event.mapLocation)}"),
+                      "https://maps.${Platform.isIOS ? 'apple' : 'google'}.com"
+                      "/maps?daddr=${Uri.encodeComponent(event.mapLocation)}"),
                   builder: (context, followLink) => GestureDetector(
                     onTap: followLink,
                     child: Center(
