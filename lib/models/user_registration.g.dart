@@ -6,8 +6,8 @@ part of 'user_registration.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-UserRegistration _$UserRegistrationFromJson(Map<String, dynamic> json) {
-  return UserRegistration(
+Registration _$UserRegistrationFromJson(Map<String, dynamic> json) {
+  return Registration(
     json['pk'] as int,
     json['member'] as int,
     json['name'] as String,
@@ -23,7 +23,7 @@ UserRegistration _$UserRegistrationFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$UserRegistrationToJson(UserRegistration instance) =>
+Map<String, dynamic> _$UserRegistrationToJson(Registration instance) =>
     <String, dynamic>{
       'pk': instance.pk,
       'member': instance.memberPk,

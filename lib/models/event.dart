@@ -22,7 +22,7 @@ class Event {
   final DateTime registrationStart;
   @JsonKey(fromJson: _dateTimeFromJson)
   final DateTime registrationEnd;
-  final UserRegistration userRegistration;
+  final Registration userRegistration;
   @JsonKey(fromJson: _dateTimeFromJson)
   final DateTime cancelDeadline;
   final int numParticipants;

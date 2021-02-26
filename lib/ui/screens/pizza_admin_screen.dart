@@ -6,6 +6,8 @@ import 'package:reaxit/providers/pizzas_provider.dart';
 import 'package:reaxit/ui/components/network_search_delegate.dart';
 import 'package:reaxit/ui/components/network_wrapper.dart';
 
+// TODO: make this properly as in EventAdminScreen, with stateful tiles.
+
 class PizzaAdminScreen extends StatefulWidget {
   @override
   _PizzaAdminScreenState createState() => _PizzaAdminScreenState();

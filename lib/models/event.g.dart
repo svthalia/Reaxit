@@ -22,7 +22,7 @@ Event _$EventFromJson(Map<String, dynamic> json) {
     _dateTimeFromJson(json['registration_end']),
     json['user_registration'] == null
         ? null
-        : UserRegistration.fromJson(
+        : Registration.fromJson(
             json['user_registration'] as Map<String, dynamic>),
     _dateTimeFromJson(json['cancel_deadline']),
     json['num_participants'] as int,
