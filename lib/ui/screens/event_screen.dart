@@ -199,17 +199,19 @@ class EventScreenState extends State<EventScreen> {
                     TextSpan(
                       text:
                           "By registering, you confirm that you have read the ",
-                      style: TextStyle(color: Color.fromRGBO(0, 0, 0, 1)),
+                      style: Theme.of(context).textTheme.bodyText2,
                     ),
                     TextSpan(
                       text: "terms and conditions",
                       recognizer: TapGestureRecognizer()..onTap = followLink,
-                      style: TextStyle(color: Theme.of(context).accentColor),
+                      style: Theme.of(context).textTheme.bodyText2.copyWith(
+                            color: Theme.of(context).accentColor,
+                          ),
                     ),
                     TextSpan(
                       text:
                           ", that you understand them and that you agree to be bound by them.",
-                      style: TextStyle(color: Color.fromRGBO(0, 0, 0, 1)),
+                      style: Theme.of(context).textTheme.bodyText2,
                     ),
                   ],
                 ),
