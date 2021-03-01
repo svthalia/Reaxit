@@ -15,7 +15,7 @@ class SettingsScreenState extends State<SettingsScreen> {
 
   @override
   void didChangeDependencies() {
-    _notification_settings = Provider.of<NotificationsProvider>(context).settingsList;
+    _notification_settings = Provider.of<NotificationsProvider>(context).getSettingsList();
     super.didChangeDependencies();
   }
 
@@ -122,15 +122,14 @@ class _SettingsCard extends StatelessWidget {
 
 class _SettingCard extends StatelessWidget {
   final Setting _setting;
-  bool _value = true;
 
   _SettingCard(this._setting);
 
   @override
   Widget build(BuildContext context) {
     return SwitchListTile(
-      value: true,
-      onChanged: ,
+      value: Provider.of<NotificationsProvider>(context).getNotificatinoSetting(_setting),
+      onChanged: (value) => {Provider.of<NotificationsProvider>(context).setNotificationSetting(this._setting, value)},
       title: Text(_setting.name),
       subtitle: (_setting.description?.isNotEmpty ?? false)
           ? Text(_setting.description)

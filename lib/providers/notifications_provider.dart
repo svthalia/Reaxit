@@ -22,8 +22,8 @@ class NotificationsProvider extends ApiService {
   }
 
   List<Setting> getSettingsList() {
-    List<Setting> settings;
-    _settings.forEach((k, v) => settings.add(v));
+    List<Setting> settings = new List<Setting>();
+    _settings.forEach((k, v) => settings.add(k));
     return settings;
   }
 
@@ -33,6 +33,15 @@ class NotificationsProvider extends ApiService {
     return jsonSettings
         .map((jsonEvent) => Setting.fromJson(jsonEvent))
         .toList();
+  }
+
+  bool getNotificatinoSetting(Setting setting) {
+    if (_settings.containsKey(setting)) {
+      return _settings[setting];
+    }
+    else {
+      return null;
+    }
   }
 
   Future<bool> _getNotificationSetting(Setting setting) async {
