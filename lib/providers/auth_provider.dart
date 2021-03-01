@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:oauth2_client/access_token_response.dart';
+import 'package:oauth2_client/oauth2_helper.dart';
 import 'package:reaxit/api/oauth_client.dart';
-import 'package:reaxit/api/oauth_helper.dart';
 
 enum AuthStatus { INIT, SIGNED_IN, SIGNED_OUT }
 
 class AuthProvider extends ChangeNotifier {
-  OAuthHelper _helper;
+  OAuth2Helper _helper;
   AuthStatus _status;
 
   String _name = 'loading';
@@ -19,7 +19,7 @@ class AuthProvider extends ChangeNotifier {
       "https://staging.thalia.nu/static/members/images/default-avatar.jpg";
 
   AuthStatus get status => _status;
-  OAuthHelper get helper => _helper;
+  OAuth2Helper get helper => _helper;
 
   String get name => _name;
   String get pictureUrl => _pictureUrl;
@@ -34,8 +34,8 @@ class AuthProvider extends ChangeNotifier {
     OAuthClient client = OAuthClient(
         redirectUri: 'nu.thalia://callback', customUriScheme: 'nu.thalia');
 
-    _helper = OAuthHelper(client,
-        grantType: OAuthHelper.AUTHORIZATION_CODE,
+    _helper = OAuth2Helper(client,
+        grantType: OAuth2Helper.AUTHORIZATION_CODE,
         clientId: '3zlt7pqGVMiUCGxOnKTZEpytDUN7haeFBP2kVkig',
         clientSecret:
             'Chwh1BE3MgfU1OZZmYRV3LU3e3GzpZJ6tiWrqzFY3dPhMlS7VYD3qMm1RC1pPBvg3WaWmJxfRq8bv5ElVOpjRZwabAGOZ0DbuHhW3chAMaNlOmwXixNfUJIKIBzlnr7I',

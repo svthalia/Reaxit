@@ -12,3 +12,10 @@ Getting started
 4. Clone this repository and open it in your IDE.
 5. Run `flutter pub get` in the reaxit folder.
 6. Run `flutter run` to build and start the app.
+
+Reading material
+----------------
+
+- [Dart style guide](https://dart.dev/guides/language/effective-dart)
+- [API reference](https://api.flutter.dev)
+- [Widget of the week videos](https://youtube.com/playlist?list=PLjxrf2q8roU23XGwz3Km7sQZFTdB996iG)

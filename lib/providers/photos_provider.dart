@@ -4,7 +4,7 @@ import 'package:reaxit/models/album.dart';
 import 'package:reaxit/providers/api_service.dart';
 import 'package:reaxit/providers/auth_provider.dart';
 
-class PhotosProvider extends ApiSearchService {
+class PhotosProvider extends ApiService {
   List<Album> _albumList = [];
 
   List<Album> get albumList => _albumList;
@@ -16,18 +16,17 @@ class PhotosProvider extends ApiSearchService {
     _albumList = await _getAlbums();
   }
 
-  @override
+  Future<List<Album>> _getAlbums() async {
+    String response = await this.get("/photos/albums/");
+    List<dynamic> jsonAlbums = jsonDecode(response);
+    return jsonAlbums.map((jsonAlbum) => Album.fromJson(jsonAlbum)).toList();
+  }
+
   Future<List<Album>> search(String query) async {
     String response = await this.get(
       "/photos/albums/?search=${Uri.encodeComponent(query)}",
     );
-    List<dynamic> jsonAlbums = jsonDecode(response)['results'];
-    return jsonAlbums.map((jsonAlbum) => Album.fromJson(jsonAlbum)).toList();
-  }
-
-  Future<List<Album>> _getAlbums() async {
-    String response = await this.get("/photos/albums/");
-    List<dynamic> jsonAlbums = jsonDecode(response)['results'];
+    List<dynamic> jsonAlbums = jsonDecode(response);
     return jsonAlbums.map((jsonAlbum) => Album.fromJson(jsonAlbum)).toList();
   }
 

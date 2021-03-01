@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/user_registration.dart';
 import 'package:reaxit/providers/events_provider.dart';
+import 'package:reaxit/ui/screens/event_admin_screen.dart';
 import 'package:reaxit/ui/screens/event_registration_screen.dart';
 import 'package:reaxit/ui/components/member_card.dart';
 import 'package:reaxit/ui/screens/pizza_screen.dart';
@@ -24,7 +25,7 @@ class EventScreen extends StatefulWidget {
 
 class EventScreenState extends State<EventScreen> {
   Future<Event> _event;
-  Future<List<UserRegistration>> _registrations;
+  Future<List<Registration>> _registrations;
 
   @override
   void initState() {
@@ -163,8 +164,8 @@ class EventScreenState extends State<EventScreen> {
     } else if (!event.registrationAllowedAndPossible()) {
       text = 'Registration is not possible anymore.';
     } else if (event.isLateCancellation()) {
-      text =
-          'Registration is not allowed anymore, as you cancelled your registration after the deadline.';
+      text = 'Registration is not allowed anymore, as you '
+          'cancelled your registration after the deadline.';
     }
 
     if (event.afterCancelDeadline() && !event.isLateCancellation()) {
@@ -172,7 +173,8 @@ class EventScreenState extends State<EventScreen> {
         text += ' ';
       }
       text +=
-          "Cancellation isn't possible anymore without having to pay the full costs of €${event.fine}. Also note that you will be unable to re-register.";
+          "Cancellation isn't possible anymore without having to pay the full "
+          "costs of €${event.fine}. Also note that you will be unable to re-register.";
     }
 
     if (text.isNotEmpty) {
@@ -198,30 +200,30 @@ class EventScreenState extends State<EventScreen> {
                     TextSpan(
                       text:
                           "By registering, you confirm that you have read the ",
-                      style: TextStyle(color: Color.fromRGBO(0, 0, 0, 1)),
+                      style: Theme.of(context).textTheme.bodyText2,
                     ),
                     TextSpan(
                       text: "terms and conditions",
                       recognizer: TapGestureRecognizer()..onTap = followLink,
-                      style: TextStyle(color: Theme.of(context).accentColor),
+                      style: Theme.of(context).textTheme.bodyText2.copyWith(
+                            color: Theme.of(context).accentColor,
+                          ),
                     ),
                     TextSpan(
                       text:
                           ", that you understand them and that you agree to be bound by them.",
-                      style: TextStyle(color: Color.fromRGBO(0, 0, 0, 1)),
+                      style: Theme.of(context).textTheme.bodyText2,
                     ),
                   ],
                 ),
               ),
             ),
-            FlatButton(
-              textColor: Colors.white,
-              color: Theme.of(context).accentColor,
+            ElevatedButton(
               child: Text(
                 event.maxParticipants != null &&
                         event.maxParticipants <= event.numParticipants
-                    ? 'Put me on the waiting list'
-                    : 'Register',
+                    ? 'PUT ME ON THE WAITING LIST'
+                    : 'REGISTER',
               ),
               onPressed: () {
                 Navigator.push(
@@ -244,18 +246,14 @@ class EventScreenState extends State<EventScreen> {
             event.hasFields) {
           return Column(
             children: [
-              FlatButton(
-                textColor: Colors.white,
-                color: Theme.of(context).accentColor,
-                child: Text('Update registration'),
+              ElevatedButton(
+                child: Text('UPDATE REGISTRATION'),
                 onPressed: () {
                   // TODO: Go to update registration view
                 },
               ),
-              FlatButton(
-                textColor: Colors.white,
-                color: Theme.of(context).accentColor,
-                child: Text('Cancel registration'),
+              ElevatedButton(
+                child: Text('CANCEL REGISTRATION'),
                 onPressed: () {
                   // TODO: Cancel registration
                 },
@@ -265,10 +263,8 @@ class EventScreenState extends State<EventScreen> {
         } else {
           return Column(
             children: [
-              FlatButton(
-                textColor: Colors.white,
-                color: Theme.of(context).accentColor,
-                child: Text('Cancel registration'),
+              ElevatedButton(
+                child: Text('CANCEL REGISTRATION'),
                 onPressed: () {},
               ),
             ],
@@ -280,12 +276,9 @@ class EventScreenState extends State<EventScreen> {
   }
 
   static Widget _makePizzaAction(BuildContext context, Event event) {
-    return FlatButton.icon(
+    return ElevatedButton.icon(
       icon: Icon(Icons.local_pizza),
-      textColor: Colors.white,
-      label: Text("Pizza"),
-      color: Theme.of(context).accentColor,
-      disabledColor: Theme.of(context).disabledColor,
+      label: Text("PIZZA"),
       onPressed: () => Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => PizzaScreen()),
@@ -295,120 +288,145 @@ class EventScreenState extends State<EventScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Event'),
-      ),
-      body: FutureBuilder<Event>(
-        future: _event,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            Event event = snapshot.data;
-            return Container(
-              child: Column(
-                children: [
-                  Link(
-                    uri: Uri.parse(
-                        "https://maps.${Platform.isIOS ? 'apple' : 'google'}.com/maps?daddr=${Uri.encodeComponent(event.mapLocation)}"),
-                    builder: (context, followLink) => GestureDetector(
-                      onTap: followLink,
-                      child: Center(
-                        child: FadeInImage.assetNetwork(
-                          // TODO: Replace placeholder
-                          placeholder: 'assets/img/huygens.jpg',
-                          image: event.googleMapsUrl,
+    return FutureBuilder<Event>(
+      future: _event,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          Event event = snapshot.data;
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Event'),
+              actions: [
+                if (event.registrationRequired() && event.isAdmin ?? false)
+                  IconButton(
+                    icon: Icon(Icons.settings),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EventAdminScreen(event.pk),
                         ),
+                      );
+                    },
+                  ),
+              ],
+            ),
+            body: Column(
+              children: [
+                Link(
+                  uri: Uri.parse(
+                      "https://maps.${Platform.isIOS ? 'apple' : 'google'}.com"
+                      "/maps?daddr=${Uri.encodeComponent(event.mapLocation)}"),
+                  builder: (context, followLink) => GestureDetector(
+                    onTap: followLink,
+                    child: Center(
+                      child: FadeInImage.assetNetwork(
+                        // TODO: Replace placeholder
+                        placeholder: 'assets/img/huygens.jpg',
+                        image: event.googleMapsUrl,
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: 20,
-                      top: 10,
-                      right: 20,
-                      bottom: 0,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(bottom: 10),
-                          child: Text(
-                            event.title,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 24,
-                            ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: 20,
+                    top: 10,
+                    right: 20,
+                    bottom: 0,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        child: Text(
+                          event.title,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24,
                           ),
                         ),
-                        _makeEventProperties(context, event),
-                        SizedBox(height: 15),
-                        _makeEventActions(context, event),
-                        _makeRegistrationText(context, event),
-                        if (event.isPizzaEvent)
-                          _makePizzaAction(context, event),
-                      ],
-                    ),
+                      ),
+                      _makeEventProperties(context, event),
+                      SizedBox(height: 15),
+                      _makeEventActions(context, event),
+                      _makeRegistrationText(context, event),
+                      if (event.isPizzaEvent) _makePizzaAction(context, event),
+                    ],
                   ),
+                ),
+                Divider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Html(data: event.description),
+                ),
+                if (event.registrationRequired() &&
+                    event.numParticipants == 0) ...[
                   Divider(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Html(data: event.description),
-                  ),
-                  if (event.registrationRequired() &&
-                      event.numParticipants == 0) ...[
-                    Divider(),
-                    Text("No registrations yet."),
-                  ],
-                  if (event.registrationRequired() &&
-                      event.numParticipants > 0) ...[
-                    Divider(),
-                    FutureBuilder(
-                      future: _registrations,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return GridView.builder(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 10,
-                              crossAxisCount: 3,
-                            ),
-                            itemCount: snapshot.data.length,
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            padding: const EdgeInsets.all(20),
-                            itemBuilder: (context, index) =>
-                                MemberCard(snapshot.data[index]),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Center(
-                            child: Text(
-                              "An error occurred while fetching registrations.",
-                            ),
-                          );
-                        } else {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      },
-                    ),
-                  ]
+                  Text("No registrations yet."),
                 ],
-              ),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
+                if (event.registrationRequired() &&
+                    event.numParticipants > 0) ...[
+                  Divider(),
+                  FutureBuilder(
+                    future: _registrations,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        // TODO: transform to grid of registrations,
+                        // probably by changing the whole screen to a SliverGrid
+                        // return GridView.builder(
+                        //   gridDelegate:
+                        //       SliverGridDelegateWithFixedCrossAxisCount(
+                        //     crossAxisSpacing: 10,
+                        //     mainAxisSpacing: 10,
+                        //     crossAxisCount: 3,
+                        //   ),
+                        //   itemCount: snapshot.data.length,
+                        //   physics: const AlwaysScrollableScrollPhysics(),
+                        //   padding: const EdgeInsets.all(20),
+                        //   itemBuilder: (context, index) =>
+                        //       MemberCard(snapshot.data[index]),
+                        // );
+                        return Text("TODO");
+                      } else if (snapshot.hasError) {
+                        return Center(
+                          child: Text(
+                            "An error occurred while fetching registrations.",
+                          ),
+                        );
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
+                  ),
+                ]
+              ],
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Event'),
+            ),
+            body: Center(
               child: Text("An error occurred while fetching event data."),
-            );
-          } else {
-            return Center(
+            ),
+          );
+        } else {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Event'),
+            ),
+            body: Center(
               child: CircularProgressIndicator(),
-            );
-          }
-        },
-      ),
+            ),
+          );
+        }
+      },
     );
   }
 }

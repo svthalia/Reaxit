@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/models/event.dart';
-import 'package:reaxit/ui/components/card_section.dart';
 import 'package:reaxit/ui/screens/event_screen.dart';
 
 class EventDetailCard extends StatelessWidget {
@@ -11,70 +10,49 @@ class EventDetailCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: CardSection(
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                margin: EdgeInsets.only(bottom: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(_event.title),
-                        Text(
-                          DateFormat('HH:mm').format(_event.start) +
-                              ' - ' +
-                              DateFormat('HH:mm').format(_event.start) +
-                              ' | ' +
-                              _event.location,
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      width: 20,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color:
-                            _event.registered ? Color(0xFFE62272) : Colors.grey,
-                      ),
-                    ),
-                  ],
+    String start = DateFormat('HH:mm').format(_event.start);
+    String end = DateFormat('HH:mm').format(_event.end);
+    return Card(
+      margin: const EdgeInsets.all(20),
+      child: Padding(
+        padding: const EdgeInsets.only(
+          left: 16,
+          right: 16,
+          bottom: 16,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(_event.title),
+              subtitle: Text("$start - $end | ${_event.location}"),
+              trailing: Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _event.registered ? Color(0xFFE62272) : Colors.grey,
                 ),
               ),
-              Container(
-                margin: EdgeInsets.only(bottom: 10),
-                child: Text(
-                  _event.description,
-                  style: TextStyle(color: Colors.black87),
-                ),
-              ),
-              Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                FlatButton(
-                  textColor: Colors.white,
-                  color: Color(0xFFE62272),
-                  child: Text('MORE INFO'),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => EventScreen(_event.pk)),
-                    );
-                  },
-                ),
-              ])
-            ],
-          ),
-        ],
+            ),
+            Divider(),
+            Text(_event.description),
+            Divider(),
+            ElevatedButton(
+              child: Text('MORE INFO'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EventScreen(_event.pk),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -5,7 +5,7 @@ import 'package:reaxit/models/photo.dart';
 part 'user_registration.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class UserRegistration {
+class Registration {
   final int pk;
   @JsonKey(name: 'member')
   final int memberPk;
@@ -15,11 +15,11 @@ class UserRegistration {
   final bool isCancelled;
   final bool isLateCancellation;
   final int queuePosition;
-  final String payment;
-  final bool present;
   final Photo avatar;
+  bool present;
+  String payment;
 
-  UserRegistration(
+  Registration(
     this.pk,
     this.memberPk,
     this.name,
@@ -32,7 +32,7 @@ class UserRegistration {
     this.avatar,
   );
 
-  factory UserRegistration.fromJson(Map<String, dynamic> json) =>
+  factory Registration.fromJson(Map<String, dynamic> json) =>
       _$UserRegistrationFromJson(json);
 
   Member get member => Member(

@@ -22,7 +22,7 @@ class Event {
   final DateTime registrationStart;
   @JsonKey(fromJson: _dateTimeFromJson)
   final DateTime registrationEnd;
-  final UserRegistration userRegistration;
+  final Registration userRegistration;
   @JsonKey(fromJson: _dateTimeFromJson)
   final DateTime cancelDeadline;
   final int numParticipants;
@@ -31,6 +31,7 @@ class Event {
   final String fine;
   final bool hasFields;
   final String googleMapsUrl;
+  final bool isAdmin;
 
   Event(
     this.pk,
@@ -54,6 +55,7 @@ class Event {
     this.hasFields,
     this.googleMapsUrl,
     this.mapLocation,
+    this.isAdmin,
   );
 
   bool registrationRequired() {

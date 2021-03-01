@@ -1,15 +1,30 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:reaxit/models/pizza.dart';
 import 'package:reaxit/models/pizza_event.dart';
 import 'package:reaxit/models/pizza_order.dart';
 import 'package:reaxit/providers/api_service.dart';
 import 'package:reaxit/providers/auth_provider.dart';
 
+/// Filters a list of orders on a string.
+///
+/// [arguments] must be a map with `arguments['list']` a [List<PizzaOrder>] and
+/// `arguments['query']` the [String] query.
+List<PizzaOrder> _filterOrders(Map arguments) {
+  return arguments['list'].where((PizzaOrder order) {
+    String query = arguments['query'].toLowerCase();
+    return (order.displayName.toLowerCase().contains(query) ||
+        order.pizza.name.toLowerCase().contains(query));
+  }).toList();
+}
+
 class PizzasProvider extends ApiService {
   List<Pizza> _pizzaList = [];
-
   List<Pizza> get pizzaList => _pizzaList;
+
+  List<PizzaOrder> _orderList = [];
+  List<PizzaOrder> get orderList => _orderList;
 
   PizzaOrder _myOrder;
   PizzaOrder get myOrder => _myOrder;
@@ -18,7 +33,8 @@ class PizzasProvider extends ApiService {
   PizzaEvent _pizzaEvent;
   PizzaEvent get pizzaEvent => _pizzaEvent;
   bool get hasEvent => _pizzaEvent != null;
-  bool get canOrder =>
+
+  bool canOrder() =>
       _pizzaEvent != null &&
       DateTime.now().isAfter(_pizzaEvent?.start) &&
       DateTime.now().isBefore(_pizzaEvent?.end);
@@ -30,6 +46,7 @@ class PizzasProvider extends ApiService {
     _pizzaEvent = await _getPizzaEvent();
     _myOrder = await _getMyOrder();
     _pizzaList = await _getPizzas();
+    _orderList = await _getOrders();
     if (_myOrder != null) {
       _myOrder.pizza = _pizzaList.firstWhere(
         (pizza) => pizza.pk == _myOrder.pizzaPk,
@@ -69,6 +86,30 @@ class PizzasProvider extends ApiService {
     }
   }
 
+  Future<List<PizzaOrder>> _getOrders() async {
+    if (_pizzaEvent?.isAdmin ?? false) {
+      String response = await this.get("/pizzas/orders/");
+      List<dynamic> jsonOrders = jsonDecode(response);
+      return jsonOrders.map<PizzaOrder>((jsonOrder) {
+        PizzaOrder order = PizzaOrder.fromJson(jsonOrder);
+        order.pizza = _pizzaList.firstWhere(
+          (pizza) => pizza.pk == order.pizzaPk,
+          orElse: () => null,
+        );
+        return order;
+      }).toList();
+    } else {
+      return [];
+    }
+  }
+
+  Future<List<PizzaOrder>> searchOrders(String query) async {
+    return compute(
+      _filterOrders,
+      {'list': _orderList, 'query': query},
+    );
+  }
+
   Future<void> placeOrder(Pizza pizza) async {
     String body = jsonEncode({'product': pizza.pk});
     if (hasOrder) {
@@ -89,13 +130,10 @@ class PizzasProvider extends ApiService {
     notifyListeners();
   }
 
-  Future<List<PizzaOrder>> getOrders() async {
-    // TODO: retrieve orders
-    throw UnimplementedError();
-  }
-
-  Future<PizzaOrder> updateOrder(PizzaOrder order, String payment) async {
-    // TODO: update an order, separate or only updateMyOrder()?
-    throw UnimplementedError();
+  /// Marks an [order] as paid with payment method [payment].
+  Future<void> payOrder(PizzaOrder order, String payment) async {
+    String body = jsonEncode({'payment': payment});
+    await this.patch("/pizzas/orders/${order.pk}/", body);
+    load();
   }
 }

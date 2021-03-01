@@ -312,7 +312,9 @@ class _MemberDetailState extends State<MemberDetail> {
             children: [
               PhotoView(
                 imageProvider: NetworkImage(avatar),
-                heroAttributes: PhotoViewHeroAttributes(tag: widget.pk),
+                heroAttributes: PhotoViewHeroAttributes(
+                  tag: "member_${widget.pk}",
+                ),
                 backgroundDecoration: BoxDecoration(color: Colors.transparent),
                 minScale: PhotoViewComputedScale.contained * 0.8,
                 maxScale: PhotoViewComputedScale.covered * 1.2,
@@ -349,7 +351,7 @@ class _MemberDetailState extends State<MemberDetail> {
                         fit: StackFit.expand,
                         children: [
                           Hero(
-                            tag: widget.pk,
+                            tag: "member_${widget.pk}",
                             child: FadeInImage.assetNetwork(
                               placeholder: 'assets/img/default-avatar.jpg',
                               image: member.avatar.full,
@@ -393,7 +395,7 @@ class _MemberDetailState extends State<MemberDetail> {
                         fit: StackFit.expand,
                         children: [
                           Hero(
-                            tag: widget.pk,
+                            tag: "member_${widget.pk}",
                             child: widget.listMember != null
                                 ? FadeInImage.assetNetwork(
                                     placeholder:

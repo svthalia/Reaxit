@@ -18,7 +18,8 @@ class AlbumList extends StatelessWidget {
             onPressed: () => showSearch(
               context: context,
               delegate: NetworkSearchDelegate<PhotosProvider>(
-                resultBuilder: (context, albumList, child) {
+                search: (albums, query) => albums.search(query),
+                resultBuilder: (context, albums, albumList) {
                   return GridView.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisSpacing: 10,

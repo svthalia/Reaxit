@@ -3,7 +3,7 @@ import 'package:reaxit/models/photo.dart';
 
 part 'album.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class Album {
   final int pk;
   final String title;

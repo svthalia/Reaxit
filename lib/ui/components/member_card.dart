@@ -21,7 +21,7 @@ class MemberCard extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           Hero(
-            tag: _member.pk,
+            tag: "member_${_member.pk}",
             child: FadeInImage.assetNetwork(
               placeholder: 'assets/img/default-avatar.jpg',
               image: _member.avatar.medium,

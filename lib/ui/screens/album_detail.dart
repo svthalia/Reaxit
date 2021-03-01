@@ -32,15 +32,9 @@ class _AlbumDetailState extends State<AlbumDetail> {
             children: [
               PhotoViewGallery.builder(
                 itemCount: album.photos.length,
-                builder: (context, i) =>
-                    PhotoViewGalleryPageOptions.customChild(
-                  child: Hero(
-                    tag: album.photos[i].pk,
-                    child: FadeInImage.assetNetwork(
-                      placeholder: 'assets/img/default-avatar.jpg',
-                      image: album.photos[i].full,
-                    ),
-                  ),
+                builder: (context, i) => PhotoViewGalleryPageOptions(
+                  imageProvider: NetworkImage(album.photos[i].full),
+                  tightMode: false,
                 ),
                 pageController: PageController(initialPage: index),
               ),
@@ -60,7 +54,7 @@ class _AlbumDetailState extends State<AlbumDetail> {
     return GestureDetector(
       onTap: () => _showPhotoGallery(context, album, index),
       child: Hero(
-        tag: album.photos[index].pk,
+        tag: "photo_${album.photos[index].pk}",
         child: FadeInImage.assetNetwork(
           placeholder: 'assets/img/default-avatar.jpg',
           image: album.photos[index].medium,

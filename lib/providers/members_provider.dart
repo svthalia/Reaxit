@@ -4,8 +4,7 @@ import 'package:reaxit/models/member.dart';
 import 'package:reaxit/providers/api_service.dart';
 import 'package:reaxit/providers/auth_provider.dart';
 
-class MembersProvider extends ApiSearchService {
-  /// Stored future that is executed on load(), to be used in a [FutureBuilder].
+class MembersProvider extends ApiService {
   List<Member> _memberList = [];
   List<Member> get memberList => _memberList;
 
@@ -16,20 +15,19 @@ class MembersProvider extends ApiSearchService {
     _memberList = await _getMembers();
   }
 
-  @override
-  Future<List<Member>> search(String query) async {
-    String response = await this.get(
-      "/members/?search=${Uri.encodeComponent(query)}",
-    );
-    List<dynamic> jsonMembers = jsonDecode(response)['results'];
+  Future<List<Member>> _getMembers() async {
+    String response = await this.get("/members/");
+    List<dynamic> jsonMembers = jsonDecode(response);
     return jsonMembers
         .map((jsonMember) => Member.fromJson(jsonMember))
         .toList();
   }
 
-  Future<List<Member>> _getMembers() async {
-    String response = await this.get("/members/");
-    List<dynamic> jsonMembers = jsonDecode(response)['results'];
+  Future<List<Member>> search(String query) async {
+    String response = await this.get(
+      "/members/?search=${Uri.encodeComponent(query)}",
+    );
+    List<dynamic> jsonMembers = jsonDecode(response);
     return jsonMembers
         .map((jsonMember) => Member.fromJson(jsonMember))
         .toList();

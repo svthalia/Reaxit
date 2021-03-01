@@ -3,18 +3,20 @@ import 'package:reaxit/models/pizza.dart';
 
 part 'pizza_order.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class PizzaOrder {
   final int pk;
   @JsonKey(name: "product")
   final int pizzaPk;
   final String name;
-  final String payment;
   final int member;
+  final String displayName;
+  String payment;
   @JsonKey(ignore: true)
   Pizza pizza;
 
-  PizzaOrder(this.pk, this.name, this.pizzaPk, this.payment, this.member);
+  PizzaOrder(this.pk, this.name, this.pizzaPk, this.payment, this.member,
+      this.displayName);
 
   bool get isPaid => (payment?.isNotEmpty ?? false) && payment != 'no_payment';
 

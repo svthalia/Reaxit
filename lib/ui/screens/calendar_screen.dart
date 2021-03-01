@@ -45,7 +45,8 @@ class CalendarScreenState extends State<CalendarScreen> {
               showSearch(
                 context: context,
                 delegate: NetworkSearchDelegate<EventsProvider>(
-                  resultBuilder: (context, eventList, child) => ListView(
+                  search: (events, query) => events.search(query),
+                  resultBuilder: (context, events, eventList) => ListView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     padding: const EdgeInsets.all(20),
                     children: groupByMonth(eventList)
