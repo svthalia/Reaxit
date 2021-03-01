@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reaxit/providers/pizzas_provider.dart';
-import 'package:reaxit/providers/settings_provider.dart';
+import 'package:reaxit/providers/notifications_provider.dart';
 import 'package:reaxit/providers/theme_mode_provider.dart';
 import 'package:reaxit/ui/screens/splash_screen.dart';
 import 'package:reaxit/ui/styles/theme.dart';
@@ -50,11 +50,11 @@ class ThaliApp extends StatelessWidget {
             ),
             update: (context, auth, pizzas) => PizzasProvider(auth),
           ),
-          ChangeNotifierProxyProvider<AuthProvider, SettingsProvider>(
-            create: (context) => SettingsProvider(
+          ChangeNotifierProxyProvider<AuthProvider, NotificationsProvider>(
+            create: (context) => NotificationsProvider(
               Provider.of<AuthProvider>(context, listen: false),
             ),
-            update: (context, auth, pizzas) => SettingsProvider(auth),
+            update: (context, auth, pizzas) => NotificationsProvider(auth),
           ),
         ],
         child: Consumer<ThemeModeProvider>(

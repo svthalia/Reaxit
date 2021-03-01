@@ -125,6 +125,7 @@ ThemeData darkTheme = ThemeData.from(
   colorScheme: darkColorScheme,
   textTheme: generatedTextTheme,
 ).copyWith(
+  toggleableActiveColor: darkColorScheme.primary,
   primaryTextTheme: ThemeData.dark().primaryTextTheme.merge(generatedTextTheme),
   appBarTheme: lightTheme.appBarTheme,
 );
