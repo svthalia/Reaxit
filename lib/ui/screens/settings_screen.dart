@@ -5,20 +5,7 @@ import 'package:reaxit/providers/theme_mode_provider.dart';
 import 'package:reaxit/ui/components/menu_drawer.dart';
 import 'package:reaxit/models/setting.dart';
 
-class SettingsScreen extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => SettingsScreenState();
-}
-
-class SettingsScreenState extends State<SettingsScreen> {
-  List<Setting> _notification_settings;
-
-  @override
-  void didChangeDependencies() {
-    _notification_settings = Provider.of<NotificationsProvider>(context).getSettingsList();
-    super.didChangeDependencies();
-  }
-
+class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +21,7 @@ class SettingsScreenState extends State<SettingsScreen> {
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyText1,
           ),
-          _SettingsCard(_notification_settings),
+          _SettingsCard(),
         ],
       ),
     );
@@ -101,21 +88,22 @@ class _ThemeModeCard extends StatelessWidget {
 }
 
 class _SettingsCard extends StatelessWidget {
-  final List<Setting> _settings;
-
-  _SettingsCard(this._settings);
-
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: ListTile.divideTiles(
-          context: context,
-          tiles: _settings.map((setting) => _SettingCard(setting)),
-        ).toList(),
-      ),
+    return Consumer<NotificationsProvider>(
+      builder: (context, _notifications, child) {
+        return Card(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: ListTile.divideTiles(
+              context: context,
+              tiles: _notifications.settings
+                  .map((setting) => _SettingCard(setting)),
+            ).toList(),
+          ),
+        );
+      },
     );
   }
 }
@@ -128,8 +116,12 @@ class _SettingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SwitchListTile(
-      value: Provider.of<NotificationsProvider>(context).getNotificatinoSetting(_setting),
-      onChanged: (value) => {Provider.of<NotificationsProvider>(context).setNotificationSetting(this._setting, value)},
+      value: Provider.of<NotificationsProvider>(context)
+          .getNotificatinoSetting(_setting),
+      onChanged: (value) => {
+        Provider.of<NotificationsProvider>(context)
+            .setNotificationSetting(this._setting, value)
+      },
       title: Text(_setting.name),
       subtitle: (_setting.description?.isNotEmpty ?? false)
           ? Text(_setting.description)

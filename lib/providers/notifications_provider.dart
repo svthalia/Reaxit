@@ -8,8 +8,8 @@ import 'auth_provider.dart';
 
 class NotificationsProvider extends ApiService {
   Map<Setting, bool> _settings = {};
-  final String _PREFIX = "notifications_";
-  final bool _DEFAULT_SETTING_VALUE = true;
+  static const String _prefix = "notifications_";
+  static const bool _defaultSettingValue = true;
 
   NotificationsProvider(AuthProvider authProvider) : super(authProvider);
 
@@ -17,15 +17,11 @@ class NotificationsProvider extends ApiService {
   Future<void> loadImplementation() async {
     List<Setting> settings = await _getSettings();
     for (int i = 0; i < settings.length; i++) {
-      _settings[settings[i]] = await this._getNotificationSetting(settings[i]);
+      _settings[settings[i]] = await _getStoredSetting(settings[i]);
     }
   }
 
-  List<Setting> getSettingsList() {
-    List<Setting> settings = new List<Setting>();
-    _settings.forEach((k, v) => settings.add(k));
-    return settings;
-  }
+  List<Setting> get settings => _settings.keys.toList();
 
   Future<List<Setting>> _getSettings() async {
     String response = await this.get("/devices/categories/");
@@ -35,33 +31,24 @@ class NotificationsProvider extends ApiService {
         .toList();
   }
 
+  Future<bool> _getStoredSetting(Setting setting) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool value = await prefs.getBool(_prefix + setting.key);
+    return value ?? _defaultSettingValue;
+  }
+
+  Future<void> _setStoredSetting(Setting setting, bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_prefix + setting.key, value);
+  }
+
   bool getNotificatinoSetting(Setting setting) {
-    if (_settings.containsKey(setting)) {
-      return _settings[setting];
-    }
-    else {
-      return null;
-    }
-  }
-
-  Future<bool> _getNotificationSetting(Setting setting) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool value = await prefs.getBool(this._PREFIX + setting.key);
-    if (value == null) {
-      return _DEFAULT_SETTING_VALUE;
-    } else {
-      return value;
-    }
-  }
-
-  Future<void> _setNotificationSetting(Setting setting, bool value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(this._PREFIX + setting.key, value);
+    return _settings.containsKey(setting) ? _settings[setting] : null;
   }
 
   Future<void> setNotificationSetting(Setting setting, bool value) async {
     _settings[setting] = value;
-    this._setNotificationSetting(setting, value);
+    _setStoredSetting(setting, value);
     notifyListeners();
   }
 }
