@@ -20,7 +20,6 @@ class EventDetailCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ListTile(
-            // contentPadding: EdgeInsets.zero,
             title: Text(_event.title),
             subtitle: Text("$start - $end | ${_event.location}"),
             trailing: Container(
