@@ -116,11 +116,11 @@ class _SettingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SwitchListTile(
-      value: Provider.of<NotificationsProvider>(context)
+      value: Provider.of<NotificationsProvider>(context, listen: false)
           .getNotificatinoSetting(_setting),
-      onChanged: (value) => {
-        Provider.of<NotificationsProvider>(context)
-            .setNotificationSetting(this._setting, value)
+      onChanged: (value) {
+        Provider.of<NotificationsProvider>(context, listen: false)
+            .setNotificationSetting(this._setting, value);
       },
       title: Text(_setting.name),
       subtitle: (_setting.description?.isNotEmpty ?? false)
