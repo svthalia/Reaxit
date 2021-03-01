@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:reaxit/models/event.dart';
-import 'package:reaxit/models/user_registration.dart';
+import 'package:reaxit/models/registration.dart';
 import 'package:reaxit/providers/api_service.dart';
 import 'package:reaxit/providers/events_provider.dart';
 import 'package:reaxit/ui/components/network_search_delegate.dart';
@@ -168,7 +167,6 @@ class _RegistrationTile extends StatefulWidget {
 
 class __RegistrationTileState extends State<_RegistrationTile> {
   Registration registration;
-  bool _dropdownIsFocused = false;
 
   __RegistrationTileState(this.registration);
 

@@ -6,7 +6,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:reaxit/models/event.dart';
-import 'package:reaxit/models/user_registration.dart';
+import 'package:reaxit/models/registration.dart';
 import 'package:reaxit/providers/events_provider.dart';
 import 'package:reaxit/ui/screens/event_admin_screen.dart';
 import 'package:reaxit/ui/screens/event_registration_screen.dart';

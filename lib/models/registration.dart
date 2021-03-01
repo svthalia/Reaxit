@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:reaxit/models/member.dart';
 import 'package:reaxit/models/photo.dart';
 
-part 'user_registration.g.dart';
+part 'registration.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Registration {
