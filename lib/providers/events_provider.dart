@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:reaxit/models/event.dart';
-import 'package:reaxit/models/user_registration.dart';
+import 'package:reaxit/models/registration.dart';
 import 'package:reaxit/providers/api_service.dart';
 import 'package:reaxit/providers/auth_provider.dart';
 

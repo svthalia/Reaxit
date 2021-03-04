@@ -102,7 +102,7 @@ class _OrderTile extends StatelessWidget {
                   value: order.payment,
                   onChanged: (payment) async {
                     try {
-                      await Provider.of<PizzasProvider>(context)
+                      await Provider.of<PizzasProvider>(context, listen: false)
                           .payOrder(order, payment);
                       order.payment = payment;
                       // payOrder loads the list again, this is only

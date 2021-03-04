@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:reaxit/models/event.dart';
-import 'package:reaxit/models/user_registration.dart';
+import 'package:reaxit/models/registration.dart';
 import 'package:reaxit/providers/api_service.dart';
 import 'package:reaxit/providers/events_provider.dart';
 import 'package:reaxit/ui/components/network_search_delegate.dart';
@@ -30,7 +29,7 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
   Future<void> refresh() async {
     List<Registration> registrations;
     try {
-      registrations = await Provider.of<EventsProvider>(context)
+      registrations = await Provider.of<EventsProvider>(context, listen: false)
           .getEventRegistrations(widget.pk);
       _error = null;
     } on ApiException catch (error) {
@@ -168,7 +167,6 @@ class _RegistrationTile extends StatefulWidget {
 
 class __RegistrationTileState extends State<_RegistrationTile> {
   Registration registration;
-  bool _dropdownIsFocused = false;
 
   __RegistrationTileState(this.registration);
 
@@ -191,7 +189,7 @@ class __RegistrationTileState extends State<_RegistrationTile> {
                   bool oldValue = registration.present;
                   setState(() => registration.present = value);
                   try {
-                    await Provider.of<EventsProvider>(context)
+                    await Provider.of<EventsProvider>(context, listen: false)
                         .setPresent(registration, value);
                   } on ApiException {
                     Scaffold.of(context).showSnackBar(
@@ -224,7 +222,8 @@ class __RegistrationTileState extends State<_RegistrationTile> {
                         String oldPayment = registration.payment;
                         setState(() => registration.payment = payment);
                         try {
-                          await Provider.of<EventsProvider>(context)
+                          await Provider.of<EventsProvider>(context,
+                                  listen: false)
                               .payRegistration(registration, payment);
                         } on ApiException {
                           Scaffold.of(context).showSnackBar(

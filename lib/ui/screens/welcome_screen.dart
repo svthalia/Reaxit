@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reaxit/navigation.dart';
 import 'package:reaxit/providers/events_provider.dart';
 import 'package:reaxit/ui/components/menu_drawer.dart';
 import 'package:reaxit/ui/components/event_detail_card.dart';
@@ -21,6 +22,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
       drawer: MenuDrawer(),
       body: NetworkWrapper<EventsProvider>(
         builder: (context, events) => ListView(
+            padding: const EdgeInsets.all(20),
             physics: const AlwaysScrollableScrollPhysics(),
             children: new List<Widget>.from(events.eventList
                 .map((event) => EventDetailCard(event))
@@ -30,9 +32,8 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                 Column(children: [
                   TextButton(
                     child: Text('SHOW THE ENTIRE AGENDA'),
-                    onPressed: () => Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => CalendarScreen()),
+                    onPressed: () => MyRouterDelegate.of(context).replace(
+                      MyPage(child: CalendarScreen()),
                     ),
                   )
                 ])

@@ -20,7 +20,8 @@ class _MemberDetailState extends State<MemberDetail> {
 
   @override
   didChangeDependencies() {
-    _memberFuture = Provider.of<MembersProvider>(context).getMember(widget.pk);
+    _memberFuture = Provider.of<MembersProvider>(context, listen: false)
+        .getMember(widget.pk);
     super.didChangeDependencies();
   }
 

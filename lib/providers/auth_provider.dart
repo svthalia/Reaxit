@@ -64,6 +64,9 @@ class AuthProvider extends ChangeNotifier {
   logOut() {
     _helper.disconnect();
     _status = AuthStatus.SIGNED_OUT;
+    _name = null;
+    _pictureUrl = null;
+    notifyListeners();
   }
 
   Future<String> logIn() async {

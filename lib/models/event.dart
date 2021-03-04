@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:reaxit/models/user_registration.dart';
+import 'package:reaxit/models/registration.dart';
 
 part 'event.g.dart';
 
@@ -16,7 +16,6 @@ class Event {
   final String mapLocation;
   final String price;
   final bool registered;
-  final bool isPizzaEvent;
   final bool registrationAllowed;
   @JsonKey(fromJson: _dateTimeFromJson)
   final DateTime registrationStart;
@@ -33,6 +32,14 @@ class Event {
   final String googleMapsUrl;
   final bool isAdmin;
 
+  // The api names this "pizza" for /events/ and "is_pizza_event" for /event/pk.
+  @JsonKey(name: "is_pizza_event")
+  final bool pizza1;
+  @JsonKey(name: "pizza")
+  final bool pizza2;
+
+  bool get isPizzaEvent => pizza1 ?? pizza2;
+
   Event(
     this.pk,
     this.title,
@@ -42,7 +49,6 @@ class Event {
     this.location,
     this.price,
     this.registered,
-    this.isPizzaEvent,
     this.registrationAllowed,
     this.registrationStart,
     this.registrationEnd,
@@ -56,6 +62,8 @@ class Event {
     this.googleMapsUrl,
     this.mapLocation,
     this.isAdmin,
+    this.pizza1,
+    this.pizza2,
   );
 
   bool registrationRequired() {

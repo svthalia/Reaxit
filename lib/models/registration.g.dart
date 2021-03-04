@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user_registration.dart';
+part of 'registration.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Registration _$UserRegistrationFromJson(Map<String, dynamic> json) {
+Registration _$RegistrationFromJson(Map<String, dynamic> json) {
   return Registration(
     json['pk'] as int,
     json['member'] as int,
@@ -23,7 +23,7 @@ Registration _$UserRegistrationFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$UserRegistrationToJson(Registration instance) =>
+Map<String, dynamic> _$RegistrationToJson(Registration instance) =>
     <String, dynamic>{
       'pk': instance.pk,
       'member': instance.memberPk,
@@ -32,7 +32,7 @@ Map<String, dynamic> _$UserRegistrationToJson(Registration instance) =>
       'is_cancelled': instance.isCancelled,
       'is_late_cancellation': instance.isLateCancellation,
       'queue_position': instance.queuePosition,
-      'payment': instance.payment,
-      'present': instance.present,
       'avatar': instance.avatar,
+      'present': instance.present,
+      'payment': instance.payment,
     };

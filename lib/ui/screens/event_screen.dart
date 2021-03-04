@@ -6,7 +6,8 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:reaxit/models/event.dart';
-import 'package:reaxit/models/user_registration.dart';
+import 'package:reaxit/models/registration.dart';
+import 'package:reaxit/navigation.dart';
 import 'package:reaxit/providers/events_provider.dart';
 import 'package:reaxit/ui/screens/event_admin_screen.dart';
 import 'package:reaxit/ui/screens/event_registration_screen.dart';
@@ -34,11 +35,12 @@ class EventScreenState extends State<EventScreen> {
 
   @override
   void didChangeDependencies() {
-    _event = Provider.of<EventsProvider>(context).getEvent(widget.pk);
+    _event =
+        Provider.of<EventsProvider>(context, listen: false).getEvent(widget.pk);
     _event.then(
       (event) {
         if (event?.registrationRequired() ?? false) {
-          _registrations = Provider.of<EventsProvider>(context)
+          _registrations = Provider.of<EventsProvider>(context, listen: false)
               .getEventRegistrations(event.pk);
         }
       },
@@ -226,10 +228,8 @@ class EventScreenState extends State<EventScreen> {
                     : 'REGISTER',
               ),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => EventRegistrationScreen(event)),
+                MyRouterDelegate.of(context).push(
+                  MyPage(child: EventRegistrationScreen(event)),
                 );
               },
             ),
@@ -279,9 +279,8 @@ class EventScreenState extends State<EventScreen> {
     return ElevatedButton.icon(
       icon: Icon(Icons.local_pizza),
       label: Text("PIZZA"),
-      onPressed: () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => PizzaScreen()),
+      onPressed: () => MyRouterDelegate.of(context).push(
+        MyPage(child: PizzaScreen()),
       ),
     );
   }
@@ -301,11 +300,8 @@ class EventScreenState extends State<EventScreen> {
                   IconButton(
                     icon: Icon(Icons.settings),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EventAdminScreen(event.pk),
-                        ),
+                      MyRouterDelegate.of(context).push(
+                        MyPage(child: EventAdminScreen(event.pk)),
                       );
                     },
                   ),

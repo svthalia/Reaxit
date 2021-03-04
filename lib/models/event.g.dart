@@ -16,7 +16,6 @@ Event _$EventFromJson(Map<String, dynamic> json) {
     json['location'] as String,
     json['price'] as String,
     json['registered'] as bool,
-    json['is_pizza_event'] as bool,
     json['registration_allowed'] as bool,
     _dateTimeFromJson(json['registration_start']),
     _dateTimeFromJson(json['registration_end']),
@@ -33,6 +32,8 @@ Event _$EventFromJson(Map<String, dynamic> json) {
     json['google_maps_url'] as String,
     json['map_location'] as String,
     json['is_admin'] as bool,
+    json['is_pizza_event'] as bool,
+    json['pizza'] as bool,
   );
 }
 
@@ -46,7 +47,6 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'map_location': instance.mapLocation,
       'price': instance.price,
       'registered': instance.registered,
-      'is_pizza_event': instance.isPizzaEvent,
       'registration_allowed': instance.registrationAllowed,
       'registration_start': instance.registrationStart?.toIso8601String(),
       'registration_end': instance.registrationEnd?.toIso8601String(),
@@ -59,4 +59,6 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'has_fields': instance.hasFields,
       'google_maps_url': instance.googleMapsUrl,
       'is_admin': instance.isAdmin,
+      'is_pizza_event': instance.pizza1,
+      'pizza': instance.pizza2,
     };

@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:reaxit/models/pizza.dart';
 import 'package:reaxit/models/pizza_event.dart';
+import 'package:reaxit/navigation.dart';
 import 'package:reaxit/providers/api_service.dart';
 import 'package:reaxit/providers/pizzas_provider.dart';
 import 'package:reaxit/ui/components/network_wrapper.dart';
@@ -23,11 +24,8 @@ class PizzaScreen extends StatelessWidget {
                 return IconButton(
                   icon: Icon(Icons.settings),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PizzaAdminScreen(),
-                      ),
+                    MyRouterDelegate.of(context).push(
+                      MyPage(child: PizzaAdminScreen()),
                     );
                   },
                 );
