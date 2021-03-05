@@ -1,6 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:reaxit/ui/screens/calendar_screen.dart';
+import 'package:reaxit/ui/screens/event_screen.dart';
+import 'package:reaxit/ui/screens/pizza_screen.dart';
 import 'package:reaxit/ui/screens/splash_screen.dart';
+import 'package:reaxit/ui/screens/welcome_screen.dart';
 
 // TODO: rename
 class MyRouterDelegate extends RouterDelegate<MyPage>
@@ -46,6 +50,7 @@ class MyRouterDelegate extends RouterDelegate<MyPage>
     // TODO: change app state
     // Here we should take info from the MyPage and use it to sepcify more
     // such as other pages under it.
+    print("setNewRoutePath: $page");
     _stack
       ..clear()
       ..add(page);
@@ -73,6 +78,7 @@ class MyRouterDelegate extends RouterDelegate<MyPage>
 class MyRouteInformationParser implements RouteInformationParser<MyPage> {
   @override
   Future<MyPage> parseRouteInformation(routeInformation) async {
+    print(routeInformation.location);
     Uri uri = Uri.parse(routeInformation.location);
     String path = uri.path;
     List<String> segments = uri.pathSegments;
@@ -81,60 +87,20 @@ class MyRouteInformationParser implements RouteInformationParser<MyPage> {
     if (uri.pathSegments.length == 0) return MyPage(child: SplashScreen());
 
     if (RegExp('^/pizzas/\$').hasMatch(path)) {
-      return MyPage(child: TestScreen(page: "pizza"));
+      return MyPage(child: PizzaScreen());
     } else if (RegExp('^/events/\$').hasMatch(path)) {
-      return MyPage(child: TestScreen(page: "eventList"));
+      return MyPage(child: CalendarScreen());
     } else if (RegExp('^/events/([0-9]+)/\$').hasMatch(path)) {
-      return MyPage(child: TestScreen(page: "eventDetail_${segments[1]}"));
+      return MyPage(child: EventScreen(int.parse(segments[1])));
     }
 
     // Handle unknown path.
-    return MyPage(child: TestScreen(page: "unknown"));
+    return MyPage(child: WelcomeScreen());
   }
 
   @override
   RouteInformation restoreRouteInformation(configuration) {
-    // TODO: implement restoreRouteInformation
-    var screen = configuration.child as TestScreen;
-    return RouteInformation(location: screen.page);
-  }
-}
-
-class TestScreen extends StatelessWidget {
-  final String page;
-
-  const TestScreen({Key key, this.page}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(page),
-            Builder(
-              builder: (context) => ElevatedButton(
-                onPressed: () => MyRouterDelegate.of(context).push(
-                  MyPage(
-                    child: TestScreen(
-                      page: "pushed",
-                    ),
-                  ),
-                ),
-                child: Text("push"),
-              ),
-            ),
-            Builder(
-              builder: (context) => ElevatedButton(
-                onPressed: () => MyRouterDelegate.of(context).pop(),
-                child: Text("pop"),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    return RouteInformation(location: "/");
   }
 }
 
