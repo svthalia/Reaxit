@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reaxit/navigation.dart';
 import 'package:reaxit/providers/auth_provider.dart';
 
 import 'welcome_screen.dart';
@@ -62,11 +63,8 @@ class LoginScreenState extends State<LoginScreen> {
                             setState(() => _loading = false);
                             _showSnackbar(res);
                             if (res == 'success') {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => WelcomeScreen(),
-                                ),
+                              MyRouterDelegate.of(context).replace(
+                                MyPage(child: WelcomeScreen()),
                               );
                             }
                           },
