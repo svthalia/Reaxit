@@ -6,7 +6,7 @@ import 'package:reaxit/ui/screens/pizza_screen.dart';
 import 'package:reaxit/ui/screens/splash_screen.dart';
 import 'package:reaxit/ui/screens/welcome_screen.dart';
 
-// TODO: rename
+// TODO: rename?
 class MyRouterDelegate extends RouterDelegate<MyPage>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<MyPage> {
   final GlobalKey<NavigatorState> navigatorKey;
@@ -25,7 +25,7 @@ class MyRouterDelegate extends RouterDelegate<MyPage>
   @override
   Widget build(BuildContext context) {
     // TODO: remove print
-    print("${describeIdentity(_stack)}: $_stack");
+    print("${describeIdentity(this)}.stack: $_stack");
     return Navigator(
       key: navigatorKey,
       onPopPage: _onPopPage,
@@ -50,7 +50,6 @@ class MyRouterDelegate extends RouterDelegate<MyPage>
     // TODO: change app state
     // Here we should take info from the MyPage and use it to sepcify more
     // such as other pages under it.
-    print("setNewRoutePath: $page");
     _stack
       ..clear()
       ..add(page);
@@ -78,7 +77,6 @@ class MyRouterDelegate extends RouterDelegate<MyPage>
 class MyRouteInformationParser implements RouteInformationParser<MyPage> {
   @override
   Future<MyPage> parseRouteInformation(routeInformation) async {
-    print(routeInformation.location);
     Uri uri = Uri.parse(routeInformation.location);
     String path = uri.path;
     List<String> segments = uri.pathSegments;
@@ -86,11 +84,15 @@ class MyRouteInformationParser implements RouteInformationParser<MyPage> {
     // Handle "/".
     if (uri.pathSegments.length == 0) return MyPage(child: SplashScreen());
 
-    if (RegExp('^/pizzas/\$').hasMatch(path)) {
+    // TODO: How is being logged out handled? Probably shouldn't just open the
+    // right place, unless we handle logged out redirection inside each screen,
+    // or in a Builder wrapper inside MyPage.
+
+    if (RegExp('^/pizzas\$').hasMatch(path)) {
       return MyPage(child: PizzaScreen());
-    } else if (RegExp('^/events/\$').hasMatch(path)) {
+    } else if (RegExp('^/events\$').hasMatch(path)) {
       return MyPage(child: CalendarScreen());
-    } else if (RegExp('^/events/([0-9]+)/\$').hasMatch(path)) {
+    } else if (RegExp('^/events/([0-9]+)\$').hasMatch(path)) {
       return MyPage(child: EventScreen(int.parse(segments[1])));
     }
 

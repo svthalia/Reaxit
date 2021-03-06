@@ -1,3 +1,5 @@
+// import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:reaxit/navigation.dart';
 import 'package:reaxit/providers/pizzas_provider.dart';
@@ -16,9 +18,8 @@ void main() {
 }
 
 class ThaliApp extends StatelessWidget {
-  final MyRouteInformationParser _routeInformationParser =
-      MyRouteInformationParser();
-  final MyRouterDelegate _routerDelegate = MyRouterDelegate();
+  final _routeInformationParser = MyRouteInformationParser();
+  final _routerDelegate = MyRouterDelegate();
 
   @override
   Widget build(BuildContext context) {

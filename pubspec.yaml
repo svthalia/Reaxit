@@ -31,30 +31,30 @@ dependencies:
 
   google_fonts: ^1.1.2
 
-  provider: ^3.0.0
+  provider: ^5.0.0
   http: ^0.12.2
   oauth2_client: ^1.7.1
-  json_annotation: ^3.0.0
+  json_annotation: ^4.0.0
   flutter_html: ^1.2.0
 
   # date/time formatting
-  intl: ^0.16.1
+  intl: ^0.17.0
 
   # opening urls
-  url_launcher: ^5.7.10
+  url_launcher: ^6.0.2
 
   # modal photo view
   photo_view: ^0.10.3
 
   # persistent storage 
-  shared_preferences: '>=0.5.12+4 <2.0.0'
+  shared_preferences: ^2.0.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   build_runner: ^1.0.0
-  json_serializable: ^3.2.0
+  json_serializable: ^4.0.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
