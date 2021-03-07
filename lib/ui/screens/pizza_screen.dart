@@ -129,7 +129,7 @@ class PizzaScreen extends StatelessWidget {
     try {
       await pizzas.placeOrder(pizza);
     } on ApiException {
-      Scaffold.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Couldn't order '${pizza.name}'..."),
           duration: Duration(seconds: 1),
@@ -298,7 +298,7 @@ class _MyOrderInfoCard extends StatelessWidget {
     try {
       await _pizzas.cancelOrder();
     } on ApiException catch (error) {
-      Scaffold.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Couldn't cancel the order...$error"),
           duration: Duration(seconds: 1),

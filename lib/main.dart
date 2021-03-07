@@ -1,5 +1,3 @@
-// import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:reaxit/navigation.dart';
 import 'package:reaxit/providers/pizzas_provider.dart';

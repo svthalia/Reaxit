@@ -68,6 +68,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<String> logIn() async {
+    // TODO: handle unexpected behaviour (e.g. clicking cancel)
     try {
       await _helper.getToken();
     } on PlatformException catch (e) {

@@ -11,18 +11,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   bool _loading = false;
   ImageProvider logo = AssetImage('assets/img/logo.png');
-
-  void _showSnackbar(String text) {
-    _scaffoldKey.currentState.showSnackBar(
-      SnackBar(
-        content: Text(text),
-        duration: Duration(seconds: 1),
-      ),
-    );
-  }
 
   @override
   void didChangeDependencies() {
@@ -33,47 +23,59 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
       backgroundColor: Color(0xFFE62272),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Center(
+            child: Image(
               image: logo,
               width: 260,
             ),
-            SizedBox(height: 50),
-            Center(
-              child: _loading
-                  ? CircularProgressIndicator(
+          ),
+          SizedBox(height: 50),
+          SizedBox(
+            height: 50,
+            child: Center(
+              child: Builder(
+                builder: (context) {
+                  if (_loading) {
+                    return CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    )
-                  : RaisedButton(
-                      textColor: Colors.white,
-                      color: Colors.black87,
+                    );
+                  } else {
+                    return ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.black87,
+                        onPrimary: Colors.white,
+                      ),
                       child: Text('LOGIN'),
-                      onPressed: () {
+                      onPressed: () async {
                         setState(() => _loading = true);
-                        Provider.of<AuthProvider>(context, listen: false)
-                            .logIn()
-                            .then(
-                          (res) {
-                            setState(() => _loading = false);
-                            _showSnackbar(res);
-                            if (res == 'success') {
-                              MyRouterDelegate.of(context).replace(
-                                MyPage(child: WelcomeScreen()),
-                              );
-                            }
-                          },
+                        String result = await Provider.of<AuthProvider>(context,
+                                listen: false)
+                            .logIn();
+                        setState(() => _loading = false);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(result),
+                            duration: Duration(seconds: 1),
+                          ),
                         );
+                        if (result == 'success') {
+                          MyRouterDelegate.of(context).replace(
+                            MyPage(child: WelcomeScreen()),
+                          );
+                        }
                       },
-                    ),
+                    );
+                  }
+                },
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
