@@ -195,7 +195,7 @@ class _CalendarEventCard extends StatelessWidget {
     return InkWell(
       onTap: () {
         MyRouterDelegate.of(context).push(
-          MyPage(child: EventScreen(this._pk)),
+          MaterialPage(child: EventScreen(this._pk)),
         );
       },
       child: Container(

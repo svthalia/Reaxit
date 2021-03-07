@@ -65,7 +65,7 @@ class LoginScreenState extends State<LoginScreen> {
                         );
                         if (result == 'success') {
                           MyRouterDelegate.of(context).replace(
-                            MyPage(child: WelcomeScreen()),
+                            MaterialPage(child: WelcomeScreen()),
                           );
                         }
                       },

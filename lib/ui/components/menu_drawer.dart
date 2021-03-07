@@ -77,35 +77,35 @@ class MenuDrawer extends StatelessWidget {
             title: Text('Welcome'),
             leading: Icon(Icons.home),
             onTap: () => MyRouterDelegate.of(context).replace(
-              MyPage(child: WelcomeScreen()),
+              MaterialPage(child: WelcomeScreen()),
             ),
           ),
           ListTile(
             title: Text('Calendar'),
             leading: Icon(Icons.event),
             onTap: () => MyRouterDelegate.of(context).replace(
-              MyPage(child: CalendarScreen()),
+              MaterialPage(child: CalendarScreen()),
             ),
           ),
           ListTile(
             title: Text('Member list'),
             leading: Icon(Icons.people),
             onTap: () => MyRouterDelegate.of(context).replace(
-              MyPage(child: MemberList()),
+              MaterialPage(child: MemberList()),
             ),
           ),
           ListTile(
             title: Text('Photos'),
             leading: Icon(Icons.photo),
             onTap: () => MyRouterDelegate.of(context).replace(
-              MyPage(child: AlbumList()),
+              MaterialPage(child: AlbumList()),
             ),
           ),
           ListTile(
             title: Text('Settings'),
             leading: Icon(Icons.settings),
             onTap: () => MyRouterDelegate.of(context).replace(
-              MyPage(child: SettingsScreen()),
+              MaterialPage(child: SettingsScreen()),
             ),
           ),
           Divider(),
@@ -115,7 +115,7 @@ class MenuDrawer extends StatelessWidget {
             onTap: () {
               Provider.of<AuthProvider>(context, listen: false).logOut();
               MyRouterDelegate.of(context).replace(
-                MyPage(child: LoginScreen()),
+                MaterialPage(child: LoginScreen()),
               );
             },
           ),

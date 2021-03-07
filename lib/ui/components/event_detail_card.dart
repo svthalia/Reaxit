@@ -48,7 +48,7 @@ class EventDetailCard extends StatelessWidget {
                   child: Text('MORE INFO'),
                   onPressed: () {
                     MyRouterDelegate.of(context).push(
-                      MyPage(child: EventScreen(_event.pk)),
+                      MaterialPage(child: EventScreen(_event.pk)),
                     );
                   },
                 ),
@@ -59,7 +59,7 @@ class EventDetailCard extends StatelessWidget {
                     icon: Icon(Icons.local_pizza),
                     onPressed: () {
                       MyRouterDelegate.of(context).push(
-                        MyPage(child: PizzaScreen()),
+                        MaterialPage(child: PizzaScreen()),
                       );
                     },
                   ),

@@ -25,7 +25,7 @@ class PizzaScreen extends StatelessWidget {
                   icon: Icon(Icons.settings),
                   onPressed: () {
                     MyRouterDelegate.of(context).push(
-                      MyPage(child: PizzaAdminScreen()),
+                      MaterialPage(child: PizzaAdminScreen()),
                     );
                   },
                 );

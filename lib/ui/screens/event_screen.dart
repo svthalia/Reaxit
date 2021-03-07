@@ -229,7 +229,7 @@ class EventScreenState extends State<EventScreen> {
               ),
               onPressed: () {
                 MyRouterDelegate.of(context).push(
-                  MyPage(child: EventRegistrationScreen(event)),
+                  MaterialPage(child: EventRegistrationScreen(event)),
                 );
               },
             ),
@@ -280,7 +280,7 @@ class EventScreenState extends State<EventScreen> {
       icon: Icon(Icons.local_pizza),
       label: Text("PIZZA"),
       onPressed: () => MyRouterDelegate.of(context).push(
-        MyPage(child: PizzaScreen()),
+        MaterialPage(child: PizzaScreen()),
       ),
     );
   }
@@ -301,7 +301,7 @@ class EventScreenState extends State<EventScreen> {
                     icon: Icon(Icons.settings),
                     onPressed: () {
                       MyRouterDelegate.of(context).push(
-                        MyPage(child: EventAdminScreen(event.pk)),
+                        MaterialPage(child: EventAdminScreen(event.pk)),
                       );
                     },
                   ),

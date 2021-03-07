@@ -33,7 +33,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                   TextButton(
                     child: Text('SHOW THE ENTIRE AGENDA'),
                     onPressed: () => MyRouterDelegate.of(context).replace(
-                      MyPage(child: CalendarScreen()),
+                      MaterialPage(child: CalendarScreen()),
                     ),
                   )
                 ])

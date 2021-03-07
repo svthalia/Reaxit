@@ -13,7 +13,7 @@ class AlbumCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         MyRouterDelegate.of(context).push(
-          MyPage(child: AlbumDetail(this._album.pk, this._album)),
+          MaterialPage(child: AlbumDetail(this._album.pk, this._album)),
         );
       },
       child: Stack(

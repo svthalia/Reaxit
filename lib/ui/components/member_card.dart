@@ -12,7 +12,7 @@ class MemberCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         MyRouterDelegate.of(context).push(
-          MyPage(child: MemberDetail(_member.pk, _member)),
+          MaterialPage(child: MemberDetail(_member.pk, _member)),
         );
       },
       child: Stack(
