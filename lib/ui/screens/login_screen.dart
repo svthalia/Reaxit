@@ -64,7 +64,7 @@ class LoginScreenState extends State<LoginScreen> {
                           ),
                         );
                         if (result == 'success') {
-                          MyRouterDelegate.of(context).replace(
+                          ThaliaRouterDelegate.of(context).replace(
                             MaterialPage(child: WelcomeScreen()),
                           );
                         }

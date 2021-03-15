@@ -47,7 +47,7 @@ class EventDetailCard extends StatelessWidget {
                 ElevatedButton(
                   child: Text('MORE INFO'),
                   onPressed: () {
-                    MyRouterDelegate.of(context).push(
+                    ThaliaRouterDelegate.of(context).push(
                       MaterialPage(child: EventScreen(_event.pk)),
                     );
                   },
@@ -58,7 +58,7 @@ class EventDetailCard extends StatelessWidget {
                     label: Text("PIZZA"),
                     icon: Icon(Icons.local_pizza),
                     onPressed: () {
-                      MyRouterDelegate.of(context).push(
+                      ThaliaRouterDelegate.of(context).push(
                         MaterialPage(child: PizzaScreen()),
                       );
                     },

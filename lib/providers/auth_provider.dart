@@ -79,7 +79,7 @@ class AuthProvider extends ChangeNotifier {
       return 'Unknown error';
     }
 
-    _loadUserData();
+    await _loadUserData();
     _status = AuthStatus.SIGNED_IN;
     notifyListeners();
     return 'success';

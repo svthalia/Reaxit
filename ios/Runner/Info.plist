@@ -52,7 +52,7 @@
 		<string>thalia.nu</string>
 		<key>CFBundleURLSchemes</key>
 		<array>
-		<string>thaliapp</string>
+		<string>https</string>
 		</array>
 		</dict>
 	</array>

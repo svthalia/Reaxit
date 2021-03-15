@@ -11,7 +11,7 @@ class MemberCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        MyRouterDelegate.of(context).push(
+        ThaliaRouterDelegate.of(context).push(
           MaterialPage(child: MemberDetail(_member.pk, _member)),
         );
       },

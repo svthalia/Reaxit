@@ -228,7 +228,7 @@ class EventScreenState extends State<EventScreen> {
                     : 'REGISTER',
               ),
               onPressed: () {
-                MyRouterDelegate.of(context).push(
+                ThaliaRouterDelegate.of(context).push(
                   MaterialPage(child: EventRegistrationScreen(event)),
                 );
               },
@@ -279,7 +279,7 @@ class EventScreenState extends State<EventScreen> {
     return ElevatedButton.icon(
       icon: Icon(Icons.local_pizza),
       label: Text("PIZZA"),
-      onPressed: () => MyRouterDelegate.of(context).push(
+      onPressed: () => ThaliaRouterDelegate.of(context).push(
         MaterialPage(child: PizzaScreen()),
       ),
     );
@@ -300,7 +300,7 @@ class EventScreenState extends State<EventScreen> {
                   IconButton(
                     icon: Icon(Icons.settings),
                     onPressed: () {
-                      MyRouterDelegate.of(context).push(
+                      ThaliaRouterDelegate.of(context).push(
                         MaterialPage(child: EventAdminScreen(event.pk)),
                       );
                     },

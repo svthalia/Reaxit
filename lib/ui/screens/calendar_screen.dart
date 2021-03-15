@@ -194,7 +194,7 @@ class _CalendarEventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        MyRouterDelegate.of(context).push(
+        ThaliaRouterDelegate.of(context).push(
           MaterialPage(child: EventScreen(this._pk)),
         );
       },

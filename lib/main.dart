@@ -16,8 +16,8 @@ void main() {
 }
 
 class ThaliApp extends StatelessWidget {
-  final _routeInformationParser = MyRouteInformationParser();
-  final _routerDelegate = MyRouterDelegate();
+  final _routeInformationParser = ThaliaRouteInformationParser();
+  final _routerDelegate = ThaliaRouterDelegate();
 
   @override
   Widget build(BuildContext context) {

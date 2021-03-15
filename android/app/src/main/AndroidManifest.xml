@@ -40,7 +40,12 @@
               <action android:name="android.intent.action.VIEW" />
               <category android:name="android.intent.category.DEFAULT" />
               <category android:name="android.intent.category.BROWSABLE" />
-              <data android:scheme="thaliapp" android:host="thalia.nu" />
+              <data android:scheme="https" />
+              <data android:host="thalia.nu" />
+              <data android:path="/pizzas/" />
+              <data android:path="/events/" />
+              <data android:pathPattern="/events/.*/" />
+              <data android:pathPattern="/members/photos/.*/" />
             </intent-filter>
             
             <intent-filter>

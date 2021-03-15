@@ -76,35 +76,35 @@ class MenuDrawer extends StatelessWidget {
           ListTile(
             title: Text('Welcome'),
             leading: Icon(Icons.home),
-            onTap: () => MyRouterDelegate.of(context).replace(
+            onTap: () => ThaliaRouterDelegate.of(context).replace(
               MaterialPage(child: WelcomeScreen()),
             ),
           ),
           ListTile(
             title: Text('Calendar'),
             leading: Icon(Icons.event),
-            onTap: () => MyRouterDelegate.of(context).replace(
+            onTap: () => ThaliaRouterDelegate.of(context).replace(
               MaterialPage(child: CalendarScreen()),
             ),
           ),
           ListTile(
             title: Text('Member list'),
             leading: Icon(Icons.people),
-            onTap: () => MyRouterDelegate.of(context).replace(
+            onTap: () => ThaliaRouterDelegate.of(context).replace(
               MaterialPage(child: MemberList()),
             ),
           ),
           ListTile(
             title: Text('Photos'),
             leading: Icon(Icons.photo),
-            onTap: () => MyRouterDelegate.of(context).replace(
+            onTap: () => ThaliaRouterDelegate.of(context).replace(
               MaterialPage(child: AlbumList()),
             ),
           ),
           ListTile(
             title: Text('Settings'),
             leading: Icon(Icons.settings),
-            onTap: () => MyRouterDelegate.of(context).replace(
+            onTap: () => ThaliaRouterDelegate.of(context).replace(
               MaterialPage(child: SettingsScreen()),
             ),
           ),
@@ -114,7 +114,7 @@ class MenuDrawer extends StatelessWidget {
             title: Text('Log out'),
             onTap: () {
               Provider.of<AuthProvider>(context, listen: false).logOut();
-              MyRouterDelegate.of(context).replace(
+              ThaliaRouterDelegate.of(context).replace(
                 MaterialPage(child: LoginScreen()),
               );
             },

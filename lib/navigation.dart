@@ -1,33 +1,47 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:reaxit/providers/auth_provider.dart';
+import 'package:reaxit/ui/screens/album_detail.dart';
+import 'package:reaxit/ui/screens/album_list.dart';
 import 'package:reaxit/ui/screens/calendar_screen.dart';
 import 'package:reaxit/ui/screens/event_screen.dart';
+import 'package:reaxit/ui/screens/login_screen.dart';
 import 'package:reaxit/ui/screens/pizza_screen.dart';
-import 'package:reaxit/ui/screens/splash_screen.dart';
 import 'package:reaxit/ui/screens/welcome_screen.dart';
 
-// TODO: rename?
-class MyRouterDelegate extends RouterDelegate<List<Page>>
+class ThaliaRouterDelegate extends RouterDelegate<List<Page>>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<List<Page>> {
   final GlobalKey<NavigatorState> navigatorKey;
 
-  static MyRouterDelegate of(BuildContext context) {
+  static ThaliaRouterDelegate of(BuildContext context) {
     RouterDelegate delegate = Router.of(context).routerDelegate;
-    assert(delegate is MyRouterDelegate, 'Delegate type must match.');
-    return delegate as MyRouterDelegate;
+    assert(delegate is ThaliaRouterDelegate, 'Delegate type must match.');
+    return delegate as ThaliaRouterDelegate;
   }
 
-  MyRouterDelegate() : navigatorKey = GlobalKey<NavigatorState>();
+  ThaliaRouterDelegate() : navigatorKey = GlobalKey<NavigatorState>();
 
-  // TODO: keep app state
-  List<Page> _stack = [MaterialPage(child: SplashScreen())];
+  List<Page> _stack = [MaterialPage(child: WelcomeScreen())];
 
   @override
   Widget build(BuildContext context) {
-    return Navigator(
-      key: navigatorKey,
-      onPopPage: _onPopPage,
-      pages: _stack.toList(),
+    return Consumer<AuthProvider>(
+      builder: (context, auth, child) {
+        if (auth.status == AuthStatus.SIGNED_OUT) {
+          _stack
+            ..clear()
+            ..add(MaterialPage(child: LoginScreen()));
+        }
+
+        return Navigator(
+          key: navigatorKey,
+          onPopPage: _onPopPage,
+          pages: auth.status == AuthStatus.INIT
+              ? [MaterialPage(child: _SplashScreen())]
+              : _stack.toList(),
+        );
+      },
     );
   }
 
@@ -54,7 +68,6 @@ class MyRouterDelegate extends RouterDelegate<List<Page>>
 
   /// Removes the top of the stack.
   void pop() {
-    // TODO: allow return values? This might still be handled by Navigator.
     if (_stack.length > 1) _stack.removeLast();
     notifyListeners();
   }
@@ -76,7 +89,26 @@ class MyRouterDelegate extends RouterDelegate<List<Page>>
   }
 }
 
-class MyRouteInformationParser implements RouteInformationParser<List<Page>> {
+class _SplashScreen extends StatelessWidget {
+  const _SplashScreen({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Color(0xFFE62272),
+      child: Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+        ),
+      ),
+    );
+  }
+}
+
+class ThaliaRouteInformationParser
+    implements RouteInformationParser<List<Page>> {
   @override
   Future<List<Page>> parseRouteInformation(routeInformation) async {
     Uri uri = Uri.parse(routeInformation.location);
@@ -85,23 +117,24 @@ class MyRouteInformationParser implements RouteInformationParser<List<Page>> {
 
     // Handle "/".
     if (uri.pathSegments.length == 0)
-      return [MaterialPage(child: SplashScreen())];
+      return [MaterialPage(child: WelcomeScreen())];
 
-    // TODO: How is being logged out handled? Probably shouldn't just open the
-    // right place, unless we handle logged out redirection inside each screen,
-    // or in a Builder wrapper inside pages.
-
-    if (RegExp('^/pizzas\$').hasMatch(path)) {
+    if (RegExp('^/pizzas/\$').hasMatch(path)) {
       return [
         MaterialPage(child: WelcomeScreen()),
         MaterialPage(child: PizzaScreen()),
       ];
-    } else if (RegExp('^/events\$').hasMatch(path)) {
+    } else if (RegExp('^/events/\$').hasMatch(path)) {
       return [MaterialPage(child: CalendarScreen())];
-    } else if (RegExp('^/events/([0-9]+)\$').hasMatch(path)) {
+    } else if (RegExp('^/events/([0-9]+)/\$').hasMatch(path)) {
       return [
         MaterialPage(child: CalendarScreen()),
         MaterialPage(child: EventScreen(int.parse(segments[1])))
+      ];
+    } else if (RegExp('^/members/photos/([0-9]+)/\$').hasMatch(path)) {
+      return [
+        MaterialPage(child: AlbumList()),
+        MaterialPage(child: AlbumDetail(int.parse(segments[1])))
       ];
     }
 

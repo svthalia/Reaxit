@@ -24,7 +24,7 @@ class PizzaScreen extends StatelessWidget {
                 return IconButton(
                   icon: Icon(Icons.settings),
                   onPressed: () {
-                    MyRouterDelegate.of(context).push(
+                    ThaliaRouterDelegate.of(context).push(
                       MaterialPage(child: PizzaAdminScreen()),
                     );
                   },

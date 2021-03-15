@@ -32,7 +32,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                 Column(children: [
                   TextButton(
                     child: Text('SHOW THE ENTIRE AGENDA'),
-                    onPressed: () => MyRouterDelegate.of(context).replace(
+                    onPressed: () => ThaliaRouterDelegate.of(context).replace(
                       MaterialPage(child: CalendarScreen()),
                     ),
                   )
