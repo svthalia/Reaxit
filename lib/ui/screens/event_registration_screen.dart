@@ -23,8 +23,8 @@ class EventRegistrationScreenState extends State<EventRegistrationScreen> {
 
   @override
   void didChangeDependencies() async {
-    _event =
-        await Provider.of<EventsProvider>(context).getEvent(widget.event.pk);
+    _event = await Provider.of<EventsProvider>(context, listen: false)
+        .getEvent(widget.event.pk);
     if (_event == null) {
       // TODO: Event loading failed
     }

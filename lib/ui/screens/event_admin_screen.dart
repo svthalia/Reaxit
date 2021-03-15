@@ -29,7 +29,7 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
   Future<void> refresh() async {
     List<Registration> registrations;
     try {
-      registrations = await Provider.of<EventsProvider>(context)
+      registrations = await Provider.of<EventsProvider>(context, listen: false)
           .getEventRegistrations(widget.pk);
       _error = null;
     } on ApiException catch (error) {
@@ -179,20 +179,17 @@ class __RegistrationTileState extends State<_RegistrationTile> {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                "Present:",
-                style: Theme.of(context).textTheme.caption,
-              ),
+              Text("Present:", style: Theme.of(context).textTheme.caption),
               Checkbox(
                 value: registration.present,
                 onChanged: (value) async {
                   bool oldValue = registration.present;
                   setState(() => registration.present = value);
                   try {
-                    await Provider.of<EventsProvider>(context)
+                    await Provider.of<EventsProvider>(context, listen: false)
                         .setPresent(registration, value);
                   } on ApiException {
-                    Scaffold.of(context).showSnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
                           value
@@ -207,9 +204,7 @@ class __RegistrationTileState extends State<_RegistrationTile> {
                   widget.refresh();
                 },
               ),
-              SizedBox(
-                width: 15,
-              ),
+              SizedBox(width: 15),
               registration.payment == "tpay_payment"
                   ? DropdownButton(
                       items: [DropdownMenuItem(child: Text("Thalia Pay"))],
@@ -222,10 +217,11 @@ class __RegistrationTileState extends State<_RegistrationTile> {
                         String oldPayment = registration.payment;
                         setState(() => registration.payment = payment);
                         try {
-                          await Provider.of<EventsProvider>(context)
+                          await Provider.of<EventsProvider>(context,
+                                  listen: false)
                               .payRegistration(registration, payment);
                         } on ApiException {
-                          Scaffold.of(context).showSnackBar(
+                          ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
                                 (payment == "no_payment")

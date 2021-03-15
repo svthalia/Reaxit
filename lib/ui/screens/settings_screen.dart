@@ -91,14 +91,14 @@ class _SettingsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<NotificationsProvider>(
-      builder: (context, _notifications, child) {
+      builder: (context, notifications, child) {
         return Card(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: ListTile.divideTiles(
               context: context,
-              tiles: _notifications.settings
+              tiles: notifications.settings
                   .map((setting) => _SettingCard(setting)),
             ).toList(),
           ),
@@ -120,7 +120,7 @@ class _SettingCard extends StatelessWidget {
           .getNotificatinoSetting(_setting),
       onChanged: (value) {
         Provider.of<NotificationsProvider>(context, listen: false)
-            .setNotificationSetting(this._setting, value);
+            .setNotificationSetting(_setting, value);
       },
       title: Text(_setting.name),
       subtitle: (_setting.description?.isNotEmpty ?? false)

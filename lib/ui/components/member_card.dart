@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reaxit/navigation.dart';
 import 'package:reaxit/ui/screens/member_detail.dart';
 import 'package:reaxit/models/member.dart';
 
@@ -10,11 +11,8 @@ class MemberCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MemberDetail(_member.pk, _member),
-          ),
+        ThaliaRouterDelegate.of(context).push(
+          MaterialPage(child: MemberDetail(_member.pk, _member)),
         );
       },
       child: Stack(

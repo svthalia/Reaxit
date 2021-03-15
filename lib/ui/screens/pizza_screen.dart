@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:reaxit/models/pizza.dart';
 import 'package:reaxit/models/pizza_event.dart';
+import 'package:reaxit/navigation.dart';
 import 'package:reaxit/providers/api_service.dart';
 import 'package:reaxit/providers/pizzas_provider.dart';
 import 'package:reaxit/ui/components/network_wrapper.dart';
@@ -23,11 +24,8 @@ class PizzaScreen extends StatelessWidget {
                 return IconButton(
                   icon: Icon(Icons.settings),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PizzaAdminScreen(),
-                      ),
+                    ThaliaRouterDelegate.of(context).push(
+                      MaterialPage(child: PizzaAdminScreen()),
                     );
                   },
                 );
@@ -131,7 +129,7 @@ class PizzaScreen extends StatelessWidget {
     try {
       await pizzas.placeOrder(pizza);
     } on ApiException {
-      Scaffold.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Couldn't order '${pizza.name}'..."),
           duration: Duration(seconds: 1),
@@ -300,7 +298,7 @@ class _MyOrderInfoCard extends StatelessWidget {
     try {
       await _pizzas.cancelOrder();
     } on ApiException catch (error) {
-      Scaffold.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Couldn't cancel the order...$error"),
           duration: Duration(seconds: 1),

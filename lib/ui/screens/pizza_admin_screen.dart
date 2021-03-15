@@ -22,8 +22,8 @@ class _PizzaAdminScreenState extends State<PizzaAdminScreen> {
       floatingActionButton: Builder(
         builder: (context) => FloatingActionButton(
           onPressed: () {
-            this.setState(() => filterPaid = !filterPaid);
-            Scaffold.of(context).showSnackBar(
+            setState(() => filterPaid = !filterPaid);
+            ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
                   filterPaid
@@ -102,14 +102,14 @@ class _OrderTile extends StatelessWidget {
                   value: order.payment,
                   onChanged: (payment) async {
                     try {
-                      await Provider.of<PizzasProvider>(context)
+                      await Provider.of<PizzasProvider>(context, listen: false)
                           .payOrder(order, payment);
                       order.payment = payment;
                       // payOrder loads the list again, this is only
                       // temporary so that the value is updated before
                       // finishing the loading.
                     } on ApiException {
-                      Scaffold.of(context).showSnackBar(
+                      ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
                             (payment == "no_payment")

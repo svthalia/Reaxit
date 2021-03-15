@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:reaxit/navigation.dart';
 import 'package:reaxit/ui/screens/album_detail.dart';
 import 'package:reaxit/models/album.dart';
 
@@ -11,11 +12,8 @@ class AlbumCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => AlbumDetail(this._album.pk, this._album),
-          ),
+        ThaliaRouterDelegate.of(context).push(
+          MaterialPage(child: AlbumDetail(this._album.pk, this._album)),
         );
       },
       child: Stack(

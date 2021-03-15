@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reaxit/navigation.dart';
 import 'package:reaxit/providers/auth_provider.dart';
 import 'package:reaxit/ui/screens/album_list.dart';
 import 'package:reaxit/ui/screens/calendar_screen.dart';
@@ -75,41 +76,36 @@ class MenuDrawer extends StatelessWidget {
           ListTile(
             title: Text('Welcome'),
             leading: Icon(Icons.home),
-            onTap: () => Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => WelcomeScreen()),
+            onTap: () => ThaliaRouterDelegate.of(context).replace(
+              MaterialPage(child: WelcomeScreen()),
             ),
           ),
           ListTile(
             title: Text('Calendar'),
             leading: Icon(Icons.event),
-            onTap: () => Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => CalendarScreen()),
+            onTap: () => ThaliaRouterDelegate.of(context).replace(
+              MaterialPage(child: CalendarScreen()),
             ),
           ),
           ListTile(
             title: Text('Member list'),
             leading: Icon(Icons.people),
-            onTap: () => Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => MemberList()),
+            onTap: () => ThaliaRouterDelegate.of(context).replace(
+              MaterialPage(child: MemberList()),
             ),
           ),
           ListTile(
             title: Text('Photos'),
             leading: Icon(Icons.photo),
-            onTap: () => Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => AlbumList()),
+            onTap: () => ThaliaRouterDelegate.of(context).replace(
+              MaterialPage(child: AlbumList()),
             ),
           ),
           ListTile(
             title: Text('Settings'),
             leading: Icon(Icons.settings),
-            onTap: () => Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => SettingsScreen()),
+            onTap: () => ThaliaRouterDelegate.of(context).replace(
+              MaterialPage(child: SettingsScreen()),
             ),
           ),
           Divider(),
@@ -117,10 +113,9 @@ class MenuDrawer extends StatelessWidget {
             leading: Icon(Icons.logout),
             title: Text('Log out'),
             onTap: () {
-              Provider.of<AuthProvider>(context).logOut();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => LoginScreen()),
+              Provider.of<AuthProvider>(context, listen: false).logOut();
+              ThaliaRouterDelegate.of(context).replace(
+                MaterialPage(child: LoginScreen()),
               );
             },
           ),

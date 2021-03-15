@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reaxit/navigation.dart';
 import 'package:reaxit/providers/events_provider.dart';
 import 'package:reaxit/ui/components/menu_drawer.dart';
 import 'package:reaxit/ui/components/event_detail_card.dart';
@@ -31,9 +32,8 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                 Column(children: [
                   TextButton(
                     child: Text('SHOW THE ENTIRE AGENDA'),
-                    onPressed: () => Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => CalendarScreen()),
+                    onPressed: () => ThaliaRouterDelegate.of(context).replace(
+                      MaterialPage(child: CalendarScreen()),
                     ),
                   )
                 ])

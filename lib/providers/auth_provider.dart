@@ -64,9 +64,11 @@ class AuthProvider extends ChangeNotifier {
   logOut() {
     _helper.disconnect();
     _status = AuthStatus.SIGNED_OUT;
+    notifyListeners();
   }
 
   Future<String> logIn() async {
+    // TODO: handle unexpected behaviour (e.g. clicking cancel)
     try {
       await _helper.getToken();
     } on PlatformException catch (e) {
@@ -77,7 +79,7 @@ class AuthProvider extends ChangeNotifier {
       return 'Unknown error';
     }
 
-    _loadUserData();
+    await _loadUserData();
     _status = AuthStatus.SIGNED_IN;
     notifyListeners();
     return 'success';

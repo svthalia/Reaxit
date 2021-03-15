@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/models/event.dart';
+import 'package:reaxit/navigation.dart';
 import 'package:reaxit/ui/screens/event_screen.dart';
 import 'package:reaxit/ui/screens/pizza_screen.dart';
 
@@ -46,11 +47,8 @@ class EventDetailCard extends StatelessWidget {
                 ElevatedButton(
                   child: Text('MORE INFO'),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EventScreen(_event.pk),
-                      ),
+                    ThaliaRouterDelegate.of(context).push(
+                      MaterialPage(child: EventScreen(_event.pk)),
                     );
                   },
                 ),
@@ -60,11 +58,8 @@ class EventDetailCard extends StatelessWidget {
                     label: Text("PIZZA"),
                     icon: Icon(Icons.local_pizza),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PizzaScreen(),
-                        ),
+                      ThaliaRouterDelegate.of(context).push(
+                        MaterialPage(child: PizzaScreen()),
                       );
                     },
                   ),

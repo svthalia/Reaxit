@@ -18,7 +18,8 @@ class _AlbumDetailState extends State<AlbumDetail> {
 
   @override
   didChangeDependencies() {
-    _album = Provider.of<PhotosProvider>(context).getAlbum(widget.pk);
+    _album =
+        Provider.of<PhotosProvider>(context, listen: false).getAlbum(widget.pk);
     super.didChangeDependencies();
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/models/event.dart';
+import 'package:reaxit/navigation.dart';
 import 'package:reaxit/providers/events_provider.dart';
 import 'package:reaxit/ui/components/menu_drawer.dart';
 import 'package:reaxit/ui/components/network_wrapper.dart';
@@ -193,9 +194,8 @@ class _CalendarEventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => EventScreen(this._pk)),
+        ThaliaRouterDelegate.of(context).push(
+          MaterialPage(child: EventScreen(this._pk)),
         );
       },
       child: Container(
