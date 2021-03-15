@@ -4,6 +4,7 @@
 *.pyc
 *.swp
 .DS_Store
+Podfile.lock
 .atom/
 .buildlog/
 .history
