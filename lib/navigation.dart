@@ -28,7 +28,7 @@ class ThaliaRouterDelegate extends RouterDelegate<List<Page>>
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
       builder: (context, auth, child) {
-        if (auth.status == AuthStatus.SIGNED_OUT) {
+        if (auth.status == AuthStatus.signedOut) {
           _stack
             ..clear()
             ..add(MaterialPage(child: LoginScreen()));
@@ -37,7 +37,7 @@ class ThaliaRouterDelegate extends RouterDelegate<List<Page>>
         return Navigator(
           key: navigatorKey,
           onPopPage: _onPopPage,
-          pages: auth.status == AuthStatus.INIT
+          pages: auth.status == AuthStatus.init
               ? [MaterialPage(child: _SplashScreen())]
               : _stack.toList(),
         );

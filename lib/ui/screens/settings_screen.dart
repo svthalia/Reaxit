@@ -98,8 +98,9 @@ class _SettingsCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: ListTile.divideTiles(
               context: context,
-              tiles: notifications.settings
-                  .map((setting) => _SettingCard(setting)),
+              tiles: notifications.settings.map(
+                (setting) => _SettingCard(setting),
+              ),
             ).toList(),
           ),
         );
@@ -116,11 +117,15 @@ class _SettingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SwitchListTile(
-      value: Provider.of<NotificationsProvider>(context, listen: false)
-          .getNotificatinoSetting(_setting),
+      value: Provider.of<NotificationsProvider>(
+        context,
+        listen: false,
+      ).getNotificatinoSetting(_setting),
       onChanged: (value) {
-        Provider.of<NotificationsProvider>(context, listen: false)
-            .setNotificationSetting(_setting, value);
+        Provider.of<NotificationsProvider>(
+          context,
+          listen: false,
+        ).setNotificationSetting(_setting, value);
       },
       title: Text(_setting.name),
       subtitle: (_setting.description?.isNotEmpty ?? false)

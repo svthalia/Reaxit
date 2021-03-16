@@ -20,7 +20,7 @@ abstract class ApiService extends ChangeNotifier {
   /// throws an [ApiException] when something goes wrong.
   /// Returns the response body on status code 200.
   Future<String> get(String url) async {
-    if (authProvider.status == AuthStatus.SIGNED_IN) {
+    if (authProvider.status == AuthStatus.signedIn) {
       try {
         Response response = await authProvider.helper.get(_apiUrl + url);
         if (response.statusCode == 200) {
@@ -48,7 +48,7 @@ abstract class ApiService extends ChangeNotifier {
   /// throws an [ApiException] when something goes wrong.
   /// Returns the response body on status code 200 or 201.
   Future<String> post(String url, String body) async {
-    if (authProvider.status == AuthStatus.SIGNED_IN) {
+    if (authProvider.status == AuthStatus.signedIn) {
       try {
         Response response = await authProvider.helper.post(
           _apiUrl + url,
@@ -81,7 +81,7 @@ abstract class ApiService extends ChangeNotifier {
   /// A helper method that performs a PUT request. This
   /// throws an [ApiException] when something goes wrong.
   Future<void> put(String url, String body) async {
-    if (authProvider.status == AuthStatus.SIGNED_IN) {
+    if (authProvider.status == AuthStatus.signedIn) {
       try {
         Response response = await authProvider.helper.put(
           _apiUrl + url,
@@ -114,7 +114,7 @@ abstract class ApiService extends ChangeNotifier {
   /// A helper method that performs a DELETE request. This
   /// throws an [ApiException] when something goes wrong.
   Future<void> delete(String url) async {
-    if (authProvider.status == AuthStatus.SIGNED_IN) {
+    if (authProvider.status == AuthStatus.signedIn) {
       try {
         Response response = await authProvider.helper.delete(_apiUrl + url);
         if (response.statusCode == 204) {
@@ -142,7 +142,7 @@ abstract class ApiService extends ChangeNotifier {
   /// throws an [ApiException] when something goes wrong.
   /// Returns the response body on status code 200 or 201.
   Future<String> patch(String url, String body) async {
-    if (authProvider.status == AuthStatus.SIGNED_IN) {
+    if (authProvider.status == AuthStatus.signedIn) {
       try {
         Response response = await authProvider.helper.patch(
           _apiUrl + url,

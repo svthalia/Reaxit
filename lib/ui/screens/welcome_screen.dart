@@ -22,22 +22,26 @@ class WelcomeScreenState extends State<WelcomeScreen> {
       drawer: MenuDrawer(),
       body: NetworkWrapper<EventsProvider>(
         builder: (context, events) => ListView(
-            padding: const EdgeInsets.all(20),
-            physics: const AlwaysScrollableScrollPhysics(),
-            children: new List<Widget>.from(events.eventList
+          padding: const EdgeInsets.all(20),
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: new List<Widget>.from(
+            events.eventList
                 .map((event) => EventDetailCard(event))
                 .take(3)
-                .toList())
-              ..addAll([
-                Column(children: [
+                .toList(),
+          )..add(
+              Column(
+                children: [
                   TextButton(
                     child: Text('SHOW THE ENTIRE AGENDA'),
                     onPressed: () => ThaliaRouterDelegate.of(context).replace(
                       MaterialPage(child: CalendarScreen()),
                     ),
                   )
-                ])
-              ])),
+                ],
+              ),
+            ),
+        ),
       ),
     );
   }

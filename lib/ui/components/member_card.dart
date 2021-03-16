@@ -30,8 +30,10 @@ class MemberCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             alignment: Alignment.bottomLeft,
-            child: Text(_member.displayName,
-                style: Theme.of(context).primaryTextTheme.bodyText2),
+            child: Text(
+              _member.displayName,
+              style: Theme.of(context).primaryTextTheme.bodyText2,
+            ),
             decoration: BoxDecoration(
               color: Colors.black,
               gradient: LinearGradient(

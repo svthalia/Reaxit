@@ -13,7 +13,7 @@ class AlbumCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         ThaliaRouterDelegate.of(context).push(
-          MaterialPage(child: AlbumDetail(this._album.pk, this._album)),
+          MaterialPage(child: AlbumDetail(_album.pk, _album)),
         );
       },
       child: Stack(

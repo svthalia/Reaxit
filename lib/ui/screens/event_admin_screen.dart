@@ -29,8 +29,10 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
   Future<void> refresh() async {
     List<Registration> registrations;
     try {
-      registrations = await Provider.of<EventsProvider>(context, listen: false)
-          .getEventRegistrations(widget.pk);
+      registrations = await Provider.of<EventsProvider>(
+        context,
+        listen: false,
+      ).getEventRegistrations(widget.pk);
       _error = null;
     } on ApiException catch (error) {
       _error = error;
@@ -54,8 +56,10 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
             onPressed: () => showSearch(
               context: context,
               delegate: NetworkSearchDelegate<EventsProvider>(
-                search: (events, query) =>
-                    events.searchRegistrations(_registrationList, query),
+                search: (events, query) => events.searchRegistrations(
+                  _registrationList,
+                  query,
+                ),
                 resultBuilder: (context, events, registrationList) {
                   return ListView.builder(
                     itemCount: registrationList.length,
@@ -186,8 +190,10 @@ class __RegistrationTileState extends State<_RegistrationTile> {
                   bool oldValue = registration.present;
                   setState(() => registration.present = value);
                   try {
-                    await Provider.of<EventsProvider>(context, listen: false)
-                        .setPresent(registration, value);
+                    await Provider.of<EventsProvider>(
+                      context,
+                      listen: false,
+                    ).setPresent(registration, value);
                   } on ApiException {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(

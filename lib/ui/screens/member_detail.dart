@@ -20,8 +20,10 @@ class _MemberDetailState extends State<MemberDetail> {
 
   @override
   didChangeDependencies() {
-    _memberFuture = Provider.of<MembersProvider>(context, listen: false)
-        .getMember(widget.pk);
+    _memberFuture = Provider.of<MembersProvider>(
+      context,
+      listen: false,
+    ).getMember(widget.pk);
     super.didChangeDependencies();
   }
 
@@ -36,8 +38,9 @@ class _MemberDetailState extends State<MemberDetail> {
         children: achievement.periods.map((Period period) {
           DateFormat formatter = DateFormat("d MMMM y");
           String since = formatter.format(period.since);
-          String until =
-              period.until != null ? formatter.format(period.since) : "Present";
+          String until = (period.until != null)
+              ? formatter.format(period.since)
+              : "Present";
           String dates = "$since - $until";
           String leader = "";
           if (period.chair) {
@@ -102,8 +105,10 @@ class _MemberDetailState extends State<MemberDetail> {
             child: Column(
               children: List.generate(
                 member.societies.length,
-                (index) =>
-                    _achievementTile(member.societies[index], index == 0),
+                (index) => _achievementTile(
+                  member.societies[index],
+                  index == 0,
+                ),
               ),
             ),
           ),
@@ -125,8 +130,10 @@ class _MemberDetailState extends State<MemberDetail> {
             child: Column(
               children: List.generate(
                 member.achievements.length,
-                (index) =>
-                    _achievementTile(member.achievements[index], index == 0),
+                (index) => _achievementTile(
+                  member.achievements[index],
+                  index == 0,
+                ),
               ),
             ),
           ),

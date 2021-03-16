@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:provider/provider.dart';
 import 'package:reaxit/models/album.dart';
@@ -36,6 +37,8 @@ class _AlbumDetailState extends State<AlbumDetail> {
                 builder: (context, i) => PhotoViewGalleryPageOptions(
                   imageProvider: NetworkImage(album.photos[i].full),
                   tightMode: false,
+                  minScale: PhotoViewComputedScale.contained * 0.8,
+                  maxScale: PhotoViewComputedScale.covered * 2,
                 ),
                 pageController: PageController(initialPage: index),
               ),
