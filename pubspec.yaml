@@ -49,6 +49,9 @@ dependencies:
   # persistent storage 
   shared_preferences: ^2.0.3
 
+  # sentry error reporting
+  sentry_flutter: ^4.0.6
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

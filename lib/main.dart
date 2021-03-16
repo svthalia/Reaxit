@@ -4,15 +4,21 @@ import 'package:reaxit/providers/pizzas_provider.dart';
 import 'package:reaxit/providers/notifications_provider.dart';
 import 'package:reaxit/providers/theme_mode_provider.dart';
 import 'package:reaxit/ui/styles/theme.dart';
-
 import 'package:provider/provider.dart';
 import 'package:reaxit/providers/auth_provider.dart';
 import 'package:reaxit/providers/events_provider.dart';
 import 'package:reaxit/providers/members_provider.dart';
 import 'package:reaxit/providers/photos_provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
-void main() {
-  runApp(ThaliApp());
+Future<void> main() async {
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = "https://ddc09a4019314587a8bda17"
+          "3ff3ee038@o263149.ingest.sentry.io/5652574";
+    },
+    appRunner: () => runApp(ThaliApp()),
+  );
 }
 
 class ThaliApp extends StatelessWidget {
