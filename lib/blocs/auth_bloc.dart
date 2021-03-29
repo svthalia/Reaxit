@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:oauth2/oauth2.dart';
 
 final _identifier = '3zlt7pqGVMiUCGxOnKTZEpytDUN7haeFBP2kVkig';
@@ -77,6 +81,17 @@ class LoggedInAuthState extends AuthState {
   List<Object> get props => [client];
 }
 
+/// Something went wrong.
+class FailureAuthState extends AuthState {
+  /// An [http.BaseClient] that adds an OAuth2 token to all requests.
+  final String? message;
+
+  FailureAuthState({this.message});
+
+  @override
+  List<Object> get props => [message ?? ''];
+}
+
 abstract class AuthEvent extends Equatable {
   const AuthEvent();
 
@@ -88,30 +103,18 @@ class LoadAuthEvent extends AuthEvent {}
 
 class LogOutAuthEvent extends AuthEvent {}
 
-class RequestLogInAuthEvent extends AuthEvent {}
-
-class CompleteLogInAuthEvent extends AuthEvent {
-  /// The responseUrl after sigining in on `LoggingInAuthState.authorizeUrl`.
-  final Uri responseUrl;
-
-  /// The grant to which [responseUrl] belongs.
-  /// Should be `LoggingInAuthState.grant`.
-  final AuthorizationCodeGrant grant;
-
-  CompleteLogInAuthEvent({required this.responseUrl, required this.grant});
-}
+class LogInAuthEvent extends AuthEvent {}
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(LoadingAuthState());
 
   @override
   Stream<AuthState> mapEventToState(AuthEvent event) async* {
+    print(event);
     if (event is LoadAuthEvent) {
       yield* _mapLoadAuthEventToState();
-    } else if (event is RequestLogInAuthEvent) {
-      yield* _mapRequestLogInAuthEventToState();
-    } else if (event is CompleteLogInAuthEvent) {
-      yield* _mapCompleteLogInAuthEventToState(event);
+    } else if (event is LogInAuthEvent) {
+      yield* _mapLogInAuthEventToState();
     } else if (event is LogOutAuthEvent) {
       yield* _mapLogOutAuthEventToState();
     }
@@ -138,7 +141,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Stream<AuthState> _mapRequestLogInAuthEventToState() async* {
+  Stream<AuthState> _mapLogInAuthEventToState() async* {
+    yield LoadingAuthState();
+
     final grant = AuthorizationCodeGrant(
         _identifier, _authorizationEndpoint, _tokenEndpoint,
         secret: _secret);
@@ -148,28 +153,32 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       scopes: _scopes,
     );
 
-    yield LoggingInAuthState(
-      authorizeUrl: authorizeUrl,
-      redirectUrl: _redirectUrl,
-      grant: grant,
-    );
-  }
+    try {
+      final responseUrl = Uri.parse(
+        await FlutterWebAuth.authenticate(
+          url: authorizeUrl.toString(),
+          callbackUrlScheme: _redirectUrl.scheme,
+        ),
+      );
 
-  Stream<AuthState> _mapCompleteLogInAuthEventToState(
-      CompleteLogInAuthEvent event) async* {
-    yield LoadingAuthState();
-    final client = await event.grant.handleAuthorizationResponse(
-      event.responseUrl.queryParameters,
-    );
+      final client = await grant.handleAuthorizationResponse(
+        responseUrl.queryParameters,
+      );
 
-    final _storage = FlutterSecureStorage();
-    await _storage.write(
-      key: _credentialsStorageKey,
-      value: client.credentials.toJson(),
-      iOptions: IOSOptions(accessibility: IOSAccessibility.first_unlock),
-    );
-
-    yield LoggedInAuthState(client: client);
+      final _storage = FlutterSecureStorage();
+      await _storage.write(
+        key: _credentialsStorageKey,
+        value: client.credentials.toJson(),
+        iOptions: IOSOptions(accessibility: IOSAccessibility.first_unlock),
+      );
+      yield LoggedInAuthState(client: client);
+    } on PlatformException catch (exception) {
+      yield FailureAuthState(message: exception.message);
+    } on SocketException catch (_) {
+      yield FailureAuthState(message: 'No internet.');
+    } catch (_) {
+      yield FailureAuthState(message: 'An unknown error occured.');
+    }
   }
 
   Stream<AuthState> _mapLogOutAuthEventToState() async* {

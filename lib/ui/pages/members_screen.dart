@@ -1,9 +1,9 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:reaxit/router/router.dart';
 import 'package:reaxit/ui/menu_drawer.dart';
+import 'package:reaxit/ui/pages/profile_screen.dart';
 
-class MembersPage extends StatelessWidget {
+class MembersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,7 +12,9 @@ class MembersPage extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-            AutoRouter.of(context).push(ProfileRoute(memberPk: 3));
+            ThaliaRouterDelegate.of(context).push(
+              MaterialPage(child: ProfileScreen(memberPk: 3)),
+            );
           },
           child: Text('To member 3'),
         ),

@@ -1,58 +1,174 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:reaxit/router/auth_guard.dart';
-import 'package:reaxit/ui/pages/albums_page.dart';
-import 'package:reaxit/ui/pages/calendar_page.dart';
-import 'package:reaxit/ui/pages/event_admin_page.dart';
-import 'package:reaxit/ui/pages/event_page.dart';
-import 'package:reaxit/ui/pages/login_page.dart';
-import 'package:reaxit/ui/pages/members_page.dart';
-import 'package:reaxit/ui/pages/profile_page.dart';
-import 'package:reaxit/ui/pages/settings_page.dart';
-import 'package:reaxit/ui/pages/welcome_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reaxit/blocs/auth_bloc.dart';
+import 'package:reaxit/ui/pages/album_screen.dart';
+import 'package:reaxit/ui/pages/albums_screen.dart';
+import 'package:reaxit/ui/pages/calendar_screen.dart';
+import 'package:reaxit/ui/pages/event_screen.dart';
+import 'package:reaxit/ui/pages/login_screen.dart';
+import 'package:reaxit/ui/pages/members_screen.dart';
+import 'package:reaxit/ui/pages/pizza_screen.dart';
+import 'package:reaxit/ui/pages/profile_screen.dart';
+import 'package:reaxit/ui/pages/welcome_screen.dart';
 
-export 'router.gr.dart';
+class ThaliaRouterDelegate extends RouterDelegate<List<MaterialPage>>
+    with ChangeNotifier, PopNavigatorRouterDelegateMixin<List<MaterialPage>> {
+  static ThaliaRouterDelegate of(BuildContext context) {
+    var delegate = Router.of(context).routerDelegate;
+    assert(delegate is ThaliaRouterDelegate, 'Delegate type must match.');
+    return delegate as ThaliaRouterDelegate;
+  }
 
-@MaterialAutoRouter(
-  replaceInRouteName: 'Page,Route',
-  routes: <AutoRoute>[
-    AutoRoute(path: '/login', page: LoginPage),
-    AutoRoute(
-      guards: [AuthGuard],
-      path: '/',
-      page: WelcomePage,
-    ),
-    AutoRoute(
-      guards: [AuthGuard],
-      path: '/members/photos',
-      page: AlbumsPage,
-    ),
-    AutoRoute(
-      guards: [AuthGuard],
-      path: '/members',
-      name: 'MembersRouter',
-      page: MembersPage,
-      children: <AutoRoute>[
-        AutoRoute(page: ProfilePage, path: ':pk'),
-      ],
-    ),
-    AutoRoute(
-      guards: [AuthGuard],
-      path: '/events/',
-      page: CalendarPage,
-      children: [
-        AutoRoute(
-          path: ':pk',
-          page: EventPage,
-          children: [AutoRoute(page: EventAdminPage)],
-        ),
-      ],
-    ),
-    AutoRoute(
-      guards: [AuthGuard],
-      page: SettingsPage,
-    ),
-    RedirectRoute(path: '*', redirectTo: '/'),
-  ],
-)
-class $AppRouter {}
+  @override
+  final GlobalKey<NavigatorState> navigatorKey;
+
+  bool _isAuthenticated = false;
+  final List<MaterialPage> _stack = [MaterialPage(child: LoginScreen())];
+
+  ThaliaRouterDelegate({required AuthBloc authBloc})
+      : navigatorKey = GlobalKey<NavigatorState>() {
+    authBloc.stream.listen((event) {
+      if (event is LoggedInAuthState) {
+        if (!_isAuthenticated) {
+          replaceStack([MaterialPage(child: WelcomeScreen())]);
+        }
+        _isAuthenticated = true;
+      } else if (event is LoggedOutAuthState) {
+        replaceStack([MaterialPage(child: LoginScreen())]);
+        _isAuthenticated = false;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<AuthBloc, AuthState>(
+      listenWhen: (previous, current) {
+        if (previous is LoggedInAuthState && current is LoggedOutAuthState) {
+          return true;
+        } else if (previous is LoggingInAuthState &&
+            current is LoggedInAuthState) {
+          return true;
+        } else if (current is FailureAuthState) {
+          return true;
+        }
+        return false;
+      },
+      listener: (context, state) {
+        if (state is LoggedOutAuthState) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Logged out'),
+            duration: Duration(seconds: 2),
+          ));
+        } else if (state is LoggedInAuthState) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Logged in'),
+            duration: Duration(seconds: 2),
+          ));
+        } else if (state is FailureAuthState) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(state.message ?? 'Logging in failed.'),
+            duration: Duration(seconds: 2),
+          ));
+        }
+      },
+      child: Navigator(
+        key: navigatorKey,
+        onPopPage: _onPopPage,
+        // Copy the stack with `.toList()` to have the navigator update.
+        pages: _stack.toList(),
+      ),
+    );
+  }
+
+  bool _onPopPage(route, result) {
+    if (!route.didPop(result)) return false;
+    if (_stack.length > 1) _stack.removeLast();
+    notifyListeners();
+    return true;
+  }
+
+  @override
+  Future<void> setNewRoutePath(List<MaterialPage> stack) async {
+    if (!_isAuthenticated) return SynchronousFuture(null);
+    _stack
+      ..clear()
+      ..addAll(stack);
+    return SynchronousFuture(null);
+  }
+
+  /// Adds a page to the top of the stack.
+  void push(MaterialPage page) {
+    _stack.add(page);
+    notifyListeners();
+  }
+
+  /// Removes the top of the stack.
+  void pop() {
+    if (_stack.length > 1) _stack.removeLast();
+    notifyListeners();
+  }
+
+  /// Replaces the top of the stack.
+  void replace(MaterialPage page) {
+    _stack
+      ..removeLast()
+      ..add(page);
+    notifyListeners();
+  }
+
+  /// Replaces the current stack.
+  void replaceStack(List<MaterialPage> stack) {
+    _stack
+      ..clear()
+      ..addAll(stack);
+    notifyListeners();
+  }
+}
+
+class ThaliaRouteInformationParser
+    implements RouteInformationParser<List<MaterialPage>> {
+  @override
+  Future<List<MaterialPage>> parseRouteInformation(routeInformation) async {
+    var uri = Uri.parse(routeInformation.location!);
+    var path = uri.path;
+    var segments = uri.pathSegments;
+
+    // Handle "/".
+    print(uri);
+    if (uri.pathSegments.isEmpty) {
+      return [MaterialPage(child: WelcomeScreen())];
+    } else if (RegExp('^/pizzas/\$').hasMatch(path)) {
+      return [
+        MaterialPage(child: WelcomeScreen()),
+        MaterialPage(child: PizzaScreen()),
+      ];
+    } else if (RegExp('^/events/\$').hasMatch(path)) {
+      return [MaterialPage(child: CalendarScreen())];
+    } else if (RegExp('^/events/([0-9]+)\$').hasMatch(path)) {
+      return [
+        MaterialPage(child: CalendarScreen()),
+        MaterialPage(child: EventScreen(eventPk: int.parse(segments[1])))
+      ];
+    } else if (RegExp('^/members/photos/([0-9]+)\$').hasMatch(path)) {
+      return [
+        MaterialPage(child: AlbumsScreen()),
+        MaterialPage(child: AlbumScreen(albumPk: int.parse(segments[1])))
+      ];
+    } else if (RegExp('^/members/([0-9]+)\$').hasMatch(path)) {
+      return [
+        MaterialPage(child: MembersScreen()),
+        MaterialPage(child: ProfileScreen(memberPk: int.parse(segments[1])))
+      ];
+    }
+
+    // Handle unknown path.
+    return [MaterialPage(child: WelcomeScreen())];
+  }
+
+  @override
+  RouteInformation restoreRouteInformation(configuration) {
+    return RouteInformation(location: '/');
+  }
+}

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/auth_bloc.dart';
 import 'package:reaxit/blocs/theme_bloc.dart';
-import 'package:reaxit/router/auth_guard.dart';
 import 'package:reaxit/router/router.dart';
 import 'package:reaxit/theme.dart';
 
@@ -23,12 +22,15 @@ class ThaliApp extends StatefulWidget {
 }
 
 class _ThaliAppState extends State<ThaliApp> {
-  late final _appRouter;
+  late final ThaliaRouterDelegate _routerDelegate;
+  late final ThaliaRouteInformationParser _routeInformationParser;
 
   @override
   void initState() {
-    final authBloc = BlocProvider.of<AuthBloc>(context, listen: false);
-    _appRouter = AppRouter(authGuard: AuthGuard(authBloc.stream));
+    _routerDelegate = ThaliaRouterDelegate(
+      authBloc: BlocProvider.of<AuthBloc>(context, listen: false),
+    );
+    _routeInformationParser = ThaliaRouteInformationParser();
     super.initState();
   }
 
@@ -41,8 +43,8 @@ class _ThaliAppState extends State<ThaliApp> {
           theme: lightTheme,
           darkTheme: darkTheme,
           themeMode: themeMode,
-          routerDelegate: _appRouter.delegate(),
-          routeInformationParser: _appRouter.defaultRouteParser(),
+          routerDelegate: _routerDelegate,
+          routeInformationParser: _routeInformationParser,
         );
       },
     );

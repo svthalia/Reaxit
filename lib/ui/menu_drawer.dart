@@ -1,8 +1,12 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/auth_bloc.dart';
 import 'package:reaxit/router/router.dart';
+import 'package:reaxit/ui/pages/albums_screen.dart';
+import 'package:reaxit/ui/pages/calendar_screen.dart';
+import 'package:reaxit/ui/pages/members_screen.dart';
+import 'package:reaxit/ui/pages/settings_screen.dart';
+import 'package:reaxit/ui/pages/welcome_screen.dart';
 import 'package:url_launcher/link.dart';
 
 class MenuDrawer extends StatelessWidget {
@@ -16,12 +20,10 @@ class MenuDrawer extends StatelessWidget {
         children: [
           InkWell(
             onTap: () {
-              // AutoRouter.of(context).push(ProfileRoute(memberPk: 6));
-              AutoRouter.of(context).root.push(
-                    MembersRouter(
-                      children: [MembersRoute(), ProfileRoute(memberPk: 6)],
-                    ),
-                  );
+              // Member me = Provider.of<AuthProvider>(context, listen: false).me;
+              // ThaliaRouterDelegate.of(context).push(MaterialPage(
+              //   child: MemberDetail(me.pk, me),
+              // ));
             },
             child: Stack(
               children: [
@@ -87,34 +89,43 @@ class MenuDrawer extends StatelessWidget {
           ListTile(
             title: Text('Welcome'),
             leading: Icon(Icons.home),
-            onTap: () => AutoRouter.of(context).root.replace(WelcomeRoute()),
+            onTap: () => ThaliaRouterDelegate.of(context).replace(
+              MaterialPage(child: WelcomeScreen()),
+            ),
           ),
           ListTile(
             title: Text('Calendar'),
             leading: Icon(Icons.event),
-            onTap: () => AutoRouter.of(context).root.replace(CalendarRoute()),
+            onTap: () => ThaliaRouterDelegate.of(context).replace(
+              MaterialPage(child: CalendarScreen()),
+            ),
           ),
           ListTile(
             title: Text('Member list'),
             leading: Icon(Icons.people),
-            onTap: () => AutoRouter.of(context).root.replace(MembersRouter()),
+            onTap: () => ThaliaRouterDelegate.of(context).replace(
+              MaterialPage(child: MembersScreen()),
+            ),
           ),
           ListTile(
             title: Text('Photos'),
             leading: Icon(Icons.photo),
-            onTap: () => AutoRouter.of(context).root.replace(AlbumsRoute()),
+            onTap: () => ThaliaRouterDelegate.of(context).replace(
+              MaterialPage(child: AlbumsScreen()),
+            ),
           ),
           ListTile(
             title: Text('Settings'),
             leading: Icon(Icons.settings),
-            onTap: () => AutoRouter.of(context).root.replace(SettingsRoute()),
+            onTap: () => ThaliaRouterDelegate.of(context).replace(
+              MaterialPage(child: SettingsScreen()),
+            ),
           ),
           Divider(),
           ListTile(
             leading: Icon(Icons.logout),
             title: Text('Log out'),
             onTap: () async {
-              await AutoRouter.of(context).root.replaceAll([LoginRoute()]);
               BlocProvider.of<AuthBloc>(context, listen: false).add(
                 LogOutAuthEvent(),
               );
@@ -165,3 +176,5 @@ class MenuDrawer extends StatelessWidget {
     );
   }
 }
+
+class MemberList {}

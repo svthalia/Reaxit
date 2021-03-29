@@ -1,11 +1,9 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reaxit/blocs/auth_bloc.dart';
 import 'package:reaxit/router/router.dart';
 import 'package:reaxit/ui/menu_drawer.dart';
+import 'package:reaxit/ui/pages/profile_screen.dart';
 
-class WelcomePage extends StatelessWidget {
+class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,19 +17,12 @@ class WelcomePage extends StatelessWidget {
             Text('Welcome page'),
             ElevatedButton(
               onPressed: () {
-                AutoRouter.of(context).pushPath('/members/5');
+                ThaliaRouterDelegate.of(context).push(
+                  MaterialPage(child: ProfileScreen(memberPk: 5)),
+                );
               },
               child: Text('to 5'),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                await AutoRouter.of(context).replaceAll([LoginRoute()]);
-                BlocProvider.of<AuthBloc>(context, listen: false).add(
-                  LogOutAuthEvent(),
-                );
-              },
-              child: Text('log out'),
-            )
           ],
         ),
       ),
