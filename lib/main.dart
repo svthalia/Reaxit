@@ -38,13 +38,29 @@ class _ThaliAppState extends State<ThaliApp> {
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeMode>(
       builder: (context, themeMode) {
-        return MaterialApp.router(
-          title: 'ThaliApp',
-          theme: lightTheme,
-          darkTheme: darkTheme,
-          themeMode: themeMode,
-          routerDelegate: _routerDelegate,
-          routeInformationParser: _routeInformationParser,
+        return BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, authState) {
+            if (authState is LoggedInAuthState) {
+              // TODO: MultiBlocProvider.
+              return MaterialApp.router(
+                title: 'ThaliApp',
+                theme: lightTheme,
+                darkTheme: darkTheme,
+                themeMode: themeMode,
+                routerDelegate: _routerDelegate,
+                routeInformationParser: _routeInformationParser,
+              );
+            } else {
+              return MaterialApp.router(
+                title: 'ThaliApp',
+                theme: lightTheme,
+                darkTheme: darkTheme,
+                themeMode: themeMode,
+                routerDelegate: _routerDelegate,
+                routeInformationParser: _routeInformationParser,
+              );
+            }
+          },
         );
       },
     );

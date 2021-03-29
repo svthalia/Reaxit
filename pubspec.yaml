@@ -44,10 +44,6 @@ dependencies:
   # BLoC.
   flutter_bloc: ^7.0.0
   equatable: ^2.0.0
-  
-  # Navigation.
-  # auto_route: ^1.0.2
-  # vrouter: ^1.1.0
 
   # Persistent storage.
   shared_preferences: ^2.0.5
@@ -71,9 +67,6 @@ dev_dependencies:
 
   # JSON parsing.
   json_serializable: ^4.1.0
-
-  # Navigation.
-  # auto_route_generator: ^1.0.2
 
 # The following section is specific to Flutter.
 flutter:

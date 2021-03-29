@@ -75,10 +75,14 @@ class LoggedInAuthState extends AuthState {
   /// An [http.BaseClient] that adds an OAuth2 token to all requests.
   final Client client;
 
-  LoggedInAuthState({required this.client});
+  /// A callback that can be used to indicate to the [AuthBloc] that the client
+  /// no longer works (e.g. its token is revoked);
+  final Function() logOut;
+
+  LoggedInAuthState({required this.client, required this.logOut});
 
   @override
-  List<Object> get props => [client];
+  List<Object> get props => [client, logOut];
 }
 
 /// Something went wrong.
@@ -135,6 +139,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           identifier: _identifier,
           secret: _secret,
         ),
+        logOut: () => add(LogOutAuthEvent()),
       );
     } else {
       yield LoggedOutAuthState();
@@ -171,7 +176,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         value: client.credentials.toJson(),
         iOptions: IOSOptions(accessibility: IOSAccessibility.first_unlock),
       );
-      yield LoggedInAuthState(client: client);
+      yield LoggedInAuthState(
+        client: client,
+        logOut: () => add(LogOutAuthEvent()),
+      );
     } on PlatformException catch (exception) {
       yield FailureAuthState(message: exception.message);
     } on SocketException catch (_) {
