@@ -41,6 +41,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<!-- Deep Linking -->
 	<key>FlutterDeepLinkingEnabled</key>
 	<true/>
 	<key>CFBundleURLTypes</key>
@@ -53,8 +54,14 @@
 		<key>CFBundleURLSchemes</key>
 		<array>
 		<string>https</string>
+		<string>thaliapp</string>
 		</array>
 		</dict>
 	</array>
+	<!-- Image Picker -->
+	<key>NSCameraUsageDescription</key>
+	<string>$(EXECUTABLE_NAME) would like to use your camera so you can create a new profile picture</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>$(PRODUCT_NAME) would like access to your photo gallery so you can choose an existing photo as your profile picture</string>
 </dict>
 </plist>
