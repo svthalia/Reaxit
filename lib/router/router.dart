@@ -2,15 +2,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/auth_bloc.dart';
-import 'package:reaxit/ui/pages/album_screen.dart';
-import 'package:reaxit/ui/pages/albums_screen.dart';
-import 'package:reaxit/ui/pages/calendar_screen.dart';
-import 'package:reaxit/ui/pages/event_screen.dart';
-import 'package:reaxit/ui/pages/login_screen.dart';
-import 'package:reaxit/ui/pages/members_screen.dart';
-import 'package:reaxit/ui/pages/pizza_screen.dart';
-import 'package:reaxit/ui/pages/profile_screen.dart';
-import 'package:reaxit/ui/pages/welcome_screen.dart';
+import 'package:reaxit/ui/screens/album_screen.dart';
+import 'package:reaxit/ui/screens/albums_screen.dart';
+import 'package:reaxit/ui/screens/calendar_screen.dart';
+import 'package:reaxit/ui/screens/event_screen.dart';
+import 'package:reaxit/ui/screens/login_screen.dart';
+import 'package:reaxit/ui/screens/members_screen.dart';
+import 'package:reaxit/ui/screens/pizza_screen.dart';
+import 'package:reaxit/ui/screens/profile_screen.dart';
+import 'package:reaxit/ui/screens/welcome_screen.dart';
 
 class ThaliaRouterDelegate extends RouterDelegate<List<MaterialPage>>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<List<MaterialPage>> {

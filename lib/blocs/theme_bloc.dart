@@ -48,7 +48,18 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeMode> {
   }
 
   Stream<ThemeMode> _mapThemeChangeEventToState(ThemeChangeEvent event) async* {
-    yield ThemeMode.system;
-    throw UnimplementedError();
+    var prefs = await SharedPreferences.getInstance();
+    switch (event.newMode) {
+      case ThemeMode.system:
+        await prefs.setString('themeMode', 'system');
+        break;
+      case ThemeMode.light:
+        await prefs.setString('themeMode', 'light');
+        break;
+      case ThemeMode.dark:
+        await prefs.setString('themeMode', 'dark');
+        break;
+    }
+    yield event.newMode;
   }
 }
