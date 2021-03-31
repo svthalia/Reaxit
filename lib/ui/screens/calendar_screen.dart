@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reaxit/blocs/event_list_bloc.dart';
 import 'package:reaxit/ui/menu_drawer.dart';
 
 class CalendarScreen extends StatelessWidget {
@@ -7,8 +9,22 @@ class CalendarScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       drawer: MenuDrawer(),
-      body: Center(
-        child: Text('Calendar'),
+      body: BlocBuilder<EventListBloc, EventListState>(
+        builder: (context, listState) {
+          print(listState);
+          if (listState.hasException) {
+            // TODO: proper error screen
+            return Text(listState.message!);
+          } else {
+            return ListView.builder(
+              // TODO: change this to the expected number? without breaking if we havent loaded those yet.
+              itemCount: listState.events.length,
+              itemBuilder: (context, index) => ListTile(
+                title: Text(listState.events[index].title),
+              ),
+            );
+          }
+        },
       ),
     );
   }

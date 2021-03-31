@@ -28,6 +28,8 @@ final _scopes = <String>[
   'read',
   'write',
   'members:read',
+  // 'events:read',
+  // 'events:register',
   'activemembers:read',
 ];
 
@@ -37,7 +39,7 @@ abstract class AuthState extends Equatable {
   const AuthState();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 /// Authentication is loading.
@@ -67,7 +69,7 @@ class LoggingInAuthState extends AuthState {
       required this.grant});
 
   @override
-  List<Object> get props => [authorizeUrl, grant];
+  List<Object?> get props => [authorizeUrl, grant];
 }
 
 /// Logged in.
@@ -82,7 +84,7 @@ class LoggedInAuthState extends AuthState {
   LoggedInAuthState({required this.client, required this.logOut});
 
   @override
-  List<Object> get props => [client, logOut];
+  List<Object?> get props => [client, logOut];
 }
 
 /// Something went wrong.
@@ -93,7 +95,7 @@ class FailureAuthState extends AuthState {
   FailureAuthState({this.message});
 
   @override
-  List<Object> get props => [message ?? ''];
+  List<Object?> get props => [message];
 }
 
 abstract class AuthEvent extends Equatable {
@@ -184,6 +186,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       yield FailureAuthState(message: exception.message);
     } on SocketException catch (_) {
       yield FailureAuthState(message: 'No internet.');
+    } on AuthorizationException catch (_) {
+      yield FailureAuthState(message: 'Authorization failed.');
     } catch (_) {
       yield FailureAuthState(message: 'An unknown error occured.');
     }
@@ -202,3 +206,5 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     yield LoggedOutAuthState();
   }
 }
+
+// TODO: make AuthBloc a cubit?

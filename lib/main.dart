@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/auth_bloc.dart';
+import 'package:reaxit/blocs/event_list_bloc.dart';
 import 'package:reaxit/blocs/theme_bloc.dart';
 import 'package:reaxit/router/router.dart';
 import 'package:reaxit/theme.dart';
@@ -41,14 +43,34 @@ class _ThaliAppState extends State<ThaliApp> {
         return BlocBuilder<AuthBloc, AuthState>(
           builder: (context, authState) {
             if (authState is LoggedInAuthState) {
-              // TODO: MultiBlocProvider.
-              return MaterialApp.router(
-                title: 'ThaliApp',
-                theme: lightTheme,
-                darkTheme: darkTheme,
-                themeMode: themeMode,
-                routerDelegate: _routerDelegate,
-                routeInformationParser: _routeInformationParser,
+              return RepositoryProvider(
+                create: (_) => ApiRepository(
+                  client: authState.client,
+                  logOut: authState.logOut,
+                ),
+                child: Builder(builder: (context) {
+                  var apiRepository = RepositoryProvider.of<ApiRepository>(
+                    context,
+                    listen: false,
+                  );
+                  return MultiBlocProvider(
+                    providers: [
+                      BlocProvider(
+                        create: (_) => EventListBloc(apiRepository)
+                          ..add(EventListEvent.load()),
+                        lazy: false,
+                      ),
+                    ],
+                    child: MaterialApp.router(
+                      title: 'ThaliApp',
+                      theme: lightTheme,
+                      darkTheme: darkTheme,
+                      themeMode: themeMode,
+                      routerDelegate: _routerDelegate,
+                      routeInformationParser: _routeInformationParser,
+                    ),
+                  );
+                }),
               );
             } else {
               return MaterialApp.router(
