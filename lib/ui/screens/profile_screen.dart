@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:reaxit/models/member.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final int memberPk;
+  final int pk;
+  final ListMember? member;
 
-  const ProfileScreen({Key? key, required this.memberPk}) : super(key: key);
+  const ProfileScreen({Key? key, required this.pk, this.member})
+      : super(key: key);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -15,7 +18,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(),
       body: Center(
-        child: Text('profile nr. ${widget.memberPk}'),
+        child: Text('profile nr. ${widget.pk}'),
       ),
     );
   }

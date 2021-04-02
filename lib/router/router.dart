@@ -159,7 +159,7 @@ class ThaliaRouteInformationParser
     } else if (RegExp('^/members/([0-9]+)\$').hasMatch(path)) {
       return [
         MaterialPage(child: MembersScreen()),
-        MaterialPage(child: ProfileScreen(memberPk: int.parse(segments[1])))
+        MaterialPage(child: ProfileScreen(pk: int.parse(segments[1])))
       ];
     }
 

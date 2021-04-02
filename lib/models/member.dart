@@ -26,7 +26,7 @@ class ListMember {
   DateTime? get birthday => profile.birthday;
   Photo get photo => profile.photo;
   Programme? get programme => profile.programme;
-  int get startingYear => profile.startingYear;
+  int? get startingYear => profile.startingYear;
   Uri? get website => profile.website;
   String? get profileDescription => profile.profileDescription;
 
@@ -90,7 +90,7 @@ class Profile {
   final DateTime? birthday;
   final Photo photo;
   final Programme? programme;
-  final int startingYear;
+  final int? startingYear;
   final Uri? website;
   final String? profileDescription;
 
@@ -138,7 +138,7 @@ class FullProfile extends Profile {
     DateTime? birthday,
     Photo photo,
     Programme? programme,
-    int startingYear,
+    int? startingYear,
     Uri? website,
     String? profileDescription,
     this.addressStreet,

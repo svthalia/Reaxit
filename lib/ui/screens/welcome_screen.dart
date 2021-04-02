@@ -18,7 +18,7 @@ class WelcomeScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 ThaliaRouterDelegate.of(context).push(
-                  MaterialPage(child: ProfileScreen(memberPk: 5)),
+                  MaterialPage(child: ProfileScreen(pk: 5)),
                 );
               },
               child: Text('to 5'),

@@ -107,7 +107,7 @@ Profile _$ProfileFromJson(Map<String, dynamic> json) {
         : DateTime.parse(json['birthday'] as String),
     Photo.fromJson(json['photo'] as Map<String, dynamic>),
     _$enumDecodeNullable(_$ProgrammeEnumMap, json['programme']),
-    json['starting_year'] as int,
+    json['starting_year'] as int?,
     json['website'] == null ? null : Uri.parse(json['website'] as String),
     json['profile_description'] as String?,
   );
@@ -149,7 +149,7 @@ FullProfile _$FullProfileFromJson(Map<String, dynamic> json) {
         : DateTime.parse(json['birthday'] as String),
     Photo.fromJson(json['photo'] as Map<String, dynamic>),
     _$enumDecodeNullable(_$ProgrammeEnumMap, json['programme']),
-    json['starting_year'] as int,
+    json['starting_year'] as int?,
     json['website'] == null ? null : Uri.parse(json['website'] as String),
     json['profile_description'] as String?,
     json['address_street'] as String?,
