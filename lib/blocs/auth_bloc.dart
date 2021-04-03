@@ -27,10 +27,16 @@ final _redirectUrl = Uri.parse(
 final _scopes = <String>[
   'read',
   'write',
+  // 'announcements:read',
   'members:read',
-  // 'events:read',
-  // 'events:register',
+  'profile:read',
+  'profile:write',
   'activemembers:read',
+  'events:read',
+  'events:register',
+  'photos:read',
+  'pushnotifications:read',
+  // 'pushnotifications:write',
 ];
 
 final _credentialsStorageKey = 'ThaliApp OAuth2 credentials';
