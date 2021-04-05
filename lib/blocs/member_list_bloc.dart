@@ -74,7 +74,6 @@ class MemberListState extends ListState<MemberListEvent, ListMember> {
   }) : super.success(results: results, event: event, isDone: isDone);
 }
 
-/// Bloc that serves a list of [Event]. The state is `null` when loading.
 class MemberListBloc extends Bloc<MemberListEvent, MemberListState> {
   static final int _firstPageSize = 9;
   static final int _pageSize = 30;
@@ -98,7 +97,7 @@ class MemberListBloc extends Bloc<MemberListEvent, MemberListState> {
 
   Stream<MemberListState> _load(MemberListEvent event) async* {
     yield state.copyWith(isLoading: true, event: event);
-    await Future.delayed(Duration(seconds: 1));
+    // await Future.delayed(Duration(seconds: 1));
 
     try {
       var listResponse = await api.getMembers(
@@ -131,7 +130,7 @@ class MemberListBloc extends Bloc<MemberListEvent, MemberListState> {
 
   Stream<MemberListState> _more(MemberListEvent event) async* {
     yield state.copyWith(isLoadingMore: true);
-    await Future.delayed(Duration(seconds: 1));
+    // await Future.delayed(Duration(seconds: 1));
 
     try {
       var listResponse = await api.getMembers(

@@ -1,124 +1,155 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/api_repository.dart';
+import 'package:reaxit/blocs/list_event.dart';
+import 'package:reaxit/blocs/list_state.dart';
 import 'package:reaxit/models/event.dart';
+import 'package:reaxit/models/member.dart';
 
-class EventListEvent extends Equatable {
-  final bool isLoad;
-  final bool isMore;
-
-  // TODO: Add new filter parameters.
-  /// The search query to use.
+class EventListEvent extends ListEvent {
   final String? search;
 
-  const EventListEvent.load({this.search})
-      : isLoad = true,
-        isMore = false;
-
-  const EventListEvent.more({this.search})
-      : isLoad = false,
-        isMore = true;
-
-  bool get isSearch => search != null;
+  EventListEvent.load({this.search}) : super.load();
+  EventListEvent.more()
+      : search = null,
+        super.more();
 
   @override
   List<Object?> get props => [isLoad, isMore, search];
 }
 
-class EventListState extends Equatable {
-  /// The [Event]s to be shown. These are outdated if `isLoading` is true.
-  final List<Event> events;
-
-  /// A message describing why there are no results.
-  final String? message;
-
-  /// Different results are being loaded. The `events` are outdated.
-  final bool isLoading;
-
-  /// The last results have been loaded. False if there are more pages left.
-  final bool isDone;
-
-  bool get hasException => message != null;
-
-  const EventListState.loading({required this.events})
-      : message = null,
-        isLoading = true,
-        isDone = true;
-
-  const EventListState.results({required this.events, required this.isDone})
-      : message = null,
-        isLoading = false;
-
-  const EventListState.failure(String message)
-      : events = const [],
-        message = message,
-        isLoading = false,
-        isDone = true;
+// TODO: when dart 2.13 becomes the standard, replace this entire class by a typedef. Currently typedefs can only be used on function signatures.
+class EventListState extends ListState<EventListEvent, Event> {
+  EventListState({
+    required List<Event> results,
+    required String? message,
+    required bool isLoading,
+    required bool isLoadingMore,
+    required bool isDone,
+    required EventListEvent event,
+  }) : super(
+          results: results,
+          message: message,
+          isLoading: isLoading,
+          isLoadingMore: isLoadingMore,
+          isDone: isDone,
+          event: event,
+        );
 
   @override
-  List<Object?> get props => [events, message, isLoading, isDone];
+  EventListState copyWith({
+    List<Event>? results,
+    String? message,
+    bool? isLoading,
+    bool? isLoadingMore,
+    bool? isDone,
+    EventListEvent? event,
+  }) =>
+      EventListState(
+        results: results ?? this.results,
+        message: message ?? this.message,
+        isLoading: isLoading ?? this.isLoading,
+        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+        isDone: isDone ?? this.isDone,
+        event: event ?? this.event,
+      );
+  EventListState.failure({
+    required String message,
+    required EventListEvent event,
+  }) : super.failure(message: message, event: event);
 
-  @override
-  String toString() {
-    return 'EventListState(isLoading: $isLoading, isDone: $isDone, message: $message, ${events.length} eventscoa)';
-  }
+  EventListState.loading({
+    required List<Event> results,
+    required EventListEvent event,
+  }) : super.loading(results: results, event: event);
+
+  EventListState.loadingMore({
+    required List<Event> results,
+    required EventListEvent event,
+  }) : super.loadingMore(results: results, event: event);
+
+  EventListState.success({
+    required List<Event> results,
+    required EventListEvent event,
+    required bool isDone,
+  }) : super.success(results: results, event: event, isDone: isDone);
 }
 
-/// Bloc that serves a list of [Event]. The state is `null` when loading.
 class EventListBloc extends Bloc<EventListEvent, EventListState> {
+  static final int _firstPageSize = 9;
+  static final int _pageSize = 30;
+
   final ApiRepository api;
 
-  EventListBloc(this.api) : super(EventListState.loading(events: []));
+  EventListBloc(this.api)
+      : super(EventListState.loading(
+          results: [],
+          event: EventListEvent.load(),
+        ));
 
   @override
   Stream<EventListState> mapEventToState(EventListEvent event) async* {
     if (event.isLoad) {
-      yield* _load(event.search);
-    } else if (event.isMore) {
-      yield* _more(event.search);
+      yield* _load(event);
+    } else if (event.isMore && !state.isDone) {
+      yield* _more(event);
     }
   }
 
-  Stream<EventListState> _load(String? search) async* {
-    yield EventListState.loading(events: state.events);
+  Stream<EventListState> _load(EventListEvent event) async* {
+    yield state.copyWith(isLoading: true, event: event);
+    // await Future.delayed(Duration(seconds: 1));
 
     try {
       var listResponse = await api.getEvents(
-        search: search,
-        limit: 50,
+        search: event.search,
+        limit: _firstPageSize,
         offset: 0,
       );
       if (listResponse.results.isNotEmpty) {
-        yield EventListState.results(
-          events: listResponse.results,
+        yield EventListState.success(
+          results: listResponse.results,
           isDone: listResponse.results.length == listResponse.count,
+          event: event,
         );
       } else {
-        // TODO: give appropriate error message for search
-        yield EventListState.failure('There are no events.');
+        yield EventListState.failure(
+          message: state.event.search == null
+              ? 'There are no members.'
+              : 'There are no members found for "${state.event.search}"',
+          event: event,
+        );
       }
     } on ApiException catch (_) {
       // TODO: give appropriate error message
-      yield EventListState.failure('An error occured.');
+      yield EventListState.failure(
+        message: 'An error occured.',
+        event: event,
+      );
     }
   }
 
-  Stream<EventListState> _more(String? search) async* {
+  Stream<EventListState> _more(EventListEvent event) async* {
+    yield state.copyWith(isLoadingMore: true);
+    // await Future.delayed(Duration(seconds: 1));
+
     try {
       var listResponse = await api.getEvents(
-        search: search,
-        limit: 50,
-        offset: state.events.length,
+        search: state.event.search,
+        limit: _pageSize,
+        offset: state.results.length,
       );
-      yield EventListState.results(
-        events: state.events + listResponse.results,
-        isDone: listResponse.results.length == listResponse.count,
+      final members = state.results + listResponse.results;
+      yield EventListState.success(
+        results: members,
+        isDone: members.length == listResponse.count,
+        event: state.event,
       );
     } on ApiException catch (_) {
       // TODO: give appropriate error message
-      yield EventListState.failure('An error occured.');
+      yield EventListState.failure(
+        message: 'An error occured.',
+        event: state.event,
+      );
     }
   }
 }
-
-// TODO: we may need to include the offset in the events. Otherwise it might happen that when an outdated state is added, the old state's offset is used. We may be able to solve such things by debouncing.

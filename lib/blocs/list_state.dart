@@ -1,10 +1,11 @@
 import 'package:equatable/equatable.dart';
+import 'package:reaxit/blocs/list_event.dart';
 
 /// Generic class to be used as state for paginated lists.
 ///
 /// Keeps the instance of the event that contains the information used
 /// to retrieve for the result, such as a search query.
-class ListState<EventType, ElementType> extends Equatable {
+class ListState<EventType extends ListEvent, ElementType> extends Equatable {
   /// The results to be shown. These are outdated if `isLoading` is true.
   final List<ElementType> results;
 
