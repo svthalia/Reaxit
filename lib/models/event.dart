@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:reaxit/models/event_registration.dart';
 
 part 'event.g.dart';
 
@@ -22,15 +23,15 @@ class Event {
   final double price;
   final double fine;
   final int numParticipants;
-  final int maxParticipants;
-  final String noRegistrationMessage;
+  final int? maxParticipants;
+  final String? noRegistrationMessage;
   final bool hasFields;
   final bool isPizzaEvent;
   final String mapsUrl;
-  final String userPermissions;
-  final String userRegistration;
+  final EventPermissions userPermissions;
+  final EventRegistration? userRegistration;
   // final Commitee organiser;
-  // final Slide slide;
+  // final Slide? slide;
 
   factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
 
@@ -56,4 +57,22 @@ class Event {
     this.userPermissions,
     this.userRegistration,
   );
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class EventPermissions {
+  final bool createRegistration;
+  final bool cancelRegistration;
+  final bool updateRegistration;
+  final bool manageEvent;
+
+  EventPermissions(
+    this.createRegistration,
+    this.cancelRegistration,
+    this.updateRegistration,
+    this.manageEvent,
+  );
+
+  factory EventPermissions.fromJson(Map<String, dynamic> json) =>
+      _$EventPermissionsFromJson(json);
 }

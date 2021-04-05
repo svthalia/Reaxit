@@ -7,24 +7,22 @@ class EventListEvent extends Equatable {
   final bool isLoad;
   final bool isMore;
 
+  // TODO: Add new filter parameters.
   /// The search query to use.
-  ///
-  /// We search instead of 'get' if this is not null.
-  /// Especially, `''` shows past events, whereas `null` does not.
-  final String? query;
+  final String? search;
 
-  const EventListEvent.load({this.query})
+  const EventListEvent.load({this.search})
       : isLoad = true,
         isMore = false;
 
-  const EventListEvent.more({this.query})
+  const EventListEvent.more({this.search})
       : isLoad = false,
         isMore = true;
 
-  bool get isSearch => query != null;
+  bool get isSearch => search != null;
 
   @override
-  List<Object?> get props => [isLoad, isMore, query];
+  List<Object?> get props => [isLoad, isMore, search];
 }
 
 class EventListState extends Equatable {
@@ -59,9 +57,13 @@ class EventListState extends Equatable {
 
   @override
   List<Object?> get props => [events, message, isLoading, isDone];
+
+  @override
+  String toString() {
+    return 'EventListState(isLoading: $isLoading, isDone: $isDone, message: $message, ${events.length} eventscoa)';
+  }
 }
 
-// TODO: wrap list in an EventListState with isLoading and message?
 /// Bloc that serves a list of [Event]. The state is `null` when loading.
 class EventListBloc extends Bloc<EventListEvent, EventListState> {
   final ApiRepository api;
@@ -71,18 +73,18 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
   @override
   Stream<EventListState> mapEventToState(EventListEvent event) async* {
     if (event.isLoad) {
-      yield* _load(event.query);
+      yield* _load(event.search);
     } else if (event.isMore) {
-      yield* _more(event.query);
+      yield* _more(event.search);
     }
   }
 
-  Stream<EventListState> _load(String? query) async* {
+  Stream<EventListState> _load(String? search) async* {
     yield EventListState.loading(events: state.events);
 
     try {
       var listResponse = await api.getEvents(
-        query: query,
+        search: search,
         limit: 50,
         offset: 0,
       );
@@ -101,17 +103,15 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
     }
   }
 
-  Stream<EventListState> _more(String? query) async* {
+  Stream<EventListState> _more(String? search) async* {
     try {
       var listResponse = await api.getEvents(
-        query: query,
+        search: search,
         limit: 50,
         offset: state.events.length,
       );
-      // TODO: does this trigger a rebuild? the list doesn't change so might need to do .toList();
-      state.events.addAll(listResponse.results);
       yield EventListState.results(
-        events: state.events,
+        events: state.events + listResponse.results,
         isDone: listResponse.results.length == listResponse.count,
       );
     } on ApiException catch (_) {

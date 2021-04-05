@@ -27,13 +27,16 @@ Event _$EventFromJson(Map<String, dynamic> json) {
     (json['price'] as num).toDouble(),
     (json['fine'] as num).toDouble(),
     json['num_participants'] as int,
-    json['max_participants'] as int,
-    json['no_registration_message'] as String,
+    json['max_participants'] as int?,
+    json['no_registration_message'] as String?,
     json['has_fields'] as bool,
     json['is_pizza_event'] as bool,
     json['maps_url'] as String,
-    json['user_permissions'] as String,
-    json['user_registration'] as String,
+    EventPermissions.fromJson(json['user_permissions'] as Map<String, dynamic>),
+    json['user_registration'] == null
+        ? null
+        : EventRegistration.fromJson(
+            json['user_registration'] as Map<String, dynamic>),
   );
 }
 
@@ -94,3 +97,20 @@ const _$EventCategoryEnumMap = {
   EventCategory.association: 'association',
   EventCategory.other: 'other',
 };
+
+EventPermissions _$EventPermissionsFromJson(Map<String, dynamic> json) {
+  return EventPermissions(
+    json['create_registration'] as bool,
+    json['cancel_registration'] as bool,
+    json['update_registration'] as bool,
+    json['manage_event'] as bool,
+  );
+}
+
+Map<String, dynamic> _$EventPermissionsToJson(EventPermissions instance) =>
+    <String, dynamic>{
+      'create_registration': instance.createRegistration,
+      'cancel_registration': instance.cancelRegistration,
+      'update_registration': instance.updateRegistration,
+      'manage_event': instance.manageEvent,
+    };
