@@ -70,6 +70,10 @@ class ApiRepository {
       throw ApiException.notLoggedIn;
     } on FormatException catch (_) {
       throw ApiException.unknownError;
+    } on ApiException catch (_) {
+      rethrow;
+    } catch (_) {
+      throw ApiException.unknownError;
     }
   }
 
@@ -84,10 +88,10 @@ class ApiRepository {
   ///
   /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
   /// total number of [Events] that can be returned.
-  /// Use `query` to filter on name, `ordering` to order with values in {'start',
+  /// Use `search` to filter on name, `ordering` to order with values in {'start',
   /// 'end', '-start', '-end'}, and `start` and/or `end` to filter on a time range.
   Future<ListResponse<Event>> getEvents({
-    String? query,
+    String? search,
     int? limit,
     int? offset,
     String? ordering,
@@ -101,7 +105,7 @@ class ApiRepository {
     var uri = _baseUri.replace(
       path: _basePath + '/events/',
       queryParameters: {
-        if (query != null) 'query': query,
+        if (search != null) 'search': search,
         if (limit != null) 'limit': limit.toString(),
         if (offset != null) 'offset': offset.toString(),
         if (ordering != null) 'ordering': ordering,
@@ -147,10 +151,10 @@ class ApiRepository {
   ///
   /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
   /// total number of [ListMember]s that can be returned.
-  /// Use `query` to filter on name, `ordering` to order with values in {'last_name',
+  /// Use `search` to filter on name, `ordering` to order with values in {'last_name',
   /// 'first_name', 'username', '-last_name', '-first_name', '-username'},
   Future<ListResponse<ListMember>> getMembers({
-    String? query,
+    String? search,
     int? limit,
     int? offset,
     String? ordering,
@@ -170,7 +174,7 @@ class ApiRepository {
     var uri = _baseUri.replace(
       path: _basePath + '/members/',
       queryParameters: {
-        if (query != null) 'query': query,
+        if (search != null) 'search': search,
         if (limit != null) 'limit': limit.toString(),
         if (offset != null) 'offset': offset.toString(),
         if (ordering != null) 'ordering': ordering,
