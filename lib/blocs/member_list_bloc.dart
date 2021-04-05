@@ -1,169 +1,158 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/api_repository.dart';
+import 'package:reaxit/blocs/list_event.dart';
+import 'package:reaxit/blocs/list_state.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/member.dart';
 
-class MemberListEvent extends Equatable {
-  final bool isLoad;
-  final bool isMore;
-
-  /// The search query to use.
+class MemberListEvent extends ListEvent {
   final String? search;
 
-  const MemberListEvent.load({this.search})
-      : isLoad = true,
-        isMore = false;
-
-  const MemberListEvent.more({this.search})
-      : isLoad = false,
-        isMore = true;
-
-  bool get isSearch => search != null;
+  MemberListEvent.load({this.search}) : super.load();
+  MemberListEvent.more()
+      : search = null,
+        super.more();
 
   @override
   List<Object?> get props => [isLoad, isMore, search];
 }
 
-class MemberListState extends Equatable {
-  /// The [Event]s to be shown. These are outdated if `isLoading` is true.
-  final List<ListMember> members;
+// TODO: when dart 2.13 becomes the standard, replace this entire class by a typedef. Currently typedefs can only be used on function signatures.
+class MemberListState extends ListState<MemberListEvent, ListMember> {
+  MemberListState({
+    required List<ListMember> results,
+    required String? message,
+    required bool isLoading,
+    required bool isLoadingMore,
+    required bool isDone,
+    required MemberListEvent event,
+  }) : super(
+          results: results,
+          message: message,
+          isLoading: isLoading,
+          isLoadingMore: isLoadingMore,
+          isDone: isDone,
+          event: event,
+        );
 
-  /// A message describing why there are no results.
-  final String? message;
-
-  /// Different results are being loaded. The `events` are outdated.
-  final bool isLoading;
-
-  /// More of the same results are being loaded. The `events` are not outdated.
-  final bool isLoadingMore;
-
-  /// The last results have been loaded. False if there are more pages left.
-  final bool isDone;
-
-  bool get hasException => message != null;
-
-  const MemberListState(
-      {required this.members,
-      required this.message,
-      required this.isLoading,
-      required this.isLoadingMore,
-      required this.isDone});
-
-  const MemberListState.loading({required this.members})
-      : message = null,
-        isLoading = true,
-        isLoadingMore = false,
-        isDone = true;
-
-  const MemberListState.loadingMore({required this.members})
-      : message = null,
-        isLoading = false,
-        isLoadingMore = true,
-        isDone = true;
-
-  const MemberListState.results({required this.members, required this.isDone})
-      : message = null,
-        isLoading = false,
-        isLoadingMore = false;
-
-  const MemberListState.failure(String message)
-      : members = const [],
-        message = message,
-        isLoading = false,
-        isLoadingMore = false,
-        isDone = true;
-
-  MemberListState copyWith(
-          {List<ListMember>? members,
-          String? message,
-          bool? isLoading,
-          bool? isLoadingMore,
-          bool? isDone}) =>
+  @override
+  MemberListState copyWith({
+    List<ListMember>? results,
+    String? message,
+    bool? isLoading,
+    bool? isLoadingMore,
+    bool? isDone,
+    MemberListEvent? event,
+  }) =>
       MemberListState(
-        members: members ?? this.members,
+        results: results ?? this.results,
         message: message ?? this.message,
         isLoading: isLoading ?? this.isLoading,
         isLoadingMore: isLoadingMore ?? this.isLoadingMore,
         isDone: isDone ?? this.isDone,
+        event: event ?? this.event,
       );
+  MemberListState.failure({
+    required String message,
+    required MemberListEvent event,
+  }) : super.failure(message: message, event: event);
 
-  @override
-  List<Object?> get props => [
-        members,
-        message,
-        isLoading,
-        isLoadingMore,
-        isDone,
-      ];
+  MemberListState.loading({
+    required List<ListMember> results,
+    required MemberListEvent event,
+  }) : super.loading(results: results, event: event);
 
-  @override
-  String toString() {
-    return 'MemberListState(isLoading: $isLoading, isLoadingMore: $isLoadingMore, isDone: $isDone, message: $message, ${members.length} members)';
-  }
+  MemberListState.loadingMore({
+    required List<ListMember> results,
+    required MemberListEvent event,
+  }) : super.loadingMore(results: results, event: event);
+
+  MemberListState.success({
+    required List<ListMember> results,
+    required MemberListEvent event,
+    required bool isDone,
+  }) : super.success(results: results, event: event, isDone: isDone);
 }
 
 /// Bloc that serves a list of [Event]. The state is `null` when loading.
 class MemberListBloc extends Bloc<MemberListEvent, MemberListState> {
+  static final int _firstPageSize = 9;
+  static final int _pageSize = 30;
+
   final ApiRepository api;
 
-  MemberListBloc(this.api) : super(MemberListState.loading(members: []));
+  MemberListBloc(this.api)
+      : super(MemberListState.loading(
+          results: [],
+          event: MemberListEvent.load(),
+        ));
 
   @override
   Stream<MemberListState> mapEventToState(MemberListEvent event) async* {
     if (event.isLoad) {
-      yield* _load(event.search);
+      yield* _load(event);
     } else if (event.isMore && !state.isDone) {
-      yield* _more(event.search);
+      yield* _more(event);
     }
   }
 
-  Stream<MemberListState> _load(String? search) async* {
-    yield state.copyWith(isLoading: true);
-    // await Future.delayed(Duration(seconds: 1));
+  Stream<MemberListState> _load(MemberListEvent event) async* {
+    yield state.copyWith(isLoading: true, event: event);
+    await Future.delayed(Duration(seconds: 1));
 
     try {
       var listResponse = await api.getMembers(
-        search: search,
-        limit: 9,
+        search: event.search,
+        limit: _firstPageSize,
         offset: 0,
       );
       if (listResponse.results.isNotEmpty) {
-        yield MemberListState.results(
-          members: listResponse.results,
+        yield MemberListState.success(
+          results: listResponse.results,
           isDone: listResponse.results.length == listResponse.count,
+          event: event,
         );
       } else {
-        // TODO: give appropriate error message for search
-        yield MemberListState.failure('There are no events.');
+        yield MemberListState.failure(
+          message: state.event.search == null
+              ? 'There are no members.'
+              : 'There are no members found for "${state.event.search}"',
+          event: event,
+        );
       }
     } on ApiException catch (_) {
       // TODO: give appropriate error message
-      yield MemberListState.failure('An error occured.');
+      yield MemberListState.failure(
+        message: 'An error occured.',
+        event: event,
+      );
     }
   }
 
-  Stream<MemberListState> _more(String? search) async* {
+  Stream<MemberListState> _more(MemberListEvent event) async* {
     yield state.copyWith(isLoadingMore: true);
-    // await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(Duration(seconds: 1));
 
     try {
       var listResponse = await api.getMembers(
-        search: search,
-        limit: 9,
-        offset: state.members.length,
+        search: state.event.search,
+        limit: _pageSize,
+        offset: state.results.length,
       );
-      final members = state.members + listResponse.results;
-      yield MemberListState.results(
-        members: members,
+      final members = state.results + listResponse.results;
+      yield MemberListState.success(
+        results: members,
         isDone: members.length == listResponse.count,
+        event: state.event,
       );
     } on ApiException catch (_) {
       // TODO: give appropriate error message
-      yield MemberListState.failure('An error occured.');
+      yield MemberListState.failure(
+        message: 'An error occured.',
+        event: state.event,
+      );
     }
   }
 }
 
 // TODO: We need to prevent the handling of old events overwriting that of new events. One way to do so may be to check whether the state has changed during handling, and not send a new state if some other (so newer) event has changed it already.
-// TODO: We also need to keep track of search/filter/ordering parameters somehow. One way might be to include the initial event in all following states. We can then retrieve it from this.state.event in _more().

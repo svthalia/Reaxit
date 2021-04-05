@@ -63,7 +63,6 @@ class _MembersScreenState extends State<MembersScreen> {
           _memberListBloc.add(MemberListEvent.load());
           await _memberListBloc.stream.firstWhere(
             (state) => !state.isLoading,
-            // TODO: Is orElse needed to prevent an uncaught exception if there never is a success?
           );
         },
         child: BlocBuilder<MemberListBloc, MemberListState>(
@@ -86,9 +85,9 @@ class _MembersScreenState extends State<MembersScreen> {
                       ),
                       delegate: SliverChildBuilderDelegate(
                         (context, index) => MemberTile(
-                          member: listState.members[index],
+                          member: listState.results[index],
                         ),
-                        childCount: listState.members.length,
+                        childCount: listState.results.length,
                       ),
                     ),
                   ),
@@ -177,9 +176,9 @@ class MembersSearchDelegate extends SearchDelegate {
                   ),
                   delegate: SliverChildBuilderDelegate(
                     (context, index) => MemberTile(
-                      member: listState.members[index],
+                      member: listState.results[index],
                     ),
-                    childCount: listState.members.length,
+                    childCount: listState.results.length,
                   ),
                 ),
               ),
@@ -225,9 +224,9 @@ class MembersSearchDelegate extends SearchDelegate {
                   ),
                   delegate: SliverChildBuilderDelegate(
                     (context, index) => MemberTile(
-                      member: listState.members[index],
+                      member: listState.results[index],
                     ),
-                    childCount: listState.members.length,
+                    childCount: listState.results.length,
                   ),
                 ),
               ),
