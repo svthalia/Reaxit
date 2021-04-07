@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
+import 'package:reaxit/models/album.dart';
 
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/event_registration.dart';
@@ -139,6 +140,7 @@ class ApiRepository {
   }
 
   // TODO: admin, register, cancel, fields
+  // getAdminEventRegistrations()
 
   /// Get the [Member] with the `pk`.
   Future<Member> getMember({required int pk}) async {
@@ -193,6 +195,39 @@ class ApiRepository {
     var uri = _baseUri.replace(path: _basePath + '/members/me');
     var response = await _handleExceptions(() => client.get(uri));
     return FullMember.fromJson(jsonDecode(response.body));
+  }
+
+  /// Get the [Album] with the `pk`.
+  Future<Album> getAlbum({required int pk}) async {
+    var uri = _baseUri.replace(path: _basePath + '/photos/albums/$pk');
+    var response = await _handleExceptions(() => client.get(uri));
+    return Album.fromJson(jsonDecode(response.body));
+  }
+
+  /// Get a list of [ListAlbum]s.
+  ///
+  /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
+  /// total number of [ListAlbum]s that can be returned.
+  /// Use `search` to filter on name or date.
+  Future<ListResponse<ListAlbum>> getAlbums({
+    String? search,
+    int? limit,
+    int? offset,
+  }) async {
+    var uri = _baseUri.replace(
+      path: _basePath + '/photos/albums/',
+      queryParameters: {
+        if (search != null) 'search': search,
+        if (limit != null) 'limit': limit.toString(),
+        if (offset != null) 'offset': offset.toString(),
+      },
+    );
+
+    var response = await _handleExceptions(() => client.get(uri));
+    return ListResponse<ListAlbum>.fromJson(
+      jsonDecode(response.body),
+      (json) => ListAlbum.fromJson(json as Map<String, dynamic>),
+    );
   }
 }
 

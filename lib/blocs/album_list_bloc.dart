@@ -2,13 +2,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/list_event.dart';
 import 'package:reaxit/blocs/list_state.dart';
-import 'package:reaxit/models/event.dart';
+import 'package:reaxit/models/album.dart';
 
-class EventListEvent extends ListEvent {
+class AlbumListEvent extends ListEvent {
   final String? search;
 
-  EventListEvent.load({this.search}) : super.load();
-  EventListEvent.more()
+  AlbumListEvent.load({this.search}) : super.load();
+  AlbumListEvent.more()
       : search = null,
         super.more();
 
@@ -17,14 +17,14 @@ class EventListEvent extends ListEvent {
 }
 
 // TODO: when dart 2.13 becomes the standard, replace this entire class by a typedef. Currently typedefs can only be used on function signatures.
-class EventListState extends ListState<EventListEvent, Event> {
-  EventListState({
-    required List<Event> results,
+class AlbumListState extends ListState<AlbumListEvent, ListAlbum> {
+  AlbumListState({
+    required List<ListAlbum> results,
     required String? message,
     required bool isLoading,
     required bool isLoadingMore,
     required bool isDone,
-    required EventListEvent event,
+    required AlbumListEvent event,
   }) : super(
           results: results,
           message: message,
@@ -35,15 +35,15 @@ class EventListState extends ListState<EventListEvent, Event> {
         );
 
   @override
-  EventListState copyWith({
-    List<Event>? results,
+  AlbumListState copyWith({
+    List<ListAlbum>? results,
     String? message,
     bool? isLoading,
     bool? isLoadingMore,
     bool? isDone,
-    EventListEvent? event,
+    AlbumListEvent? event,
   }) =>
-      EventListState(
+      AlbumListState(
         results: results ?? this.results,
         message: message ?? this.message,
         isLoading: isLoading ?? this.isLoading,
@@ -52,42 +52,42 @@ class EventListState extends ListState<EventListEvent, Event> {
         event: event ?? this.event,
       );
 
-  EventListState.failure({
+  AlbumListState.failure({
     required String message,
-    required EventListEvent event,
+    required AlbumListEvent event,
   }) : super.failure(message: message, event: event);
 
-  EventListState.loading({
-    required List<Event> results,
-    required EventListEvent event,
+  AlbumListState.loading({
+    required List<ListAlbum> results,
+    required AlbumListEvent event,
   }) : super.loading(results: results, event: event);
 
-  EventListState.loadingMore({
-    required List<Event> results,
-    required EventListEvent event,
+  AlbumListState.loadingMore({
+    required List<ListAlbum> results,
+    required AlbumListEvent event,
   }) : super.loadingMore(results: results, event: event);
 
-  EventListState.success({
-    required List<Event> results,
-    required EventListEvent event,
+  AlbumListState.success({
+    required List<ListAlbum> results,
+    required AlbumListEvent event,
     required bool isDone,
   }) : super.success(results: results, event: event, isDone: isDone);
 }
 
-class EventListBloc extends Bloc<EventListEvent, EventListState> {
+class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
   static final int _firstPageSize = 9;
-  static final int _pageSize = 9;
+  static final int _pageSize = 30;
 
   final ApiRepository api;
 
-  EventListBloc(this.api)
-      : super(EventListState.loading(
+  AlbumListBloc(this.api)
+      : super(AlbumListState.loading(
           results: [],
-          event: EventListEvent.load(),
+          event: AlbumListEvent.load(),
         ));
 
   @override
-  Stream<EventListState> mapEventToState(EventListEvent event) async* {
+  Stream<AlbumListState> mapEventToState(AlbumListEvent event) async* {
     if (event.isLoad) {
       yield* _load(event);
     } else if (event.isMore && !state.isDone) {
@@ -95,24 +95,24 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
     }
   }
 
-  Stream<EventListState> _load(EventListEvent event) async* {
+  Stream<AlbumListState> _load(AlbumListEvent event) async* {
     yield state.copyWith(isLoading: true, event: event);
     // await Future.delayed(Duration(seconds: 1));
 
     try {
-      var listResponse = await api.getEvents(
+      var listResponse = await api.getAlbums(
         search: event.search,
         limit: _firstPageSize,
         offset: 0,
       );
       if (listResponse.results.isNotEmpty) {
-        yield EventListState.success(
+        yield AlbumListState.success(
           results: listResponse.results,
           isDone: listResponse.results.length == listResponse.count,
           event: event,
         );
       } else {
-        yield EventListState.failure(
+        yield AlbumListState.failure(
           message: state.event.search == null
               ? 'There are no members.'
               : 'There are no members found for "${state.event.search}"',
@@ -121,32 +121,32 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
       }
     } on ApiException catch (_) {
       // TODO: give appropriate error message
-      yield EventListState.failure(
+      yield AlbumListState.failure(
         message: 'An error occured.',
         event: event,
       );
     }
   }
 
-  Stream<EventListState> _more(EventListEvent event) async* {
+  Stream<AlbumListState> _more(AlbumListEvent event) async* {
     yield state.copyWith(isLoadingMore: true);
     // await Future.delayed(Duration(seconds: 1));
 
     try {
-      var listResponse = await api.getEvents(
+      var listResponse = await api.getAlbums(
         search: state.event.search,
         limit: _pageSize,
         offset: state.results.length,
       );
-      final events = state.results + listResponse.results;
-      yield EventListState.success(
-        results: events,
-        isDone: events.length == listResponse.count,
+      final albums = state.results + listResponse.results;
+      yield AlbumListState.success(
+        results: albums,
+        isDone: albums.length == listResponse.count,
         event: state.event,
       );
     } on ApiException catch (_) {
       // TODO: give appropriate error message
-      yield EventListState.failure(
+      yield AlbumListState.failure(
         message: 'An error occured.',
         event: state.event,
       );

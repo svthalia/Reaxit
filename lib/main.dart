@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reaxit/blocs/album_list_bloc.dart';
 import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/auth_bloc.dart';
 import 'package:reaxit/blocs/event_list_bloc.dart';
@@ -64,6 +65,11 @@ class _ThaliAppState extends State<ThaliApp> {
                       BlocProvider(
                         create: (_) => MemberListBloc(apiRepository)
                           ..add(MemberListEvent.load()),
+                        lazy: false,
+                      ),
+                      BlocProvider(
+                        create: (_) => AlbumListBloc(apiRepository)
+                          ..add(AlbumListEvent.load()),
                         lazy: false,
                       ),
                     ],

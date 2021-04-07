@@ -18,9 +18,9 @@ class CalendarScreen extends StatelessWidget {
           } else {
             return ListView.builder(
               // TODO: change this to the expected number? without breaking if we havent loaded those yet.
-              itemCount: listState.events.length,
+              itemCount: listState.results.length,
               itemBuilder: (context, index) => ListTile(
-                title: Text(listState.events[index].title),
+                title: Text(listState.results[index].title),
               ),
             );
           }

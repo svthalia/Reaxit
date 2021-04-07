@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/list_event.dart';
 import 'package:reaxit/blocs/list_state.dart';
-import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/member.dart';
 
 class MemberListEvent extends ListEvent {
@@ -52,6 +51,7 @@ class MemberListState extends ListState<MemberListEvent, ListMember> {
         isDone: isDone ?? this.isDone,
         event: event ?? this.event,
       );
+
   MemberListState.failure({
     required String message,
     required MemberListEvent event,
@@ -76,7 +76,7 @@ class MemberListState extends ListState<MemberListEvent, ListMember> {
 
 class MemberListBloc extends Bloc<MemberListEvent, MemberListState> {
   static final int _firstPageSize = 9;
-  static final int _pageSize = 30;
+  static final int _pageSize = 9;
 
   final ApiRepository api;
 
@@ -85,6 +85,10 @@ class MemberListBloc extends Bloc<MemberListEvent, MemberListState> {
           results: [],
           event: MemberListEvent.load(),
         ));
+
+  // TODO: Only handle the most recent event. Don't use results from handling of old events.
+  // This may be possible using Stream.switchMap in this.transformEvents by RxDart, if we are willing to add RxDart.
+  // Otherwise we could handle it in the mapEventToState methods, of even in transformTransition (drop transitions that belong to an old event).
 
   @override
   Stream<MemberListState> mapEventToState(MemberListEvent event) async* {
@@ -153,5 +157,3 @@ class MemberListBloc extends Bloc<MemberListEvent, MemberListState> {
     }
   }
 }
-
-// TODO: We need to prevent the handling of old events overwriting that of new events. One way to do so may be to check whether the state has changed during handling, and not send a new state if some other (so newer) event has changed it already.
