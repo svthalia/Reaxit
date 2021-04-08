@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:reaxit/models/album.dart';
 
 class AlbumScreen extends StatefulWidget {
-  final int albumPk;
+  final int pk;
+  final ListAlbum? album;
 
-  const AlbumScreen({Key? key, required this.albumPk}) : super(key: key);
+  const AlbumScreen({Key? key, required this.pk, this.album}) : super(key: key);
 
   @override
   _AlbumScreenState createState() => _AlbumScreenState();
@@ -15,7 +17,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
     return Scaffold(
       appBar: AppBar(),
       body: Center(
-        child: Text('event ${widget.albumPk}'),
+        child: Text('album ${widget.pk}'),
       ),
     );
   }

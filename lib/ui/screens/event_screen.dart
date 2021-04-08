@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:reaxit/blocs/list_event.dart';
 
 class EventScreen extends StatefulWidget {
-  final int eventPk;
+  final int pk;
+  final ListEvent? event;
 
-  const EventScreen({Key? key, required this.eventPk}) : super(key: key);
+  const EventScreen({Key? key, required this.pk, this.event});
 
   @override
   _EventScreenState createState() => _EventScreenState();
@@ -15,7 +17,7 @@ class _EventScreenState extends State<EventScreen> {
     return Scaffold(
       appBar: AppBar(),
       body: Center(
-        child: Text('event ${widget.eventPk}'),
+        child: Text('event ${widget.pk}'),
       ),
     );
   }
