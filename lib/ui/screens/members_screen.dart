@@ -67,42 +67,12 @@ class _MembersScreenState extends State<MembersScreen> {
         },
         child: BlocBuilder<MemberListBloc, MemberListState>(
           builder: (context, listState) {
-            print(listState);
             if (listState.hasException) {
               return ErrorScrollView(listState.message!);
             } else {
-              return CustomScrollView(
+              return MemberListScrollView(
                 controller: _controller,
-                physics: AlwaysScrollableScrollPhysics(),
-                slivers: [
-                  SliverPadding(
-                    padding: EdgeInsets.all(10),
-                    sliver: SliverGrid(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 10,
-                      ),
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) => MemberTile(
-                          member: listState.results[index],
-                        ),
-                        childCount: listState.results.length,
-                      ),
-                    ),
-                  ),
-                  if (listState.isLoadingMore)
-                    SliverPadding(
-                      padding: EdgeInsets.all(10),
-                      sliver: SliverList(
-                        delegate: SliverChildListDelegate.fixed([
-                          Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        ]),
-                      ),
-                    ),
-                ],
+                listState: listState,
               );
             }
           },
@@ -122,7 +92,7 @@ class MembersSearchDelegate extends SearchDelegate {
 
   void _scrollListener() {
     if (_controller.position.pixels == _controller.position.maxScrollExtent) {
-      // TODO: take search query from state if the event is more
+      // TODO: add a range, so we start fetching before scrolling to the very end.
       _bloc.add(MemberListEvent.more());
     }
   }
@@ -153,47 +123,16 @@ class MembersSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    // TODO: make sure we dont search again with the same query, either here or inside the bloc.
     _bloc.add(MemberListEvent.load(search: query));
     return BlocBuilder<MemberListBloc, MemberListState>(
       bloc: _bloc,
       builder: (context, listState) {
-        print(listState);
         if (listState.hasException) {
           return ErrorScrollView(listState.message!);
         } else {
-          return CustomScrollView(
+          return MemberListScrollView(
             controller: _controller,
-            physics: AlwaysScrollableScrollPhysics(),
-            slivers: [
-              SliverPadding(
-                padding: EdgeInsets.all(10),
-                sliver: SliverGrid(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 10,
-                  ),
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) => MemberTile(
-                      member: listState.results[index],
-                    ),
-                    childCount: listState.results.length,
-                  ),
-                ),
-              ),
-              if (listState.isLoadingMore)
-                SliverPadding(
-                  padding: EdgeInsets.all(10),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate.fixed([
-                      Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    ]),
-                  ),
-                ),
-            ],
+            listState: listState,
           );
         }
       },
@@ -206,45 +145,66 @@ class MembersSearchDelegate extends SearchDelegate {
     return BlocBuilder<MemberListBloc, MemberListState>(
       bloc: _bloc,
       builder: (context, listState) {
-        print(listState);
         if (listState.hasException) {
           return ErrorScrollView(listState.message!);
         } else {
-          return CustomScrollView(
+          return MemberListScrollView(
             controller: _controller,
-            physics: AlwaysScrollableScrollPhysics(),
-            slivers: [
-              SliverPadding(
-                padding: EdgeInsets.all(10),
-                sliver: SliverGrid(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 10,
-                  ),
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) => MemberTile(
-                      member: listState.results[index],
-                    ),
-                    childCount: listState.results.length,
-                  ),
-                ),
-              ),
-              if (listState.isLoadingMore)
-                SliverPadding(
-                  padding: EdgeInsets.all(10),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate.fixed([
-                      Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    ]),
-                  ),
-                ),
-            ],
+            listState: listState,
           );
         }
       },
+    );
+  }
+}
+
+/// A ScrollView that shows a grid of [MemberTile]s.
+///
+/// This does not take care of communicating with a Bloc. The [controller]
+/// should do that. The [listState] also must not have an exception.
+class MemberListScrollView extends StatelessWidget {
+  final ScrollController _controller;
+  final MemberListState listState;
+
+  const MemberListScrollView(
+      {Key? key, required ScrollController controller, required this.listState})
+      : _controller = controller,
+        super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      controller: _controller,
+      physics: AlwaysScrollableScrollPhysics(),
+      slivers: [
+        SliverPadding(
+          padding: EdgeInsets.all(10),
+          sliver: SliverGrid(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => MemberTile(
+                member: listState.results[index],
+              ),
+              childCount: listState.results.length,
+            ),
+          ),
+        ),
+        if (listState.isLoadingMore)
+          SliverPadding(
+            padding: EdgeInsets.all(10),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate.fixed([
+                Center(
+                  child: CircularProgressIndicator(),
+                )
+              ]),
+            ),
+          ),
+      ],
     );
   }
 }
