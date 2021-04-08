@@ -6,7 +6,7 @@ import 'package:reaxit/blocs/auth_bloc.dart';
 import 'package:reaxit/blocs/event_list_bloc.dart';
 import 'package:reaxit/blocs/member_list_bloc.dart';
 import 'package:reaxit/blocs/theme_bloc.dart';
-import 'package:reaxit/router/router.dart';
+import 'package:reaxit/ui/router/router.dart';
 import 'package:reaxit/theme.dart';
 
 void main() async {
