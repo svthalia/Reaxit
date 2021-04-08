@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:reaxit/ui/router/router.dart';
-import 'package:reaxit/ui/menu_drawer.dart';
+import 'package:reaxit/ui/widgets/menu_drawer.dart';
 import 'package:reaxit/ui/screens/profile_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text('Welcome')),
       drawer: MenuDrawer(),
       body: Center(
         child: Column(

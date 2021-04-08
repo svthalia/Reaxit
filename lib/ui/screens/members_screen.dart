@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/member_list_bloc.dart';
-import 'package:reaxit/ui/error_scroll_view.dart';
-import 'package:reaxit/ui/member_tile.dart';
-import 'package:reaxit/ui/menu_drawer.dart';
+import 'package:reaxit/ui/widgets/error_scroll_view.dart';
+import 'package:reaxit/ui/widgets/member_tile.dart';
+import 'package:reaxit/ui/widgets/menu_drawer.dart';
 
 class MembersScreen extends StatefulWidget {
   @override
@@ -38,6 +38,7 @@ class _MembersScreenState extends State<MembersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: Text('Members'),
         actions: [
           IconButton(
             icon: Icon(Icons.search),

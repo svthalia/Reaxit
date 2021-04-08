@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/theme_bloc.dart';
-import 'package:reaxit/ui/menu_drawer.dart';
+import 'package:reaxit/ui/widgets/menu_drawer.dart';
 
 class SettingsScreen extends StatelessWidget {
   @override
