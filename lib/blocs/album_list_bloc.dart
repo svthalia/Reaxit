@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:meta/meta.dart';
 import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/list_event.dart';
 import 'package:reaxit/blocs/list_state.dart';
@@ -18,6 +19,7 @@ class AlbumListEvent extends ListEvent {
 
 // TODO: when dart 2.13 becomes the standard, replace this entire class by a typedef. Currently typedefs can only be used on function signatures.
 class AlbumListState extends ListState<AlbumListEvent, ListAlbum> {
+  @protected
   AlbumListState({
     required List<ListAlbum> results,
     required String? message,
@@ -122,7 +124,7 @@ class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
     } on ApiException catch (_) {
       // TODO: give appropriate error message
       yield AlbumListState.failure(
-        message: 'An error occured.',
+        message: 'An error occurred.',
         event: event,
       );
     }
@@ -147,7 +149,7 @@ class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
     } on ApiException catch (_) {
       // TODO: give appropriate error message
       yield AlbumListState.failure(
-        message: 'An error occured.',
+        message: 'An error occurred.',
         event: state.event,
       );
     }

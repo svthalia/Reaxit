@@ -195,7 +195,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } on AuthorizationException catch (_) {
       yield FailureAuthState(message: 'Authorization failed.');
     } catch (_) {
-      yield FailureAuthState(message: 'An unknown error occured.');
+      yield FailureAuthState(message: 'An unknown error occurred.');
     }
   }
 

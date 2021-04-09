@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:meta/meta.dart';
 import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/list_event.dart';
 import 'package:reaxit/blocs/list_state.dart';
@@ -18,6 +19,7 @@ class MemberListEvent extends ListEvent {
 
 // TODO: when dart 2.13 becomes the standard, replace this entire class by a typedef. Currently typedefs can only be used on function signatures.
 class MemberListState extends ListState<MemberListEvent, ListMember> {
+  @protected
   MemberListState({
     required List<ListMember> results,
     required String? message,
@@ -126,7 +128,7 @@ class MemberListBloc extends Bloc<MemberListEvent, MemberListState> {
     } on ApiException catch (_) {
       // TODO: give appropriate error message
       yield MemberListState.failure(
-        message: 'An error occured.',
+        message: 'An error occurred.',
         event: event,
       );
     }
@@ -151,7 +153,7 @@ class MemberListBloc extends Bloc<MemberListEvent, MemberListState> {
     } on ApiException catch (_) {
       // TODO: give appropriate error message
       yield MemberListState.failure(
-        message: 'An error occured.',
+        message: 'An error occurred.',
         event: state.event,
       );
     }
