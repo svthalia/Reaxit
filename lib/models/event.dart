@@ -33,6 +33,8 @@ class Event {
   // final Commitee organiser;
   // final Slide? slide;
 
+  bool get isRegistered => userRegistration != null;
+
   factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
 
   Event(
