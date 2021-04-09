@@ -175,9 +175,9 @@ class FullProfile extends Profile {
 @JsonSerializable()
 class Period {
   final DateTime since;
-  final DateTime until;
+  final DateTime? until;
   final bool chair;
-  final String role;
+  final String? role;
   Period(this.since, this.until, this.chair, this.role);
   factory Period.fromJson(Map<String, dynamic> json) => _$PeriodFromJson(json);
 }
@@ -185,17 +185,17 @@ class Period {
 @JsonSerializable()
 class Achievement {
   final String name;
-  final List<Period> periods;
+  final DateTime earliest;
 
-  Achievement(this.name, this.periods);
+  final bool? active;
+  final DateTime? latest;
+  final List<Period>? periods;
+
+  final int? pk;
+  final Uri? url;
+
+  Achievement(this.name, this.periods, this.pk, this.active, this.url,
+      this.earliest, this.latest);
   factory Achievement.fromJson(Map<String, dynamic> json) =>
       _$AchievementFromJson(json);
 }
-
-// DateTime? _dateTimeFromJson(String? json) {
-//   if (json == null) {
-//     return null;
-//   } else {
-//     return DateTime.parse(json).toLocal();
-//   }
-// }

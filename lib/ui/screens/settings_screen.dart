@@ -43,7 +43,7 @@ class _ThemeModeCard extends StatelessWidget {
             return DropdownButton(
               value: themeMode,
               onChanged: (ThemeMode? newMode) async {
-                BlocProvider.of<ThemeBloc>(context, listen: false).add(
+                BlocProvider.of<ThemeBloc>(context).add(
                   ThemeChangeEvent(newMode!),
                 );
               },

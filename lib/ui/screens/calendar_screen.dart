@@ -23,7 +23,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   void initState() {
-    _bloc = BlocProvider.of<EventListBloc>(context, listen: false);
+    _bloc = BlocProvider.of<EventListBloc>(context);
     _controller = ScrollController()..addListener(_scrollListener);
     super.initState();
   }

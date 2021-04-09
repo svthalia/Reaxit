@@ -213,15 +213,15 @@ const _$DisplayNamePreferenceEnumMap = {
 Period _$PeriodFromJson(Map<String, dynamic> json) {
   return Period(
     DateTime.parse(json['since'] as String),
-    DateTime.parse(json['until'] as String),
+    json['until'] == null ? null : DateTime.parse(json['until'] as String),
     json['chair'] as bool,
-    json['role'] as String,
+    json['role'] as String?,
   );
 }
 
 Map<String, dynamic> _$PeriodToJson(Period instance) => <String, dynamic>{
       'since': instance.since.toIso8601String(),
-      'until': instance.until.toIso8601String(),
+      'until': instance.until?.toIso8601String(),
       'chair': instance.chair,
       'role': instance.role,
     };
@@ -229,14 +229,24 @@ Map<String, dynamic> _$PeriodToJson(Period instance) => <String, dynamic>{
 Achievement _$AchievementFromJson(Map<String, dynamic> json) {
   return Achievement(
     json['name'] as String,
-    (json['periods'] as List<dynamic>)
-        .map((e) => Period.fromJson(e as Map<String, dynamic>))
+    (json['periods'] as List<dynamic>?)
+        ?.map((e) => Period.fromJson(e as Map<String, dynamic>))
         .toList(),
+    json['pk'] as int?,
+    json['active'] as bool?,
+    json['url'] == null ? null : Uri.parse(json['url'] as String),
+    DateTime.parse(json['earliest'] as String),
+    json['latest'] == null ? null : DateTime.parse(json['latest'] as String),
   );
 }
 
 Map<String, dynamic> _$AchievementToJson(Achievement instance) =>
     <String, dynamic>{
       'name': instance.name,
+      'earliest': instance.earliest.toIso8601String(),
+      'active': instance.active,
+      'latest': instance.latest?.toIso8601String(),
       'periods': instance.periods,
+      'pk': instance.pk,
+      'url': instance.url?.toString(),
     };

@@ -14,6 +14,7 @@ class MemberCubit extends Cubit<DetailState<Member>> {
       final member = await api.getMember(pk: pk);
       emit(DetailState.result(result: member));
     } on ApiException catch (exception) {
+      // TODO: give appropriate error message
       emit(DetailState.failure(message: 'An error occurred.'));
     }
   }

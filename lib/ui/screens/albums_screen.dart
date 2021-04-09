@@ -17,7 +17,7 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
 
   @override
   void initState() {
-    _bloc = BlocProvider.of<AlbumListBloc>(context, listen: false);
+    _bloc = BlocProvider.of<AlbumListBloc>(context);
     _controller = ScrollController()..addListener(_scrollListener);
     super.initState();
   }

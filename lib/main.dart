@@ -32,7 +32,7 @@ class _ThaliAppState extends State<ThaliApp> {
   @override
   void initState() {
     _routerDelegate = ThaliaRouterDelegate(
-      authBloc: BlocProvider.of<AuthBloc>(context, listen: false),
+      authBloc: BlocProvider.of<AuthBloc>(context),
     );
     _routeInformationParser = ThaliaRouteInformationParser();
     super.initState();
@@ -51,10 +51,8 @@ class _ThaliAppState extends State<ThaliApp> {
                   logOut: authState.logOut,
                 ),
                 child: Builder(builder: (context) {
-                  var apiRepository = RepositoryProvider.of<ApiRepository>(
-                    context,
-                    listen: false,
-                  );
+                  var apiRepository =
+                      RepositoryProvider.of<ApiRepository>(context);
                   return MultiBlocProvider(
                     providers: [
                       BlocProvider(

@@ -126,7 +126,7 @@ class MenuDrawer extends StatelessWidget {
             leading: Icon(Icons.logout),
             title: Text('Log out'),
             onTap: () async {
-              BlocProvider.of<AuthBloc>(context, listen: false).add(
+              BlocProvider.of<AuthBloc>(context).add(
                 LogOutAuthEvent(),
               );
             },

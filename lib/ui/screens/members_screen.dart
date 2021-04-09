@@ -17,7 +17,7 @@ class _MembersScreenState extends State<MembersScreen> {
 
   @override
   void initState() {
-    _memberListBloc = BlocProvider.of<MemberListBloc>(context, listen: false);
+    _memberListBloc = BlocProvider.of<MemberListBloc>(context);
     _controller = ScrollController()..addListener(_scrollListener);
     super.initState();
   }
