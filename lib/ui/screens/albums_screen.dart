@@ -164,18 +164,19 @@ class AlbumsSearchDelegate extends SearchDelegate {
 /// This does not take care of communicating with a Bloc. The [controller]
 /// should do that. The [listState] also must not have an exception.
 class AlbumListScrollView extends StatelessWidget {
-  final ScrollController _controller;
+  final ScrollController controller;
   final AlbumListState listState;
 
-  const AlbumListScrollView(
-      {Key? key, required ScrollController controller, required this.listState})
-      : _controller = controller,
-        super(key: key);
+  const AlbumListScrollView({
+    Key? key,
+    required this.controller,
+    required this.listState,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
-      controller: _controller,
+      controller: controller,
       physics: AlwaysScrollableScrollPhysics(),
       slivers: [
         SliverPadding(
