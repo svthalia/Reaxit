@@ -147,19 +147,22 @@ class ThaliaRouteInformationParser
     } else if (RegExp('^/events/\$').hasMatch(path)) {
       return [MaterialPage(child: CalendarScreen())];
     } else if (RegExp('^/events/([0-9]+)\$').hasMatch(path)) {
+      final pk = int.parse(segments[1]);
       return [
         MaterialPage(child: CalendarScreen()),
-        MaterialPage(child: EventScreen(pk: int.parse(segments[1])))
+        MaterialPage(child: EventScreen(pk: pk))
       ];
     } else if (RegExp('^/members/photos/([0-9]+)\$').hasMatch(path)) {
+      final pk = int.parse(segments[2]);
       return [
         MaterialPage(child: AlbumsScreen()),
-        MaterialPage(child: AlbumScreen(pk: int.parse(segments[1])))
+        MaterialPage(child: AlbumScreen(pk: pk))
       ];
     } else if (RegExp('^/members/([0-9]+)\$').hasMatch(path)) {
+      final pk = int.parse(segments[1]);
       return [
         MaterialPage(child: MembersScreen()),
-        MaterialPage(child: ProfileScreen(pk: int.parse(segments[1])))
+        MaterialPage(child: ProfileScreen(pk: pk))
       ];
     }
 

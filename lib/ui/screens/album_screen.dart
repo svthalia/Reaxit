@@ -5,7 +5,7 @@ class AlbumScreen extends StatefulWidget {
   final int pk;
   final ListAlbum? album;
 
-  const AlbumScreen({Key? key, required this.pk, this.album}) : super(key: key);
+  AlbumScreen({required this.pk, this.album}) : super(key: ValueKey(pk));
 
   @override
   _AlbumScreenState createState() => _AlbumScreenState();

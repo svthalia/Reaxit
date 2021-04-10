@@ -5,7 +5,7 @@ class EventScreen extends StatefulWidget {
   final int pk;
   final ListEvent? event;
 
-  const EventScreen({Key? key, required this.pk, this.event});
+  EventScreen({required this.pk, this.event}) : super(key: ValueKey(pk));
 
   @override
   _EventScreenState createState() => _EventScreenState();
