@@ -11,7 +11,8 @@ class ListAlbum {
   final bool shareable;
   final AlbumPhoto cover;
 
-  ListAlbum(this.pk, this.title, this.accessible, this.shareable, this.cover);
+  const ListAlbum(
+      this.pk, this.title, this.accessible, this.shareable, this.cover);
 
   factory ListAlbum.fromJson(Map<String, dynamic> json) =>
       _$ListAlbumFromJson(json);
@@ -21,8 +22,8 @@ class ListAlbum {
 class Album extends ListAlbum {
   final List<AlbumPhoto> photos;
 
-  Album(int pk, String title, bool accessible, bool shareable, AlbumPhoto cover,
-      this.photos)
+  const Album(int pk, String title, bool accessible, bool shareable,
+      AlbumPhoto cover, this.photos)
       : super(pk, title, accessible, shareable, cover);
 
   factory Album.fromJson(Map<String, dynamic> json) => _$AlbumFromJson(json);

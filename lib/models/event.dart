@@ -37,7 +37,7 @@ class Event {
 
   factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
 
-  Event(
+  const Event(
     this.pk,
     this.title,
     this.description,
@@ -68,7 +68,7 @@ class EventPermissions {
   final bool updateRegistration;
   final bool manageEvent;
 
-  EventPermissions(
+  const EventPermissions(
     this.createRegistration,
     this.cancelRegistration,
     this.updateRegistration,

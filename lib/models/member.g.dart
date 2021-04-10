@@ -58,11 +58,11 @@ Member _$MemberFromJson(Map<String, dynamic> json) {
     json['pk'] as int,
     _$enumDecode(_$MembershipTypeEnumMap, json['membership_type']),
     Profile.fromJson(json['profile'] as Map<String, dynamic>),
-    (json['achievements'] as List<dynamic>?)
-        ?.map((e) => Achievement.fromJson(e as Map<String, dynamic>))
+    (json['achievements'] as List<dynamic>)
+        .map((e) => Achievement.fromJson(e as Map<String, dynamic>))
         .toList(),
-    (json['societies'] as List<dynamic>?)
-        ?.map((e) => Achievement.fromJson(e as Map<String, dynamic>))
+    (json['societies'] as List<dynamic>)
+        .map((e) => Achievement.fromJson(e as Map<String, dynamic>))
         .toList(),
   );
 }
@@ -80,11 +80,11 @@ FullMember _$FullMemberFromJson(Map<String, dynamic> json) {
     json['pk'] as int,
     _$enumDecode(_$MembershipTypeEnumMap, json['membership_type']),
     FullProfile.fromJson(json['profile'] as Map<String, dynamic>),
-    (json['achievements'] as List<dynamic>?)
-        ?.map((e) => Achievement.fromJson(e as Map<String, dynamic>))
+    (json['achievements'] as List<dynamic>)
+        .map((e) => Achievement.fromJson(e as Map<String, dynamic>))
         .toList(),
-    (json['societies'] as List<dynamic>?)
-        ?.map((e) => Achievement.fromJson(e as Map<String, dynamic>))
+    (json['societies'] as List<dynamic>)
+        .map((e) => Achievement.fromJson(e as Map<String, dynamic>))
         .toList(),
   );
 }

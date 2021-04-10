@@ -42,10 +42,10 @@ class ListMember {
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Member extends ListMember {
-  final List<Achievement>? achievements;
-  final List<Achievement>? societies;
+  final List<Achievement> achievements;
+  final List<Achievement> societies;
 
-  Member(
+  const Member(
     int pk,
     MembershipType membershipType,
     Profile profile,
@@ -65,12 +65,12 @@ class FullMember extends Member {
   @override
   final FullProfile profile;
 
-  FullMember(
+  const FullMember(
     int pk,
     MembershipType membershipType,
     this.profile,
-    List<Achievement>? achievements,
-    List<Achievement>? societies,
+    List<Achievement> achievements,
+    List<Achievement> societies,
   ) : super(
           pk,
           membershipType,
@@ -132,7 +132,7 @@ class FullProfile extends Profile {
 
   final bool emailGsuiteOnly;
 
-  FullProfile(
+  const FullProfile(
     String displayName,
     String shortDisplayName,
     DateTime? birthday,
@@ -178,7 +178,7 @@ class Period {
   final DateTime? until;
   final bool chair;
   final String? role;
-  Period(this.since, this.until, this.chair, this.role);
+  const Period(this.since, this.until, this.chair, this.role);
   factory Period.fromJson(Map<String, dynamic> json) => _$PeriodFromJson(json);
 }
 
@@ -194,7 +194,7 @@ class Achievement {
   final int? pk;
   final Uri? url;
 
-  Achievement(this.name, this.periods, this.pk, this.active, this.url,
+  const Achievement(this.name, this.periods, this.pk, this.active, this.url,
       this.earliest, this.latest);
   factory Achievement.fromJson(Map<String, dynamic> json) =>
       _$AchievementFromJson(json);
