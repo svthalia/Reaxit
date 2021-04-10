@@ -121,10 +121,9 @@ class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
           event: event,
         );
       }
-    } on ApiException catch (_) {
-      // TODO: give appropriate error message
+    } on ApiException catch (exception) {
       yield AlbumListState.failure(
-        message: 'An error occurred.',
+        message: _failureMessage(exception),
         event: event,
       );
     }
@@ -146,12 +145,20 @@ class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
         isDone: albums.length == listResponse.count,
         event: state.event,
       );
-    } on ApiException catch (_) {
-      // TODO: give appropriate error message
+    } on ApiException catch (exception) {
       yield AlbumListState.failure(
-        message: 'An error occurred.',
+        message: _failureMessage(exception),
         event: state.event,
       );
+    }
+  }
+
+  String _failureMessage(ApiException exception) {
+    switch (exception) {
+      case ApiException.noInternet:
+        return 'Not connected to the internet.';
+      default:
+        return 'An unknown error occurred.';
     }
   }
 }

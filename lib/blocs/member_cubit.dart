@@ -14,8 +14,18 @@ class MemberCubit extends Cubit<DetailState<Member>> {
       final member = await api.getMember(pk: pk);
       emit(DetailState.result(result: member));
     } on ApiException catch (exception) {
-      // TODO: give appropriate error message
-      emit(DetailState.failure(message: 'An error occurred.'));
+      emit(DetailState.failure(message: _failureMessage(exception)));
+    }
+  }
+
+  String _failureMessage(ApiException exception) {
+    switch (exception) {
+      case ApiException.noInternet:
+        return 'Not connected to the internet.';
+      case ApiException.notFound:
+        return 'The member does not exist.';
+      default:
+        return 'An unknown error occurred.';
     }
   }
 }
