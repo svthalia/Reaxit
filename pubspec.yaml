@@ -55,11 +55,7 @@ dependencies:
   url_launcher: ^6.0.3
 
   # Authenticating in browser.
-  flutter_web_auth:
-    # Null-safe fork of flutter_web_auth.
-    # Once https://github.com/LinusU/flutter_web_auth/pull/60 is merged, or perhaps the fork is published on pub.dev we can replace this.
-    git:
-      url: 'git@github.com:junying1/flutter_web_auth.git'
+  flutter_web_auth: ^0.3.0
 
   # Modal photo views.
   photo_view: ^0.11.1
