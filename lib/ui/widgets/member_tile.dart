@@ -28,7 +28,7 @@ class MemberTile extends StatelessWidget {
             tag: 'member_${member.pk}',
             child: FadeInImage.assetNetwork(
               placeholder: 'assets/img/default-avatar.jpg',
-              image: member.photo.medium,
+              image: member.photo.small,
               fit: BoxFit.cover,
               fadeInDuration: const Duration(milliseconds: 200),
             ),

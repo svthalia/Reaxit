@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class EventAdminScreen extends StatefulWidget {
-  final int eventPk;
+  final int pk;
 
-  const EventAdminScreen({Key? key, required this.eventPk}) : super(key: key);
+  EventAdminScreen({required this.pk}) : super(key: ValueKey(pk));
 
   @override
   _EventAdminScreenState createState() => _EventAdminScreenState();
@@ -15,7 +15,7 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
     return Scaffold(
       appBar: AppBar(),
       body: Center(
-        child: Text('event admin ${widget.eventPk}'),
+        child: Text('event admin ${widget.pk}'),
       ),
     );
   }

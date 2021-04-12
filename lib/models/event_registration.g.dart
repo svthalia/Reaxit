@@ -11,7 +11,7 @@ EventRegistration _$EventRegistrationFromJson(Map<String, dynamic> json) {
     json['pk'] as int,
     json['member'] == null
         ? null
-        : Member.fromJson(json['member'] as Map<String, dynamic>),
+        : ListMember.fromJson(json['member'] as Map<String, dynamic>),
     json['name'] as String?,
   );
 }

@@ -6,7 +6,7 @@ part 'event_registration.g.dart';
 @JsonSerializable(fieldRename: FieldRename.snake)
 class EventRegistration {
   final int pk;
-  final Member? member;
+  final ListMember? member;
   final String? name;
 
   factory EventRegistration.fromJson(Map<String, dynamic> json) =>

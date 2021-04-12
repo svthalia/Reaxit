@@ -21,11 +21,11 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late final MemberCubit _cubit;
+  late final MemberCubit _memberCubit;
 
   @override
   void initState() {
-    _cubit = MemberCubit(
+    _memberCubit = MemberCubit(
       RepositoryProvider.of<ApiRepository>(context),
     )..load(widget.pk);
     super.initState();
@@ -253,7 +253,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   SliverPadding _makeSocietiesSliver(Member member) {
-    print(member.societies);
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       sliver: SliverList(
@@ -273,7 +272,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocBuilder<MemberCubit, DetailState<Member>>(
-        bloc: _cubit,
+        bloc: _memberCubit,
         builder: (context, state) {
           if (state.hasException) {
             return CustomScrollView(

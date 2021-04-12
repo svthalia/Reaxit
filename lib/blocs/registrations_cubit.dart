@@ -1,18 +1,23 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/detail_state.dart';
-import 'package:reaxit/models/member.dart';
+import 'package:reaxit/models/event_registration.dart';
 
-class MemberCubit extends Cubit<DetailState<Member>> {
+class RegistrationsCubit extends Cubit<DetailState<List<EventRegistration>>> {
   final ApiRepository api;
 
-  MemberCubit(this.api) : super(DetailState<Member>.loading());
+  RegistrationsCubit(this.api)
+      : super(DetailState<List<EventRegistration>>.loading());
 
   Future<void> load(int pk) async {
     emit(state.copyWith(isLoading: true));
     try {
-      final member = await api.getMember(pk: pk);
-      emit(DetailState.result(result: member));
+      final listResponse = await api.getEventRegistrations(pk: pk);
+      if (listResponse.results.isNotEmpty) {
+        emit(DetailState.result(result: listResponse.results));
+      } else {
+        emit(DetailState.failure(message: 'There are no registrations yet.'));
+      }
     } on ApiException catch (exception) {
       emit(DetailState.failure(message: _failureMessage(exception)));
     }
@@ -23,7 +28,7 @@ class MemberCubit extends Cubit<DetailState<Member>> {
       case ApiException.noInternet:
         return 'Not connected to the internet.';
       case ApiException.notFound:
-        return 'The member does not exist.';
+        return 'The event does not exist.';
       default:
         return 'An unknown error occurred.';
     }

@@ -135,8 +135,19 @@ class ApiRepository {
     int? limit,
     int? offset,
   }) async {
-    // TODO: implement this.
-    throw UnimplementedError();
+    var uri = _baseUri.replace(
+      path: _basePath + '/events/$pk/registrations/',
+      queryParameters: {
+        if (limit != null) 'limit': limit.toString(),
+        if (offset != null) 'offset': offset.toString(),
+      },
+    );
+
+    var response = await _handleExceptions(() => client.get(uri));
+    return ListResponse<EventRegistration>.fromJson(
+      jsonDecode(response.body),
+      (json) => EventRegistration.fromJson(json as Map<String, dynamic>),
+    );
   }
 
   // TODO: admin, register, cancel, fields

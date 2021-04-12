@@ -8,7 +8,7 @@ class AlbumCubit extends Cubit<DetailState<Album>> {
 
   AlbumCubit(this.api) : super(DetailState<Album>.loading());
 
-  void load(int pk) async {
+  Future<void> load(int pk) async {
     emit(state.copyWith(isLoading: true));
     try {
       final album = await api.getAlbum(pk: pk);

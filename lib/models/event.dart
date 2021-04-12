@@ -34,6 +34,7 @@ class Event {
   // final Slide? slide;
 
   bool get isRegistered => userRegistration != null;
+  bool get registrationRequired => registrationEnd != null;
 
   factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
 

@@ -20,11 +20,11 @@ class AlbumScreen extends StatefulWidget {
 }
 
 class _AlbumScreenState extends State<AlbumScreen> {
-  late final AlbumCubit _cubit;
+  late final AlbumCubit _albumCubit;
 
   @override
   void initState() {
-    _cubit = AlbumCubit(
+    _albumCubit = AlbumCubit(
       RepositoryProvider.of<ApiRepository>(context),
     )..load(widget.pk);
     super.initState();
@@ -37,7 +37,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
         tag: 'photo_${album.photos[index].pk}',
         child: FadeInImage.assetNetwork(
           placeholder: 'assets/img/default-avatar.jpg',
-          image: album.photos[index].medium,
+          image: album.photos[index].small,
           fit: BoxFit.cover,
         ),
       ),
@@ -77,7 +77,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AlbumCubit, DetailState<Album>>(
-      bloc: _cubit,
+      bloc: _albumCubit,
       builder: (context, state) {
         if (state.hasException) {
           return Scaffold(
