@@ -4,6 +4,7 @@ import 'package:reaxit/blocs/album_list_bloc.dart';
 import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/auth_bloc.dart';
 import 'package:reaxit/blocs/event_list_bloc.dart';
+import 'package:reaxit/blocs/full_member_cubit.dart';
 import 'package:reaxit/blocs/member_list_bloc.dart';
 import 'package:reaxit/blocs/theme_bloc.dart';
 import 'package:reaxit/ui/router/router.dart';
@@ -55,6 +56,10 @@ class _ThaliAppState extends State<ThaliApp> {
                       RepositoryProvider.of<ApiRepository>(context);
                   return MultiBlocProvider(
                     providers: [
+                      BlocProvider(
+                        create: (_) => FullMemberCubit(apiRepository)..load(),
+                        lazy: false,
+                      ),
                       BlocProvider(
                         create: (_) => EventListBloc(apiRepository)
                           ..add(EventListEvent.load()),
