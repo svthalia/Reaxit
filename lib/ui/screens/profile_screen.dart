@@ -342,12 +342,15 @@ class _ProfileAppBar extends SliverAppBar {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
+                      Container(
+                        decoration: BoxDecoration(color: Color(0xFFC5C5C5)),
+                      ),
                       Hero(
                         tag: 'member_$pk',
                         child: member != null
                             ? FadeInImage.assetNetwork(
                                 placeholder: 'assets/img/default-avatar.jpg',
-                                image: member.photo.full,
+                                image: member.photo.small,
                                 fit: BoxFit.cover,
                                 fadeInDuration:
                                     const Duration(milliseconds: 300),
