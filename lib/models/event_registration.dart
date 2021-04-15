@@ -12,5 +12,29 @@ class EventRegistration {
   factory EventRegistration.fromJson(Map<String, dynamic> json) =>
       _$EventRegistrationFromJson(json);
 
-  const EventRegistration(this.pk, this.member, this.name);
+  const EventRegistration(this.pk, this.member, this.name)
+      : assert(
+          member != null || name != null,
+          'Either a member or name must be given. $member, $name',
+        );
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class AdminRegistration {
+  final int pk;
+  final bool present;
+  final int? queuePosition;
+  final DateTime date;
+  final String? payment;
+
+  factory AdminRegistration.fromJson(Map<String, dynamic> json) =>
+      _$AdminRegistrationFromJson(json);
+
+  const AdminRegistration(
+    this.pk,
+    this.present,
+    this.queuePosition,
+    this.date,
+    this.payment,
+  );
 }

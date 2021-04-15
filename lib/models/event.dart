@@ -29,12 +29,17 @@ class Event {
   final bool isPizzaEvent;
   final String mapsUrl;
   final EventPermissions userPermissions;
-  final EventRegistration? userRegistration;
+  final AdminRegistration? userRegistration;
   // final Commitee organiser;
   // final Slide? slide;
 
   bool get isRegistered => userRegistration != null;
-  bool get registrationRequired => registrationEnd != null;
+  bool get registrationIsRequired => registrationStart != null;
+
+  bool get canCreateRegistration => userPermissions.createRegistration;
+  bool get canUpdateRegistration => userPermissions.updateRegistration;
+  bool get canCancelRegistration => userPermissions.cancelRegistration;
+  bool get canManageEvent => userPermissions.manageEvent;
 
   factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
 

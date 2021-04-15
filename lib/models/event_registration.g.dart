@@ -22,3 +22,22 @@ Map<String, dynamic> _$EventRegistrationToJson(EventRegistration instance) =>
       'member': instance.member,
       'name': instance.name,
     };
+
+AdminRegistration _$AdminRegistrationFromJson(Map<String, dynamic> json) {
+  return AdminRegistration(
+    json['pk'] as int,
+    json['present'] as bool,
+    json['queue_position'] as int?,
+    DateTime.parse(json['date'] as String),
+    json['payment'] as String?,
+  );
+}
+
+Map<String, dynamic> _$AdminRegistrationToJson(AdminRegistration instance) =>
+    <String, dynamic>{
+      'pk': instance.pk,
+      'present': instance.present,
+      'queue_position': instance.queuePosition,
+      'date': instance.date.toIso8601String(),
+      'payment': instance.payment,
+    };

@@ -9,7 +9,7 @@ part of 'member.dart';
 ListMember _$ListMemberFromJson(Map<String, dynamic> json) {
   return ListMember(
     json['pk'] as int,
-    _$enumDecode(_$MembershipTypeEnumMap, json['membership_type']),
+    _$enumDecodeNullable(_$MembershipTypeEnumMap, json['membership_type']),
     Profile.fromJson(json['profile'] as Map<String, dynamic>),
   );
 }
@@ -47,6 +47,17 @@ K _$enumDecode<K, V>(
   ).key;
 }
 
+K? _$enumDecodeNullable<K, V>(
+  Map<K, V> enumValues,
+  dynamic source, {
+  K? unknownValue,
+}) {
+  if (source == null) {
+    return null;
+  }
+  return _$enumDecode<K, V>(enumValues, source, unknownValue: unknownValue);
+}
+
 const _$MembershipTypeEnumMap = {
   MembershipType.member: 'member',
   MembershipType.benefactor: 'benefactor',
@@ -56,7 +67,7 @@ const _$MembershipTypeEnumMap = {
 Member _$MemberFromJson(Map<String, dynamic> json) {
   return Member(
     json['pk'] as int,
-    _$enumDecode(_$MembershipTypeEnumMap, json['membership_type']),
+    _$enumDecodeNullable(_$MembershipTypeEnumMap, json['membership_type']),
     Profile.fromJson(json['profile'] as Map<String, dynamic>),
     (json['achievements'] as List<dynamic>)
         .map((e) => Achievement.fromJson(e as Map<String, dynamic>))
@@ -78,7 +89,7 @@ Map<String, dynamic> _$MemberToJson(Member instance) => <String, dynamic>{
 FullMember _$FullMemberFromJson(Map<String, dynamic> json) {
   return FullMember(
     json['pk'] as int,
-    _$enumDecode(_$MembershipTypeEnumMap, json['membership_type']),
+    _$enumDecodeNullable(_$MembershipTypeEnumMap, json['membership_type']),
     FullProfile.fromJson(json['profile'] as Map<String, dynamic>),
     (json['achievements'] as List<dynamic>)
         .map((e) => Achievement.fromJson(e as Map<String, dynamic>))
@@ -123,17 +134,6 @@ Map<String, dynamic> _$ProfileToJson(Profile instance) => <String, dynamic>{
       'website': instance.website?.toString(),
       'profile_description': instance.profileDescription,
     };
-
-K? _$enumDecodeNullable<K, V>(
-  Map<K, V> enumValues,
-  dynamic source, {
-  K? unknownValue,
-}) {
-  if (source == null) {
-    return null;
-  }
-  return _$enumDecode<K, V>(enumValues, source, unknownValue: unknownValue);
-}
 
 const _$ProgrammeEnumMap = {
   Programme.computingscience: 'computingscience',

@@ -18,7 +18,7 @@ enum DisplayNamePreference {
 @JsonSerializable(fieldRename: FieldRename.snake)
 class ListMember {
   final int pk;
-  final MembershipType membershipType;
+  final MembershipType? membershipType;
   final Profile profile;
 
   String get displayName => profile.displayName;
@@ -47,7 +47,7 @@ class Member extends ListMember {
 
   const Member(
     int pk,
-    MembershipType membershipType,
+    MembershipType? membershipType,
     Profile profile,
     this.achievements,
     this.societies,
@@ -67,7 +67,7 @@ class FullMember extends Member {
 
   const FullMember(
     int pk,
-    MembershipType membershipType,
+    MembershipType? membershipType,
     this.profile,
     List<Achievement> achievements,
     List<Achievement> societies,

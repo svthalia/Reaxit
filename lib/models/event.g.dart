@@ -35,7 +35,7 @@ Event _$EventFromJson(Map<String, dynamic> json) {
     EventPermissions.fromJson(json['user_permissions'] as Map<String, dynamic>),
     json['user_registration'] == null
         ? null
-        : EventRegistration.fromJson(
+        : AdminRegistration.fromJson(
             json['user_registration'] as Map<String, dynamic>),
   );
 }
