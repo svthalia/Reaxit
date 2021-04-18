@@ -1,6 +1,7 @@
 # Assets
 
 ## Placeholder Images
+
 The placeholder images have background color `#c5c5c5` and foreground `#ffffff`. They are made in GIMP from SVG files as follows:
 
 - Create a background canvas of twice the required size (e.g. 900x500 for the 450x250 map placeholder), with the background color.
