@@ -27,7 +27,7 @@ class AlbumTile extends StatelessWidget {
           Hero(
             tag: 'album_${album.pk}',
             child: FadeInImage.assetNetwork(
-              placeholder: 'assets/img/default-avatar.jpg',
+              placeholder: 'assets/img/album_placeholder.png',
               image: album.cover.medium,
               fit: BoxFit.cover,
               fadeInDuration: const Duration(milliseconds: 200),
