@@ -150,8 +150,30 @@ class ApiRepository {
     );
   }
 
-  // TODO: admin, register, cancel, fields
+  /// Register for the [Event] with the `pk`.
+  Future<EventRegistration> registerForEvent(int pk) async {
+    var uri = _baseUri.replace(path: _basePath + '/events/$pk/registrations/');
+    var response = await _handleExceptions(() => client.post(uri));
+    return EventRegistration.fromJson(jsonDecode(response.body));
+  }
+
+  /// Deregister for the [Event] with the `pk`.
+  Future<void> cancelRegistrationForEvent(int pk) async {
+    var uri = _baseUri.replace(path: _basePath + '/events/$pk/registrations/');
+    await _handleExceptions(() => client.delete(uri));
+  }
+
+  // TODO: fields
+
+  // TODO: event admin
   // getAdminEventRegistrations()
+  // ...
+
+  // TODO: pizzas
+
+  // TODO: pizza admin
+
+  // TODO: Thalia Pay
 
   /// Get the [Member] with the `pk`.
   Future<Member> getMember({required int pk}) async {

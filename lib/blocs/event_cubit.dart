@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/event.dart';
+import 'package:reaxit/models/event_registration.dart';
 
 class EventCubit extends Cubit<DetailState<Event>> {
   final ApiRepository api;
@@ -16,6 +17,25 @@ class EventCubit extends Cubit<DetailState<Event>> {
     } on ApiException catch (exception) {
       emit(DetailState.failure(message: _failureMessage(exception)));
     }
+  }
+
+  /// Register for the [Event] with the `pk`.
+  ///
+  /// This throws an [ApiException] if registration fails.
+  Future<EventRegistration> register(int pk) async {
+    final registration = await api.registerForEvent(pk);
+    // Reload the event for updated registration status.
+    await load(pk);
+    return registration;
+  }
+
+  /// Cancel your registration for the [Event] with the `pk`.
+  ///
+  /// This throws an [ApiException] if deregistering fails.
+  Future<void> cancelRegistration(int pk) async {
+    await api.cancelRegistrationForEvent(pk);
+    // Reload the event for updated registration status.
+    await load(pk);
   }
 
   String _failureMessage(ApiException exception) {
