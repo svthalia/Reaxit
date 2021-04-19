@@ -252,7 +252,7 @@ class _EventScreenState extends State<EventScreen>
         event.description,
         onTapUrl: (String url) async {
           if (await canLaunch(url)) {
-            launch(url);
+            await launch(url);
           } else {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text("Could not open '$url'."),
