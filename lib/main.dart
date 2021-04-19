@@ -7,6 +7,7 @@ import 'package:reaxit/blocs/event_list_bloc.dart';
 import 'package:reaxit/blocs/full_member_cubit.dart';
 import 'package:reaxit/blocs/member_list_bloc.dart';
 import 'package:reaxit/blocs/theme_bloc.dart';
+import 'package:reaxit/blocs/welcome_cubit.dart';
 import 'package:reaxit/ui/router/router.dart';
 import 'package:reaxit/theme.dart';
 
@@ -58,6 +59,10 @@ class _ThaliAppState extends State<ThaliApp> {
                     providers: [
                       BlocProvider(
                         create: (_) => FullMemberCubit(apiRepository)..load(),
+                        lazy: false,
+                      ),
+                      BlocProvider(
+                        create: (_) => WelcomeCubit(apiRepository)..load(),
                         lazy: false,
                       ),
                       BlocProvider(
