@@ -12,9 +12,7 @@ AlbumPhoto _$AlbumPhotoFromJson(Map<String, dynamic> json) {
     json['rotation'] as int,
     json['hidden'] as bool,
     json['album'] as int,
-    json['file'] == null
-        ? null
-        : Photo.fromJson(json['file'] as Map<String, dynamic>),
+    Photo.fromJson(json['file'] as Map<String, dynamic>),
   );
 }
 

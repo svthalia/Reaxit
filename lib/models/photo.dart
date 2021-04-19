@@ -15,7 +15,7 @@ class AlbumPhoto {
   String get medium => file.medium;
   String get large => file.large;
 
-  AlbumPhoto(
+  const AlbumPhoto(
     this.pk,
     this.rotation,
     this.hidden,
@@ -34,6 +34,6 @@ class Photo {
   final String medium;
   final String large;
 
-  Photo(this.full, this.small, this.medium, this.large);
+  const Photo(this.full, this.small, this.medium, this.large);
   factory Photo.fromJson(Map<String, dynamic> json) => _$PhotoFromJson(json);
 }

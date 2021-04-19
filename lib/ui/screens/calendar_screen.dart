@@ -1,36 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:collection/collection.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:reaxit/blocs/api_repository.dart';
+import 'package:reaxit/blocs/event_list_bloc.dart';
 import 'package:reaxit/models/event.dart';
-import 'package:reaxit/navigation.dart';
-import 'package:reaxit/providers/events_provider.dart';
-import 'package:reaxit/ui/components/menu_drawer.dart';
-import 'package:reaxit/ui/components/network_wrapper.dart';
-import 'package:reaxit/ui/components/network_search_delegate.dart';
+import 'package:reaxit/ui/router/router.dart';
 import 'package:reaxit/ui/screens/event_screen.dart';
+import 'package:reaxit/ui/widgets/error_scroll_view.dart';
+import 'package:reaxit/ui/widgets/menu_drawer.dart';
+import 'package:collection/collection.dart';
 
+// TODO: fix ordering
+// TODO: styling
 class CalendarScreen extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => CalendarScreenState();
+  _CalendarScreenState createState() => _CalendarScreenState();
 }
 
-class CalendarScreenState extends State<CalendarScreen> {
-  Map<String, List<Event>> groupByMonth(List<Event> eventList) {
-    return groupBy(eventList, (event) {
-      String month = DateFormat(DateFormat.MONTH).format(event.start);
-      if (event.start.year == DateTime.now().year) {
-        return month;
-      } else {
-        return '$month - ${event.start.year}';
-      }
-    });
+class _CalendarScreenState extends State<CalendarScreen> {
+  late ScrollController _controller;
+  late EventListBloc _bloc;
+
+  @override
+  void initState() {
+    _bloc = BlocProvider.of<EventListBloc>(context);
+    _controller = ScrollController()..addListener(_scrollListener);
+    super.initState();
   }
 
-  Map<DateTime, List<Event>> groupByDate(List<Event> eventList) {
-    return groupBy(
-      eventList,
-      (event) => DateTime(event.start.year, event.start.month, event.start.day),
-    );
+  void _scrollListener() {
+    if (_controller.position.pixels == _controller.position.maxScrollExtent) {
+      _bloc.add(EventListEvent.more());
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -40,109 +47,243 @@ class CalendarScreenState extends State<CalendarScreen> {
         title: Text('Calendar'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.search),
-            tooltip: "Search for events",
+            icon: Icon(Icons.search),
             onPressed: () {
               showSearch(
                 context: context,
-                delegate: NetworkSearchDelegate<EventsProvider>(
-                  search: (events, query) => events.search(query),
-                  resultBuilder: (context, events, eventList) => ListView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(20),
-                    children: groupByMonth(eventList)
-                        .entries
-                        .map(
-                          (monthGroup) => _CalendarMonthCard(
-                            monthGroup.key,
-                            groupByDate(monthGroup.value)
-                                .entries
-                                .map(
-                                  (dayGroup) => _CalendarDayCard(
-                                    DateFormat(DateFormat.ABBR_WEEKDAY)
-                                        .format(dayGroup.key),
-                                    dayGroup.key.day,
-                                    dayGroup.value
-                                        .map((event) =>
-                                            _CalendarEventCard(event))
-                                        .toList(),
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                        )
-                        .toList(),
+                delegate: CalendarSearchDelegate(
+                  EventListBloc(
+                    RepositoryProvider.of<ApiRepository>(
+                      context,
+                      listen: false,
+                    ),
                   ),
                 ),
               );
             },
-          )
+          ),
         ],
       ),
       drawer: MenuDrawer(),
-      body: NetworkWrapper<EventsProvider>(
-        builder: (context, events) => ListView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(20),
-          children: groupByMonth(events.eventList)
-              .entries
-              .map(
-                (monthGroup) => _CalendarMonthCard(
-                  monthGroup.key,
-                  groupByDate(monthGroup.value)
-                      .entries
-                      .map(
-                        (dayGroup) => _CalendarDayCard(
-                          DateFormat(DateFormat.ABBR_WEEKDAY)
-                              .format(dayGroup.key),
-                          dayGroup.key.day,
-                          dayGroup.value
-                              .map((event) => _CalendarEventCard(event))
-                              .toList(),
-                        ),
-                      )
-                      .toList(),
-                ),
-              )
-              .toList(),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          _bloc.add(EventListEvent.load());
+          await _bloc.stream.firstWhere(
+            (state) => !state.isLoading,
+          );
+        },
+        child: BlocBuilder<EventListBloc, EventListState>(
+          builder: (context, listState) {
+            if (listState.hasException) {
+              return ErrorScrollView(listState.message!);
+            } else {
+              return CalendarScrollView(
+                controller: _controller,
+                listState: listState,
+              );
+            }
+          },
         ),
       ),
     );
   }
 }
 
-class _CalendarMonthCard extends StatelessWidget {
-  final String _month;
-  final List<_CalendarDayCard> _dayCards;
+class CalendarSearchDelegate extends SearchDelegate {
+  late final ScrollController _controller;
+  final EventListBloc _bloc;
 
-  _CalendarMonthCard(this._month, this._dayCards);
+  CalendarSearchDelegate(this._bloc) {
+    _controller = ScrollController()..addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    if (_controller.position.pixels == _controller.position.maxScrollExtent) {
+      // TODO: add a range, so we start fetching before scrolling to the very end.
+      _bloc.add(EventListEvent.more());
+    }
+  }
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-        child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(this._month, style: TextStyle(fontSize: 20)),
-        Column(
-          children: this._dayCards,
+  List<Widget> buildActions(BuildContext context) {
+    if (query.isNotEmpty) {
+      return <Widget>[
+        IconButton(
+          tooltip: 'Clear search bar',
+          icon: Icon(Icons.delete),
+          onPressed: () {
+            query = '';
+          },
         )
-      ],
-    ));
+      ];
+    } else {
+      return [];
+    }
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return CloseButton(
+      onPressed: () => close(context, null),
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    _bloc.add(EventListEvent.load(search: query));
+    return BlocBuilder<EventListBloc, EventListState>(
+      bloc: _bloc,
+      builder: (context, listState) {
+        if (listState.hasException) {
+          return ErrorScrollView(listState.message!);
+        } else {
+          return CalendarScrollView(
+            controller: _controller,
+            listState: listState,
+          );
+        }
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    _bloc.add(EventListEvent.load(search: query));
+    return BlocBuilder<EventListBloc, EventListState>(
+      bloc: _bloc,
+      builder: (context, listState) {
+        if (listState.hasException) {
+          return ErrorScrollView(listState.message!);
+        } else {
+          return CalendarScrollView(
+            controller: _controller,
+            listState: listState,
+          );
+        }
+      },
+    );
   }
 }
 
-class _CalendarDayCard extends StatelessWidget {
-  final String _day;
-  final int _dayNumber;
-  final List<_CalendarEventCard> _eventCards;
+/// A ScrollView that shows a calendar with [Event]s.
+///
+/// The events are grouped by month, and date.
+///
+/// This does not take care of communicating with a Bloc. The [controller]
+/// should do that. The [listState] also must not have an exception.
+class CalendarScrollView extends StatelessWidget {
+  final ScrollController controller;
+  final EventListState listState;
 
-  _CalendarDayCard(this._day, this._dayNumber, this._eventCards);
+  const CalendarScrollView({
+    Key? key,
+    required this.controller,
+    required this.listState,
+  }) : super(key: key);
+
+  static Map<DateTime, List<Event>> _groupByMonth(List<Event> eventList) {
+    return groupBy<Event, DateTime>(
+      eventList,
+      (event) => DateTime(
+        event.start.year,
+        event.start.month,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
+    final monthGroupedEvents = _groupByMonth(listState.results);
+    final months = monthGroupedEvents.keys.toList();
+
+    return CustomScrollView(
+      controller: controller,
+      physics: AlwaysScrollableScrollPhysics(),
+      slivers: [
+        SliverPadding(
+          padding: EdgeInsets.all(10),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                final month = months[index];
+                final events = monthGroupedEvents[month]!;
+                return _MonthCard(month: month, events: events);
+              },
+              childCount: monthGroupedEvents.length,
+            ),
+          ),
+        ),
+        if (listState.isLoadingMore)
+          SliverPadding(
+            padding: EdgeInsets.all(10),
+            sliver: SliverToBoxAdapter(
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _MonthCard extends StatelessWidget {
+  final DateTime month;
+  final List<Event> events;
+
+  static final _monthFormatter = DateFormat('MMMM');
+  static final _monthYearFormatter = DateFormat('MMMM - yyyy');
+
+  static Map<DateTime, List<Event>> _groupByDay(List<Event> eventList) {
+    return groupBy<Event, DateTime>(
+      eventList,
+      (event) => DateTime(
+        event.start.year,
+        event.start.month,
+        event.start.day,
+      ),
+    );
+  }
+
+  const _MonthCard({Key? key, required this.month, required this.events})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final dayGroupedEvents = _groupByDay(events);
+    final days = dayGroupedEvents.keys.toList();
+
+    return Column(
+      children: [
+        Text(
+          month.year == DateTime.now().year
+              ? _monthFormatter.format(month)
+              : _monthYearFormatter.format(month),
+          style: Theme.of(context).textTheme.headline5,
+        ),
+        Column(
+          children: days
+              .map((day) => _DayCard(day: day, events: dayGroupedEvents[day]!))
+              .toList(),
+        )
+      ],
+    );
+  }
+}
+
+class _DayCard extends StatelessWidget {
+  final DateTime day;
+  final List<Event> events;
+
+  static final _dayFormatter = DateFormat(DateFormat.ABBR_WEEKDAY);
+
+  const _DayCard({Key? key, required this.day, required this.events})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,10 +295,10 @@ class _CalendarDayCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  this._dayNumber.toString(),
+                  day.day.toString(),
                   style: TextStyle(fontSize: 30),
                 ),
-                Text(this._day),
+                Text(_dayFormatter.format(day)),
               ],
             ),
           ),
@@ -165,7 +306,7 @@ class _CalendarDayCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: _eventCards,
+              children: events.map((event) => _EventCard(event)).toList(),
             ),
           )
         ],
@@ -174,28 +315,21 @@ class _CalendarDayCard extends StatelessWidget {
   }
 }
 
-class _CalendarEventCard extends StatelessWidget {
-  final String _title;
-  final String _startTime;
-  final String _endTime;
-  final String _location;
-  final bool _registered;
-  final int _pk;
+class _EventCard extends StatelessWidget {
+  final Event event;
 
-  _CalendarEventCard(Event event)
-      : _title = event.title,
-        _startTime = DateFormat('HH:mm').format(event.start),
-        _endTime = DateFormat('HH:mm').format(event.end),
-        _location = event.location,
-        _registered = event.registered,
-        _pk = event.pk;
+  const _EventCard(this.event, {Key? key}) : super(key: key);
+
+  static final _timeFormatter = DateFormat('HH:mm');
 
   @override
   Widget build(BuildContext context) {
+    final startTime = _timeFormatter.format(event.start);
+    final endTime = _timeFormatter.format(event.end);
     return InkWell(
       onTap: () {
         ThaliaRouterDelegate.of(context).push(
-          MaterialPage(child: EventScreen(this._pk)),
+          MaterialPage(child: EventScreen(pk: event.pk)),
         );
       },
       child: Container(
@@ -203,21 +337,21 @@ class _CalendarEventCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(1),
-          color: this._registered ? Color(0xFFE62272) : Colors.grey,
+          color: event.isRegistered ? Color(0xFFE62272) : Colors.grey,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              this._title,
+              event.title,
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
-              "$_startTime - $_endTime | $_location",
+              '$startTime - $endTime | ${event.location}',
               style: TextStyle(color: Colors.white),
             ),
           ],

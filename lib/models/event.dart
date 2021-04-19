@@ -1,103 +1,86 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:reaxit/models/registration.dart';
+import 'package:reaxit/models/event_registration.dart';
 
 part 'event.g.dart';
+
+enum EventCategory { alumni, education, career, leisure, association, other }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Event {
   final int pk;
   final String title;
+
+  // TODO: set empty string defaults if necessary:
+  // @JsonKey(defaultValue: '')
   final String description;
-  @JsonKey(fromJson: _dateTimeFromJson)
   final DateTime start;
-  @JsonKey(fromJson: _dateTimeFromJson)
   final DateTime end;
+  final EventCategory category;
+  final DateTime? registrationStart;
+  final DateTime? registrationEnd;
+  final DateTime? cancelDeadline;
   final String location;
-  final String mapLocation;
-  final String price;
-  final bool registered;
-  final bool registrationAllowed;
-  @JsonKey(fromJson: _dateTimeFromJson)
-  final DateTime registrationStart;
-  @JsonKey(fromJson: _dateTimeFromJson)
-  final DateTime registrationEnd;
-  final Registration userRegistration;
-  @JsonKey(fromJson: _dateTimeFromJson)
-  final DateTime cancelDeadline;
+  final double price;
+  final double fine;
   final int numParticipants;
-  final int maxParticipants;
-  final String noRegistrationMessage;
-  final String fine;
+  final int? maxParticipants;
+  final String? noRegistrationMessage;
   final bool hasFields;
-  final String googleMapsUrl;
-  final bool isAdmin;
+  final bool isPizzaEvent;
+  final String mapsUrl;
+  final EventPermissions userPermissions;
+  final AdminRegistration? userRegistration;
+  // final Commitee organiser;
+  // final Slide? slide;
 
-  // The api names this "pizza" for /events/ and "is_pizza_event" for /event/pk.
-  @JsonKey(name: "is_pizza_event")
-  final bool pizza1;
-  @JsonKey(name: "pizza")
-  final bool pizza2;
+  bool get isRegistered => userRegistration != null;
+  bool get registrationIsRequired => registrationStart != null;
 
-  bool get isPizzaEvent => pizza1 ?? pizza2;
+  bool get canCreateRegistration => userPermissions.createRegistration;
+  bool get canUpdateRegistration => userPermissions.updateRegistration;
+  bool get canCancelRegistration => userPermissions.cancelRegistration;
+  bool get canManageEvent => userPermissions.manageEvent;
 
-  Event(
+  factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
+
+  const Event(
     this.pk,
     this.title,
     this.description,
     this.start,
     this.end,
-    this.location,
-    this.price,
-    this.registered,
-    this.registrationAllowed,
+    this.category,
     this.registrationStart,
     this.registrationEnd,
-    this.userRegistration,
     this.cancelDeadline,
+    this.location,
+    this.price,
+    this.fine,
     this.numParticipants,
     this.maxParticipants,
     this.noRegistrationMessage,
-    this.fine,
     this.hasFields,
-    this.googleMapsUrl,
-    this.mapLocation,
-    this.isAdmin,
-    this.pizza1,
-    this.pizza2,
+    this.isPizzaEvent,
+    this.mapsUrl,
+    this.userPermissions,
+    this.userRegistration,
   );
-
-  bool registrationRequired() {
-    return registrationStart != null || registrationEnd != null;
-  }
-
-  bool registrationStarted() {
-    return registrationStart.isBefore(DateTime.now());
-  }
-
-  bool isLateCancellation() {
-    return userRegistration != null &&
-        userRegistration.isLateCancellation != null;
-  }
-
-  bool registrationAllowedAndPossible() {
-    return registrationRequired() &&
-        (DateTime.now()).isBefore(registrationEnd) &&
-        registrationStarted() &&
-        registrationAllowed &&
-        !isLateCancellation();
-  }
-
-  bool afterCancelDeadline() {
-    return cancelDeadline != null && (DateTime.now()).isAfter(cancelDeadline);
-  }
-
-  factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
 }
 
-DateTime _dateTimeFromJson(json) {
-  if (json == null) {
-    return null;
-  } else {
-    return DateTime.parse(json).toLocal();
-  }
+@JsonSerializable(fieldRename: FieldRename.snake)
+class EventPermissions {
+  final bool createRegistration;
+  final bool cancelRegistration;
+  final bool updateRegistration;
+  final bool manageEvent;
+
+  const EventPermissions(
+    this.createRegistration,
+    this.cancelRegistration,
+    this.updateRegistration,
+    this.manageEvent,
+  );
+
+  factory EventPermissions.fromJson(Map<String, dynamic> json) =>
+      _$EventPermissionsFromJson(json);
 }

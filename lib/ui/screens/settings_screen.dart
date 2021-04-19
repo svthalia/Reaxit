@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:reaxit/providers/notifications_provider.dart';
-import 'package:reaxit/providers/theme_mode_provider.dart';
-import 'package:reaxit/ui/components/menu_drawer.dart';
-import 'package:reaxit/models/setting.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reaxit/blocs/theme_bloc.dart';
+import 'package:reaxit/ui/widgets/menu_drawer.dart';
 
 class SettingsScreen extends StatelessWidget {
   @override
@@ -17,11 +15,11 @@ class SettingsScreen extends StatelessWidget {
           _ThemeModeCard(),
           Divider(),
           Text(
-            "Notifications",
+            'Notifications',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyText1,
           ),
-          _SettingsCard(),
+          // _SettingsCard(),
         ],
       ),
     );
@@ -34,18 +32,20 @@ class _ThemeModeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Consumer<ThemeModeProvider>(
-        builder: (context, themeModeProvider, child) {
-          return ListTile(
-            leading: Icon(Icons.brightness_6_sharp),
-            title: Text(
-              "Theme mode",
-              style: Theme.of(context).textTheme.bodyText1,
-            ),
-            trailing: DropdownButton(
-              value: themeModeProvider.themeMode,
-              onChanged: (newThemeMode) async {
-                themeModeProvider.setThemeMode(newThemeMode);
+      child: ListTile(
+        leading: Icon(Icons.brightness_6_sharp),
+        title: Text(
+          'Theme mode',
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
+        trailing: BlocBuilder<ThemeBloc, ThemeMode>(
+          builder: (context, themeMode) {
+            return DropdownButton(
+              value: themeMode,
+              onChanged: (ThemeMode? newMode) async {
+                BlocProvider.of<ThemeBloc>(context).add(
+                  ThemeChangeEvent(newMode!),
+                );
               },
               items: [
                 DropdownMenuItem(
@@ -54,7 +54,7 @@ class _ThemeModeCard extends StatelessWidget {
                     children: [
                       Icon(Icons.wb_sunny_outlined),
                       SizedBox(width: 15),
-                      Text("Light")
+                      Text('Light')
                     ],
                   ),
                 ),
@@ -64,7 +64,7 @@ class _ThemeModeCard extends StatelessWidget {
                     children: [
                       Icon(Icons.settings),
                       SizedBox(width: 15),
-                      Text("System default")
+                      Text('System default')
                     ],
                   ),
                 ),
@@ -74,63 +74,63 @@ class _ThemeModeCard extends StatelessWidget {
                     children: [
                       Icon(Icons.brightness_2_outlined),
                       SizedBox(width: 15),
-                      Text("Dark")
+                      Text('Dark')
                     ],
                   ),
                 ),
               ],
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
 }
 
-class _SettingsCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<NotificationsProvider>(
-      builder: (context, notifications, child) {
-        return Card(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: ListTile.divideTiles(
-              context: context,
-              tiles: notifications.settings.map(
-                (setting) => _SettingCard(setting),
-              ),
-            ).toList(),
-          ),
-        );
-      },
-    );
-  }
-}
+// class _SettingsCard extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Consumer<NotificationsProvider>(
+//       builder: (context, notifications, child) {
+//         return Card(
+//           child: Column(
+//             mainAxisAlignment: MainAxisAlignment.start,
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: ListTile.divideTiles(
+//               context: context,
+//               tiles: notifications.settings.map(
+//                 (setting) => _SettingCard(setting),
+//               ),
+//             ).toList(),
+//           ),
+//         );
+//       },
+//     );
+//   }
+// }
 
-class _SettingCard extends StatelessWidget {
-  final Setting _setting;
+// class _SettingCard extends StatelessWidget {
+//   final Setting _setting;
 
-  _SettingCard(this._setting);
+//   _SettingCard(this._setting);
 
-  @override
-  Widget build(BuildContext context) {
-    return SwitchListTile(
-      value: Provider.of<NotificationsProvider>(
-        context,
-        listen: false,
-      ).getNotificatinoSetting(_setting),
-      onChanged: (value) {
-        Provider.of<NotificationsProvider>(
-          context,
-          listen: false,
-        ).setNotificationSetting(_setting, value);
-      },
-      title: Text(_setting.name),
-      subtitle: (_setting.description?.isNotEmpty ?? false)
-          ? Text(_setting.description)
-          : null,
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return SwitchListTile(
+//       value: Provider.of<NotificationsProvider>(
+//         context,
+//         listen: false,
+//       ).getNotificatinoSetting(_setting),
+//       onChanged: (value) {
+//         Provider.of<NotificationsProvider>(
+//           context,
+//           listen: false,
+//         ).setNotificationSetting(_setting, value);
+//       },
+//       title: Text(_setting.name),
+//       subtitle: (_setting.description?.isNotEmpty ?? false)
+//           ? Text(_setting.description)
+//           : null,
+//     );
+//   }
+// }

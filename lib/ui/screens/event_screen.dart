@@ -1,424 +1,409 @@
 import 'dart:io';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:reaxit/blocs/api_repository.dart';
+import 'package:reaxit/blocs/detail_state.dart';
+import 'package:reaxit/blocs/event_cubit.dart';
+import 'package:reaxit/blocs/registrations_cubit.dart';
 import 'package:reaxit/models/event.dart';
-import 'package:reaxit/models/registration.dart';
-import 'package:reaxit/navigation.dart';
-import 'package:reaxit/providers/events_provider.dart';
+import 'package:reaxit/models/event_registration.dart';
+import 'package:reaxit/ui/router/router.dart';
 import 'package:reaxit/ui/screens/event_admin_screen.dart';
-import 'package:reaxit/ui/screens/event_registration_screen.dart';
-import 'package:reaxit/ui/components/member_card.dart';
-import 'package:reaxit/ui/screens/pizza_screen.dart';
+import 'package:reaxit/ui/screens/registration_screen.dart';
+import 'package:reaxit/ui/widgets/error_scroll_view.dart';
+import 'package:reaxit/ui/widgets/member_tile.dart';
 import 'package:url_launcher/link.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EventScreen extends StatefulWidget {
   final int pk;
+  final Event? event;
 
-  EventScreen(this.pk);
+  EventScreen({required this.pk, this.event}) : super(key: ValueKey(pk));
 
   @override
-  State<StatefulWidget> createState() => EventScreenState();
+  _EventScreenState createState() => _EventScreenState();
 }
 
-class EventScreenState extends State<EventScreen> {
-  Future<Event> _event;
-  Future<List<Registration>> _registrations;
+class _EventScreenState extends State<EventScreen>
+    with TickerProviderStateMixin {
+  late final EventCubit _eventCubit;
+  late final RegistrationsCubit _registrationsCubit;
 
   @override
   void initState() {
+    final api = RepositoryProvider.of<ApiRepository>(context);
+    _eventCubit = EventCubit(api)..load(widget.pk);
+    _registrationsCubit = RegistrationsCubit(api)..load(widget.pk);
     super.initState();
   }
 
-  @override
-  void didChangeDependencies() {
-    _event =
-        Provider.of<EventsProvider>(context, listen: false).getEvent(widget.pk);
-    _event.then(
-      (event) {
-        if (event?.registrationRequired() ?? false) {
-          _registrations = Provider.of<EventsProvider>(context, listen: false)
-              .getEventRegistrations(event.pk);
-        }
-      },
-    );
-    super.didChangeDependencies();
-  }
-
-  Widget _makeEventProperties(BuildContext context, Event event) {
-    List<TableRow> infoItems = [
-      TableRow(children: [
-        TableCell(
-          child: Text(
-            "From: ",
-            style: TextStyle(fontWeight: FontWeight.bold),
+  Widget _makeMap(Event event) {
+    return Link(
+      uri: Uri.parse(
+        'https://maps.${Platform.isIOS ? 'apple' : 'google'}.com'
+        '/maps?daddr=${Uri.encodeComponent(event.location)}',
+      ),
+      builder: (context, followLink) => GestureDetector(
+        onTap: followLink,
+        child: Center(
+          child: FadeInImage.assetNetwork(
+            fadeInDuration: Duration(milliseconds: 300),
+            fadeOutDuration: Duration(milliseconds: 300),
+            placeholder: 'assets/img/map_placeholder.png',
+            image: event.mapsUrl,
           ),
         ),
-        TableCell(
-            child: Text(DateFormat('d MMM yyyy, HH:mm').format(event.start)))
-      ]),
-      TableRow(children: [
-        TableCell(
-          child: Text(
-            "Until: ",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        TableCell(
-            child: Text(DateFormat('d MMM yyyy, HH:mm').format(event.end)))
-      ]),
-      TableRow(children: [
-        TableCell(
-          child: Text(
-            "Location: ",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        TableCell(child: Text(event.location))
-      ]),
-      TableRow(children: [
-        TableCell(
-          child: Text(
-            "Price: ",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        TableCell(child: Text('€${event.price}'))
-      ]),
-    ];
-
-    if (event.registrationRequired()) {
-      infoItems.add(TableRow(children: [
-        TableCell(
-          child: Text(
-            "Registration deadline: ",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        TableCell(child: Text(event.registrationEnd.toString()))
-      ]));
-      infoItems.add(TableRow(children: [
-        TableCell(
-          child: Text(
-            "Cancellation deadline: ",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        TableCell(child: Text(event.cancelDeadline.toString()))
-      ]));
-      String participantText = '${event.numParticipants} registrations';
-      if (event.maxParticipants != null) {
-        participantText += ' (${event.maxParticipants} max)';
-      }
-      infoItems.add(TableRow(children: [
-        TableCell(
-          child: Text(
-            "Number of registrations: ",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        TableCell(child: Text(participantText))
-      ]));
-      if (event.userRegistration != null) {
-        String registrationState;
-        if (event.isLateCancellation()) {
-          registrationState =
-              'Your registration is cancelled after the cancellation deadline';
-        } else if (event.userRegistration.isCancelled) {
-          registrationState = 'Your registration is cancelled';
-        } else if (event.userRegistration.queuePosition == null) {
-          registrationState = 'You are registered';
-        } else if (event.userRegistration.queuePosition > 0) {
-          registrationState =
-              'Queue position ${event.userRegistration.queuePosition}';
-        } else {
-          registrationState = 'Your registration is cancelled';
-        }
-        infoItems.add(TableRow(children: [
-          TableCell(
-            child: Text("Registration status: ",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
-          TableCell(child: Text(registrationState))
-        ]));
-      }
-    }
-
-    return Table(
-      children: infoItems.toList(),
-    );
-  }
-
-  static Widget _makeRegistrationText(BuildContext context, Event event) {
-    String text = "";
-
-    if (!event.registrationRequired()) {
-      if (event.noRegistrationMessage != null) {
-        text = event.noRegistrationMessage;
-      } else {
-        text = "No registration required.";
-      }
-    } else if (!event.registrationStarted()) {
-      text = "Registration will open ${event.registrationStart}";
-    } else if (!event.registrationAllowedAndPossible()) {
-      text = 'Registration is not possible anymore.';
-    } else if (event.isLateCancellation()) {
-      text = 'Registration is not allowed anymore, as you '
-          'cancelled your registration after the deadline.';
-    }
-
-    if (event.afterCancelDeadline() && !event.isLateCancellation()) {
-      if (text.length > 0) {
-        text += ' ';
-      }
-      text +=
-          "Cancellation isn't possible anymore without having to pay the full "
-          "costs of €${event.fine}. Also note that you will be unable to re-register.";
-    }
-
-    if (text.isNotEmpty) {
-      return Text(text);
-    } else {
-      return SizedBox(height: 0);
-    }
-  }
-
-  static Widget _makeEventActions(BuildContext context, Event event) {
-    if (event.registrationAllowedAndPossible()) {
-      if (event.userRegistration == null ||
-          event.userRegistration.isCancelled) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Link(
-              uri: Uri.parse(
-                  "https://staging.thalia.nu/event-registration-terms/"),
-              builder: (context, followLink) => RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text:
-                          "By registering, you confirm that you have read the ",
-                      style: Theme.of(context).textTheme.bodyText2,
-                    ),
-                    TextSpan(
-                      text: "terms and conditions",
-                      recognizer: TapGestureRecognizer()..onTap = followLink,
-                      style: Theme.of(context).textTheme.bodyText2.copyWith(
-                            color: Theme.of(context).accentColor,
-                          ),
-                    ),
-                    TextSpan(
-                      text:
-                          ", that you understand them and that you agree to be bound by them.",
-                      style: Theme.of(context).textTheme.bodyText2,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            ElevatedButton(
-              child: Text(
-                event.maxParticipants != null &&
-                        event.maxParticipants <= event.numParticipants
-                    ? 'PUT ME ON THE WAITING LIST'
-                    : 'REGISTER',
-              ),
-              onPressed: () {
-                ThaliaRouterDelegate.of(context).push(
-                  MaterialPage(child: EventRegistrationScreen(event)),
-                );
-              },
-            ),
-          ],
-        );
-      }
-      if (event.userRegistration != null &&
-          !event.userRegistration.isCancelled &&
-          event.registrationRequired() &&
-          event.registrationStarted()) {
-        if (event.registrationStarted() &&
-            event.userRegistration != null &&
-            !event.userRegistration.isCancelled &&
-            event.hasFields) {
-          return Column(
-            children: [
-              ElevatedButton(
-                child: Text('UPDATE REGISTRATION'),
-                onPressed: () {
-                  // TODO: Go to update registration view
-                },
-              ),
-              ElevatedButton(
-                child: Text('CANCEL REGISTRATION'),
-                onPressed: () {
-                  // TODO: Cancel registration
-                },
-              )
-            ],
-          );
-        } else {
-          return Column(
-            children: [
-              ElevatedButton(
-                child: Text('CANCEL REGISTRATION'),
-                onPressed: () {},
-              ),
-            ],
-          );
-        }
-      }
-    }
-    return Container();
-  }
-
-  static Widget _makePizzaAction(BuildContext context, Event event) {
-    return ElevatedButton.icon(
-      icon: Icon(Icons.local_pizza),
-      label: Text("PIZZA"),
-      onPressed: () => ThaliaRouterDelegate.of(context).push(
-        MaterialPage(child: PizzaScreen()),
       ),
     );
   }
 
+  Widget _makeInfo(Event event) {
+    // TODO @LCKnol: make info
+    return Text('info');
+  }
+
+  Widget _makeButtons(Event event) {
+    Widget? registrationButton;
+    // TODO: add disabled versions when registration is not yet or not anymore possible
+    if (event.canCreateRegistration && event.registrationIsRequired) {
+      registrationButton = Column(
+        key: ValueKey('register'),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                try {
+                  final registration = await _eventCubit.register(event.pk);
+                  if (event.hasFields) {
+                    ThaliaRouterDelegate.of(context).push(
+                      MaterialPage(
+                        child: RegistrationScreen(
+                          eventPk: event.pk,
+                          registrationPk: registration.pk,
+                        ),
+                      ),
+                    );
+                  }
+                } on ApiException {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Could not register for the event.'),
+                    duration: Duration(seconds: 1),
+                  ));
+                }
+                await _registrationsCubit.load(event.pk);
+              },
+              icon: Icon(Icons.create_outlined),
+              label: Text('REGISTER'),
+            ),
+          ),
+        ],
+      );
+    } else if (event.canCreateRegistration && !event.registrationIsRequired) {
+      registrationButton = Column(
+        key: ValueKey('register'),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                try {
+                  await _eventCubit.register(event.pk);
+                  await _registrationsCubit.load(event.pk);
+                } on ApiException {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Could not register for the event.'),
+                    duration: Duration(seconds: 1),
+                  ));
+                }
+              },
+              icon: Icon(Icons.check),
+              label: Text("I'LL BE THERE"),
+            ),
+          ),
+        ],
+      );
+    } else if (event.canCancelRegistration && event.registrationIsRequired) {
+      registrationButton = Column(
+        key: ValueKey('cancel'),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                // TODO: confirmation dialog.
+                try {
+                  await _eventCubit.cancelRegistration(event.pk);
+                  await _registrationsCubit.load(event.pk);
+                } on ApiException {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Could not cancel your registration'),
+                    duration: Duration(seconds: 1),
+                  ));
+                }
+              },
+              icon: Icon(Icons.delete_forever_outlined),
+              label: Text('CANCEL REGISTRATION'),
+            ),
+          ),
+        ],
+      );
+    } else if (event.canCancelRegistration && !event.registrationIsRequired) {
+      registrationButton = Column(
+        key: ValueKey('cancel'),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                try {
+                  await _eventCubit.cancelRegistration(event.pk);
+                  await _registrationsCubit.load(event.pk);
+                } on ApiException {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Could not cancel your registration'),
+                    duration: Duration(seconds: 1),
+                  ));
+                }
+              },
+              icon: Icon(Icons.clear),
+              label: Text("I WON'T BE THERE"),
+            ),
+          ),
+        ],
+      );
+    }
+
+    Widget? updateButton;
+    if (event.canUpdateRegistration && event.isRegistered && event.hasFields) {
+      updateButton = Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: ElevatedButton.icon(
+              onPressed: () {
+                ThaliaRouterDelegate.of(context).push(
+                  MaterialPage(
+                    child: RegistrationScreen(
+                      eventPk: event.pk,
+                      registrationPk: event.userRegistration!.pk,
+                    ),
+                  ),
+                );
+              },
+              icon: Icon(Icons.build),
+              label: Text('UPDATE REGISTRATION'),
+            ),
+          ),
+        ],
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // TODO: make padding nice
+        // TODO: disclaimers and fine warnings
+        AnimatedSize(
+          vsync: this,
+          curve: Curves.ease,
+          duration: Duration(milliseconds: 200),
+          child: AnimatedSwitcher(
+            switchInCurve: Curves.ease,
+            switchOutCurve: Curves.ease,
+            duration: Duration(milliseconds: 200),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return ScaleTransition(scale: animation, child: child);
+            },
+            child: registrationButton ?? SizedBox(height: 0),
+          ),
+        ),
+        AnimatedSize(
+          vsync: this,
+          curve: Curves.ease,
+          duration: Duration(milliseconds: 200),
+          child: AnimatedSwitcher(
+            switchInCurve: Curves.ease,
+            switchOutCurve: Curves.ease,
+            duration: Duration(milliseconds: 200),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return ScaleTransition(scale: animation, child: child);
+            },
+            child: updateButton ?? SizedBox(height: 0),
+          ),
+        ),
+        SizedBox(height: 5),
+      ],
+    );
+  }
+
+  Widget _makeDescription(Event event) {
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: HtmlWidget(
+        event.description,
+        onTapUrl: (String url) async {
+          if (await canLaunch(url)) {
+            launch(url);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Could not open '$url'."),
+              duration: Duration(seconds: 1),
+            ));
+          }
+        },
+      ),
+    );
+  }
+
+  SliverPadding _makeRegistrations(DetailState<List<EventRegistration>> state) {
+    if (state.isLoading) {
+      return SliverPadding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        sliver: SliverToBoxAdapter(
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+    } else if (state.hasException) {
+      return SliverPadding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        sliver: SliverToBoxAdapter(
+          child: Center(child: Text(state.message!)),
+        ),
+      );
+    } else {
+      return SliverPadding(
+        padding: EdgeInsets.all(10),
+        sliver: SliverGrid(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
+          ),
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              if (state.result![index].member != null) {
+                return MemberTile(
+                  member: state.result![index].member!,
+                );
+              } else {
+                return InkWell(
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.asset('assets/image/default-avatar.jpg'),
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        alignment: Alignment.bottomLeft,
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          gradient: LinearGradient(
+                            begin: FractionalOffset.topCenter,
+                            end: FractionalOffset.bottomCenter,
+                            colors: [
+                              Colors.black.withOpacity(0.0),
+                              Colors.black.withOpacity(0.5),
+                            ],
+                            stops: [0.4, 1.0],
+                          ),
+                        ),
+                        child: Text(
+                          state.result![index].name!,
+                          style: Theme.of(context).primaryTextTheme.bodyText2,
+                        ),
+                      )
+                    ],
+                  ),
+                );
+              }
+            },
+            childCount: state.result!.length,
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Event>(
-      future: _event,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          Event event = snapshot.data;
+    return BlocBuilder<EventCubit, DetailState<Event>>(
+      bloc: _eventCubit,
+      builder: (context, state) {
+        if (state.hasException) {
+          return Scaffold(
+            appBar: AppBar(title: Text(widget.event?.title ?? 'Event')),
+            body: RefreshIndicator(
+              onRefresh: () async {
+                // Await both loads.
+                var eventFuture = _eventCubit.load(widget.pk);
+                await _registrationsCubit.load(widget.pk);
+                await eventFuture;
+              },
+              child: ErrorScrollView(state.message!),
+            ),
+          );
+        } else if (state.isLoading &&
+            widget.event == null &&
+            state.result == null) {
+          return Scaffold(
+            appBar: AppBar(title: Text('Event')),
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        } else {
+          final event = (state.result ?? widget.event)!;
           return Scaffold(
             appBar: AppBar(
-              title: Text('Event'),
+              title: Text(event.title),
               actions: [
-                if (event.registrationRequired() && event.isAdmin ?? false)
+                if (event.userPermissions.manageEvent)
                   IconButton(
                     icon: Icon(Icons.settings),
                     onPressed: () {
                       ThaliaRouterDelegate.of(context).push(
-                        MaterialPage(child: EventAdminScreen(event.pk)),
+                        MaterialPage(child: EventAdminScreen(pk: event.pk)),
                       );
                     },
                   ),
               ],
             ),
-            body: Column(
-              children: [
-                Link(
-                  uri: Uri.parse(
-                      "https://maps.${Platform.isIOS ? 'apple' : 'google'}.com"
-                      "/maps?daddr=${Uri.encodeComponent(event.mapLocation)}"),
-                  builder: (context, followLink) => GestureDetector(
-                    onTap: followLink,
-                    child: Center(
-                      child: FadeInImage.assetNetwork(
-                        // TODO: Replace placeholder
-                        placeholder: 'assets/img/huygens.jpg',
-                        image: event.googleMapsUrl,
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: 20,
-                    top: 10,
-                    right: 20,
-                    bottom: 0,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(bottom: 10),
-                        child: Text(
-                          event.title,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
-                          ),
+            body: RefreshIndicator(
+              onRefresh: () => _eventCubit.load(widget.pk),
+              child: BlocBuilder<RegistrationsCubit,
+                  DetailState<List<EventRegistration>>>(
+                bloc: _registrationsCubit,
+                builder: (context, state) {
+                  return CustomScrollView(
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _makeMap(event),
+                            _makeInfo(event),
+                            _makeButtons(event),
+                            Divider(),
+                            _makeDescription(event),
+                            Divider(),
+                          ],
                         ),
                       ),
-                      _makeEventProperties(context, event),
-                      SizedBox(height: 15),
-                      _makeEventActions(context, event),
-                      _makeRegistrationText(context, event),
-                      if (event.isPizzaEvent) _makePizzaAction(context, event),
+                      _makeRegistrations(state),
                     ],
-                  ),
-                ),
-                Divider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Html(data: event.description),
-                ),
-                if (event.registrationRequired() &&
-                    event.numParticipants == 0) ...[
-                  Divider(),
-                  Text("No registrations yet."),
-                ],
-                if (event.registrationRequired() &&
-                    event.numParticipants > 0) ...[
-                  Divider(),
-                  FutureBuilder(
-                    future: _registrations,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        // TODO: transform to grid of registrations,
-                        // probably by changing the whole screen to a SliverGrid
-                        // return GridView.builder(
-                        //   gridDelegate:
-                        //       SliverGridDelegateWithFixedCrossAxisCount(
-                        //     crossAxisSpacing: 10,
-                        //     mainAxisSpacing: 10,
-                        //     crossAxisCount: 3,
-                        //   ),
-                        //   itemCount: snapshot.data.length,
-                        //   physics: const AlwaysScrollableScrollPhysics(),
-                        //   padding: const EdgeInsets.all(20),
-                        //   itemBuilder: (context, index) =>
-                        //       MemberCard(snapshot.data[index]),
-                        // );
-                        return Text("TODO");
-                      } else if (snapshot.hasError) {
-                        return Center(
-                          child: Text(
-                            "An error occurred while fetching registrations.",
-                          ),
-                        );
-                      } else {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                    },
-                  ),
-                ]
-              ],
-            ),
-          );
-        } else if (snapshot.hasError) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Event'),
-            ),
-            body: Center(
-              child: Text("An error occurred while fetching event data."),
-            ),
-          );
-        } else {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Event'),
-            ),
-            body: Center(
-              child: CircularProgressIndicator(),
+                  );
+                },
+              ),
             ),
           );
         }

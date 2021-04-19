@@ -4,35 +4,27 @@ import 'package:reaxit/models/photo.dart';
 part 'album.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class Album {
+class ListAlbum {
   final int pk;
   final String title;
-  @JsonKey(fromJson: _dateTimeFromJson)
-  final DateTime date;
-  final AlbumPhoto cover;
-  final bool hidden;
-  final bool shareable;
   final bool accessible;
-  final List<AlbumPhoto> photos;
+  final bool shareable;
+  final AlbumPhoto cover;
 
-  Album(
-    this.pk,
-    this.title,
-    this.date,
-    this.cover,
-    this.hidden,
-    this.shareable,
-    this.accessible,
-    this.photos,
-  );
+  const ListAlbum(
+      this.pk, this.title, this.accessible, this.shareable, this.cover);
 
-  factory Album.fromJson(Map<String, dynamic> json) => _$AlbumFromJson(json);
+  factory ListAlbum.fromJson(Map<String, dynamic> json) =>
+      _$ListAlbumFromJson(json);
 }
 
-DateTime _dateTimeFromJson(json) {
-  if (json == null) {
-    return null;
-  } else {
-    return DateTime.parse(json).toLocal();
-  }
+@JsonSerializable(fieldRename: FieldRename.snake)
+class Album extends ListAlbum {
+  final List<AlbumPhoto> photos;
+
+  const Album(int pk, String title, bool accessible, bool shareable,
+      AlbumPhoto cover, this.photos)
+      : super(pk, title, accessible, shareable, cover);
+
+  factory Album.fromJson(Map<String, dynamic> json) => _$AlbumFromJson(json);
 }
