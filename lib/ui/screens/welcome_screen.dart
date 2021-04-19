@@ -26,18 +26,15 @@ class WelcomeScreen extends StatelessWidget {
           builder: (context, state) {
             if (state.hasException) {
               return ErrorScrollView(state.message!);
-            } else if (state.isLoading) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
             } else {
               return ListView(
                 padding: const EdgeInsets.all(20),
                 physics: const AlwaysScrollableScrollPhysics(),
                 children: [
-                  ...state.result!.map(
-                    (event) => EventDetailCard(event: event),
-                  ),
+                  if (state.result != null)
+                    ...state.result!.map(
+                      (event) => EventDetailCard(event: event),
+                    ),
                   TextButton(
                     onPressed: () => ThaliaRouterDelegate.of(context).replace(
                       MaterialPage(child: CalendarScreen()),
