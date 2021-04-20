@@ -7,6 +7,7 @@ import 'package:reaxit/models/event.dart';
 
 class EventListEvent extends ListEvent {
   final String? search;
+  final DateTime date = DateTime.now();
 
   EventListEvent.load({this.search}) : super.load();
   EventListEvent.more()
@@ -104,6 +105,7 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
     try {
       var listResponse = await api.getEvents(
         search: event.search,
+        start: event.search == null ? event.date : null,
         limit: _firstPageSize,
         offset: 0,
       );
@@ -136,6 +138,7 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
     try {
       var listResponse = await api.getEvents(
         search: state.event.search,
+        start: state.event.search == null ? event.date : null,
         limit: _pageSize,
         offset: state.results.length,
       );

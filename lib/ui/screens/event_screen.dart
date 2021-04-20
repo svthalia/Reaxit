@@ -6,6 +6,7 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/blocs/event_cubit.dart';
+import 'package:reaxit/blocs/event_list_bloc.dart';
 import 'package:reaxit/blocs/registrations_cubit.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/event_registration.dart';
@@ -89,6 +90,9 @@ class _EventScreenState extends State<EventScreen>
                       ),
                     );
                   }
+                  BlocProvider.of<EventListBloc>(context).add(
+                    EventListEvent.load(),
+                  );
                 } on ApiException {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('Could not register for the event.'),
@@ -115,6 +119,9 @@ class _EventScreenState extends State<EventScreen>
                 try {
                   await _eventCubit.register(event.pk);
                   await _registrationsCubit.load(event.pk);
+                  BlocProvider.of<EventListBloc>(context).add(
+                    EventListEvent.load(),
+                  );
                 } on ApiException {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('Could not register for the event.'),
@@ -141,6 +148,9 @@ class _EventScreenState extends State<EventScreen>
                 try {
                   await _eventCubit.cancelRegistration(event.pk);
                   await _registrationsCubit.load(event.pk);
+                  BlocProvider.of<EventListBloc>(context).add(
+                    EventListEvent.load(),
+                  );
                 } on ApiException {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('Could not cancel your registration'),
@@ -166,6 +176,9 @@ class _EventScreenState extends State<EventScreen>
                 try {
                   await _eventCubit.cancelRegistration(event.pk);
                   await _registrationsCubit.load(event.pk);
+                  BlocProvider.of<EventListBloc>(context).add(
+                    EventListEvent.load(),
+                  );
                 } on ApiException {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('Could not cancel your registration'),
