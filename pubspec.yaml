@@ -68,7 +68,7 @@ dev_dependencies:
     sdk: flutter
 
   # JSON parsing.
-  build_runner: ^1.12.2
+  build_runner: ^2.0.0
 
   # JSON parsing.
   json_serializable: ^4.1.0
