@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:reaxit/models/album.dart';
-
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/event_registration.dart';
 import 'package:reaxit/models/list_response.dart';

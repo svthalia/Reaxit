@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import 'photo.dart';
+import 'package:reaxit/models/photo.dart';
 
 part 'member.g.dart';
 

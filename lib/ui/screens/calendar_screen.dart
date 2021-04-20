@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -8,7 +9,6 @@ import 'package:reaxit/ui/router/router.dart';
 import 'package:reaxit/ui/screens/event_screen.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
-import 'package:collection/collection.dart';
 
 // TODO: fix ordering
 // TODO: styling

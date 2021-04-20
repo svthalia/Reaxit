@@ -8,9 +8,6 @@ import 'package:reaxit/ui/screens/calendar_screen.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/event_detail_card.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
-import 'package:reaxit/ui/router/router.dart';
-import 'package:reaxit/ui/widgets/menu_drawer.dart';
-import 'package:reaxit/ui/screens/profile_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   @override

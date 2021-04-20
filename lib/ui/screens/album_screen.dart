@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:photo_view/photo_view_gallery.dart';
-import 'package:reaxit/blocs/album_cubit.dart';
-import 'package:reaxit/models/album.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
+import 'package:reaxit/blocs/album_cubit.dart';
 import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/detail_state.dart';
+import 'package:reaxit/models/album.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 
 /// Screen that loads and shows a the Album of the member with `pk`.
