@@ -7,9 +7,11 @@ import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/event_registration.dart';
 import 'package:reaxit/models/list_response.dart';
 import 'package:reaxit/models/member.dart';
+import 'package:reaxit/models/registration_field.dart';
 
-Uri _baseUri = Uri(scheme: 'https', host: 'staging.thalia.nu');
-String _basePath = 'api/v2';
+final Uri _baseUri = Uri(scheme: 'https', host: 'staging.thalia.nu');
+const String _basePath = 'api/v2';
+const Map<String, String> _jsonHeader = {'Content-type': 'application/json'};
 
 enum ApiException {
   notFound,
@@ -41,12 +43,12 @@ class ApiRepository {
   ///
   /// Can be called for example as
   /// ```dart
-  /// var response = await _handleExceptions(() => client.get(uri));
+  /// final response = await _handleExceptions(() => client.get(uri));
   /// ```
   Future<Response> _handleExceptions(
       Future<Response> Function() request) async {
     try {
-      var response = await request();
+      final response = await request();
       switch (response.statusCode) {
         case 200:
         case 201:
@@ -79,8 +81,8 @@ class ApiRepository {
 
   /// Get the [Event] with the `pk`.
   Future<Event> getEvent({required int pk}) async {
-    var uri = _baseUri.replace(path: _basePath + '/events/$pk');
-    var response = await _handleExceptions(() => client.get(uri));
+    final uri = _baseUri.replace(path: '$_basePath/events/$pk');
+    final response = await _handleExceptions(() => client.get(uri));
     return Event.fromJson(jsonDecode(response.body));
   }
 
@@ -102,8 +104,8 @@ class ApiRepository {
       ordering == null || ['start', 'end', '-start', '-end'].contains(ordering),
       'Invalid ordering parameter: $ordering',
     );
-    var uri = _baseUri.replace(
-      path: _basePath + '/events/',
+    final uri = _baseUri.replace(
+      path: '$_basePath/events/',
       queryParameters: {
         if (search != null) 'search': search,
         if (limit != null) 'limit': limit.toString(),
@@ -114,7 +116,7 @@ class ApiRepository {
       },
     );
 
-    var response = await _handleExceptions(() => client.get(uri));
+    final response = await _handleExceptions(() => client.get(uri));
     return ListResponse<Event>.fromJson(
       jsonDecode(response.body),
       (json) => Event.fromJson(json as Map<String, dynamic>),
@@ -134,15 +136,15 @@ class ApiRepository {
     int? limit,
     int? offset,
   }) async {
-    var uri = _baseUri.replace(
-      path: _basePath + '/events/$pk/registrations/',
+    final uri = _baseUri.replace(
+      path: '$_basePath/events/$pk/registrations/',
       queryParameters: {
         if (limit != null) 'limit': limit.toString(),
         if (offset != null) 'offset': offset.toString(),
       },
     );
 
-    var response = await _handleExceptions(() => client.get(uri));
+    final response = await _handleExceptions(() => client.get(uri));
     return ListResponse<EventRegistration>.fromJson(
       jsonDecode(response.body),
       (json) => EventRegistration.fromJson(json as Map<String, dynamic>),
@@ -151,18 +153,55 @@ class ApiRepository {
 
   /// Register for the [Event] with the `pk`.
   Future<EventRegistration> registerForEvent(int pk) async {
-    var uri = _baseUri.replace(path: _basePath + '/events/$pk/registrations/');
-    var response = await _handleExceptions(() => client.post(uri));
+    final uri = _baseUri.replace(path: '$_basePath/events/$pk/registrations/');
+    final response = await _handleExceptions(() => client.post(uri));
     return EventRegistration.fromJson(jsonDecode(response.body));
   }
 
   /// Deregister for the [Event] with the `pk`.
   Future<void> cancelRegistrationForEvent(int pk) async {
-    var uri = _baseUri.replace(path: _basePath + '/events/$pk/registrations/');
+    final uri = _baseUri.replace(path: '$_basePath/events/$pk/registrations/');
     await _handleExceptions(() => client.delete(uri));
   }
 
-  // TODO: fields
+  /// Get the [RegistrationField]s of [EventRegistration] `registrationPk`
+  /// for [Event] `eventPk`.
+  ///
+  /// Returns a [Map] of identifiers and corresponding [RegistrationFields].
+  Future<Map<String, RegistrationField>> getRegistrationFields({
+    required int eventPk,
+    required int registrationPk,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/events/$eventPk/registrations/$registrationPk/fields/',
+    );
+    final response = await _handleExceptions(() => client.get(uri));
+    Map<String, dynamic> json = jsonDecode(response.body);
+    return json.map(
+      (key, jsonField) => MapEntry(key, RegistrationField.fromJson(jsonField)),
+    );
+  }
+
+  /// Update the [RegistrationField]s of EventRegistration] `registrationPk`
+  /// for [Event] `eventPk` to the values in `fields`.
+  ///
+  /// `fields` must contain every [RegistrationField] returned by
+  /// [this.getRegistrationFields()], possibly with null values.
+  Future<void> updateRegistrationFields({
+    required int eventPk,
+    required int registrationPk,
+    required Map<String, RegistrationField> fields,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/events/$eventPk/registrations/$registrationPk/fields/',
+    );
+    final body = jsonEncode(
+      fields.map((key, field) => MapEntry(key, field.value)),
+    );
+    await _handleExceptions(
+      () => client.put(uri, body: body, headers: _jsonHeader),
+    );
+  }
 
   // TODO: event admin
   // getAdminEventRegistrations()
@@ -176,8 +215,8 @@ class ApiRepository {
 
   /// Get the [Member] with the `pk`.
   Future<Member> getMember({required int pk}) async {
-    var uri = _baseUri.replace(path: _basePath + '/members/$pk');
-    var response = await _handleExceptions(() => client.get(uri));
+    final uri = _baseUri.replace(path: '$_basePath/members/$pk');
+    final response = await _handleExceptions(() => client.get(uri));
     return Member.fromJson(jsonDecode(response.body));
   }
 
@@ -205,8 +244,8 @@ class ApiRepository {
           ].contains(ordering),
       'Invalid ordering parameter: $ordering',
     );
-    var uri = _baseUri.replace(
-      path: _basePath + '/members/',
+    final uri = _baseUri.replace(
+      path: '$_basePath/members/',
       queryParameters: {
         if (search != null) 'search': search,
         if (limit != null) 'limit': limit.toString(),
@@ -215,7 +254,7 @@ class ApiRepository {
       },
     );
 
-    var response = await _handleExceptions(() => client.get(uri));
+    final response = await _handleExceptions(() => client.get(uri));
     return ListResponse<ListMember>.fromJson(
       jsonDecode(response.body),
       (json) => ListMember.fromJson(json as Map<String, dynamic>),
@@ -224,15 +263,15 @@ class ApiRepository {
 
   /// Get the logged in [FullMember].
   Future<FullMember> getMe() async {
-    var uri = _baseUri.replace(path: _basePath + '/members/me');
-    var response = await _handleExceptions(() => client.get(uri));
+    final uri = _baseUri.replace(path: '$_basePath/members/me');
+    final response = await _handleExceptions(() => client.get(uri));
     return FullMember.fromJson(jsonDecode(response.body));
   }
 
   /// Get the [Album] with the `pk`.
   Future<Album> getAlbum({required int pk}) async {
-    var uri = _baseUri.replace(path: _basePath + '/photos/albums/$pk');
-    var response = await _handleExceptions(() => client.get(uri));
+    final uri = _baseUri.replace(path: '$_basePath/photos/albums/$pk');
+    final response = await _handleExceptions(() => client.get(uri));
     return Album.fromJson(jsonDecode(response.body));
   }
 
@@ -246,8 +285,8 @@ class ApiRepository {
     int? limit,
     int? offset,
   }) async {
-    var uri = _baseUri.replace(
-      path: _basePath + '/photos/albums/',
+    final uri = _baseUri.replace(
+      path: '$_basePath/photos/albums/',
       queryParameters: {
         if (search != null) 'search': search,
         if (limit != null) 'limit': limit.toString(),
@@ -255,7 +294,7 @@ class ApiRepository {
       },
     );
 
-    var response = await _handleExceptions(() => client.get(uri));
+    final response = await _handleExceptions(() => client.get(uri));
     return ListResponse<ListAlbum>.fromJson(
       jsonDecode(response.body),
       (json) => ListAlbum.fromJson(json as Map<String, dynamic>),
