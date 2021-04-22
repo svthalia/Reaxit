@@ -71,61 +71,86 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   ...state.result!.entries.map((entry) {
                     final field = entry.value;
                     if (field is TextRegistrationField) {
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                          left: 20,
-                          top: 20,
-                          right: 20,
-                        ),
-                        child: TextFormField(
-                          initialValue: field.value,
-                          minLines: 1,
-                          maxLines: 5,
-                          decoration: InputDecoration(
-                            labelText: field.label + ' *',
-                            hintText: 'Lorem ipsum...',
+                      return Column(
+                        children: [
+                          ListTile(
+                            title: Text(field.label),
+                            subtitle: field.description.isNotEmpty
+                                ? Text(field.description)
+                                : null,
                           ),
-                          validator: (value) {
-                            if (field.isRequired &&
-                                (value == null || value.isEmpty)) {
-                              return 'Please fill in this field.';
-                            }
-                            return null;
-                          },
-                          onSaved: (newValue) => field.value = newValue,
-                        ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 20,
+                              bottom: 20,
+                              right: 20,
+                            ),
+                            child: TextFormField(
+                              initialValue: field.value,
+                              minLines: 1,
+                              maxLines: 5,
+                              decoration: InputDecoration(
+                                labelText: field.isRequired
+                                    ? field.label + ' *'
+                                    : field.label,
+                                hintText: 'Lorem ipsum...',
+                              ),
+                              validator: (value) {
+                                if (field.isRequired &&
+                                    (value == null || value.isEmpty)) {
+                                  return 'Please fill in this field.';
+                                }
+                                return null;
+                              },
+                              onSaved: (newValue) => field.value = newValue,
+                            ),
+                          ),
+                        ],
                       );
                     } else if (field is IntegerRegistrationField) {
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                          left: 20,
-                          top: 20,
-                          right: 20,
-                        ),
-                        child: TextFormField(
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                          decoration: InputDecoration(
-                            labelText: field.label + ' *',
-                            hintText: '123...',
+                      return Column(
+                        children: [
+                          ListTile(
+                            dense: field.description.isEmpty,
+                            title: Text(field.label),
+                            subtitle: field.description.isNotEmpty
+                                ? Text(field.description)
+                                : null,
                           ),
-                          initialValue: field.value?.toString(),
-                          validator: (value) {
-                            if (field.isRequired &&
-                                (value == null || value.isEmpty)) {
-                              return 'Please fill in this field.';
-                            }
-                            return null;
-                          },
-                          onSaved: (newValue) =>
-                              field.value = int.tryParse(newValue!),
-                        ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 20,
+                              right: 20,
+                              bottom: 20,
+                            ),
+                            child: TextFormField(
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              decoration: InputDecoration(
+                                labelText: field.isRequired
+                                    ? field.label + ' *'
+                                    : field.label,
+                                hintText: '123...',
+                              ),
+                              initialValue: field.value?.toString(),
+                              validator: (value) {
+                                if (field.isRequired &&
+                                    (value == null || value.isEmpty)) {
+                                  return 'Please fill in this field.';
+                                }
+                                return null;
+                              },
+                              onSaved: (newValue) =>
+                                  field.value = int.tryParse(newValue!),
+                            ),
+                          ),
+                        ],
                       );
                     } else if (field is CheckboxRegistrationField) {
                       return Padding(
-                        padding: const EdgeInsets.only(top: 20),
+                        padding: const EdgeInsets.only(bottom: 20),
                         child: _CheckboxFormField(
                           initialValue: field.value ?? false,
                           onSaved: (newValue) => field.value = newValue,
@@ -164,6 +189,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 );
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
+                                    duration: Duration(seconds: 1),
                                     content: Text(
                                       'Your registration has been updated.',
                                     ),
@@ -174,6 +200,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 print(e);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
+                                    duration: Duration(seconds: 1),
                                     content: Text(
                                       "Couldn't update your registration.",
                                     ),
