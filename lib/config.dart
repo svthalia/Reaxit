@@ -6,7 +6,7 @@
 
 const String apiHost = String.fromEnvironment(
   'API_HOST',
-  defaultValue: 'thalia.nu',
+  defaultValue: 'staging.thalia.nu',
 );
 
 const String apiSecret = String.fromEnvironment(
