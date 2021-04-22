@@ -7,9 +7,10 @@ import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/event_registration.dart';
 import 'package:reaxit/models/list_response.dart';
 import 'package:reaxit/models/member.dart';
+import 'package:reaxit/config.dart' as config;
 
-Uri _baseUri = Uri(scheme: 'https', host: 'staging.thalia.nu');
-String _basePath = 'api/v2';
+final Uri _baseUri = Uri(scheme: 'https', host: config.apiHost);
+final String _basePath = 'api/v2';
 
 enum ApiException {
   notFound,
