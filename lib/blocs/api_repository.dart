@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
+import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/models/album.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/event_registration.dart';
@@ -9,9 +10,16 @@ import 'package:reaxit/models/list_response.dart';
 import 'package:reaxit/models/member.dart';
 import 'package:reaxit/models/registration_field.dart';
 
-final Uri _baseUri = Uri(scheme: 'https', host: 'staging.thalia.nu');
+final Uri _baseUri = Uri(
+  scheme: 'https',
+  host: config.apiHost,
+);
+
 const String _basePath = 'api/v2';
-const Map<String, String> _jsonHeader = {'Content-type': 'application/json'};
+
+const Map<String, String> _jsonHeader = {
+  'Content-type': 'application/json',
+};
 
 enum ApiException {
   notFound,

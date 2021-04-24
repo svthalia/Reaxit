@@ -6,22 +6,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:oauth2/oauth2.dart';
-
-final _identifier = '3zlt7pqGVMiUCGxOnKTZEpytDUN7haeFBP2kVkig';
-final _secret =
-    'Chwh1BE3MgfU1OZZmYRV3LU3e3GzpZJ6tiWrqzFY3dPhMlS7VYD3qMm1RC1pPBvg'
-    '3WaWmJxfRq8bv5ElVOpjRZwabAGOZ0DbuHhW3chAMaNlOmwXixNfUJIKIBzlnr7I';
-
-final _authorizationEndpoint = Uri.parse(
-  'https://staging.thalia.nu/user/oauth/authorize/',
-);
-
-final _tokenEndpoint = Uri.parse(
-  'https://staging.thalia.nu/user/oauth/token/',
-);
+import 'package:reaxit/config.dart' as config;
 
 final _redirectUrl = Uri.parse(
   'nu.thalia://callback',
+);
+
+final Uri _authorizationEndpoint = Uri(
+  scheme: 'https',
+  host: config.apiHost,
+  path: 'user/oauth/authorize/',
+);
+
+final Uri _tokenEndpoint = Uri(
+  scheme: 'https',
+  host: config.apiHost,
+  path: 'user/oauth/token/',
 );
 
 final _scopes = <String>[
@@ -144,8 +144,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       yield LoggedInAuthState(
         client: Client(
           credentials,
-          identifier: _identifier,
-          secret: _secret,
+          identifier: config.apiIdentifier,
+          secret: config.apiSecret,
         ),
         logOut: () => add(LogOutAuthEvent()),
       );
@@ -158,8 +158,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     yield LoadingAuthState();
 
     final grant = AuthorizationCodeGrant(
-        _identifier, _authorizationEndpoint, _tokenEndpoint,
-        secret: _secret);
+      config.apiIdentifier,
+      _authorizationEndpoint,
+      _tokenEndpoint,
+      secret: config.apiSecret,
+    );
 
     final authorizeUrl = grant.getAuthorizationUrl(
       _redirectUrl,
