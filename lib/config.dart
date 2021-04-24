@@ -20,3 +20,5 @@ const String apiIdentifier = String.fromEnvironment(
   'API_IDENTIFIER',
   defaultValue: '3zlt7pqGVMiUCGxOnKTZEpytDUN7haeFBP2kVkig',
 );
+
+const String sentryDSN = String.fromEnvironment('SENTRY_DSN');
