@@ -8,18 +8,27 @@ import 'package:reaxit/blocs/full_member_cubit.dart';
 import 'package:reaxit/blocs/member_list_bloc.dart';
 import 'package:reaxit/blocs/theme_bloc.dart';
 import 'package:reaxit/blocs/welcome_cubit.dart';
-import 'package:reaxit/ui/router/router.dart';
+import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/theme.dart';
+import 'package:reaxit/ui/router/router.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
-void main() async {
-  runApp(BlocProvider(
-    create: (_) => ThemeBloc()..add(ThemeLoadEvent()),
-    lazy: false,
-    child: BlocProvider(
-      create: (context) => AuthBloc()..add(LoadAuthEvent()),
-      child: ThaliApp(),
-    ),
-  ));
+Future<void> main() async {
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = config.sentryDSN;
+    },
+    appRunner: () {
+      runApp(BlocProvider(
+        create: (_) => ThemeBloc()..add(ThemeLoadEvent()),
+        lazy: false,
+        child: BlocProvider(
+          create: (context) => AuthBloc()..add(LoadAuthEvent()),
+          child: ThaliApp(),
+        ),
+      ));
+    },
+  );
 }
 
 class ThaliApp extends StatefulWidget {
