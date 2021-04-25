@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:reaxit/blocs/album_cubit.dart';
@@ -7,6 +11,8 @@ import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/album.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
+import 'package:reaxit/config.dart' as config;
+import 'package:share/share.dart';
 
 /// Screen that loads and shows a the Album of the member with `pk`.
 class AlbumScreen extends StatefulWidget {
@@ -47,29 +53,89 @@ class _AlbumScreenState extends State<AlbumScreen> {
   void _showPhotoGallery(Album album, int index) {
     showDialog(
       context: context,
-      barrierColor: Colors.black.withOpacity(0.9),
+      barrierColor: Colors.black.withOpacity(0.92),
       builder: (context) {
-        return Scaffold(
-          body: Stack(
+        final pageController = PageController(initialPage: index);
+        return Material(
+          color: Colors.transparent,
+          child: Stack(
             children: [
               PhotoViewGallery.builder(
+                backgroundDecoration: BoxDecoration(color: Colors.transparent),
                 itemCount: album.photos.length,
                 builder: (context, i) => PhotoViewGalleryPageOptions(
+                  heroAttributes: PhotoViewHeroAttributes(
+                    tag: 'photo_${album.photos[i].pk}',
+                  ),
                   imageProvider: NetworkImage(album.photos[i].full),
-                  tightMode: false,
                   minScale: PhotoViewComputedScale.contained * 0.8,
                   maxScale: PhotoViewComputedScale.covered * 2,
                 ),
-                pageController: PageController(initialPage: index),
+                pageController: pageController,
               ),
-              // TODO: share button
-              CloseButton(
-                color: Theme.of(context).primaryIconTheme.color,
+              SafeArea(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CloseButton(
+                      color: Theme.of(context).primaryIconTheme.color,
+                    ),
+                    IconButton(
+                      color: Theme.of(context).primaryIconTheme.color,
+                      icon: Icon(
+                        Platform.isIOS ? Icons.ios_share : Icons.share,
+                      ),
+                      onPressed: () async {
+                        var i = pageController.page!.round();
+                        if (i < 0 || i >= album.photos.length) i = index;
+                        final url = Uri.parse(album.photos[i].full);
+                        try {
+                          final response = await http.get(url);
+                          if (response.statusCode != 200) throw Exception();
+                          final baseTempDir = await getTemporaryDirectory();
+                          final tempDir = await baseTempDir.createTemp();
+                          final tempFile = File(
+                            '${tempDir.path}/${url.pathSegments.last}',
+                          );
+                          await tempFile.writeAsBytes(response.bodyBytes);
+                          await Share.shareFiles([tempFile.path]);
+                        } catch (_) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            duration: Duration(seconds: 1),
+                            content: Text('Could not share the image.'),
+                          ));
+                        }
+                      },
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
-          backgroundColor: Colors.transparent,
         );
+      },
+    );
+  }
+
+  Widget _makeShareAlbumButton(int pk) {
+    return IconButton(
+      color: Theme.of(context).primaryIconTheme.color,
+      icon: Icon(
+        Platform.isIOS ? Icons.ios_share : Icons.share,
+      ),
+      onPressed: () async {
+        try {
+          // TODO: The api currently uses only the pk, and the website only a
+          //  slug. Concrexit issue #1626 should be closed before adding this,
+          //  and at that point the slug route should also be accepted as a
+          //  deeplink. All album pk's should be replaced with slugs.
+          await Share.share('https://${config.apiHost}/members/photos/$pk/');
+        } catch (_) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            duration: Duration(seconds: 1),
+            content: Text('Could not share the album.'),
+          ));
+        }
       },
     );
   }
@@ -83,6 +149,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
           return Scaffold(
             appBar: AppBar(
               title: Text(widget.album?.title ?? 'Album'),
+              actions: [_makeShareAlbumButton(widget.pk)],
             ),
             body: ErrorScrollView(state.message!),
           );
@@ -90,12 +157,16 @@ class _AlbumScreenState extends State<AlbumScreen> {
           return Scaffold(
             appBar: AppBar(
               title: Text(widget.album?.title ?? 'Album'),
+              actions: [_makeShareAlbumButton(widget.pk)],
             ),
             body: Center(child: CircularProgressIndicator()),
           );
         } else {
           return Scaffold(
-            appBar: AppBar(title: Text(state.result!.title)),
+            appBar: AppBar(
+              title: Text(state.result!.title),
+              actions: [_makeShareAlbumButton(widget.pk)],
+            ),
             body: GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisSpacing: 5,

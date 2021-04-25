@@ -153,6 +153,9 @@ class ThaliaRouteInformationParser
         MaterialPage(child: EventScreen(pk: pk))
       ];
     } else if (RegExp('^/members/photos/([0-9]+)\$').hasMatch(path)) {
+      // TODO: The api currently uses only the pk, and the website only a
+      //  slug. After the closing of concrexit issue #1626, this link should
+      //  expect a slug instead of an int.
       final pk = int.parse(segments[2]);
       return [
         MaterialPage(child: AlbumsScreen()),
