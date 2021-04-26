@@ -214,8 +214,8 @@ class ApiRepository {
   }
 
   // TODO: event admin
-  // getAdminEventRegistrations()
-  // ...
+  //  getAdminEventRegistrations()
+  //  ...
 
   // TODO: pizzas
 

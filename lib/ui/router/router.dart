@@ -136,7 +136,6 @@ class ThaliaRouteInformationParser
     var segments = uri.pathSegments;
 
     // Handle "/".
-    print(uri);
     if (uri.pathSegments.isEmpty) {
       return [MaterialPage(child: WelcomeScreen())];
     } else if (RegExp('^/pizzas/\$').hasMatch(path)) {

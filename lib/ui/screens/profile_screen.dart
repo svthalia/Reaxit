@@ -519,7 +519,7 @@ class __DescriptionFactState extends State<_DescriptionFact>
   late final FullMemberCubit _fullMemberCubit;
 
   @override
-  initState() {
+  void initState() {
     _fullMemberCubit = BlocProvider.of<FullMemberCubit>(context);
     _controller = TextEditingController.fromValue(
       TextEditingValue(text: widget.member.profileDescription ?? ''),
@@ -618,9 +618,5 @@ class __DescriptionFactState extends State<_DescriptionFact>
         ],
       ),
     );
-    // return AnimatedSwitcher(
-    //   duration: Duration(milliseconds: 200),
-    //   child: isEditting ? Text('editting') : Text('reading'),
-    // );
   }
 }
