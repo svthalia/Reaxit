@@ -34,6 +34,7 @@ dependencies:
 
   # Networking basics.
   http: ^0.13.1
+  http_parser: ^4.0.0
 
   # OAuth2 authorized http Client.
   oauth2: ^2.0.0
@@ -65,6 +66,12 @@ dependencies:
 
   # Sentry error reporting.
   sentry_flutter: ^5.0.0
+
+  # Access camera and gallery.
+  image_picker: ^0.7.4
+
+  # Resize images.
+  image_cropper: ^1.4.0
 
 dev_dependencies:
   flutter_test:

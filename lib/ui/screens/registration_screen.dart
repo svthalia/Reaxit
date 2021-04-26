@@ -197,7 +197,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 );
                                 ThaliaRouterDelegate.of(context).pop();
                               } on ApiException catch (e) {
-                                print(e);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     duration: Duration(seconds: 1),

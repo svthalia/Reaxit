@@ -27,7 +27,6 @@ class _LoginScreenState extends State<LoginScreen> {
             current is FailureAuthState);
       },
       builder: (context, authState) {
-        print(authState);
         if (authState is LoadingAuthState) {
           return Scaffold(
             backgroundColor: Color(0xFFE62272),
@@ -58,7 +57,6 @@ class _LoginScreenState extends State<LoginScreen> {
             backgroundColor: Color(0xFFE62272),
             body: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              // crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Center(
                   child: Image(
