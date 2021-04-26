@@ -59,8 +59,6 @@ class ApiRepository {
       Future<http.Response> Function() request) async {
     try {
       final response = await request();
-      print(response.statusCode);
-      print(response.body);
       switch (response.statusCode) {
         case 200:
         case 201:
@@ -93,7 +91,7 @@ class ApiRepository {
 
   /// Get the [Event] with the `pk`.
   Future<Event> getEvent({required int pk}) async {
-    final uri = _baseUri.replace(path: '$_basePath/events/$pk');
+    final uri = _baseUri.replace(path: '$_basePath/events/$pk/');
     final response = await _handleExceptions(() => client.get(uri));
     return Event.fromJson(jsonDecode(response.body));
   }
@@ -227,7 +225,7 @@ class ApiRepository {
 
   /// Get the [Member] with the `pk`.
   Future<Member> getMember({required int pk}) async {
-    final uri = _baseUri.replace(path: '$_basePath/members/$pk');
+    final uri = _baseUri.replace(path: '$_basePath/members/$pk/');
     final response = await _handleExceptions(() => client.get(uri));
     return Member.fromJson(jsonDecode(response.body));
   }
@@ -275,7 +273,7 @@ class ApiRepository {
 
   /// Get the logged in [FullMember].
   Future<FullMember> getMe() async {
-    final uri = _baseUri.replace(path: '$_basePath/members/me');
+    final uri = _baseUri.replace(path: '$_basePath/members/me/');
     final response = await _handleExceptions(() => client.get(uri));
     return FullMember.fromJson(jsonDecode(response.body));
   }
@@ -284,13 +282,11 @@ class ApiRepository {
   ///
   /// `file` should be a jpg image.
   Future<void> updateAvatar(File file) async {
-    // TODO: switch to api v2 when concrexit issue #1627 is fixed.
-    // final uri = _baseUri.replace(path: '$_basePath/members/me/');
-    final uri = _baseUri.replace(path: 'api/v1/members/me/');
+    final uri = _baseUri.replace(path: '$_basePath/members/me/');
     final request = http.MultipartRequest('PATCH', uri);
     request.files.add(
       await http.MultipartFile.fromPath(
-        'photo',
+        'profile.photo',
         file.path,
         contentType: MediaType('image', 'jpeg'),
       ),
@@ -301,9 +297,20 @@ class ApiRepository {
     });
   }
 
+  /// Update the description of the logged in member.
+  Future<void> updateDescription(String description) async {
+    final uri = _baseUri.replace(path: '$_basePath/members/me/');
+    final body = jsonEncode({
+      'profile': {'profile_description': description}
+    });
+    await _handleExceptions(
+      () => client.patch(uri, body: body, headers: _jsonHeader),
+    );
+  }
+
   /// Get the [Album] with the `pk`.
   Future<Album> getAlbum({required int pk}) async {
-    final uri = _baseUri.replace(path: '$_basePath/photos/albums/$pk');
+    final uri = _baseUri.replace(path: '$_basePath/photos/albums/$pk/');
     final response = await _handleExceptions(() => client.get(uri));
     return Album.fromJson(jsonDecode(response.body));
   }

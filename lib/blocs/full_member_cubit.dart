@@ -25,6 +25,11 @@ class FullMemberCubit extends Cubit<DetailState<FullMember>> {
     await load();
   }
 
+  Future<void> updateDescription(String description) async {
+    await api.updateDescription(description);
+    await load();
+  }
+
   String _failureMessage(ApiException exception) {
     switch (exception) {
       case ApiException.noInternet:

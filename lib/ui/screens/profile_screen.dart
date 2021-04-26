@@ -242,33 +242,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _makeDescriptionFact(ListMember member) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SizedBox(height: 5),
-          _fieldLabel('About ${member.displayName}'),
-          const SizedBox(height: 3),
-          Padding(
-            padding: const EdgeInsets.all(5),
-            child: Text(
-              member.profileDescription != null
-                  ? member.profileDescription!
-                  : "This member hasn't created a description yet.",
-              style: TextStyle(
-                fontStyle: member.profileDescription != null
-                    ? FontStyle.normal
-                    : FontStyle.italic,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _makeStudiesFact(ListMember member) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -371,7 +344,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _makeHonoraryFact(),
           _factDivider(),
         ],
-        _makeDescriptionFact(member),
+        _DescriptionFact(member: member, cubit: _memberCubit),
         _factDivider(),
         if (member.startingYear != null && member.programme != null) ...[
           _makeStudiesFact(member),
@@ -460,7 +433,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: BlocBuilder<MemberCubit, DetailState<Member>>(
         bloc: _memberCubit,
         builder: (context, state) {
-          print('.');
           if (state.hasException) {
             return CustomScrollView(
               slivers: [
@@ -524,5 +496,131 @@ class _BlackGradient extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _DescriptionFact extends StatefulWidget {
+  final ListMember member;
+  final MemberCubit cubit;
+  const _DescriptionFact({
+    Key? key,
+    required this.member,
+    required this.cubit,
+  }) : super(key: key);
+
+  @override
+  __DescriptionFactState createState() => __DescriptionFactState();
+}
+
+class __DescriptionFactState extends State<_DescriptionFact>
+    with TickerProviderStateMixin {
+  bool isEditting = false;
+  late final TextEditingController _controller;
+  late final FullMemberCubit _fullMemberCubit;
+
+  @override
+  initState() {
+    _fullMemberCubit = BlocProvider.of<FullMemberCubit>(context);
+    _controller = TextEditingController.fromValue(
+      TextEditingValue(text: widget.member.profileDescription ?? ''),
+    );
+    super.initState();
+  }
+
+  Widget _fieldLabel(String title) {
+    return Text(title, style: Theme.of(context).textTheme.subtitle2);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final fullMemberCubit = BlocProvider.of<FullMemberCubit>(context);
+    final isMe = fullMemberCubit.state.result?.pk == widget.member.pk;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SizedBox(height: 5),
+          _fieldLabel('About ${widget.member.displayName}'),
+          const SizedBox(height: 3),
+          Padding(
+            padding: const EdgeInsets.all(5),
+            child: AnimatedSize(
+              vsync: this,
+              duration: Duration(milliseconds: 200),
+              child: AnimatedSwitcher(
+                duration: Duration(milliseconds: 200),
+                child: isEditting
+                    ? Row(
+                        key: ValueKey(true),
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Expanded(
+                            child: TextField(
+                                controller: _controller,
+                                minLines: 1,
+                                maxLines: 5,
+                                style: Theme.of(context).textTheme.bodyText2),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.check),
+                            onPressed: () async {
+                              try {
+                                await _fullMemberCubit.updateDescription(
+                                  _controller.text,
+                                );
+                                await widget.cubit.load(widget.member.pk);
+                              } on ApiException {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    duration: Duration(seconds: 2),
+                                    content: Text(
+                                      'Uploading your avatar failed.',
+                                    ),
+                                  ),
+                                );
+                              }
+                              setState(() => isEditting = false);
+                            },
+                          ),
+                        ],
+                      )
+                    : Row(
+                        key: ValueKey(false),
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Text(
+                            widget.member.profileDescription != null
+                                ? widget.member.profileDescription!
+                                : "This member hasn't created a description yet.",
+                            style: TextStyle(
+                              fontStyle:
+                                  widget.member.profileDescription != null
+                                      ? FontStyle.normal
+                                      : FontStyle.italic,
+                            ),
+                          ),
+                          if (isMe)
+                            IconButton(
+                              tooltip: 'Edit your description',
+                              icon: Icon(Icons.edit_outlined),
+                              onPressed: () {
+                                setState(() => isEditting = true);
+                              },
+                            ),
+                        ],
+                      ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    // return AnimatedSwitcher(
+    //   duration: Duration(milliseconds: 200),
+    //   child: isEditting ? Text('editting') : Text('reading'),
+    // );
   }
 }
