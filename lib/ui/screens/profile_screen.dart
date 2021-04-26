@@ -558,10 +558,11 @@ class __DescriptionFactState extends State<_DescriptionFact>
                         children: [
                           Expanded(
                             child: TextField(
-                                controller: _controller,
-                                minLines: 1,
-                                maxLines: 5,
-                                style: Theme.of(context).textTheme.bodyText2),
+                              controller: _controller,
+                              minLines: 1,
+                              maxLines: 5,
+                              style: Theme.of(context).textTheme.bodyText2,
+                            ),
                           ),
                           IconButton(
                             icon: Icon(Icons.check),
@@ -591,15 +592,19 @@ class __DescriptionFactState extends State<_DescriptionFact>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Text(
-                            widget.member.profileDescription != null
-                                ? widget.member.profileDescription!
-                                : "This member hasn't created a description yet.",
-                            style: TextStyle(
-                              fontStyle:
-                                  widget.member.profileDescription != null
-                                      ? FontStyle.normal
-                                      : FontStyle.italic,
+                          Expanded(
+                            child: Text(
+                              (widget.member.profileDescription?.isEmpty ??
+                                      true)
+                                  ? "This member hasn't created a description yet."
+                                  : widget.member.profileDescription!,
+                              style: TextStyle(
+                                fontStyle: (widget.member.profileDescription
+                                            ?.isEmpty ??
+                                        true)
+                                    ? FontStyle.italic
+                                    : FontStyle.normal,
+                              ),
                             ),
                           ),
                           if (isMe)
