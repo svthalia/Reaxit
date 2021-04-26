@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/detail_state.dart';
@@ -16,6 +18,11 @@ class FullMemberCubit extends Cubit<DetailState<FullMember>> {
     } on ApiException catch (exception) {
       emit(DetailState.failure(message: _failureMessage(exception)));
     }
+  }
+
+  Future<void> updateAvatar(File file) async {
+    await api.updateAvatar(file);
+    await load();
   }
 
   String _failureMessage(ApiException exception) {

@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/models/album.dart';
@@ -53,10 +55,12 @@ class ApiRepository {
   /// ```dart
   /// final response = await _handleExceptions(() => client.get(uri));
   /// ```
-  Future<Response> _handleExceptions(
-      Future<Response> Function() request) async {
+  Future<http.Response> _handleExceptions(
+      Future<http.Response> Function() request) async {
     try {
       final response = await request();
+      print(response.statusCode);
+      print(response.body);
       switch (response.statusCode) {
         case 200:
         case 201:
@@ -274,6 +278,27 @@ class ApiRepository {
     final uri = _baseUri.replace(path: '$_basePath/members/me');
     final response = await _handleExceptions(() => client.get(uri));
     return FullMember.fromJson(jsonDecode(response.body));
+  }
+
+  /// Update the avatar of the logged in member.
+  ///
+  /// `file` should be a jpg image.
+  Future<void> updateAvatar(File file) async {
+    // TODO: switch to api v2 when concrexit issue #1627 is fixed.
+    // final uri = _baseUri.replace(path: '$_basePath/members/me/');
+    final uri = _baseUri.replace(path: 'api/v1/members/me/');
+    final request = http.MultipartRequest('PATCH', uri);
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        'photo',
+        file.path,
+        contentType: MediaType('image', 'jpeg'),
+      ),
+    );
+    await _handleExceptions(() async {
+      final streamedResponse = await client.send(request);
+      return http.Response.fromStream(streamedResponse);
+    });
   }
 
   /// Get the [Album] with the `pk`.
