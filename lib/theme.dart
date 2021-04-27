@@ -26,7 +26,7 @@ ColorScheme darkColorScheme = ColorScheme(
   secondary: Color(0xFFE62272),
   onSecondary: Colors.black,
   secondaryVariant: Color(0xFFE62272),
-  surface: Colors.grey[900]!,
+  surface: Color(0xFF181818),
   onSurface: Colors.white,
   background: Colors.black,
   onBackground: Colors.white,
@@ -125,7 +125,11 @@ ThemeData darkTheme = ThemeData.from(
   colorScheme: darkColorScheme,
   textTheme: generatedTextTheme,
 ).copyWith(
+  applyElevationOverlayColor: false,
   toggleableActiveColor: darkColorScheme.primary,
+  // TODO: Make text less white.
   primaryTextTheme: ThemeData.dark().primaryTextTheme.merge(generatedTextTheme),
-  appBarTheme: lightTheme.appBarTheme,
+  appBarTheme: lightTheme.appBarTheme.copyWith(color: Colors.black),
+  dialogBackgroundColor: darkColorScheme.surface,
+  dividerColor: Colors.white38,
 );
