@@ -13,6 +13,7 @@ import 'package:reaxit/models/event_registration.dart';
 import 'package:reaxit/ui/router/router.dart';
 import 'package:reaxit/ui/screens/event_admin_screen.dart';
 import 'package:reaxit/ui/screens/registration_screen.dart';
+import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/member_tile.dart';
 import 'package:url_launcher/link.dart';
@@ -354,7 +355,7 @@ class _EventScreenState extends State<EventScreen>
       builder: (context, state) {
         if (state.hasException) {
           return Scaffold(
-            appBar: AppBar(title: Text(widget.event?.title ?? 'Event')),
+            appBar: ThaliaAppBar(title: Text(widget.event?.title ?? 'Event')),
             body: RefreshIndicator(
               onRefresh: () async {
                 // Await both loads.
@@ -369,7 +370,7 @@ class _EventScreenState extends State<EventScreen>
             widget.event == null &&
             state.result == null) {
           return Scaffold(
-            appBar: AppBar(title: Text('Event')),
+            appBar: ThaliaAppBar(title: Text('Event')),
             body: Center(
               child: CircularProgressIndicator(),
             ),
@@ -377,7 +378,7 @@ class _EventScreenState extends State<EventScreen>
         } else {
           final event = (state.result ?? widget.event)!;
           return Scaffold(
-            appBar: AppBar(
+            appBar: ThaliaAppBar(
               title: Text(event.title),
               actions: [
                 if (event.userPermissions.manageEvent)

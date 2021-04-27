@@ -5,6 +5,7 @@ import 'package:reaxit/blocs/welcome_cubit.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/ui/router/router.dart';
 import 'package:reaxit/ui/screens/calendar_screen.dart';
+import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/event_detail_card.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
@@ -13,7 +14,7 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Welcome')),
+      appBar: ThaliaAppBar(title: Text('Welcome')),
       drawer: MenuDrawer(),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -24,6 +25,7 @@ class WelcomeScreen extends StatelessWidget {
             if (state.hasException) {
               return ErrorScrollView(state.message!);
             } else {
+              // TODO: Add date headers, with 'Tomorrow', etc. where possible.
               return ListView(
                 padding: const EdgeInsets.all(20),
                 physics: const AlwaysScrollableScrollPhysics(),

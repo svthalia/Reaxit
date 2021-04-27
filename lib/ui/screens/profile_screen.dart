@@ -177,6 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   SliverAppBar _makeAppBar([ListMember? member]) {
     return SliverAppBar(
+      brightness: Brightness.dark,
       expandedHeight: 200,
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(

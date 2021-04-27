@@ -216,7 +216,7 @@ class MenuDrawer extends StatelessWidget {
                 builder: (context, followLink) => OutlinedButton.icon(
                   onPressed: followLink,
                   icon: Icon(Icons.history),
-                  label: Text('Changelog'),
+                  label: Text('CHANGELOG'),
                 ),
               ),
               Link(
@@ -226,7 +226,7 @@ class MenuDrawer extends StatelessWidget {
                 builder: (context, followLink) => OutlinedButton.icon(
                   onPressed: followLink,
                   icon: Icon(Icons.bug_report_outlined),
-                  label: Text('Feedback'),
+                  label: Text('FEEDBACK'),
                 ),
               ),
               Divider(),
@@ -237,5 +237,3 @@ class MenuDrawer extends StatelessWidget {
     );
   }
 }
-
-class MemberList {}

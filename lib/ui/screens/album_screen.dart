@@ -6,6 +6,7 @@ import 'package:reaxit/blocs/album_cubit.dart';
 import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/album.dart';
+import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 
 /// Screen that loads and shows a the Album of the member with `pk`.
@@ -81,21 +82,21 @@ class _AlbumScreenState extends State<AlbumScreen> {
       builder: (context, state) {
         if (state.hasException) {
           return Scaffold(
-            appBar: AppBar(
+            appBar: ThaliaAppBar(
               title: Text(widget.album?.title ?? 'Album'),
             ),
             body: ErrorScrollView(state.message!),
           );
         } else if (state.isLoading) {
           return Scaffold(
-            appBar: AppBar(
+            appBar: ThaliaAppBar(
               title: Text(widget.album?.title ?? 'Album'),
             ),
             body: Center(child: CircularProgressIndicator()),
           );
         } else {
           return Scaffold(
-            appBar: AppBar(title: Text(state.result!.title)),
+            appBar: ThaliaAppBar(title: Text(state.result!.title)),
             body: GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisSpacing: 5,

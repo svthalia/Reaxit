@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/member_list_bloc.dart';
+import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/member_tile.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
@@ -37,7 +38,7 @@ class _MembersScreenState extends State<MembersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: ThaliaAppBar(
         title: Text('Members'),
         actions: [
           IconButton(

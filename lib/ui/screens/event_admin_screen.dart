@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reaxit/ui/widgets/app_bar.dart';
 
 class EventAdminScreen extends StatefulWidget {
   final int pk;
@@ -13,7 +14,7 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: ThaliaAppBar(),
       body: Center(
         child: Text('event admin ${widget.pk}'),
       ),

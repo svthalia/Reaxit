@@ -55,62 +55,65 @@ class _ThaliAppState extends State<ThaliApp> {
       builder: (context, themeMode) {
         return BlocBuilder<AuthBloc, AuthState>(
           builder: (context, authState) {
-            if (authState is LoggedInAuthState) {
-              return RepositoryProvider(
-                create: (_) => ApiRepository(
-                  client: authState.client,
-                  logOut: authState.logOut,
-                ),
-                child: Builder(builder: (context) {
-                  var apiRepository =
-                      RepositoryProvider.of<ApiRepository>(context);
-                  return MultiBlocProvider(
-                    providers: [
-                      BlocProvider(
-                        create: (_) => FullMemberCubit(apiRepository)..load(),
-                        lazy: false,
-                      ),
-                      BlocProvider(
-                        create: (_) => WelcomeCubit(apiRepository)..load(),
-                        lazy: false,
-                      ),
-                      BlocProvider(
-                        create: (_) => EventListBloc(apiRepository)
-                          ..add(EventListEvent.load()),
-                        lazy: false,
-                      ),
-                      BlocProvider(
-                        create: (_) => MemberListBloc(apiRepository)
-                          ..add(MemberListEvent.load()),
-                        lazy: false,
-                      ),
-                      BlocProvider(
-                        create: (_) => AlbumListBloc(apiRepository)
-                          ..add(AlbumListEvent.load()),
-                        lazy: false,
-                      ),
-                    ],
-                    child: MaterialApp.router(
-                      title: 'ThaliApp',
-                      theme: lightTheme,
-                      darkTheme: darkTheme,
-                      themeMode: themeMode,
-                      routerDelegate: _routerDelegate,
-                      routeInformationParser: _routeInformationParser,
+            return MaterialApp.router(
+              title: 'ThaliApp',
+              theme: lightTheme,
+              darkTheme: darkTheme,
+              themeMode: themeMode,
+              routerDelegate: _routerDelegate,
+              routeInformationParser: _routeInformationParser,
+              builder: (context, router) {
+                if (authState is LoggedInAuthState) {
+                  return RepositoryProvider(
+                    create: (_) => ApiRepository(
+                      client: authState.client,
+                      logOut: authState.logOut,
                     ),
+                    child: Builder(builder: (context) {
+                      final apiRepository =
+                          RepositoryProvider.of<ApiRepository>(context);
+                      return MultiBlocProvider(
+                        providers: [
+                          BlocProvider(
+                            create: (_) => FullMemberCubit(
+                              apiRepository,
+                            )..load(),
+                            lazy: false,
+                          ),
+                          BlocProvider(
+                            create: (_) => WelcomeCubit(
+                              apiRepository,
+                            )..load(),
+                            lazy: false,
+                          ),
+                          BlocProvider(
+                            create: (_) => EventListBloc(
+                              apiRepository,
+                            )..add(EventListEvent.load()),
+                            lazy: false,
+                          ),
+                          BlocProvider(
+                            create: (_) => MemberListBloc(
+                              apiRepository,
+                            )..add(MemberListEvent.load()),
+                            lazy: false,
+                          ),
+                          BlocProvider(
+                            create: (_) => AlbumListBloc(
+                              apiRepository,
+                            )..add(AlbumListEvent.load()),
+                            lazy: false,
+                          ),
+                        ],
+                        child: router!,
+                      );
+                    }),
                   );
-                }),
-              );
-            } else {
-              return MaterialApp.router(
-                title: 'ThaliApp',
-                theme: lightTheme,
-                darkTheme: darkTheme,
-                themeMode: themeMode,
-                routerDelegate: _routerDelegate,
-                routeInformationParser: _routeInformationParser,
-              );
-            }
+                } else {
+                  return router!;
+                }
+              },
+            );
           },
         );
       },
