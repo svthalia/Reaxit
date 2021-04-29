@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/theme_bloc.dart';
+import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
 
 class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Settings')),
+      appBar: ThaliaAppBar(title: Text('Settings')),
       drawer: MenuDrawer(),
       body: ListView(
         padding: const EdgeInsets.all(15),

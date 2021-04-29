@@ -89,8 +89,8 @@ class MemberListBloc extends Bloc<MemberListEvent, MemberListState> {
         ));
 
   // TODO: Only handle the most recent event. Don't use results from handling of old events.
-  // This may be possible using Stream.switchMap in this.transformEvents by RxDart, if we are willing to add RxDart.
-  // Otherwise we could handle it in the mapEventToState methods, of even in transformTransition (drop transitions that belong to an old event).
+  //  This may be possible using Stream.switchMap in this.transformEvents by RxDart, if we are willing to add RxDart.
+  //  Otherwise we could handle it in the mapEventToState methods, of even in transformTransition (drop transitions that belong to an old event).
 
   @override
   Stream<MemberListState> mapEventToState(MemberListEvent event) async* {

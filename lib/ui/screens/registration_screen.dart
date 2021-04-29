@@ -6,6 +6,7 @@ import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/blocs/registration_fields_cubit.dart';
 import 'package:reaxit/models/registration_field.dart';
 import 'package:reaxit/ui/router/router.dart';
+import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_center.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -43,7 +44,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       builder: (context, state) {
         if (state.hasException) {
           return Scaffold(
-            appBar: AppBar(
+            appBar: ThaliaAppBar(
               title: Text('Registration'),
               leading: CloseButton(),
             ),
@@ -51,7 +52,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           );
         } else if (state.isLoading) {
           return Scaffold(
-            appBar: AppBar(
+            appBar: ThaliaAppBar(
               title: Text('Registration'),
               leading: CloseButton(),
             ),
@@ -59,7 +60,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           );
         } else {}
         return Scaffold(
-          appBar: AppBar(
+          appBar: ThaliaAppBar(
             title: Text('Registration'),
             leading: CloseButton(),
           ),
@@ -196,8 +197,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   ),
                                 );
                                 ThaliaRouterDelegate.of(context).pop();
-                              } on ApiException catch (e) {
-                                print(e);
+                              } on ApiException {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     duration: Duration(seconds: 1),

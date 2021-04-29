@@ -10,6 +10,7 @@ import 'package:reaxit/blocs/album_cubit.dart';
 import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/album.dart';
+import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:share/share.dart';
@@ -143,7 +144,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
       builder: (context, state) {
         if (state.hasException) {
           return Scaffold(
-            appBar: AppBar(
+            appBar: ThaliaAppBar(
               title: Text(widget.album?.title ?? 'Album'),
               actions: [_makeShareAlbumButton(widget.slug)],
             ),
@@ -151,7 +152,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
           );
         } else if (state.isLoading) {
           return Scaffold(
-            appBar: AppBar(
+            appBar: ThaliaAppBar(
               title: Text(widget.album?.title ?? 'Album'),
               actions: [_makeShareAlbumButton(widget.slug)],
             ),
@@ -159,7 +160,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
           );
         } else {
           return Scaffold(
-            appBar: AppBar(
+            appBar: ThaliaAppBar(
               title: Text(state.result!.title),
               actions: [_makeShareAlbumButton(widget.slug)],
             ),
