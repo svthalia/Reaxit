@@ -7,7 +7,6 @@ class AlbumPhoto {
   final int pk;
   final int rotation;
   final bool hidden;
-  final int album;
   final Photo file;
 
   String get full => file.full;
@@ -19,7 +18,6 @@ class AlbumPhoto {
     this.pk,
     this.rotation,
     this.hidden,
-    this.album,
     this.file,
   );
 

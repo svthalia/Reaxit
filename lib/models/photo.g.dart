@@ -11,7 +11,6 @@ AlbumPhoto _$AlbumPhotoFromJson(Map<String, dynamic> json) {
     json['pk'] as int,
     json['rotation'] as int,
     json['hidden'] as bool,
-    json['album'] as int,
     Photo.fromJson(json['file'] as Map<String, dynamic>),
   );
 }
@@ -21,7 +20,6 @@ Map<String, dynamic> _$AlbumPhotoToJson(AlbumPhoto instance) =>
       'pk': instance.pk,
       'rotation': instance.rotation,
       'hidden': instance.hidden,
-      'album': instance.album,
       'file': instance.file,
     };
 

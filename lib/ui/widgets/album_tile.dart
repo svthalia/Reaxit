@@ -15,7 +15,7 @@ class AlbumTile extends StatelessWidget {
         ThaliaRouterDelegate.of(context).push(
           MaterialPage(
             child: AlbumScreen(
-              pk: album.pk,
+              slug: album.slug,
               album: album,
             ),
           ),
@@ -25,7 +25,7 @@ class AlbumTile extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           Hero(
-            tag: 'album_${album.pk}',
+            tag: 'album_${album.slug}',
             child: FadeInImage.assetNetwork(
               placeholder: 'assets/img/album_placeholder.png',
               image: album.cover.medium,

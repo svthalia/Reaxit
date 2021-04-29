@@ -14,12 +14,12 @@ import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:share/share.dart';
 
-/// Screen that loads and shows a the Album of the member with `pk`.
+/// Screen that loads and shows a the Album of the member with `slug`.
 class AlbumScreen extends StatefulWidget {
-  final int pk;
+  final String slug;
   final ListAlbum? album;
 
-  AlbumScreen({required this.pk, this.album}) : super(key: ValueKey(pk));
+  AlbumScreen({required this.slug, this.album}) : super(key: ValueKey(slug));
 
   @override
   _AlbumScreenState createState() => _AlbumScreenState();
@@ -32,7 +32,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
   void initState() {
     _albumCubit = AlbumCubit(
       RepositoryProvider.of<ApiRepository>(context),
-    )..load(widget.pk);
+    )..load(widget.slug);
     super.initState();
   }
 
@@ -117,7 +117,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
     );
   }
 
-  Widget _makeShareAlbumButton(int pk) {
+  Widget _makeShareAlbumButton(String slug) {
     return IconButton(
       color: Theme.of(context).primaryIconTheme.color,
       icon: Icon(
@@ -125,11 +125,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
       ),
       onPressed: () async {
         try {
-          // TODO: The api currently uses only the pk, and the website only a
-          //  slug. Concrexit issue #1626 should be closed before adding this,
-          //  and at that point the slug route should also be accepted as a
-          //  deeplink. All album pk's should be replaced with slugs.
-          await Share.share('https://${config.apiHost}/members/photos/$pk/');
+          await Share.share('https://${config.apiHost}/members/photos/$slug/');
         } catch (_) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             duration: Duration(seconds: 1),
@@ -149,7 +145,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
           return Scaffold(
             appBar: AppBar(
               title: Text(widget.album?.title ?? 'Album'),
-              actions: [_makeShareAlbumButton(widget.pk)],
+              actions: [_makeShareAlbumButton(widget.slug)],
             ),
             body: ErrorScrollView(state.message!),
           );
@@ -157,7 +153,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
           return Scaffold(
             appBar: AppBar(
               title: Text(widget.album?.title ?? 'Album'),
-              actions: [_makeShareAlbumButton(widget.pk)],
+              actions: [_makeShareAlbumButton(widget.slug)],
             ),
             body: Center(child: CircularProgressIndicator()),
           );
@@ -165,7 +161,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
           return Scaffold(
             appBar: AppBar(
               title: Text(state.result!.title),
-              actions: [_makeShareAlbumButton(widget.pk)],
+              actions: [_makeShareAlbumButton(widget.slug)],
             ),
             body: GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
