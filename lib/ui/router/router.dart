@@ -151,11 +151,10 @@ class ThaliaRouteInformationParser
         MaterialPage(child: CalendarScreen()),
         MaterialPage(child: EventScreen(pk: pk))
       ];
-    } else if (RegExp('^/members/photos/([0-9]+)\$').hasMatch(path)) {
-      final pk = int.parse(segments[2]);
+    } else if (RegExp('^/members/photos/([a-z0-9\-_]+)\$').hasMatch(path)) {
       return [
         MaterialPage(child: AlbumsScreen()),
-        MaterialPage(child: AlbumScreen(pk: pk))
+        MaterialPage(child: AlbumScreen(slug: segments[2]))
       ];
     } else if (RegExp('^/members/([0-9]+)\$').hasMatch(path)) {
       final pk = int.parse(segments[1]);

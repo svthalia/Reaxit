@@ -8,7 +8,7 @@ part of 'album.dart';
 
 ListAlbum _$ListAlbumFromJson(Map<String, dynamic> json) {
   return ListAlbum(
-    json['pk'] as int,
+    json['slug'] as String,
     json['title'] as String,
     json['accessible'] as bool,
     json['shareable'] as bool,
@@ -17,7 +17,7 @@ ListAlbum _$ListAlbumFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$ListAlbumToJson(ListAlbum instance) => <String, dynamic>{
-      'pk': instance.pk,
+      'slug': instance.slug,
       'title': instance.title,
       'accessible': instance.accessible,
       'shareable': instance.shareable,
@@ -26,7 +26,7 @@ Map<String, dynamic> _$ListAlbumToJson(ListAlbum instance) => <String, dynamic>{
 
 Album _$AlbumFromJson(Map<String, dynamic> json) {
   return Album(
-    json['pk'] as int,
+    json['slug'] as String,
     json['title'] as String,
     json['accessible'] as bool,
     json['shareable'] as bool,
@@ -38,7 +38,7 @@ Album _$AlbumFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$AlbumToJson(Album instance) => <String, dynamic>{
-      'pk': instance.pk,
+      'slug': instance.slug,
       'title': instance.title,
       'accessible': instance.accessible,
       'shareable': instance.shareable,

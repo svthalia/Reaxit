@@ -308,9 +308,9 @@ class ApiRepository {
     );
   }
 
-  /// Get the [Album] with the `pk`.
-  Future<Album> getAlbum({required int pk}) async {
-    final uri = _baseUri.replace(path: '$_basePath/photos/albums/$pk/');
+  /// Get the [Album] with the `slug`.
+  Future<Album> getAlbum({required String slug}) async {
+    final uri = _baseUri.replace(path: '$_basePath/photos/albums/$slug');
     final response = await _handleExceptions(() => client.get(uri));
     return Album.fromJson(jsonDecode(response.body));
   }
