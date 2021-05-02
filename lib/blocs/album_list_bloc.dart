@@ -116,8 +116,8 @@ class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
       } else {
         yield AlbumListState.failure(
           message: state.event.search == null
-              ? 'There are no members.'
-              : 'There are no members found for "${state.event.search}"',
+              ? 'There are no albums.'
+              : 'There are no albums found for "${state.event.search}"',
           event: event,
         );
       }
