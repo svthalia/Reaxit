@@ -10,6 +10,7 @@ import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/event_registration.dart';
 import 'package:reaxit/models/list_response.dart';
 import 'package:reaxit/models/member.dart';
+import 'package:reaxit/models/group.dart';
 import 'package:reaxit/models/registration_field.dart';
 
 final Uri _baseUri = Uri(
@@ -338,6 +339,101 @@ class ApiRepository {
     return ListResponse<ListAlbum>.fromJson(
       jsonDecode(response.body),
       (json) => ListAlbum.fromJson(json as Map<String, dynamic>),
+    );
+  }
+
+  /// Get a list of committees.
+  ///
+  /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
+  /// total number of [ListGroup]s that can be returned.
+  Future<ListResponse<ListGroup>> getCommittees({
+    int? limit,
+    int? offset,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/activemembers/committees/',
+      queryParameters: {
+        if (limit != null) 'limit': limit.toString(),
+        if (offset != null) 'offset': offset.toString(),
+      },
+    );
+
+    final response = await _handleExceptions(() => client.get(uri));
+    return ListResponse<ListGroup>.fromJson(
+      jsonDecode(response.body),
+      (json) => ListGroup.fromJson(json as Map<String, dynamic>),
+    );
+  }
+
+  /// Get a list of societies.
+  ///
+  /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
+  /// total number of [ListGroup]s that can be returned.
+  Future<ListResponse<ListGroup>> getSocieties({
+    int? limit,
+    int? offset,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/activemembers/societies/',
+      queryParameters: {
+        if (limit != null) 'limit': limit.toString(),
+        if (offset != null) 'offset': offset.toString(),
+      },
+    );
+
+    final response = await _handleExceptions(() => client.get(uri));
+    return ListResponse<ListGroup>.fromJson(
+      jsonDecode(response.body),
+      (json) => ListGroup.fromJson(json as Map<String, dynamic>),
+    );
+  }
+
+  /// Get a list of boards.
+  ///
+  /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
+  /// total number of [ListGroup]s that can be returned.
+  Future<ListResponse<ListGroup>> getBoards({
+    int? limit,
+    int? offset,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/activemembers/boards/',
+      queryParameters: {
+        if (limit != null) 'limit': limit.toString(),
+        if (offset != null) 'offset': offset.toString(),
+      },
+    );
+
+    final response = await _handleExceptions(() => client.get(uri));
+    return ListResponse<ListGroup>.fromJson(
+      jsonDecode(response.body),
+      (json) => ListGroup.fromJson(json as Map<String, dynamic>),
+    );
+  }
+
+  /// Get a list of [ListGroup]s.
+  ///
+  /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
+  /// total number of [ListGroup]s that can be returned.
+  /// Use `search` to filter on name.
+  Future<ListResponse<ListGroup>> getGroups({
+    String? search,
+    int? limit,
+    int? offset,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/activemembers/groups/',
+      queryParameters: {
+        if (search != null) 'search': search,
+        if (limit != null) 'limit': limit.toString(),
+        if (offset != null) 'offset': offset.toString(),
+      },
+    );
+
+    final response = await _handleExceptions(() => client.get(uri));
+    return ListResponse<ListGroup>.fromJson(
+      jsonDecode(response.body),
+      (json) => ListGroup.fromJson(json as Map<String, dynamic>),
     );
   }
 }
