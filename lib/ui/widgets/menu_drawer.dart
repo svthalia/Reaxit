@@ -7,6 +7,7 @@ import 'package:reaxit/models/member.dart';
 import 'package:reaxit/ui/router/router.dart';
 import 'package:reaxit/ui/screens/albums_screen.dart';
 import 'package:reaxit/ui/screens/calendar_screen.dart';
+import 'package:reaxit/ui/screens/groups_screen.dart';
 import 'package:reaxit/ui/screens/members_screen.dart';
 import 'package:reaxit/ui/screens/profile_screen.dart';
 import 'package:reaxit/ui/screens/settings_screen.dart';
@@ -163,7 +164,7 @@ class MenuDrawer extends StatelessWidget {
           ),
           ListTile(
             title: Text('Member list'),
-            leading: Icon(Icons.people),
+            leading: Icon(Icons.person_search),
             onTap: () => ThaliaRouterDelegate.of(context).replace(
               MaterialPage(child: MembersScreen()),
             ),
@@ -173,6 +174,13 @@ class MenuDrawer extends StatelessWidget {
             leading: Icon(Icons.photo),
             onTap: () => ThaliaRouterDelegate.of(context).replace(
               MaterialPage(child: AlbumsScreen()),
+            ),
+          ),
+          ListTile(
+            title: Text('Groups'),
+            leading: Icon(Icons.people),
+            onTap: () => ThaliaRouterDelegate.of(context).replace(
+              MaterialPage(child: GroupsScreen()),
             ),
           ),
           ListTile(
