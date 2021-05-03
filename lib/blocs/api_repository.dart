@@ -342,6 +342,13 @@ class ApiRepository {
     );
   }
 
+  /// Get the [Group] with the `pk`.
+  Future<Group> getGroup({required int pk}) async {
+    final uri = _baseUri.replace(path: '$_basePath/activemembers/groups/$pk');
+    final response = await _handleExceptions(() => client.get(uri));
+    return Group.fromJson(jsonDecode(response.body));
+  }
+
   /// Get a list of committees.
   ///
   /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
