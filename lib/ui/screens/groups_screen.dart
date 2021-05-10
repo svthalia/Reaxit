@@ -7,6 +7,8 @@ import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/blocs/group_list_bloc.dart';
 import 'package:reaxit/blocs/societies_cubit.dart';
 import 'package:reaxit/models/group.dart';
+import 'package:reaxit/ui/router/router.dart';
+import 'package:reaxit/ui/screens/group_screen.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
@@ -56,7 +58,7 @@ class GroupsScreen extends StatelessWidget {
                     itemCount: state.result!.length,
                     itemBuilder: (context, index) {
                       final group = state.result![index];
-                      return ListTile(title: Text(group.name));
+                      return GroupTile(group: group);
                     },
                   );
                 }
@@ -73,7 +75,7 @@ class GroupsScreen extends StatelessWidget {
                     itemCount: state.result!.length,
                     itemBuilder: (context, index) {
                       final group = state.result![index];
-                      return ListTile(title: Text(group.name));
+                      return GroupTile(group: group);
                     },
                   );
                 }
@@ -90,7 +92,7 @@ class GroupsScreen extends StatelessWidget {
                     itemCount: state.result!.length,
                     itemBuilder: (context, index) {
                       final group = state.result![index];
-                      return ListTile(title: Text(group.name));
+                      return GroupTile(group: group);
                     },
                   );
                 }
@@ -199,20 +201,13 @@ class GroupListScrollView extends StatelessWidget {
       controller: controller,
       physics: AlwaysScrollableScrollPhysics(),
       slivers: [
-        SliverPadding(
-          padding: EdgeInsets.all(10),
-          sliver: SliverGrid(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) => Padding(
+              padding: const EdgeInsets.all(10),
+              child: GroupTile(group: listState.results[index]),
             ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => ListTile(
-                title: Text(listState.results[index].name),
-              ),
-              childCount: listState.results.length,
-            ),
+            childCount: listState.results.length,
           ),
         ),
         if (listState.isLoadingMore)
@@ -227,6 +222,57 @@ class GroupListScrollView extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+class GroupTile extends StatelessWidget {
+  final ListGroup group;
+
+  const GroupTile({Key? key, required this.group}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: InkWell(
+        onTap: () {
+          ThaliaRouterDelegate.of(context).push(
+            MaterialPage(child: GroupScreen(pk: group.pk, group: group)),
+          );
+        },
+        child: SizedBox(
+          height: 120,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              AspectRatio(
+                aspectRatio: 1,
+                child: FadeInImage.assetNetwork(
+                  fit: BoxFit.cover,
+                  placeholder: 'assets/img/group_placeholder.png',
+                  image: group.photo.small,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Text(
+                      group.name,
+                      style: Theme.of(context).textTheme.headline5,
+                    ),
+                    Text(group.since.toString()),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

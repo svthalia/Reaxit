@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/foundation/diagnostics.dart';
 
 class ThaliaAppBar extends AppBar {
   ThaliaAppBar({
@@ -35,20 +34,3 @@ class ThaliaAppBar extends AppBar {
           ),
         );
 }
-
-// class PreferredSizeWrapper extends PreferredSize {
-//   PreferredSizeWrapper({required PreferredSizeWidget child})
-//       : super(
-//             preferredSize: child.preferredSize,
-//             child: Column(
-//               children: [
-//                 Container(
-//                   decoration: BoxDecoration(
-//                     border: Border(
-//                       bottom: BorderSide(color: Color(0xFFE62272)),
-//                     ),
-//                   ),
-//                 ),
-//               ],
-//             ));
-// }
