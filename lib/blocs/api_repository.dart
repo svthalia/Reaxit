@@ -8,8 +8,11 @@ import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/models/album.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/event_registration.dart';
+import 'package:reaxit/models/food_event.dart';
+import 'package:reaxit/models/food_order.dart';
 import 'package:reaxit/models/list_response.dart';
 import 'package:reaxit/models/member.dart';
+import 'package:reaxit/models/product.dart';
 import 'package:reaxit/models/registration_field.dart';
 
 final Uri _baseUri = Uri(
@@ -217,7 +220,80 @@ class ApiRepository {
   //  getAdminEventRegistrations()
   //  ...
 
-  // TODO: pizzas
+  /// Get the [FoodEvent] with the `pk`.
+  Future<FoodEvent> getFoodEvent(int pk) async {
+    final uri = _baseUri.replace(path: '$_basePath/food/events/$pk/');
+    final response = await _handleExceptions(() => client.get(uri));
+    return FoodEvent.fromJson(jsonDecode(response.body));
+  }
+
+  /// Get a list of [FoodEvent]s.
+  ///
+  /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
+  /// total number of [FoodEvents] that can be returned.
+  /// Use `search` to filter on name, `ordering` to order with values in {'start',
+  /// 'end', '-start', '-end'}, and `start` and/or `end` to filter on a time range.
+  Future<ListResponse<FoodEvent>> getFoodEvents({
+    int? limit,
+    int? offset,
+    String? ordering,
+    DateTime? start,
+    DateTime? end,
+  }) async {
+    assert(
+      ordering == null || ['start', 'end', '-start', '-end'].contains(ordering),
+      'Invalid ordering parameter: $ordering',
+    );
+    final uri = _baseUri.replace(
+      path: '$_basePath/events/',
+      queryParameters: {
+        if (limit != null) 'limit': limit.toString(),
+        if (offset != null) 'offset': offset.toString(),
+        if (ordering != null) 'ordering': ordering,
+        if (start != null) 'start': start.toLocal().toIso8601String(),
+        if (end != null) 'end': end.toLocal().toIso8601String(),
+      },
+    );
+
+    final response = await _handleExceptions(() => client.get(uri));
+    return ListResponse<FoodEvent>.fromJson(
+      jsonDecode(response.body),
+      (json) => FoodEvent.fromJson(json as Map<String, dynamic>),
+    );
+  }
+
+  /// Get the [FoodOrder] for the [FoodEvent] with the `pk`.
+  Future<FoodOrder> getFoodOrder(int pk) async {
+    final uri = _baseUri.replace(path: '$_basePath/food/events/$pk/order');
+    final response = await _handleExceptions(() => client.get(uri));
+    return FoodOrder.fromJson(jsonDecode(response.body));
+  }
+
+  /// Get a list of [Product]s for the [FoodEvent] with the `pk`.
+  ///
+  /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
+  /// total number of [Product]s that can be returned.
+  /// Use `search` to filter on name.
+  Future<ListResponse<Product>> getFoodEventProducts(
+    int pk, {
+    int? limit,
+    int? offset,
+    String? search,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/events/',
+      queryParameters: {
+        if (limit != null) 'limit': limit.toString(),
+        if (offset != null) 'offset': offset.toString(),
+      },
+    );
+
+    final response = await _handleExceptions(() => client.get(uri));
+    return ListResponse<Product>.fromJson(
+      jsonDecode(response.body),
+      (json) => Product.fromJson(json as Map<String, dynamic>),
+    );
+  }
 
   // TODO: pizza admin
 
