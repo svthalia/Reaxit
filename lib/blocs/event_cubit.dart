@@ -29,13 +29,20 @@ class EventCubit extends Cubit<DetailState<Event>> {
     return registration;
   }
 
-  /// Cancel your registration for the [Event] with the `pk`.
+  /// Cancel the [EventRegistration] with `registrationPk`
+  /// for the [Event] with `eventPk`.
   ///
   /// This throws an [ApiException] if deregistering fails.
-  Future<void> cancelRegistration(int pk) async {
-    await api.cancelRegistrationForEvent(pk);
+  Future<void> cancelRegistration({
+    required int eventPk,
+    required int registrationPk,
+  }) async {
+    await api.cancelRegistration(
+      eventPk: eventPk,
+      registrationPk: registrationPk,
+    );
     // Reload the event for updated registration status.
-    await load(pk);
+    await load(eventPk);
   }
 
   String _failureMessage(ApiException exception) {

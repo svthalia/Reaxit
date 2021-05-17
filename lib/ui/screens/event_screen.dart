@@ -147,7 +147,10 @@ class _EventScreenState extends State<EventScreen>
               onPressed: () async {
                 // TODO: confirmation dialog.
                 try {
-                  await _eventCubit.cancelRegistration(event.pk);
+                  await _eventCubit.cancelRegistration(
+                    eventPk: event.pk,
+                    registrationPk: event.userRegistration!.pk,
+                  );
                   await _registrationsCubit.load(event.pk);
                   BlocProvider.of<EventListBloc>(context).add(
                     EventListEvent.load(),
@@ -175,7 +178,10 @@ class _EventScreenState extends State<EventScreen>
             child: ElevatedButton.icon(
               onPressed: () async {
                 try {
-                  await _eventCubit.cancelRegistration(event.pk);
+                  await _eventCubit.cancelRegistration(
+                    eventPk: event.pk,
+                    registrationPk: event.userRegistration!.pk,
+                  );
                   await _registrationsCubit.load(event.pk);
                   BlocProvider.of<EventListBloc>(context).add(
                     EventListEvent.load(),

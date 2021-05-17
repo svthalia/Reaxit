@@ -171,9 +171,15 @@ class ApiRepository {
     return EventRegistration.fromJson(jsonDecode(response.body));
   }
 
-  /// Deregister for the [Event] with the `pk`.
-  Future<void> cancelRegistrationForEvent(int pk) async {
-    final uri = _baseUri.replace(path: '$_basePath/events/$pk/registrations/');
+  /// Cancel the [EventRegistration] with `registrationPk`
+  /// for the [Event] with `eventPk`.
+  Future<void> cancelRegistration({
+    required int eventPk,
+    required int registrationPk,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/events/$eventPk/registrations/$registrationPk/',
+    );
     await _handleExceptions(() => client.delete(uri));
   }
 
@@ -406,7 +412,7 @@ class ApiRepository {
 
   /// Get the [Album] with the `slug`.
   Future<Album> getAlbum({required String slug}) async {
-    final uri = _baseUri.replace(path: '$_basePath/photos/albums/$slug');
+    final uri = _baseUri.replace(path: '$_basePath/photos/albums/$slug/');
     final response = await _handleExceptions(() => client.get(uri));
     return Album.fromJson(jsonDecode(response.body));
   }

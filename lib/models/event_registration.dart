@@ -22,7 +22,7 @@ class EventRegistration {
 @JsonSerializable(fieldRename: FieldRename.snake)
 class AdminRegistration {
   final int pk;
-  final bool present;
+  final bool? present;
   final int? queuePosition;
   final DateTime date;
   final String? payment;
@@ -37,4 +37,32 @@ class AdminRegistration {
     this.date,
     this.payment,
   );
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class FullEventRegistration implements EventRegistration, AdminRegistration {
+  final int pk;
+  final ListMember? member;
+  final String? name;
+
+  final bool? present;
+  final int? queuePosition;
+  final DateTime date;
+  final String? payment;
+
+  const FullEventRegistration(
+    this.pk,
+    this.member,
+    this.name,
+    this.present,
+    this.queuePosition,
+    this.date,
+    this.payment,
+  ) : assert(
+          member != null || name != null,
+          'Either a member or name must be given. $member, $name',
+        );
+
+  factory FullEventRegistration.fromJson(Map<String, dynamic> json) =>
+      _$FullEventRegistrationFromJson(json);
 }

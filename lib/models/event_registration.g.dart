@@ -26,7 +26,7 @@ Map<String, dynamic> _$EventRegistrationToJson(EventRegistration instance) =>
 AdminRegistration _$AdminRegistrationFromJson(Map<String, dynamic> json) {
   return AdminRegistration(
     json['pk'] as int,
-    json['present'] as bool,
+    json['present'] as bool?,
     json['queue_position'] as int?,
     DateTime.parse(json['date'] as String),
     json['payment'] as String?,
@@ -36,6 +36,33 @@ AdminRegistration _$AdminRegistrationFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$AdminRegistrationToJson(AdminRegistration instance) =>
     <String, dynamic>{
       'pk': instance.pk,
+      'present': instance.present,
+      'queue_position': instance.queuePosition,
+      'date': instance.date.toIso8601String(),
+      'payment': instance.payment,
+    };
+
+FullEventRegistration _$FullEventRegistrationFromJson(
+    Map<String, dynamic> json) {
+  return FullEventRegistration(
+    json['pk'] as int,
+    json['member'] == null
+        ? null
+        : ListMember.fromJson(json['member'] as Map<String, dynamic>),
+    json['name'] as String?,
+    json['present'] as bool?,
+    json['queue_position'] as int?,
+    DateTime.parse(json['date'] as String),
+    json['payment'] as String?,
+  );
+}
+
+Map<String, dynamic> _$FullEventRegistrationToJson(
+        FullEventRegistration instance) =>
+    <String, dynamic>{
+      'pk': instance.pk,
+      'member': instance.member,
+      'name': instance.name,
       'present': instance.present,
       'queue_position': instance.queuePosition,
       'date': instance.date.toIso8601String(),
