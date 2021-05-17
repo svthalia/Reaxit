@@ -15,7 +15,7 @@ FoodEvent _$FoodEventFromJson(Map<String, dynamic> json) {
     json['can_manage'] as bool,
     json['order'] == null
         ? null
-        : FoodEvent.fromJson(json['order'] as Map<String, dynamic>),
+        : FoodOrder.fromJson(json['order'] as Map<String, dynamic>),
     json['title'] as String,
   );
 }

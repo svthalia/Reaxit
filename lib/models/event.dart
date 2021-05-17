@@ -26,7 +26,8 @@ class Event {
   final int? maxParticipants;
   final String? noRegistrationMessage;
   final bool hasFields;
-  final bool isPizzaEvent;
+  final bool hasFoodEvent;
+  final int? foodEventPk;
   final String mapsUrl;
   final EventPermissions userPermissions;
   final AdminRegistration? userRegistration;
@@ -60,11 +61,15 @@ class Event {
     this.maxParticipants,
     this.noRegistrationMessage,
     this.hasFields,
-    this.isPizzaEvent,
+    this.hasFoodEvent,
+    this.foodEventPk,
     this.mapsUrl,
     this.userPermissions,
     this.userRegistration,
-  );
+  ) : assert(
+          hasFoodEvent == (foodEventPk != null),
+          'There should be a `foodEventPk` iff the event has a food event',
+        );
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)

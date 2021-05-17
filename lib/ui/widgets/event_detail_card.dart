@@ -106,10 +106,10 @@ class EventDetailCard extends StatelessWidget {
                   },
                   child: Text('MORE INFO'),
                 ),
-                if (event.isPizzaEvent) ...[
+                if (event.hasFoodEvent) ...[
                   SizedBox(width: 16),
                   ElevatedButton.icon(
-                    label: Text('PIZZA'),
+                    label: Text('FOOD'),
                     icon: Icon(Icons.local_pizza),
                     onPressed: () {
                       // ThaliaRouterDelegate.of(context).push(

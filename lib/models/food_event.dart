@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:reaxit/models/event.dart';
+import 'package:reaxit/models/food_order.dart';
 
 part 'food_event.g.dart';
 
@@ -11,7 +12,7 @@ class FoodEvent {
   final DateTime start;
   final DateTime end;
   final bool canManage;
-  final FoodEvent? order;
+  final FoodOrder? order;
 
   factory FoodEvent.fromJson(Map<String, dynamic> json) =>
       _$FoodEventFromJson(json);

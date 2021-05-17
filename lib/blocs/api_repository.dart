@@ -231,8 +231,9 @@ class ApiRepository {
   ///
   /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
   /// total number of [FoodEvents] that can be returned.
-  /// Use `search` to filter on name, `ordering` to order with values in {'start',
-  /// 'end', '-start', '-end'}, and `start` and/or `end` to filter on a time range.
+  /// Use `search` to filter on name, `ordering` to order with values in
+  /// {'start', 'end', '-start', '-end'}, and `start` and/or `end` to filter
+  /// on a time range.
   Future<ListResponse<FoodEvent>> getFoodEvents({
     int? limit,
     int? offset,
@@ -264,8 +265,27 @@ class ApiRepository {
 
   /// Get the [FoodOrder] for the [FoodEvent] with the `pk`.
   Future<FoodOrder> getFoodOrder(int pk) async {
-    final uri = _baseUri.replace(path: '$_basePath/food/events/$pk/order');
+    final uri = _baseUri.replace(path: '$_basePath/food/events/$pk/order/');
     final response = await _handleExceptions(() => client.get(uri));
+    return FoodOrder.fromJson(jsonDecode(response.body));
+  }
+
+  /// Cancel your [FoodOrder] for the [FoodEvent] with the `pk`.
+  Future<void> cancelFoodOrder(int pk) async {
+    final uri = _baseUri.replace(path: '$_basePath/food/events/$pk/order/');
+    final response = await _handleExceptions(() => client.delete(uri));
+  }
+
+  /// Place an order [Product] `productPk` on [FoodEvent] `eventPk`.
+  Future<FoodOrder> putFoodOrder({
+    required int eventPk,
+    required int productPk,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/food/events/$eventPk/order/',
+    );
+    final body = jsonEncode({'product': productPk});
+    final response = await _handleExceptions(() => client.put(uri, body: body));
     return FoodOrder.fromJson(jsonDecode(response.body));
   }
 
