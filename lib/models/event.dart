@@ -26,6 +26,7 @@ class Event {
   final int? maxParticipants;
   final String? noRegistrationMessage;
   final bool hasFields;
+  @JsonKey(defaultValue: false)
   final bool hasFoodEvent;
   final int? foodEventPk;
   final String mapsUrl;

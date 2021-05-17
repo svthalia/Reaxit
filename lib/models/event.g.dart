@@ -30,7 +30,7 @@ Event _$EventFromJson(Map<String, dynamic> json) {
     json['max_participants'] as int?,
     json['no_registration_message'] as String?,
     json['has_fields'] as bool,
-    json['has_food_event'] as bool,
+    json['has_food_event'] as bool? ?? false,
     json['food_event_pk'] as int?,
     json['maps_url'] as String,
     EventPermissions.fromJson(json['user_permissions'] as Map<String, dynamic>),
