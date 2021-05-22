@@ -4,18 +4,19 @@ import 'package:intl/intl.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/ui/router/router.dart';
 import 'package:reaxit/ui/screens/event_screen.dart';
+import 'package:reaxit/ui/screens/food_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EventDetailCard extends StatelessWidget {
-  static DateFormat timeFormat = DateFormat('HH:mm');
+  static final timeFormatter = DateFormat('HH:mm');
   final Event event;
 
   EventDetailCard({required this.event});
 
   @override
   Widget build(BuildContext context) {
-    final start = timeFormat.format(event.start);
-    final end = timeFormat.format(event.end);
+    final start = timeFormatter.format(event.start);
+    final end = timeFormatter.format(event.end);
     return Card(
       margin: EdgeInsets.only(bottom: 20),
       child: Column(
@@ -112,9 +113,14 @@ class EventDetailCard extends StatelessWidget {
                     label: Text('FOOD'),
                     icon: Icon(Icons.local_pizza),
                     onPressed: () {
-                      // ThaliaRouterDelegate.of(context).push(
-                      //   MaterialPage(child: PizzaScreen()),
-                      // );
+                      ThaliaRouterDelegate.of(context).push(
+                        MaterialPage(
+                          child: FoodScreen(
+                            pk: event.foodEvent!,
+                            event: event,
+                          ),
+                        ),
+                      );
                     },
                   ),
                 ]
