@@ -13,6 +13,8 @@ class FoodOrder {
   final Product product;
   final Payment? payment;
 
+  bool get isPaid => payment != null;
+
   factory FoodOrder.fromJson(Map<String, dynamic> json) =>
       _$FoodOrderFromJson(json);
 

@@ -13,6 +13,13 @@ class FoodEvent {
   final DateTime end;
   final bool canManage;
   final FoodOrder? order;
+  
+  bool get hasOrder => order != null;
+
+  bool hasEnded() => DateTime.now().isAfter(end);
+  bool hasStarted() => DateTime.now().isAfter(start);
+
+  bool canOrder() => hasStarted() && !hasEnded();
 
   factory FoodEvent.fromJson(Map<String, dynamic> json) =>
       _$FoodEventFromJson(json);

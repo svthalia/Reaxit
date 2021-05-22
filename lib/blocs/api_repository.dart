@@ -279,11 +279,11 @@ class ApiRepository {
   /// Cancel your [FoodOrder] for the [FoodEvent] with the `pk`.
   Future<void> cancelFoodOrder(int pk) async {
     final uri = _baseUri.replace(path: '$_basePath/food/events/$pk/order/');
-    final response = await _handleExceptions(() => client.delete(uri));
+    await _handleExceptions(() => client.delete(uri));
   }
 
   /// Place an order [Product] `productPk` on [FoodEvent] `eventPk`.
-  Future<FoodOrder> putFoodOrder({
+  Future<FoodOrder> placeFoodOrder({
     required int eventPk,
     required int productPk,
   }) async {
@@ -291,7 +291,24 @@ class ApiRepository {
       path: '$_basePath/food/events/$eventPk/order/',
     );
     final body = jsonEncode({'product': productPk});
-    final response = await _handleExceptions(() => client.put(uri, body: body));
+    final response = await _handleExceptions(
+      () => client.post(uri, body: body, headers: _jsonHeader),
+    );
+    return FoodOrder.fromJson(jsonDecode(response.body));
+  }
+
+  /// Change your order to [Product] `productPk` on [FoodEvent] `eventPk`.
+  Future<FoodOrder> changeFoodOrder({
+    required int eventPk,
+    required int productPk,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/food/events/$eventPk/order/',
+    );
+    final body = jsonEncode({'product': productPk});
+    final response = await _handleExceptions(
+      () => client.put(uri, body: body, headers: _jsonHeader),
+    );
     return FoodOrder.fromJson(jsonDecode(response.body));
   }
 
@@ -307,7 +324,7 @@ class ApiRepository {
     String? search,
   }) async {
     final uri = _baseUri.replace(
-      path: '$_basePath/events/',
+      path: '$_basePath/food/events/$pk/products/',
       queryParameters: {
         if (limit != null) 'limit': limit.toString(),
         if (offset != null) 'offset': offset.toString(),

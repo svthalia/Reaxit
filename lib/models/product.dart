@@ -7,7 +7,7 @@ class Product {
   final int pk;
   final String name;
   final String description;
-  final double price;
+  final String price;
 
   factory Product.fromJson(Map<String, dynamic> json) =>
       _$ProductFromJson(json);

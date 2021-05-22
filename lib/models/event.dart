@@ -26,14 +26,14 @@ class Event {
   final int? maxParticipants;
   final String? noRegistrationMessage;
   final bool hasFields;
-  @JsonKey(defaultValue: false)
-  final bool hasFoodEvent;
-  final int? foodEventPk;
+  final int? foodEvent;
   final String mapsUrl;
   final EventPermissions userPermissions;
   final AdminRegistration? userRegistration;
   // final Commitee organiser;
   // final Slide? slide;
+
+  bool get hasFoodEvent => foodEvent != null;
 
   bool get isRegistered => userRegistration != null;
   bool get registrationIsRequired => registrationStart != null;
@@ -62,15 +62,11 @@ class Event {
     this.maxParticipants,
     this.noRegistrationMessage,
     this.hasFields,
-    this.hasFoodEvent,
-    this.foodEventPk,
+    this.foodEvent,
     this.mapsUrl,
     this.userPermissions,
     this.userRegistration,
-  ) : assert(
-          hasFoodEvent == (foodEventPk != null),
-          'There should be a `foodEventPk` iff the event has a food event',
-        );
+  );
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)

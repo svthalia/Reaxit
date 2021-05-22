@@ -41,13 +41,20 @@ class AdminRegistration {
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class FullEventRegistration implements EventRegistration, AdminRegistration {
+  @override
   final int pk;
+  @override
   final ListMember? member;
+  @override
   final String? name;
 
+  @override
   final bool? present;
+  @override
   final int? queuePosition;
+  @override
   final DateTime date;
+  @override
   final String? payment;
 
   const FullEventRegistration(
