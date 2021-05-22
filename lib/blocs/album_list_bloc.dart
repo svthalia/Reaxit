@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/list_event.dart';
 import 'package:reaxit/blocs/list_state.dart';
@@ -17,64 +16,7 @@ class AlbumListEvent extends ListEvent {
   List<Object?> get props => [isLoad, isMore, search];
 }
 
-// TODO: when dart 2.13 becomes the standard, replace this entire class by a typedef. Currently typedefs can only be used on function signatures.
-class AlbumListState extends ListState<AlbumListEvent, ListAlbum> {
-  @protected
-  AlbumListState({
-    required List<ListAlbum> results,
-    required String? message,
-    required bool isLoading,
-    required bool isLoadingMore,
-    required bool isDone,
-    required AlbumListEvent event,
-  }) : super(
-          results: results,
-          message: message,
-          isLoading: isLoading,
-          isLoadingMore: isLoadingMore,
-          isDone: isDone,
-          event: event,
-        );
-
-  @override
-  AlbumListState copyWith({
-    List<ListAlbum>? results,
-    String? message,
-    bool? isLoading,
-    bool? isLoadingMore,
-    bool? isDone,
-    AlbumListEvent? event,
-  }) =>
-      AlbumListState(
-        results: results ?? this.results,
-        message: message ?? this.message,
-        isLoading: isLoading ?? this.isLoading,
-        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-        isDone: isDone ?? this.isDone,
-        event: event ?? this.event,
-      );
-
-  AlbumListState.failure({
-    required String message,
-    required AlbumListEvent event,
-  }) : super.failure(message: message, event: event);
-
-  AlbumListState.loading({
-    required List<ListAlbum> results,
-    required AlbumListEvent event,
-  }) : super.loading(results: results, event: event);
-
-  AlbumListState.loadingMore({
-    required List<ListAlbum> results,
-    required AlbumListEvent event,
-  }) : super.loadingMore(results: results, event: event);
-
-  AlbumListState.success({
-    required List<ListAlbum> results,
-    required AlbumListEvent event,
-    required bool isDone,
-  }) : super.success(results: results, event: event, isDone: isDone);
-}
+typedef AlbumListState = ListState<AlbumListEvent, ListAlbum>;
 
 class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
   static final int _firstPageSize = 9;

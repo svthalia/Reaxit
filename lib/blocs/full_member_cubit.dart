@@ -5,18 +5,20 @@ import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/member.dart';
 
-class FullMemberCubit extends Cubit<DetailState<FullMember>> {
+typedef FullMemberState = DetailState<FullMember>;
+
+class FullMemberCubit extends Cubit<FullMemberState> {
   final ApiRepository api;
 
-  FullMemberCubit(this.api) : super(DetailState<FullMember>.loading());
+  FullMemberCubit(this.api) : super(FullMemberState.loading());
 
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
     try {
       final member = await api.getMe();
-      emit(DetailState.result(result: member));
+      emit(FullMemberState.result(result: member));
     } on ApiException catch (exception) {
-      emit(DetailState.failure(message: _failureMessage(exception)));
+      emit(FullMemberState.failure(message: _failureMessage(exception)));
     }
   }
 

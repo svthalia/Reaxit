@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/api_repository.dart';
-import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/blocs/registration_fields_cubit.dart';
 import 'package:reaxit/models/registration_field.dart';
 import 'package:reaxit/ui/router/router.dart';
@@ -38,8 +37,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<RegistrationFieldsCubit,
-        DetailState<Map<String, RegistrationField>>>(
+    return BlocBuilder<RegistrationFieldsCubit, RegistrationFieldsState>(
       bloc: _registrationFieldsCubit,
       builder: (context, state) {
         if (state.hasException) {

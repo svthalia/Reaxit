@@ -3,11 +3,12 @@ import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/registration_field.dart';
 
-class RegistrationFieldsCubit
-    extends Cubit<DetailState<Map<String, RegistrationField>>> {
+typedef RegistrationFieldsState = DetailState<Map<String, RegistrationField>>;
+
+class RegistrationFieldsCubit extends Cubit<RegistrationFieldsState> {
   final ApiRepository api;
 
-  RegistrationFieldsCubit(this.api) : super(DetailState.loading());
+  RegistrationFieldsCubit(this.api) : super(RegistrationFieldsState.loading());
 
   Future<void> load({required int eventPk, required int registrationPk}) async {
     emit(state.copyWith(isLoading: true));
@@ -16,9 +17,11 @@ class RegistrationFieldsCubit
         eventPk: eventPk,
         registrationPk: registrationPk,
       );
-      emit(DetailState.result(result: fields));
+      emit(RegistrationFieldsState.result(result: fields));
     } on ApiException catch (exception) {
-      emit(DetailState.failure(message: _failureMessage(exception)));
+      emit(RegistrationFieldsState.failure(
+        message: _failureMessage(exception),
+      ));
     }
   }
 
@@ -32,7 +35,6 @@ class RegistrationFieldsCubit
       registrationPk: registrationPk,
       fields: fields,
     );
-    // await load(eventPk: eventPk, registrationPk: registrationPk);
   }
 
   String _failureMessage(ApiException exception) {

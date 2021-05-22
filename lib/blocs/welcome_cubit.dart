@@ -3,10 +3,12 @@ import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/event.dart';
 
-class WelcomeCubit extends Cubit<DetailState<List<Event>>> {
+typedef WelcomeState = DetailState<List<Event>>;
+
+class WelcomeCubit extends Cubit<WelcomeState> {
   final ApiRepository api;
 
-  WelcomeCubit(this.api) : super(DetailState<List<Event>>.loading());
+  WelcomeCubit(this.api) : super(WelcomeState.loading());
 
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
@@ -16,21 +18,19 @@ class WelcomeCubit extends Cubit<DetailState<List<Event>>> {
         limit: 3,
       );
       if (eventsResponse.results.isNotEmpty) {
-        emit(DetailState.result(result: eventsResponse.results));
+        emit(WelcomeState.result(result: eventsResponse.results));
       } else {
-        emit(DetailState.failure(message: 'There are no upcoming events.'));
+        emit(WelcomeState.failure(message: 'There are no upcoming events.'));
       }
     } on ApiException catch (exception) {
-      emit(DetailState.failure(message: _failureMessage(exception)));
+      emit(WelcomeState.failure(message: _failureMessage(exception)));
     }
   }
 
   String _failureMessage(ApiException exception) {
     switch (exception) {
-      // case ApiException.noInternet:
-      //   return 'Not connected to the internet.';
-      // case ApiException.notFound:
-      //   return 'The member does not exist.';
+      case ApiException.noInternet:
+        return 'Not connected to the internet.';
       default:
         return 'An unknown error occurred.';
     }

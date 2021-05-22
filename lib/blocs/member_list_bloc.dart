@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/list_event.dart';
 import 'package:reaxit/blocs/list_state.dart';
@@ -17,64 +16,7 @@ class MemberListEvent extends ListEvent {
   List<Object?> get props => [isLoad, isMore, search];
 }
 
-// TODO: when dart 2.13 becomes the standard, replace this entire class by a typedef. Currently typedefs can only be used on function signatures.
-class MemberListState extends ListState<MemberListEvent, ListMember> {
-  @protected
-  MemberListState({
-    required List<ListMember> results,
-    required String? message,
-    required bool isLoading,
-    required bool isLoadingMore,
-    required bool isDone,
-    required MemberListEvent event,
-  }) : super(
-          results: results,
-          message: message,
-          isLoading: isLoading,
-          isLoadingMore: isLoadingMore,
-          isDone: isDone,
-          event: event,
-        );
-
-  @override
-  MemberListState copyWith({
-    List<ListMember>? results,
-    String? message,
-    bool? isLoading,
-    bool? isLoadingMore,
-    bool? isDone,
-    MemberListEvent? event,
-  }) =>
-      MemberListState(
-        results: results ?? this.results,
-        message: message ?? this.message,
-        isLoading: isLoading ?? this.isLoading,
-        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-        isDone: isDone ?? this.isDone,
-        event: event ?? this.event,
-      );
-
-  MemberListState.failure({
-    required String message,
-    required MemberListEvent event,
-  }) : super.failure(message: message, event: event);
-
-  MemberListState.loading({
-    required List<ListMember> results,
-    required MemberListEvent event,
-  }) : super.loading(results: results, event: event);
-
-  MemberListState.loadingMore({
-    required List<ListMember> results,
-    required MemberListEvent event,
-  }) : super.loadingMore(results: results, event: event);
-
-  MemberListState.success({
-    required List<ListMember> results,
-    required MemberListEvent event,
-    required bool isDone,
-  }) : super.success(results: results, event: event, isDone: isDone);
-}
+typedef MemberListState = ListState<MemberListEvent, ListMember>;
 
 class MemberListBloc extends Bloc<MemberListEvent, MemberListState> {
   static final int _firstPageSize = 9;

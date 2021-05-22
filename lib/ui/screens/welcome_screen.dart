@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/blocs/welcome_cubit.dart';
-import 'package:reaxit/models/event.dart';
 import 'package:reaxit/ui/router/router.dart';
 import 'package:reaxit/ui/screens/calendar_screen.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
@@ -20,7 +18,7 @@ class WelcomeScreen extends StatelessWidget {
         onRefresh: () async {
           await BlocProvider.of<WelcomeCubit>(context).load();
         },
-        child: BlocBuilder<WelcomeCubit, DetailState<List<Event>>>(
+        child: BlocBuilder<WelcomeCubit, WelcomeState>(
           builder: (context, state) {
             if (state.hasException) {
               return ErrorScrollView(state.message!);

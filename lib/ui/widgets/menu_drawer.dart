@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/auth_bloc.dart';
-import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/blocs/full_member_cubit.dart';
-import 'package:reaxit/models/member.dart';
 import 'package:reaxit/ui/router/router.dart';
 import 'package:reaxit/ui/screens/albums_screen.dart';
 import 'package:reaxit/ui/screens/calendar_screen.dart';
@@ -22,7 +20,7 @@ class MenuDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          BlocBuilder<FullMemberCubit, DetailState<FullMember>>(
+          BlocBuilder<FullMemberCubit, FullMemberState>(
               builder: (context, state) {
             if (state.result != null) {
               final me = state.result!;

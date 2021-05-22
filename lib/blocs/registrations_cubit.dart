@@ -3,23 +3,26 @@ import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/event_registration.dart';
 
-class RegistrationsCubit extends Cubit<DetailState<List<EventRegistration>>> {
+typedef RegistrationsState = DetailState<List<EventRegistration>>;
+
+class RegistrationsCubit extends Cubit<RegistrationsState> {
   final ApiRepository api;
 
-  RegistrationsCubit(this.api)
-      : super(DetailState<List<EventRegistration>>.loading());
+  RegistrationsCubit(this.api) : super(RegistrationsState.loading());
 
   Future<void> load(int pk) async {
     emit(state.copyWith(isLoading: true));
     try {
       final listResponse = await api.getEventRegistrations(pk: pk);
       if (listResponse.results.isNotEmpty) {
-        emit(DetailState.result(result: listResponse.results));
+        emit(RegistrationsState.result(result: listResponse.results));
       } else {
-        emit(DetailState.failure(message: 'There are no registrations yet.'));
+        emit(RegistrationsState.failure(
+          message: 'There are no registrations yet.',
+        ));
       }
     } on ApiException catch (exception) {
-      emit(DetailState.failure(message: _failureMessage(exception)));
+      emit(RegistrationsState.failure(message: _failureMessage(exception)));
     }
   }
 

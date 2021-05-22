@@ -5,7 +5,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:reaxit/blocs/api_repository.dart';
-import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/blocs/full_member_cubit.dart';
 import 'package:reaxit/blocs/member_cubit.dart';
 import 'package:reaxit/models/member.dart';
@@ -431,7 +430,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<MemberCubit, DetailState<Member>>(
+      body: BlocBuilder<MemberCubit, MemberState>(
         bloc: _memberCubit,
         builder: (context, state) {
           if (state.hasException) {

@@ -4,18 +4,20 @@ import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/event_registration.dart';
 
-class EventCubit extends Cubit<DetailState<Event>> {
+typedef EventState = DetailState<Event>;
+
+class EventCubit extends Cubit<EventState> {
   final ApiRepository api;
 
-  EventCubit(this.api) : super(DetailState<Event>.loading());
+  EventCubit(this.api) : super(EventState.loading());
 
   Future<void> load(int pk) async {
     emit(state.copyWith(isLoading: true));
     try {
       final event = await api.getEvent(pk: pk);
-      emit(DetailState.result(result: event));
+      emit(EventState.result(result: event));
     } on ApiException catch (exception) {
-      emit(DetailState.failure(message: _failureMessage(exception)));
+      emit(EventState.failure(message: _failureMessage(exception)));
     }
   }
 

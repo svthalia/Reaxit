@@ -4,12 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:reaxit/blocs/api_repository.dart';
-import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/blocs/event_cubit.dart';
 import 'package:reaxit/blocs/event_list_bloc.dart';
 import 'package:reaxit/blocs/registrations_cubit.dart';
 import 'package:reaxit/models/event.dart';
-import 'package:reaxit/models/event_registration.dart';
 import 'package:reaxit/ui/router/router.dart';
 import 'package:reaxit/ui/screens/event_admin_screen.dart';
 import 'package:reaxit/ui/screens/registration_screen.dart';
@@ -284,7 +282,7 @@ class _EventScreenState extends State<EventScreen>
     );
   }
 
-  SliverPadding _makeRegistrations(DetailState<List<EventRegistration>> state) {
+  SliverPadding _makeRegistrations(RegistrationsState state) {
     if (state.isLoading) {
       return SliverPadding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -356,7 +354,7 @@ class _EventScreenState extends State<EventScreen>
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EventCubit, DetailState<Event>>(
+    return BlocBuilder<EventCubit, EventState>(
       bloc: _eventCubit,
       builder: (context, state) {
         if (state.hasException) {
@@ -400,8 +398,7 @@ class _EventScreenState extends State<EventScreen>
             ),
             body: RefreshIndicator(
               onRefresh: () => _eventCubit.load(widget.pk),
-              child: BlocBuilder<RegistrationsCubit,
-                  DetailState<List<EventRegistration>>>(
+              child: BlocBuilder<RegistrationsCubit, RegistrationsState>(
                 bloc: _registrationsCubit,
                 builder: (context, state) {
                   return CustomScrollView(

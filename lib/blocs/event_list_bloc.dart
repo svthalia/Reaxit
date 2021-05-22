@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/list_event.dart';
 import 'package:reaxit/blocs/list_state.dart';
@@ -18,64 +17,7 @@ class EventListEvent extends ListEvent {
   List<Object?> get props => [isLoad, isMore, search];
 }
 
-// TODO: when dart 2.13 becomes the standard, replace this entire class by a typedef. Currently typedefs can only be used on function signatures.
-class EventListState extends ListState<EventListEvent, Event> {
-  @protected
-  EventListState({
-    required List<Event> results,
-    required String? message,
-    required bool isLoading,
-    required bool isLoadingMore,
-    required bool isDone,
-    required EventListEvent event,
-  }) : super(
-          results: results,
-          message: message,
-          isLoading: isLoading,
-          isLoadingMore: isLoadingMore,
-          isDone: isDone,
-          event: event,
-        );
-
-  @override
-  EventListState copyWith({
-    List<Event>? results,
-    String? message,
-    bool? isLoading,
-    bool? isLoadingMore,
-    bool? isDone,
-    EventListEvent? event,
-  }) =>
-      EventListState(
-        results: results ?? this.results,
-        message: message ?? this.message,
-        isLoading: isLoading ?? this.isLoading,
-        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-        isDone: isDone ?? this.isDone,
-        event: event ?? this.event,
-      );
-
-  EventListState.failure({
-    required String message,
-    required EventListEvent event,
-  }) : super.failure(message: message, event: event);
-
-  EventListState.loading({
-    required List<Event> results,
-    required EventListEvent event,
-  }) : super.loading(results: results, event: event);
-
-  EventListState.loadingMore({
-    required List<Event> results,
-    required EventListEvent event,
-  }) : super.loadingMore(results: results, event: event);
-
-  EventListState.success({
-    required List<Event> results,
-    required EventListEvent event,
-    required bool isDone,
-  }) : super.success(results: results, event: event, isDone: isDone);
-}
+typedef EventListState = ListState<EventListEvent, Event>;
 
 class EventListBloc extends Bloc<EventListEvent, EventListState> {
   static final int _firstPageSize = 9;

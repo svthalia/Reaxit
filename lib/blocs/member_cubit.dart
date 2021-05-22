@@ -3,18 +3,20 @@ import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/member.dart';
 
-class MemberCubit extends Cubit<DetailState<Member>> {
+typedef MemberState = DetailState<Member>;
+
+class MemberCubit extends Cubit<MemberState> {
   final ApiRepository api;
 
-  MemberCubit(this.api) : super(DetailState<Member>.loading());
+  MemberCubit(this.api) : super(MemberState.loading());
 
   Future<void> load(int pk) async {
     emit(state.copyWith(isLoading: true));
     try {
       final member = await api.getMember(pk: pk);
-      emit(DetailState.result(result: member));
+      emit(MemberState.result(result: member));
     } on ApiException catch (exception) {
-      emit(DetailState.failure(message: _failureMessage(exception)));
+      emit(MemberState.failure(message: _failureMessage(exception)));
     }
   }
 

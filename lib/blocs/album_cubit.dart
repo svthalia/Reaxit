@@ -3,18 +3,20 @@ import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/album.dart';
 
-class AlbumCubit extends Cubit<DetailState<Album>> {
+typedef AlbumState = DetailState<Album>;
+
+class AlbumCubit extends Cubit<AlbumState> {
   final ApiRepository api;
 
-  AlbumCubit(this.api) : super(DetailState<Album>.loading());
+  AlbumCubit(this.api) : super(AlbumState.loading());
 
   Future<void> load(String slug) async {
     emit(state.copyWith(isLoading: true));
     try {
       final album = await api.getAlbum(slug: slug);
-      emit(DetailState.result(result: album));
+      emit(AlbumState.result(result: album));
     } on ApiException catch (exception) {
-      emit(DetailState.failure(message: _failureMessage(exception)));
+      emit(AlbumState.failure(message: _failureMessage(exception)));
     }
   }
 

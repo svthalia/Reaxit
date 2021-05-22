@@ -8,7 +8,6 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:reaxit/blocs/album_cubit.dart';
 import 'package:reaxit/blocs/api_repository.dart';
-import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/album.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
@@ -139,7 +138,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AlbumCubit, DetailState<Album>>(
+    return BlocBuilder<AlbumCubit, AlbumState>(
       bloc: _albumCubit,
       builder: (context, state) {
         if (state.hasException) {
