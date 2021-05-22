@@ -3,9 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/album_list_bloc.dart';
 import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/auth_bloc.dart';
+import 'package:reaxit/blocs/boards_cubit.dart';
+import 'package:reaxit/blocs/committees_cubit.dart';
 import 'package:reaxit/blocs/event_list_bloc.dart';
 import 'package:reaxit/blocs/full_member_cubit.dart';
 import 'package:reaxit/blocs/member_list_bloc.dart';
+import 'package:reaxit/blocs/societies_cubit.dart';
 import 'package:reaxit/blocs/theme_bloc.dart';
 import 'package:reaxit/blocs/welcome_cubit.dart';
 import 'package:reaxit/config.dart' as config;
@@ -102,6 +105,24 @@ class _ThaliAppState extends State<ThaliApp> {
                             create: (_) => AlbumListBloc(
                               apiRepository,
                             )..add(AlbumListEvent.load()),
+                            lazy: false,
+                          ),
+                          BlocProvider(
+                            create: (_) => CommitteesCubit(
+                              apiRepository,
+                            )..load(),
+                            lazy: false,
+                          ),
+                          BlocProvider(
+                            create: (_) => SocietiesCubit(
+                              apiRepository,
+                            )..load(),
+                            lazy: false,
+                          ),
+                          BlocProvider(
+                            create: (_) => BoardsCubit(
+                              apiRepository,
+                            )..load(),
                             lazy: false,
                           ),
                         ],

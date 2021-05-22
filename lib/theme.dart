@@ -129,7 +129,10 @@ ThemeData darkTheme = ThemeData.from(
   toggleableActiveColor: darkColorScheme.primary,
   // TODO: Make text less white.
   primaryTextTheme: ThemeData.dark().primaryTextTheme.merge(generatedTextTheme),
-  appBarTheme: lightTheme.appBarTheme.copyWith(color: Colors.black),
+  appBarTheme: lightTheme.appBarTheme.copyWith(
+    color: Colors.black,
+    // color: Color(0xFFE62272),
+  ),
   dialogBackgroundColor: darkColorScheme.surface,
   dividerColor: Colors.white38,
 );
