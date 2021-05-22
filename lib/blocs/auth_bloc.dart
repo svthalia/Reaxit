@@ -37,6 +37,8 @@ final _scopes = <String>[
   'photos:read',
   'pushnotifications:read',
   // 'pushnotifications:write',
+  'food:read',
+  'food:order',
 ];
 
 final _credentialsStorageKey = 'ThaliApp OAuth2 credentials';
