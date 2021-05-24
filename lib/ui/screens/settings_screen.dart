@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reaxit/blocs/setting_cubit.dart';
 import 'package:reaxit/blocs/theme_bloc.dart';
+import 'package:reaxit/models/setting.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,6 +27,21 @@ class SettingsScreen extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  _SettingsScreenState createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+
+  late final SettingCubit _settingCubit;
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    throw UnimplementedError();
+  }
+
 }
 
 class _ThemeModeCard extends StatelessWidget {
@@ -88,50 +105,50 @@ class _ThemeModeCard extends StatelessWidget {
   }
 }
 
-// class _SettingsCard extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Consumer<NotificationsProvider>(
-//       builder: (context, notifications, child) {
-//         return Card(
-//           child: Column(
-//             mainAxisAlignment: MainAxisAlignment.start,
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: ListTile.divideTiles(
-//               context: context,
-//               tiles: notifications.settings.map(
-//                 (setting) => _SettingCard(setting),
-//               ),
-//             ).toList(),
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
+class _SettingsCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<NotificationsProvider>(
+      builder: (context, notifications, child) {
+        return Card(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: ListTile.divideTiles(
+              context: context,
+              tiles: notifications.settings.map(
+                (setting) => _SettingCard(setting),
+              ),
+            ).toList(),
+          ),
+        );
+      },
+    );
+  }
+}
 
-// class _SettingCard extends StatelessWidget {
-//   final Setting _setting;
+class _SettingCard extends StatelessWidget {
+  final Setting _setting;
 
-//   _SettingCard(this._setting);
+  _SettingCard(this._setting);
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return SwitchListTile(
-//       value: Provider.of<NotificationsProvider>(
-//         context,
-//         listen: false,
-//       ).getNotificatinoSetting(_setting),
-//       onChanged: (value) {
-//         Provider.of<NotificationsProvider>(
-//           context,
-//           listen: false,
-//         ).setNotificationSetting(_setting, value);
-//       },
-//       title: Text(_setting.name),
-//       subtitle: (_setting.description?.isNotEmpty ?? false)
-//           ? Text(_setting.description)
-//           : null,
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return SwitchListTile(
+      value: Provider.of<NotificationsProvider>(
+        context,
+        listen: false,
+      ).getNotificatinoSetting(_setting),
+      onChanged: (value) {
+        Provider.of<NotificationsProvider>(
+          context,
+          listen: false,
+        ).setNotificationSetting(_setting, value);
+      },
+      title: Text(_setting.name),
+      subtitle: (_setting.description?.isNotEmpty ?? false)
+          ? Text(_setting.description)
+          : null,
+    );
+  }
+}
