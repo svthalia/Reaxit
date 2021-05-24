@@ -232,8 +232,8 @@ class _MonthCard extends StatelessWidget {
   final DateTime month;
   final List<Event> events;
 
-  static final _monthFormatter = DateFormat('MMMM');
-  static final _monthYearFormatter = DateFormat('MMMM - yyyy');
+  static final monthFormatter = DateFormat('MMMM');
+  static final monthYearFormatter = DateFormat('MMMM - yyyy');
 
   static Map<DateTime, List<Event>> _groupByDay(List<Event> eventList) {
     return groupBy<Event, DateTime>(
@@ -258,8 +258,8 @@ class _MonthCard extends StatelessWidget {
       children: [
         Text(
           month.year == DateTime.now().year
-              ? _monthFormatter.format(month)
-              : _monthYearFormatter.format(month),
+              ? monthFormatter.format(month)
+              : monthYearFormatter.format(month),
           style: Theme.of(context).textTheme.headline5,
         ),
         Column(
@@ -276,7 +276,7 @@ class _DayCard extends StatelessWidget {
   final DateTime day;
   final List<Event> events;
 
-  static final _dayFormatter = DateFormat(DateFormat.ABBR_WEEKDAY);
+  static final dayFormatter = DateFormat(DateFormat.ABBR_WEEKDAY);
 
   const _DayCard({Key? key, required this.day, required this.events})
       : super(key: key);
@@ -299,7 +299,7 @@ class _DayCard extends StatelessWidget {
                   day.day.toString(),
                   style: TextStyle(fontSize: 30),
                 ),
-                Text(_dayFormatter.format(day)),
+                Text(dayFormatter.format(day)),
               ],
             ),
           ),
@@ -321,12 +321,12 @@ class _EventCard extends StatelessWidget {
 
   const _EventCard(this.event, {Key? key}) : super(key: key);
 
-  static final _timeFormatter = DateFormat('HH:mm');
+  static final timeFormatter = DateFormat('HH:mm');
 
   @override
   Widget build(BuildContext context) {
-    final startTime = _timeFormatter.format(event.start);
-    final endTime = _timeFormatter.format(event.end);
+    final startTime = timeFormatter.format(event.start);
+    final endTime = timeFormatter.format(event.end);
     return InkWell(
       onTap: () {
         ThaliaRouterDelegate.of(context).push(

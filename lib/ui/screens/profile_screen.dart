@@ -23,6 +23,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  static final dateFormatter = DateFormat('d MMMM y');
   late final MemberCubit _memberCubit;
 
   @override
@@ -300,7 +301,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Padding(
             padding: const EdgeInsets.all(5),
             child: Text(
-              DateFormat('d MMMM y').format(member.birthday!),
+              dateFormatter.format(member.birthday!),
               style: TextStyle(fontSize: 18),
             ),
           ),
@@ -368,10 +369,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       periodCol = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: achievement.periods!.map((Period period) {
-          final formatter = DateFormat('d MMMM y');
-          final since = formatter.format(period.since);
+          final since = dateFormatter.format(period.since);
           final until = (period.until != null)
-              ? formatter.format(period.since)
+              ? dateFormatter.format(period.since)
               : 'Present';
           final dates = '$since - $until';
           var leading = '';

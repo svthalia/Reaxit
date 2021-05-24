@@ -30,7 +30,7 @@ Event _$EventFromJson(Map<String, dynamic> json) {
     json['max_participants'] as int?,
     json['no_registration_message'] as String?,
     json['has_fields'] as bool,
-    json['is_pizza_event'] as bool,
+    json['food_event'] as int?,
     json['maps_url'] as String,
     EventPermissions.fromJson(json['user_permissions'] as Map<String, dynamic>),
     json['user_registration'] == null
@@ -57,7 +57,7 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'max_participants': instance.maxParticipants,
       'no_registration_message': instance.noRegistrationMessage,
       'has_fields': instance.hasFields,
-      'is_pizza_event': instance.isPizzaEvent,
+      'food_event': instance.foodEvent,
       'maps_url': instance.mapsUrl,
       'user_permissions': instance.userPermissions,
       'user_registration': instance.userRegistration,

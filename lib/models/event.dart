@@ -26,12 +26,14 @@ class Event {
   final int? maxParticipants;
   final String? noRegistrationMessage;
   final bool hasFields;
-  final bool isPizzaEvent;
+  final int? foodEvent;
   final String mapsUrl;
   final EventPermissions userPermissions;
   final AdminRegistration? userRegistration;
   // final Commitee organiser;
   // final Slide? slide;
+
+  bool get hasFoodEvent => foodEvent != null;
 
   bool get isRegistered => userRegistration != null;
   bool get registrationIsRequired => registrationStart != null;
@@ -60,7 +62,7 @@ class Event {
     this.maxParticipants,
     this.noRegistrationMessage,
     this.hasFields,
-    this.isPizzaEvent,
+    this.foodEvent,
     this.mapsUrl,
     this.userPermissions,
     this.userRegistration,

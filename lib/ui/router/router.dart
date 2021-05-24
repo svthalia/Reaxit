@@ -8,7 +8,6 @@ import 'package:reaxit/ui/screens/calendar_screen.dart';
 import 'package:reaxit/ui/screens/event_screen.dart';
 import 'package:reaxit/ui/screens/login_screen.dart';
 import 'package:reaxit/ui/screens/members_screen.dart';
-import 'package:reaxit/ui/screens/pizza_screen.dart';
 import 'package:reaxit/ui/screens/profile_screen.dart';
 import 'package:reaxit/ui/screens/welcome_screen.dart';
 
@@ -141,7 +140,8 @@ class ThaliaRouteInformationParser
     } else if (RegExp('^/pizzas/\$').hasMatch(path)) {
       return [
         MaterialPage(child: WelcomeScreen()),
-        MaterialPage(child: PizzaScreen()),
+        // TODO: get the right foodevent.
+        // MaterialPage(child: FoodScreen()),
       ];
     } else if (RegExp('^/events/\$').hasMatch(path)) {
       return [MaterialPage(child: CalendarScreen())];
