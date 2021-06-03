@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reaxit/blocs/setting_cubit.dart';
+import 'package:reaxit/blocs/api_repository.dart';
+import 'package:reaxit/blocs/settings_cubit.dart';
 import 'package:reaxit/blocs/theme_bloc.dart';
 import 'package:reaxit/models/setting.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
+import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -34,12 +36,75 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
 
-  late final SettingCubit _settingCubit;
+  late final SettingsCubit _settingCubit;
+
+  @override
+  void initState() {
+    _settingCubit = SettingsCubit(
+      RepositoryProvider.of<ApiRepository>(context),
+    )..load();
+    super.initState();
+  }
+
+  Widget _makeSetting(String receiveCategory) {
+    return Text(receiveCategory);
+  }
+
+  Widget _makeNotificationSettings() {
+    return BlocBuilder<SettingsCubit, SettingState>(
+      bloc: _settingCubit,
+      builder: (context, state) {
+        if (state.hasException) {
+          return RefreshIndicator(
+            onRefresh: () async {
+              var settingFuture = _settingCubit.load();
+              await settingFuture;
+            },
+            child: ErrorScrollView(state.message!),
+          );
+        } else if (state.isLoading && state.result == null) {
+          print(state.result);
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else {
+          print(state.result!.receiveCategory);
+          return Card(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: ListTile.divideTiles(
+                context: context,
+                tiles: ["bla"].map(
+                        (setting) => _makeSetting(setting),
+                ),
+              ).toList(),
+            ),
+          );
+        }
+      }
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
+    return Scaffold(
+      appBar: ThaliaAppBar(title: Text('Settings')),
+      drawer: MenuDrawer(),
+      body: ListView(
+        padding: const EdgeInsets.all(15),
+        children: [
+          _ThemeModeCard(),
+          Divider(),
+          Text(
+            'Notifications',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+          _makeNotificationSettings(),
+        ],
+      ),
+    );
   }
 
 }
@@ -104,8 +169,18 @@ class _ThemeModeCard extends StatelessWidget {
     );
   }
 }
-
+/*
 class _SettingsCard extends StatelessWidget {
+
+  final List<Setting> _settings;
+
+  @override
+  void initState() {
+    _settingCubit = SettingsCubit(
+      RepositoryProvider.of<ApiRepository>(context),
+    )..load();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Consumer<NotificationsProvider>(
@@ -151,4 +226,4 @@ class _SettingCard extends StatelessWidget {
           : null,
     );
   }
-}
+}*/

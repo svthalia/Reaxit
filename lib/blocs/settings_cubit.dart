@@ -7,16 +7,16 @@ import 'detail_state.dart';
 
 typedef SettingState = DetailState<Setting>;
 
-class SettingCubit extends Cubit<SettingState> {
+class SettingsCubit extends Cubit<SettingState> {
   final ApiRepository api;
 
-  SettingCubit(this.api) : super(SettingState.loading());
+  SettingsCubit(this.api) : super(SettingState.loading());
 
-  Future<void> load(int pk) async {
+  Future<void> load() async {
     emit(state.copyWith(isLoading: true));
     try {
-      final settings = await api.getDevices();
-      emit(SettingState.result(result: settings.results.first));
+      final setting = await api.getDevices();
+      emit(SettingState.result(result: setting));
     } on ApiException catch (exception) {
       emit(SettingState.failure(message: _failureMessage(exception)));
     }
