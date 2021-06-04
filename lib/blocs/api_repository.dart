@@ -10,10 +10,12 @@ import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/event_registration.dart';
 import 'package:reaxit/models/food_event.dart';
 import 'package:reaxit/models/food_order.dart';
+import 'package:reaxit/models/frontpage_article.dart';
 import 'package:reaxit/models/list_response.dart';
 import 'package:reaxit/models/member.dart';
 import 'package:reaxit/models/product.dart';
 import 'package:reaxit/models/registration_field.dart';
+import 'package:reaxit/models/slide.dart';
 
 final Uri _baseUri = Uri(
   scheme: 'https',
@@ -457,6 +459,52 @@ class ApiRepository {
     return ListResponse<ListAlbum>.fromJson(
       jsonDecode(response.body),
       (json) => ListAlbum.fromJson(json as Map<String, dynamic>),
+    );
+  }
+
+  /// Get a list of [Slide]s.
+  ///
+  /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
+  /// total number of [Slide]s that can be returned.
+  Future<ListResponse<Slide>> getSlides({
+    int? limit,
+    int? offset,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/announcements/slides/',
+      queryParameters: {
+        if (limit != null) 'limit': limit.toString(),
+        if (offset != null) 'offset': offset.toString(),
+      },
+    );
+
+    final response = await _handleExceptions(() => client.get(uri));
+    return ListResponse<Slide>.fromJson(
+      jsonDecode(response.body),
+      (json) => Slide.fromJson(json as Map<String, dynamic>),
+    );
+  }
+
+  /// Get a list of [FrontpageArticle]s.
+  ///
+  /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
+  /// total number of [FrontpageArticle]s that can be returned.
+  Future<ListResponse<FrontpageArticle>> getFrontpageArticles({
+    int? limit,
+    int? offset,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/announcements/frontpage-articles/',
+      queryParameters: {
+        if (limit != null) 'limit': limit.toString(),
+        if (offset != null) 'offset': offset.toString(),
+      },
+    );
+
+    final response = await _handleExceptions(() => client.get(uri));
+    return ListResponse<FrontpageArticle>.fromJson(
+      jsonDecode(response.body),
+      (json) => FrontpageArticle.fromJson(json as Map<String, dynamic>),
     );
   }
 }
