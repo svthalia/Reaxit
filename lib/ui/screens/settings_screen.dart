@@ -8,7 +8,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ThaliaAppBar(title: Text('Settings')),
+      appBar: ThaliaAppBar(title: Text('SETTINGS')),
       drawer: MenuDrawer(),
       body: ListView(
         padding: const EdgeInsets.all(15),
@@ -36,7 +36,7 @@ class _ThemeModeCard extends StatelessWidget {
       child: ListTile(
         leading: Icon(Icons.brightness_6_sharp),
         title: Text(
-          'Theme mode',
+          'Theme',
           style: Theme.of(context).textTheme.bodyText1,
         ),
         trailing: BlocBuilder<ThemeBloc, ThemeMode>(

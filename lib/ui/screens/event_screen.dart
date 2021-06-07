@@ -68,6 +68,7 @@ class _EventScreenState extends State<EventScreen>
   Widget _makeButtons(Event event) {
     Widget? registrationButton;
     // TODO: add disabled versions when registration is not yet or not anymore possible
+    // TODO: Handle being in queue!
     if (event.canCreateRegistration && event.registrationIsRequired) {
       registrationButton = Column(
         key: ValueKey('register'),
@@ -359,7 +360,7 @@ class _EventScreenState extends State<EventScreen>
       builder: (context, state) {
         if (state.hasException) {
           return Scaffold(
-            appBar: ThaliaAppBar(title: Text(widget.event?.title ?? 'Event')),
+            appBar: ThaliaAppBar(title: Text(widget.event?.title ?? 'EVENT')),
             body: RefreshIndicator(
               onRefresh: () async {
                 // Await both loads.
@@ -374,7 +375,7 @@ class _EventScreenState extends State<EventScreen>
             widget.event == null &&
             state.result == null) {
           return Scaffold(
-            appBar: ThaliaAppBar(title: Text('Event')),
+            appBar: ThaliaAppBar(title: Text('EVENT')),
             body: Center(
               child: CircularProgressIndicator(),
             ),

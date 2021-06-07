@@ -43,7 +43,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         if (state.hasException) {
           return Scaffold(
             appBar: ThaliaAppBar(
-              title: Text('Registration'),
+              title: Text('REGISTRATION'),
               leading: CloseButton(),
             ),
             body: ErrorCenter(state.message!),
@@ -51,7 +51,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         } else if (state.isLoading) {
           return Scaffold(
             appBar: ThaliaAppBar(
-              title: Text('Registration'),
+              title: Text('REGISTRATION'),
               leading: CloseButton(),
             ),
             body: Center(child: CircularProgressIndicator()),
@@ -59,7 +59,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         } else {}
         return Scaffold(
           appBar: ThaliaAppBar(
-            title: Text('Registration'),
+            title: Text('REGISTRATION'),
             leading: CloseButton(),
           ),
           body: SingleChildScrollView(

@@ -266,7 +266,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
           if (state.hasException) {
             return Scaffold(
               appBar: ThaliaAppBar(
-                title: Text('Order Food'),
+                title: Text('ORDER FOOD'),
               ),
               body: RefreshIndicator(
                 onRefresh: () async => await _foodCubit.load(widget.pk),
@@ -277,7 +277,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
               (state.foodEvent == null || state.products == null)) {
             return Scaffold(
               appBar: ThaliaAppBar(
-                title: Text('Order Food'),
+                title: Text('ORDER FOOD'),
               ),
               body: Center(child: CircularProgressIndicator()),
             );
@@ -286,7 +286,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
             final products = state.products;
             return Scaffold(
               appBar: ThaliaAppBar(
-                title: Text('Order Food'),
+                title: Text('ORDER FOOD'),
                 actions: [
                   if (foodEvent.canManage)
                     IconButton(
@@ -311,11 +311,9 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                     _makeOrderInfo(foodEvent),
                     Divider(),
                     Card(
-                      child: Column(
-                        children: products!
-                            .map((product) => _ProductTile(product))
-                            .toList(),
-                      ),
+                      child: Column(children: [
+                        for (final product in products!) _ProductTile(product)
+                      ]),
                     ),
                   ],
                 ),
