@@ -79,6 +79,9 @@ dependencies:
   # Resize images.
   image_cropper: ^1.4.0
 
+  # Carousel.
+  carousel_slider: ^4.0.0-nullsafety.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
