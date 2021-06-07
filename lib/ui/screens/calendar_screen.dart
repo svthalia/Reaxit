@@ -45,7 +45,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ThaliaAppBar(
-        title: Text('Calendar'),
+        title: Text('CALENDAR'),
         actions: [
           IconButton(
             icon: Icon(Icons.search),
