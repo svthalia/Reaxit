@@ -10,7 +10,7 @@ class Payment {
   final String topic;
   final String? notes;
   final PaymentType type;
-  final double amount;
+  final String amount;
   final DateTime createdAt;
 
   factory Payment.fromJson(Map<String, dynamic> json) =>

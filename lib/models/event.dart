@@ -20,8 +20,8 @@ class Event {
   final DateTime? registrationEnd;
   final DateTime? cancelDeadline;
   final String location;
-  final double price;
-  final double fine;
+  final String price;
+  final String fine;
   final int numParticipants;
   final int? maxParticipants;
   final String? noRegistrationMessage;
@@ -36,6 +36,7 @@ class Event {
   bool get hasFoodEvent => foodEvent != null;
 
   bool get isRegistered => userRegistration != null;
+  bool get isInQueue => userRegistration?.queuePosition != null;
   bool get registrationIsRequired => registrationStart != null;
 
   bool get canCreateRegistration => userPermissions.createRegistration;
