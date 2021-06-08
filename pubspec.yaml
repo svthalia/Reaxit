@@ -74,7 +74,7 @@ dependencies:
   path_provider: ^2.0.1
   
   # Access camera and gallery.
-  image_picker: ^0.7.4
+  image_picker: ^0.8.0
 
   # Resize images.
   image_cropper: ^1.4.0
