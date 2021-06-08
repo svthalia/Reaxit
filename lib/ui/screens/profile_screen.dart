@@ -181,7 +181,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       expandedHeight: 200,
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
-        title: Text(member?.displayName ?? 'Profile'),
+        title: Text(member?.displayName ?? 'PROFILE'),
         background: Builder(
           builder: (context) {
             return GestureDetector(
@@ -559,13 +559,13 @@ class __DescriptionFactState extends State<_DescriptionFact>
                           Expanded(
                             child: TextField(
                               controller: _controller,
-                              minLines: 1,
-                              maxLines: 5,
+                              maxLines: null,
                               style: Theme.of(context).textTheme.bodyText2,
                             ),
                           ),
                           IconButton(
                             icon: Icon(Icons.check),
+                            tooltip: 'Edit your description',
                             onPressed: () async {
                               try {
                                 await _fullMemberCubit.updateDescription(
@@ -598,13 +598,16 @@ class __DescriptionFactState extends State<_DescriptionFact>
                                       true)
                                   ? "This member hasn't created a description yet."
                                   : widget.member.profileDescription!,
-                              style: TextStyle(
-                                fontStyle: (widget.member.profileDescription
-                                            ?.isEmpty ??
-                                        true)
-                                    ? FontStyle.italic
-                                    : FontStyle.normal,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2!
+                                  .copyWith(
+                                    fontStyle: (widget.member.profileDescription
+                                                ?.isEmpty ??
+                                            true)
+                                        ? FontStyle.italic
+                                        : FontStyle.normal,
+                                  ),
                             ),
                           ),
                           if (isMe)
@@ -625,3 +628,5 @@ class __DescriptionFactState extends State<_DescriptionFact>
     );
   }
 }
+
+// TODO: Add photo index/total indicator to gallery.

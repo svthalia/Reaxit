@@ -12,7 +12,7 @@ Payment _$PaymentFromJson(Map<String, dynamic> json) {
     json['topic'] as String,
     json['notes'] as String?,
     _$enumDecode(_$PaymentTypeEnumMap, json['type']),
-    (json['amount'] as num).toDouble(),
+    json['amount'] as String,
     DateTime.parse(json['created_at'] as String),
   );
 }

@@ -27,7 +27,7 @@ final Uri _tokenEndpoint = Uri(
 final _scopes = <String>[
   'read',
   'write',
-  // 'announcements:read',
+  'announcements:read',
   'members:read',
   'profile:read',
   'profile:write',

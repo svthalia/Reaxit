@@ -144,7 +144,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
         if (state.hasException) {
           return Scaffold(
             appBar: ThaliaAppBar(
-              title: Text(widget.album?.title ?? 'Album'),
+              title: Text(widget.album?.title ?? 'ALBUM'),
               actions: [_makeShareAlbumButton(widget.slug)],
             ),
             body: ErrorScrollView(state.message!),
@@ -152,7 +152,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
         } else if (state.isLoading) {
           return Scaffold(
             appBar: ThaliaAppBar(
-              title: Text(widget.album?.title ?? 'Album'),
+              title: Text(widget.album?.title ?? 'ALBUM'),
               actions: [_makeShareAlbumButton(widget.slug)],
             ),
             body: Center(child: CircularProgressIndicator()),

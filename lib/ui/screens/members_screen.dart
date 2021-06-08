@@ -39,7 +39,7 @@ class _MembersScreenState extends State<MembersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ThaliaAppBar(
-        title: Text('Members'),
+        title: Text('MEMBERS'),
         actions: [
           IconButton(
             icon: Icon(Icons.search),

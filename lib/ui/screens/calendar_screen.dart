@@ -45,7 +45,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ThaliaAppBar(
-        title: Text('Calendar'),
+        title: Text('CALENDAR'),
         actions: [
           IconButton(
             icon: Icon(Icons.search),
@@ -262,11 +262,10 @@ class _MonthCard extends StatelessWidget {
               : monthYearFormatter.format(month),
           style: Theme.of(context).textTheme.headline5,
         ),
-        Column(
-          children: days
-              .map((day) => _DayCard(day: day, events: dayGroupedEvents[day]!))
-              .toList(),
-        )
+        Column(children: [
+          for (final day in days)
+            _DayCard(day: day, events: dayGroupedEvents[day]!),
+        ])
       ],
     );
   }
@@ -307,7 +306,7 @@ class _DayCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: events.map((event) => _EventCard(event)).toList(),
+              children: [for (final event in events) _EventCard(event)],
             ),
           )
         ],
@@ -361,3 +360,5 @@ class _EventCard extends StatelessWidget {
     );
   }
 }
+
+// TODO: Add partner events.

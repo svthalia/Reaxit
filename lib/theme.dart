@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -26,9 +28,9 @@ ColorScheme darkColorScheme = ColorScheme(
   secondary: Color(0xFFE62272),
   onSecondary: Colors.black,
   secondaryVariant: Color(0xFFE62272),
-  surface: Color(0xFF181818),
+  surface: Color(0xFF212121),
   onSurface: Colors.white,
-  background: Colors.black,
+  background: Color(0xFF111111),
   onBackground: Colors.white,
   error: Colors.red,
   onError: Colors.white,
@@ -41,44 +43,42 @@ ColorScheme darkColorScheme = ColorScheme(
 /// https://material.io/design/typography/the-type-system.html
 TextTheme generatedTextTheme = TextTheme(
   headline1: GoogleFonts.oswald(
-    fontSize: 88,
-    fontWeight: FontWeight.w300,
-    letterSpacing: -1.5,
+    fontSize: 44,
+    fontWeight: FontWeight.w400,
+    letterSpacing: -1,
   ),
   headline2: GoogleFonts.oswald(
-    fontSize: 55,
+    fontSize: 36,
     fontWeight: FontWeight.w300,
-    letterSpacing: -0.5,
   ),
   headline3: GoogleFonts.oswald(
-    fontSize: 44,
+    fontSize: 28,
     fontWeight: FontWeight.w400,
   ),
   headline4: GoogleFonts.oswald(
-    fontSize: 31,
-    fontWeight: FontWeight.w400,
+    fontSize: 22,
+    fontWeight: FontWeight.w500,
     letterSpacing: 0.25,
   ),
   headline5: GoogleFonts.oswald(
-    // increased fontSize from 22
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: FontWeight.w400,
+    letterSpacing: 0.4,
   ),
   headline6: GoogleFonts.oswald(
-    // increased fontSize from 18
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: FontWeight.w500,
     letterSpacing: 0.15,
   ),
   subtitle1: GoogleFonts.oswald(
-    fontSize: 15,
-    fontWeight: FontWeight.w400,
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
     letterSpacing: 0.15,
   ),
-  subtitle2: GoogleFonts.oswald(
-    fontSize: 13,
-    fontWeight: FontWeight.w500,
-    letterSpacing: 0.1,
+  subtitle2: GoogleFonts.openSans(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    letterSpacing: -0.4,
   ),
   bodyText1: GoogleFonts.openSans(
     fontSize: 16,
@@ -91,18 +91,17 @@ TextTheme generatedTextTheme = TextTheme(
     letterSpacing: 0.25,
   ),
   button: GoogleFonts.oswald(
-    // switched fontFamily from openSans
     fontSize: 14,
     fontWeight: FontWeight.w500,
     letterSpacing: 1.25,
   ),
   caption: GoogleFonts.openSans(
     fontSize: 12,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w700,
     letterSpacing: 0.4,
   ),
   overline: GoogleFonts.openSans(
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: FontWeight.w400,
     letterSpacing: 1.5,
   ),
@@ -129,7 +128,9 @@ ThemeData darkTheme = ThemeData.from(
   toggleableActiveColor: darkColorScheme.primary,
   // TODO: Make text less white.
   primaryTextTheme: ThemeData.dark().primaryTextTheme.merge(generatedTextTheme),
-  appBarTheme: lightTheme.appBarTheme.copyWith(color: Colors.black),
+  appBarTheme: lightTheme.appBarTheme.copyWith(
+    color: darkColorScheme.background,
+  ),
   dialogBackgroundColor: darkColorScheme.surface,
-  dividerColor: Colors.white38,
+  dividerColor: Colors.white60,
 );

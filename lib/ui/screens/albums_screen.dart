@@ -39,7 +39,7 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ThaliaAppBar(
-        title: Text('Albums'),
+        title: Text('ALBUMS'),
         actions: [
           IconButton(
             icon: Icon(Icons.search),
