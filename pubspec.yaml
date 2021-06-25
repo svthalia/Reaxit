@@ -65,7 +65,7 @@ dependencies:
   flutter_widget_from_html_core: ^0.6.0
 
   # Sentry error reporting.
-  sentry_flutter: ^5.0.0
+  sentry_flutter: ^5.1.0
 
   # Share menu.
   share: ^2.0.1
@@ -74,7 +74,7 @@ dependencies:
   path_provider: ^2.0.1
   
   # Access camera and gallery.
-  image_picker: ^0.7.4
+  image_picker: ^0.8.0+1
 
   # Resize images.
   image_cropper: ^1.4.0

@@ -81,8 +81,7 @@ class EventDetailCard extends StatelessWidget {
                     height: 16,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color:
-                          event.isRegistered ? Color(0xFFE62272) : Colors.grey,
+                      color: indicatorColor,
                     ),
                   ),
                 ],
