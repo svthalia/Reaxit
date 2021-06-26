@@ -107,8 +107,54 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ElevatedButton.icon(
-              onPressed: () {
-                // TODO: Thalia Pay!
+              onPressed: () async {
+                final confirmed = await showDialog<bool>(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text('Confirm payment'),
+                      content: Text(
+                        'Are you sure you want to pay '
+                        '€${order.product.price} for your '
+                        '"${order.product.name}"?',
+                        style: Theme.of(context).textTheme.bodyText2,
+                      ),
+                      actions: [
+                        TextButton.icon(
+                          onPressed: () => Navigator.of(
+                            context,
+                            rootNavigator: true,
+                          ).pop(false),
+                          icon: Icon(Icons.clear),
+                          label: Text('CANCEL'),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: () => Navigator.of(
+                            context,
+                            rootNavigator: true,
+                          ).pop(true),
+                          icon: Icon(Icons.check),
+                          label: Text('YES'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+
+                if (confirmed ?? false) {
+                  try {
+                    await _foodCubit.thaliaPayOrder(
+                      eventPk: foodEvent.pk,
+                      orderPk: order.pk,
+                    );
+                  } on ApiException {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Could not pay your order.'),
+                      ),
+                    );
+                  }
+                }
               },
               icon: Icon(Icons.euro),
               label: Text('THALIA PAY: €${order.product.price}'),

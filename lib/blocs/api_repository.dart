@@ -13,6 +13,8 @@ import 'package:reaxit/models/food_order.dart';
 import 'package:reaxit/models/frontpage_article.dart';
 import 'package:reaxit/models/list_response.dart';
 import 'package:reaxit/models/member.dart';
+import 'package:reaxit/models/payable.dart';
+import 'package:reaxit/models/payment.dart';
 import 'package:reaxit/models/product.dart';
 import 'package:reaxit/models/registration_field.dart';
 import 'package:reaxit/models/slide.dart';
@@ -343,6 +345,74 @@ class ApiRepository {
   // TODO: pizza admin
 
   // TODO: Thalia Pay
+
+  /// Get a [Payable].
+  Future<Payable> _getPayable({
+    required String appLabel,
+    required String modelName,
+    // The payablePk can technically be a string, but there
+    // are currently no payable models that have a string pk.
+    required int payablePk,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/payments/payables/$appLabel/$modelName/$payablePk/',
+    );
+
+    final response = await _handleExceptions(() => client.get(uri));
+    return Payable.fromJson(jsonDecode(response.body));
+  }
+
+  /// Make a Thalia Pay [Payment].
+  ///
+  /// For example, to pay for a [FoodOrder] with `pk` 1:
+  ///
+  /// ```dart
+  /// _makeThaliaPayPayment(
+  ///   appLabel: 'pizzas',
+  ///   modelName: 'foodorder',
+  ///   payablePk: 1,
+  /// );
+  /// ```
+  Future<Payable> _makeThaliaPayPayment({
+    required String appLabel,
+    required String modelName,
+    // The payablePk can technically be a string, but there
+    // are currently no payable models that have a string pk.
+    required int payablePk,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/payments/payables/$appLabel/$modelName/$payablePk/',
+    );
+
+    final response = await _handleExceptions(() => client.patch(uri));
+    return Payable.fromJson(jsonDecode(response.body));
+  }
+
+  // TODO: Do we need getFoodOrderPayable() etc.?
+
+  /// Get the [Payable] for the [FoodOrder] with the `pk`.
+  Future<Payable> getFoodOrderPayable({required int foodOrderPk}) =>
+      _getPayable(
+        appLabel: 'pizzas',
+        modelName: 'foodorder',
+        payablePk: foodOrderPk,
+      );
+
+  /// Pay for the [FoodOrder] with the `foodOrderPk` with Thalia Pay.
+  Future<Payable> thaliaPayFoodOrder({required int foodOrderPk}) =>
+      _makeThaliaPayPayment(
+        appLabel: 'pizzas',
+        modelName: 'foodorder',
+        payablePk: foodOrderPk,
+      );
+
+  /// Pay for the [EventRegistration] with the `registrationPk` with Thalia Pay.
+  Future<Payable> thaliaPayRegistration({required int registrationPk}) =>
+      _makeThaliaPayPayment(
+        appLabel: 'events',
+        modelName: 'eventregistration',
+        payablePk: registrationPk,
+      );
 
   /// Get the [Member] with the `pk`.
   Future<Member> getMember({required int pk}) async {

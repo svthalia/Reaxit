@@ -112,6 +112,15 @@ class FoodCubit extends Cubit<FoodState> {
     await load(pk);
   }
 
+  /// Pay your order `orderPk` for the event `eventPk` using Thalia Pay.
+  Future<void> thaliaPayOrder({
+    required int eventPk,
+    required int orderPk,
+  }) async {
+    await api.thaliaPayFoodOrder(foodOrderPk: orderPk);
+    await load(eventPk);
+  }
+
   String _failureMessage(ApiException exception) {
     switch (exception) {
       case ApiException.noInternet:
