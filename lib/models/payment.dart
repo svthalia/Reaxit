@@ -2,7 +2,18 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'payment.g.dart';
 
-enum PaymentType { cashPayment, cardPayment, tpayPayment, wirePayment }
+enum PaymentType {
+  @JsonValue('no_payment')
+  noPayment,
+  @JsonValue('cash_payment')
+  cashPayment,
+  @JsonValue('card_payment')
+  cardPayment,
+  @JsonValue('tpay_payment')
+  tpayPayment,
+  @JsonValue('wire_payment')
+  wirePayment,
+}
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Payment {

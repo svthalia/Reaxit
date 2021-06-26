@@ -53,8 +53,9 @@ K _$enumDecode<K, V>(
 }
 
 const _$PaymentTypeEnumMap = {
-  PaymentType.cashPayment: 'cashPayment',
-  PaymentType.cardPayment: 'cardPayment',
-  PaymentType.tpayPayment: 'tpayPayment',
-  PaymentType.wirePayment: 'wirePayment',
+  PaymentType.noPayment: 'no_payment',
+  PaymentType.cashPayment: 'cash_payment',
+  PaymentType.cardPayment: 'card_payment',
+  PaymentType.tpayPayment: 'tpay_payment',
+  PaymentType.wirePayment: 'wire_payment',
 };
