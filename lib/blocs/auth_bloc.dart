@@ -24,23 +24,6 @@ final Uri _tokenEndpoint = Uri(
   path: 'user/oauth/token/',
 );
 
-final _scopes = <String>[
-  'read',
-  'write',
-  'announcements:read',
-  'members:read',
-  'profile:read',
-  'profile:write',
-  'activemembers:read',
-  'events:read',
-  'events:register',
-  'photos:read',
-  'pushnotifications:read',
-  // 'pushnotifications:write',
-  'food:read',
-  'food:order',
-];
-
 final _credentialsStorageKey = 'ThaliApp OAuth2 credentials';
 
 abstract class AuthState extends Equatable {
@@ -167,7 +150,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final authorizeUrl = grant.getAuthorizationUrl(
       _redirectUrl,
-      scopes: _scopes,
+      scopes: config.oauthScopes,
     );
 
     try {

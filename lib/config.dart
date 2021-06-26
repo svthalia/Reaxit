@@ -22,3 +22,26 @@ const String apiIdentifier = String.fromEnvironment(
 );
 
 const String sentryDSN = String.fromEnvironment('SENTRY_DSN');
+
+const List<String> oauthScopes = [
+  'read',
+  'write',
+  'activemembers:read',
+  'announcements:read',
+  'events:read',
+  'events:register',
+  'events:admin',
+  'food:read',
+  'food:order',
+  'members:read',
+  'photos:read',
+  'profile:read',
+  'profile:write',
+  'pushnotifications:read',
+  'pushnotifications:write',
+  'payments:read',
+  'payments:write',
+  // 'payments:admin',
+  // 'sales:read',
+  // 'sales:write',
+];
