@@ -34,6 +34,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _memberCubit.close();
+    super.dispose();
+  }
+
   void _showAvatarView(BuildContext context, ListMember member) {
     showDialog(
       context: context,
@@ -525,6 +531,13 @@ class __DescriptionFactState extends State<_DescriptionFact>
       TextEditingValue(text: widget.member.profileDescription ?? ''),
     );
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _fullMemberCubit.close();
+    _controller.dispose();
+    super.dispose();
   }
 
   Widget _fieldLabel(String title) {

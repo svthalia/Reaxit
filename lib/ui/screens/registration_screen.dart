@@ -36,6 +36,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   @override
+  void dispose() {
+    _registrationFieldsCubit.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<RegistrationFieldsCubit, RegistrationFieldsState>(
       bloc: _registrationFieldsCubit,

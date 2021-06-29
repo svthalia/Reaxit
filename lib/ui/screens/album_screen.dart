@@ -36,6 +36,12 @@ class _AlbumScreenState extends State<AlbumScreen> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _albumCubit.close();
+    super.dispose();
+  }
+
   Widget _makePhotoCard(Album album, int index) {
     return GestureDetector(
       onTap: () => _showPhotoGallery(album, index),

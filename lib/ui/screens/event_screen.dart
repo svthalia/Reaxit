@@ -7,6 +7,7 @@ import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/event_cubit.dart';
 import 'package:reaxit/blocs/event_list_bloc.dart';
 import 'package:reaxit/blocs/registrations_cubit.dart';
+import 'package:reaxit/blocs/welcome_cubit.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/ui/router/router.dart';
 import 'package:reaxit/ui/screens/event_admin_screen.dart';
@@ -38,6 +39,13 @@ class _EventScreenState extends State<EventScreen>
     _eventCubit = EventCubit(api)..load(widget.pk);
     _registrationsCubit = RegistrationsCubit(api)..load(widget.pk);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _eventCubit.close();
+    _registrationsCubit.close();
+    super.dispose();
   }
 
   Widget _makeMap(Event event) {
@@ -150,16 +158,17 @@ class _EventScreenState extends State<EventScreen>
                     eventPk: event.pk,
                     registrationPk: event.userRegistration!.pk,
                   );
-                  await _registrationsCubit.load(event.pk);
-                  BlocProvider.of<EventListBloc>(context).add(
-                    EventListEvent.load(),
-                  );
                 } on ApiException {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('Could not cancel your registration'),
                     duration: Duration(seconds: 1),
                   ));
                 }
+                await _registrationsCubit.load(event.pk);
+                BlocProvider.of<EventListBloc>(context).add(
+                  EventListEvent.load(),
+                );
+                await BlocProvider.of<WelcomeCubit>(context).load();
               },
               icon: Icon(Icons.delete_forever_outlined),
               label: Text('CANCEL REGISTRATION'),
