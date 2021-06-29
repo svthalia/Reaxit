@@ -476,19 +476,28 @@ class ApiRepository {
         if (offset != null) 'offset': offset.toString(),
       }
     );
-    print(uri);
-
     final response = await _handleExceptions(() => client.get(uri));
     return ListResponse<Setting>.fromJson(
         jsonDecode(response.body),
             (json) => Setting.fromJson(json as Map<String, dynamic>));
   }
 
-  Future<Setting> getDevice({required String id}) async {
+  Future<Setting> getDevice({required int id}) async {
     final uri = _baseUri.replace(
       path: '$_basePath/pushnotifications/devices/$id/'
     );
+    print(uri);
     final response = await _handleExceptions(() => client.get(uri));
+    return Setting.fromJson(jsonDecode(response.body));
+  }
+
+  /// Register a device for token
+  Future<Setting> registerDevice(String token, String type) async {
+    final uri = _baseUri.replace(path: '$_basePath/pushnotifications/devices/');
+    final body = jsonEncode({'registration_id': token, 'active': true, 'type': type});
+    final response = await _handleExceptions(
+          () => client.post(uri, body: body, headers: _jsonHeader),
+    );
     return Setting.fromJson(jsonDecode(response.body));
   }
 }

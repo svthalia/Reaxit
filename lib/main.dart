@@ -14,6 +14,8 @@ import 'package:reaxit/ui/router/router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import 'blocs/setting_cubit.dart';
+
 Future<void> main() async {
   await SentryFlutter.init(
     (options) {
@@ -49,6 +51,17 @@ class _ThaliAppState extends State<ThaliApp> {
     );
     _routeInformationParser = ThaliaRouteInformationParser();
     super.initState();
+  }
+
+  Widget _buildNotInitialized() {
+    return MaterialApp.router(
+      title: 'ThaliApp',
+      routerDelegate: _routerDelegate,
+      routeInformationParser: _routeInformationParser,
+      builder: (context, router) {
+        return Center(child: Text('Failed to initialize Firebase'));
+      },
+    );
   }
 
   Widget _buildThaliApp() {
@@ -105,6 +118,12 @@ class _ThaliAppState extends State<ThaliApp> {
                             )..add(AlbumListEvent.load()),
                             lazy: false,
                           ),
+                          BlocProvider(
+                            create: (_) => SettingsCubit(
+                              apiRepository,
+                            )..load(),
+                            lazy: false,
+                          ),
                         ],
                         child: router!,
                       );
@@ -126,9 +145,9 @@ class _ThaliAppState extends State<ThaliApp> {
     return FutureBuilder(
       future: _initialization,
       builder: (context, snapshot) {
-        if (!snapshot.hasError) {
+        if (snapshot.hasError) {
           // TODO: Display nice error message
-          return Text('Firebase failed to initialize');
+          return _buildNotInitialized();
         }
         else if (snapshot.connectionState == ConnectionState.done) {
           return _buildThaliApp();

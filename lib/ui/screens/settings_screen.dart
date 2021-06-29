@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/api_repository.dart';
-import 'package:reaxit/blocs/push_notifications.dart';
 import 'package:reaxit/blocs/setting_cubit.dart';
 import 'package:reaxit/blocs/theme_bloc.dart';
-import 'package:reaxit/models/setting.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
-import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -42,10 +38,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   void initState() {
-    var manager = PushNotificationsManager();
-    print(manager);
     final api = RepositoryProvider.of<ApiRepository>(context);
-    _settingCubit = SettingsCubit(api)..load();
+    _settingCubit = RepositoryProvider.of<SettingsCubit>(context)..load();
     super.initState();
   }
 
@@ -58,35 +52,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
       bloc: _settingCubit,
       builder: (context, state) {
         if (state.hasException) {
-          print("Exception");
           return RefreshIndicator(
             onRefresh: () async {
               var settingFuture = _settingCubit.load();
               await settingFuture;
             },
-            child: ErrorScrollView(state.message!),
+            child: Center(child: Text(state.message!)),
           );
         } else if (state.isLoading && state.result == null) {
-          print("Loading");
-          print(state.result);
           return Center(
             child: CircularProgressIndicator(),
           );
         } else {
-          print("done");
-          print(state.result!.receiveCategory);
-          return Card(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: ListTile.divideTiles(
-                context: context,
-                tiles: ['bla'].map(
-                        (setting) => _makeSetting(setting),
-                ),
-              ).toList(),
-            ),
-          );
+          return Text('Done');
         }
       }
     );

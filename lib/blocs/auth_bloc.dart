@@ -36,7 +36,7 @@ final _scopes = <String>[
   'events:register',
   'photos:read',
   'pushnotifications:read',
-  // 'pushnotifications:write',
+  'pushnotifications:write',
   'food:read',
   'food:order',
 ];
