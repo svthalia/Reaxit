@@ -12,6 +12,7 @@ import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/theme.dart';
 import 'package:reaxit/ui/router/router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 Future<void> main() async {
   await SentryFlutter.init(
@@ -39,6 +40,7 @@ class ThaliApp extends StatefulWidget {
 class _ThaliAppState extends State<ThaliApp> {
   late final ThaliaRouterDelegate _routerDelegate;
   late final ThaliaRouteInformationParser _routeInformationParser;
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
   @override
   void initState() {
@@ -49,8 +51,7 @@ class _ThaliAppState extends State<ThaliApp> {
     super.initState();
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildThaliApp() {
     return BlocBuilder<ThemeBloc, ThemeMode>(
       builder: (context, themeMode) {
         return BlocBuilder<AuthBloc, AuthState>(
@@ -71,7 +72,7 @@ class _ThaliAppState extends State<ThaliApp> {
                     ),
                     child: Builder(builder: (context) {
                       final apiRepository =
-                          RepositoryProvider.of<ApiRepository>(context);
+                      RepositoryProvider.of<ApiRepository>(context);
                       return MultiBlocProvider(
                         providers: [
                           BlocProvider(
@@ -117,6 +118,27 @@ class _ThaliAppState extends State<ThaliApp> {
           },
         );
       },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _initialization,
+      builder: (context, snapshot) {
+        if (!snapshot.hasError) {
+          // TODO: Display nice error message
+          return Text('Firebase failed to initialize');
+        }
+        else if (snapshot.connectionState == ConnectionState.done) {
+          return _buildThaliApp();
+        }
+        else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      }
     );
   }
 }

@@ -465,7 +465,7 @@ class ApiRepository {
   ///
   /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
   /// total number of [Setting]s that can be returned.
-  Future<Setting> getDevices({
+  Future<ListResponse<Setting>> getDevices({
     int? limit,
     int? offset,
   }) async {
@@ -476,7 +476,18 @@ class ApiRepository {
         if (offset != null) 'offset': offset.toString(),
       }
     );
+    print(uri);
 
+    final response = await _handleExceptions(() => client.get(uri));
+    return ListResponse<Setting>.fromJson(
+        jsonDecode(response.body),
+            (json) => Setting.fromJson(json as Map<String, dynamic>));
+  }
+
+  Future<Setting> getDevice({required String id}) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/pushnotifications/devices/$id/'
+    );
     final response = await _handleExceptions(() => client.get(uri));
     return Setting.fromJson(jsonDecode(response.body));
   }

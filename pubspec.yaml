@@ -79,6 +79,9 @@ dependencies:
   # Resize images.
   image_cropper: ^1.4.0
 
+  # Firebase
+  firebase_messaging: ^10.0.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
