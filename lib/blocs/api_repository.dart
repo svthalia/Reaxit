@@ -15,6 +15,7 @@ import 'package:reaxit/models/list_response.dart';
 import 'package:reaxit/models/member.dart';
 import 'package:reaxit/models/payable.dart';
 import 'package:reaxit/models/payment.dart';
+import 'package:reaxit/models/payment_user.dart';
 import 'package:reaxit/models/product.dart';
 import 'package:reaxit/models/registration_field.dart';
 import 'package:reaxit/models/slide.dart';
@@ -344,15 +345,11 @@ class ApiRepository {
 
   // TODO: pizza admin
 
-  // TODO: Thalia Pay
-
   /// Get a [Payable].
   Future<Payable> _getPayable({
     required String appLabel,
     required String modelName,
-    // The payablePk can technically be a string, but there
-    // are currently no payable models that have a string pk.
-    required int payablePk,
+    required String payablePk,
   }) async {
     final uri = _baseUri.replace(
       path: '$_basePath/payments/payables/$appLabel/$modelName/$payablePk/',
@@ -376,26 +373,30 @@ class ApiRepository {
   Future<Payable> _makeThaliaPayPayment({
     required String appLabel,
     required String modelName,
-    // The payablePk can technically be a string, but there
-    // are currently no payable models that have a string pk.
-    required int payablePk,
+    required String payablePk,
   }) async {
     final uri = _baseUri.replace(
-      path: '$_basePath/payments/payables/$appLabel/$modelName/$payablePk/',
+      path: '$_basePath/payments/payables/$appLabel/'
+          '$modelName/${Uri.encodeComponent(payablePk)}/',
     );
 
     final response = await _handleExceptions(() => client.patch(uri));
     return Payable.fromJson(jsonDecode(response.body));
   }
 
-  // TODO: Do we need getFoodOrderPayable() etc.?
+  /// Get the [PaymentUser] of the currently logged in member.
+  Future<PaymentUser> getPaymentUser() async {
+    final uri = _baseUri.replace(path: '$_basePath/payments/users/me/');
+    final response = await _handleExceptions(() => client.get(uri));
+    return PaymentUser.fromJson(jsonDecode(response.body));
+  }
 
-  /// Get the [Payable] for the [FoodOrder] with the `pk`.
+  /// Get the [Payable] for the [FoodOrder] with the `foodOrderPk`.
   Future<Payable> getFoodOrderPayable({required int foodOrderPk}) =>
       _getPayable(
         appLabel: 'pizzas',
         modelName: 'foodorder',
-        payablePk: foodOrderPk,
+        payablePk: foodOrderPk.toString(),
       );
 
   /// Pay for the [FoodOrder] with the `foodOrderPk` with Thalia Pay.
@@ -403,7 +404,15 @@ class ApiRepository {
       _makeThaliaPayPayment(
         appLabel: 'pizzas',
         modelName: 'foodorder',
-        payablePk: foodOrderPk,
+        payablePk: foodOrderPk.toString(),
+      );
+
+  /// Get the [Payable] for the [EventRegistration] with the `registrationPk`.
+  Future<Payable> getEventRegistrationPayable({required int registrationPk}) =>
+      _getPayable(
+        appLabel: 'events',
+        modelName: 'eventregistration',
+        payablePk: registrationPk.toString(),
       );
 
   /// Pay for the [EventRegistration] with the `registrationPk` with Thalia Pay.
@@ -411,7 +420,23 @@ class ApiRepository {
       _makeThaliaPayPayment(
         appLabel: 'events',
         modelName: 'eventregistration',
-        payablePk: registrationPk,
+        payablePk: registrationPk.toString(),
+      );
+
+  /// get the [Payable] for the sales order with the `salesOrderPk`.
+  Future<Payable> getSalesOrderPayable({required String salesOrderPk}) =>
+      _getPayable(
+        appLabel: 'sales',
+        modelName: 'order',
+        payablePk: salesOrderPk,
+      );
+
+  /// Pay for the sales order with the `salesOrderPk` with Thalia Pay.
+  Future<Payable> thaliaPaySalesOrder({required String salesOrderPk}) =>
+      _makeThaliaPayPayment(
+        appLabel: 'sales',
+        modelName: 'order',
+        payablePk: salesOrderPk,
       );
 
   /// Get the [Member] with the `pk`.
@@ -577,6 +602,10 @@ class ApiRepository {
       (json) => FrontpageArticle.fromJson(json as Map<String, dynamic>),
     );
   }
-}
 
-// TODO: move json parsing of lists into isolates?
+  // TODO: Move json parsing of lists into isolates?
+  // TODO: Change ApiException to a class that can contain a string?
+  //  We can then display more specific error messages to the user based on
+  //  the message returned from the server, instead of only the status code.
+  //  This may especially be useful for the sales order payments.
+}

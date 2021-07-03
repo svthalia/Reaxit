@@ -6,6 +6,7 @@ import 'package:reaxit/blocs/auth_bloc.dart';
 import 'package:reaxit/blocs/event_list_bloc.dart';
 import 'package:reaxit/blocs/full_member_cubit.dart';
 import 'package:reaxit/blocs/member_list_bloc.dart';
+import 'package:reaxit/blocs/payment_user_cubit.dart';
 import 'package:reaxit/blocs/theme_bloc.dart';
 import 'package:reaxit/blocs/welcome_cubit.dart';
 import 'package:reaxit/config.dart' as config;
@@ -50,6 +51,12 @@ class _ThaliAppState extends State<ThaliApp> {
   }
 
   @override
+  void dispose() {
+    _routerDelegate.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeMode>(
       builder: (context, themeMode) {
@@ -74,6 +81,12 @@ class _ThaliAppState extends State<ThaliApp> {
                           RepositoryProvider.of<ApiRepository>(context);
                       return MultiBlocProvider(
                         providers: [
+                          BlocProvider(
+                            create: (_) => PaymentUserCubit(
+                              apiRepository,
+                            )..load(),
+                            lazy: false,
+                          ),
                           BlocProvider(
                             create: (_) => FullMemberCubit(
                               apiRepository,
