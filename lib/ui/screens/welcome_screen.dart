@@ -41,7 +41,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       vsync: this,
       curve: Curves.ease,
       duration: Duration(milliseconds: 300),
-      child: slides.isNotEmpty ? SlidesCarousel(slides) : SizedBox(height: 0),
+      child:
+          slides.isNotEmpty ? SlidesCarousel(slides) : const SizedBox.shrink(),
     );
   }
 
@@ -81,7 +82,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 ],
               ),
             )
-          : SizedBox(height: 0),
+          : const SizedBox.shrink(),
     );
   }
 

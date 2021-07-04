@@ -146,53 +146,53 @@ class MenuDrawer extends StatelessWidget {
             }
           }),
           ListTile(
-            title: Text('Welcome'),
-            leading: Icon(Icons.home),
+            title: const Text('Welcome'),
+            leading: const Icon(Icons.home),
             onTap: () => ThaliaRouterDelegate.of(context).replace(
               MaterialPage(child: WelcomeScreen()),
             ),
           ),
           ListTile(
-            title: Text('Calendar'),
-            leading: Icon(Icons.event),
+            title: const Text('Calendar'),
+            leading: const Icon(Icons.event),
             onTap: () => ThaliaRouterDelegate.of(context).replace(
               MaterialPage(child: CalendarScreen()),
             ),
           ),
           ListTile(
-            title: Text('Member list'),
-            leading: Icon(Icons.people),
+            title: const Text('Member list'),
+            leading: const Icon(Icons.people),
             onTap: () => ThaliaRouterDelegate.of(context).replace(
               MaterialPage(child: MembersScreen()),
             ),
           ),
           ListTile(
-            title: Text('Photos'),
-            leading: Icon(Icons.photo),
+            title: const Text('Photos'),
+            leading: const Icon(Icons.photo),
             onTap: () => ThaliaRouterDelegate.of(context).replace(
               MaterialPage(child: AlbumsScreen()),
             ),
           ),
           ListTile(
-            title: Text('Settings'),
-            leading: Icon(Icons.settings),
+            title: const Text('Settings'),
+            leading: const Icon(Icons.settings),
             onTap: () => ThaliaRouterDelegate.of(context).replace(
               MaterialPage(child: SettingsScreen()),
             ),
           ),
-          Divider(),
+          const Divider(),
           ListTile(
-            leading: Icon(Icons.logout),
-            title: Text('Log out'),
+            leading: const Icon(Icons.logout),
+            title: const Text('Log out'),
             onTap: () async {
               BlocProvider.of<AuthBloc>(context).add(
                 LogOutAuthEvent(),
               );
             },
           ),
-          Divider(),
+          const Divider(),
           AboutListTile(
-            icon: Icon(Icons.info_outline),
+            icon: const Icon(Icons.info_outline),
             dense: true,
             applicationVersion: 'v2.0.1',
             applicationIcon: Image.asset(
@@ -206,7 +206,7 @@ class MenuDrawer extends StatelessWidget {
                 'There is an app for everything.',
                 style: Theme.of(context).textTheme.bodyText1,
               ),
-              Divider(),
+              const Divider(),
               Link(
                 uri: Uri.parse(
                   'https://github.com/svthalia/Reaxit/releases',
@@ -227,7 +227,7 @@ class MenuDrawer extends StatelessWidget {
                   label: Text('FEEDBACK'),
                 ),
               ),
-              Divider(),
+              const Divider(),
             ],
           ),
         ],

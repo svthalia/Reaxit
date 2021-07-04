@@ -251,7 +251,7 @@ class _EventScreenState extends State<EventScreen>
             transitionBuilder: (Widget child, Animation<double> animation) {
               return ScaleTransition(scale: animation, child: child);
             },
-            child: registrationButton ?? SizedBox(height: 0),
+            child: registrationButton ?? const SizedBox.shrink(),
           ),
         ),
         AnimatedSize(
@@ -265,7 +265,7 @@ class _EventScreenState extends State<EventScreen>
             transitionBuilder: (Widget child, Animation<double> animation) {
               return ScaleTransition(scale: animation, child: child);
             },
-            child: updateButton ?? SizedBox(height: 0),
+            child: updateButton ?? const SizedBox.shrink(),
           ),
         ),
         SizedBox(height: 5),
@@ -420,9 +420,9 @@ class _EventScreenState extends State<EventScreen>
                             _makeMap(event),
                             _makeInfo(event),
                             _makeButtons(event),
-                            Divider(),
+                            const Divider(),
                             _makeDescription(event),
-                            Divider(),
+                            const Divider(),
                           ],
                         ),
                       ),
