@@ -17,7 +17,7 @@ FoodOrder _$FoodOrderFromJson(Map<String, dynamic> json) {
     json['payment'] == null
         ? null
         : Payment.fromJson(json['payment'] as Map<String, dynamic>),
-  )..tpayAllowed = json['tpay_allowed'] as bool;
+  );
 }
 
 Map<String, dynamic> _$FoodOrderToJson(FoodOrder instance) => <String, dynamic>{
@@ -26,5 +26,4 @@ Map<String, dynamic> _$FoodOrderToJson(FoodOrder instance) => <String, dynamic>{
       'name': instance.name,
       'product': instance.product,
       'payment': instance.payment,
-      'tpay_allowed': instance.tpayAllowed,
     };

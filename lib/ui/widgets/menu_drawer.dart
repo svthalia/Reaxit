@@ -15,7 +15,7 @@ class MenuDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: add selected highlight, and make the onTap on the active item
-    // dismiss the drawer if the top level page is the only item in the stack.
+    //  dismiss the drawer if the top level page is the only item in the stack.
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,

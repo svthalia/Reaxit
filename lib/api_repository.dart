@@ -101,7 +101,18 @@ class ApiRepository {
   Future<Event> getEvent({required int pk}) async {
     final uri = _baseUri.replace(path: '$_basePath/events/$pk/');
     final response = await _handleExceptions(() => client.get(uri));
-    return Event.fromJson(jsonDecode(response.body));
+    final event = Event.fromJson(jsonDecode(response.body));
+    if (event.isRegistered) {
+      try {
+        await getEventRegistrationPayable(
+          registrationPk: event.userRegistration!.pk,
+        );
+        event.userRegistration!.tpayAllowed = true;
+      } on ApiException catch (exception) {
+        if (exception != ApiException.notAllowed) rethrow;
+      }
+    }
+    return event;
   }
 
   /// Get a list of [Event]s.
