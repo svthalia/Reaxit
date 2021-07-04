@@ -56,79 +56,162 @@ class _ThaliAppState extends State<ThaliApp> {
     super.dispose();
   }
 
+  /// This key prevents initializing a new [MaterialApp] state and, through
+  /// that, a new [Router] state, that would otherwise unintentionally make
+  /// an additional call to [ThaliaRouterDelegate.setInitialRoutePath] on
+  /// uthentication events.
+  final _materialAppKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeMode>(
       builder: (context, themeMode) {
         return BlocBuilder<AuthBloc, AuthState>(
           builder: (context, authState) {
-            return MaterialApp.router(
-              title: 'ThaliApp',
-              theme: lightTheme,
-              darkTheme: darkTheme,
-              themeMode: themeMode,
-              routerDelegate: _routerDelegate,
-              routeInformationParser: _routeInformationParser,
-              builder: (context, router) {
-                if (authState is LoggedInAuthState) {
-                  return RepositoryProvider(
-                    create: (_) => ApiRepository(
-                      client: authState.client,
-                      logOut: authState.logOut,
+            if (authState is LoggedInAuthState) {
+              return RepositoryProvider(
+                create: (_) => ApiRepository(
+                  client: authState.client,
+                  logOut: authState.logOut,
+                ),
+                child: Builder(builder: (context) {
+                  final apiRepository =
+                      RepositoryProvider.of<ApiRepository>(context);
+                  return MultiBlocProvider(
+                    providers: [
+                      BlocProvider(
+                        create: (_) => PaymentUserCubit(
+                          apiRepository,
+                        )..load(),
+                        lazy: false,
+                      ),
+                      BlocProvider(
+                        create: (_) => FullMemberCubit(
+                          apiRepository,
+                        )..load(),
+                        lazy: false,
+                      ),
+                      BlocProvider(
+                        create: (_) => WelcomeCubit(
+                          apiRepository,
+                        )..load(),
+                        lazy: false,
+                      ),
+                      BlocProvider(
+                        create: (_) => EventListBloc(
+                          apiRepository,
+                        )..add(EventListEvent.load()),
+                        lazy: false,
+                      ),
+                      BlocProvider(
+                        create: (_) => MemberListBloc(
+                          apiRepository,
+                        )..add(MemberListEvent.load()),
+                        lazy: false,
+                      ),
+                      BlocProvider(
+                        create: (_) => AlbumListBloc(
+                          apiRepository,
+                        )..add(AlbumListEvent.load()),
+                        lazy: false,
+                      ),
+                    ],
+                    child: MaterialApp.router(
+                      key: _materialAppKey,
+                      title: 'ThaliApp',
+                      theme: lightTheme,
+                      darkTheme: darkTheme,
+                      themeMode: themeMode,
+                      routerDelegate: _routerDelegate,
+                      routeInformationParser: _routeInformationParser,
                     ),
-                    child: Builder(builder: (context) {
-                      final apiRepository =
-                          RepositoryProvider.of<ApiRepository>(context);
-                      return MultiBlocProvider(
-                        providers: [
-                          BlocProvider(
-                            create: (_) => PaymentUserCubit(
-                              apiRepository,
-                            )..load(),
-                            lazy: false,
-                          ),
-                          BlocProvider(
-                            create: (_) => FullMemberCubit(
-                              apiRepository,
-                            )..load(),
-                            lazy: false,
-                          ),
-                          BlocProvider(
-                            create: (_) => WelcomeCubit(
-                              apiRepository,
-                            )..load(),
-                            lazy: false,
-                          ),
-                          BlocProvider(
-                            create: (_) => EventListBloc(
-                              apiRepository,
-                            )..add(EventListEvent.load()),
-                            lazy: false,
-                          ),
-                          BlocProvider(
-                            create: (_) => MemberListBloc(
-                              apiRepository,
-                            )..add(MemberListEvent.load()),
-                            lazy: false,
-                          ),
-                          BlocProvider(
-                            create: (_) => AlbumListBloc(
-                              apiRepository,
-                            )..add(AlbumListEvent.load()),
-                            lazy: false,
-                          ),
-                        ],
-                        child: router!,
-                      );
-                    }),
                   );
-                } else {
-                  return router!;
-                }
-              },
-            );
+                }),
+              );
+            } else {
+              return MaterialApp.router(
+                key: _materialAppKey,
+                title: 'ThaliApp',
+                theme: lightTheme,
+                darkTheme: darkTheme,
+                themeMode: themeMode,
+                routerDelegate: _routerDelegate,
+                routeInformationParser: _routeInformationParser,
+              );
+            }
           },
         );
+
+        // return MaterialApp.router(
+        //   key: _routerKey,
+        //   title: 'ThaliApp',
+        //   theme: lightTheme,
+        //   darkTheme: darkTheme,
+        //   themeMode: themeMode,
+        //   routerDelegate: _routerDelegate,
+        //   routeInformationParser: _routeInformationParser,
+        //   builder: (context, router) {
+        //     return BlocBuilder<AuthBloc, AuthState>(
+        //       builder: (context, authState) {
+        //         if (authState is LoggedInAuthState) {
+        //           return RepositoryProvider(
+        //             create: (_) => ApiRepository(
+        //               client: authState.client,
+        //               logOut: authState.logOut,
+        //             ),
+        //             child: Builder(builder: (context) {
+        //               final apiRepository =
+        //                   RepositoryProvider.of<ApiRepository>(context);
+        //               return MultiBlocProvider(
+        //                 providers: [
+        //                   BlocProvider(
+        //                     create: (_) => PaymentUserCubit(
+        //                       apiRepository,
+        //                     )..load(),
+        //                     lazy: false,
+        //                   ),
+        //                   BlocProvider(
+        //                     create: (_) => FullMemberCubit(
+        //                       apiRepository,
+        //                     )..load(),
+        //                     lazy: false,
+        //                   ),
+        //                   BlocProvider(
+        //                     create: (_) => WelcomeCubit(
+        //                       apiRepository,
+        //                     )..load(),
+        //                     lazy: false,
+        //                   ),
+        //                   BlocProvider(
+        //                     create: (_) => EventListBloc(
+        //                       apiRepository,
+        //                     )..add(EventListEvent.load()),
+        //                     lazy: false,
+        //                   ),
+        //                   BlocProvider(
+        //                     create: (_) => MemberListBloc(
+        //                       apiRepository,
+        //                     )..add(MemberListEvent.load()),
+        //                     lazy: false,
+        //                   ),
+        //                   BlocProvider(
+        //                     create: (_) => AlbumListBloc(
+        //                       apiRepository,
+        //                     )..add(AlbumListEvent.load()),
+        //                     lazy: false,
+        //                   ),
+        //                 ],
+        //                 child: router!,
+        //               );
+        //             }),
+        //           );
+        //         } else {
+        //           return router!;
+        //         }
+        //       },
+        //     );
+        //   },
+        // );
       },
     );
   }

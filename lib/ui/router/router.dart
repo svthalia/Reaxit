@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,29 +23,34 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
     return delegate as ThaliaRouterDelegate;
   }
 
+  final AuthBloc authBloc;
+  late final StreamSubscription authSubscription;
+
   @override
   final GlobalKey<NavigatorState> navigatorKey;
 
-  bool _isAuthenticated = false;
   final List<Page> _stack = [MaterialPage(child: LoginScreen())];
 
-  ThaliaRouterDelegate({required AuthBloc authBloc})
+  ThaliaRouterDelegate({required this.authBloc})
       : navigatorKey = GlobalKey<NavigatorState>() {
-    authBloc.stream.listen((event) {
-      if (event is LoggedInAuthState) {
-        if (!_isAuthenticated) {
-          replaceStack([MaterialPage(child: WelcomeScreen())]);
-        }
-        _isAuthenticated = true;
-      } else if (event is LoggedOutAuthState) {
+    authSubscription = authBloc.stream.listen((state) {
+      if (state is LoggedInAuthState) {
+        replaceStack([MaterialPage(child: WelcomeScreen())]);
+      } else if (state is LoggedOutAuthState) {
         replaceStack([MaterialPage(child: LoginScreen())]);
-        _isAuthenticated = false;
       }
     });
   }
 
   @override
+  void dispose() {
+    authSubscription.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // Listener that creates SnackBars.
     return BlocListener<AuthBloc, AuthState>(
       listenWhen: (previous, current) {
         if (previous is LoggedInAuthState && current is LoggedOutAuthState) {
@@ -92,7 +99,16 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
 
   @override
   Future<void> setNewRoutePath(Uri uri) async {
-    if (!_isAuthenticated) return SynchronousFuture(null);
+    var authState = authBloc.state;
+    // Wait for the first non-loading authState, because deeplinks in
+    // android are passed before the AuthBloc gets the chance to load.
+    if (authState is LoadingAuthState) {
+      authState = await authBloc.stream.firstWhere(
+        (state) => !(state is LoadingAuthState),
+      );
+    }
+
+    if (!(authState is LoggedInAuthState)) return SynchronousFuture(null);
 
     var path = uri.path;
     var segments = uri.pathSegments;
