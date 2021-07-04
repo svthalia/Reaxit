@@ -151,6 +151,9 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
           } else if (!paymentUserState.result!.tpayAllowed) {
             // TPay is not allowed.
             payButton = const SizedBox.shrink();
+          } else if (!order.tpayAllowed) {
+            // TPay is not allowed.
+            payButton = const SizedBox.shrink();
           } else if (!paymentUserState.result!.tpayEnabled) {
             // TPay is not enabled.
             payButton = SizedBox(
@@ -170,8 +173,6 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
             );
           } else {
             // TPay can be used.
-            // TODO: Check tpay allowed of Payable or FoodEvent.
-            //  See https://github.com/svthalia/concrexit/issues/1784.
             addDivider = true;
             payButton = SizedBox(
               key: ValueKey('pay'),

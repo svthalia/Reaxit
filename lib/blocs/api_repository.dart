@@ -235,7 +235,16 @@ class ApiRepository {
   Future<FoodEvent> getFoodEvent(int pk) async {
     final uri = _baseUri.replace(path: '$_basePath/food/events/$pk/');
     final response = await _handleExceptions(() => client.get(uri));
-    return FoodEvent.fromJson(jsonDecode(response.body));
+    final foodEvent = FoodEvent.fromJson(jsonDecode(response.body));
+    if (foodEvent.hasOrder) {
+      try {
+        await getFoodOrderPayable(foodOrderPk: foodEvent.order!.pk);
+        foodEvent.order!.tpayAllowed = true;
+      } on ApiException catch (exception) {
+        if (exception != ApiException.notAllowed) rethrow;
+      }
+    }
+    return foodEvent;
   }
 
   /// Get a list of [FoodEvent]s.
@@ -278,7 +287,14 @@ class ApiRepository {
   Future<FoodOrder> getFoodOrder(int pk) async {
     final uri = _baseUri.replace(path: '$_basePath/food/events/$pk/order/');
     final response = await _handleExceptions(() => client.get(uri));
-    return FoodOrder.fromJson(jsonDecode(response.body));
+    final foodOrder = FoodOrder.fromJson(jsonDecode(response.body));
+    try {
+      await getFoodOrderPayable(foodOrderPk: foodOrder.pk);
+      foodOrder.tpayAllowed = true;
+    } on ApiException catch (exception) {
+      if (exception != ApiException.notAllowed) rethrow;
+    }
+    return foodOrder;
   }
 
   /// Cancel your [FoodOrder] for the [FoodEvent] with the `pk`.
@@ -299,7 +315,14 @@ class ApiRepository {
     final response = await _handleExceptions(
       () => client.post(uri, body: body, headers: _jsonHeader),
     );
-    return FoodOrder.fromJson(jsonDecode(response.body));
+    final foodOrder = FoodOrder.fromJson(jsonDecode(response.body));
+    try {
+      await getFoodOrderPayable(foodOrderPk: foodOrder.pk);
+      foodOrder.tpayAllowed = true;
+    } on ApiException catch (exception) {
+      if (exception != ApiException.notAllowed) rethrow;
+    }
+    return foodOrder;
   }
 
   /// Change your order to [Product] `productPk` on [FoodEvent] `eventPk`.
@@ -314,7 +337,14 @@ class ApiRepository {
     final response = await _handleExceptions(
       () => client.put(uri, body: body, headers: _jsonHeader),
     );
-    return FoodOrder.fromJson(jsonDecode(response.body));
+    final foodOrder = FoodOrder.fromJson(jsonDecode(response.body));
+    try {
+      await getFoodOrderPayable(foodOrderPk: foodOrder.pk);
+      foodOrder.tpayAllowed = true;
+    } on ApiException catch (exception) {
+      if (exception != ApiException.notAllowed) rethrow;
+    }
+    return foodOrder;
   }
 
   /// Get a list of [Product]s for the [FoodEvent] with the `pk`.
