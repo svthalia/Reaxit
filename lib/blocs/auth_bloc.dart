@@ -146,6 +146,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       _authorizationEndpoint,
       _tokenEndpoint,
       secret: config.apiSecret,
+      onCredentialsRefreshed: (credentials) async {
+        final _storage = FlutterSecureStorage();
+        await _storage.write(
+          key: _credentialsStorageKey,
+          value: credentials.toJson(),
+          iOptions: IOSOptions(accessibility: IOSAccessibility.first_unlock),
+        );
+      },
     );
 
     final authorizeUrl = grant.getAuthorizationUrl(
