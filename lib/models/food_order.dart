@@ -14,7 +14,7 @@ class FoodOrder {
   final Payment? payment;
 
   @JsonKey(ignore: true)
-  late final bool? _tpayAllowed;
+  bool? _tpayAllowed;
 
   /// Whether this order can be paid with Thalia Pay.
   /// See https://github.com/svthalia/concrexit/issues/1784.

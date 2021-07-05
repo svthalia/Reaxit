@@ -47,6 +47,15 @@ class EventCubit extends Cubit<EventState> {
     await load(eventPk);
   }
 
+  /// Pay your registration for the event using Thalia Pay.
+  Future<void> thaliaPayRegistration({
+    required int eventPk,
+    required int registrationPk,
+  }) async {
+    await api.thaliaPayRegistration(registrationPk: registrationPk);
+    await load(eventPk);
+  }
+
   String _failureMessage(ApiException exception) {
     switch (exception) {
       case ApiException.noInternet:
