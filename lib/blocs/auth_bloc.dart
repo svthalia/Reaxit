@@ -130,6 +130,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           credentials,
           identifier: config.apiIdentifier,
           secret: config.apiSecret,
+          onCredentialsRefreshed: (credentials) async {
+            final _storage = FlutterSecureStorage();
+            await _storage.write(
+              key: _credentialsStorageKey,
+              value: credentials.toJson(),
+              iOptions: IOSOptions(
+                accessibility: IOSAccessibility.first_unlock,
+              ),
+            );
+          },
         ),
         logOut: () => add(LogOutAuthEvent()),
       );
