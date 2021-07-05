@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/setting_cubit.dart';
 import 'package:reaxit/blocs/theme_bloc.dart';
+import 'package:reaxit/models/category.dart';
+import 'package:reaxit/models/device.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
 
@@ -38,13 +40,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   void initState() {
-    final api = RepositoryProvider.of<ApiRepository>(context);
-    _settingCubit = RepositoryProvider.of<SettingsCubit>(context)..load();
+    _settingCubit = SettingsCubit(RepositoryProvider.of<ApiRepository>(context))..load();
     super.initState();
   }
 
-  Widget _makeSetting(String receiveCategory) {
-    return Text(receiveCategory);
+  Widget _makeSetting(Category category, bool enabled) {
+    return SwitchListTile(
+      value: enabled,
+      onChanged: (value) {
+        _settingCubit.setSetting(category.key, value);
+      },
+      title: Text(category.name),
+      subtitle: category.description.isNotEmpty
+          ? Text(category.description)
+          : null,
+    );
   }
 
   Widget _makeNotificationSettings() {
@@ -59,12 +69,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
             child: Center(child: Text(state.message!)),
           );
-        } else if (state.isLoading && state.result == null) {
+        } else if (state.isLoading && state.categories == null) {
           return Center(
             child: CircularProgressIndicator(),
           );
         } else {
-          return Text('Done');
+          return Card(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: ListTile.divideTiles(
+                context: context,
+                tiles: _settingCubit.state.categories!.map((category) => _makeSetting(category, _settingCubit.state.device!.receiveCategory.contains(category.key))),
+              ).toList(),
+            )
+          );
         }
       }
     );
@@ -153,61 +172,3 @@ class _ThemeModeCard extends StatelessWidget {
     );
   }
 }
-/*
-class _SettingsCard extends StatelessWidget {
-
-  final List<Setting> _settings;
-
-  @override
-  void initState() {
-    _settingCubit = SettingsCubit(
-      RepositoryProvider.of<ApiRepository>(context),
-    )..load();
-    super.initState();
-  }
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<NotificationsProvider>(
-      builder: (context, notifications, child) {
-        return Card(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: ListTile.divideTiles(
-              context: context,
-              tiles: notifications.settings.map(
-                (setting) => _SettingCard(setting),
-              ),
-            ).toList(),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _SettingCard extends StatelessWidget {
-  final Setting _setting;
-
-  _SettingCard(this._setting);
-
-  @override
-  Widget build(BuildContext context) {
-    return SwitchListTile(
-      value: Provider.of<NotificationsProvider>(
-        context,
-        listen: false,
-      ).getNotificatinoSetting(_setting),
-      onChanged: (value) {
-        Provider.of<NotificationsProvider>(
-          context,
-          listen: false,
-        ).setNotificationSetting(_setting, value);
-      },
-      title: Text(_setting.name),
-      subtitle: (_setting.description?.isNotEmpty ?? false)
-          ? Text(_setting.description)
-          : null,
-    );
-  }
-}*/

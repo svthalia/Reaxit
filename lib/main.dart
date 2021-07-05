@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/album_list_bloc.dart';
@@ -9,6 +10,7 @@ import 'package:reaxit/blocs/member_list_bloc.dart';
 import 'package:reaxit/blocs/theme_bloc.dart';
 import 'package:reaxit/blocs/welcome_cubit.dart';
 import 'package:reaxit/config.dart' as config;
+import 'package:reaxit/push_notifications.dart';
 import 'package:reaxit/theme.dart';
 import 'package:reaxit/ui/router/router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -22,6 +24,7 @@ Future<void> main() async {
       options.dsn = config.sentryDSN;
     },
     appRunner: () {
+      Firebase.initializeApp();
       runApp(BlocProvider(
         create: (_) => ThemeBloc()..add(ThemeLoadEvent()),
         lazy: false,
@@ -42,7 +45,6 @@ class ThaliApp extends StatefulWidget {
 class _ThaliAppState extends State<ThaliApp> {
   late final ThaliaRouterDelegate _routerDelegate;
   late final ThaliaRouteInformationParser _routeInformationParser;
-  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
   @override
   void initState() {
@@ -53,18 +55,8 @@ class _ThaliAppState extends State<ThaliApp> {
     super.initState();
   }
 
-  Widget _buildNotInitialized() {
-    return MaterialApp.router(
-      title: 'ThaliApp',
-      routerDelegate: _routerDelegate,
-      routeInformationParser: _routeInformationParser,
-      builder: (context, router) {
-        return Center(child: Text('Failed to initialize Firebase'));
-      },
-    );
-  }
-
-  Widget _buildThaliApp() {
+  @override
+  Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeMode>(
       builder: (context, themeMode) {
         return BlocBuilder<AuthBloc, AuthState>(
@@ -78,11 +70,13 @@ class _ThaliAppState extends State<ThaliApp> {
               routeInformationParser: _routeInformationParser,
               builder: (context, router) {
                 if (authState is LoggedInAuthState) {
+                  var apiRepository = ApiRepository(client: authState.client, logOut: authState.logOut);
+                  register(apiRepository);
+                  FirebaseMessaging.instance.onTokenRefresh.listen((String token) {
+                    registerToken(token, apiRepository);
+                  });
                   return RepositoryProvider(
-                    create: (_) => ApiRepository(
-                      client: authState.client,
-                      logOut: authState.logOut,
-                    ),
+                    create: (_) => apiRepository,
                     child: Builder(builder: (context) {
                       final apiRepository =
                       RepositoryProvider.of<ApiRepository>(context);
@@ -118,12 +112,6 @@ class _ThaliAppState extends State<ThaliApp> {
                             )..add(AlbumListEvent.load()),
                             lazy: false,
                           ),
-                          BlocProvider(
-                            create: (_) => SettingsCubit(
-                              apiRepository,
-                            )..load(),
-                            lazy: false,
-                          ),
                         ],
                         child: router!,
                       );
@@ -137,27 +125,6 @@ class _ThaliAppState extends State<ThaliApp> {
           },
         );
       },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _initialization,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          // TODO: Display nice error message
-          return _buildNotInitialized();
-        }
-        else if (snapshot.connectionState == ConnectionState.done) {
-          return _buildThaliApp();
-        }
-        else {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-      }
     );
   }
 }

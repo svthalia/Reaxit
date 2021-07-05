@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'setting.dart';
+part of 'device.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Setting _$SettingFromJson(Map<String, dynamic> json) {
-  return Setting(
+Device _$DeviceFromJson(Map<String, dynamic> json) {
+  return Device(
     json['pk'] as int,
     json['registration_id'] as String,
     json['active'] as bool,
@@ -19,7 +19,7 @@ Setting _$SettingFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$SettingToJson(Setting instance) => <String, dynamic>{
+Map<String, dynamic> _$DeviceToJson(Device instance) => <String, dynamic>{
       'pk': instance.pk,
       'registration_id': instance.registrationId,
       'active': instance.active,

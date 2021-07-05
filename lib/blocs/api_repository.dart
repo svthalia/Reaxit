@@ -6,6 +6,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/models/album.dart';
+import 'package:reaxit/models/category.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/event_registration.dart';
 import 'package:reaxit/models/food_event.dart';
@@ -14,7 +15,7 @@ import 'package:reaxit/models/list_response.dart';
 import 'package:reaxit/models/member.dart';
 import 'package:reaxit/models/product.dart';
 import 'package:reaxit/models/registration_field.dart';
-import 'package:reaxit/models/setting.dart';
+import 'package:reaxit/models/device.dart';
 
 final Uri _baseUri = Uri(
   scheme: 'https',
@@ -461,44 +462,40 @@ class ApiRepository {
     );
   }
 
-  /// Get a list of [Setting]s.
-  ///
-  /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
-  /// total number of [Setting]s that can be returned.
-  Future<ListResponse<Setting>> getDevices({
-    int? limit,
-    int? offset,
-  }) async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/pushnotifications/devices/',
-      queryParameters: {
-        if (limit != null) 'limit': limit.toString(),
-        if (offset != null) 'offset': offset.toString(),
-      }
-    );
-    final response = await _handleExceptions(() => client.get(uri));
-    return ListResponse<Setting>.fromJson(
-        jsonDecode(response.body),
-            (json) => Setting.fromJson(json as Map<String, dynamic>));
-  }
-
-  Future<Setting> getDevice({required int id}) async {
+  Future<Device> getDevice({required int id}) async {
     final uri = _baseUri.replace(
       path: '$_basePath/pushnotifications/devices/$id/'
     );
-    print(uri);
     final response = await _handleExceptions(() => client.get(uri));
-    return Setting.fromJson(jsonDecode(response.body));
+    return Device.fromJson(jsonDecode(response.body));
+  }
+
+  Future<Device> putDevice({required int id, required Device device}) async {
+    final uri = _baseUri.replace(
+        path: '$_basePath/pushnotifications/devices/$id/'
+    );
+    final response = await _handleExceptions(() => client.put(uri, body: jsonEncode(device.toJson()), headers: _jsonHeader));
+    return Device.fromJson(jsonDecode(response.body));
   }
 
   /// Register a device for token
-  Future<Setting> registerDevice(String token, String type) async {
+  Future<Device> registerDevice(String token, String type, bool active) async {
     final uri = _baseUri.replace(path: '$_basePath/pushnotifications/devices/');
-    final body = jsonEncode({'registration_id': token, 'active': true, 'type': type});
+    final body = jsonEncode({'registration_id': token, 'active': active, 'type': type});
     final response = await _handleExceptions(
           () => client.post(uri, body: body, headers: _jsonHeader),
     );
-    return Setting.fromJson(jsonDecode(response.body));
+    return Device.fromJson(jsonDecode(response.body));
+  }
+
+  Future<ListResponse<Category>> getCategories() async {
+    final uri = _baseUri.replace(path: '$_basePath/pushnotifications/categories/');
+    final response = await _handleExceptions(
+          () => client.get(uri),
+    );
+    return ListResponse<Category>.fromJson(
+        jsonDecode(response.body),
+            (json) => Category.fromJson(json as Map<String, dynamic>));
   }
 }
 

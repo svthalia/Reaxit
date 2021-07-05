@@ -1,9 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'setting.g.dart';
+part 'device.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class Setting {
+class Device {
   final int pk;
   final String registrationId;
   final bool active;
@@ -11,10 +11,16 @@ class Setting {
   final String type;
   final List<String> receiveCategory;
 
-  factory Setting.fromJson(Map<String, dynamic> json) =>
-        _$SettingFromJson(json);
+  factory Device.fromJson(Map<String, dynamic> json) =>
+        _$DeviceFromJson(json);
 
-  const Setting(
+  Map<String, dynamic> toJson() => _$DeviceToJson(this);
+
+  const Device(
     this.pk, this.registrationId, this.active, this.dateCreated, this.type, this.receiveCategory
   );
+
+  Device copy() {
+    return Device(pk, registrationId, active, dateCreated, type, receiveCategory.toList());
+  }
 }
