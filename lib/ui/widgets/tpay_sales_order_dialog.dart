@@ -40,10 +40,70 @@ class _TPaySalesOrderDialogState extends State<TPaySalesOrderDialog>
           builder: (context, orderState) {
             late Widget content;
             late Widget payButton;
+            if (paymentUserState.result == null) {
+              // PaymentUser loading or exception.
+              payButton = ElevatedButton.icon(
+                onPressed: null,
+                icon: Icon(Icons.euro),
+                label: Text('THALIA PAY'),
+              );
+            } else if (!paymentUserState.result!.tpayAllowed) {
+              payButton = payButton = ElevatedButton.icon(
+                // TPay is not allowed.
+                onPressed: null,
+                icon: Icon(Icons.euro),
+                label: Text('THALIA PAY'),
+              );
+            } else if (!paymentUserState.result!.tpayEnabled) {
+              // TPay is not enabled.
+              payButton = SizedBox(
+                key: ValueKey('enable'),
+                width: double.infinity,
+                child: Tooltip(
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.all(8),
+                  message: 'To start using Thalia Pay, sign '
+                      'a direct debit mandate on the website.',
+                  child: ElevatedButton.icon(
+                    onPressed: null,
+                    icon: Icon(Icons.euro),
+                    label: Text('THALIA PAY'),
+                  ),
+                ),
+              );
+            } else if (orderState.hasException) {
+              // Order can't be loaded.
+              payButton = ElevatedButton.icon(
+                onPressed: null,
+                icon: Icon(Icons.euro),
+                label: Text('THALIA PAY'),
+              );
+            } else if (orderState.isLoading) {
+              // Order is loading
+              payButton = ElevatedButton.icon(
+                onPressed: null,
+                icon: Icon(Icons.euro),
+                label: Text('THALIA PAY'),
+              );
+            } else {
+              // TPay can be used.
+              final order = orderState.result!;
+              payButton = ElevatedButton.icon(
+                onPressed: _paySalesOrder,
+                icon: Icon(Icons.euro),
+                label: Text('THALIA PAY: €${order.amount}'),
+              );
+            }
+
             if (orderState.hasException) {
               content = Text(
                 orderState.message!,
                 style: Theme.of(context).textTheme.bodyText2,
+              );
+              payButton = ElevatedButton.icon(
+                onPressed: null,
+                icon: Icon(Icons.euro),
+                label: Text('THALIA PAY'),
               );
             } else if (orderState.isLoading) {
               content = Column(
@@ -51,13 +111,13 @@ class _TPaySalesOrderDialogState extends State<TPaySalesOrderDialog>
                 children: [CircularProgressIndicator()],
               );
             } else {
-              final payable = orderState.result!;
+              final order = orderState.result!;
 
               // TODO: Handle already paid, under-age, etc. Waiting for
               //  https://github.com/svthalia/concrexit/issues/1785.
               content = Text(
                 'Are you sure you want to pay '
-                '€${payable.amount} for ${payable.notes}?',
+                '€${order.amount} for ${order.notes}?',
                 style: Theme.of(context).textTheme.bodyText2,
               );
             }
@@ -78,14 +138,11 @@ class _TPaySalesOrderDialogState extends State<TPaySalesOrderDialog>
                   icon: Icon(Icons.clear),
                   label: Text('CANCEL'),
                 ),
-                ElevatedButton.icon(
-                  // TODO: Check user's TPay possibility!
-                  onPressed: orderState.result != null &&
-                          orderState.result!.tpayAllowed
-                      ? _paySalesOrder
-                      : null,
-                  icon: Icon(Icons.check),
-                  label: Text('THALIA PAY'),
+                AnimatedSize(
+                  vsync: this,
+                  curve: Curves.ease,
+                  duration: Duration(milliseconds: 200),
+                  child: payButton,
                 ),
               ],
             );
