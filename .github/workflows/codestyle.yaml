@@ -1,0 +1,21 @@
+---
+name: Codestyle
+on:
+  - pull_request
+  - workflow_dispatch
+
+jobs:
+  linting:
+    name: Flutter formatting
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: 2.2.3
+
+      - name: Formatting
+        run: flutter format --set-exit-if-changed .
