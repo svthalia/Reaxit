@@ -238,9 +238,59 @@ class ApiRepository {
     );
   }
 
-  // TODO: event admin
-  //  getAdminEventRegistrations()
-  //  ...
+  /// Get the [AdminRegistration]s of the [Event] with the `pk`.
+  ///
+  /// Currently does not implement pagination, though the API supports it.
+  Future<ListResponse<AdminRegistration>> getAdminEventRegistrations({
+    required int pk,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/admin/events/$pk/registrations/',
+    );
+    final response = await _handleExceptions(() => client.get(uri));
+    return ListResponse<AdminRegistration>.fromJson(
+      jsonDecode(response.body),
+      (json) => AdminRegistration.fromJson(json as Map<String, dynamic>),
+    );
+  }
+
+  /// Mark registration `registrationPk` for [Event] `eventPk` as `present`.
+  Future<AdminRegistration> markPresentAdminEventRegistration({
+    required int eventPk,
+    required int registrationPk,
+    required bool present,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/admin/payments/event/registrations/$registrationPk/',
+    );
+    final body = jsonEncode({'present': present});
+    final response = await _handleExceptions(
+      () => client.patch(uri, body: body, headers: _jsonHeader),
+    );
+    return AdminRegistration.fromJson(jsonDecode(response.body));
+  }
+
+  /// Mark registration `registrationPk` as paid with `paymentType`.
+  ///
+  /// If `paymentType` is null, delete the payment if possible.
+  Future<void> markPaidAdminEventRegistration({
+    required int registrationPk,
+    required PaymentType? paymentType,
+  }) async {
+    assert(paymentType != PaymentType.tpayPayment);
+    final uri = _baseUri.replace(
+      path:
+          '$_basePath/admin/payments/events/eventregistration/$registrationPk/',
+    );
+    if (paymentType == null) {
+      await _handleExceptions(() => client.delete(uri));
+    } else {
+      final body = jsonEncode({'payment_type': paymentType});
+      await _handleExceptions(
+        () => client.patch(uri, body: body, headers: _jsonHeader),
+      );
+    }
+  }
 
   /// Get the [FoodEvent] with the `pk`.
   Future<FoodEvent> getFoodEvent(int pk) async {
