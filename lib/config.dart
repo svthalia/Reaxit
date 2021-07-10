@@ -5,19 +5,19 @@
 /// specified, be sure to specify all.
 
 const String apiHost = String.fromEnvironment(
-  'API_HOST',
+  'THALIA_API_HOST',
   defaultValue: 'staging.thalia.nu',
 );
 
 const String apiSecret = String.fromEnvironment(
-  'API_SECRET',
+  'THALIA_OAUTH_APP_SECRET',
   defaultValue:
       'Chwh1BE3MgfU1OZZmYRV3LU3e3GzpZJ6tiWrqzFY3dPhMlS7VYD3qMm1RC1pPBvg'
       '3WaWmJxfRq8bv5ElVOpjRZwabAGOZ0DbuHhW3chAMaNlOmwXixNfUJIKIBzlnr7I',
 );
 
 const String apiIdentifier = String.fromEnvironment(
-  'API_IDENTIFIER',
+  'THALIA_OAUTH_APP_ID',
   defaultValue: '3zlt7pqGVMiUCGxOnKTZEpytDUN7haeFBP2kVkig',
 );
 

@@ -1,0 +1,116 @@
+platform :ios do
+  private_lane :setup_key do
+    app_store_connect_api_key(
+      key_id: "H37PU3Q6JX",
+      issuer_id: "69a6de95-e27f-47e3-e053-5b8c7c11a4d1",
+      key_filepath: "./app-store.p8",
+    )
+  end
+
+  private_lane :setup_project do |options|
+    if is_ci?
+      create_keychain(
+        name: "fastlane-keychain",
+        password: ENV["KEYCHAIN_PASSWORD"],
+        default_keychain: true,
+        unlock: true,
+        timeout: 3600,
+        lock_when_sleeps: false
+      )
+    end
+    sh("flutter pub get")
+    cocoapods(
+      use_bundle_exec: false,
+      podfile: './ios'
+    )
+    match(
+      type: options[:type],
+      readonly: is_ci,
+      keychain_name: is_ci? ? "fastlane-keychain" : nil,
+      keychain_password: is_ci? ? ENV["KEYCHAIN_PASSWORD"] : nil
+    )
+    
+    sh("flutter clean")
+    build_cmd = "flutter build ios --release --config-only"
+
+    if ENV["THALIA_OAUTH_APP_ID"] and ENV["THALIA_OAUTH_APP_SECRET"] and ENV["THALIA_API_HOST"]
+      build_cmd += " --dart-define=THALIA_API_HOST=\"#{ENV["THALIA_API_HOST"]}\""
+      build_cmd += " --dart-define=THALIA_OAUTH_APP_ID=\"#{ENV["THALIA_OAUTH_APP_ID"]}\""
+      build_cmd += " --dart-define=THALIA_OAUTH_APP_SECRET=\"#{ENV["THALIA_OAUTH_APP_SECRET"]}\""
+    end
+
+    if ENV["SENTRY_DSN"]
+      build_cmd += " --dart-define=SENTRY_DSN=\"#{ENV["SENTRY_DSN"]}\""
+    end
+
+    if options[:build_number]
+      build_cmd += " --build-number=#{options[:build_number]}"
+    end
+
+    sh(build_cmd)
+  end
+
+  desc "Execute Adhoc build"
+  lane :deploy_adhoc do
+    setup_key
+    setup_project(type: "adhoc")
+    update_project_provisioning(
+      xcodeproj: "./ios/Runner.xcodeproj",
+      profile: ENV["sigh_com.thaliapp_adhoc_profile-path"],
+      build_configuration: "Release"
+    )
+    build_app(
+      workspace: "./ios/Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "ad-hoc"
+    )
+    sh("mv ../Runner.ipa ../build/ios/ThaliApp.ipa")
+  end
+
+  desc "Push a new internal build to TestFlight"
+  lane :deploy_internal do
+    setup_key
+    setup_project(
+      type: "appstore",
+      build_number: latest_testflight_build_number + 1
+    )
+    build_app(
+      workspace: "./ios/Runner.xcworkspace",
+      scheme: "Runner"
+      )
+    upload_to_testflight
+  end
+
+  desc "Push a new beta build to TestFlight"
+  lane :deploy_beta do
+    setup_key
+    setup_project(
+      type: "appstore",
+      build_number: latest_testflight_build_number + 1
+    )
+    build_app(
+      workspace: "./ios/Runner.xcworkspace",
+      scheme: "Runner"
+    )
+    upload_to_testflight(distribute_external: true)
+  end
+
+  desc "Push a new build to the App Store"
+  lane :deploy_production do
+    setup_key
+    setup_project(
+      type: "appstore",
+      build_number: app_store_build_number + 1
+    )
+    build_app(
+      workspace: "./ios/Runner.xcworkspace",
+      scheme: "Runner"
+    )
+    upload_to_app_store(
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      automatic_release: true
+    )
+  end
+end

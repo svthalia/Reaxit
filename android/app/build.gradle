@@ -21,6 +21,24 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+
+/*
+
+This code loads signingConfig properties from the key file
+Such a file should look like
+
+storeFile=../path/to/upload.keystore
+storePassword="myStorePass"
+keyPassword="myKeyPass"
+keyAlias="myKeyAlias"
+
+*/
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
@@ -37,7 +55,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.thaliapp.reaxit"
+        applicationId "com.thaliapp"
         resValue "string", "app_name", "ThaliApp"
         minSdkVersion 18
         targetSdkVersion 29
@@ -45,11 +63,18 @@ android {
         versionName flutterVersionName
     }
 
+    signingConfigs {
+        release {
+           keyAlias keystoreProperties['keyAlias']
+           keyPassword keystoreProperties['keyPassword']
+           storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+           storePassword keystoreProperties['storePassword']
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
         debug {
             applicationIdSuffix '.debug'
