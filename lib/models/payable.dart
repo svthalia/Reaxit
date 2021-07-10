@@ -11,7 +11,6 @@ class Payable {
   final Payment? payment;
   final bool tpayAllowed;
 
-  // TODO: Is no_payment the same as null? if so, && payment.type != no_payment.
   bool get isPaid => payment != null;
 
   factory Payable.fromJson(Map<String, dynamic> json) =>

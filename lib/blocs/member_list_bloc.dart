@@ -19,8 +19,8 @@ class MemberListEvent extends ListEvent {
 typedef MemberListState = ListState<MemberListEvent, ListMember>;
 
 class MemberListBloc extends Bloc<MemberListEvent, MemberListState> {
-  static final int _firstPageSize = 9;
-  static final int _pageSize = 9;
+  static final int _firstPageSize = 60;
+  static final int _pageSize = 30;
 
   final ApiRepository api;
 
@@ -45,7 +45,6 @@ class MemberListBloc extends Bloc<MemberListEvent, MemberListState> {
 
   Stream<MemberListState> _load(MemberListEvent event) async* {
     yield state.copyWith(isLoading: true, event: event);
-    // await Future.delayed(Duration(seconds: 1));
 
     try {
       var listResponse = await api.getMembers(
@@ -77,7 +76,6 @@ class MemberListBloc extends Bloc<MemberListEvent, MemberListState> {
 
   Stream<MemberListState> _more(MemberListEvent event) async* {
     yield state.copyWith(isLoadingMore: true);
-    // await Future.delayed(Duration(seconds: 1));
 
     try {
       var listResponse = await api.getMembers(

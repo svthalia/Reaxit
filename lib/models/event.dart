@@ -9,9 +9,6 @@ enum EventCategory { alumni, education, career, leisure, association, other }
 class Event {
   final int pk;
   final String title;
-
-  // TODO: set empty string defaults if necessary:
-  // @JsonKey(defaultValue: '')
   final String description;
   final DateTime start;
   final DateTime end;
