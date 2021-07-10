@@ -4,7 +4,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:reaxit/blocs/api_repository.dart';
+import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/blocs/full_member_cubit.dart';
 import 'package:reaxit/blocs/member_cubit.dart';
 import 'package:reaxit/models/member.dart';
@@ -32,6 +32,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       RepositoryProvider.of<ApiRepository>(context),
     )..load(widget.pk);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _memberCubit.close();
+    super.dispose();
   }
 
   void _showAvatarView(BuildContext context, ListMember member) {
@@ -525,6 +531,13 @@ class __DescriptionFactState extends State<_DescriptionFact>
       TextEditingValue(text: widget.member.profileDescription ?? ''),
     );
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _fullMemberCubit.close();
+    _controller.dispose();
+    super.dispose();
   }
 
   Widget _fieldLabel(String title) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reaxit/blocs/api_repository.dart';
+import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/blocs/registration_fields_cubit.dart';
 import 'package:reaxit/models/registration_field.dart';
 import 'package:reaxit/ui/router/router.dart';
@@ -33,6 +33,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         registrationPk: widget.registrationPk,
       );
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _registrationFieldsCubit.close();
+    super.dispose();
   }
 
   @override

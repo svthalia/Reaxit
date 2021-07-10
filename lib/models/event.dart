@@ -9,9 +9,6 @@ enum EventCategory { alumni, education, career, leisure, association, other }
 class Event {
   final int pk;
   final String title;
-
-  // TODO: set empty string defaults if necessary:
-  // @JsonKey(defaultValue: '')
   final String description;
   final DateTime start;
   final DateTime end;
@@ -36,8 +33,10 @@ class Event {
   bool get hasFoodEvent => foodEvent != null;
 
   bool get isRegistered => userRegistration != null;
-  bool get isInQueue => userRegistration?.queuePosition != null;
+  bool get isInQueue => userRegistration?.isInQueue ?? false;
+  bool get isInvited => userRegistration?.isInvited ?? false;
   bool get registrationIsRequired => registrationStart != null;
+  bool get paymentIsRequired => double.tryParse(price) != 0;
 
   bool get canCreateRegistration => userPermissions.createRegistration;
   bool get canUpdateRegistration => userPermissions.updateRegistration;

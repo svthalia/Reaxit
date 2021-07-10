@@ -24,23 +24,6 @@ final Uri _tokenEndpoint = Uri(
   path: 'user/oauth/token/',
 );
 
-final _scopes = <String>[
-  'read',
-  'write',
-  'announcements:read',
-  'members:read',
-  'profile:read',
-  'profile:write',
-  'activemembers:read',
-  'events:read',
-  'events:register',
-  'photos:read',
-  'pushnotifications:read',
-  // 'pushnotifications:write',
-  'food:read',
-  'food:order',
-];
-
 final _credentialsStorageKey = 'ThaliApp OAuth2 credentials';
 
 abstract class AuthState extends Equatable {
@@ -147,6 +130,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           credentials,
           identifier: config.apiIdentifier,
           secret: config.apiSecret,
+          onCredentialsRefreshed: (credentials) async {
+            final _storage = FlutterSecureStorage();
+            await _storage.write(
+              key: _credentialsStorageKey,
+              value: credentials.toJson(),
+              iOptions: IOSOptions(
+                accessibility: IOSAccessibility.first_unlock,
+              ),
+            );
+          },
         ),
         logOut: () => add(LogOutAuthEvent()),
       );
@@ -163,11 +156,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       _authorizationEndpoint,
       _tokenEndpoint,
       secret: config.apiSecret,
+      onCredentialsRefreshed: (credentials) async {
+        final _storage = FlutterSecureStorage();
+        await _storage.write(
+          key: _credentialsStorageKey,
+          value: credentials.toJson(),
+          iOptions: IOSOptions(accessibility: IOSAccessibility.first_unlock),
+        );
+      },
     );
 
     final authorizeUrl = grant.getAuthorizationUrl(
       _redirectUrl,
-      scopes: _scopes,
+      scopes: config.oauthScopes,
     );
 
     try {

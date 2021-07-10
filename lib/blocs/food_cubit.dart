@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reaxit/blocs/api_repository.dart';
+import 'package:reaxit/api_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:reaxit/models/food_event.dart';
@@ -110,6 +110,15 @@ class FoodCubit extends Cubit<FoodState> {
   Future<void> cancelOrder(int pk) async {
     await api.cancelFoodOrder(pk);
     await load(pk);
+  }
+
+  /// Pay your order `orderPk` for the event `eventPk` using Thalia Pay.
+  Future<void> thaliaPayOrder({
+    required int eventPk,
+    required int orderPk,
+  }) async {
+    await api.thaliaPayFoodOrder(foodOrderPk: orderPk);
+    await load(eventPk);
   }
 
   String _failureMessage(ApiException exception) {

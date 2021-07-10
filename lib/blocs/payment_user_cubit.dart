@@ -1,22 +1,22 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/blocs/detail_state.dart';
-import 'package:reaxit/models/member.dart';
+import 'package:reaxit/models/payment_user.dart';
 
-typedef MemberState = DetailState<Member>;
+typedef PaymentUserState = DetailState<PaymentUser>;
 
-class MemberCubit extends Cubit<MemberState> {
+class PaymentUserCubit extends Cubit<PaymentUserState> {
   final ApiRepository api;
 
-  MemberCubit(this.api) : super(MemberState.loading());
+  PaymentUserCubit(this.api) : super(PaymentUserState.loading());
 
-  Future<void> load(int pk) async {
+  Future<void> load() async {
     emit(state.copyWith(isLoading: true));
     try {
-      final member = await api.getMember(pk: pk);
-      emit(MemberState.result(result: member));
+      final paymentUser = await api.getPaymentUser();
+      emit(PaymentUserState.result(result: paymentUser));
     } on ApiException catch (exception) {
-      emit(MemberState.failure(message: _failureMessage(exception)));
+      emit(PaymentUserState.failure(message: _failureMessage(exception)));
     }
   }
 
@@ -24,8 +24,6 @@ class MemberCubit extends Cubit<MemberState> {
     switch (exception) {
       case ApiException.noInternet:
         return 'Not connected to the internet.';
-      case ApiException.notFound:
-        return 'The member does not exist.';
       default:
         return 'An unknown error occurred.';
     }

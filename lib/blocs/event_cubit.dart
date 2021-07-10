@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reaxit/blocs/api_repository.dart';
+import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/event_registration.dart';
@@ -44,6 +44,15 @@ class EventCubit extends Cubit<EventState> {
       registrationPk: registrationPk,
     );
     // Reload the event for updated registration status.
+    await load(eventPk);
+  }
+
+  /// Pay your registration for the event using Thalia Pay.
+  Future<void> thaliaPayRegistration({
+    required int eventPk,
+    required int registrationPk,
+  }) async {
+    await api.thaliaPayRegistration(registrationPk: registrationPk);
     await load(eventPk);
   }
 
