@@ -3,8 +3,6 @@ import 'package:json_annotation/json_annotation.dart';
 part 'payment.g.dart';
 
 enum PaymentType {
-  @JsonValue('no_payment')
-  noPayment,
   @JsonValue('cash_payment')
   cashPayment,
   @JsonValue('card_payment')
