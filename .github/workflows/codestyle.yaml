@@ -7,7 +7,7 @@ on:
 jobs:
   linting:
     name: Flutter formatting
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -19,3 +19,18 @@ jobs:
 
       - name: Formatting
         run: flutter format --set-exit-if-changed .
+
+  analyze:
+    name: Flutter analyze
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: 2.2.3
+
+      - name: Analyze
+        run: flutter analyze
