@@ -85,6 +85,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 1.8
+          distribution: zulu
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v1
