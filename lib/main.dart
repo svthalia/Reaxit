@@ -16,8 +16,6 @@ import 'package:reaxit/ui/router/router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import 'blocs/setting_cubit.dart';
-
 Future<void> main() async {
   await SentryFlutter.init(
     (options) {
@@ -46,6 +44,18 @@ class _ThaliAppState extends State<ThaliApp> {
   late final ThaliaRouterDelegate _routerDelegate;
   late final ThaliaRouteInformationParser _routeInformationParser;
 
+  Future<void> setupInteractdMessage() async {
+    var initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+
+    if (initialMessage != null) {
+      // App is opened from a message
+    }
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      // Message is received while the app is open
+    });
+  }
+
   @override
   void initState() {
     _routerDelegate = ThaliaRouterDelegate(
@@ -53,6 +63,7 @@ class _ThaliAppState extends State<ThaliApp> {
     );
     _routeInformationParser = ThaliaRouteInformationParser();
     super.initState();
+    setupInteractdMessage();
   }
 
   @override

@@ -4,7 +4,6 @@ import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/setting_cubit.dart';
 import 'package:reaxit/blocs/theme_bloc.dart';
 import 'package:reaxit/models/category.dart';
-import 'package:reaxit/models/device.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
 
@@ -45,6 +44,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _makeSetting(Category category, bool enabled) {
+    if (category.key == 'general') {
+      // The general category is always enabled (and can't be disabled)
+      return SwitchListTile(
+        value: true,
+        onChanged: null,
+        title: Text(category.name),
+        subtitle: category.description.isNotEmpty
+            ? Text(category.description)
+            : null,
+      );
+    }
     return SwitchListTile(
       value: enabled,
       onChanged: (value) {
