@@ -82,6 +82,9 @@ dependencies:
   # Firebase
   firebase_messaging: ^10.0.2
 
+  # Push notifications in app
+  overlay_support: ^1.2.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

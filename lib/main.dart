@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:reaxit/blocs/album_list_bloc.dart';
 import 'package:reaxit/blocs/api_repository.dart';
 import 'package:reaxit/blocs/auth_bloc.dart';
@@ -44,15 +45,58 @@ class _ThaliAppState extends State<ThaliApp> {
   late final ThaliaRouterDelegate _routerDelegate;
   late final ThaliaRouteInformationParser _routeInformationParser;
 
-  Future<void> setupInteractdMessage() async {
+  Future<void> setupInteractedMessage(BuildContext context) async {
     var initialMessage = await FirebaseMessaging.instance.getInitialMessage();
 
+    // User got a push notification outside of the app while the app was not running in the background
     if (initialMessage != null) {
-      // App is opened from a message
+      print(initialMessage);
     }
 
+    // User got a push notification while the app is running
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        showOverlayNotification((context) {
+          return SafeArea(
+            child: Card(
+              child: ListTile(
+                title: Text(message.notification!.title != null ? message.notification!.title! : ''),
+                subtitle: Text(message.notification!.body != null ? message.notification!.body! : ''),
+                trailing: IconButton(
+                    icon: Icon(Icons.close),
+                    onPressed: () {
+                      OverlaySupportEntry.of(context)!.dismiss();
+                    }),
+              ),
+            ),
+          );
+        }, duration: Duration(milliseconds: 4000));
+      }
+    });
+
+    // User clicked on push notification outside of app and the app was still in the background
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      // Message is received while the app is open
+      if (message.notification != null) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(message.notification!.title != null ? message.notification!.title! : ''),
+              content: SingleChildScrollView(
+                child: Text(message.notification!.title != null ? message.notification!.title! : ''),
+              ),
+              actions: [
+                TextButton(
+                onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                child: Text('Ok'),
+                ),
+              ]
+            );
+          },
+        );
+      }
     });
   }
 
@@ -63,12 +107,12 @@ class _ThaliAppState extends State<ThaliApp> {
     );
     _routeInformationParser = ThaliaRouteInformationParser();
     super.initState();
-    setupInteractdMessage();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ThemeBloc, ThemeMode>(
+    return OverlaySupport(
+      child: BlocBuilder<ThemeBloc, ThemeMode>(
       builder: (context, themeMode) {
         return BlocBuilder<AuthBloc, AuthState>(
           builder: (context, authState) {
@@ -86,6 +130,7 @@ class _ThaliAppState extends State<ThaliApp> {
                   FirebaseMessaging.instance.onTokenRefresh.listen((String token) {
                     registerToken(token, apiRepository);
                   });
+                  setupInteractedMessage(context);
                   return RepositoryProvider(
                     create: (_) => apiRepository,
                     child: Builder(builder: (context) {
@@ -136,6 +181,7 @@ class _ThaliAppState extends State<ThaliApp> {
           },
         );
       },
+    )
     );
   }
 }
