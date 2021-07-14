@@ -50,7 +50,9 @@ class _ThaliAppState extends State<ThaliApp> {
 
     // User got a push notification outside of the app while the app was not running in the background
     if (initialMessage != null) {
-      print(initialMessage);
+      if (initialMessage.data.containsKey('url') && initialMessage.data['url'] != null) {
+        // TODO
+      }
     }
 
     // User got a push notification while the app is running
@@ -76,26 +78,8 @@ class _ThaliAppState extends State<ThaliApp> {
 
     // User clicked on push notification outside of app and the app was still in the background
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      if (message.notification != null) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(message.notification!.title != null ? message.notification!.title! : ''),
-              content: SingleChildScrollView(
-                child: Text(message.notification!.title != null ? message.notification!.title! : ''),
-              ),
-              actions: [
-                TextButton(
-                onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                child: Text('Ok'),
-                ),
-              ]
-            );
-          },
-        );
+      if (message.data.containsKey('url') && message.data['url'] != null) {
+        // TODO
       }
     });
   }
