@@ -12,7 +12,7 @@ Payment _$PaymentFromJson(Map<String, dynamic> json) {
     json['topic'] as String,
     json['notes'] as String?,
     _$enumDecode(_$PaymentTypeEnumMap, json['type']),
-    (json['amount'] as num).toDouble(),
+    json['amount'] as String,
     DateTime.parse(json['created_at'] as String),
   );
 }
@@ -53,8 +53,9 @@ K _$enumDecode<K, V>(
 }
 
 const _$PaymentTypeEnumMap = {
-  PaymentType.cashPayment: 'cashPayment',
-  PaymentType.cardPayment: 'cardPayment',
-  PaymentType.tpayPayment: 'tpayPayment',
-  PaymentType.wirePayment: 'wirePayment',
+  PaymentType.noPayment: 'no_payment',
+  PaymentType.cashPayment: 'cash_payment',
+  PaymentType.cardPayment: 'card_payment',
+  PaymentType.tpayPayment: 'tpay_payment',
+  PaymentType.wirePayment: 'wire_payment',
 };

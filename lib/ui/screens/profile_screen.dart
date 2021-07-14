@@ -4,7 +4,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:reaxit/blocs/api_repository.dart';
+import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/blocs/full_member_cubit.dart';
 import 'package:reaxit/blocs/member_cubit.dart';
 import 'package:reaxit/models/member.dart';
@@ -32,6 +32,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       RepositoryProvider.of<ApiRepository>(context),
     )..load(widget.pk);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _memberCubit.close();
+    super.dispose();
   }
 
   void _showAvatarView(BuildContext context, ListMember member) {
@@ -181,7 +187,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       expandedHeight: 200,
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
-        title: Text(member?.displayName ?? 'Profile'),
+        title: Text(member?.displayName ?? 'PROFILE'),
         background: Builder(
           builder: (context) {
             return GestureDetector(
@@ -527,6 +533,13 @@ class __DescriptionFactState extends State<_DescriptionFact>
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _fullMemberCubit.close();
+    _controller.dispose();
+    super.dispose();
+  }
+
   Widget _fieldLabel(String title) {
     return Text(title, style: Theme.of(context).textTheme.subtitle2);
   }
@@ -559,13 +572,13 @@ class __DescriptionFactState extends State<_DescriptionFact>
                           Expanded(
                             child: TextField(
                               controller: _controller,
-                              minLines: 1,
-                              maxLines: 5,
+                              maxLines: null,
                               style: Theme.of(context).textTheme.bodyText2,
                             ),
                           ),
                           IconButton(
                             icon: Icon(Icons.check),
+                            tooltip: 'Edit your description',
                             onPressed: () async {
                               try {
                                 await _fullMemberCubit.updateDescription(
@@ -598,13 +611,16 @@ class __DescriptionFactState extends State<_DescriptionFact>
                                       true)
                                   ? "This member hasn't created a description yet."
                                   : widget.member.profileDescription!,
-                              style: TextStyle(
-                                fontStyle: (widget.member.profileDescription
-                                            ?.isEmpty ??
-                                        true)
-                                    ? FontStyle.italic
-                                    : FontStyle.normal,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2!
+                                  .copyWith(
+                                    fontStyle: (widget.member.profileDescription
+                                                ?.isEmpty ??
+                                            true)
+                                        ? FontStyle.italic
+                                        : FontStyle.normal,
+                                  ),
                             ),
                           ),
                           if (isMe)
@@ -625,3 +641,5 @@ class __DescriptionFactState extends State<_DescriptionFact>
     );
   }
 }
+
+// TODO: Add photo index/total indicator to gallery.

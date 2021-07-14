@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:overlay_support/overlay_support.dart';
-import 'package:reaxit/blocs/api_repository.dart';
+import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/blocs/setting_cubit.dart';
 import 'package:reaxit/blocs/theme_bloc.dart';
 import 'package:reaxit/models/category.dart';
@@ -12,7 +11,7 @@ class SettingsScreen extends StatefulWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ThaliaAppBar(title: Text('Settings')),
+      appBar: ThaliaAppBar(title: Text('SETTINGS')),
       drawer: MenuDrawer(),
       body: ListView(
         padding: const EdgeInsets.all(15),
@@ -132,7 +131,7 @@ class _ThemeModeCard extends StatelessWidget {
       child: ListTile(
         leading: Icon(Icons.brightness_6_sharp),
         title: Text(
-          'Theme mode',
+          'Theme',
           style: Theme.of(context).textTheme.bodyText1,
         ),
         trailing: BlocBuilder<ThemeBloc, ThemeMode>(

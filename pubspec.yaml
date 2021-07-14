@@ -14,7 +14,7 @@ publish_to: 'none'
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 3.0.0+1
 
 environment:
   sdk: '>=2.13.0 <3.0.0'
@@ -65,7 +65,7 @@ dependencies:
   flutter_widget_from_html_core: ^0.6.0
 
   # Sentry error reporting.
-  sentry_flutter: ^5.0.0
+  sentry_flutter: ^5.1.0
 
   # Share menu.
   share: ^2.0.1
@@ -74,10 +74,16 @@ dependencies:
   path_provider: ^2.0.1
   
   # Access camera and gallery.
-  image_picker: ^0.7.4
+  image_picker: ^0.8.0+1
 
   # Resize images.
   image_cropper: ^1.4.0
+
+  # Carousel.
+  carousel_slider: ^4.0.0-nullsafety.0
+
+  # Static analysis.
+  pedantic: ^1.11.1
 
   # Firebase
   firebase_messaging: ^10.0.2

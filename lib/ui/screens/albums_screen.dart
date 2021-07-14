@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/album_list_bloc.dart';
-import 'package:reaxit/blocs/api_repository.dart';
+import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/ui/widgets/album_tile.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
@@ -39,7 +39,7 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ThaliaAppBar(
-        title: Text('Albums'),
+        title: Text('ALBUMS'),
         actions: [
           IconButton(
             icon: Icon(Icons.search),

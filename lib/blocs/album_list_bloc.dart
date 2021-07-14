@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reaxit/blocs/api_repository.dart';
+import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/blocs/list_event.dart';
 import 'package:reaxit/blocs/list_state.dart';
 import 'package:reaxit/models/album.dart';
@@ -19,7 +19,7 @@ class AlbumListEvent extends ListEvent {
 typedef AlbumListState = ListState<AlbumListEvent, ListAlbum>;
 
 class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
-  static final int _firstPageSize = 9;
+  static final int _firstPageSize = 60;
   static final int _pageSize = 30;
 
   final ApiRepository api;
@@ -41,7 +41,6 @@ class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
 
   Stream<AlbumListState> _load(AlbumListEvent event) async* {
     yield state.copyWith(isLoading: true, event: event);
-    // await Future.delayed(Duration(seconds: 1));
 
     try {
       var listResponse = await api.getAlbums(
@@ -73,7 +72,6 @@ class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
 
   Stream<AlbumListState> _more(AlbumListEvent event) async* {
     yield state.copyWith(isLoadingMore: true);
-    // await Future.delayed(Duration(seconds: 1));
 
     try {
       var listResponse = await api.getAlbums(

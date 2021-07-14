@@ -30,6 +30,7 @@ Podfile.lock
 .pub-cache/
 .pub/
 /build/
+*.ipa
 
 # Web related
 lib/generated_plugin_registrant.dart
@@ -43,3 +44,21 @@ app.*.map.json
 # Google services
 google-services.json
 GoogleService-Info.plist
+google-play.json
+app-store.p8
+
+# Environment
+.env
+key.properties
+
+# fastlane
+#
+# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
+# screenshots whenever they are needed.
+# For more information about the recommended setup visit:
+# https://docs.fastlane.tools/best-practices/source-control/
+
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output

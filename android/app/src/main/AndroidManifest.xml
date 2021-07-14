@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.thaliapp.reaxit">
+    package="com.thaliapp">
     <!-- io.flutter.app.FlutterApplication is an android.app.Application that
          calls FlutterMain.startInitialization(this); in its onCreate method.
          In most cases you can leave this as-is, but you if you want to provide
@@ -50,6 +50,7 @@
                 <data android:path="/events/" />
                 <data android:pathPattern="/events/.*/" />
                 <data android:pathPattern="/members/photos/.*/" />
+                <data android:pathPattern="/sales/order/.*/pay/" />
             </intent-filter>
             
             <intent-filter>

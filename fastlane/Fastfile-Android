@@ -1,0 +1,71 @@
+def get_next_version_code
+  internal_version = google_play_track_version_codes(track: "internal")
+  alpha_version = google_play_track_version_codes(track: "alpha")
+  beta_version = google_play_track_version_codes(track: "beta")
+  production_version = google_play_track_version_codes(track: "production")
+
+  return [
+    internal_version[0],
+    alpha_version[0],
+    beta_version[0],
+    production_version[0]
+  ].select { |element| element.is_a?(Integer) }.max + 1
+end
+
+platform :android do
+  private_lane :build do |options|
+    sh("flutter", "clean")
+    build_cmd = "flutter build"
+    if options[:apk]
+      build_cmd += " apk"
+    else
+      build_cmd += " appbundle"
+    end
+
+    if ENV["THALIA_OAUTH_APP_ID"] and ENV["THALIA_OAUTH_APP_SECRET"] and ENV["THALIA_API_HOST"]
+      build_cmd += " --dart-define=THALIA_API_HOST=\"#{ENV["THALIA_API_HOST"]}\""
+      build_cmd += " --dart-define=THALIA_OAUTH_APP_ID=\"#{ENV["THALIA_OAUTH_APP_ID"]}\""
+      build_cmd += " --dart-define=THALIA_OAUTH_APP_SECRET=\"#{ENV["THALIA_OAUTH_APP_SECRET"]}\""
+    end
+    
+    if ENV["SENTRY_DSN"]
+      build_cmd += " --dart-define=SENTRY_DSN=\"#{ENV["SENTRY_DSN"]}\""
+    end
+
+    build_cmd += " --build-number=#{get_next_version_code()}"
+    sh(build_cmd)
+  end
+
+  desc "Build release APK and upload"
+  private_lane :release_and_upload do |options|
+    build
+    changelog_from_git_commits
+    upload_to_play_store(
+      track: options[:track],
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      aab: "build/app/outputs/bundle/release/app-release.aab"
+    )
+  end
+
+  desc "Continuous Integration build"
+  lane :deploy_adhoc do
+    build(apk: true)
+  end
+
+  desc "Deploy a new alpha version to the Google Play"
+  lane :deploy_internal do
+    release_and_upload(track: "internal")
+  end
+
+  desc "Deploy a new beta version to the Google Play"
+  lane :deploy_beta do
+    release_and_upload(track: "beta")
+  end
+
+  desc "Deploy a new version to the Google Play"
+  lane :deploy_production do |options|
+    release_and_upload(track: "production")
+  end
+end

@@ -13,12 +13,25 @@ class FoodOrder {
   final Product product;
   final Payment? payment;
 
+  @JsonKey(ignore: true)
+  bool? _tpayAllowed;
+
+  /// Whether this order can be paid with Thalia Pay.
+  /// See https://github.com/svthalia/concrexit/issues/1784.
+  ///
+  /// Warning: this is not properly set on orders retrieved
+  /// through [ApiRepository.getFoodEvents].
+  @JsonKey(ignore: true)
+  bool get tpayAllowed => _tpayAllowed ?? false;
+  @JsonKey(ignore: true)
+  set tpayAllowed(bool value) => _tpayAllowed = value;
+
   bool get isPaid => payment != null;
 
   factory FoodOrder.fromJson(Map<String, dynamic> json) =>
       _$FoodOrderFromJson(json);
 
-  const FoodOrder(
+  FoodOrder(
     this.pk,
     this.member,
     this.name,

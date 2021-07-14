@@ -5,13 +5,11 @@ import 'package:equatable/equatable.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:reaxit/blocs/api_repository.dart';
+import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/models/category.dart';
 import 'package:reaxit/models/device.dart';
 import 'package:reaxit/push_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'detail_state.dart';
 
 class SettingState extends Equatable {
   /// This can only be null when [isLoading] or [hasException] is true.

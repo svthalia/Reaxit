@@ -1,0 +1,7 @@
+if not is_ci?
+  update_fastlane
+end
+skip_docs
+
+import("./Fastfile-Android")
+import("./Fastfile-iOS")

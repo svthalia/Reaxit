@@ -27,10 +27,27 @@ class AdminRegistration {
   final DateTime date;
   final String? payment;
 
+  @JsonKey(ignore: true)
+  bool? _tpayAllowed;
+
+  /// Whether this registration can be paid with Thalia Pay.
+  /// See https://github.com/svthalia/concrexit/issues/1784.
+  ///
+  /// Warning: this is only properly set on registrations
+  /// retrieved through [ApiRepository.getEvent].
+  @JsonKey(ignore: true)
+  bool get tpayAllowed => _tpayAllowed ?? false;
+  @JsonKey(ignore: true)
+  set tpayAllowed(bool value) => _tpayAllowed = value;
+
+  bool get isInQueue => queuePosition != null;
+  bool get isInvited => queuePosition == null;
+  bool get isPaid => payment != null;
+
   factory AdminRegistration.fromJson(Map<String, dynamic> json) =>
       _$AdminRegistrationFromJson(json);
 
-  const AdminRegistration(
+  AdminRegistration(
     this.pk,
     this.present,
     this.queuePosition,
@@ -57,7 +74,30 @@ class FullEventRegistration implements EventRegistration, AdminRegistration {
   @override
   final String? payment;
 
-  const FullEventRegistration(
+  @override
+  @JsonKey(ignore: true)
+  bool? _tpayAllowed;
+
+  /// Whether this registration can be paid with Thalia Pay.
+  /// See https://github.com/svthalia/concrexit/issues/1784.
+  ///
+  /// Warning: this is not properly set on orders retrieved
+  /// through [ApiRepository.getEvents].
+  @override
+  @JsonKey(ignore: true)
+  bool get tpayAllowed => _tpayAllowed ?? false;
+  @override
+  @JsonKey(ignore: true)
+  set tpayAllowed(bool value) => _tpayAllowed = value;
+
+  @override
+  bool get isInQueue => queuePosition != null;
+  @override
+  bool get isInvited => queuePosition == null;
+  @override
+  bool get isPaid => payment != null;
+
+  FullEventRegistration(
     this.pk,
     this.member,
     this.name,

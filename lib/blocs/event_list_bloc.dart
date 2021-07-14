@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reaxit/blocs/api_repository.dart';
+import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/blocs/list_event.dart';
 import 'package:reaxit/blocs/list_state.dart';
 import 'package:reaxit/models/event.dart';
@@ -20,8 +20,8 @@ class EventListEvent extends ListEvent {
 typedef EventListState = ListState<EventListEvent, Event>;
 
 class EventListBloc extends Bloc<EventListEvent, EventListState> {
-  static final int _firstPageSize = 9;
-  static final int _pageSize = 9;
+  static final int _firstPageSize = 20;
+  static final int _pageSize = 10;
 
   final ApiRepository api;
 
@@ -42,11 +42,11 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
 
   Stream<EventListState> _load(EventListEvent event) async* {
     yield state.copyWith(isLoading: true, event: event);
-    // await Future.delayed(Duration(seconds: 1));
 
     try {
       var listResponse = await api.getEvents(
         search: event.search,
+        ordering: 'start',
         start: event.search == null ? event.date : null,
         limit: _firstPageSize,
         offset: 0,
@@ -75,11 +75,11 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
 
   Stream<EventListState> _more(EventListEvent event) async* {
     yield state.copyWith(isLoadingMore: true);
-    // await Future.delayed(Duration(seconds: 1));
 
     try {
       var listResponse = await api.getEvents(
         search: state.event.search,
+        ordering: 'start',
         start: state.event.search == null ? event.date : null,
         limit: _pageSize,
         offset: state.results.length,

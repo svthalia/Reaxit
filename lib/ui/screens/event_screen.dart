@@ -3,10 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
-import 'package:reaxit/blocs/api_repository.dart';
+import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/blocs/event_cubit.dart';
 import 'package:reaxit/blocs/event_list_bloc.dart';
+import 'package:reaxit/blocs/payment_user_cubit.dart';
 import 'package:reaxit/blocs/registrations_cubit.dart';
+import 'package:reaxit/blocs/welcome_cubit.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/ui/router/router.dart';
 import 'package:reaxit/ui/screens/event_admin_screen.dart';
@@ -40,6 +42,13 @@ class _EventScreenState extends State<EventScreen>
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _eventCubit.close();
+    _registrationsCubit.close();
+    super.dispose();
+  }
+
   Widget _makeMap(Event event) {
     return Link(
       uri: Uri.parse(
@@ -60,206 +69,353 @@ class _EventScreenState extends State<EventScreen>
     );
   }
 
-  Widget _makeInfo(Event event) {
+  Widget _makeEventInfo(Event event) {
     // TODO @LCKnol: make info
     return Text('info');
   }
 
-  Widget _makeButtons(Event event) {
-    Widget? registrationButton;
-    // TODO: add disabled versions when registration is not yet or not anymore possible
-    if (event.canCreateRegistration && event.registrationIsRequired) {
-      registrationButton = Column(
-        key: ValueKey('register'),
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: ElevatedButton.icon(
-              onPressed: () async {
-                try {
-                  final registration = await _eventCubit.register(event.pk);
-                  if (event.hasFields) {
-                    ThaliaRouterDelegate.of(context).push(
-                      MaterialPage(
-                        child: RegistrationScreen(
-                          eventPk: event.pk,
-                          registrationPk: registration.pk,
-                        ),
-                      ),
-                    );
-                  }
-                  BlocProvider.of<EventListBloc>(context).add(
-                    EventListEvent.load(),
-                  );
-                } on ApiException {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Could not register for the event.'),
-                    duration: Duration(seconds: 1),
-                  ));
-                }
-                await _registrationsCubit.load(event.pk);
-              },
-              icon: Icon(Icons.create_outlined),
-              label: Text('REGISTER'),
-            ),
-          ),
-        ],
-      );
-    } else if (event.canCreateRegistration && !event.registrationIsRequired) {
-      registrationButton = Column(
-        key: ValueKey('register'),
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: ElevatedButton.icon(
-              onPressed: () async {
-                try {
-                  await _eventCubit.register(event.pk);
-                  await _registrationsCubit.load(event.pk);
-                  BlocProvider.of<EventListBloc>(context).add(
-                    EventListEvent.load(),
-                  );
-                } on ApiException {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Could not register for the event.'),
-                    duration: Duration(seconds: 1),
-                  ));
-                }
-              },
-              icon: Icon(Icons.check),
-              label: Text("I'LL BE THERE"),
-            ),
-          ),
-        ],
-      );
-    } else if (event.canCancelRegistration && event.registrationIsRequired) {
-      registrationButton = Column(
-        key: ValueKey('cancel'),
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: ElevatedButton.icon(
-              onPressed: () async {
-                // TODO: confirmation dialog.
-                try {
-                  await _eventCubit.cancelRegistration(
-                    eventPk: event.pk,
-                    registrationPk: event.userRegistration!.pk,
-                  );
-                  await _registrationsCubit.load(event.pk);
-                  BlocProvider.of<EventListBloc>(context).add(
-                    EventListEvent.load(),
-                  );
-                } on ApiException {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Could not cancel your registration'),
-                    duration: Duration(seconds: 1),
-                  ));
-                }
-              },
-              icon: Icon(Icons.delete_forever_outlined),
-              label: Text('CANCEL REGISTRATION'),
-            ),
-          ),
-        ],
-      );
-    } else if (event.canCancelRegistration && !event.registrationIsRequired) {
-      registrationButton = Column(
-        key: ValueKey('cancel'),
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: ElevatedButton.icon(
-              onPressed: () async {
-                try {
-                  await _eventCubit.cancelRegistration(
-                    eventPk: event.pk,
-                    registrationPk: event.userRegistration!.pk,
-                  );
-                  await _registrationsCubit.load(event.pk);
-                  BlocProvider.of<EventListBloc>(context).add(
-                    EventListEvent.load(),
-                  );
-                } on ApiException {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Could not cancel your registration'),
-                    duration: Duration(seconds: 1),
-                  ));
-                }
-              },
-              icon: Icon(Icons.clear),
-              label: Text("I WON'T BE THERE"),
-            ),
-          ),
-        ],
-      );
-    }
+  Widget _makeRegistrationInfo(Event event) {
+    return BlocBuilder<PaymentUserCubit, PaymentUserState>(
+      builder: (context, paymentUserState) {
+        // TODO: Add disabled versions when registration is not yet or not anymore
+        //  possible? Or at least a text that describes this.
+        // TODO: Handle being in queue!
 
-    Widget? updateButton;
-    if (event.canUpdateRegistration && event.isRegistered && event.hasFields) {
-      updateButton = Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: ElevatedButton.icon(
-              onPressed: () {
-                ThaliaRouterDelegate.of(context).push(
-                  MaterialPage(
-                    child: RegistrationScreen(
+        late Widget updateButton;
+        // Update registration button.
+        if (event.canUpdateRegistration &&
+            event.isRegistered &&
+            event.hasFields) {
+          updateButton = SizedBox(
+            key: ValueKey('update'),
+            width: double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  ThaliaRouterDelegate.of(context).push(
+                    MaterialPage(
+                      child: RegistrationScreen(
+                        eventPk: event.pk,
+                        registrationPk: event.userRegistration!.pk,
+                      ),
+                    ),
+                  );
+                },
+                icon: Icon(Icons.build),
+                label: Text('UPDATE REGISTRATION'),
+              ),
+            ),
+          );
+        } else {
+          updateButton = SizedBox.shrink();
+        }
+
+        late Widget registrationButton;
+        // Create or cancel registration buttons.
+        if (event.canCreateRegistration && event.registrationIsRequired) {
+          // TODO: Join queue version: `if event.reached_max_participants`.
+          // TODO: Confirmation dialog if deregistration deadline has passed.
+          registrationButton = SizedBox(
+            key: ValueKey('register'),
+            width: double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  try {
+                    final registration = await _eventCubit.register(event.pk);
+                    if (event.hasFields) {
+                      ThaliaRouterDelegate.of(context).push(
+                        MaterialPage(
+                          child: RegistrationScreen(
+                            eventPk: event.pk,
+                            registrationPk: registration.pk,
+                          ),
+                        ),
+                      );
+                    }
+                    BlocProvider.of<EventListBloc>(context).add(
+                      EventListEvent.load(),
+                    );
+                  } on ApiException {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Could not register for the event.'),
+                      duration: Duration(seconds: 1),
+                    ));
+                  }
+                  await _registrationsCubit.load(event.pk);
+                },
+                icon: Icon(Icons.create_outlined),
+                label: Text('REGISTER'),
+              ),
+            ),
+          );
+        } else if (event.canCreateRegistration &&
+            !event.registrationIsRequired) {
+          registrationButton = SizedBox(
+            key: ValueKey('register'),
+            width: double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  try {
+                    await _eventCubit.register(event.pk);
+                    await _registrationsCubit.load(event.pk);
+                    BlocProvider.of<EventListBloc>(context).add(
+                      EventListEvent.load(),
+                    );
+                  } on ApiException {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Could not register for the event.'),
+                      duration: Duration(seconds: 1),
+                    ));
+                  }
+                },
+                icon: Icon(Icons.check),
+                label: Text("I'LL BE THERE"),
+              ),
+            ),
+          );
+        } else if (event.canCancelRegistration &&
+            event.registrationIsRequired) {
+          // TODO: Confirmation dialog, with money warning text if deadline has passed.
+          registrationButton = SizedBox(
+            key: ValueKey('cancel'),
+            width: double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  // TODO: The confirmation dialog.
+                  try {
+                    await _eventCubit.cancelRegistration(
                       eventPk: event.pk,
                       registrationPk: event.userRegistration!.pk,
-                    ),
-                  ),
-                );
-              },
-              icon: Icon(Icons.build),
-              label: Text('UPDATE REGISTRATION'),
+                    );
+                  } on ApiException {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Could not cancel your registration'),
+                      duration: Duration(seconds: 1),
+                    ));
+                  }
+                  await _registrationsCubit.load(event.pk);
+                  BlocProvider.of<EventListBloc>(context).add(
+                    EventListEvent.load(),
+                  );
+                  await BlocProvider.of<WelcomeCubit>(context).load();
+                },
+                icon: Icon(Icons.delete_forever_outlined),
+                label: Text('CANCEL REGISTRATION'),
+              ),
             ),
-          ),
-        ],
-      );
-    }
+          );
+        } else if (event.canCancelRegistration &&
+            !event.registrationIsRequired) {
+          registrationButton = SizedBox(
+            key: ValueKey('cancel'),
+            width: double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  try {
+                    await _eventCubit.cancelRegistration(
+                      eventPk: event.pk,
+                      registrationPk: event.userRegistration!.pk,
+                    );
+                    await _registrationsCubit.load(event.pk);
+                    BlocProvider.of<EventListBloc>(context).add(
+                      EventListEvent.load(),
+                    );
+                  } on ApiException {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Could not cancel your registration'),
+                      duration: Duration(seconds: 1),
+                    ));
+                  }
+                },
+                icon: Icon(Icons.clear),
+                label: Text("I WON'T BE THERE"),
+              ),
+            ),
+          );
+        } else {
+          registrationButton = SizedBox.shrink();
+        }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // TODO: make padding nice
-        // TODO: disclaimers and fine warnings
-        AnimatedSize(
-          vsync: this,
-          curve: Curves.ease,
-          duration: Duration(milliseconds: 200),
-          child: AnimatedSwitcher(
-            switchInCurve: Curves.ease,
-            switchOutCurve: Curves.ease,
-            duration: Duration(milliseconds: 200),
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              return ScaleTransition(scale: animation, child: child);
-            },
-            child: registrationButton ?? SizedBox(height: 0),
-          ),
-        ),
-        AnimatedSize(
-          vsync: this,
-          curve: Curves.ease,
-          duration: Duration(milliseconds: 200),
-          child: AnimatedSwitcher(
-            switchInCurve: Curves.ease,
-            switchOutCurve: Curves.ease,
-            duration: Duration(milliseconds: 200),
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              return ScaleTransition(scale: animation, child: child);
-            },
-            child: updateButton ?? SizedBox(height: 0),
-          ),
-        ),
-        SizedBox(height: 5),
-      ],
+        late Widget registrationInfoText;
+        // TODO: Registration-related info text.
+        registrationInfoText = SizedBox.shrink();
+
+        late Widget paymentWidget;
+        if (event.isInvited && event.paymentIsRequired) {
+          if (event.userRegistration!.isPaid) {
+            paymentWidget = Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text('You have paid.'),
+            );
+          } else if (paymentUserState.result == null) {
+            // PaymentUser loading or exception.
+            paymentWidget = const SizedBox.shrink();
+          } else if (!paymentUserState.result!.tpayAllowed) {
+            // TPay is not allowed.
+            paymentWidget = const SizedBox.shrink();
+          } else if (!event.userRegistration!.tpayAllowed) {
+            // TPay is not allowed.
+            paymentWidget = const SizedBox.shrink();
+          } else if (!paymentUserState.result!.tpayEnabled) {
+            // TPay is not enabled.
+            paymentWidget = SizedBox(
+              key: ValueKey('enable'),
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Tooltip(
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.all(8),
+                  message: 'To start using Thalia Pay, sign '
+                      'a direct debit mandate on the website.',
+                  child: ElevatedButton.icon(
+                    onPressed: null,
+                    icon: Icon(Icons.euro),
+                    label: Text('THALIA PAY: €${event.price}'),
+                  ),
+                ),
+              ),
+            );
+          } else {
+            // TPay can be used.
+            paymentWidget = SizedBox(
+              key: ValueKey('pay'),
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    final confirmed = await showDialog<bool>(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text('Confirm payment'),
+                          content: Text(
+                            'Are you sure you want to pay €${event.price} for '
+                            'your registration to "${event.title}"?',
+                            style: Theme.of(context).textTheme.bodyText2,
+                          ),
+                          actions: [
+                            TextButton.icon(
+                              onPressed: () => Navigator.of(
+                                context,
+                                rootNavigator: true,
+                              ).pop(false),
+                              icon: Icon(Icons.clear),
+                              label: Text('CANCEL'),
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: () => Navigator.of(
+                                context,
+                                rootNavigator: true,
+                              ).pop(true),
+                              icon: Icon(Icons.check),
+                              label: Text('YES'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+
+                    if (confirmed ?? false) {
+                      try {
+                        await _eventCubit.thaliaPayRegistration(
+                          eventPk: event.pk,
+                          registrationPk: event.userRegistration!.pk,
+                        );
+                      } on ApiException {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Could not pay your order.'),
+                          ),
+                        );
+                      }
+                    }
+                  },
+                  icon: Icon(Icons.euro),
+                  label: Text('THALIA PAY: €${event.price}'),
+                ),
+              ),
+            );
+          }
+        } else {
+          paymentWidget = SizedBox.shrink();
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // TODO: make padding nice
+            // TODO: disclaimers and fine warnings
+            AnimatedSize(
+              vsync: this,
+              curve: Curves.ease,
+              duration: Duration(milliseconds: 200),
+              child: AnimatedSwitcher(
+                switchInCurve: Curves.ease,
+                switchOutCurve: Curves.ease,
+                duration: Duration(milliseconds: 200),
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return ScaleTransition(scale: animation, child: child);
+                },
+                child: updateButton,
+              ),
+            ),
+            AnimatedSize(
+              vsync: this,
+              curve: Curves.ease,
+              duration: Duration(milliseconds: 200),
+              child: AnimatedSwitcher(
+                switchInCurve: Curves.ease,
+                switchOutCurve: Curves.ease,
+                duration: Duration(milliseconds: 200),
+                // transitionBuilder: (Widget child, Animation<double> animation) {
+                //   return ScaleTransition(scale: animation, child: child);
+                // },
+                child: registrationInfoText,
+              ),
+            ),
+            AnimatedSize(
+              vsync: this,
+              curve: Curves.ease,
+              duration: Duration(milliseconds: 200),
+              child: AnimatedSwitcher(
+                switchInCurve: Curves.ease,
+                switchOutCurve: Curves.ease,
+                duration: Duration(milliseconds: 200),
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return ScaleTransition(scale: animation, child: child);
+                },
+                child: registrationButton,
+              ),
+            ),
+            AnimatedSize(
+              vsync: this,
+              curve: Curves.ease,
+              duration: Duration(milliseconds: 200),
+              child: AnimatedSwitcher(
+                switchInCurve: Curves.ease,
+                switchOutCurve: Curves.ease,
+                duration: Duration(milliseconds: 200),
+                // transitionBuilder: (Widget child, Animation<double> animation) {
+                //   return ScaleTransition(scale: animation, child: child);
+                // },
+                child: paymentWidget,
+              ),
+            ),
+            SizedBox(height: 5),
+          ],
+        );
+      },
     );
   }
 
@@ -359,7 +515,7 @@ class _EventScreenState extends State<EventScreen>
       builder: (context, state) {
         if (state.hasException) {
           return Scaffold(
-            appBar: ThaliaAppBar(title: Text(widget.event?.title ?? 'Event')),
+            appBar: ThaliaAppBar(title: Text(widget.event?.title ?? 'EVENT')),
             body: RefreshIndicator(
               onRefresh: () async {
                 // Await both loads.
@@ -374,7 +530,7 @@ class _EventScreenState extends State<EventScreen>
             widget.event == null &&
             state.result == null) {
           return Scaffold(
-            appBar: ThaliaAppBar(title: Text('Event')),
+            appBar: ThaliaAppBar(title: Text('EVENT')),
             body: Center(
               child: CircularProgressIndicator(),
             ),
@@ -408,11 +564,11 @@ class _EventScreenState extends State<EventScreen>
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             _makeMap(event),
-                            _makeInfo(event),
-                            _makeButtons(event),
-                            Divider(),
+                            _makeEventInfo(event),
+                            _makeRegistrationInfo(event),
+                            const Divider(),
                             _makeDescription(event),
-                            Divider(),
+                            const Divider(),
                           ],
                         ),
                       ),

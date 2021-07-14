@@ -24,8 +24,8 @@ Event _$EventFromJson(Map<String, dynamic> json) {
         ? null
         : DateTime.parse(json['cancel_deadline'] as String),
     json['location'] as String,
-    (json['price'] as num).toDouble(),
-    (json['fine'] as num).toDouble(),
+    json['price'] as String,
+    json['fine'] as String,
     json['num_participants'] as int,
     json['max_participants'] as int?,
     json['no_registration_message'] as String?,

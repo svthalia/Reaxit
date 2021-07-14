@@ -7,7 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:reaxit/blocs/album_cubit.dart';
-import 'package:reaxit/blocs/api_repository.dart';
+import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/models/album.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
@@ -34,6 +34,12 @@ class _AlbumScreenState extends State<AlbumScreen> {
       RepositoryProvider.of<ApiRepository>(context),
     )..load(widget.slug);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _albumCubit.close();
+    super.dispose();
   }
 
   Widget _makePhotoCard(Album album, int index) {
@@ -144,7 +150,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
         if (state.hasException) {
           return Scaffold(
             appBar: ThaliaAppBar(
-              title: Text(widget.album?.title ?? 'Album'),
+              title: Text(widget.album?.title ?? 'ALBUM'),
               actions: [_makeShareAlbumButton(widget.slug)],
             ),
             body: ErrorScrollView(state.message!),
@@ -152,7 +158,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
         } else if (state.isLoading) {
           return Scaffold(
             appBar: ThaliaAppBar(
-              title: Text(widget.album?.title ?? 'Album'),
+              title: Text(widget.album?.title ?? 'ALBUM'),
               actions: [_makeShareAlbumButton(widget.slug)],
             ),
             body: Center(child: CircularProgressIndicator()),

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:reaxit/blocs/api_repository.dart';
+import 'package:reaxit/api_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 String deviceRegistrationIdPreferenceName = 'deviceRegistrationId';

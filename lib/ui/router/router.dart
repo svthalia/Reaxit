@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pedantic/pedantic.dart';
 import 'package:reaxit/blocs/auth_bloc.dart';
 import 'package:reaxit/ui/screens/album_screen.dart';
 import 'package:reaxit/ui/screens/albums_screen.dart';
@@ -10,38 +13,44 @@ import 'package:reaxit/ui/screens/login_screen.dart';
 import 'package:reaxit/ui/screens/members_screen.dart';
 import 'package:reaxit/ui/screens/profile_screen.dart';
 import 'package:reaxit/ui/screens/welcome_screen.dart';
+import 'package:reaxit/ui/widgets/tpay_sales_order_dialog.dart';
 
-class ThaliaRouterDelegate extends RouterDelegate<List<MaterialPage>>
-    with ChangeNotifier, PopNavigatorRouterDelegateMixin<List<MaterialPage>> {
+class ThaliaRouterDelegate extends RouterDelegate<Uri>
+    with ChangeNotifier, PopNavigatorRouterDelegateMixin<Uri> {
   static ThaliaRouterDelegate of(BuildContext context) {
     var delegate = Router.of(context).routerDelegate;
     assert(delegate is ThaliaRouterDelegate, 'Delegate type must match.');
     return delegate as ThaliaRouterDelegate;
   }
 
+  final AuthBloc authBloc;
+  late final StreamSubscription authSubscription;
+
   @override
   final GlobalKey<NavigatorState> navigatorKey;
 
-  bool _isAuthenticated = false;
-  final List<MaterialPage> _stack = [MaterialPage(child: LoginScreen())];
+  final List<Page> _stack = [MaterialPage(child: LoginScreen())];
 
-  ThaliaRouterDelegate({required AuthBloc authBloc})
+  ThaliaRouterDelegate({required this.authBloc})
       : navigatorKey = GlobalKey<NavigatorState>() {
-    authBloc.stream.listen((event) {
-      if (event is LoggedInAuthState) {
-        if (!_isAuthenticated) {
-          replaceStack([MaterialPage(child: WelcomeScreen())]);
-        }
-        _isAuthenticated = true;
-      } else if (event is LoggedOutAuthState) {
+    authSubscription = authBloc.stream.listen((state) {
+      if (state is LoggedInAuthState) {
+        replaceStack([MaterialPage(child: WelcomeScreen())]);
+      } else if (state is LoggedOutAuthState) {
         replaceStack([MaterialPage(child: LoginScreen())]);
-        _isAuthenticated = false;
       }
     });
   }
 
   @override
+  void dispose() {
+    authSubscription.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // Listener that creates SnackBars.
     return BlocListener<AuthBloc, AuthState>(
       listenWhen: (previous, current) {
         if (previous is LoggedInAuthState && current is LoggedOutAuthState) {
@@ -89,11 +98,77 @@ class ThaliaRouterDelegate extends RouterDelegate<List<MaterialPage>>
   }
 
   @override
-  Future<void> setNewRoutePath(List<MaterialPage> stack) async {
-    if (!_isAuthenticated) return SynchronousFuture(null);
-    _stack
-      ..clear()
-      ..addAll(stack);
+  Future<void> setNewRoutePath(Uri uri) async {
+    var authState = authBloc.state;
+    // Wait for the first non-loading authState, because deeplinks in
+    // android are passed before the AuthBloc gets the chance to load.
+    if (authState is LoadingAuthState) {
+      authState = await authBloc.stream.firstWhere(
+        (state) => !(state is LoadingAuthState),
+      );
+    }
+
+    if (!(authState is LoggedInAuthState)) return SynchronousFuture(null);
+
+    var path = uri.path;
+    var segments = uri.pathSegments;
+
+    if (segments.isEmpty) {
+      // Handle "/".
+      _stack
+        ..clear()
+        ..addAll([
+          MaterialPage(child: WelcomeScreen()),
+        ]);
+    } else if (RegExp('^/pizzas/?\$').hasMatch(path)) {
+      _stack
+        ..clear()
+        ..addAll([
+          MaterialPage(child: WelcomeScreen()),
+          // TODO: Get the right foodevent, probably using a disambiguation dialog
+          //  that is a SimpleDialog and shortly creates its own cubit to load the
+          //  possible foodevents.
+          // MaterialPage(child: FoodScreen()),
+        ]);
+    } else if (RegExp('^/events/?\$').hasMatch(path)) {
+      _stack
+        ..clear()
+        ..addAll([
+          MaterialPage(child: CalendarScreen()),
+        ]);
+    } else if (RegExp('^/events/([0-9]+)/?\$').hasMatch(path)) {
+      final pk = int.parse(segments[1]);
+      _stack
+        ..clear()
+        ..addAll([
+          MaterialPage(child: CalendarScreen()),
+          MaterialPage(child: EventScreen(pk: pk))
+        ]);
+    } else if (RegExp('^/members/photos/([a-z0-9\-_]+)/?\$').hasMatch(path)) {
+      _stack
+        ..clear()
+        ..addAll([
+          MaterialPage(child: AlbumsScreen()),
+          MaterialPage(child: AlbumScreen(slug: segments[2]))
+        ]);
+    } else if (RegExp('^/members/([0-9]+)/?\$').hasMatch(path)) {
+      final pk = int.parse(segments[1]);
+      _stack
+        ..clear()
+        ..addAll([
+          MaterialPage(child: MembersScreen()),
+          MaterialPage(child: ProfileScreen(pk: pk))
+        ]);
+    } else if (RegExp('^/sales/order/([a-f0-9\-]+)/pay/?\$').hasMatch(path)) {
+      final pk = segments[2];
+      if (navigatorKey.currentContext != null) {
+        unawaited(showDialog(
+          context: navigatorKey.currentContext!,
+          builder: (context) => TPaySalesOrderDialog(pk: pk),
+        ));
+      }
+    }
+
     return SynchronousFuture(null);
   }
 
@@ -109,6 +184,9 @@ class ThaliaRouterDelegate extends RouterDelegate<List<MaterialPage>>
     notifyListeners();
   }
 
+  // TODO: Fix missing animations. The old page is currently swapped for the
+  //  new one. Instead, it should be rendered over it before removing the old one.
+
   /// Replaces the top of the stack.
   void replace(MaterialPage page) {
     _stack
@@ -119,6 +197,7 @@ class ThaliaRouterDelegate extends RouterDelegate<List<MaterialPage>>
 
   /// Replaces the current stack.
   void replaceStack(List<MaterialPage> stack) {
+    // TODO: Dispose the removed widgets if that doesn't happen automatically.
     _stack
       ..clear()
       ..addAll(stack);
@@ -126,50 +205,15 @@ class ThaliaRouterDelegate extends RouterDelegate<List<MaterialPage>>
   }
 }
 
-class ThaliaRouteInformationParser
-    implements RouteInformationParser<List<MaterialPage>> {
+class ThaliaRouteInformationParser implements RouteInformationParser<Uri> {
   @override
-  Future<List<MaterialPage>> parseRouteInformation(routeInformation) async {
+  Future<Uri> parseRouteInformation(routeInformation) async {
     var uri = Uri.parse(routeInformation.location!);
-    var path = uri.path;
-    var segments = uri.pathSegments;
-
-    // Handle "/".
-    if (uri.pathSegments.isEmpty) {
-      return [MaterialPage(child: WelcomeScreen())];
-    } else if (RegExp('^/pizzas/\$').hasMatch(path)) {
-      return [
-        MaterialPage(child: WelcomeScreen()),
-        // TODO: get the right foodevent.
-        // MaterialPage(child: FoodScreen()),
-      ];
-    } else if (RegExp('^/events/\$').hasMatch(path)) {
-      return [MaterialPage(child: CalendarScreen())];
-    } else if (RegExp('^/events/([0-9]+)\$').hasMatch(path)) {
-      final pk = int.parse(segments[1]);
-      return [
-        MaterialPage(child: CalendarScreen()),
-        MaterialPage(child: EventScreen(pk: pk))
-      ];
-    } else if (RegExp('^/members/photos/([a-z0-9\-_]+)\$').hasMatch(path)) {
-      return [
-        MaterialPage(child: AlbumsScreen()),
-        MaterialPage(child: AlbumScreen(slug: segments[2]))
-      ];
-    } else if (RegExp('^/members/([0-9]+)\$').hasMatch(path)) {
-      final pk = int.parse(segments[1]);
-      return [
-        MaterialPage(child: MembersScreen()),
-        MaterialPage(child: ProfileScreen(pk: pk))
-      ];
-    }
-
-    // Handle unknown path.
-    return [MaterialPage(child: WelcomeScreen())];
+    return SynchronousFuture(uri);
   }
 
   @override
   RouteInformation restoreRouteInformation(configuration) {
-    return RouteInformation(location: '/');
+    return RouteInformation(location: configuration.toString());
   }
 }

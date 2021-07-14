@@ -1,4 +1,4 @@
-package com.thaliapp.reaxit
+package com.thaliapp
 
 import io.flutter.embedding.android.FlutterActivity
 
