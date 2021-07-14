@@ -647,45 +647,44 @@ class ApiRepository {
   }
 
   Future<Device> getDevice({required int id}) async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/pushnotifications/devices/$id/'
-    );
+    final uri =
+        _baseUri.replace(path: '$_basePath/pushnotifications/devices/$id/');
     final response = await _handleExceptions(() => client.get(uri));
     return Device.fromJson(jsonDecode(response.body));
   }
 
   Future<Device> putDevice({required int id, required Device device}) async {
-    final uri = _baseUri.replace(
-        path: '$_basePath/pushnotifications/devices/$id/'
-    );
-    final response = await _handleExceptions(() => client.put(uri, body: jsonEncode(device.toJson()), headers: _jsonHeader));
+    final uri =
+        _baseUri.replace(path: '$_basePath/pushnotifications/devices/$id/');
+    final response = await _handleExceptions(() => client.put(uri,
+        body: jsonEncode(device.toJson()), headers: _jsonHeader));
     return Device.fromJson(jsonDecode(response.body));
   }
 
   /// Register a device for token
   Future<Device> registerDevice(String token, String type, bool active) async {
     final uri = _baseUri.replace(path: '$_basePath/pushnotifications/devices/');
-    final body = jsonEncode({'registration_id': token, 'active': active, 'type': type});
+    final body =
+        jsonEncode({'registration_id': token, 'active': active, 'type': type});
     final response = await _handleExceptions(
-          () => client.post(uri, body: body, headers: _jsonHeader),
+      () => client.post(uri, body: body, headers: _jsonHeader),
     );
     return Device.fromJson(jsonDecode(response.body));
   }
 
   Future<ListResponse<Category>> getCategories() async {
-    final uri = _baseUri.replace(path: '$_basePath/pushnotifications/categories/');
+    final uri =
+        _baseUri.replace(path: '$_basePath/pushnotifications/categories/');
     final response = await _handleExceptions(
-          () => client.get(uri),
+      () => client.get(uri),
     );
-    return ListResponse<Category>.fromJson(
-        jsonDecode(response.body),
-            (json) => Category.fromJson(json as Map<String, dynamic>));
+    return ListResponse<Category>.fromJson(jsonDecode(response.body),
+        (json) => Category.fromJson(json as Map<String, dynamic>));
   }
 }
 
-  // TODO: Move json parsing of lists into isolates?
-  // TODO: Change ApiException to a class that can contain a string?
-  //  We can then display more specific error messages to the user based on
-  //  the message returned from the server, instead of only the status code.
-  //  This may especially be useful for the sales order payments.
-
+// TODO: Move json parsing of lists into isolates?
+// TODO: Change ApiException to a class that can contain a string?
+//  We can then display more specific error messages to the user based on
+//  the message returned from the server, instead of only the status code.
+//  This may especially be useful for the sales order payments.

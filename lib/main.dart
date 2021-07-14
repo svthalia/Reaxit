@@ -51,7 +51,8 @@ class _ThaliAppState extends State<ThaliApp> {
 
     // User got a push notification outside of the app while the app was not running in the background
     if (initialMessage != null) {
-      if (initialMessage.data.containsKey('url') && initialMessage.data['url'] != null) {
+      if (initialMessage.data.containsKey('url') &&
+          initialMessage.data['url'] != null) {
         // TODO
       }
     }
@@ -63,8 +64,12 @@ class _ThaliAppState extends State<ThaliApp> {
           return SafeArea(
             child: Card(
               child: ListTile(
-                title: Text(message.notification!.title != null ? message.notification!.title! : ''),
-                subtitle: Text(message.notification!.body != null ? message.notification!.body! : ''),
+                title: Text(message.notification!.title != null
+                    ? message.notification!.title!
+                    : ''),
+                subtitle: Text(message.notification!.body != null
+                    ? message.notification!.body!
+                    : ''),
                 trailing: IconButton(
                     icon: Icon(Icons.close),
                     onPressed: () {
@@ -108,13 +113,13 @@ class _ThaliAppState extends State<ThaliApp> {
 
   @override
   Widget build(BuildContext context) {
-    return OverlaySupport(
-      child: BlocBuilder<ThemeBloc, ThemeMode>(
+    return OverlaySupport(child: BlocBuilder<ThemeBloc, ThemeMode>(
       builder: (context, themeMode) {
         return BlocBuilder<AuthBloc, AuthState>(
           builder: (context, authState) {
             if (authState is LoggedInAuthState) {
-              var apiRepository = ApiRepository(client: authState.client, logOut: authState.logOut);
+              var apiRepository = ApiRepository(
+                  client: authState.client, logOut: authState.logOut);
               register(apiRepository);
               FirebaseMessaging.instance.onTokenRefresh.listen((String token) {
                 registerToken(token, apiRepository);
@@ -190,7 +195,6 @@ class _ThaliAppState extends State<ThaliApp> {
           },
         );
       },
-    )
-    );
+    ));
   }
 }

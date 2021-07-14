@@ -11,7 +11,5 @@ class Category {
   factory Category.fromJson(Map<String, dynamic> json) =>
       _$CategoryFromJson(json);
 
-  const Category(
-    this.key, this.name, this.description
-  );
+  const Category(this.key, this.name, this.description);
 }

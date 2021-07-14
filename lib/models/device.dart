@@ -11,16 +11,15 @@ class Device {
   final String type;
   final List<String> receiveCategory;
 
-  factory Device.fromJson(Map<String, dynamic> json) =>
-        _$DeviceFromJson(json);
+  factory Device.fromJson(Map<String, dynamic> json) => _$DeviceFromJson(json);
 
   Map<String, dynamic> toJson() => _$DeviceToJson(this);
 
-  const Device(
-    this.pk, this.registrationId, this.active, this.dateCreated, this.type, this.receiveCategory
-  );
+  const Device(this.pk, this.registrationId, this.active, this.dateCreated,
+      this.type, this.receiveCategory);
 
   Device copy() {
-    return Device(pk, registrationId, active, dateCreated, type, receiveCategory.toList());
+    return Device(pk, registrationId, active, dateCreated, type,
+        receiveCategory.toList());
   }
 }

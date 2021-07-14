@@ -40,18 +40,19 @@ Future<bool> registerToken(String token, ApiRepository api) async {
       // The device token is invalid
       await prefs.remove(deviceRegistrationIdPreferenceName);
       try {
-        var setting = await api.registerDevice(token, Platform.isIOS ? 'ios' : 'android', true);
+        var setting = await api.registerDevice(
+            token, Platform.isIOS ? 'ios' : 'android', true);
         await prefs.setInt(deviceRegistrationIdPreferenceName, setting.pk);
         return true;
       } on ApiException {
         return false;
       }
     }
-  }
-  else {
+  } else {
     // We must always register this device if there is no deviceRegistrationId
     try {
-      var setting = await api.registerDevice(token, Platform.isIOS ? 'ios' : 'android', true);
+      var setting = await api.registerDevice(
+          token, Platform.isIOS ? 'ios' : 'android', true);
       await prefs.setInt(deviceRegistrationIdPreferenceName, setting.pk);
       return true;
     } on ApiException {

@@ -34,12 +34,12 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-
   late final SettingsCubit _settingCubit;
 
   @override
   void initState() {
-    _settingCubit = SettingsCubit(RepositoryProvider.of<ApiRepository>(context))..load();
+    _settingCubit = SettingsCubit(RepositoryProvider.of<ApiRepository>(context))
+      ..load();
     super.initState();
   }
 
@@ -50,9 +50,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         value: true,
         onChanged: null,
         title: Text(category.name),
-        subtitle: category.description.isNotEmpty
-            ? Text(category.description)
-            : null,
+        subtitle:
+            category.description.isNotEmpty ? Text(category.description) : null,
       );
     }
     return SwitchListTile(
@@ -61,42 +60,43 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _settingCubit.setSetting(category.key, value);
       },
       title: Text(category.name),
-      subtitle: category.description.isNotEmpty
-          ? Text(category.description)
-          : null,
+      subtitle:
+          category.description.isNotEmpty ? Text(category.description) : null,
     );
   }
 
   Widget _makeNotificationSettings() {
     return BlocBuilder<SettingsCubit, SettingState>(
-      bloc: _settingCubit,
-      builder: (context, state) {
-        if (state.hasException) {
-          return RefreshIndicator(
-            onRefresh: () async {
-              var settingFuture = _settingCubit.load();
-              await settingFuture;
-            },
-            child: Center(child: Text(state.message!)),
-          );
-        } else if (state.isLoading && state.categories == null) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        } else {
-          return Card(
-            child: Column(
+        bloc: _settingCubit,
+        builder: (context, state) {
+          if (state.hasException) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                var settingFuture = _settingCubit.load();
+                await settingFuture;
+              },
+              child: Center(child: Text(state.message!)),
+            );
+          } else if (state.isLoading && state.categories == null) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            return Card(
+                child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: ListTile.divideTiles(
                 context: context,
-                tiles: _settingCubit.state.categories!.map((category) => _makeSetting(category, _settingCubit.state.device!.receiveCategory.contains(category.key))),
+                tiles: _settingCubit.state.categories!.map((category) =>
+                    _makeSetting(
+                        category,
+                        _settingCubit.state.device!.receiveCategory
+                            .contains(category.key))),
               ).toList(),
-            )
-          );
-        }
-      }
-    );
+            ));
+          }
+        });
   }
 
   @override
@@ -119,7 +119,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
   }
-
 }
 
 class _ThemeModeCard extends StatelessWidget {

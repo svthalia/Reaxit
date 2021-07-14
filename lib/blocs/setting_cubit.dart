@@ -1,4 +1,3 @@
-
 import 'dart:io' show Platform;
 
 import 'package:equatable/equatable.dart';
@@ -33,9 +32,9 @@ class SettingState extends Equatable {
     required this.isLoading,
     required this.message,
   }) : assert(
-  categories != null || isLoading || message != null,
-  'foodEvent can only be null when isLoading or hasException is true.',
-  );
+          categories != null || isLoading || message != null,
+          'foodEvent can only be null when isLoading or hasException is true.',
+        );
 
   @override
   List<Object?> get props => [device, categories, message, isLoading];
@@ -81,17 +80,17 @@ class SettingsCubit extends Cubit<SettingState> {
       var copy = state.device!.copy();
       if (value) {
         copy.receiveCategory.add(key);
-      }
-      else {
+      } else {
         copy.receiveCategory.remove(key);
       }
       emit(SettingState.result(device: copy, categories: state.categories!));
       var prefs = await SharedPreferences.getInstance();
-      var deviceRegistrationId = prefs.getInt(deviceRegistrationIdPreferenceName);
+      var deviceRegistrationId =
+          prefs.getInt(deviceRegistrationIdPreferenceName);
       if (deviceRegistrationId == null) {
-        emit(SettingState.failure(message: 'Failed to register device for push notifications.'));
-      }
-      else {
+        emit(SettingState.failure(
+            message: 'Failed to register device for push notifications.'));
+      } else {
         await api.putDevice(id: deviceRegistrationId, device: copy);
       }
     }
@@ -104,15 +103,15 @@ class SettingsCubit extends Cubit<SettingState> {
     var deviceRegistrationId = prefs.getInt(deviceRegistrationIdPreferenceName);
     if (token == null) {
       emit(SettingState.failure(message: 'No device token found.'));
-    }
-    else if (deviceRegistrationId == null) {
-      emit(SettingState.failure(message: 'Failed to register device for push notifications.'));
-    }
-    else {
+    } else if (deviceRegistrationId == null) {
+      emit(SettingState.failure(
+          message: 'Failed to register device for push notifications.'));
+    } else {
       try {
         final setting = await api.getDevice(id: deviceRegistrationId);
         final categories = await api.getCategories();
-        emit(SettingState.result(device: setting, categories: categories.results));
+        emit(SettingState.result(
+            device: setting, categories: categories.results));
       } on ApiException catch (exception) {
         emit(SettingState.failure(message: _failureMessage(exception)));
       }
