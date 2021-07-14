@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/auth_bloc.dart';
+import 'package:reaxit/theme.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -29,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
       builder: (context, authState) {
         if (authState is LoadingAuthState) {
           return Scaffold(
-            backgroundColor: Color(0xFFE62272),
+            backgroundColor: magenta,
             body: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -54,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         } else {
           return Scaffold(
-            backgroundColor: Color(0xFFE62272),
+            backgroundColor: magenta,
             body: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

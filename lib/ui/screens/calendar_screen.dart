@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/blocs/event_list_bloc.dart';
 import 'package:reaxit/models/event.dart';
+import 'package:reaxit/theme.dart';
 import 'package:reaxit/ui/router/router.dart';
 import 'package:reaxit/ui/screens/event_screen.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
@@ -202,7 +203,7 @@ class CalendarScrollView extends StatelessWidget {
       physics: AlwaysScrollableScrollPhysics(),
       slivers: [
         SliverPadding(
-          padding: EdgeInsets.all(10),
+          padding: EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 4),
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
@@ -216,7 +217,7 @@ class CalendarScrollView extends StatelessWidget {
         ),
         if (listState.isLoadingMore)
           SliverPadding(
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.all(8),
             sliver: SliverToBoxAdapter(
               child: Center(
                 child: CircularProgressIndicator(),
@@ -255,12 +256,17 @@ class _MonthCard extends StatelessWidget {
     final days = dayGroupedEvents.keys.toList();
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          month.year == DateTime.now().year
-              ? monthFormatter.format(month)
-              : monthYearFormatter.format(month),
-          style: Theme.of(context).textTheme.headline5,
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Text(
+            month.year == DateTime.now().year
+                ? monthFormatter.format(month)
+                : monthYearFormatter.format(month),
+            style: Theme.of(context).textTheme.headline6,
+            textAlign: TextAlign.left,
+          ),
         ),
         Column(children: [
           for (final day in days)
@@ -283,22 +289,26 @@ class _DayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: 70,
-            alignment: Alignment.topLeft,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   day.day.toString(),
-                  style: TextStyle(fontSize: 30),
+                  style: TextStyle(
+                      color: Color(0xFF8e8e8e), fontSize: 28, height: 1),
                 ),
-                Text(dayFormatter.format(day)),
+                Text(
+                  dayFormatter.format(day),
+                  style: TextStyle(color: Color(0xFF8e8e8e), fontSize: 14),
+                ),
               ],
             ),
           ),
@@ -326,38 +336,42 @@ class _EventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final startTime = timeFormatter.format(event.start);
     final endTime = timeFormatter.format(event.end);
-    return InkWell(
-      onTap: () {
-        ThaliaRouterDelegate.of(context).push(
-          MaterialPage(child: EventScreen(pk: event.pk)),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.all(15),
-        margin: const EdgeInsets.only(bottom: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(1),
-          color: event.isRegistered ? Color(0xFFE62272) : Colors.grey,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              event.title,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              '$startTime - $endTime | ${event.location}',
-              style: TextStyle(color: Colors.white),
-            ),
-          ],
-        ),
+    return Container(
+        // margin: const EdgeInsets.only(bottom: 8),
+        child: Ink(
+      decoration: BoxDecoration(
+        color: event.isRegistered ? magenta : Colors.grey,
+        borderRadius: BorderRadius.circular(2),
       ),
-    );
+      child: InkWell(
+          onTap: () {
+            ThaliaRouterDelegate.of(context).push(
+              MaterialPage(child: EventScreen(pk: event.pk)),
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  event.title,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  '$startTime - $endTime | ${event.location}',
+                  style: TextStyle(
+                    color: Colors.white.withAlpha(204),
+                  ),
+                ),
+              ],
+            ),
+          )),
+    ));
   }
 }
 

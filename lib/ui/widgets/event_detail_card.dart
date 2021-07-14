@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/models/event.dart';
+import 'package:reaxit/theme.dart';
 import 'package:reaxit/ui/router/router.dart';
 import 'package:reaxit/ui/screens/event_screen.dart';
 import 'package:reaxit/ui/screens/food_screen.dart';
@@ -19,7 +20,7 @@ class EventDetailCard extends StatelessWidget {
 
     var indicatorColor = Colors.transparent;
     if (event.isRegistered && !event.isInQueue) {
-      indicatorColor = Color(0xFFE62272);
+      indicatorColor = magenta;
     } else if (event.isInQueue) {
       indicatorColor = Colors.yellow;
     } else if (event.canCreateRegistration) {
@@ -49,7 +50,7 @@ class EventDetailCard extends StatelessWidget {
                 top: 16,
                 left: 16,
                 right: 16,
-                bottom: 10,
+                bottom: 16,
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
