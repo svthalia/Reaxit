@@ -23,17 +23,21 @@ Map<String, dynamic> _$EventRegistrationToJson(EventRegistration instance) =>
       'name': instance.name,
     };
 
-AdminRegistration _$AdminRegistrationFromJson(Map<String, dynamic> json) {
-  return AdminRegistration(
+UserEventRegistration _$UserEventRegistrationFromJson(
+    Map<String, dynamic> json) {
+  return UserEventRegistration(
     json['pk'] as int,
     json['present'] as bool?,
     json['queue_position'] as int?,
     DateTime.parse(json['date'] as String),
-    json['payment'] as String?,
+    json['payment'] == null
+        ? null
+        : Payment.fromJson(json['payment'] as Map<String, dynamic>),
   );
 }
 
-Map<String, dynamic> _$AdminRegistrationToJson(AdminRegistration instance) =>
+Map<String, dynamic> _$UserEventRegistrationToJson(
+        UserEventRegistration instance) =>
     <String, dynamic>{
       'pk': instance.pk,
       'present': instance.present,
@@ -42,23 +46,25 @@ Map<String, dynamic> _$AdminRegistrationToJson(AdminRegistration instance) =>
       'payment': instance.payment,
     };
 
-FullEventRegistration _$FullEventRegistrationFromJson(
+AdminEventRegistration _$AdminEventRegistrationFromJson(
     Map<String, dynamic> json) {
-  return FullEventRegistration(
+  return AdminEventRegistration(
     json['pk'] as int,
     json['member'] == null
         ? null
         : ListMember.fromJson(json['member'] as Map<String, dynamic>),
     json['name'] as String?,
-    json['present'] as bool?,
+    json['present'] as bool,
     json['queue_position'] as int?,
     DateTime.parse(json['date'] as String),
-    json['payment'] as String?,
+    json['payment'] == null
+        ? null
+        : Payment.fromJson(json['payment'] as Map<String, dynamic>),
   );
 }
 
-Map<String, dynamic> _$FullEventRegistrationToJson(
-        FullEventRegistration instance) =>
+Map<String, dynamic> _$AdminEventRegistrationToJson(
+        AdminEventRegistration instance) =>
     <String, dynamic>{
       'pk': instance.pk,
       'member': instance.member,

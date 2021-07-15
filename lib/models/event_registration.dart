@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:reaxit/models/member.dart';
+import 'package:reaxit/models/payment.dart';
 
 part 'event_registration.g.dart';
 
@@ -20,12 +21,12 @@ class EventRegistration {
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class AdminRegistration {
+class UserEventRegistration {
   final int pk;
   final bool? present;
   final int? queuePosition;
   final DateTime date;
-  final String? payment;
+  final Payment? payment;
 
   @JsonKey(ignore: true)
   bool? _tpayAllowed;
@@ -44,10 +45,10 @@ class AdminRegistration {
   bool get isInvited => queuePosition == null;
   bool get isPaid => payment != null;
 
-  factory AdminRegistration.fromJson(Map<String, dynamic> json) =>
-      _$AdminRegistrationFromJson(json);
+  factory UserEventRegistration.fromJson(Map<String, dynamic> json) =>
+      _$UserEventRegistrationFromJson(json);
 
-  AdminRegistration(
+  UserEventRegistration(
     this.pk,
     this.present,
     this.queuePosition,
@@ -57,7 +58,8 @@ class AdminRegistration {
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class FullEventRegistration implements EventRegistration, AdminRegistration {
+class AdminEventRegistration
+    implements EventRegistration, UserEventRegistration {
   @override
   final int pk;
   @override
@@ -66,13 +68,13 @@ class FullEventRegistration implements EventRegistration, AdminRegistration {
   final String? name;
 
   @override
-  final bool? present;
+  final bool present;
   @override
   final int? queuePosition;
   @override
   final DateTime date;
   @override
-  final String? payment;
+  final Payment? payment;
 
   @override
   @JsonKey(ignore: true)
@@ -97,7 +99,7 @@ class FullEventRegistration implements EventRegistration, AdminRegistration {
   @override
   bool get isPaid => payment != null;
 
-  FullEventRegistration(
+  AdminEventRegistration(
     this.pk,
     this.member,
     this.name,
@@ -107,9 +109,31 @@ class FullEventRegistration implements EventRegistration, AdminRegistration {
     this.payment,
   ) : assert(
           member != null || name != null,
-          'Either a member or name must be given. $member, $name',
+          'Either a member or name must be given.',
         );
 
-  factory FullEventRegistration.fromJson(Map<String, dynamic> json) =>
-      _$FullEventRegistrationFromJson(json);
+  AdminEventRegistration copyWithPresent(bool newPresent) =>
+      AdminEventRegistration(
+        pk,
+        member,
+        name,
+        newPresent,
+        queuePosition,
+        date,
+        payment,
+      );
+
+  AdminEventRegistration copyWithPayment(Payment? newPayment) =>
+      AdminEventRegistration(
+        pk,
+        member,
+        name,
+        present,
+        queuePosition,
+        date,
+        newPayment,
+      );
+
+  factory AdminEventRegistration.fromJson(Map<String, dynamic> json) =>
+      _$AdminEventRegistrationFromJson(json);
 }

@@ -240,58 +240,80 @@ class ApiRepository {
     );
   }
 
-  /// Get the [AdminRegistration]s of the [Event] with the `pk`.
+  /// Get the [AdminEventRegistration]s of the [Event] with the `pk`.
   ///
   /// Currently does not implement pagination, though the API supports it.
-  Future<ListResponse<AdminRegistration>> getAdminEventRegistrations({
+  Future<ListResponse<AdminEventRegistration>> getAdminEventRegistrations({
     required int pk,
   }) async {
     final uri = _baseUri.replace(
       path: '$_basePath/admin/events/$pk/registrations/',
     );
     final response = await _handleExceptions(() => client.get(uri));
-    return ListResponse<AdminRegistration>.fromJson(
+    return ListResponse<AdminEventRegistration>.fromJson(
       jsonDecode(response.body),
-      (json) => AdminRegistration.fromJson(json as Map<String, dynamic>),
+      (json) => AdminEventRegistration.fromJson(json as Map<String, dynamic>),
     );
   }
 
   /// Mark registration `registrationPk` for [Event] `eventPk` as `present`.
-  Future<AdminRegistration> markPresentAdminEventRegistration({
+  Future<AdminEventRegistration> markPresentAdminEventRegistration({
     required int eventPk,
     required int registrationPk,
     required bool present,
   }) async {
     final uri = _baseUri.replace(
-      path: '$_basePath/admin/payments/event/registrations/$registrationPk/',
+      path: '$_basePath/admin/events/$eventPk/registrations/$registrationPk/',
     );
     final body = jsonEncode({'present': present});
     final response = await _handleExceptions(
       () => client.patch(uri, body: body, headers: _jsonHeader),
     );
-    return AdminRegistration.fromJson(jsonDecode(response.body));
+    return AdminEventRegistration.fromJson(jsonDecode(response.body));
   }
 
   /// Mark registration `registrationPk` as paid with `paymentType`.
-  ///
-  /// If `paymentType` is null, delete the payment if possible.
-  Future<void> markPaidAdminEventRegistration({
+  Future<Payable> markPaidAdminEventRegistration({
     required int registrationPk,
-    required PaymentType? paymentType,
+    required PaymentType paymentType,
   }) async {
     assert(paymentType != PaymentType.tpayPayment);
     final uri = _baseUri.replace(
-      path:
-          '$_basePath/admin/payments/events/eventregistration/$registrationPk/',
+      path: '$_basePath/admin/payments/payables/events'
+          '/eventregistration/$registrationPk/',
     );
-    if (paymentType == null) {
-      await _handleExceptions(() => client.delete(uri));
-    } else {
-      final body = jsonEncode({'payment_type': paymentType});
-      await _handleExceptions(
-        () => client.patch(uri, body: body, headers: _jsonHeader),
-      );
+    late String typeString;
+    switch (paymentType) {
+      case PaymentType.cardPayment:
+        typeString = 'card_payment';
+        break;
+      case PaymentType.cashPayment:
+        typeString = 'cash_payment';
+        break;
+      case PaymentType.wirePayment:
+        typeString = 'wire_payment';
+        break;
+      case PaymentType.tpayPayment:
+        // This case should never occur.
+        typeString = 'tpay_payment';
+        break;
     }
+    final body = jsonEncode({'payment_type': typeString});
+    final response = await _handleExceptions(
+      () => client.patch(uri, body: body, headers: _jsonHeader),
+    );
+    return Payable.fromJson(jsonDecode(response.body));
+  }
+
+  /// Delete the payment for registration `registrationPk`.
+  Future<void> markNotPaidAdminEventRegistration({
+    required int registrationPk,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/admin/payments/payables/events'
+          '/eventregistration/$registrationPk/',
+    );
+    await _handleExceptions(() => client.delete(uri));
   }
 
   /// Get the [FoodEvent] with the `pk`.
