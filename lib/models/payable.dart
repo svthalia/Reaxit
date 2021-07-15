@@ -9,7 +9,6 @@ class Payable {
   final String topic;
   final String? notes;
   final Payment? payment;
-  final bool tpayAllowed;
 
   bool get isPaid => payment != null;
 
@@ -21,6 +20,5 @@ class Payable {
     this.topic,
     this.notes,
     this.payment,
-    this.tpayAllowed,
   );
 }

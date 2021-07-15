@@ -26,7 +26,7 @@ class Event {
   final int? foodEvent;
   final String mapsUrl;
   final EventPermissions userPermissions;
-  final AdminRegistration? userRegistration;
+  final UserEventRegistration? userRegistration;
   // final Commitee organiser;
   // final Slide? slide;
 
