@@ -242,12 +242,40 @@ class ApiRepository {
 
   /// Get the [AdminEventRegistration]s of the [Event] with the `pk`.
   ///
-  /// Currently does not implement pagination, though the API supports it.
+  /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
+  /// total number of registrations that can be returned.
+  /// Use `search` to filter on name, `ordering` to order with values in
+  /// {'date', 'date_cancelled', 'queue_position', '-date', '-date_cancelled',
+  /// '-queue_position'}, and `cancelled` to filter on cancelled registrations.
   Future<ListResponse<AdminEventRegistration>> getAdminEventRegistrations({
     required int pk,
+    int? limit,
+    int? offset,
+    String? search,
+    String? ordering,
+    bool? cancelled,
   }) async {
+    assert(
+      ordering == null ||
+          [
+            'date',
+            'date_cancelled',
+            'queue_position',
+            '-date',
+            '-date_cancelled',
+            '-queue_position',
+          ].contains(ordering),
+      'Invalid ordering parameter: $ordering',
+    );
     final uri = _baseUri.replace(
       path: '$_basePath/admin/events/$pk/registrations/',
+      queryParameters: {
+        if (limit != null) 'limit': limit.toString(),
+        if (offset != null) 'offset': offset.toString(),
+        if (ordering != null) 'ordering': ordering,
+        if (search != null) 'search': search,
+        if (cancelled != null) 'cancelled': cancelled,
+      },
     );
     final response = await _handleExceptions(() => client.get(uri));
     return ListResponse<AdminEventRegistration>.fromJson(
