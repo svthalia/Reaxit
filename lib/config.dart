@@ -41,7 +41,7 @@ const List<String> oauthScopes = [
   'pushnotifications:write',
   'payments:read',
   'payments:write',
-  // 'payments:admin',
+  'payments:admin',
   // 'sales:read',
   // 'sales:write',
 ];
