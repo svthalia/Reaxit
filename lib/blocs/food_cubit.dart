@@ -28,12 +28,15 @@ class FoodState extends Equatable {
     required this.isLoading,
     required this.message,
   }) : assert(
-          foodEvent != null || isLoading || message != null,
-          'foodEvent can only be null when isLoading or hasException is true.',
+          (foodEvent != null && products != null) ||
+              isLoading ||
+              message != null,
+          'foodEvent and products can only be null '
+          'when isLoading or hasException is true.',
         );
 
   @override
-  List<Object?> get props => [foodEvent, message, isLoading];
+  List<Object?> get props => [foodEvent, products, message, isLoading];
 
   FoodState copyWith({
     FoodEvent? foodEvent,
