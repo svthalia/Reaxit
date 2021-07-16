@@ -135,7 +135,7 @@ class __RegistrationTileState extends State<_RegistrationTile> {
     if (widget.requiresPayment) {
       if (registration.isPaid &&
           registration.payment!.type == PaymentType.tpayPayment) {
-        paymentDropdown = DropdownButton(
+        paymentDropdown = DropdownButton<PaymentType?>(
           items: [
             DropdownMenuItem(
               value: PaymentType.tpayPayment,

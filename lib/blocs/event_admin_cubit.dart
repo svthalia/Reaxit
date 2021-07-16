@@ -175,7 +175,7 @@ class EventAdminCubit extends Cubit<EventAdminState> {
       case ApiException.noInternet:
         return 'Not connected to the internet.';
       case ApiException.notFound:
-        return 'The album does not exist.';
+        return 'The event does not exist.';
       default:
         return 'An unknown error occurred.';
     }
