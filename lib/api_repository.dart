@@ -344,6 +344,75 @@ class ApiRepository {
     await _handleExceptions(() => client.delete(uri));
   }
 
+  /// Get the [FoodOrder]s of the [FoodEvent] with the `pk`.
+  ///
+  /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
+  /// total number of orders that can be returned.
+  Future<ListResponse<FoodOrder>> getAdminFoodOrders({
+    required int pk,
+    int? limit,
+    int? offset,
+    String? search,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/admin/food/$pk/orders/',
+      queryParameters: {
+        if (limit != null) 'limit': limit.toString(),
+        if (offset != null) 'offset': offset.toString(),
+        if (search != null) 'search': search,
+      },
+    );
+    final response = await _handleExceptions(() => client.get(uri));
+    return ListResponse<FoodOrder>.fromJson(
+      jsonDecode(response.body),
+      (json) => FoodOrder.fromJson(json as Map<String, dynamic>),
+    );
+  }
+
+  /// Mark food order `orderPk` as paid with `paymentType`.
+  Future<Payable> markPaidAdminFoodOrder({
+    required int orderPk,
+    required PaymentType paymentType,
+  }) async {
+    assert(paymentType != PaymentType.tpayPayment);
+    final uri = _baseUri.replace(
+      path: '$_basePath/admin/payments/payables/'
+          'pizzas/foodorder/$orderPk/',
+    );
+    late String typeString;
+    switch (paymentType) {
+      case PaymentType.cardPayment:
+        typeString = 'card_payment';
+        break;
+      case PaymentType.cashPayment:
+        typeString = 'cash_payment';
+        break;
+      case PaymentType.wirePayment:
+        typeString = 'wire_payment';
+        break;
+      case PaymentType.tpayPayment:
+        // This case should never occur.
+        typeString = 'tpay_payment';
+        break;
+    }
+    final body = jsonEncode({'payment_type': typeString});
+    final response = await _handleExceptions(
+      () => client.patch(uri, body: body, headers: _jsonHeader),
+    );
+    return Payable.fromJson(jsonDecode(response.body));
+  }
+
+  /// Delete the payment for food order `orderPk`.
+  Future<void> markNotPaidAdminFoodOrder({
+    required int orderPk,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/admin/payments/payables/'
+          'pizzas/foodorder/$orderPk/',
+    );
+    await _handleExceptions(() => client.delete(uri));
+  }
+
   /// Get the [FoodEvent] with the `pk`.
   Future<FoodEvent> getFoodEvent(int pk) async {
     final uri = _baseUri.replace(path: '$_basePath/food/events/$pk/');
@@ -485,8 +554,6 @@ class ApiRepository {
       (json) => Product.fromJson(json as Map<String, dynamic>),
     );
   }
-
-  // TODO: pizza admin
 
   /// Get a [Payable].
   Future<Payable> _getPayable({
