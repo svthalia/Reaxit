@@ -41,4 +41,7 @@ class FoodOrder {
           member != null || name != null,
           'Either a member or name must be given. $member, $name',
         );
+
+  FoodOrder copyWithPayment(Payment? newPayment) =>
+      FoodOrder(pk, member, name, product, newPayment);
 }
