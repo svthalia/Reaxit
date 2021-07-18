@@ -6,7 +6,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/models/album.dart';
-import 'package:reaxit/models/category.dart';
+import 'package:reaxit/models/push_notification_category.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/event_registration.dart';
 import 'package:reaxit/models/food_event.dart';
@@ -647,8 +647,9 @@ class ApiRepository {
   }
 
   Future<Device> getDevice({required int id}) async {
-    final uri =
-        _baseUri.replace(path: '$_basePath/pushnotifications/devices/$id/');
+    final uri = _baseUri.replace(
+      path: '$_basePath/pushnotifications/devices/$id/',
+    );
     final response = await _handleExceptions(() => client.get(uri));
     return Device.fromJson(jsonDecode(response.body));
   }
@@ -661,25 +662,33 @@ class ApiRepository {
     return Device.fromJson(jsonDecode(response.body));
   }
 
-  /// Register a device for token
-  Future<Device> registerDevice(String token, String type, bool active) async {
+  /// Register a device for token.
+  Future<Device> registerDevice({
+    required String token,
+    required String type,
+    required bool active,
+  }) async {
     final uri = _baseUri.replace(path: '$_basePath/pushnotifications/devices/');
-    final body =
-        jsonEncode({'registration_id': token, 'active': active, 'type': type});
+    final body = jsonEncode({
+      'registration_id': token,
+      'active': active,
+      'type': type,
+    });
     final response = await _handleExceptions(
       () => client.post(uri, body: body, headers: _jsonHeader),
     );
     return Device.fromJson(jsonDecode(response.body));
   }
 
-  Future<ListResponse<Category>> getCategories() async {
-    final uri =
-        _baseUri.replace(path: '$_basePath/pushnotifications/categories/');
-    final response = await _handleExceptions(
-      () => client.get(uri),
+  Future<ListResponse<PushNotificationCategory>> getCategories() async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/pushnotifications/categories/',
     );
-    return ListResponse<Category>.fromJson(jsonDecode(response.body),
-        (json) => Category.fromJson(json as Map<String, dynamic>));
+    final response = await _handleExceptions(() => client.get(uri));
+    return ListResponse<PushNotificationCategory>.fromJson(
+        jsonDecode(response.body),
+        (json) =>
+            PushNotificationCategory.fromJson(json as Map<String, dynamic>));
   }
 }
 

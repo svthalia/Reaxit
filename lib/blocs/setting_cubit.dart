@@ -3,7 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:reaxit/api_repository.dart';
-import 'package:reaxit/models/category.dart';
+import 'package:reaxit/models/push_notification_category.dart';
 import 'package:reaxit/models/device.dart';
 import 'package:reaxit/push_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,12 +13,13 @@ class SettingState extends Equatable {
   final Device? device;
 
   /// This can only be null when [isLoading] or [hasException] is true.
-  final List<Category>? categories;
+  final List<PushNotificationCategory>? categories;
 
   /// A message describing why there are no settings or categories.
   final String? message;
 
-  /// A list of settings is being loaded. If there is already a list of settings it is outdated.
+  /// A list of settings is being loaded. If there is
+  /// already a list of settings it is outdated.
   final bool isLoading;
 
   bool get hasException => message != null;
@@ -30,8 +31,11 @@ class SettingState extends Equatable {
     required this.isLoading,
     required this.message,
   }) : assert(
-          categories != null || isLoading || message != null,
-          'foodEvent can only be null when isLoading or hasException is true.',
+          (device != null && categories != null) ||
+              isLoading ||
+              message != null,
+          'device and categories can only be null '
+          'when isLoading or hasException is true.',
         );
 
   @override
@@ -39,7 +43,7 @@ class SettingState extends Equatable {
 
   SettingState copyWith({
     Device? device,
-    List<Category>? categories,
+    List<PushNotificationCategory>? categories,
     bool? isLoading,
     String? message,
   }) =>
@@ -51,7 +55,8 @@ class SettingState extends Equatable {
       );
 
   SettingState.result(
-      {required Device device, required List<Category> categories})
+      {required Device device,
+      required List<PushNotificationCategory> categories})
       : device = device,
         categories = categories,
         message = null,
@@ -83,11 +88,13 @@ class SettingsCubit extends Cubit<SettingState> {
       }
       emit(SettingState.result(device: copy, categories: state.categories!));
       var prefs = await SharedPreferences.getInstance();
-      var deviceRegistrationId =
-          prefs.getInt(deviceRegistrationIdPreferenceName);
+      var deviceRegistrationId = prefs.getInt(
+        deviceRegistrationIdPreferenceName,
+      );
       if (deviceRegistrationId == null) {
         emit(SettingState.failure(
-            message: 'Failed to register device for push notifications.'));
+          message: 'Failed to register device for push notifications.',
+        ));
       } else {
         await api.putDevice(id: deviceRegistrationId, device: copy);
       }
@@ -103,13 +110,16 @@ class SettingsCubit extends Cubit<SettingState> {
       emit(SettingState.failure(message: 'No device token found.'));
     } else if (deviceRegistrationId == null) {
       emit(SettingState.failure(
-          message: 'Failed to register device for push notifications.'));
+        message: 'Failed to register device for push notifications.',
+      ));
     } else {
       try {
-        final setting = await api.getDevice(id: deviceRegistrationId);
+        final device = await api.getDevice(id: deviceRegistrationId);
         final categories = await api.getCategories();
         emit(SettingState.result(
-            device: setting, categories: categories.results));
+          device: device,
+          categories: categories.results,
+        ));
       } on ApiException catch (exception) {
         emit(SettingState.failure(message: _failureMessage(exception)));
       }

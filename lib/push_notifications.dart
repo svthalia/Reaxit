@@ -6,8 +6,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 String deviceRegistrationIdPreferenceName = 'deviceRegistrationId';
 
-Future<bool> register(api) async {
-  var settings = await FirebaseMessaging.instance.requestPermission(
+/// Request pushnotifications permissions and register a FCM token.
+///
+/// Return whether pushnotifications have been set up successfully.
+Future<bool> registerPushNotifications(ApiRepository api) async {
+  final settings = await FirebaseMessaging.instance.requestPermission(
     alert: true,
     announcement: true,
     badge: true,
@@ -21,27 +24,34 @@ Future<bool> register(api) async {
     return false;
   }
 
-  var token = await FirebaseMessaging.instance.getToken();
-  if (token == null) {
-    return false;
-  }
-  return await registerToken(token, api);
+  final token = await FirebaseMessaging.instance.getToken();
+  if (token == null) return false;
+  return await registerPushNotificationsToken(api, token);
 }
 
-Future<bool> registerToken(String token, ApiRepository api) async {
-  var prefs = await SharedPreferences.getInstance();
-  var deviceRegistrationId = prefs.getInt(deviceRegistrationIdPreferenceName);
+/// Register a Firebase Cloud Messaging token to the api, and store it.
+///
+/// Return whether the token has been registered successfully.
+Future<bool> registerPushNotificationsToken(
+  ApiRepository api,
+  String token,
+) async {
+  final prefs = await SharedPreferences.getInstance();
+  final deviceRegistrationId = prefs.getInt(deviceRegistrationIdPreferenceName);
   if (deviceRegistrationId != null) {
-    // We have already registered a deviceRegistrationId
+    // We have already registered a deviceRegistrationId.
     try {
       await api.getDevice(id: deviceRegistrationId);
       return true;
     } on ApiException {
-      // The device token is invalid
+      // The device token is invalid.
       await prefs.remove(deviceRegistrationIdPreferenceName);
       try {
         var setting = await api.registerDevice(
-            token, Platform.isIOS ? 'ios' : 'android', true);
+          token: token,
+          type: Platform.isIOS ? 'ios' : 'android',
+          active: true,
+        );
         await prefs.setInt(deviceRegistrationIdPreferenceName, setting.pk);
         return true;
       } on ApiException {
@@ -49,10 +59,13 @@ Future<bool> registerToken(String token, ApiRepository api) async {
       }
     }
   } else {
-    // We must always register this device if there is no deviceRegistrationId
+    // We must always register the device if there is no `deviceRegistrationId`.
     try {
       var setting = await api.registerDevice(
-          token, Platform.isIOS ? 'ios' : 'android', true);
+        token: token,
+        type: Platform.isIOS ? 'ios' : 'android',
+        active: true,
+      );
       await prefs.setInt(deviceRegistrationIdPreferenceName, setting.pk);
       return true;
     } on ApiException {

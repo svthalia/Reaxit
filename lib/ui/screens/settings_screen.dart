@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/blocs/setting_cubit.dart';
 import 'package:reaxit/blocs/theme_bloc.dart';
-import 'package:reaxit/models/category.dart';
+import 'package:reaxit/models/push_notification_category.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
 
@@ -42,9 +42,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.initState();
   }
 
-  Widget _makeSetting(Category category, bool enabled) {
+  Widget _makeSetting(PushNotificationCategory category, bool enabled) {
     if (category.key == 'general') {
-      // The general category is always enabled (and can't be disabled)
+      // The general category is always enabled and can't be disabled.
       return SwitchListTile(
         value: true,
         onChanged: null,
@@ -57,6 +57,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       value: enabled,
       onChanged: (value) {
         _settingCubit.setSetting(category.key, value);
+        // TODO: Handle exceptions.
       },
       title: Text(category.name),
       subtitle:
@@ -66,36 +67,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _makeNotificationSettings() {
     return BlocBuilder<SettingsCubit, SettingState>(
-        bloc: _settingCubit,
-        builder: (context, state) {
-          if (state.hasException) {
-            return RefreshIndicator(
-              onRefresh: () async {
-                var settingFuture = _settingCubit.load();
-                await settingFuture;
-              },
-              child: Center(child: Text(state.message!)),
-            );
-          } else if (state.isLoading && state.categories == null) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            return Card(
-                child: Column(
+      bloc: _settingCubit,
+      builder: (context, state) {
+        if (state.hasException) {
+          // TODO: This is not surrounding a scrollable, so doesn't work.
+          return RefreshIndicator(
+            onRefresh: () async {
+              await _settingCubit.load();
+            },
+            child: Center(child: Text(state.message!)),
+          );
+        } else if (state.isLoading && state.categories == null) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else {
+          return Card(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: ListTile.divideTiles(
                 context: context,
-                tiles: _settingCubit.state.categories!.map((category) =>
-                    _makeSetting(
-                        category,
-                        _settingCubit.state.device!.receiveCategory
-                            .contains(category.key))),
+                tiles: state.categories!.map(
+                  (category) => _makeSetting(
+                    category,
+                    state.device!.receiveCategory.contains(category.key),
+                  ),
+                ),
               ).toList(),
-            ));
-          }
-        });
+            ),
+          );
+        }
+      },
+    );
   }
 
   @override
