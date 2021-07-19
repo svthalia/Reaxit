@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/blocs/registration_fields_cubit.dart';
 import 'package:reaxit/models/registration_field.dart';
-import 'package:reaxit/ui/router/router.dart';
+import 'package:reaxit/ui/router.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_center.dart';
 

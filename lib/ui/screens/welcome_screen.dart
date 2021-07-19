@@ -7,7 +7,7 @@ import 'package:reaxit/blocs/welcome_cubit.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/frontpage_article.dart';
 import 'package:reaxit/models/slide.dart';
-import 'package:reaxit/ui/router/router.dart';
+import 'package:reaxit/ui/router.dart';
 import 'package:reaxit/ui/screens/calendar_screen.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reaxit/models/member.dart';
-import 'package:reaxit/ui/router/router.dart';
+import 'package:reaxit/ui/router.dart';
 import 'package:reaxit/ui/screens/profile_screen.dart';
 
 class MemberTile extends StatelessWidget {
