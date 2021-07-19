@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:oauth2/oauth2.dart';
+import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/config.dart' as config;
 
 final _redirectUrl = Uri.parse(
@@ -65,17 +66,16 @@ class LoggingInAuthState extends AuthState {
 
 /// Logged in.
 class LoggedInAuthState extends AuthState {
-  /// An [http.BaseClient] that adds an OAuth2 token to all requests.
-  final Client client;
+  final ApiRepository apiRepository;
 
-  /// A callback that can be used to indicate to the [AuthBloc] that the client
-  /// no longer works (e.g. its token is revoked);
-  final Function() logOut;
-
-  LoggedInAuthState({required this.client, required this.logOut});
+  LoggedInAuthState({required Client client, required void Function() logOut})
+      : apiRepository = ApiRepository(
+          client: client,
+          logOut: logOut,
+        );
 
   @override
-  List<Object?> get props => [client, logOut];
+  List<Object?> get props => [apiRepository];
 }
 
 /// Something went wrong.
@@ -207,10 +207,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Stream<AuthState> _mapLogOutAuthEventToState() async* {
     var state = this.state;
     if (state is LoggedInAuthState) {
-      state.client.close();
+      state.apiRepository.client.close();
     }
-    final _storage = FlutterSecureStorage();
-    await _storage.delete(
+    final storage = FlutterSecureStorage();
+    await storage.delete(
       key: _credentialsStorageKey,
       iOptions: IOSOptions(accessibility: IOSAccessibility.first_unlock),
     );

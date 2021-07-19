@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/auth_bloc.dart';
 import 'package:reaxit/blocs/full_member_cubit.dart';
-import 'package:reaxit/ui/router/router.dart';
+import 'package:reaxit/ui/router.dart';
 import 'package:reaxit/ui/screens/albums_screen.dart';
 import 'package:reaxit/ui/screens/calendar_screen.dart';
 import 'package:reaxit/ui/screens/members_screen.dart';

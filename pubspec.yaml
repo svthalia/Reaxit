@@ -85,6 +85,12 @@ dependencies:
   # Static analysis.
   pedantic: ^1.11.1
 
+  # Firebase for push notifications.
+  firebase_messaging: ^10.0.2
+
+  # Push notifications in app. 
+  overlay_support: ^1.2.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

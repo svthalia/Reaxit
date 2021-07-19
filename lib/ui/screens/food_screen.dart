@@ -9,7 +9,7 @@ import 'package:reaxit/blocs/payment_user_cubit.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/food_event.dart';
 import 'package:reaxit/models/product.dart';
-import 'package:reaxit/ui/router/router.dart';
+import 'package:reaxit/ui/router.dart';
 import 'package:reaxit/ui/screens/food_admin_screen.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
@@ -390,7 +390,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                 title: Text('ORDER FOOD'),
               ),
               body: RefreshIndicator(
-                onRefresh: () async => await _foodCubit.load(widget.pk),
+                onRefresh: () => _foodCubit.load(widget.pk),
                 child: ErrorScrollView(state.message!),
               ),
             );
@@ -422,7 +422,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                 ],
               ),
               body: RefreshIndicator(
-                onRefresh: () async => await _foodCubit.load(widget.pk),
+                onRefresh: () => _foodCubit.load(widget.pk),
                 child: ListView(
                   controller: _controller,
                   physics: const AlwaysScrollableScrollPhysics(),

@@ -6,6 +6,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/models/album.dart';
+import 'package:reaxit/models/push_notification_category.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/event_registration.dart';
 import 'package:reaxit/models/food_event.dart';
@@ -19,6 +20,7 @@ import 'package:reaxit/models/payment_user.dart';
 import 'package:reaxit/models/product.dart';
 import 'package:reaxit/models/registration_field.dart';
 import 'package:reaxit/models/slide.dart';
+import 'package:reaxit/models/device.dart';
 
 final Uri _baseUri = Uri(
   scheme: 'https',
@@ -811,9 +813,54 @@ class ApiRepository {
     );
   }
 
-  // TODO: Move json parsing of lists into isolates?
-  // TODO: Change ApiException to a class that can contain a string?
-  //  We can then display more specific error messages to the user based on
-  //  the message returned from the server, instead of only the status code.
-  //  This may especially be useful for the sales order payments.
+  Future<Device> getDevice({required int id}) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/pushnotifications/devices/$id/',
+    );
+    final response = await _handleExceptions(() => client.get(uri));
+    return Device.fromJson(jsonDecode(response.body));
+  }
+
+  Future<Device> putDevice({required int id, required Device device}) async {
+    final uri =
+        _baseUri.replace(path: '$_basePath/pushnotifications/devices/$id/');
+    final response = await _handleExceptions(() => client.put(uri,
+        body: jsonEncode(device.toJson()), headers: _jsonHeader));
+    return Device.fromJson(jsonDecode(response.body));
+  }
+
+  /// Register a device for token.
+  Future<Device> registerDevice({
+    required String token,
+    required String type,
+    required bool active,
+  }) async {
+    final uri = _baseUri.replace(path: '$_basePath/pushnotifications/devices/');
+    final body = jsonEncode({
+      'registration_id': token,
+      'active': active,
+      'type': type,
+    });
+    final response = await _handleExceptions(
+      () => client.post(uri, body: body, headers: _jsonHeader),
+    );
+    return Device.fromJson(jsonDecode(response.body));
+  }
+
+  Future<ListResponse<PushNotificationCategory>> getCategories() async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/pushnotifications/categories/',
+    );
+    final response = await _handleExceptions(() => client.get(uri));
+    return ListResponse<PushNotificationCategory>.fromJson(
+        jsonDecode(response.body),
+        (json) =>
+            PushNotificationCategory.fromJson(json as Map<String, dynamic>));
+  }
 }
+
+// TODO: Move json parsing of lists into isolates?
+// TODO: Change ApiException to a class that can contain a string?
+//  We can then display more specific error messages to the user based on
+//  the message returned from the server, instead of only the status code.
+//  This may especially be useful for the sales order payments.

@@ -1,6 +1,6 @@
 ---
 name: Other
-about: Changes that do not affect the behaviour of the website. If you are not a member of the Technicie, there is a very high chance that you should not use this template
+about: Changes that do not affect the behaviour of the app. If you are not a member of the Technicie, there is a very high chance that you should not use this template
 labels: 'priority: low'
 
 ---

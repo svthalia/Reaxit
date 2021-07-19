@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reaxit/models/album.dart';
-import 'package:reaxit/ui/router/router.dart';
+import 'package:reaxit/ui/router.dart';
 import 'package:reaxit/ui/screens/album_screen.dart';
 
 class AlbumTile extends StatelessWidget {
