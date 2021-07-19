@@ -43,62 +43,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _makeSetting(PushNotificationCategory category, bool enabled) {
+    Widget? subtitle;
+    if (category.description.isNotEmpty) {
+      subtitle = Text(category.description);
+    }
+
     if (category.key == 'general') {
       // The general category is always enabled and can't be disabled.
       return SwitchListTile(
         value: true,
         onChanged: null,
         title: Text(category.name),
-        subtitle:
-            category.description.isNotEmpty ? Text(category.description) : null,
+        subtitle: subtitle,
       );
     }
     return SwitchListTile(
       value: enabled,
-      onChanged: (value) {
-        _settingCubit.setSetting(category.key, value);
-        // TODO: Handle exceptions.
-      },
-      title: Text(category.name),
-      subtitle:
-          category.description.isNotEmpty ? Text(category.description) : null,
-    );
-  }
-
-  Widget _makeNotificationSettings() {
-    return BlocBuilder<SettingsCubit, SettingState>(
-      bloc: _settingCubit,
-      builder: (context, state) {
-        if (state.hasException) {
-          // TODO: This is not surrounding a scrollable, so doesn't work.
-          return RefreshIndicator(
-            onRefresh: () async {
-              await _settingCubit.load();
-            },
-            child: Center(child: Text(state.message!)),
-          );
-        } else if (state.isLoading && state.categories == null) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        } else {
-          return Card(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: ListTile.divideTiles(
-                context: context,
-                tiles: state.categories!.map(
-                  (category) => _makeSetting(
-                    category,
-                    state.device!.receiveCategory.contains(category.key),
-                  ),
-                ),
-              ).toList(),
-            ),
-          );
+      onChanged: (value) async {
+        try {
+          await _settingCubit.setSetting(category.key, value);
+        } on ApiException {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Could not change your notification settings.'),
+          ));
         }
       },
+      title: Text(category.name),
+      subtitle: subtitle,
     );
   }
 
@@ -107,18 +78,72 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: ThaliaAppBar(title: Text('Settings')),
       drawer: MenuDrawer(),
-      body: ListView(
-        padding: const EdgeInsets.all(15),
-        children: [
-          _ThemeModeCard(),
-          Divider(),
-          Text(
-            'Notifications',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyText1,
-          ),
-          _makeNotificationSettings(),
-        ],
+      body: BlocBuilder<SettingsCubit, SettingsState>(
+        bloc: _settingCubit,
+        builder: (context, state) {
+          if (state.hasException) {
+            return RefreshIndicator(
+              onRefresh: () => _settingCubit.load(),
+              child: ListView(
+                padding: const EdgeInsets.all(15),
+                children: [
+                  _ThemeModeCard(),
+                  Divider(),
+                  Text(
+                    'Notifications',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  Center(child: Text(state.message!)),
+                ],
+              ),
+            );
+          } else if (state.isLoading && state.categories == null) {
+            return ListView(
+              padding: const EdgeInsets.all(15),
+              children: [
+                _ThemeModeCard(),
+                Divider(),
+                Text(
+                  'Notifications',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+                Center(child: CircularProgressIndicator()),
+              ],
+            );
+          } else {
+            return ListView(
+              padding: const EdgeInsets.all(15),
+              children: [
+                _ThemeModeCard(),
+                Divider(),
+                Text(
+                  'Notifications',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+                Card(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: ListTile.divideTiles(
+                      context: context,
+                      tiles: state.categories!.map(
+                        (category) => _makeSetting(
+                          category,
+                          state.device!.receiveCategory.contains(
+                            category.key,
+                          ),
+                        ),
+                      ),
+                    ).toList(),
+                  ),
+                )
+              ],
+            );
+          }
+        },
       ),
     );
   }
