@@ -67,7 +67,11 @@ class _ThaliAppState extends State<ThaliApp> {
                         message.data['url'] != null) {
                       final link = Uri.tryParse(message.data['url']);
                       if (link != null && await canLaunch(link.toString())) {
-                        await launch(link.toString());
+                        await launch(
+                          link.toString(),
+                          forceSafariVC: false,
+                          forceWebView: false,
+                        );
                       }
                     }
                   },
@@ -91,8 +95,13 @@ class _ThaliAppState extends State<ThaliApp> {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       if (message.data.containsKey('url') && message.data['url'] != null) {
         final link = Uri.tryParse(message.data['url']);
+        // TODO: Dialog?
         if (link != null && await canLaunch(link.toString())) {
-          await launch(link.toString());
+          await launch(
+            link.toString(),
+            forceSafariVC: false,
+            forceWebView: false,
+          );
         }
       }
     });
@@ -103,8 +112,13 @@ class _ThaliAppState extends State<ThaliApp> {
       if (initialMessage.data.containsKey('url') &&
           initialMessage.data['url'] != null) {
         final link = Uri.tryParse(initialMessage.data['url']);
+        // TODO: Dialog?
         if (link != null && await canLaunch(link.toString())) {
-          await launch(link.toString());
+          await launch(
+            link.toString(),
+            forceSafariVC: false,
+            forceWebView: false,
+          );
         }
       }
     }
