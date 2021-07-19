@@ -7,7 +7,7 @@ import 'package:reaxit/blocs/welcome_cubit.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/frontpage_article.dart';
 import 'package:reaxit/models/slide.dart';
-import 'package:reaxit/ui/router/router.dart';
+import 'package:reaxit/ui/router.dart';
 import 'package:reaxit/ui/screens/calendar_screen.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
@@ -157,9 +157,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       appBar: ThaliaAppBar(title: Text('WELCOME')),
       drawer: MenuDrawer(),
       body: RefreshIndicator(
-        onRefresh: () async {
-          await BlocProvider.of<WelcomeCubit>(context).load();
-        },
+        onRefresh: () => BlocProvider.of<WelcomeCubit>(context).load(),
         child: BlocBuilder<WelcomeCubit, WelcomeState>(
           builder: (context, state) {
             if (state.hasException) {

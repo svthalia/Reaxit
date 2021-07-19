@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/blocs/event_list_bloc.dart';
 import 'package:reaxit/models/event.dart';
-import 'package:reaxit/ui/router/router.dart';
+import 'package:reaxit/ui/router.dart';
 import 'package:reaxit/ui/screens/event_screen.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';

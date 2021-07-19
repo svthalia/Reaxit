@@ -1,27 +1,129 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reaxit/api_repository.dart';
+import 'package:reaxit/blocs/setting_cubit.dart';
 import 'package:reaxit/blocs/theme_bloc.dart';
+import 'package:reaxit/models/push_notification_category.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
+  @override
+  _SettingsScreenState createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  late final SettingsCubit _settingCubit;
+
+  @override
+  void initState() {
+    _settingCubit = SettingsCubit(RepositoryProvider.of<ApiRepository>(context))
+      ..load();
+    super.initState();
+  }
+
+  Widget _makeSetting(PushNotificationCategory category, bool enabled) {
+    Widget? subtitle;
+    if (category.description.isNotEmpty) {
+      subtitle = Text(category.description);
+    }
+
+    if (category.key == 'general') {
+      // The general category is always enabled and can't be disabled.
+      return SwitchListTile(
+        value: true,
+        onChanged: null,
+        title: Text(category.name),
+        subtitle: subtitle,
+      );
+    }
+    return SwitchListTile(
+      value: enabled,
+      onChanged: (value) async {
+        try {
+          await _settingCubit.setSetting(category.key, value);
+        } on ApiException {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Could not change your notification settings.'),
+          ));
+        }
+      },
+      title: Text(category.name),
+      subtitle: subtitle,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ThaliaAppBar(title: Text('SETTINGS')),
+      appBar: ThaliaAppBar(title: Text('Settings')),
       drawer: MenuDrawer(),
-      body: ListView(
-        padding: const EdgeInsets.all(15),
-        children: [
-          _ThemeModeCard(),
-          Divider(),
-          Text(
-            'Notifications',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyText1,
-          ),
-          // _SettingsCard(),
-        ],
+      body: BlocBuilder<SettingsCubit, SettingsState>(
+        bloc: _settingCubit,
+        builder: (context, state) {
+          if (state.hasException) {
+            return RefreshIndicator(
+              onRefresh: () => _settingCubit.load(),
+              child: ListView(
+                padding: const EdgeInsets.all(15),
+                children: [
+                  _ThemeModeCard(),
+                  Divider(),
+                  Text(
+                    'Notifications',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  Center(child: Text(state.message!)),
+                ],
+              ),
+            );
+          } else if (state.isLoading && state.categories == null) {
+            return ListView(
+              padding: const EdgeInsets.all(15),
+              children: [
+                _ThemeModeCard(),
+                Divider(),
+                Text(
+                  'Notifications',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+                Center(child: CircularProgressIndicator()),
+              ],
+            );
+          } else {
+            return ListView(
+              padding: const EdgeInsets.all(15),
+              children: [
+                _ThemeModeCard(),
+                Divider(),
+                Text(
+                  'Notifications',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+                Card(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: ListTile.divideTiles(
+                      context: context,
+                      tiles: state.categories!.map(
+                        (category) => _makeSetting(
+                          category,
+                          state.device!.receiveCategory.contains(
+                            category.key,
+                          ),
+                        ),
+                      ),
+                    ).toList(),
+                  ),
+                )
+              ],
+            );
+          }
+        },
       ),
     );
   }
@@ -87,51 +189,3 @@ class _ThemeModeCard extends StatelessWidget {
     );
   }
 }
-
-// class _SettingsCard extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Consumer<NotificationsProvider>(
-//       builder: (context, notifications, child) {
-//         return Card(
-//           child: Column(
-//             mainAxisAlignment: MainAxisAlignment.start,
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: ListTile.divideTiles(
-//               context: context,
-//               tiles: notifications.settings.map(
-//                 (setting) => _SettingCard(setting),
-//               ),
-//             ).toList(),
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
-
-// class _SettingCard extends StatelessWidget {
-//   final Setting _setting;
-
-//   _SettingCard(this._setting);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return SwitchListTile(
-//       value: Provider.of<NotificationsProvider>(
-//         context,
-//         listen: false,
-//       ).getNotificatinoSetting(_setting),
-//       onChanged: (value) {
-//         Provider.of<NotificationsProvider>(
-//           context,
-//           listen: false,
-//         ).setNotificationSetting(_setting, value);
-//       },
-//       title: Text(_setting.name),
-//       subtitle: (_setting.description?.isNotEmpty ?? false)
-//           ? Text(_setting.description)
-//           : null,
-//     );
-//   }
-// }
