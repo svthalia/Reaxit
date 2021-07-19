@@ -8,7 +8,7 @@ import 'package:reaxit/models/device.dart';
 import 'package:reaxit/push_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SettingState extends Equatable {
+class SettingsState extends Equatable {
   /// This can only be null when [isLoading] or [hasException] is true.
   final Device? device;
 
@@ -25,7 +25,7 @@ class SettingState extends Equatable {
   bool get hasException => message != null;
 
   @protected
-  const SettingState({
+  const SettingsState({
     required this.device,
     required this.categories,
     required this.isLoading,
@@ -41,20 +41,20 @@ class SettingState extends Equatable {
   @override
   List<Object?> get props => [device, categories, message, isLoading];
 
-  SettingState copyWith({
+  SettingsState copyWith({
     Device? device,
     List<PushNotificationCategory>? categories,
     bool? isLoading,
     String? message,
   }) =>
-      SettingState(
+      SettingsState(
         device: device ?? this.device,
         categories: categories ?? this.categories,
         isLoading: isLoading ?? this.isLoading,
         message: message ?? this.message,
       );
 
-  SettingState.result(
+  SettingsState.result(
       {required Device device,
       required List<PushNotificationCategory> categories})
       : device = device,
@@ -62,41 +62,49 @@ class SettingState extends Equatable {
         message = null,
         isLoading = false;
 
-  SettingState.loading({this.device, this.categories})
+  SettingsState.loading({this.device, this.categories})
       : message = null,
         isLoading = true;
 
-  SettingState.failure({required String message})
+  SettingsState.failure({required String message})
       : device = null,
         categories = null,
         message = message,
         isLoading = false;
 }
 
-class SettingsCubit extends Cubit<SettingState> {
+class SettingsCubit extends Cubit<SettingsState> {
   final ApiRepository api;
 
-  SettingsCubit(this.api) : super(SettingState.loading());
+  SettingsCubit(this.api) : super(SettingsState.loading());
 
   Future<void> setSetting(String key, bool value) async {
-    if (state.device != null) {
-      var copy = state.device!.copy();
+    if (state.device != null && state.categories != null) {
+      Device device;
       if (value) {
-        copy.receiveCategory.add(key);
+        device = state.device!.copyWithReceiveCategory(
+          state.device!.receiveCategory.toList()..add(key),
+        );
       } else {
-        copy.receiveCategory.remove(key);
+        device = state.device!.copyWithReceiveCategory(
+          state.device!.receiveCategory.toList()..remove(key),
+        );
       }
-      emit(SettingState.result(device: copy, categories: state.categories!));
+
       var prefs = await SharedPreferences.getInstance();
       var deviceRegistrationId = prefs.getInt(
         deviceRegistrationIdPreferenceName,
       );
       if (deviceRegistrationId == null) {
-        emit(SettingState.failure(
+        emit(SettingsState.failure(
           message: 'Failed to register device for push notifications.',
         ));
       } else {
-        await api.putDevice(id: deviceRegistrationId, device: copy);
+        await api.putDevice(id: deviceRegistrationId, device: device);
+        emit(SettingsState.result(
+          device: device,
+          categories: state.categories!,
+        ));
       }
     }
   }
@@ -107,27 +115,26 @@ class SettingsCubit extends Cubit<SettingState> {
     var prefs = await SharedPreferences.getInstance();
     var deviceRegistrationId = prefs.getInt(deviceRegistrationIdPreferenceName);
     if (token == null) {
-      emit(SettingState.failure(message: 'No device token found.'));
+      emit(SettingsState.failure(message: 'No device token found.'));
     } else if (deviceRegistrationId == null) {
-      emit(SettingState.failure(
+      emit(SettingsState.failure(
         message: 'Failed to register device for push notifications.',
       ));
     } else {
       try {
         final device = await api.getDevice(id: deviceRegistrationId);
         final categories = await api.getCategories();
-        emit(SettingState.result(
+        emit(SettingsState.result(
           device: device,
           categories: categories.results,
         ));
       } on ApiException catch (exception) {
-        emit(SettingState.failure(message: _failureMessage(exception)));
+        emit(SettingsState.failure(message: _failureMessage(exception)));
       }
     }
   }
 
   String _failureMessage(ApiException exception) {
-    print(exception);
     switch (exception) {
       case ApiException.noInternet:
         return 'Not connected to the internet.';

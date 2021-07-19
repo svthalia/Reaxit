@@ -18,8 +18,6 @@ class Device {
   const Device(this.pk, this.registrationId, this.active, this.dateCreated,
       this.type, this.receiveCategory);
 
-  Device copy() {
-    return Device(pk, registrationId, active, dateCreated, type,
-        receiveCategory.toList());
-  }
+  Device copyWithReceiveCategory(List<String> newReceiveCategory) =>
+      Device(pk, registrationId, active, dateCreated, type, newReceiveCategory);
 }
