@@ -390,7 +390,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                 title: Text('ORDER FOOD'),
               ),
               body: RefreshIndicator(
-                onRefresh: () async => await _foodCubit.load(widget.pk),
+                onRefresh: () => _foodCubit.load(widget.pk),
                 child: ErrorScrollView(state.message!),
               ),
             );
@@ -422,7 +422,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                 ],
               ),
               body: RefreshIndicator(
-                onRefresh: () async => await _foodCubit.load(widget.pk),
+                onRefresh: () => _foodCubit.load(widget.pk),
                 child: ListView(
                   controller: _controller,
                   physics: const AlwaysScrollableScrollPhysics(),

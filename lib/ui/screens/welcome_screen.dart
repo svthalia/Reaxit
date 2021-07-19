@@ -157,9 +157,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       appBar: ThaliaAppBar(title: Text('WELCOME')),
       drawer: MenuDrawer(),
       body: RefreshIndicator(
-        onRefresh: () async {
-          await BlocProvider.of<WelcomeCubit>(context).load();
-        },
+        onRefresh: () => BlocProvider.of<WelcomeCubit>(context).load(),
         child: BlocBuilder<WelcomeCubit, WelcomeState>(
           builder: (context, state) {
             if (state.hasException) {
