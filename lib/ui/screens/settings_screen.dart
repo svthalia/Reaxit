@@ -8,26 +8,6 @@ import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
 
 class SettingsScreen extends StatefulWidget {
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: ThaliaAppBar(title: Text('SETTINGS')),
-      drawer: MenuDrawer(),
-      body: ListView(
-        padding: const EdgeInsets.all(15),
-        children: [
-          _ThemeModeCard(),
-          Divider(),
-          Text(
-            'Notifications',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyText1,
-          ),
-          // _SettingsCard(),
-        ],
-      ),
-    );
-  }
-
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }

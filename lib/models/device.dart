@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'device.g.dart';
 
+/// Object used by the server to provide push notifications.
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Device {
   final int pk;
