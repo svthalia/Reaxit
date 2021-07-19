@@ -102,7 +102,10 @@ class PushNotificationDialog extends StatelessWidget {
           Link(
             uri: uri,
             builder: (context, followLink) => OutlinedButton(
-              onPressed: followLink,
+              onPressed: () {
+                Navigator.of(context).pop();
+                followLink?.call();
+              },
               child: Text('OPEN'),
             ),
           ),
