@@ -41,6 +41,10 @@ enum ApiException {
   unknownError,
 }
 
+/// Wrapper that utf-8 decodes the body of a response to json.
+Map<String, dynamic> _jsonDecode(http.Response response) =>
+    jsonDecode(utf8.decode(response.bodyBytes));
+
 /// Provides an interface to the api.
 ///
 /// Its methods may throw an [ApiException] if there are unexpected results.
@@ -103,7 +107,7 @@ class ApiRepository {
   Future<Event> getEvent({required int pk}) async {
     final uri = _baseUri.replace(path: '$_basePath/events/$pk/');
     final response = await _handleExceptions(() => client.get(uri));
-    final event = Event.fromJson(jsonDecode(response.body));
+    final event = Event.fromJson(_jsonDecode(response));
     if (event.isRegistered) {
       try {
         await getEventRegistrationPayable(
@@ -149,7 +153,7 @@ class ApiRepository {
 
     final response = await _handleExceptions(() => client.get(uri));
     return ListResponse<Event>.fromJson(
-      jsonDecode(response.body),
+      _jsonDecode(response),
       (json) => Event.fromJson(json as Map<String, dynamic>),
     );
   }
@@ -177,7 +181,7 @@ class ApiRepository {
 
     final response = await _handleExceptions(() => client.get(uri));
     return ListResponse<EventRegistration>.fromJson(
-      jsonDecode(response.body),
+      _jsonDecode(response),
       (json) => EventRegistration.fromJson(json as Map<String, dynamic>),
     );
   }
@@ -186,7 +190,7 @@ class ApiRepository {
   Future<EventRegistration> registerForEvent(int pk) async {
     final uri = _baseUri.replace(path: '$_basePath/events/$pk/registrations/');
     final response = await _handleExceptions(() => client.post(uri));
-    return EventRegistration.fromJson(jsonDecode(response.body));
+    return EventRegistration.fromJson(_jsonDecode(response));
   }
 
   /// Cancel the [EventRegistration] with `registrationPk`
@@ -213,7 +217,7 @@ class ApiRepository {
       path: '$_basePath/events/$eventPk/registrations/$registrationPk/fields/',
     );
     final response = await _handleExceptions(() => client.get(uri));
-    Map<String, dynamic> json = jsonDecode(response.body);
+    var json = _jsonDecode(response);
     return json.map(
       (key, jsonField) => MapEntry(key, RegistrationField.fromJson(jsonField)),
     );
@@ -279,7 +283,7 @@ class ApiRepository {
     );
     final response = await _handleExceptions(() => client.get(uri));
     return ListResponse<AdminEventRegistration>.fromJson(
-      jsonDecode(response.body),
+      _jsonDecode(response),
       (json) => AdminEventRegistration.fromJson(json as Map<String, dynamic>),
     );
   }
@@ -297,7 +301,7 @@ class ApiRepository {
     final response = await _handleExceptions(
       () => client.patch(uri, body: body, headers: _jsonHeader),
     );
-    return AdminEventRegistration.fromJson(jsonDecode(response.body));
+    return AdminEventRegistration.fromJson(_jsonDecode(response));
   }
 
   /// Mark registration `registrationPk` as paid with `paymentType`.
@@ -330,7 +334,7 @@ class ApiRepository {
     final response = await _handleExceptions(
       () => client.patch(uri, body: body, headers: _jsonHeader),
     );
-    return Payable.fromJson(jsonDecode(response.body));
+    return Payable.fromJson(_jsonDecode(response));
   }
 
   /// Delete the payment for registration `registrationPk`.
@@ -364,7 +368,7 @@ class ApiRepository {
     );
     final response = await _handleExceptions(() => client.get(uri));
     return ListResponse<FoodOrder>.fromJson(
-      jsonDecode(response.body),
+      _jsonDecode(response),
       (json) => FoodOrder.fromJson(json as Map<String, dynamic>),
     );
   }
@@ -399,7 +403,7 @@ class ApiRepository {
     final response = await _handleExceptions(
       () => client.patch(uri, body: body, headers: _jsonHeader),
     );
-    return Payable.fromJson(jsonDecode(response.body));
+    return Payable.fromJson(_jsonDecode(response));
   }
 
   /// Delete the payment for food order `orderPk`.
@@ -417,7 +421,7 @@ class ApiRepository {
   Future<FoodEvent> getFoodEvent(int pk) async {
     final uri = _baseUri.replace(path: '$_basePath/food/events/$pk/');
     final response = await _handleExceptions(() => client.get(uri));
-    final foodEvent = FoodEvent.fromJson(jsonDecode(response.body));
+    final foodEvent = FoodEvent.fromJson(_jsonDecode(response));
     if (foodEvent.hasOrder) {
       try {
         await getFoodOrderPayable(foodOrderPk: foodEvent.order!.pk);
@@ -460,7 +464,7 @@ class ApiRepository {
 
     final response = await _handleExceptions(() => client.get(uri));
     return ListResponse<FoodEvent>.fromJson(
-      jsonDecode(response.body),
+      _jsonDecode(response),
       (json) => FoodEvent.fromJson(json as Map<String, dynamic>),
     );
   }
@@ -469,7 +473,7 @@ class ApiRepository {
   Future<FoodOrder> getFoodOrder(int pk) async {
     final uri = _baseUri.replace(path: '$_basePath/food/events/$pk/order/');
     final response = await _handleExceptions(() => client.get(uri));
-    final foodOrder = FoodOrder.fromJson(jsonDecode(response.body));
+    final foodOrder = FoodOrder.fromJson(_jsonDecode(response));
     try {
       await getFoodOrderPayable(foodOrderPk: foodOrder.pk);
       foodOrder.tpayAllowed = true;
@@ -497,7 +501,7 @@ class ApiRepository {
     final response = await _handleExceptions(
       () => client.post(uri, body: body, headers: _jsonHeader),
     );
-    final foodOrder = FoodOrder.fromJson(jsonDecode(response.body));
+    final foodOrder = FoodOrder.fromJson(_jsonDecode(response));
     try {
       await getFoodOrderPayable(foodOrderPk: foodOrder.pk);
       foodOrder.tpayAllowed = true;
@@ -519,7 +523,7 @@ class ApiRepository {
     final response = await _handleExceptions(
       () => client.put(uri, body: body, headers: _jsonHeader),
     );
-    final foodOrder = FoodOrder.fromJson(jsonDecode(response.body));
+    final foodOrder = FoodOrder.fromJson(_jsonDecode(response));
     try {
       await getFoodOrderPayable(foodOrderPk: foodOrder.pk);
       foodOrder.tpayAllowed = true;
@@ -550,7 +554,7 @@ class ApiRepository {
 
     final response = await _handleExceptions(() => client.get(uri));
     return ListResponse<Product>.fromJson(
-      jsonDecode(response.body),
+      _jsonDecode(response),
       (json) => Product.fromJson(json as Map<String, dynamic>),
     );
   }
@@ -566,7 +570,7 @@ class ApiRepository {
     );
 
     final response = await _handleExceptions(() => client.get(uri));
-    return Payable.fromJson(jsonDecode(response.body));
+    return Payable.fromJson(_jsonDecode(response));
   }
 
   /// Make a Thalia Pay [Payment].
@@ -591,14 +595,14 @@ class ApiRepository {
     );
 
     final response = await _handleExceptions(() => client.patch(uri));
-    return Payable.fromJson(jsonDecode(response.body));
+    return Payable.fromJson(_jsonDecode(response));
   }
 
   /// Get the [PaymentUser] of the currently logged in member.
   Future<PaymentUser> getPaymentUser() async {
     final uri = _baseUri.replace(path: '$_basePath/payments/users/me/');
     final response = await _handleExceptions(() => client.get(uri));
-    return PaymentUser.fromJson(jsonDecode(response.body));
+    return PaymentUser.fromJson(_jsonDecode(response));
   }
 
   /// Get the [Payable] for the [FoodOrder] with the `foodOrderPk`.
@@ -653,7 +657,7 @@ class ApiRepository {
   Future<Member> getMember({required int pk}) async {
     final uri = _baseUri.replace(path: '$_basePath/members/$pk/');
     final response = await _handleExceptions(() => client.get(uri));
-    return Member.fromJson(jsonDecode(response.body));
+    return Member.fromJson(_jsonDecode(response));
   }
 
   /// Get a list of [ListMember]s.
@@ -692,7 +696,7 @@ class ApiRepository {
 
     final response = await _handleExceptions(() => client.get(uri));
     return ListResponse<ListMember>.fromJson(
-      jsonDecode(response.body),
+      _jsonDecode(response),
       (json) => ListMember.fromJson(json as Map<String, dynamic>),
     );
   }
@@ -701,7 +705,7 @@ class ApiRepository {
   Future<FullMember> getMe() async {
     final uri = _baseUri.replace(path: '$_basePath/members/me/');
     final response = await _handleExceptions(() => client.get(uri));
-    return FullMember.fromJson(jsonDecode(response.body));
+    return FullMember.fromJson(_jsonDecode(response));
   }
 
   /// Update the avatar of the logged in member.
@@ -738,7 +742,7 @@ class ApiRepository {
   Future<Album> getAlbum({required String slug}) async {
     final uri = _baseUri.replace(path: '$_basePath/photos/albums/$slug/');
     final response = await _handleExceptions(() => client.get(uri));
-    return Album.fromJson(jsonDecode(response.body));
+    return Album.fromJson(_jsonDecode(response));
   }
 
   /// Get a list of [ListAlbum]s.
@@ -762,7 +766,7 @@ class ApiRepository {
 
     final response = await _handleExceptions(() => client.get(uri));
     return ListResponse<ListAlbum>.fromJson(
-      jsonDecode(response.body),
+      _jsonDecode(response),
       (json) => ListAlbum.fromJson(json as Map<String, dynamic>),
     );
   }
@@ -785,7 +789,7 @@ class ApiRepository {
 
     final response = await _handleExceptions(() => client.get(uri));
     return ListResponse<Slide>.fromJson(
-      jsonDecode(response.body),
+      _jsonDecode(response),
       (json) => Slide.fromJson(json as Map<String, dynamic>),
     );
   }
@@ -808,7 +812,7 @@ class ApiRepository {
 
     final response = await _handleExceptions(() => client.get(uri));
     return ListResponse<FrontpageArticle>.fromJson(
-      jsonDecode(response.body),
+      _jsonDecode(response),
       (json) => FrontpageArticle.fromJson(json as Map<String, dynamic>),
     );
   }
@@ -818,7 +822,7 @@ class ApiRepository {
       path: '$_basePath/pushnotifications/devices/$id/',
     );
     final response = await _handleExceptions(() => client.get(uri));
-    return Device.fromJson(jsonDecode(response.body));
+    return Device.fromJson(_jsonDecode(response));
   }
 
   Future<Device> putDevice({required int id, required Device device}) async {
@@ -826,7 +830,7 @@ class ApiRepository {
         _baseUri.replace(path: '$_basePath/pushnotifications/devices/$id/');
     final response = await _handleExceptions(() => client.put(uri,
         body: jsonEncode(device.toJson()), headers: _jsonHeader));
-    return Device.fromJson(jsonDecode(response.body));
+    return Device.fromJson(_jsonDecode(response));
   }
 
   /// Register a device for token.
@@ -844,7 +848,7 @@ class ApiRepository {
     final response = await _handleExceptions(
       () => client.post(uri, body: body, headers: _jsonHeader),
     );
-    return Device.fromJson(jsonDecode(response.body));
+    return Device.fromJson(_jsonDecode(response));
   }
 
   Future<ListResponse<PushNotificationCategory>> getCategories() async {
@@ -853,7 +857,7 @@ class ApiRepository {
     );
     final response = await _handleExceptions(() => client.get(uri));
     return ListResponse<PushNotificationCategory>.fromJson(
-        jsonDecode(response.body),
+        _jsonDecode(response),
         (json) =>
             PushNotificationCategory.fromJson(json as Map<String, dynamic>));
   }
