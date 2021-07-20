@@ -14,8 +14,7 @@ import 'package:url_launcher/link.dart';
 class MenuDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // TODO: add selected highlight, and make the onTap on the active item
-    //  dismiss the drawer if the top level page is the only item in the stack.
+    final routerDelegate = ThaliaRouterDelegate.of(context);
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -26,7 +25,7 @@ class MenuDrawer extends StatelessWidget {
               final me = state.result!;
               return InkWell(
                 onTap: () {
-                  ThaliaRouterDelegate.of(context).push(MaterialPage(
+                  routerDelegate.push(MaterialPage(
                     child: ProfileScreen(pk: me.pk, member: me),
                   ));
                 },
@@ -146,40 +145,70 @@ class MenuDrawer extends StatelessWidget {
             }
           }),
           ListTile(
-            title: const Text('Welcome'),
-            leading: const Icon(Icons.home),
-            onTap: () => ThaliaRouterDelegate.of(context).replace(
-              MaterialPage(child: WelcomeScreen()),
-            ),
-          ),
+              title: const Text('Welcome'),
+              leading: const Icon(Icons.home),
+              selected: routerDelegate.stack.last.child is WelcomeScreen,
+              onTap: () {
+                if (routerDelegate.stack.last.child is WelcomeScreen) {
+                  Navigator.of(context).pop();
+                } else {
+                  routerDelegate.replace(
+                    MaterialPage(child: WelcomeScreen()),
+                  );
+                }
+              }),
           ListTile(
-            title: const Text('Calendar'),
-            leading: const Icon(Icons.event),
-            onTap: () => ThaliaRouterDelegate.of(context).replace(
-              MaterialPage(child: CalendarScreen()),
-            ),
-          ),
+              title: const Text('Calendar'),
+              leading: const Icon(Icons.event),
+              selected: routerDelegate.stack.last.child is CalendarScreen,
+              onTap: () {
+                if (routerDelegate.stack.last.child is CalendarScreen) {
+                  Navigator.of(context).pop();
+                } else {
+                  routerDelegate.replace(
+                    MaterialPage(child: CalendarScreen()),
+                  );
+                }
+              }),
           ListTile(
-            title: const Text('Member list'),
-            leading: const Icon(Icons.people),
-            onTap: () => ThaliaRouterDelegate.of(context).replace(
-              MaterialPage(child: MembersScreen()),
-            ),
-          ),
+              title: const Text('Member list'),
+              leading: const Icon(Icons.people),
+              selected: routerDelegate.stack.last.child is MembersScreen,
+              onTap: () {
+                if (routerDelegate.stack.last.child is MembersScreen) {
+                  Navigator.of(context).pop();
+                } else {
+                  routerDelegate.replace(
+                    MaterialPage(child: MembersScreen()),
+                  );
+                }
+              }),
           ListTile(
-            title: const Text('Photos'),
-            leading: const Icon(Icons.photo),
-            onTap: () => ThaliaRouterDelegate.of(context).replace(
-              MaterialPage(child: AlbumsScreen()),
-            ),
-          ),
+              title: const Text('Photos'),
+              leading: const Icon(Icons.photo),
+              selected: routerDelegate.stack.last.child is AlbumsScreen,
+              onTap: () {
+                if (routerDelegate.stack.last.child is AlbumsScreen) {
+                  Navigator.of(context).pop();
+                } else {
+                  routerDelegate.replace(
+                    MaterialPage(child: AlbumsScreen()),
+                  );
+                }
+              }),
           ListTile(
-            title: const Text('Settings'),
-            leading: const Icon(Icons.settings),
-            onTap: () => ThaliaRouterDelegate.of(context).replace(
-              MaterialPage(child: SettingsScreen()),
-            ),
-          ),
+              title: const Text('Settings'),
+              leading: const Icon(Icons.settings),
+              selected: routerDelegate.stack.last.child is SettingsScreen,
+              onTap: () {
+                if (routerDelegate.stack.last.child is SettingsScreen) {
+                  Navigator.of(context).pop();
+                } else {
+                  routerDelegate.replace(
+                    MaterialPage(child: SettingsScreen()),
+                  );
+                }
+              }),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.logout),

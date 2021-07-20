@@ -17,9 +17,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   void initState() {
-    _settingCubit = SettingsCubit(RepositoryProvider.of<ApiRepository>(context))
-      ..load();
     super.initState();
+    _settingCubit = SettingsCubit(
+      RepositoryProvider.of<ApiRepository>(context),
+    )..load();
+  }
+
+  @override
+  void dispose() {
+    _settingCubit.close();
+    super.dispose();
   }
 
   Widget _makeSetting(PushNotificationCategory category, bool enabled) {
