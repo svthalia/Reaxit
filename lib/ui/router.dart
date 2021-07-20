@@ -16,6 +16,7 @@ import 'package:reaxit/ui/screens/members_screen.dart';
 import 'package:reaxit/ui/screens/profile_screen.dart';
 import 'package:reaxit/ui/screens/welcome_screen.dart';
 import 'package:reaxit/ui/widgets/tpay_sales_order_dialog.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:reaxit/push_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -175,6 +176,7 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
           onPopPage: _onPopPage,
           // Copy the stack with `.toList()` to have the navigator update.
           pages: _stack.toList(),
+          observers: [SentryNavigatorObserver()],
         ),
       ),
     );

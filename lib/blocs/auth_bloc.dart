@@ -8,6 +8,7 @@ import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/config.dart' as config;
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 final _redirectUrl = Uri.parse(
   'nu.thalia://callback',
@@ -140,6 +141,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               ),
             );
           },
+          httpClient: SentryHttpClient(),
         ),
         logOut: () => add(LogOutAuthEvent()),
       );
