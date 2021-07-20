@@ -35,7 +35,9 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
   @override
   final GlobalKey<NavigatorState> navigatorKey;
 
-  final List<Page> _stack = [MaterialPage(child: LoginScreen())];
+  final List<MaterialPage> _stack = [MaterialPage(child: LoginScreen())];
+
+  List<MaterialPage> get stack => _stack;
 
   final _firebaseInitialization = Firebase.initializeApp();
 
@@ -289,7 +291,6 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
 
   /// Replaces the current stack.
   void replaceStack(List<MaterialPage> stack) {
-    // TODO: Dispose the removed widgets if that doesn't happen automatically.
     _stack
       ..clear()
       ..addAll(stack);
