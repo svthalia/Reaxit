@@ -48,7 +48,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
       child: Hero(
         tag: 'photo_${album.photos[index].pk}',
         child: FadeInImage.assetNetwork(
-          placeholder: 'assets/img/default-avatar.jpg',
+          placeholder: 'assets/img/photo_placeholder.png',
           image: album.photos[index].small,
           fit: BoxFit.cover,
         ),
