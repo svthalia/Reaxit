@@ -5,6 +5,7 @@ part 'registration_field.g.dart';
 abstract class RegistrationField {
   final String label;
   final String description;
+  // ignore: prefer_typing_uninitialized_variables
   abstract final value;
 
   @JsonKey(name: 'required')

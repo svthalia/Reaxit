@@ -8,7 +8,7 @@ typedef RegistrationsState = DetailState<List<EventRegistration>>;
 class RegistrationsCubit extends Cubit<RegistrationsState> {
   final ApiRepository api;
 
-  RegistrationsCubit(this.api) : super(RegistrationsState.loading());
+  RegistrationsCubit(this.api) : super(const RegistrationsState.loading());
 
   Future<void> load(int pk) async {
     emit(state.copyWith(isLoading: true));
@@ -17,7 +17,7 @@ class RegistrationsCubit extends Cubit<RegistrationsState> {
       if (listResponse.results.isNotEmpty) {
         emit(RegistrationsState.result(result: listResponse.results));
       } else {
-        emit(RegistrationsState.failure(
+        emit(const RegistrationsState.failure(
           message: 'There are no registrations yet.',
         ));
       }

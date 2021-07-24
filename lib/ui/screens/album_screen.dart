@@ -67,7 +67,9 @@ class _AlbumScreenState extends State<AlbumScreen> {
           child: Stack(
             children: [
               PhotoViewGallery.builder(
-                backgroundDecoration: BoxDecoration(color: Colors.transparent),
+                backgroundDecoration: const BoxDecoration(
+                  color: Colors.transparent,
+                ),
                 itemCount: album.photos.length,
                 builder: (context, i) => PhotoViewGalleryPageOptions(
                   heroAttributes: PhotoViewHeroAttributes(
@@ -106,10 +108,12 @@ class _AlbumScreenState extends State<AlbumScreen> {
                           await tempFile.writeAsBytes(response.bodyBytes);
                           await Share.shareFiles([tempFile.path]);
                         } catch (_) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            duration: Duration(seconds: 1),
-                            content: Text('Could not share the image.'),
-                          ));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              duration: Duration(seconds: 1),
+                              content: Text('Could not share the image.'),
+                            ),
+                          );
                         }
                       },
                     ),
@@ -133,10 +137,12 @@ class _AlbumScreenState extends State<AlbumScreen> {
         try {
           await Share.share('https://${config.apiHost}/members/photos/$slug/');
         } catch (_) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            duration: Duration(seconds: 1),
-            content: Text('Could not share the album.'),
-          ));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              duration: Duration(seconds: 1),
+              content: Text('Could not share the album.'),
+            ),
+          );
         }
       },
     );
@@ -161,7 +167,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
               title: Text(widget.album?.title ?? 'ALBUM'),
               actions: [_makeShareAlbumButton(widget.slug)],
             ),
-            body: Center(child: CircularProgressIndicator()),
+            body: const Center(child: CircularProgressIndicator()),
           );
         } else {
           return Scaffold(
@@ -170,7 +176,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
               actions: [_makeShareAlbumButton(widget.slug)],
             ),
             body: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 5,
                 crossAxisCount: 3,

@@ -10,7 +10,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  ImageProvider logo = AssetImage('assets/img/logo.png');
+  ImageProvider logo = const AssetImage('assets/img/logo.png');
 
   @override
   void didChangeDependencies() {
@@ -21,15 +21,14 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
-      buildWhen: (previous, current) {
-        return (current is LoggedOutAuthState ||
-            current is LoadingAuthState ||
-            current is FailureAuthState);
-      },
+      buildWhen: (previous, current) =>
+          current is LoggedOutAuthState ||
+          current is LoadingAuthState ||
+          current is FailureAuthState,
       builder: (context, authState) {
         if (authState is LoadingAuthState) {
           return Scaffold(
-            backgroundColor: Color(0xFFE62272),
+            backgroundColor: const Color(0xFFE62272),
             body: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -40,8 +39,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     width: 260,
                   ),
                 ),
-                SizedBox(height: 50),
-                SizedBox(
+                const SizedBox(height: 50),
+                const SizedBox(
                   height: 50,
                   child: Center(
                     child: CircularProgressIndicator(
@@ -54,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         } else {
           return Scaffold(
-            backgroundColor: Color(0xFFE62272),
+            backgroundColor: const Color(0xFFE62272),
             body: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -64,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     width: 260,
                   ),
                 ),
-                SizedBox(height: 50),
+                const SizedBox(height: 50),
                 SizedBox(
                   height: 50,
                   child: ElevatedButton(
@@ -78,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         listen: false,
                       ).add(LogInAuthEvent());
                     },
-                    child: Text('LOGIN'),
+                    child: const Text('LOGIN'),
                   ),
                 ),
               ],

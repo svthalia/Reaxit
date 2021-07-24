@@ -17,7 +17,7 @@ import 'package:reaxit/ui/screens/profile_screen.dart';
 import 'package:reaxit/ui/screens/welcome_screen.dart';
 import 'package:reaxit/ui/widgets/tpay_sales_order_dialog.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/link.dart';
 import 'package:reaxit/push_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -35,7 +35,7 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
   @override
   final GlobalKey<NavigatorState> navigatorKey;
 
-  final List<MaterialPage> _stack = [MaterialPage(child: LoginScreen())];
+  final List<MaterialPage> _stack = [const MaterialPage(child: LoginScreen())];
 
   List<MaterialPage> get stack => _stack;
 
@@ -54,33 +54,32 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
       if (message.notification != null) {
         showOverlayNotification(
           (context) {
+            Uri? uri;
+            if (message.data.containsKey('url') &&
+                message.data['url'] is String) {
+              uri = Uri.tryParse(message.data['url'] as String);
+            }
+
             return SafeArea(
               child: Card(
-                child: ListTile(
-                  onTap: () async {
-                    if (message.data.containsKey('url') &&
-                        message.data['url'] != null) {
-                      final link = Uri.tryParse(message.data['url']);
-                      if (link != null && await canLaunch(link.toString())) {
-                        await launch(
-                          link.toString(),
-                          forceSafariVC: false,
-                          forceWebView: false,
-                        );
-                      }
-                    }
-                  },
-                  title: Text(message.notification!.title ?? '', maxLines: 1),
-                  subtitle: Text(message.notification!.body ?? '', maxLines: 2),
-                  trailing: IconButton(
-                    icon: Icon(Icons.close),
-                    onPressed: () => OverlaySupportEntry.of(context)!.dismiss(),
+                child: Link(
+                  uri: uri,
+                  builder: (context, followLink) => ListTile(
+                    onTap: followLink,
+                    title: Text(message.notification!.title ?? '', maxLines: 1),
+                    subtitle:
+                        Text(message.notification!.body ?? '', maxLines: 2),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () =>
+                          OverlaySupportEntry.of(context)!.dismiss(),
+                    ),
                   ),
                 ),
               ),
             );
           },
-          duration: Duration(milliseconds: 4000),
+          duration: const Duration(milliseconds: 4000),
         );
       }
     });
@@ -89,10 +88,10 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
     // in the background. Open the deeplink in the notification.
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       if (navigatorKey.currentContext != null) {
-        unawaited(showDialog(
+        showDialog(
           context: navigatorKey.currentContext!,
           builder: (context) => PushNotificationDialog(message),
-        ));
+        );
       }
     });
 
@@ -100,10 +99,10 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
     // running in the background. Open the deeplink in the notification.
     if (initialMessage != null) {
       if (navigatorKey.currentContext != null) {
-        unawaited(showDialog(
+        showDialog(
           context: navigatorKey.currentContext!,
           builder: (context) => PushNotificationDialog(initialMessage),
-        ));
+        );
       }
     }
   }
@@ -115,7 +114,7 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
       if (state is LoggedInAuthState) {
         replaceStack([MaterialPage(child: WelcomeScreen())]);
       } else if (state is LoggedOutAuthState) {
-        replaceStack([MaterialPage(child: LoginScreen())]);
+        replaceStack([const MaterialPage(child: LoginScreen())]);
       }
     });
   }
@@ -143,19 +142,19 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
       },
       listener: (context, state) {
         if (state is LoggedOutAuthState) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('Logged out'),
             duration: Duration(seconds: 2),
           ));
         } else if (state is LoggedInAuthState) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('Logged in'),
             duration: Duration(seconds: 2),
           ));
         } else if (state is FailureAuthState) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(state.message ?? 'Logging in failed.'),
-            duration: Duration(seconds: 2),
+            duration: const Duration(seconds: 2),
           ));
         }
       },
@@ -184,7 +183,7 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
     );
   }
 
-  bool _onPopPage(route, result) {
+  bool _onPopPage(Route<dynamic> route, dynamic result) {
     if (!route.didPop(result)) return false;
     if (_stack.length > 1) _stack.removeLast();
     notifyListeners();
@@ -192,20 +191,20 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
   }
 
   @override
-  Future<void> setNewRoutePath(Uri uri) async {
+  Future<void> setNewRoutePath(Uri configuration) async {
     var authState = authBloc.state;
     // Wait for the first non-loading authState, because deeplinks in
     // android are passed before the AuthBloc gets the chance to load.
     if (authState is LoadingAuthState) {
       authState = await authBloc.stream.firstWhere(
-        (state) => !(state is LoadingAuthState),
+        (state) => state is! LoadingAuthState,
       );
     }
 
-    if (!(authState is LoggedInAuthState)) return SynchronousFuture(null);
+    if (authState is! LoggedInAuthState) return SynchronousFuture(null);
 
-    var path = uri.path;
-    var segments = uri.pathSegments;
+    var path = configuration.path;
+    var segments = configuration.pathSegments;
 
     if (segments.isEmpty) {
       // Handle "/".
@@ -238,6 +237,8 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
           MaterialPage(child: CalendarScreen()),
           MaterialPage(child: EventScreen(pk: pk))
         ]);
+      // TODO: Check whether 0, 1 or 2 backslashes are needed.
+      // ignore: unnecessary_string_escapes
     } else if (RegExp('^/members/photos/([a-z0-9\-_]+)/?\$').hasMatch(path)) {
       _stack
         ..clear()
@@ -253,6 +254,8 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
           MaterialPage(child: MembersScreen()),
           MaterialPage(child: ProfileScreen(pk: pk))
         ]);
+      // TODO: Check whether 0, 1 or 2 backslashes are needed.
+      // ignore: unnecessary_string_escapes
     } else if (RegExp('^/sales/order/([a-f0-9\-]+)/pay/?\$').hasMatch(path)) {
       final pk = segments[2];
       if (navigatorKey.currentContext != null) {

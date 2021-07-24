@@ -17,6 +17,7 @@ class FoodAdminScreen extends StatefulWidget {
 }
 
 class _FoodAdminScreenState extends State<FoodAdminScreen> {
+  // TODO: Apply the same changes as done to EventAdmin.
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -28,10 +29,10 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
         builder: (context) {
           return Scaffold(
             appBar: ThaliaAppBar(
-              title: Text('ORDERS'),
+              title: const Text('ORDERS'),
               actions: [
                 IconButton(
-                  icon: Icon(Icons.search),
+                  icon: const Icon(Icons.search),
                   onPressed: () {
                     showSearch(
                       context: context,
@@ -55,7 +56,7 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
                   if (state.hasException) {
                     return ErrorScrollView(state.message!);
                   } else if (state.isLoading) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   } else {
                     return ListView.separated(
                       itemBuilder: (context, index) => _OrderTile(
@@ -93,7 +94,7 @@ class __OderTileState extends State<_OrderTile> {
     late Widget paymentDropdown;
     if (order.isPaid && order.payment!.type == PaymentType.tpayPayment) {
       paymentDropdown = DropdownButton<PaymentType?>(
-        items: [
+        items: const [
           DropdownMenuItem(
             value: PaymentType.tpayPayment,
             child: Text('Thalia Pay'),
@@ -120,7 +121,7 @@ class __OderTileState extends State<_OrderTile> {
       );
     } else {
       paymentDropdown = DropdownButton<PaymentType?>(
-        items: [
+        items: const [
           DropdownMenuItem(
             value: PaymentType.cardPayment,
             child: Text('Card payment'),
@@ -150,7 +151,7 @@ class __OderTileState extends State<_OrderTile> {
               content: Text(value != null
                   ? "Could not mark $name's order as paid."
                   : "Could not mark $name's order as not paid."),
-              duration: Duration(seconds: 1),
+              duration: const Duration(seconds: 1),
             ));
           }
         },
@@ -179,7 +180,7 @@ class FoodAdminSearchDelegate extends SearchDelegate {
       return <Widget>[
         IconButton(
           tooltip: 'Clear search bar',
-          icon: Icon(Icons.delete),
+          icon: const Icon(Icons.delete),
           onPressed: () {
             query = '';
           },
@@ -199,45 +200,49 @@ class FoodAdminSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    return BlocBuilder<FoodAdminCubit, FoodAdminState>(
-      bloc: _adminCubit..load(search: query),
-      builder: (context, state) {
-        if (state.hasException) {
-          return ErrorScrollView(state.message!);
-        } else if (state.result == null) {
-          return Center(child: CircularProgressIndicator());
-        } else {
-          return ListView.separated(
-            itemBuilder: (context, index) => _OrderTile(
-              order: state.result![index],
-            ),
-            separatorBuilder: (_, __) => const Divider(),
-            itemCount: state.result!.length,
-          );
-        }
-      },
+    return BlocProvider.value(
+      value: _adminCubit..load(search: query),
+      child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
+        builder: (context, state) {
+          if (state.hasException) {
+            return ErrorScrollView(state.message!);
+          } else if (state.result == null) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            return ListView.separated(
+              itemBuilder: (context, index) => _OrderTile(
+                order: state.result![index],
+              ),
+              separatorBuilder: (_, __) => const Divider(),
+              itemCount: state.result!.length,
+            );
+          }
+        },
+      ),
     );
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return BlocBuilder<FoodAdminCubit, FoodAdminState>(
-      bloc: _adminCubit..load(search: query),
-      builder: (context, state) {
-        if (state.hasException) {
-          return ErrorScrollView(state.message!);
-        } else if (state.result == null) {
-          return Center(child: CircularProgressIndicator());
-        } else {
-          return ListView.separated(
-            itemBuilder: (context, index) => _OrderTile(
-              order: state.result![index],
-            ),
-            separatorBuilder: (_, __) => const Divider(),
-            itemCount: state.result!.length,
-          );
-        }
-      },
+    return BlocProvider.value(
+      value: _adminCubit..load(search: query),
+      child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
+        builder: (context, state) {
+          if (state.hasException) {
+            return ErrorScrollView(state.message!);
+          } else if (state.result == null) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            return ListView.separated(
+              itemBuilder: (context, index) => _OrderTile(
+                order: state.result![index],
+              ),
+              separatorBuilder: (_, __) => const Divider(),
+              itemCount: state.result!.length,
+            );
+          }
+        },
+      ),
     );
   }
 }

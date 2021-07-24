@@ -13,7 +13,7 @@ abstract class ThemeEvent extends Equatable {
 class ThemeChangeEvent extends ThemeEvent {
   final ThemeMode newMode;
 
-  ThemeChangeEvent(this.newMode);
+  const ThemeChangeEvent(this.newMode);
 
   @override
   List<Object> get props => [newMode];

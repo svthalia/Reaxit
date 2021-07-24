@@ -8,7 +8,8 @@ typedef RegistrationFieldsState = DetailState<Map<String, RegistrationField>>;
 class RegistrationFieldsCubit extends Cubit<RegistrationFieldsState> {
   final ApiRepository api;
 
-  RegistrationFieldsCubit(this.api) : super(RegistrationFieldsState.loading());
+  RegistrationFieldsCubit(this.api)
+      : super(const RegistrationFieldsState.loading());
 
   Future<void> load({required int eventPk, required int registrationPk}) async {
     emit(state.copyWith(isLoading: true));

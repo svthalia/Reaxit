@@ -59,8 +59,8 @@ class _EventScreenState extends State<EventScreen>
         onTap: followLink,
         child: Center(
           child: FadeInImage.assetNetwork(
-            fadeInDuration: Duration(milliseconds: 300),
-            fadeOutDuration: Duration(milliseconds: 300),
+            fadeInDuration: const Duration(milliseconds: 300),
+            fadeOutDuration: const Duration(milliseconds: 300),
             placeholder: 'assets/img/map_placeholder.png',
             image: event.mapsUrl,
           ),
@@ -71,7 +71,7 @@ class _EventScreenState extends State<EventScreen>
 
   Widget _makeEventInfo(Event event) {
     // TODO @LCKnol: make info
-    return Text('info');
+    return const Text('info');
   }
 
   Widget _makeRegistrationInfo(Event event) {
@@ -87,7 +87,7 @@ class _EventScreenState extends State<EventScreen>
             event.isRegistered &&
             event.hasFields) {
           updateButton = SizedBox(
-            key: ValueKey('update'),
+            key: const ValueKey('update'),
             width: double.infinity,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -102,13 +102,13 @@ class _EventScreenState extends State<EventScreen>
                     ),
                   );
                 },
-                icon: Icon(Icons.build),
-                label: Text('UPDATE REGISTRATION'),
+                icon: const Icon(Icons.build),
+                label: const Text('UPDATE REGISTRATION'),
               ),
             ),
           );
         } else {
-          updateButton = SizedBox.shrink();
+          updateButton = const SizedBox.shrink();
         }
 
         late Widget registrationButton;
@@ -117,7 +117,7 @@ class _EventScreenState extends State<EventScreen>
           // TODO: Join queue version: `if event.reached_max_participants`.
           // TODO: Confirmation dialog if deregistration deadline has passed.
           registrationButton = SizedBox(
-            key: ValueKey('register'),
+            key: const ValueKey('register'),
             width: double.infinity,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -139,22 +139,22 @@ class _EventScreenState extends State<EventScreen>
                       EventListEvent.load(),
                     );
                   } on ApiException {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text('Could not register for the event.'),
                       duration: Duration(seconds: 1),
                     ));
                   }
                   await _registrationsCubit.load(event.pk);
                 },
-                icon: Icon(Icons.create_outlined),
-                label: Text('REGISTER'),
+                icon: const Icon(Icons.create_outlined),
+                label: const Text('REGISTER'),
               ),
             ),
           );
         } else if (event.canCreateRegistration &&
             !event.registrationIsRequired) {
           registrationButton = SizedBox(
-            key: ValueKey('register'),
+            key: const ValueKey('register'),
             width: double.infinity,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -167,14 +167,14 @@ class _EventScreenState extends State<EventScreen>
                       EventListEvent.load(),
                     );
                   } on ApiException {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text('Could not register for the event.'),
                       duration: Duration(seconds: 1),
                     ));
                   }
                 },
-                icon: Icon(Icons.check),
-                label: Text("I'LL BE THERE"),
+                icon: const Icon(Icons.check),
+                label: const Text("I'LL BE THERE"),
               ),
             ),
           );
@@ -182,7 +182,7 @@ class _EventScreenState extends State<EventScreen>
             event.registrationIsRequired) {
           // TODO: Confirmation dialog, with money warning text if deadline has passed.
           registrationButton = SizedBox(
-            key: ValueKey('cancel'),
+            key: const ValueKey('cancel'),
             width: double.infinity,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -195,7 +195,7 @@ class _EventScreenState extends State<EventScreen>
                       registrationPk: event.userRegistration!.pk,
                     );
                   } on ApiException {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text('Could not cancel your registration'),
                       duration: Duration(seconds: 1),
                     ));
@@ -206,15 +206,15 @@ class _EventScreenState extends State<EventScreen>
                   );
                   await BlocProvider.of<WelcomeCubit>(context).load();
                 },
-                icon: Icon(Icons.delete_forever_outlined),
-                label: Text('CANCEL REGISTRATION'),
+                icon: const Icon(Icons.delete_forever_outlined),
+                label: const Text('CANCEL REGISTRATION'),
               ),
             ),
           );
         } else if (event.canCancelRegistration &&
             !event.registrationIsRequired) {
           registrationButton = SizedBox(
-            key: ValueKey('cancel'),
+            key: const ValueKey('cancel'),
             width: double.infinity,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -230,30 +230,30 @@ class _EventScreenState extends State<EventScreen>
                       EventListEvent.load(),
                     );
                   } on ApiException {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text('Could not cancel your registration'),
                       duration: Duration(seconds: 1),
                     ));
                   }
                 },
-                icon: Icon(Icons.clear),
-                label: Text("I WON'T BE THERE"),
+                icon: const Icon(Icons.clear),
+                label: const Text("I WON'T BE THERE"),
               ),
             ),
           );
         } else {
-          registrationButton = SizedBox.shrink();
+          registrationButton = const SizedBox.shrink();
         }
 
         late Widget registrationInfoText;
         // TODO: Registration-related info text.
-        registrationInfoText = SizedBox.shrink();
+        registrationInfoText = const SizedBox.shrink();
 
         late Widget paymentWidget;
         if (event.isInvited && event.paymentIsRequired) {
           if (event.userRegistration!.isPaid) {
-            paymentWidget = Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+            paymentWidget = const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
               child: Text('You have paid.'),
             );
           } else if (paymentUserState.result == null) {
@@ -268,7 +268,7 @@ class _EventScreenState extends State<EventScreen>
           } else if (!paymentUserState.result!.tpayEnabled) {
             // TPay is not enabled.
             paymentWidget = SizedBox(
-              key: ValueKey('enable'),
+              key: const ValueKey('enable'),
               width: double.infinity,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -279,7 +279,7 @@ class _EventScreenState extends State<EventScreen>
                       'a direct debit mandate on the website.',
                   child: ElevatedButton.icon(
                     onPressed: null,
-                    icon: Icon(Icons.euro),
+                    icon: const Icon(Icons.euro),
                     label: Text('THALIA PAY: €${event.price}'),
                   ),
                 ),
@@ -288,7 +288,7 @@ class _EventScreenState extends State<EventScreen>
           } else {
             // TPay can be used.
             paymentWidget = SizedBox(
-              key: ValueKey('pay'),
+              key: const ValueKey('pay'),
               width: double.infinity,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -298,7 +298,7 @@ class _EventScreenState extends State<EventScreen>
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          title: Text('Confirm payment'),
+                          title: const Text('Confirm payment'),
                           content: Text(
                             'Are you sure you want to pay €${event.price} for '
                             'your registration to "${event.title}"?',
@@ -310,16 +310,16 @@ class _EventScreenState extends State<EventScreen>
                                 context,
                                 rootNavigator: true,
                               ).pop(false),
-                              icon: Icon(Icons.clear),
-                              label: Text('CANCEL'),
+                              icon: const Icon(Icons.clear),
+                              label: const Text('CANCEL'),
                             ),
                             ElevatedButton.icon(
                               onPressed: () => Navigator.of(
                                 context,
                                 rootNavigator: true,
                               ).pop(true),
-                              icon: Icon(Icons.check),
-                              label: Text('YES'),
+                              icon: const Icon(Icons.check),
+                              label: const Text('YES'),
                             ),
                           ],
                         );
@@ -334,21 +334,21 @@ class _EventScreenState extends State<EventScreen>
                         );
                       } on ApiException {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
+                          const SnackBar(
                             content: Text('Could not pay your order.'),
                           ),
                         );
                       }
                     }
                   },
-                  icon: Icon(Icons.euro),
+                  icon: const Icon(Icons.euro),
                   label: Text('THALIA PAY: €${event.price}'),
                 ),
               ),
             );
           }
         } else {
-          paymentWidget = SizedBox.shrink();
+          paymentWidget = const SizedBox.shrink();
         }
 
         return Column(
@@ -359,11 +359,11 @@ class _EventScreenState extends State<EventScreen>
             AnimatedSize(
               vsync: this,
               curve: Curves.ease,
-              duration: Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 200),
               child: AnimatedSwitcher(
                 switchInCurve: Curves.ease,
                 switchOutCurve: Curves.ease,
-                duration: Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 200),
                 transitionBuilder: (Widget child, Animation<double> animation) {
                   return ScaleTransition(scale: animation, child: child);
                 },
@@ -373,11 +373,11 @@ class _EventScreenState extends State<EventScreen>
             AnimatedSize(
               vsync: this,
               curve: Curves.ease,
-              duration: Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 200),
               child: AnimatedSwitcher(
                 switchInCurve: Curves.ease,
                 switchOutCurve: Curves.ease,
-                duration: Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 200),
                 // transitionBuilder: (Widget child, Animation<double> animation) {
                 //   return ScaleTransition(scale: animation, child: child);
                 // },
@@ -387,11 +387,11 @@ class _EventScreenState extends State<EventScreen>
             AnimatedSize(
               vsync: this,
               curve: Curves.ease,
-              duration: Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 200),
               child: AnimatedSwitcher(
                 switchInCurve: Curves.ease,
                 switchOutCurve: Curves.ease,
-                duration: Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 200),
                 transitionBuilder: (Widget child, Animation<double> animation) {
                   return ScaleTransition(scale: animation, child: child);
                 },
@@ -401,18 +401,18 @@ class _EventScreenState extends State<EventScreen>
             AnimatedSize(
               vsync: this,
               curve: Curves.ease,
-              duration: Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 200),
               child: AnimatedSwitcher(
                 switchInCurve: Curves.ease,
                 switchOutCurve: Curves.ease,
-                duration: Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 200),
                 // transitionBuilder: (Widget child, Animation<double> animation) {
                 //   return ScaleTransition(scale: animation, child: child);
                 // },
                 child: paymentWidget,
               ),
             ),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
           ],
         );
       },
@@ -430,7 +430,7 @@ class _EventScreenState extends State<EventScreen>
           } else {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text("Could not open '$url'."),
-              duration: Duration(seconds: 1),
+              duration: const Duration(seconds: 1),
             ));
           }
         },
@@ -440,8 +440,8 @@ class _EventScreenState extends State<EventScreen>
 
   SliverPadding _makeRegistrations(RegistrationsState state) {
     if (state.isLoading) {
-      return SliverPadding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+      return const SliverPadding(
+        padding: EdgeInsets.symmetric(horizontal: 10),
         sliver: SliverToBoxAdapter(
           child: Center(
             child: CircularProgressIndicator(),
@@ -457,9 +457,9 @@ class _EventScreenState extends State<EventScreen>
       );
     } else {
       return SliverPadding(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         sliver: SliverGrid(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
             mainAxisSpacing: 10,
             crossAxisSpacing: 10,
@@ -488,7 +488,7 @@ class _EventScreenState extends State<EventScreen>
                               Colors.black.withOpacity(0.0),
                               Colors.black.withOpacity(0.5),
                             ],
-                            stops: [0.4, 1.0],
+                            stops: const [0.4, 1.0],
                           ),
                         ),
                         child: Text(
@@ -530,8 +530,8 @@ class _EventScreenState extends State<EventScreen>
             widget.event == null &&
             state.result == null) {
           return Scaffold(
-            appBar: ThaliaAppBar(title: Text('EVENT')),
-            body: Center(
+            appBar: ThaliaAppBar(title: const Text('EVENT')),
+            body: const Center(
               child: CircularProgressIndicator(),
             ),
           );
@@ -543,7 +543,7 @@ class _EventScreenState extends State<EventScreen>
               actions: [
                 if (event.userPermissions.manageEvent)
                   IconButton(
-                    icon: Icon(Icons.settings),
+                    icon: const Icon(Icons.settings),
                     onPressed: () {
                       ThaliaRouterDelegate.of(context).push(
                         MaterialPage(child: EventAdminScreen(pk: event.pk)),

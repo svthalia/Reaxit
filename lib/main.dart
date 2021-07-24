@@ -100,13 +100,13 @@ class _ThaliAppState extends State<ThaliApp> {
                     BlocProvider(
                       create: (_) => MemberListBloc(
                         authState.apiRepository,
-                      )..add(MemberListEvent.load()),
+                      )..add(const MemberListEvent.load()),
                       lazy: false,
                     ),
                     BlocProvider(
                       create: (_) => AlbumListBloc(
                         authState.apiRepository,
-                      )..add(AlbumListEvent.load()),
+                      )..add(const AlbumListEvent.load()),
                       lazy: false,
                     ),
                   ],

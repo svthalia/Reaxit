@@ -8,7 +8,7 @@ typedef MemberState = DetailState<Member>;
 class MemberCubit extends Cubit<MemberState> {
   final ApiRepository api;
 
-  MemberCubit(this.api) : super(MemberState.loading());
+  MemberCubit(this.api) : super(const MemberState.loading());
 
   Future<void> load(int pk) async {
     emit(state.copyWith(isLoading: true));

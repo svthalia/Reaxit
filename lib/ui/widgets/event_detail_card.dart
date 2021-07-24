@@ -9,7 +9,7 @@ class EventDetailCard extends StatelessWidget {
   static final timeFormatter = DateFormat('HH:mm');
   final Event event;
 
-  EventDetailCard({required this.event});
+  const EventDetailCard({required this.event});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class EventDetailCard extends StatelessWidget {
 
     var indicatorColor = Colors.transparent;
     if (event.isRegistered && !event.isInQueue) {
-      indicatorColor = Color(0xFFE62272);
+      indicatorColor = const Color(0xFFE62272);
     } else if (event.isInQueue) {
       indicatorColor = Colors.yellow;
     } else if (event.canCreateRegistration) {
@@ -66,7 +66,7 @@ class EventDetailCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.subtitle1,
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
                           '$start - $end | ${event.location}',
                           maxLines: 1,
@@ -115,13 +115,13 @@ class EventDetailCard extends StatelessWidget {
                         ),
                       );
                     },
-                    child: Text('MORE INFO'),
+                    child: const Text('MORE INFO'),
                   ),
                   if (event.hasFoodEvent) ...[
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     ElevatedButton.icon(
-                      label: Text('FOOD'),
-                      icon: Icon(Icons.local_pizza),
+                      label: const Text('FOOD'),
+                      icon: const Icon(Icons.local_pizza),
                       onPressed: () {
                         ThaliaRouterDelegate.of(context).push(
                           MaterialPage(

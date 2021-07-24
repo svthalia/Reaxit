@@ -6,12 +6,12 @@ import 'package:google_fonts/google_fonts.dart';
 Color magenta = const Color(0xFFE62272);
 
 ColorScheme lightColorScheme = ColorScheme(
-  primary: Color(0xFFE62272),
+  primary: magenta,
   onPrimary: Colors.white,
-  primaryVariant: Color(0xFFE62272),
-  secondary: Color(0xFFE62272),
+  primaryVariant: magenta,
+  secondary: magenta,
   onSecondary: Colors.black,
-  secondaryVariant: Color(0xFFE62272),
+  secondaryVariant: magenta,
   surface: Colors.white,
   onSurface: Colors.black,
   background: Colors.grey[50]!,
@@ -22,15 +22,15 @@ ColorScheme lightColorScheme = ColorScheme(
 );
 
 ColorScheme darkColorScheme = ColorScheme(
-  primary: Color(0xFFE62272),
+  primary: magenta,
   onPrimary: Colors.white,
-  primaryVariant: Color(0xFFE62272),
-  secondary: Color(0xFFE62272),
+  primaryVariant: magenta,
+  secondary: magenta,
   onSecondary: Colors.black,
-  secondaryVariant: Color(0xFFE62272),
-  surface: Color(0xFF212121),
+  secondaryVariant: magenta,
+  surface: const Color(0xFF212121),
   onSurface: Colors.white,
-  background: Color(0xFF111111),
+  background: const Color(0xFF111111),
   onBackground: Colors.white,
   error: Colors.red,
   onError: Colors.white,

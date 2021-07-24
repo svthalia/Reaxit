@@ -54,29 +54,26 @@ class SettingsState extends Equatable {
         message: message ?? this.message,
       );
 
-  SettingsState.result(
-      {required Device device,
-      required List<PushNotificationCategory> categories})
-      : device = device,
-        categories = categories,
-        message = null,
+  const SettingsState.result(
+      {required Device this.device,
+      required List<PushNotificationCategory> this.categories})
+      : message = null,
         isLoading = false;
 
-  SettingsState.loading({this.device, this.categories})
+  const SettingsState.loading({this.device, this.categories})
       : message = null,
         isLoading = true;
 
-  SettingsState.failure({required String message})
+  const SettingsState.failure({required String this.message})
       : device = null,
         categories = null,
-        message = message,
         isLoading = false;
 }
 
 class SettingsCubit extends Cubit<SettingsState> {
   final ApiRepository api;
 
-  SettingsCubit(this.api) : super(SettingsState.loading());
+  SettingsCubit(this.api) : super(const SettingsState.loading());
 
   Future<void> setSetting(String key, bool value) async {
     if (state.device != null && state.categories != null) {
@@ -96,7 +93,7 @@ class SettingsCubit extends Cubit<SettingsState> {
         deviceRegistrationIdPreferenceName,
       );
       if (deviceRegistrationId == null) {
-        emit(SettingsState.failure(
+        emit(const SettingsState.failure(
           message: 'Failed to register device for push notifications.',
         ));
       } else {
@@ -115,9 +112,9 @@ class SettingsCubit extends Cubit<SettingsState> {
     var prefs = await SharedPreferences.getInstance();
     var deviceRegistrationId = prefs.getInt(deviceRegistrationIdPreferenceName);
     if (token == null) {
-      emit(SettingsState.failure(message: 'No device token found.'));
+      emit(const SettingsState.failure(message: 'No device token found.'));
     } else if (deviceRegistrationId == null) {
-      emit(SettingsState.failure(
+      emit(const SettingsState.failure(
         message: 'Failed to register device for push notifications.',
       ));
     } else {

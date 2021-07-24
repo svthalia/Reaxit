@@ -16,7 +16,8 @@ class FoodState extends Equatable {
   /// A message describing why there are no foodEvents.
   final String? message;
 
-  /// A foodEvent is being loaded. If there already is a foodEvent, it is outdated.
+  /// A foodEvent is being loaded. If there
+  /// already is a foodEvent, it is outdated.
   final bool isLoading;
 
   bool get hasException => message != null;
@@ -51,28 +52,26 @@ class FoodState extends Equatable {
         message: message ?? this.message,
       );
 
-  FoodState.result(
-      {required FoodEvent foodEvent, required List<Product> products})
-      : foodEvent = foodEvent,
-        products = products,
-        message = null,
+  const FoodState.result({
+    required FoodEvent this.foodEvent,
+    required List<Product> this.products,
+  })  : message = null,
         isLoading = false;
 
-  FoodState.loading({this.foodEvent, this.products})
+  const FoodState.loading({this.foodEvent, this.products})
       : message = null,
         isLoading = true;
 
-  FoodState.failure({required String message})
+  const FoodState.failure({required String this.message})
       : foodEvent = null,
         products = null,
-        message = message,
         isLoading = false;
 }
 
 class FoodCubit extends Cubit<FoodState> {
   final ApiRepository api;
 
-  FoodCubit(this.api) : super(FoodState.loading());
+  FoodCubit(this.api) : super(const FoodState.loading());
 
   Future<void> load(int pk) async {
     emit(state.copyWith(isLoading: true));

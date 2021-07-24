@@ -15,9 +15,9 @@ class ThaliaAppBar extends AppBar {
           // in dark mode, but is invisible in light mode,
           // so we can just leave it there.
           bottom: PreferredSize(
-            preferredSize: Size.fromHeight(0),
+            preferredSize: const Size.fromHeight(0),
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 border: Border(
                   bottom: BorderSide(color: Color(0xFFE62272)),
                 ),

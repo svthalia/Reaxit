@@ -8,7 +8,7 @@ typedef AlbumState = DetailState<Album>;
 class AlbumCubit extends Cubit<AlbumState> {
   final ApiRepository api;
 
-  AlbumCubit(this.api) : super(AlbumState.loading());
+  AlbumCubit(this.api) : super(const AlbumState.loading());
 
   Future<void> load(String slug) async {
     emit(state.copyWith(isLoading: true));

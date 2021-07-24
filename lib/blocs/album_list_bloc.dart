@@ -7,8 +7,8 @@ import 'package:reaxit/models/album.dart';
 class AlbumListEvent extends ListEvent {
   final String? search;
 
-  AlbumListEvent.load({this.search}) : super.load();
-  AlbumListEvent.more()
+  const AlbumListEvent.load({this.search}) : super.load();
+  const AlbumListEvent.more()
       : search = null,
         super.more();
 
@@ -19,13 +19,13 @@ class AlbumListEvent extends ListEvent {
 typedef AlbumListState = ListState<AlbumListEvent, ListAlbum>;
 
 class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
-  static final int _firstPageSize = 60;
-  static final int _pageSize = 30;
+  static const int _firstPageSize = 60;
+  static const int _pageSize = 30;
 
   final ApiRepository api;
 
   AlbumListBloc(this.api)
-      : super(AlbumListState.loading(
+      : super(const AlbumListState.loading(
           results: [],
           event: AlbumListEvent.load(),
         ));

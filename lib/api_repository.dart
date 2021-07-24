@@ -43,7 +43,7 @@ enum ApiException {
 
 /// Wrapper that utf-8 decodes the body of a response to json.
 Map<String, dynamic> _jsonDecode(http.Response response) =>
-    jsonDecode(utf8.decode(response.bodyBytes));
+    jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
 
 /// Provides an interface to the api.
 ///
@@ -125,8 +125,9 @@ class ApiRepository {
   ///
   /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
   /// total number of [Events] that can be returned.
-  /// Use `search` to filter on name, `ordering` to order with values in {'start',
-  /// 'end', '-start', '-end'}, and `start` and/or `end` to filter on a time range.
+  /// Use `search` to filter on name, `ordering` to order with values in
+  /// {'start', 'end', '-start', '-end'}, and `start` and/or `end` to filter on
+  /// a time range.
   Future<ListResponse<Event>> getEvents({
     String? search,
     int? limit,
@@ -219,7 +220,10 @@ class ApiRepository {
     final response = await _handleExceptions(() => client.get(uri));
     var json = _jsonDecode(response);
     return json.map(
-      (key, jsonField) => MapEntry(key, RegistrationField.fromJson(jsonField)),
+      (key, jsonField) => MapEntry(
+        key,
+        RegistrationField.fromJson(jsonField as Map<String, dynamic>),
+      ),
     );
   }
 
@@ -664,8 +668,9 @@ class ApiRepository {
   ///
   /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
   /// total number of [ListMember]s that can be returned.
-  /// Use `search` to filter on name, `ordering` to order with values in {'last_name',
-  /// 'first_name', 'username', '-last_name', '-first_name', '-username'},
+  /// Use `search` to filter on name, `ordering` to order with values in
+  /// {'last_name', 'first_name', 'username', '-last_name', '-first_name',
+  /// '-username'},
   Future<ListResponse<ListMember>> getMembers({
     String? search,
     int? limit,

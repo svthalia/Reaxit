@@ -50,7 +50,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         try {
           await _settingCubit.setSetting(category.key, value);
         } on ApiException {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('Could not change your notification settings.'),
           ));
         }
@@ -63,7 +63,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ThaliaAppBar(title: Text('Settings')),
+      appBar: ThaliaAppBar(title: const Text('Settings')),
       drawer: MenuDrawer(),
       body: BlocBuilder<SettingsCubit, SettingsState>(
         bloc: _settingCubit,
@@ -74,8 +74,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: ListView(
                 padding: const EdgeInsets.all(15),
                 children: [
-                  _ThemeModeCard(),
-                  Divider(),
+                  const _ThemeModeCard(),
+                  const Divider(),
                   Text(
                     'Notifications',
                     textAlign: TextAlign.center,
@@ -89,22 +89,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
             return ListView(
               padding: const EdgeInsets.all(15),
               children: [
-                _ThemeModeCard(),
-                Divider(),
+                const _ThemeModeCard(),
+                const Divider(),
                 Text(
                   'Notifications',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
-                Center(child: CircularProgressIndicator()),
+                const Center(child: CircularProgressIndicator()),
               ],
             );
           } else {
             return ListView(
               padding: const EdgeInsets.all(15),
               children: [
-                _ThemeModeCard(),
-                Divider(),
+                const _ThemeModeCard(),
+                const Divider(),
                 Text(
                   'Notifications',
                   textAlign: TextAlign.center,
@@ -143,7 +143,7 @@ class _ThemeModeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: Icon(Icons.brightness_6_sharp),
+        leading: const Icon(Icons.brightness_6_sharp),
         title: Text(
           'Theme',
           style: Theme.of(context).textTheme.bodyText1,
@@ -161,7 +161,7 @@ class _ThemeModeCard extends StatelessWidget {
                 DropdownMenuItem(
                   value: ThemeMode.light,
                   child: Row(
-                    children: [
+                    children: const [
                       Icon(Icons.wb_sunny_outlined),
                       SizedBox(width: 15),
                       Text('Light')
@@ -171,7 +171,7 @@ class _ThemeModeCard extends StatelessWidget {
                 DropdownMenuItem(
                   value: ThemeMode.system,
                   child: Row(
-                    children: [
+                    children: const [
                       Icon(Icons.settings),
                       SizedBox(width: 15),
                       Text('System default')
@@ -181,7 +181,7 @@ class _ThemeModeCard extends StatelessWidget {
                 DropdownMenuItem(
                   value: ThemeMode.dark,
                   child: Row(
-                    children: [
+                    children: const [
                       Icon(Icons.brightness_2_outlined),
                       SizedBox(width: 15),
                       Text('Dark')

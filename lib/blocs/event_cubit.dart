@@ -9,7 +9,7 @@ typedef EventState = DetailState<Event>;
 class EventCubit extends Cubit<EventState> {
   final ApiRepository api;
 
-  EventCubit(this.api) : super(EventState.loading());
+  EventCubit(this.api) : super(const EventState.loading());
 
   Future<void> load(int pk) async {
     emit(state.copyWith(isLoading: true));

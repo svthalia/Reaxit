@@ -25,7 +25,8 @@ class _MembersScreenState extends State<MembersScreen> {
 
   void _scrollListener() {
     if (_controller.position.pixels == _controller.position.maxScrollExtent) {
-      BlocProvider.of<MemberListBloc>(context).add(MemberListEvent.more());
+      BlocProvider.of<MemberListBloc>(context)
+          .add(const MemberListEvent.more());
     }
   }
 
@@ -39,10 +40,10 @@ class _MembersScreenState extends State<MembersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ThaliaAppBar(
-        title: Text('MEMBERS'),
+        title: const Text('MEMBERS'),
         actions: [
           IconButton(
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
             onPressed: () {
               showSearch(
                 context: context,
@@ -62,7 +63,7 @@ class _MembersScreenState extends State<MembersScreen> {
       drawer: MenuDrawer(),
       body: RefreshIndicator(
         onRefresh: () async {
-          _memberListBloc.add(MemberListEvent.load());
+          _memberListBloc.add(const MemberListEvent.load());
           await _memberListBloc.stream.firstWhere(
             (state) => !state.isLoading,
           );
@@ -95,7 +96,7 @@ class MembersSearchDelegate extends SearchDelegate {
   void _scrollListener() {
     if (_controller.position.pixels == _controller.position.maxScrollExtent) {
       // TODO: add a range, so we start fetching before scrolling to the very end.
-      _bloc.add(MemberListEvent.more());
+      _bloc.add(const MemberListEvent.more());
     }
   }
 
@@ -105,7 +106,7 @@ class MembersSearchDelegate extends SearchDelegate {
       return <Widget>[
         IconButton(
           tooltip: 'Clear search bar',
-          icon: Icon(Icons.delete),
+          icon: const Icon(Icons.delete),
           onPressed: () {
             query = '';
           },
@@ -178,12 +179,12 @@ class MemberListScrollView extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScrollView(
       controller: controller,
-      physics: AlwaysScrollableScrollPhysics(),
+      physics: const AlwaysScrollableScrollPhysics(),
       slivers: [
         SliverPadding(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           sliver: SliverGrid(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
@@ -197,7 +198,7 @@ class MemberListScrollView extends StatelessWidget {
           ),
         ),
         if (listState.isLoadingMore)
-          SliverPadding(
+          const SliverPadding(
             padding: EdgeInsets.all(10),
             sliver: SliverList(
               delegate: SliverChildListDelegate.fixed([

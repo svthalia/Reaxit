@@ -13,7 +13,7 @@ class FoodAdminCubit extends Cubit<FoodAdminState> {
   FoodAdminCubit(
     this.api, {
     required this.foodEventPk,
-  }) : super(FoodAdminState.loading());
+  }) : super(const FoodAdminState.loading());
 
   Future<void> load({String? search}) async {
     emit(state.copyWith(isLoading: true));
@@ -21,7 +21,7 @@ class FoodAdminCubit extends Cubit<FoodAdminState> {
       final orders =
           await api.getAdminFoodOrders(pk: foodEventPk, search: search);
       if (orders.results.isEmpty) {
-        emit(FoodAdminState.failure(message: 'There are no orders'));
+        emit(const FoodAdminState.failure(message: 'There are no orders'));
       } else {
         emit(FoodAdminState.result(result: orders.results));
       }

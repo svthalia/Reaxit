@@ -45,10 +45,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ThaliaAppBar(
-        title: Text('CALENDAR'),
+        title: const Text('CALENDAR'),
         actions: [
           IconButton(
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
             onPressed: () {
               showSearch(
                 context: context,
@@ -111,7 +111,7 @@ class CalendarSearchDelegate extends SearchDelegate {
       return <Widget>[
         IconButton(
           tooltip: 'Clear search bar',
-          icon: Icon(Icons.delete),
+          icon: const Icon(Icons.delete),
           onPressed: () {
             query = '';
           },
@@ -199,10 +199,10 @@ class CalendarScrollView extends StatelessWidget {
 
     return CustomScrollView(
       controller: controller,
-      physics: AlwaysScrollableScrollPhysics(),
+      physics: const AlwaysScrollableScrollPhysics(),
       slivers: [
         SliverPadding(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
@@ -215,7 +215,7 @@ class CalendarScrollView extends StatelessWidget {
           ),
         ),
         if (listState.isLoadingMore)
-          SliverPadding(
+          const SliverPadding(
             padding: EdgeInsets.all(10),
             sliver: SliverToBoxAdapter(
               child: Center(
@@ -296,7 +296,7 @@ class _DayCard extends StatelessWidget {
               children: [
                 Text(
                   day.day.toString(),
-                  style: TextStyle(fontSize: 30),
+                  style: const TextStyle(fontSize: 30),
                 ),
                 Text(dayFormatter.format(day)),
               ],
@@ -337,7 +337,7 @@ class _EventCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(1),
-          color: event.isRegistered ? Color(0xFFE62272) : Colors.grey,
+          color: event.isRegistered ? const Color(0xFFE62272) : Colors.grey,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -345,14 +345,14 @@ class _EventCard extends StatelessWidget {
           children: [
             Text(
               event.title,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
               '$startTime - $endTime | ${event.location}',
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
             ),
           ],
         ),

@@ -20,14 +20,14 @@ class EventListEvent extends ListEvent {
 typedef EventListState = ListState<EventListEvent, Event>;
 
 class EventListBloc extends Bloc<EventListEvent, EventListState> {
-  static final int _firstPageSize = 20;
-  static final int _pageSize = 10;
+  static const int _firstPageSize = 20;
+  static const int _pageSize = 10;
 
   final ApiRepository api;
 
   EventListBloc(this.api)
       : super(EventListState.loading(
-          results: [],
+          results: const [],
           event: EventListEvent.load(),
         ));
 

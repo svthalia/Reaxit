@@ -91,9 +91,8 @@ class ListState<EventType extends ListEvent, ElementType> extends Equatable {
         isLoading = false,
         isLoadingMore = false;
 
-  const ListState.failure({required String message, required this.event})
+  const ListState.failure({required String this.message, required this.event})
       : results = const [],
-        message = message,
         isLoading = false,
         isLoadingMore = false,
         isDone = true;

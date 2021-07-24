@@ -31,7 +31,8 @@ class DetailState<E> extends Equatable {
 
   @override
   String toString() {
-    return 'DetailState<$E>(result: $result, loading: $isLoading, message: $message)';
+    return 'DetailState<$E>(result: $result, '
+        'loading: $isLoading, message: $message)';
   }
 
   DetailState<E> copyWith({E? result, bool? isLoading, String? message}) =>
@@ -41,17 +42,15 @@ class DetailState<E> extends Equatable {
         message: message ?? this.message,
       );
 
-  DetailState.result({required E result})
-      : result = result,
-        message = null,
+  const DetailState.result({required E this.result})
+      : message = null,
         isLoading = false;
 
-  DetailState.loading({this.result})
+  const DetailState.loading({this.result})
       : message = null,
         isLoading = true;
 
-  DetailState.failure({required String message})
+  const DetailState.failure({required String this.message})
       : result = null,
-        message = message,
         isLoading = false;
 }

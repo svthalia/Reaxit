@@ -83,8 +83,8 @@ class PushNotificationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Uri? uri;
-    if (message.data.containsKey('url') && message.data['url'] != null) {
-      uri = Uri.tryParse(message.data['url']);
+    if (message.data.containsKey('url') && message.data['url'] is String) {
+      uri = Uri.tryParse(message.data['url'] as String);
     }
 
     return AlertDialog(
@@ -96,7 +96,7 @@ class PushNotificationDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text('CLOSE'),
+          child: const Text('CLOSE'),
         ),
         if (uri != null)
           Link(
@@ -106,7 +106,7 @@ class PushNotificationDialog extends StatelessWidget {
                 Navigator.of(context).pop();
                 followLink?.call();
               },
-              child: Text('OPEN'),
+              child: const Text('OPEN'),
             ),
           ),
       ],
