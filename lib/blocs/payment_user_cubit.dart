@@ -8,7 +8,7 @@ typedef PaymentUserState = DetailState<PaymentUser>;
 class PaymentUserCubit extends Cubit<PaymentUserState> {
   final ApiRepository api;
 
-  PaymentUserCubit(this.api) : super(PaymentUserState.loading());
+  PaymentUserCubit(this.api) : super(const PaymentUserState.loading());
 
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));

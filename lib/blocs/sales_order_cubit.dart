@@ -8,7 +8,7 @@ typedef SalesOrderState = DetailState<Payable>;
 class SalesOrderCubit extends Cubit<SalesOrderState> {
   final ApiRepository api;
 
-  SalesOrderCubit(this.api) : super(SalesOrderState.loading());
+  SalesOrderCubit(this.api) : super(const SalesOrderState.loading());
 
   Future<void> load(String pk) async {
     emit(state.copyWith(isLoading: true));

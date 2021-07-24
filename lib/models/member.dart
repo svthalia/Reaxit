@@ -62,6 +62,7 @@ class Member extends ListMember {
 @JsonSerializable(fieldRename: FieldRename.snake)
 class FullMember extends Member {
   @override
+  // ignore: overridden_fields
   final FullProfile profile;
 
   const FullMember(

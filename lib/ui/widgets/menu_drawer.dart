@@ -33,7 +33,7 @@ class MenuDrawer extends StatelessWidget {
                   children: [
                     Container(
                       height: 180,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage('assets/img/huygens.jpg'),
                           fit: BoxFit.cover,
@@ -62,7 +62,7 @@ class MenuDrawer extends StatelessWidget {
                       ),
                     ),
                     SafeArea(
-                      minimum: EdgeInsets.all(20),
+                      minimum: const EdgeInsets.all(20),
                       child: Container(
                         width: 80,
                         height: 80,
@@ -72,7 +72,7 @@ class MenuDrawer extends StatelessWidget {
                             fit: BoxFit.cover,
                           ),
                           borderRadius: BorderRadius.circular(40),
-                          boxShadow: [
+                          boxShadow: const [
                             BoxShadow(
                               offset: Offset(1, 2),
                               blurRadius: 8,
@@ -91,7 +91,7 @@ class MenuDrawer extends StatelessWidget {
                   children: [
                     Container(
                       height: 180,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage('assets/img/huygens.jpg'),
                           fit: BoxFit.cover,
@@ -120,17 +120,17 @@ class MenuDrawer extends StatelessWidget {
                       ),
                     ),
                     SafeArea(
-                      minimum: EdgeInsets.all(20),
+                      minimum: const EdgeInsets.all(20),
                       child: Container(
                         width: 80,
                         height: 80,
                         decoration: BoxDecoration(
-                          image: DecorationImage(
+                          image: const DecorationImage(
                             image: AssetImage('assets/img/default-avatar.jpg'),
                             fit: BoxFit.cover,
                           ),
                           borderRadius: BorderRadius.circular(40),
-                          boxShadow: [
+                          boxShadow: const [
                             BoxShadow(
                               offset: Offset(1, 2),
                               blurRadius: 8,
@@ -145,70 +145,75 @@ class MenuDrawer extends StatelessWidget {
             }
           }),
           ListTile(
-              title: const Text('Welcome'),
-              leading: const Icon(Icons.home),
-              selected: routerDelegate.stack.last.child is WelcomeScreen,
-              onTap: () {
-                if (routerDelegate.stack.last.child is WelcomeScreen) {
-                  Navigator.of(context).pop();
-                } else {
-                  routerDelegate.replace(
-                    MaterialPage(child: WelcomeScreen()),
-                  );
-                }
-              }),
+            title: const Text('Welcome'),
+            leading: const Icon(Icons.home),
+            selected: routerDelegate.stack.last.child is WelcomeScreen,
+            onTap: () {
+              if (routerDelegate.stack.last.child is WelcomeScreen) {
+                Navigator.of(context).pop();
+              } else {
+                routerDelegate.replace(
+                  MaterialPage(child: WelcomeScreen()),
+                );
+              }
+            },
+          ),
           ListTile(
-              title: const Text('Calendar'),
-              leading: const Icon(Icons.event),
-              selected: routerDelegate.stack.last.child is CalendarScreen,
-              onTap: () {
-                if (routerDelegate.stack.last.child is CalendarScreen) {
-                  Navigator.of(context).pop();
-                } else {
-                  routerDelegate.replace(
-                    MaterialPage(child: CalendarScreen()),
-                  );
-                }
-              }),
+            title: const Text('Calendar'),
+            leading: const Icon(Icons.event),
+            selected: routerDelegate.stack.last.child is CalendarScreen,
+            onTap: () {
+              if (routerDelegate.stack.last.child is CalendarScreen) {
+                Navigator.of(context).pop();
+              } else {
+                routerDelegate.replace(
+                  MaterialPage(child: CalendarScreen()),
+                );
+              }
+            },
+          ),
           ListTile(
-              title: const Text('Member list'),
-              leading: const Icon(Icons.people),
-              selected: routerDelegate.stack.last.child is MembersScreen,
-              onTap: () {
-                if (routerDelegate.stack.last.child is MembersScreen) {
-                  Navigator.of(context).pop();
-                } else {
-                  routerDelegate.replace(
-                    MaterialPage(child: MembersScreen()),
-                  );
-                }
-              }),
+            title: const Text('Member list'),
+            leading: const Icon(Icons.people),
+            selected: routerDelegate.stack.last.child is MembersScreen,
+            onTap: () {
+              if (routerDelegate.stack.last.child is MembersScreen) {
+                Navigator.of(context).pop();
+              } else {
+                routerDelegate.replace(
+                  MaterialPage(child: MembersScreen()),
+                );
+              }
+            },
+          ),
           ListTile(
-              title: const Text('Photos'),
-              leading: const Icon(Icons.photo),
-              selected: routerDelegate.stack.last.child is AlbumsScreen,
-              onTap: () {
-                if (routerDelegate.stack.last.child is AlbumsScreen) {
-                  Navigator.of(context).pop();
-                } else {
-                  routerDelegate.replace(
-                    MaterialPage(child: AlbumsScreen()),
-                  );
-                }
-              }),
+            title: const Text('Photos'),
+            leading: const Icon(Icons.photo),
+            selected: routerDelegate.stack.last.child is AlbumsScreen,
+            onTap: () {
+              if (routerDelegate.stack.last.child is AlbumsScreen) {
+                Navigator.of(context).pop();
+              } else {
+                routerDelegate.replace(
+                  MaterialPage(child: AlbumsScreen()),
+                );
+              }
+            },
+          ),
           ListTile(
-              title: const Text('Settings'),
-              leading: const Icon(Icons.settings),
-              selected: routerDelegate.stack.last.child is SettingsScreen,
-              onTap: () {
-                if (routerDelegate.stack.last.child is SettingsScreen) {
-                  Navigator.of(context).pop();
-                } else {
-                  routerDelegate.replace(
-                    MaterialPage(child: SettingsScreen()),
-                  );
-                }
-              }),
+            title: const Text('Settings'),
+            leading: const Icon(Icons.settings),
+            selected: routerDelegate.stack.last.child is SettingsScreen,
+            onTap: () {
+              if (routerDelegate.stack.last.child is SettingsScreen) {
+                Navigator.of(context).pop();
+              } else {
+                routerDelegate.replace(
+                  MaterialPage(child: SettingsScreen()),
+                );
+              }
+            },
+          ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.logout),
@@ -242,8 +247,8 @@ class MenuDrawer extends StatelessWidget {
                 ),
                 builder: (context, followLink) => OutlinedButton.icon(
                   onPressed: followLink,
-                  icon: Icon(Icons.history),
-                  label: Text('CHANGELOG'),
+                  icon: const Icon(Icons.history),
+                  label: const Text('CHANGELOG'),
                 ),
               ),
               Link(
@@ -252,8 +257,8 @@ class MenuDrawer extends StatelessWidget {
                 ),
                 builder: (context, followLink) => OutlinedButton.icon(
                   onPressed: followLink,
-                  icon: Icon(Icons.bug_report_outlined),
-                  label: Text('FEEDBACK'),
+                  icon: const Icon(Icons.bug_report_outlined),
+                  label: const Text('FEEDBACK'),
                 ),
               ),
               const Divider(),

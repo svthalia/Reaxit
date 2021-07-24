@@ -95,7 +95,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: Text('Cancel order'),
+                        title: const Text('Cancel order'),
                         content: Text(
                           'Are you sure you want to cancel your order?',
                           style: Theme.of(context).textTheme.bodyText2,
@@ -106,16 +106,16 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                               context,
                               rootNavigator: true,
                             ).pop(false),
-                            icon: Icon(Icons.clear),
-                            label: Text('No'),
+                            icon: const Icon(Icons.clear),
+                            label: const Text('No'),
                           ),
                           ElevatedButton.icon(
                             onPressed: () => Navigator.of(
                               context,
                               rootNavigator: true,
                             ).pop(true),
-                            icon: Icon(Icons.check),
-                            label: Text('YES'),
+                            icon: const Icon(Icons.check),
+                            label: const Text('YES'),
                           ),
                         ],
                       );
@@ -127,15 +127,15 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                       await _foodCubit.cancelOrder(foodEvent.pk);
                     } on ApiException {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                           content: Text('Could not cancel your order.'),
                         ),
                       );
                     }
                   }
                 },
-                icon: Icon(Icons.cancel),
-                label: Text('CANCEL ORDER'),
+                icon: const Icon(Icons.cancel),
+                label: const Text('CANCEL ORDER'),
               ),
             );
           } else {
@@ -157,7 +157,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
           } else if (!paymentUserState.result!.tpayEnabled) {
             // TPay is not enabled.
             payButton = SizedBox(
-              key: ValueKey('enable'),
+              key: const ValueKey('enable'),
               width: double.infinity,
               child: Tooltip(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -166,7 +166,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                     'a direct debit mandate on the website.',
                 child: ElevatedButton.icon(
                   onPressed: null,
-                  icon: Icon(Icons.euro),
+                  icon: const Icon(Icons.euro),
                   label: Text('THALIA PAY: €${order.product.price}'),
                 ),
               ),
@@ -175,7 +175,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
             // TPay can be used.
             addDivider = true;
             payButton = SizedBox(
-              key: ValueKey('pay'),
+              key: const ValueKey('pay'),
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () async {
@@ -183,7 +183,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: Text('Confirm payment'),
+                        title: const Text('Confirm payment'),
                         content: Text(
                           'Are you sure you want to pay '
                           '€${order.product.price} for your '
@@ -196,16 +196,16 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                               context,
                               rootNavigator: true,
                             ).pop(false),
-                            icon: Icon(Icons.clear),
-                            label: Text('CANCEL'),
+                            icon: const Icon(Icons.clear),
+                            label: const Text('CANCEL'),
                           ),
                           ElevatedButton.icon(
                             onPressed: () => Navigator.of(
                               context,
                               rootNavigator: true,
                             ).pop(true),
-                            icon: Icon(Icons.check),
-                            label: Text('YES'),
+                            icon: const Icon(Icons.check),
+                            label: const Text('YES'),
                           ),
                         ],
                       );
@@ -220,14 +220,14 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                       );
                     } on ApiException {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                           content: Text('Could not pay your order.'),
                         ),
                       );
                     }
                   }
                 },
-                icon: Icon(Icons.euro),
+                icon: const Icon(Icons.euro),
                 label: Text('THALIA PAY: €${order.product.price}'),
               ),
             );
@@ -239,7 +239,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                 AspectRatio(
                   aspectRatio: 1,
                   child: AnimatedContainer(
-                    duration: Duration(milliseconds: 300),
+                    duration: const Duration(milliseconds: 300),
                     padding: const EdgeInsets.all(40),
                     color: order.isPaid
                         ? Colors.green.shade200
@@ -247,7 +247,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                     child: FittedBox(
                       fit: BoxFit.contain,
                       child: AnimatedSwitcher(
-                        duration: Duration(milliseconds: 300),
+                        duration: const Duration(milliseconds: 300),
                         child: order.isPaid
                             ? Icon(
                                 Icons.check_circle_outline,
@@ -294,11 +294,11 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                       AnimatedSize(
                         vsync: this,
                         curve: Curves.ease,
-                        duration: Duration(milliseconds: 200),
+                        duration: const Duration(milliseconds: 200),
                         child: AnimatedSwitcher(
                           switchInCurve: Curves.ease,
                           switchOutCurve: Curves.ease,
-                          duration: Duration(milliseconds: 200),
+                          duration: const Duration(milliseconds: 200),
                           child: addDivider
                               ? const Divider()
                               : const SizedBox.shrink(),
@@ -307,15 +307,16 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                       AnimatedSize(
                         vsync: this,
                         curve: Curves.ease,
-                        duration: Duration(milliseconds: 200),
+                        duration: const Duration(milliseconds: 200),
                         child: AnimatedSwitcher(
                           switchInCurve: Curves.ease,
                           switchOutCurve: Curves.ease,
-                          duration: Duration(milliseconds: 200),
-                          transitionBuilder:
-                              (Widget child, Animation<double> animation) {
+                          duration: const Duration(milliseconds: 200),
+                          transitionBuilder: (child, animation) {
                             return ScaleTransition(
-                                scale: animation, child: child);
+                              scale: animation,
+                              child: child,
+                            );
                           },
                           child: cancelButton,
                         ),
@@ -323,15 +324,16 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                       AnimatedSize(
                         vsync: this,
                         curve: Curves.ease,
-                        duration: Duration(milliseconds: 200),
+                        duration: const Duration(milliseconds: 200),
                         child: AnimatedSwitcher(
                           switchInCurve: Curves.ease,
                           switchOutCurve: Curves.ease,
-                          duration: Duration(milliseconds: 200),
-                          transitionBuilder:
-                              (Widget child, Animation<double> animation) {
+                          duration: const Duration(milliseconds: 200),
+                          transitionBuilder: (child, animation) {
                             return ScaleTransition(
-                                scale: animation, child: child);
+                              scale: animation,
+                              child: child,
+                            );
                           },
                           child: payButton,
                         ),
@@ -347,12 +349,12 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
         return AnimatedSize(
           vsync: this,
           curve: Curves.ease,
-          duration: Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 200),
           alignment: Alignment.topCenter,
           child: AnimatedSwitcher(
             switchInCurve: Curves.ease,
             switchOutCurve: Curves.ease,
-            duration: Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 200),
             transitionBuilder: (Widget child, Animation<double> animation) {
               return ScaleTransition(scale: animation, child: child);
             },
@@ -379,7 +381,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
         listener: (context, state) {
           _controller.animateTo(
             0,
-            duration: Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 500),
             curve: Curves.ease,
           );
         },
@@ -387,7 +389,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
           if (state.hasException) {
             return Scaffold(
               appBar: ThaliaAppBar(
-                title: Text('ORDER FOOD'),
+                title: const Text('ORDER FOOD'),
               ),
               body: RefreshIndicator(
                 onRefresh: () => _foodCubit.load(widget.pk),
@@ -398,24 +400,25 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
               (state.foodEvent == null || state.products == null)) {
             return Scaffold(
               appBar: ThaliaAppBar(
-                title: Text('ORDER FOOD'),
+                title: const Text('ORDER FOOD'),
               ),
-              body: Center(child: CircularProgressIndicator()),
+              body: const Center(child: CircularProgressIndicator()),
             );
           } else {
             final foodEvent = state.foodEvent!;
             final products = state.products;
             return Scaffold(
               appBar: ThaliaAppBar(
-                title: Text('ORDER FOOD'),
+                title: const Text('ORDER FOOD'),
                 actions: [
                   if (foodEvent.canManage)
                     IconButton(
-                      icon: Icon(Icons.settings),
+                      icon: const Icon(Icons.settings),
                       onPressed: () {
                         ThaliaRouterDelegate.of(context).push(
                           MaterialPage(
-                              child: FoodAdminScreen(pk: foodEvent.pk)),
+                            child: FoodAdminScreen(pk: foodEvent.pk),
+                          ),
                         );
                       },
                     ),
@@ -460,15 +463,15 @@ class __ProductTileState extends State<_ProductTile> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(Icons.local_pizza),
+      leading: const Icon(Icons.local_pizza),
       title: Row(
         children: [
           Text(widget.product.name),
-          SizedBox(width: 5),
+          const SizedBox(width: 5),
           Text(
             '€${widget.product.price}',
             style: Theme.of(context).textTheme.caption!.copyWith(
-              fontFeatures: [FontFeature.tabularFigures()],
+              fontFeatures: const [FontFeature.tabularFigures()],
             ),
           ),
         ],
@@ -480,23 +483,23 @@ class __ProductTileState extends State<_ProductTile> {
         buildWhen: (previous, current) => current.foodEvent != null,
         builder: (context, state) {
           return AnimatedSwitcher(
-            duration: Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 300),
             child: state.foodEvent!.hasOrder
                 ? ElevatedButton.icon(
-                    key: ValueKey('change'),
+                    key: const ValueKey('change'),
                     onPressed: state.foodEvent!.canOrder()
                         ? () => _changeOrder(state.foodEvent!)
                         : null,
-                    icon: Icon(Icons.shopping_bag),
-                    label: Text('CHANGE'),
+                    icon: const Icon(Icons.shopping_bag),
+                    label: const Text('CHANGE'),
                   )
                 : ElevatedButton.icon(
-                    key: ValueKey('order'),
+                    key: const ValueKey('order'),
                     onPressed: state.foodEvent!.canOrder()
                         ? () => _placeOrder(state.foodEvent!)
                         : null,
-                    icon: Icon(Icons.shopping_bag),
-                    label: Text('ORDER'),
+                    icon: const Icon(Icons.shopping_bag),
+                    label: const Text('ORDER'),
                   ),
           );
         },
@@ -511,11 +514,9 @@ class __ProductTileState extends State<_ProductTile> {
         productPk: widget.product.pk,
       );
     } on ApiException {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Could not place your order.'),
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Could not place your order.'),
+      ));
     }
   }
 
@@ -524,7 +525,7 @@ class __ProductTileState extends State<_ProductTile> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Change order'),
+          title: const Text('Change order'),
           content: Text(
             'Are you sure you want to change your order?',
             style: Theme.of(context).textTheme.bodyText2,
@@ -535,16 +536,16 @@ class __ProductTileState extends State<_ProductTile> {
                 context,
                 rootNavigator: true,
               ).pop(false),
-              icon: Icon(Icons.clear),
-              label: Text('No'),
+              icon: const Icon(Icons.clear),
+              label: const Text('No'),
             ),
             ElevatedButton.icon(
               onPressed: () => Navigator.of(
                 context,
                 rootNavigator: true,
               ).pop(true),
-              icon: Icon(Icons.check),
-              label: Text('YES'),
+              icon: const Icon(Icons.check),
+              label: const Text('YES'),
             ),
           ],
         );
@@ -558,11 +559,9 @@ class __ProductTileState extends State<_ProductTile> {
           productPk: widget.product.pk,
         );
       } on ApiException {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Could not change your order.'),
-          ),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Could not change your order.'),
+        ));
       }
     }
   }

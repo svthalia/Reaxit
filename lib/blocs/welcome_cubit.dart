@@ -54,32 +54,28 @@ class WelcomeState extends Equatable {
         message: message ?? this.message,
       );
 
-  WelcomeState.result({
-    required List<Slide> slides,
-    required List<FrontpageArticle> articles,
-    required List<Event> upcomingEvents,
-  })  : slides = slides,
-        articles = articles,
-        upcomingEvents = upcomingEvents,
-        message = null,
+  const WelcomeState.result({
+    required List<Slide> this.slides,
+    required List<FrontpageArticle> this.articles,
+    required List<Event> this.upcomingEvents,
+  })  : message = null,
         isLoading = false;
 
-  WelcomeState.loading({this.slides, this.articles, this.upcomingEvents})
+  const WelcomeState.loading({this.slides, this.articles, this.upcomingEvents})
       : message = null,
         isLoading = true;
 
-  WelcomeState.failure({required String message})
+  const WelcomeState.failure({required String this.message})
       : slides = null,
         articles = null,
         upcomingEvents = null,
-        message = message,
         isLoading = false;
 }
 
 class WelcomeCubit extends Cubit<WelcomeState> {
   final ApiRepository api;
 
-  WelcomeCubit(this.api) : super(WelcomeState.loading());
+  WelcomeCubit(this.api) : super(const WelcomeState.loading());
 
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));

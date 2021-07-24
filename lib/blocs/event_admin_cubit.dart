@@ -47,22 +47,19 @@ class EventAdminState extends Equatable {
         message: message ?? this.message,
       );
 
-  EventAdminState.result({
-    required Event event,
-    required List<AdminEventRegistration> registrations,
-  })  : event = event,
-        registrations = registrations,
-        message = null,
+  const EventAdminState.result({
+    required Event this.event,
+    required List<AdminEventRegistration> this.registrations,
+  })  : message = null,
         isLoading = false;
 
-  EventAdminState.loading({this.event, this.registrations})
+  const EventAdminState.loading({this.event, this.registrations})
       : message = null,
         isLoading = true;
 
-  EventAdminState.failure({required String message})
+  const EventAdminState.failure({required String this.message})
       : event = null,
         registrations = null,
-        message = message,
         isLoading = false;
 }
 
@@ -70,19 +67,35 @@ class EventAdminCubit extends Cubit<EventAdminState> {
   final ApiRepository api;
   final int eventPk;
 
+  /// The last used search query. Can be set through `this.search(query)`.
+  String? _searchQuery;
+
+  String? get searchQuery => _searchQuery;
+
   EventAdminCubit(
     this.api, {
     required this.eventPk,
-  }) : super(EventAdminState.loading());
+  }) : super(const EventAdminState.loading());
 
-  Future<void> load({String? search}) async {
+  Future<void> load() async {
     emit(state.copyWith(isLoading: true));
     try {
+      final query = _searchQuery;
       final event = await api.getEvent(pk: eventPk);
-      final registrations =
-          await api.getAdminEventRegistrations(pk: eventPk, search: search);
+      final registrations = await api.getAdminEventRegistrations(
+        pk: eventPk,
+        search: query,
+      );
       if (registrations.results.isEmpty) {
-        emit(EventAdminState.failure(message: 'There are no registrations'));
+        if (query?.isEmpty ?? true) {
+          emit(const EventAdminState.failure(
+            message: 'There are no registrations',
+          ));
+        } else {
+          emit(EventAdminState.failure(
+            message: 'There are no registrations matching "$query"',
+          ));
+        }
       } else {
         emit(EventAdminState.result(
           event: event,
@@ -91,6 +104,53 @@ class EventAdminCubit extends Cubit<EventAdminState> {
       }
     } on ApiException catch (exception) {
       emit(EventAdminState.failure(message: _failureMessage(exception)));
+    }
+  }
+
+  Future<void> loadRegistrations() async {
+    if (!state.hasException && !state.isLoading) {
+      final event = state.event!;
+      emit(state.copyWith(isLoading: true));
+      try {
+        final query = _searchQuery;
+        final registrations = await api.getAdminEventRegistrations(
+          pk: eventPk,
+          search: query,
+        );
+        if (registrations.results.isEmpty) {
+          if (query?.isEmpty ?? true) {
+            emit(const EventAdminState.failure(
+              message: 'There are no registrations',
+            ));
+          } else {
+            emit(EventAdminState.failure(
+              message: 'There are no registrations matching "$query"',
+            ));
+          }
+        } else {
+          emit(EventAdminState.result(
+            event: event,
+            registrations: registrations.results,
+          ));
+        }
+      } on ApiException catch (exception) {
+        emit(EventAdminState.failure(message: _failureMessage(exception)));
+      }
+    } else {
+      load();
+    }
+  }
+
+  /// Set this cubit's `searchQuery` and load the registrations for that query.
+  ///
+  /// Use `null` as argument to remove the search query.
+  Future<void> search(String? query) async {
+    // TODO: Debounce the call to load: e.g. wait for 100ms and then load,
+    //  saving a future so that later `search` calls within the 100ms wait
+    //  do not trigger an additional `loadRegistrations` call.
+    if (query != _searchQuery) {
+      _searchQuery = query;
+      await loadRegistrations();
     }
   }
 
@@ -180,4 +240,6 @@ class EventAdminCubit extends Cubit<EventAdminState> {
         return 'An unknown error occurred.';
     }
   }
+
+  // TODO: Change other cubits to use the search mechanism used here.
 }

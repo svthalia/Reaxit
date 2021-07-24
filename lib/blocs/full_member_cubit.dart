@@ -10,7 +10,7 @@ typedef FullMemberState = DetailState<FullMember>;
 class FullMemberCubit extends Cubit<FullMemberState> {
   final ApiRepository api;
 
-  FullMemberCubit(this.api) : super(FullMemberState.loading());
+  FullMemberCubit(this.api) : super(const FullMemberState.loading());
 
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));

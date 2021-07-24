@@ -40,7 +40,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     return AnimatedSize(
       vsync: this,
       curve: Curves.ease,
-      duration: Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 300),
       child:
           slides.isNotEmpty ? SlidesCarousel(slides) : const SizedBox.shrink(),
     );
@@ -67,7 +67,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     return AnimatedSize(
       vsync: this,
       curve: Curves.ease,
-      duration: Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 300),
       child: articles.isNotEmpty
           ? Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -76,7 +76,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 children: [
                   _makeArticle(articles.first),
                   for (final article in articles.skip(1)) ...[
-                    Divider(height: 8),
+                    const Divider(height: 8),
                     _makeArticle(article),
                   ]
                 ],
@@ -91,7 +91,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     return AnimatedSize(
       vsync: this,
       curve: Curves.ease,
-      duration: Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 300),
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
@@ -138,8 +138,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   ]);
             }).toList(),
             if (events.isEmpty)
-              Padding(
-                padding: const EdgeInsets.all(10),
+              const Padding(
+                padding: EdgeInsets.all(10),
                 child: Text(
                   'There are no upcoming events.',
                   textAlign: TextAlign.center,
@@ -154,7 +154,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ThaliaAppBar(title: Text('WELCOME')),
+      appBar: ThaliaAppBar(title: const Text('WELCOME')),
       drawer: MenuDrawer(),
       body: RefreshIndicator(
         onRefresh: () => BlocProvider.of<WelcomeCubit>(context).load(),
@@ -163,23 +163,23 @@ class _WelcomeScreenState extends State<WelcomeScreen>
             if (state.hasException) {
               return ErrorScrollView(state.message!);
             } else if (!state.hasResults) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else {
               return ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 children: [
                   _makeSlides(state.slides!),
                   if (state.slides!.isNotEmpty)
-                    Divider(indent: 16, endIndent: 16, height: 8),
+                    const Divider(indent: 16, endIndent: 16, height: 8),
                   _makeArticles(state.articles!),
                   if (state.articles!.isNotEmpty)
-                    Divider(indent: 16, endIndent: 16, height: 8),
+                    const Divider(indent: 16, endIndent: 16, height: 8),
                   _makeUpcomingEvents(state.upcomingEvents!),
                   TextButton(
                     onPressed: () => ThaliaRouterDelegate.of(context).replace(
                       MaterialPage(child: CalendarScreen()),
                     ),
-                    child: Text('SHOW THE ENTIRE AGENDA'),
+                    child: const Text('SHOW THE ENTIRE AGENDA'),
                   ),
                 ],
               );
@@ -247,10 +247,13 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
           children: List.generate(
             widget.slides.length,
             (index) => AnimatedContainer(
-              duration: Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 300),
               width: 8.0,
               height: 8.0,
-              margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+              margin: const EdgeInsets.symmetric(
+                vertical: 10.0,
+                horizontal: 2.0,
+              ),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Color.lerp(

@@ -1,5 +1,19 @@
-include: package:pedantic/analysis_options.yaml
+include: package:flutter_lints/flutter.yaml
 
 analyzer:
   exclude:
+    # Do not analyze generated files.
     - lib/models/*.g.dart
+  
+  strong-mode:
+    implicit-casts: false
+
+linter:
+  rules:
+    use_key_in_widget_constructors: false
+
+    prefer_single_quotes: true
+    always_declare_return_types: true
+
+    avoid_catching_errors: true
+    avoid_escaping_inner_quotes: true

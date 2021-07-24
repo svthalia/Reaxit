@@ -56,7 +56,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 heroAttributes: PhotoViewHeroAttributes(
                   tag: 'member_${member.pk}',
                 ),
-                backgroundDecoration: BoxDecoration(color: Colors.transparent),
+                backgroundDecoration:
+                    const BoxDecoration(color: Colors.transparent),
                 minScale: PhotoViewComputedScale.contained * 0.8,
                 maxScale: PhotoViewComputedScale.covered * 1.2,
               ),
@@ -71,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Row(
                         children: [
                           IconButton(
-                            icon: Icon(Icons.add_a_photo_outlined),
+                            icon: const Icon(Icons.add_a_photo_outlined),
                             onPressed: () async {
                               final picker = ImagePicker();
                               final pickedFile = await picker.getImage(
@@ -82,14 +83,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               if (imagePath == null) return;
                               final croppedFile = await ImageCropper.cropImage(
                                   sourcePath: imagePath,
-                                  iosUiSettings: IOSUiSettings(title: 'Crop'),
+                                  iosUiSettings: const IOSUiSettings(
+                                    title: 'Crop',
+                                  ),
                                   compressFormat: ImageCompressFormat.jpg);
                               if (croppedFile == null) return;
                               final scaffoldMessenger =
                                   ScaffoldMessenger.of(context);
                               // Not ThaliaRouterDelegate since this is a dialog.
                               Navigator.of(context).pop();
-                              scaffoldMessenger.showSnackBar(SnackBar(
+                              scaffoldMessenger.showSnackBar(const SnackBar(
                                 content: Text(
                                   'Uploading your new profile picture',
                                 ),
@@ -108,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 scaffoldMessenger.hideCurrentSnackBar();
                               } on ApiException {
                                 scaffoldMessenger.hideCurrentSnackBar();
-                                scaffoldMessenger.showSnackBar(SnackBar(
+                                scaffoldMessenger.showSnackBar(const SnackBar(
                                   duration: Duration(seconds: 2),
                                   content: Text(
                                     'Uploading your avatar failed.',
@@ -119,7 +122,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             color: Theme.of(context).primaryIconTheme.color,
                           ),
                           IconButton(
-                            icon: Icon(Icons.add_photo_alternate_outlined),
+                            icon:
+                                const Icon(Icons.add_photo_alternate_outlined),
                             onPressed: () async {
                               final picker = ImagePicker();
                               final pickedFile = await picker.getImage(
@@ -129,7 +133,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               if (imagePath == null) return;
                               final croppedFile = await ImageCropper.cropImage(
                                 sourcePath: imagePath,
-                                iosUiSettings: IOSUiSettings(title: 'Crop'),
+                                iosUiSettings: const IOSUiSettings(
+                                  title: 'Crop',
+                                ),
                               );
                               if (croppedFile == null) return;
                               final scaffoldMessenger =
@@ -140,7 +146,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               //  add a progressindicator. Many other snackbars
                               //  could at least use some styling, and possibly
                               //  icons.
-                              scaffoldMessenger.showSnackBar(SnackBar(
+                              scaffoldMessenger.showSnackBar(const SnackBar(
                                 content: Text(
                                   'Uploading your new profile picture',
                                 ),
@@ -159,7 +165,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 scaffoldMessenger.hideCurrentSnackBar();
                               } on ApiException {
                                 scaffoldMessenger.hideCurrentSnackBar();
-                                scaffoldMessenger.showSnackBar(SnackBar(
+                                scaffoldMessenger.showSnackBar(const SnackBar(
                                   duration: Duration(seconds: 2),
                                   content: Text(
                                     'Uploading your avatar failed.',
@@ -198,7 +204,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 fit: StackFit.expand,
                 children: [
                   Container(
-                    decoration: BoxDecoration(color: Color(0xFFC5C5C5)),
+                    decoration: const BoxDecoration(color: Color(0xFFC5C5C5)),
                   ),
                   Hero(
                     tag: 'member_${widget.pk}',
@@ -301,14 +307,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           _fieldLabel('Birthday'),
-          SizedBox(height: 3),
+          const SizedBox(height: 3),
           Padding(
             padding: const EdgeInsets.all(5),
             child: Text(
               dateFormatter.format(member.birthday!),
-              style: TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 18),
             ),
           ),
         ],
@@ -322,9 +328,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           _fieldLabel('Website'),
-          SizedBox(height: 3),
+          const SizedBox(height: 3),
           Padding(
             padding: const EdgeInsets.all(5),
             child: Link(
@@ -334,7 +340,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onTap: followLink,
                 child: Text(
                   member.website!.toString(),
-                  style: TextStyle(fontSize: 18),
+                  style: const TextStyle(fontSize: 18),
                 ),
               ),
             ),
@@ -406,7 +412,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       sliver: SliverList(
         delegate: SliverChildListDelegate([
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           _fieldLabel('Achievements for Thalia'),
           ...ListTile.divideTiles(
             context: context,
@@ -422,7 +428,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       sliver: SliverList(
         delegate: SliverChildListDelegate([
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           _fieldLabel('Societies'),
           ...ListTile.divideTiles(
             context: context,
@@ -452,7 +458,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             return CustomScrollView(
               slivers: [
                 _makeAppBar(),
-                SliverFillRemaining(
+                const SliverFillRemaining(
                   child: Center(child: CircularProgressIndicator()),
                 ),
               ],
@@ -468,7 +474,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   if (state.result!.societies.isNotEmpty)
                     _makeSocietiesSliver(state.result!),
                 ] else
-                  SliverPadding(
+                  const SliverPadding(
                     padding: EdgeInsets.all(10),
                     sliver: SliverToBoxAdapter(
                       child: Center(
@@ -498,7 +504,7 @@ class _BlackGradient extends StatelessWidget {
             Colors.black.withOpacity(0.0),
             Colors.black.withOpacity(0.3),
           ],
-          stops: [0.5, 1.0],
+          stops: const [0.5, 1.0],
         ),
       ),
     );
@@ -560,12 +566,12 @@ class __DescriptionFactState extends State<_DescriptionFact>
             padding: const EdgeInsets.all(5),
             child: AnimatedSize(
               vsync: this,
-              duration: Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 200),
               child: AnimatedSwitcher(
-                duration: Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 200),
                 child: isEditting
                     ? Row(
-                        key: ValueKey(true),
+                        key: const ValueKey(true),
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.max,
                         children: [
@@ -577,7 +583,7 @@ class __DescriptionFactState extends State<_DescriptionFact>
                             ),
                           ),
                           IconButton(
-                            icon: Icon(Icons.check),
+                            icon: const Icon(Icons.check),
                             tooltip: 'Edit your description',
                             onPressed: () async {
                               try {
@@ -587,7 +593,7 @@ class __DescriptionFactState extends State<_DescriptionFact>
                                 await widget.cubit.load(widget.member.pk);
                               } on ApiException {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
+                                  const SnackBar(
                                     duration: Duration(seconds: 2),
                                     content: Text(
                                       'Uploading your avatar failed.',
@@ -601,7 +607,7 @@ class __DescriptionFactState extends State<_DescriptionFact>
                         ],
                       )
                     : Row(
-                        key: ValueKey(false),
+                        key: const ValueKey(false),
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.max,
                         children: [
@@ -626,7 +632,7 @@ class __DescriptionFactState extends State<_DescriptionFact>
                           if (isMe)
                             IconButton(
                               tooltip: 'Edit your description',
-                              icon: Icon(Icons.edit_outlined),
+                              icon: const Icon(Icons.edit_outlined),
                               onPressed: () {
                                 setState(() => isEditting = true);
                               },

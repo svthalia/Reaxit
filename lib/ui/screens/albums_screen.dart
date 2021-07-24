@@ -25,7 +25,7 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
 
   void _scrollListener() {
     if (_controller.position.pixels == _controller.position.maxScrollExtent) {
-      _bloc.add(AlbumListEvent.more());
+      _bloc.add(const AlbumListEvent.more());
     }
   }
 
@@ -39,10 +39,10 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ThaliaAppBar(
-        title: Text('ALBUMS'),
+        title: const Text('ALBUMS'),
         actions: [
           IconButton(
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
             onPressed: () {
               showSearch(
                 context: context,
@@ -62,7 +62,7 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
       drawer: MenuDrawer(),
       body: RefreshIndicator(
         onRefresh: () async {
-          _bloc.add(AlbumListEvent.load());
+          _bloc.add(const AlbumListEvent.load());
           await _bloc.stream.firstWhere(
             (state) => !state.isLoading,
           );
@@ -95,7 +95,7 @@ class AlbumsSearchDelegate extends SearchDelegate {
   void _scrollListener() {
     if (_controller.position.pixels == _controller.position.maxScrollExtent) {
       // TODO: add a range, so we start fetching before scrolling to the very end.
-      _bloc.add(AlbumListEvent.more());
+      _bloc.add(const AlbumListEvent.more());
     }
   }
 
@@ -105,7 +105,7 @@ class AlbumsSearchDelegate extends SearchDelegate {
       return <Widget>[
         IconButton(
           tooltip: 'Clear search bar',
-          icon: Icon(Icons.delete),
+          icon: const Icon(Icons.delete),
           onPressed: () {
             query = '';
           },
@@ -178,12 +178,12 @@ class AlbumListScrollView extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScrollView(
       controller: controller,
-      physics: AlwaysScrollableScrollPhysics(),
+      physics: const AlwaysScrollableScrollPhysics(),
       slivers: [
         SliverPadding(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           sliver: SliverGrid(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
@@ -197,7 +197,7 @@ class AlbumListScrollView extends StatelessWidget {
           ),
         ),
         if (listState.isLoadingMore)
-          SliverPadding(
+          const SliverPadding(
             padding: EdgeInsets.all(10),
             sliver: SliverList(
               delegate: SliverChildListDelegate.fixed([

@@ -26,7 +26,7 @@ final Uri _tokenEndpoint = Uri(
   path: 'user/oauth/token/',
 );
 
-final _credentialsStorageKey = 'ThaliApp OAuth2 credentials';
+const _credentialsStorageKey = 'ThaliApp OAuth2 credentials';
 
 abstract class AuthState extends Equatable {
   const AuthState();
@@ -56,10 +56,11 @@ class LoggingInAuthState extends AuthState {
   /// Should be included in the [CompleteLogInAuthEvent].
   final AuthorizationCodeGrant grant;
 
-  LoggingInAuthState(
-      {required this.authorizeUrl,
-      required this.redirectUrl,
-      required this.grant});
+  const LoggingInAuthState({
+    required this.authorizeUrl,
+    required this.redirectUrl,
+    required this.grant,
+  });
 
   @override
   List<Object?> get props => [authorizeUrl, grant];
@@ -84,7 +85,7 @@ class FailureAuthState extends AuthState {
   /// An [http.BaseClient] that adds an OAuth2 token to all requests.
   final String? message;
 
-  FailureAuthState({this.message});
+  const FailureAuthState({this.message});
 
   @override
   List<Object?> get props => [message];
@@ -118,10 +119,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Stream<AuthState> _mapLoadAuthEventToState() async* {
-    final _storage = FlutterSecureStorage();
-    final stored = await _storage.read(
+    const storage = FlutterSecureStorage();
+    final stored = await storage.read(
       key: _credentialsStorageKey,
-      iOptions: IOSOptions(accessibility: IOSAccessibility.first_unlock),
+      iOptions: const IOSOptions(accessibility: IOSAccessibility.first_unlock),
     );
 
     if (stored != null) {
@@ -132,11 +133,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           identifier: config.apiIdentifier,
           secret: config.apiSecret,
           onCredentialsRefreshed: (credentials) async {
-            final _storage = FlutterSecureStorage();
-            await _storage.write(
+            const storage = FlutterSecureStorage();
+            await storage.write(
               key: _credentialsStorageKey,
               value: credentials.toJson(),
-              iOptions: IOSOptions(
+              iOptions: const IOSOptions(
                 accessibility: IOSAccessibility.first_unlock,
               ),
             );
@@ -159,11 +160,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       _tokenEndpoint,
       secret: config.apiSecret,
       onCredentialsRefreshed: (credentials) async {
-        final _storage = FlutterSecureStorage();
+        const _storage = FlutterSecureStorage();
         await _storage.write(
           key: _credentialsStorageKey,
           value: credentials.toJson(),
-          iOptions: IOSOptions(accessibility: IOSAccessibility.first_unlock),
+          iOptions:
+              const IOSOptions(accessibility: IOSAccessibility.first_unlock),
         );
       },
     );
@@ -185,11 +187,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         responseUrl.queryParameters,
       );
 
-      final _storage = FlutterSecureStorage();
-      await _storage.write(
+      const storage = FlutterSecureStorage();
+      await storage.write(
         key: _credentialsStorageKey,
         value: client.credentials.toJson(),
-        iOptions: IOSOptions(accessibility: IOSAccessibility.first_unlock),
+        iOptions:
+            const IOSOptions(accessibility: IOSAccessibility.first_unlock),
       );
       yield LoggedInAuthState(
         client: client,
@@ -198,11 +201,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } on PlatformException catch (exception) {
       yield FailureAuthState(message: exception.message);
     } on SocketException catch (_) {
-      yield FailureAuthState(message: 'No internet.');
+      yield const FailureAuthState(message: 'No internet.');
     } on AuthorizationException catch (_) {
-      yield FailureAuthState(message: 'Authorization failed.');
+      yield const FailureAuthState(message: 'Authorization failed.');
     } catch (_) {
-      yield FailureAuthState(message: 'An unknown error occurred.');
+      yield const FailureAuthState(message: 'An unknown error occurred.');
     }
   }
 
@@ -211,10 +214,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (state is LoggedInAuthState) {
       state.apiRepository.client.close();
     }
-    final storage = FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     await storage.delete(
       key: _credentialsStorageKey,
-      iOptions: IOSOptions(accessibility: IOSAccessibility.first_unlock),
+      iOptions: const IOSOptions(accessibility: IOSAccessibility.first_unlock),
     );
     yield LoggedOutAuthState();
   }

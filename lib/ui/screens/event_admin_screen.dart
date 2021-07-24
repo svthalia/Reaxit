@@ -29,12 +29,12 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
         builder: (context) {
           return Scaffold(
             appBar: ThaliaAppBar(
-              title: Text('REGISTRATIONS'),
+              title: const Text('REGISTRATIONS'),
               actions: [
                 IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: () {
-                    showSearch(
+                  icon: const Icon(Icons.search),
+                  onPressed: () async {
+                    await showSearch(
                       context: context,
                       delegate: EventAdminSearchDelegate(
                         EventAdminCubit(
@@ -43,20 +43,29 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                         ),
                       ),
                     );
+                    // After the search dialog closes, refresh the results,
+                    // since the search screen may have changed stuff through
+                    // its own EventAdminCubit, that do not show up in the cubit
+                    // for the EventAdminScreen until a refresh.
+                    BlocProvider.of<EventAdminCubit>(
+                      context,
+                    ).loadRegistrations();
                   },
                 ),
               ],
             ),
             body: RefreshIndicator(
               onRefresh: () async {
-                await BlocProvider.of<EventAdminCubit>(context).load();
+                await BlocProvider.of<EventAdminCubit>(
+                  context,
+                ).loadRegistrations();
               },
               child: BlocBuilder<EventAdminCubit, EventAdminState>(
                 builder: (context, state) {
                   if (state.hasException) {
                     return ErrorScrollView(state.message!);
                   } else if (state.isLoading) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   } else {
                     return ListView.separated(
                       itemBuilder: (context, index) => _RegistrationTile(
@@ -125,7 +134,7 @@ class __RegistrationTileState extends State<_RegistrationTile> {
             content: Text(value!
                 ? 'Could not mark $name as present.'
                 : 'Could not mark $name as not present.'),
-            duration: Duration(seconds: 1),
+            duration: const Duration(seconds: 1),
           ));
         }
       },
@@ -136,7 +145,7 @@ class __RegistrationTileState extends State<_RegistrationTile> {
       if (registration.isPaid &&
           registration.payment!.type == PaymentType.tpayPayment) {
         paymentDropdown = DropdownButton<PaymentType?>(
-          items: [
+          items: const [
             DropdownMenuItem(
               value: PaymentType.tpayPayment,
               child: Text('Thalia Pay'),
@@ -163,7 +172,7 @@ class __RegistrationTileState extends State<_RegistrationTile> {
         );
       } else {
         paymentDropdown = DropdownButton<PaymentType?>(
-          items: [
+          items: const [
             DropdownMenuItem(
               value: PaymentType.cardPayment,
               child: Text('Card payment'),
@@ -193,7 +202,7 @@ class __RegistrationTileState extends State<_RegistrationTile> {
                 content: Text(value != null
                     ? 'Could not mark $name as paid.'
                     : 'Could not mark $name as not paid.'),
-                duration: Duration(seconds: 1),
+                duration: const Duration(seconds: 1),
               ));
             }
           },
@@ -222,7 +231,10 @@ class __RegistrationTileState extends State<_RegistrationTile> {
 
 class EventAdminSearchDelegate extends SearchDelegate {
   final EventAdminCubit _adminCubit;
-  EventAdminSearchDelegate(this._adminCubit);
+
+  EventAdminSearchDelegate(this._adminCubit) {
+    _adminCubit.load();
+  }
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -230,7 +242,7 @@ class EventAdminSearchDelegate extends SearchDelegate {
       return <Widget>[
         IconButton(
           tooltip: 'Clear search bar',
-          icon: Icon(Icons.delete),
+          icon: const Icon(Icons.delete),
           onPressed: () {
             query = '';
           },
@@ -250,47 +262,51 @@ class EventAdminSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    return BlocBuilder<EventAdminCubit, EventAdminState>(
-      bloc: _adminCubit..load(search: query),
-      builder: (context, state) {
-        if (state.hasException) {
-          return ErrorScrollView(state.message!);
-        } else if (state.registrations == null) {
-          return Center(child: CircularProgressIndicator());
-        } else {
-          return ListView.separated(
-            itemBuilder: (context, index) => _RegistrationTile(
-              registration: state.registrations![index],
-              requiresPayment: state.event!.paymentIsRequired,
-            ),
-            separatorBuilder: (_, __) => const Divider(),
-            itemCount: state.registrations!.length,
-          );
-        }
-      },
+    return BlocProvider.value(
+      value: _adminCubit..search(query),
+      child: BlocBuilder<EventAdminCubit, EventAdminState>(
+        builder: (context, state) {
+          if (state.hasException) {
+            return ErrorScrollView(state.message!);
+          } else if (state.registrations == null) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            return ListView.separated(
+              itemBuilder: (context, index) => _RegistrationTile(
+                registration: state.registrations![index],
+                requiresPayment: state.event!.paymentIsRequired,
+              ),
+              separatorBuilder: (_, __) => const Divider(),
+              itemCount: state.registrations!.length,
+            );
+          }
+        },
+      ),
     );
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return BlocBuilder<EventAdminCubit, EventAdminState>(
-      bloc: _adminCubit..load(search: query),
-      builder: (context, state) {
-        if (state.hasException) {
-          return ErrorScrollView(state.message!);
-        } else if (state.registrations == null) {
-          return Center(child: CircularProgressIndicator());
-        } else {
-          return ListView.separated(
-            itemBuilder: (context, index) => _RegistrationTile(
-              registration: state.registrations![index],
-              requiresPayment: state.event!.paymentIsRequired,
-            ),
-            separatorBuilder: (_, __) => const Divider(),
-            itemCount: state.registrations!.length,
-          );
-        }
-      },
+    return BlocProvider.value(
+      value: _adminCubit..search(query),
+      child: BlocBuilder<EventAdminCubit, EventAdminState>(
+        builder: (context, state) {
+          if (state.hasException) {
+            return ErrorScrollView(state.message!);
+          } else if (state.registrations == null) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            return ListView.separated(
+              itemBuilder: (context, index) => _RegistrationTile(
+                registration: state.registrations![index],
+                requiresPayment: state.event!.paymentIsRequired,
+              ),
+              separatorBuilder: (_, __) => const Divider(),
+              itemCount: state.registrations!.length,
+            );
+          }
+        },
+      ),
     );
   }
 }

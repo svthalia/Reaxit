@@ -49,24 +49,24 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         if (state.hasException) {
           return Scaffold(
             appBar: ThaliaAppBar(
-              title: Text('REGISTRATION'),
-              leading: CloseButton(),
+              title: const Text('REGISTRATION'),
+              leading: const CloseButton(),
             ),
             body: ErrorCenter(state.message!),
           );
         } else if (state.isLoading) {
           return Scaffold(
             appBar: ThaliaAppBar(
-              title: Text('REGISTRATION'),
-              leading: CloseButton(),
+              title: const Text('REGISTRATION'),
+              leading: const CloseButton(),
             ),
-            body: Center(child: CircularProgressIndicator()),
+            body: const Center(child: CircularProgressIndicator()),
           );
         } else {}
         return Scaffold(
           appBar: ThaliaAppBar(
-            title: Text('REGISTRATION'),
-            leading: CloseButton(),
+            title: const Text('REGISTRATION'),
+            leading: const CloseButton(),
           ),
           body: SingleChildScrollView(
             child: Form(
@@ -166,7 +166,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         ),
                       );
                     } else {
-                      return SizedBox(height: 0);
+                      return const SizedBox(height: 0);
                     }
                   }),
                   Padding(
@@ -178,10 +178,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           onPressed: () {
                             _formKey.currentState!.reset();
                           },
-                          icon: Icon(Icons.restore_page_outlined),
-                          label: Text('RESTORE'),
+                          icon: const Icon(Icons.restore_page_outlined),
+                          label: const Text('RESTORE'),
                         ),
-                        SizedBox(width: 20),
+                        const SizedBox(width: 20),
                         ElevatedButton.icon(
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
@@ -193,7 +193,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   fields: state.result!,
                                 );
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
+                                  const SnackBar(
                                     duration: Duration(seconds: 1),
                                     content: Text(
                                       'Your registration has been updated.',
@@ -203,7 +203,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 ThaliaRouterDelegate.of(context).pop();
                               } on ApiException {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
+                                  const SnackBar(
                                     duration: Duration(seconds: 1),
                                     content: Text(
                                       "Couldn't update your registration.",
@@ -213,8 +213,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               }
                             }
                           },
-                          icon: Icon(Icons.check),
-                          label: Text('SUBMIT'),
+                          icon: const Icon(Icons.check),
+                          label: const Text('SUBMIT'),
                         ),
                       ],
                     ),

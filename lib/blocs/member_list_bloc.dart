@@ -7,8 +7,8 @@ import 'package:reaxit/models/member.dart';
 class MemberListEvent extends ListEvent {
   final String? search;
 
-  MemberListEvent.load({this.search}) : super.load();
-  MemberListEvent.more()
+  const MemberListEvent.load({this.search}) : super.load();
+  const MemberListEvent.more()
       : search = null,
         super.more();
 
@@ -19,13 +19,13 @@ class MemberListEvent extends ListEvent {
 typedef MemberListState = ListState<MemberListEvent, ListMember>;
 
 class MemberListBloc extends Bloc<MemberListEvent, MemberListState> {
-  static final int _firstPageSize = 60;
-  static final int _pageSize = 30;
+  static const int _firstPageSize = 60;
+  static const int _pageSize = 30;
 
   final ApiRepository api;
 
   MemberListBloc(this.api)
-      : super(MemberListState.loading(
+      : super(const MemberListState.loading(
           results: [],
           event: MemberListEvent.load(),
         ));

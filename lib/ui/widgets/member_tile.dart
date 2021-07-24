@@ -45,7 +45,7 @@ class MemberTile extends StatelessWidget {
                   Colors.black.withOpacity(0.0),
                   Colors.black.withOpacity(0.5),
                 ],
-                stops: [0.4, 1.0],
+                stops: const [0.4, 1.0],
               ),
             ),
             child: Text(

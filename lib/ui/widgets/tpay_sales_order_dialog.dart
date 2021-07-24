@@ -44,20 +44,20 @@ class _TPaySalesOrderDialogState extends State<TPaySalesOrderDialog>
               // PaymentUser loading or exception.
               payButton = ElevatedButton.icon(
                 onPressed: null,
-                icon: Icon(Icons.euro),
-                label: Text('THALIA PAY'),
+                icon: const Icon(Icons.euro),
+                label: const Text('THALIA PAY'),
               );
             } else if (!paymentUserState.result!.tpayAllowed) {
               payButton = payButton = ElevatedButton.icon(
                 // TPay is not allowed.
                 onPressed: null,
-                icon: Icon(Icons.euro),
-                label: Text('THALIA PAY'),
+                icon: const Icon(Icons.euro),
+                label: const Text('THALIA PAY'),
               );
             } else if (!paymentUserState.result!.tpayEnabled) {
               // TPay is not enabled.
               payButton = SizedBox(
-                key: ValueKey('enable'),
+                key: const ValueKey('enable'),
                 width: double.infinity,
                 child: Tooltip(
                   margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -66,8 +66,8 @@ class _TPaySalesOrderDialogState extends State<TPaySalesOrderDialog>
                       'a direct debit mandate on the website.',
                   child: ElevatedButton.icon(
                     onPressed: null,
-                    icon: Icon(Icons.euro),
-                    label: Text('THALIA PAY'),
+                    icon: const Icon(Icons.euro),
+                    label: const Text('THALIA PAY'),
                   ),
                 ),
               );
@@ -75,22 +75,22 @@ class _TPaySalesOrderDialogState extends State<TPaySalesOrderDialog>
               // Order can't be loaded.
               payButton = ElevatedButton.icon(
                 onPressed: null,
-                icon: Icon(Icons.euro),
-                label: Text('THALIA PAY'),
+                icon: const Icon(Icons.euro),
+                label: const Text('THALIA PAY'),
               );
             } else if (orderState.isLoading) {
               // Order is loading
               payButton = ElevatedButton.icon(
                 onPressed: null,
-                icon: Icon(Icons.euro),
-                label: Text('THALIA PAY'),
+                icon: const Icon(Icons.euro),
+                label: const Text('THALIA PAY'),
               );
             } else {
               // TPay can be used.
               final order = orderState.result!;
               payButton = ElevatedButton.icon(
                 onPressed: _paySalesOrder,
-                icon: Icon(Icons.euro),
+                icon: const Icon(Icons.euro),
                 label: Text('THALIA PAY: €${order.amount}'),
               );
             }
@@ -102,13 +102,13 @@ class _TPaySalesOrderDialogState extends State<TPaySalesOrderDialog>
               );
               payButton = ElevatedButton.icon(
                 onPressed: null,
-                icon: Icon(Icons.euro),
-                label: Text('THALIA PAY'),
+                icon: const Icon(Icons.euro),
+                label: const Text('THALIA PAY'),
               );
             } else if (orderState.isLoading) {
               content = Column(
                 mainAxisSize: MainAxisSize.min,
-                children: [CircularProgressIndicator()],
+                children: const [CircularProgressIndicator()],
               );
             } else {
               final order = orderState.result!;
@@ -123,7 +123,7 @@ class _TPaySalesOrderDialogState extends State<TPaySalesOrderDialog>
             }
 
             return AlertDialog(
-              title: Text('Pay for order'),
+              title: const Text('Pay for order'),
               content: AnimatedSize(
                 vsync: this,
                 duration: const Duration(milliseconds: 300),
@@ -135,13 +135,13 @@ class _TPaySalesOrderDialogState extends State<TPaySalesOrderDialog>
                     context,
                     rootNavigator: true,
                   ).pop(),
-                  icon: Icon(Icons.clear),
-                  label: Text('CANCEL'),
+                  icon: const Icon(Icons.clear),
+                  label: const Text('CANCEL'),
                 ),
                 AnimatedSize(
                   vsync: this,
                   curve: Curves.ease,
-                  duration: Duration(milliseconds: 200),
+                  duration: const Duration(milliseconds: 200),
                   child: payButton,
                 ),
               ],
@@ -155,23 +155,15 @@ class _TPaySalesOrderDialogState extends State<TPaySalesOrderDialog>
   Future<void> _paySalesOrder() async {
     try {
       await _salesOrderCubit.paySalesOrder(widget.pk);
-
-      Navigator.of(
-        context,
-        rootNavigator: true,
-      ).pop();
+      Navigator.of(context, rootNavigator: true).pop();
       // TODO: Confirmation animation.
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Payed you order with Thalia Pay.'),
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Payed you order with Thalia Pay.'),
+      ));
     } on ApiException {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Could not pay your order.'),
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Could not pay your order.'),
+      ));
     }
   }
 }
