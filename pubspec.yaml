@@ -88,6 +88,9 @@ dependencies:
   # Push notifications in app. 
   overlay_support: ^1.2.1
 
+  # Sticky headers for calendar.
+  sticky_headers: ^0.2.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

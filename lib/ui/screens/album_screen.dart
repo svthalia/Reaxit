@@ -175,18 +175,20 @@ class _AlbumScreenState extends State<AlbumScreen> {
               title: Text(state.result!.title),
               actions: [_makeShareAlbumButton(widget.slug)],
             ),
-            body: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisSpacing: 5,
-                mainAxisSpacing: 5,
-                crossAxisCount: 3,
-              ),
-              itemCount: state.result!.photos.length,
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(5),
-              itemBuilder: (context, index) => _makePhotoCard(
-                state.result!,
-                index,
+            body: Scrollbar(
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 5,
+                  crossAxisCount: 3,
+                ),
+                itemCount: state.result!.photos.length,
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(5),
+                itemBuilder: (context, index) => _makePhotoCard(
+                  state.result!,
+                  index,
+                ),
               ),
             ),
           );
