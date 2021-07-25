@@ -10,9 +10,10 @@ import 'package:reaxit/ui/screens/event_screen.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
+import 'package:sticky_headers/sticky_headers/widget.dart';
 
-// TODO: fix ordering
-// TODO: styling
+// TODO: Styling
+// TODO: Change padding/margin insets everywhere to 4, 8, 12, 16.
 class CalendarScreen extends StatefulWidget {
   @override
   _CalendarScreenState createState() => _CalendarScreenState();
@@ -173,6 +174,9 @@ class CalendarSearchDelegate extends SearchDelegate {
 /// This does not take care of communicating with a Bloc. The [controller]
 /// should do that. The [listState] also must not have an exception.
 class CalendarScrollView extends StatelessWidget {
+  static final monthFormatter = DateFormat('MMMM');
+  static final monthYearFormatter = DateFormat('MMMM yyyy');
+
   final ScrollController controller;
   final EventListState listState;
 
@@ -188,6 +192,17 @@ class CalendarScrollView extends StatelessWidget {
       (event) => DateTime(
         event.start.year,
         event.start.month,
+      ),
+    );
+  }
+
+  static Map<DateTime, List<Event>> _groupByDay(List<Event> eventList) {
+    return groupBy<Event, DateTime>(
+      eventList,
+      (event) => DateTime(
+        event.start.year,
+        event.start.month,
+        event.start.day,
       ),
     );
   }
@@ -208,7 +223,29 @@ class CalendarScrollView extends StatelessWidget {
               (context, index) {
                 final month = months[index];
                 final events = monthGroupedEvents[month]!;
-                return _MonthCard(month: month, events: events);
+
+                final dayGroupedEvents = _groupByDay(events);
+                final days = dayGroupedEvents.keys.toList();
+                return StickyHeader(
+                  header: SizedBox(
+                    width: double.infinity,
+                    child: Material(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Text(
+                          month.year == DateTime.now().year
+                              ? monthFormatter.format(month)
+                              : monthYearFormatter.format(month),
+                          style: Theme.of(context).textTheme.headline5,
+                        ),
+                      ),
+                    ),
+                  ),
+                  content: Column(children: [
+                    for (final day in days)
+                      _DayCard(day: day, events: dayGroupedEvents[day]!),
+                  ]),
+                );
               },
               childCount: monthGroupedEvents.length,
             ),
@@ -223,49 +260,6 @@ class CalendarScrollView extends StatelessWidget {
               ),
             ),
           ),
-      ],
-    );
-  }
-}
-
-class _MonthCard extends StatelessWidget {
-  final DateTime month;
-  final List<Event> events;
-
-  static final monthFormatter = DateFormat('MMMM');
-  static final monthYearFormatter = DateFormat('MMMM - yyyy');
-
-  static Map<DateTime, List<Event>> _groupByDay(List<Event> eventList) {
-    return groupBy<Event, DateTime>(
-      eventList,
-      (event) => DateTime(
-        event.start.year,
-        event.start.month,
-        event.start.day,
-      ),
-    );
-  }
-
-  const _MonthCard({Key? key, required this.month, required this.events})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final dayGroupedEvents = _groupByDay(events);
-    final days = dayGroupedEvents.keys.toList();
-
-    return Column(
-      children: [
-        Text(
-          month.year == DateTime.now().year
-              ? monthFormatter.format(month)
-              : monthYearFormatter.format(month),
-          style: Theme.of(context).textTheme.headline5,
-        ),
-        Column(children: [
-          for (final day in days)
-            _DayCard(day: day, events: dayGroupedEvents[day]!),
-        ])
       ],
     );
   }
@@ -290,15 +284,22 @@ class _DayCard extends StatelessWidget {
         children: [
           Container(
             width: 70,
-            alignment: Alignment.topLeft,
+            alignment: Alignment.topRight,
+            padding: const EdgeInsets.only(right: 12),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
                   day.day.toString(),
-                  style: const TextStyle(fontSize: 30),
+                  textAlign: TextAlign.right,
+                  style: Theme.of(context).textTheme.headline3,
                 ),
-                Text(dayFormatter.format(day)),
+                Text(
+                  dayFormatter.format(day).toUpperCase(),
+                  textAlign: TextAlign.right,
+                  style: Theme.of(context).textTheme.caption,
+                ),
               ],
             ),
           ),
@@ -326,39 +327,47 @@ class _EventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final startTime = timeFormatter.format(event.start);
     final endTime = timeFormatter.format(event.end);
-    return InkWell(
-      onTap: () {
-        ThaliaRouterDelegate.of(context).push(
-          MaterialPage(child: EventScreen(pk: event.pk)),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.all(15),
-        margin: const EdgeInsets.only(bottom: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(1),
-          color: event.isRegistered ? const Color(0xFFE62272) : Colors.grey,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              event.title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+    return Material(
+      borderRadius: const BorderRadius.all(Radius.circular(2)),
+      type: MaterialType.card,
+      color: event.isRegistered ? const Color(0xFFE62272) : Colors.grey[800],
+      child: InkWell(
+        onTap: () {
+          ThaliaRouterDelegate.of(context).push(
+            MaterialPage(child: EventScreen(pk: event.pk)),
+          );
+        },
+        // Prevent painting ink outside of the card.
+        borderRadius: const BorderRadius.all(Radius.circular(2)),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          margin: const EdgeInsets.only(bottom: 8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                event.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            Text(
-              '$startTime - $endTime | ${event.location}',
-              style: const TextStyle(color: Colors.white),
-            ),
-          ],
+              Text(
+                '$startTime - $endTime | ${event.location}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                      color: Colors.white.withOpacity(0.8),
+                    ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+  // TODO: Add partner events.
 }
-
-// TODO: Add partner events.
