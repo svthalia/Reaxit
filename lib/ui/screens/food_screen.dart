@@ -126,11 +126,10 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                     try {
                       await _foodCubit.cancelOrder(foodEvent.pk);
                     } on ApiException {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Could not cancel your order.'),
-                        ),
-                      );
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: Text('Could not cancel your order.'),
+                      ));
                     }
                   }
                 },
@@ -219,11 +218,10 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                         orderPk: order.pk,
                       );
                     } on ApiException {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Could not pay your order.'),
-                        ),
-                      );
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: Text('Could not pay your order.'),
+                      ));
                     }
                   }
                 },
@@ -435,9 +433,15 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                     _makeOrderInfo(foodEvent),
                     const Divider(),
                     Card(
-                      child: Column(children: [
-                        for (final product in products!) _ProductTile(product)
-                      ]),
+                      child: Column(
+                        children: ListTile.divideTiles(
+                          context: context,
+                          tiles: [
+                            for (final product in products!)
+                              _ProductTile(product)
+                          ],
+                        ).toList(),
+                      ),
                     ),
                   ],
                 ),
@@ -482,25 +486,17 @@ class __ProductTileState extends State<_ProductTile> {
       trailing: BlocBuilder<FoodCubit, FoodState>(
         buildWhen: (previous, current) => current.foodEvent != null,
         builder: (context, state) {
-          return AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: state.foodEvent!.hasOrder
-                ? ElevatedButton.icon(
-                    key: const ValueKey('change'),
-                    onPressed: state.foodEvent!.canOrder()
-                        ? () => _changeOrder(state.foodEvent!)
-                        : null,
-                    icon: const Icon(Icons.shopping_bag),
-                    label: const Text('CHANGE'),
-                  )
-                : ElevatedButton.icon(
-                    key: const ValueKey('order'),
-                    onPressed: state.foodEvent!.canOrder()
-                        ? () => _placeOrder(state.foodEvent!)
-                        : null,
-                    icon: const Icon(Icons.shopping_bag),
-                    label: const Text('ORDER'),
-                  ),
+          return ElevatedButton(
+            onPressed: state.foodEvent!.canOrder()
+                ? () {
+                    if (state.foodEvent!.hasOrder) {
+                      _changeOrder(state.foodEvent!);
+                    } else {
+                      _placeOrder(state.foodEvent!);
+                    }
+                  }
+                : null,
+            child: const Icon(Icons.shopping_bag),
           );
         },
       ),
@@ -515,6 +511,7 @@ class __ProductTileState extends State<_ProductTile> {
       );
     } on ApiException {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        behavior: SnackBarBehavior.floating,
         content: Text('Could not place your order.'),
       ));
     }
@@ -560,6 +557,7 @@ class __ProductTileState extends State<_ProductTile> {
         );
       } on ApiException {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          behavior: SnackBarBehavior.floating,
           content: Text('Could not change your order.'),
         ));
       }

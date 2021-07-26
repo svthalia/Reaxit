@@ -89,11 +89,11 @@ class EventAdminCubit extends Cubit<EventAdminState> {
       if (registrations.results.isEmpty) {
         if (query?.isEmpty ?? true) {
           emit(const EventAdminState.failure(
-            message: 'There are no registrations',
+            message: 'There are no registrations.',
           ));
         } else {
           emit(EventAdminState.failure(
-            message: 'There are no registrations matching "$query"',
+            message: 'There are no registrations matching "$query".',
           ));
         }
       } else {
@@ -120,11 +120,11 @@ class EventAdminCubit extends Cubit<EventAdminState> {
         if (registrations.results.isEmpty) {
           if (query?.isEmpty ?? true) {
             emit(const EventAdminState.failure(
-              message: 'There are no registrations',
+              message: 'There are no registrations.',
             ));
           } else {
             emit(EventAdminState.failure(
-              message: 'There are no registrations matching "$query"',
+              message: 'There are no registrations matching "$query".',
             ));
           }
         } else {

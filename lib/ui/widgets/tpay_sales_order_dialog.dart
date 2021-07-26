@@ -158,10 +158,12 @@ class _TPaySalesOrderDialogState extends State<TPaySalesOrderDialog>
       Navigator.of(context, rootNavigator: true).pop();
       // TODO: Confirmation animation.
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Payed you order with Thalia Pay.'),
+        behavior: SnackBarBehavior.floating,
+        content: Text('Paid you order with Thalia Pay.'),
       ));
     } on ApiException {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        behavior: SnackBarBehavior.floating,
         content: Text('Could not pay your order.'),
       ));
     }

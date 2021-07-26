@@ -24,9 +24,12 @@ class _MembersScreenState extends State<MembersScreen> {
   }
 
   void _scrollListener() {
-    if (_controller.position.pixels == _controller.position.maxScrollExtent) {
-      BlocProvider.of<MemberListBloc>(context)
-          .add(const MemberListEvent.more());
+    if (_controller.position.pixels >=
+        _controller.position.maxScrollExtent - 300) {
+      // Only request loading more if that's not already happening.
+      if (!_memberListBloc.state.isLoadingMore) {
+        _memberListBloc.add(const MemberListEvent.more());
+      }
     }
   }
 
@@ -94,9 +97,12 @@ class MembersSearchDelegate extends SearchDelegate {
   }
 
   void _scrollListener() {
-    if (_controller.position.pixels == _controller.position.maxScrollExtent) {
-      // TODO: add a range, so we start fetching before scrolling to the very end.
-      _bloc.add(const MemberListEvent.more());
+    if (_controller.position.pixels >=
+        _controller.position.maxScrollExtent - 300) {
+      // Only request loading more if that's not already happening.
+      if (!_bloc.state.isLoadingMore) {
+        _bloc.add(const MemberListEvent.more());
+      }
     }
   }
 
@@ -179,7 +185,9 @@ class MemberListScrollView extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScrollView(
       controller: controller,
-      physics: const AlwaysScrollableScrollPhysics(),
+      physics: const RangeMaintainingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
       slivers: [
         SliverPadding(
           padding: const EdgeInsets.all(10),

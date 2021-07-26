@@ -61,7 +61,7 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
         yield EventListState.failure(
           message: state.event.search == null
               ? 'There are no events.'
-              : 'There are no events found for "${state.event.search}"',
+              : 'There are no events found for "${state.event.search}".',
           event: event,
         );
       }

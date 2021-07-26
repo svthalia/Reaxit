@@ -93,8 +93,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               // Not ThaliaRouterDelegate since this is a dialog.
                               Navigator.of(context).pop();
                               scaffoldMessenger.showSnackBar(const SnackBar(
+                                behavior: SnackBarBehavior.floating,
                                 content: Text(
-                                  'Uploading your new profile picture',
+                                  'Uploading your new profile picture...',
                                 ),
                               ));
                               try {
@@ -112,7 +113,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               } on ApiException {
                                 scaffoldMessenger.hideCurrentSnackBar();
                                 scaffoldMessenger.showSnackBar(const SnackBar(
-                                  duration: Duration(seconds: 2),
+                                  behavior: SnackBarBehavior.floating,
                                   content: Text(
                                     'Uploading your avatar failed.',
                                   ),
@@ -142,13 +143,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ScaffoldMessenger.of(context);
                               // Not ThaliaRouterDelegate since this is a dialog.
                               Navigator.of(context).pop();
-                              // TODO: Make fancy snackbars everywhere. Here we
-                              //  add a progressindicator. Many other snackbars
-                              //  could at least use some styling, and possibly
-                              //  icons.
                               scaffoldMessenger.showSnackBar(const SnackBar(
+                                behavior: SnackBarBehavior.floating,
                                 content: Text(
-                                  'Uploading your new profile picture',
+                                  'Uploading your new profile picture...',
                                 ),
                               ));
                               try {
@@ -166,7 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               } on ApiException {
                                 scaffoldMessenger.hideCurrentSnackBar();
                                 scaffoldMessenger.showSnackBar(const SnackBar(
-                                  duration: Duration(seconds: 2),
+                                  behavior: SnackBarBehavior.floating,
                                   content: Text(
                                     'Uploading your avatar failed.',
                                   ),
@@ -594,7 +592,7 @@ class __DescriptionFactState extends State<_DescriptionFact>
                               } on ApiException {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    duration: Duration(seconds: 2),
+                                    behavior: SnackBarBehavior.floating,
                                     content: Text(
                                       'Uploading your avatar failed.',
                                     ),

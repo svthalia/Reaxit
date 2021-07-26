@@ -51,6 +51,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           await _settingCubit.setSetting(category.key, value);
         } on ApiException {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            behavior: SnackBarBehavior.floating,
             content: Text('Could not change your notification settings.'),
           ));
         }

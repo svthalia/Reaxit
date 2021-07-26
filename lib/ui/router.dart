@@ -143,18 +143,18 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
       listener: (context, state) {
         if (state is LoggedOutAuthState) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Logged out'),
-            duration: Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+            content: Text('Logged out.'),
           ));
         } else if (state is LoggedInAuthState) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Logged in'),
-            duration: Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+            content: Text('Logged in.'),
           ));
         } else if (state is FailureAuthState) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            behavior: SnackBarBehavior.floating,
             content: Text(state.message ?? 'Logging in failed.'),
-            duration: const Duration(seconds: 2),
           ));
         }
       },
