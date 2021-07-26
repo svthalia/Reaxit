@@ -31,8 +31,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   void _scrollListener() {
-    if (_controller.position.pixels == _controller.position.maxScrollExtent) {
-      _bloc.add(EventListEvent.more());
+    if (_controller.position.pixels >=
+        _controller.position.maxScrollExtent - 300) {
+      // Only request loading more if that's not already happening.
+      if (!_bloc.state.isLoadingMore) {
+        _bloc.add(EventListEvent.more());
+      }
     }
   }
 
@@ -100,9 +104,12 @@ class CalendarSearchDelegate extends SearchDelegate {
   }
 
   void _scrollListener() {
-    if (_controller.position.pixels == _controller.position.maxScrollExtent) {
-      // TODO: add a range, so we start fetching before scrolling to the very end.
-      _bloc.add(EventListEvent.more());
+    if (_controller.position.pixels >=
+        _controller.position.maxScrollExtent - 300) {
+      // Only request loading more if that's not already happening.
+      if (!_bloc.state.isLoadingMore) {
+        _bloc.add(EventListEvent.more());
+      }
     }
   }
 
@@ -214,10 +221,12 @@ class CalendarScrollView extends StatelessWidget {
 
     return CustomScrollView(
       controller: controller,
-      physics: const AlwaysScrollableScrollPhysics(),
+      physics: const RangeMaintainingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
       slivers: [
         SliverPadding(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(12),
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
@@ -242,6 +251,7 @@ class CalendarScrollView extends StatelessWidget {
                     ),
                   ),
                   content: Column(children: [
+                    const SizedBox(height: 8),
                     for (final day in days)
                       _DayCard(day: day, events: dayGroupedEvents[day]!),
                   ]),
@@ -276,42 +286,39 @@ class _DayCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 70,
-            alignment: Alignment.topRight,
-            padding: const EdgeInsets.only(right: 12),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  day.day.toString(),
-                  textAlign: TextAlign.right,
-                  style: Theme.of(context).textTheme.headline3,
-                ),
-                Text(
-                  dayFormatter.format(day).toUpperCase(),
-                  textAlign: TextAlign.right,
-                  style: Theme.of(context).textTheme.caption,
-                ),
-              ],
-            ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 70,
+          alignment: Alignment.topRight,
+          padding: const EdgeInsets.only(right: 12),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                day.day.toString(),
+                textAlign: TextAlign.right,
+                style: Theme.of(context).textTheme.headline3,
+              ),
+              Text(
+                dayFormatter.format(day).toUpperCase(),
+                textAlign: TextAlign.right,
+                style: Theme.of(context).textTheme.caption,
+              ),
+            ],
           ),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [for (final event in events) _EventCard(event)],
-            ),
-          )
-        ],
-      ),
+        ),
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [for (final event in events) _EventCard(event)],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -327,43 +334,46 @@ class _EventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final startTime = timeFormatter.format(event.start);
     final endTime = timeFormatter.format(event.end);
-    return Material(
-      borderRadius: const BorderRadius.all(Radius.circular(2)),
-      type: MaterialType.card,
-      color: event.isRegistered ? const Color(0xFFE62272) : Colors.grey[800],
-      child: InkWell(
-        onTap: () {
-          ThaliaRouterDelegate.of(context).push(
-            MaterialPage(child: EventScreen(pk: event.pk)),
-          );
-        },
-        // Prevent painting ink outside of the card.
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Material(
         borderRadius: const BorderRadius.all(Radius.circular(2)),
-        child: Container(
-          padding: const EdgeInsets.all(12),
-          margin: const EdgeInsets.only(bottom: 8),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                event.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+        type: MaterialType.card,
+        color: event.isRegistered ? const Color(0xFFE62272) : Colors.grey[800],
+        child: InkWell(
+          onTap: () {
+            ThaliaRouterDelegate.of(context).push(
+              MaterialPage(child: EventScreen(pk: event.pk)),
+            );
+          },
+          // Prevent painting ink outside of the card.
+          borderRadius: const BorderRadius.all(Radius.circular(2)),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            margin: const EdgeInsets.only(bottom: 8),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  event.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              Text(
-                '$startTime - $endTime | ${event.location}',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                      color: Colors.white.withOpacity(0.8),
-                    ),
-              ),
-            ],
+                Text(
+                  '$startTime - $endTime | ${event.location}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                        color: Colors.white.withOpacity(0.8),
+                      ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

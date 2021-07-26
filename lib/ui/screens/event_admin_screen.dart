@@ -131,10 +131,10 @@ class __RegistrationTileState extends State<_RegistrationTile> {
         } on ApiException {
           setState(() => present = oldValue);
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            behavior: SnackBarBehavior.floating,
             content: Text(value!
                 ? 'Could not mark $name as present.'
                 : 'Could not mark $name as not present.'),
-            duration: const Duration(seconds: 1),
           ));
         }
       },
@@ -199,6 +199,7 @@ class __RegistrationTileState extends State<_RegistrationTile> {
               );
             } on ApiException {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                behavior: SnackBarBehavior.floating,
                 content: Text(value != null
                     ? 'Could not mark $name as paid.'
                     : 'Could not mark $name as not paid.'),

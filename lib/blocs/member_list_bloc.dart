@@ -62,7 +62,7 @@ class MemberListBloc extends Bloc<MemberListEvent, MemberListState> {
         yield MemberListState.failure(
           message: state.event.search == null
               ? 'There are no members.'
-              : 'There are no members found for "${state.event.search}"',
+              : 'There are no members found for "${state.event.search}".',
           event: event,
         );
       }

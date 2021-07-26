@@ -140,8 +140,8 @@ class _EventScreenState extends State<EventScreen>
                     );
                   } on ApiException {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      behavior: SnackBarBehavior.floating,
                       content: Text('Could not register for the event.'),
-                      duration: Duration(seconds: 1),
                     ));
                   }
                   await _registrationsCubit.load(event.pk);
@@ -168,8 +168,8 @@ class _EventScreenState extends State<EventScreen>
                     );
                   } on ApiException {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      behavior: SnackBarBehavior.floating,
                       content: Text('Could not register for the event.'),
-                      duration: Duration(seconds: 1),
                     ));
                   }
                 },
@@ -196,8 +196,8 @@ class _EventScreenState extends State<EventScreen>
                     );
                   } on ApiException {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Could not cancel your registration'),
-                      duration: Duration(seconds: 1),
+                      behavior: SnackBarBehavior.floating,
+                      content: Text('Could not cancel your registration.'),
                     ));
                   }
                   await _registrationsCubit.load(event.pk);
@@ -231,8 +231,8 @@ class _EventScreenState extends State<EventScreen>
                     );
                   } on ApiException {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Could not cancel your registration'),
-                      duration: Duration(seconds: 1),
+                      behavior: SnackBarBehavior.floating,
+                      content: Text('Could not cancel your registration.'),
                     ));
                   }
                 },
@@ -335,6 +335,7 @@ class _EventScreenState extends State<EventScreen>
                       } on ApiException {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
+                            behavior: SnackBarBehavior.floating,
                             content: Text('Could not pay your order.'),
                           ),
                         );
@@ -429,8 +430,8 @@ class _EventScreenState extends State<EventScreen>
             await launch(url);
           } else {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text("Could not open '$url'."),
-              duration: const Duration(seconds: 1),
+              behavior: SnackBarBehavior.floating,
+              content: Text('Could not open "$url".'),
             ));
           }
         },

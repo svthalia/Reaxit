@@ -194,7 +194,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 );
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    duration: Duration(seconds: 1),
+                                    behavior: SnackBarBehavior.floating,
                                     content: Text(
                                       'Your registration has been updated.',
                                     ),
@@ -204,9 +204,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               } on ApiException {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    duration: Duration(seconds: 1),
+                                    behavior: SnackBarBehavior.floating,
                                     content: Text(
-                                      "Couldn't update your registration.",
+                                      'Could not update your registration.',
                                     ),
                                   ),
                                 );

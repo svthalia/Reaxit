@@ -148,10 +148,10 @@ class __OderTileState extends State<_OrderTile> {
             );
           } on ApiException {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              behavior: SnackBarBehavior.floating,
               content: Text(value != null
                   ? "Could not mark $name's order as paid."
                   : "Could not mark $name's order as not paid."),
-              duration: const Duration(seconds: 1),
             ));
           }
         },
