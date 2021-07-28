@@ -9,11 +9,11 @@ class ErrorScrollView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       children: [
         Container(
           height: 100,
-          margin: const EdgeInsets.all(10),
+          margin: const EdgeInsets.all(12),
           child: Image.asset(
             'assets/img/sad_cloud.png',
             fit: BoxFit.fitHeight,

@@ -244,7 +244,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Align(
       alignment: Alignment.topCenter,
       child: Padding(
-        padding: const EdgeInsets.only(top: 10),
+        padding: const EdgeInsets.only(top: 12),
         child: Text(
           'Honorary Member',
           style: Theme.of(context).textTheme.headline6,
@@ -255,11 +255,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _makeStudiesFact(ListMember member) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 3),
+          const SizedBox(height: 4),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -267,14 +267,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Flexible(child: _fieldLabel('Cohort')),
             ],
           ),
-          const SizedBox(height: 3),
+          const SizedBox(height: 4),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Flexible(
                 child: Padding(
-                  padding: const EdgeInsets.all(5),
+                  padding: const EdgeInsets.all(4),
                   child: Text(
                     member.programme == Programme.computingscience
                         ? 'Computing Science'
@@ -285,7 +285,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               Flexible(
                 child: Padding(
-                  padding: const EdgeInsets.all(5),
+                  padding: const EdgeInsets.all(4),
                   child: Text(
                     member.startingYear!.toString(),
                     style: const TextStyle(fontSize: 22),
@@ -301,15 +301,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _makeBirthdayFact(ListMember member) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 5),
+          const SizedBox(height: 4),
           _fieldLabel('Birthday'),
-          const SizedBox(height: 3),
+          const SizedBox(height: 4),
           Padding(
-            padding: const EdgeInsets.all(5),
+            padding: const EdgeInsets.all(4),
             child: Text(
               dateFormatter.format(member.birthday!),
               style: const TextStyle(fontSize: 18),
@@ -322,15 +322,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _makeWebsiteFact(ListMember member) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 5),
+          const SizedBox(height: 4),
           _fieldLabel('Website'),
-          const SizedBox(height: 3),
+          const SizedBox(height: 4),
           Padding(
-            padding: const EdgeInsets.all(5),
+            padding: const EdgeInsets.all(4),
             child: Link(
               uri: member.website!,
               target: LinkTarget.blank,
@@ -407,10 +407,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   SliverPadding _makeAchievementsSliver(Member member) {
     return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       sliver: SliverList(
         delegate: SliverChildListDelegate([
-          const SizedBox(height: 5),
+          const SizedBox(height: 4),
           _fieldLabel('Achievements for Thalia'),
           ...ListTile.divideTiles(
             context: context,
@@ -423,10 +423,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   SliverPadding _makeSocietiesSliver(Member member) {
     return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       sliver: SliverList(
         delegate: SliverChildListDelegate([
-          const SizedBox(height: 5),
+          const SizedBox(height: 4),
           _fieldLabel('Societies'),
           ...ListTile.divideTiles(
             context: context,
@@ -473,7 +473,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _makeSocietiesSliver(state.result!),
                 ] else
                   const SliverPadding(
-                    padding: EdgeInsets.all(10),
+                    padding: EdgeInsets.all(8),
                     sliver: SliverToBoxAdapter(
                       child: Center(
                         child: CircularProgressIndicator(),
@@ -553,15 +553,15 @@ class __DescriptionFactState extends State<_DescriptionFact>
     final fullMemberCubit = BlocProvider.of<FullMemberCubit>(context);
     final isMe = fullMemberCubit.state.result?.pk == widget.member.pk;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 5),
+          const SizedBox(height: 4),
           _fieldLabel('About ${widget.member.displayName}'),
-          const SizedBox(height: 3),
+          const SizedBox(height: 4),
           Padding(
-            padding: const EdgeInsets.all(5),
+            padding: const EdgeInsets.all(4),
             child: AnimatedSize(
               vsync: this,
               duration: const Duration(milliseconds: 200),

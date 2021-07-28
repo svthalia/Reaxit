@@ -86,9 +86,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(
-                              left: 20,
-                              bottom: 20,
-                              right: 20,
+                              left: 16,
+                              bottom: 16,
+                              right: 16,
                             ),
                             child: TextFormField(
                               initialValue: field.value,
@@ -124,9 +124,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(
-                              left: 20,
-                              right: 20,
-                              bottom: 20,
+                              left: 16,
+                              right: 16,
+                              bottom: 16,
                             ),
                             child: TextFormField(
                               keyboardType: TextInputType.number,
@@ -155,7 +155,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       );
                     } else if (field is CheckboxRegistrationField) {
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
+                        padding: const EdgeInsets.only(bottom: 16),
                         child: _CheckboxFormField(
                           initialValue: field.value ?? false,
                           onSaved: (newValue) => field.value = newValue,
@@ -170,7 +170,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     }
                   }),
                   Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -181,7 +181,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           icon: const Icon(Icons.restore_page_outlined),
                           label: const Text('RESTORE'),
                         ),
-                        const SizedBox(width: 20),
+                        const SizedBox(width: 16),
                         ElevatedButton.icon(
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {

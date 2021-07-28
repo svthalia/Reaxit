@@ -176,13 +176,13 @@ class _AlbumScreenState extends State<AlbumScreen> {
             body: Scrollbar(
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 5,
+                  crossAxisSpacing: 4,
+                  mainAxisSpacing: 4,
                   crossAxisCount: 3,
                 ),
                 itemCount: state.result!.photos.length,
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(5),
+                padding: const EdgeInsets.all(4),
                 itemBuilder: (context, index) => _makePhotoCard(
                   state.result!,
                   index,

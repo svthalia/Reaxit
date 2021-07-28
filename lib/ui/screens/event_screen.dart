@@ -90,7 +90,7 @@ class _EventScreenState extends State<EventScreen>
             key: const ValueKey('update'),
             width: double.infinity,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ElevatedButton.icon(
                 onPressed: () {
                   ThaliaRouterDelegate.of(context).push(
@@ -120,7 +120,7 @@ class _EventScreenState extends State<EventScreen>
             key: const ValueKey('register'),
             width: double.infinity,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ElevatedButton.icon(
                 onPressed: () async {
                   try {
@@ -157,7 +157,7 @@ class _EventScreenState extends State<EventScreen>
             key: const ValueKey('register'),
             width: double.infinity,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ElevatedButton.icon(
                 onPressed: () async {
                   try {
@@ -185,7 +185,7 @@ class _EventScreenState extends State<EventScreen>
             key: const ValueKey('cancel'),
             width: double.infinity,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ElevatedButton.icon(
                 onPressed: () async {
                   // TODO: The confirmation dialog.
@@ -217,7 +217,7 @@ class _EventScreenState extends State<EventScreen>
             key: const ValueKey('cancel'),
             width: double.infinity,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ElevatedButton.icon(
                 onPressed: () async {
                   try {
@@ -253,7 +253,7 @@ class _EventScreenState extends State<EventScreen>
         if (event.isInvited && event.paymentIsRequired) {
           if (event.userRegistration!.isPaid) {
             paymentWidget = const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: 16),
               child: Text('You have paid.'),
             );
           } else if (paymentUserState.result == null) {
@@ -271,9 +271,9 @@ class _EventScreenState extends State<EventScreen>
               key: const ValueKey('enable'),
               width: double.infinity,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Tooltip(
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
                   padding: const EdgeInsets.all(8),
                   message: 'To start using Thalia Pay, sign '
                       'a direct debit mandate on the website.',
@@ -291,7 +291,7 @@ class _EventScreenState extends State<EventScreen>
               key: const ValueKey('pay'),
               width: double.infinity,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: ElevatedButton.icon(
                   onPressed: () async {
                     final confirmed = await showDialog<bool>(
@@ -413,7 +413,7 @@ class _EventScreenState extends State<EventScreen>
                 child: paymentWidget,
               ),
             ),
-            const SizedBox(height: 5),
+            const SizedBox(height: 4),
           ],
         );
       },
@@ -422,7 +422,7 @@ class _EventScreenState extends State<EventScreen>
 
   Widget _makeDescription(Event event) {
     return Padding(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(16),
       child: HtmlWidget(
         event.description,
         onTapUrl: (String url) async {
@@ -442,7 +442,7 @@ class _EventScreenState extends State<EventScreen>
   SliverPadding _makeRegistrations(RegistrationsState state) {
     if (state.isLoading) {
       return const SliverPadding(
-        padding: EdgeInsets.symmetric(horizontal: 10),
+        padding: EdgeInsets.symmetric(horizontal: 8),
         sliver: SliverToBoxAdapter(
           child: Center(
             child: CircularProgressIndicator(),
@@ -451,19 +451,19 @@ class _EventScreenState extends State<EventScreen>
       );
     } else if (state.hasException) {
       return SliverPadding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
         sliver: SliverToBoxAdapter(
           child: Center(child: Text(state.message!)),
         ),
       );
     } else {
       return SliverPadding(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(8),
         sliver: SliverGrid(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
           ),
           delegate: SliverChildBuilderDelegate(
             (context, index) {

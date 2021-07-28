@@ -49,7 +49,7 @@ class EventDetailCard extends StatelessWidget {
                 top: 16,
                 left: 16,
                 right: 16,
-                bottom: 10,
+                bottom: 8,
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,7 +100,7 @@ class EventDetailCard extends StatelessWidget {
                 top: 8,
                 left: 16,
                 right: 16,
-                bottom: 10,
+                bottom: 8,
               ),
               child: Row(
                 children: [
