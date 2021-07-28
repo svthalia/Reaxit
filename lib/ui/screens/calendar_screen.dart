@@ -263,9 +263,7 @@ class CalendarScrollView extends StatelessWidget {
           const SliverPadding(
             padding: EdgeInsets.all(12),
             sliver: SliverToBoxAdapter(
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
+              child: Center(child: CircularProgressIndicator()),
             ),
           ),
       ],
@@ -346,9 +344,8 @@ class _EventCard extends StatelessWidget {
           },
           // Prevent painting ink outside of the card.
           borderRadius: const BorderRadius.all(Radius.circular(2)),
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            margin: const EdgeInsets.only(bottom: 8),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
