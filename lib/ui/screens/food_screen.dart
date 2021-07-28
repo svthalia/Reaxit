@@ -467,6 +467,7 @@ class __ProductTileState extends State<_ProductTile> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      horizontalTitleGap: 4,
       leading: const Icon(Icons.local_pizza),
       title: Row(
         children: [

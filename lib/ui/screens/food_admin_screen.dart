@@ -17,7 +17,8 @@ class FoodAdminScreen extends StatefulWidget {
 }
 
 class _FoodAdminScreenState extends State<FoodAdminScreen> {
-  // TODO: Apply the same changes as done to EventAdmin.
+  // TODO: Someday: add ordering and filter.
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -43,6 +44,12 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
                         ),
                       ),
                     );
+
+                    // After the search dialog closes, refresh the results,
+                    // since the search screen may have changed stuff through
+                    // its own FoodAdminCubit, that do not show up in the cubit
+                    // for the FoodAdminScreen until a refresh.
+                    BlocProvider.of<FoodAdminCubit>(context).load();
                   },
                 ),
               ],
@@ -149,9 +156,11 @@ class __OderTileState extends State<_OrderTile> {
           } on ApiException {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               behavior: SnackBarBehavior.floating,
-              content: Text(value != null
-                  ? "Could not mark $name's order as paid."
-                  : "Could not mark $name's order as not paid."),
+              content: Text(
+                value != null
+                    ? "Could not mark $name's order as paid."
+                    : "Could not mark $name's order as not paid.",
+              ),
             ));
           }
         },
@@ -160,9 +169,15 @@ class __OderTileState extends State<_OrderTile> {
 
     return ListTile(
       title: Text(name, maxLines: 1),
+      subtitle: Text(order.product.name),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          Text(
+            '€${order.product.price}',
+            style: Theme.of(context).textTheme.subtitle2,
+          ),
+          const SizedBox(width: 16),
           paymentDropdown,
         ],
       ),
@@ -201,7 +216,7 @@ class FoodAdminSearchDelegate extends SearchDelegate {
   @override
   Widget buildResults(BuildContext context) {
     return BlocProvider.value(
-      value: _adminCubit..load(search: query),
+      value: _adminCubit..search(query),
       child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
         builder: (context, state) {
           if (state.hasException) {
@@ -225,7 +240,7 @@ class FoodAdminSearchDelegate extends SearchDelegate {
   @override
   Widget buildSuggestions(BuildContext context) {
     return BlocProvider.value(
-      value: _adminCubit..load(search: query),
+      value: _adminCubit..search(query),
       child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
         builder: (context, state) {
           if (state.hasException) {

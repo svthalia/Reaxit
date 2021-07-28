@@ -363,7 +363,7 @@ class ApiRepository {
     String? search,
   }) async {
     final uri = _baseUri.replace(
-      path: '$_basePath/admin/food/$pk/orders/',
+      path: '$_basePath/admin/food/events/$pk/orders/',
       queryParameters: {
         if (limit != null) 'limit': limit.toString(),
         if (offset != null) 'offset': offset.toString(),

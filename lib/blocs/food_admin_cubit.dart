@@ -10,23 +10,52 @@ class FoodAdminCubit extends Cubit<FoodAdminState> {
   final ApiRepository api;
   final int foodEventPk;
 
+  /// The last used search query. Can be set through `this.search(query)`.
+  String? _searchQuery;
+
+  String? get searchQuery => _searchQuery;
+
   FoodAdminCubit(
     this.api, {
     required this.foodEventPk,
   }) : super(const FoodAdminState.loading());
 
-  Future<void> load({String? search}) async {
+  Future<void> load() async {
     emit(state.copyWith(isLoading: true));
     try {
-      final orders =
-          await api.getAdminFoodOrders(pk: foodEventPk, search: search);
+      final query = _searchQuery;
+      final orders = await api.getAdminFoodOrders(
+        pk: foodEventPk,
+        search: query,
+      );
       if (orders.results.isEmpty) {
-        emit(const FoodAdminState.failure(message: 'There are no orders'));
+        if (query?.isEmpty ?? true) {
+          emit(const FoodAdminState.failure(
+            message: 'There are no orders.',
+          ));
+        } else {
+          emit(FoodAdminState.failure(
+            message: 'There are no orders matching "$query".',
+          ));
+        }
       } else {
         emit(FoodAdminState.result(result: orders.results));
       }
     } on ApiException catch (exception) {
       emit(FoodAdminState.failure(message: _failureMessage(exception)));
+    }
+  }
+
+  /// Set this cubit's `searchQuery` and load the orders for that query.
+  ///
+  /// Use `null` as argument to remove the search query.
+  Future<void> search(String? query) async {
+    // TODO: Debounce the call to load: e.g. wait for 100ms and then load,
+    //  saving a future so that later `search` calls within the 100ms wait
+    //  do not trigger an additional `load` call.
+    if (query != _searchQuery) {
+      _searchQuery = query;
+      await load();
     }
   }
 
