@@ -18,6 +18,8 @@ class EventAdminScreen extends StatefulWidget {
 }
 
 class _EventAdminScreenState extends State<EventAdminScreen> {
+  // TODO: Someday: add ordering and filter.
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
