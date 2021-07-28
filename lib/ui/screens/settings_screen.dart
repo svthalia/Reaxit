@@ -73,7 +73,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             return RefreshIndicator(
               onRefresh: () => _settingCubit.load(),
               child: ListView(
-                padding: const EdgeInsets.all(15),
+                padding: const EdgeInsets.all(16),
                 children: [
                   const _ThemeModeCard(),
                   const Divider(),
@@ -88,7 +88,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             );
           } else if (state.isLoading && state.categories == null) {
             return ListView(
-              padding: const EdgeInsets.all(15),
+              padding: const EdgeInsets.all(16),
               children: [
                 const _ThemeModeCard(),
                 const Divider(),
@@ -102,7 +102,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             );
           } else {
             return ListView(
-              padding: const EdgeInsets.all(15),
+              padding: const EdgeInsets.all(16),
               children: [
                 const _ThemeModeCard(),
                 const Divider(),
@@ -164,7 +164,7 @@ class _ThemeModeCard extends StatelessWidget {
                   child: Row(
                     children: const [
                       Icon(Icons.wb_sunny_outlined),
-                      SizedBox(width: 15),
+                      SizedBox(width: 16),
                       Text('Light')
                     ],
                   ),
@@ -174,7 +174,7 @@ class _ThemeModeCard extends StatelessWidget {
                   child: Row(
                     children: const [
                       Icon(Icons.settings),
-                      SizedBox(width: 15),
+                      SizedBox(width: 16),
                       Text('System default')
                     ],
                   ),
@@ -184,7 +184,7 @@ class _ThemeModeCard extends StatelessWidget {
                   child: Row(
                     children: const [
                       Icon(Icons.brightness_2_outlined),
-                      SizedBox(width: 15),
+                      SizedBox(width: 16),
                       Text('Dark')
                     ],
                   ),

@@ -159,7 +159,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
               key: const ValueKey('enable'),
               width: double.infinity,
               child: Tooltip(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
+                margin: const EdgeInsets.symmetric(horizontal: 16),
                 padding: const EdgeInsets.all(8),
                 message: 'To start using Thalia Pay, sign '
                     'a direct debit mandate on the website.',
@@ -238,7 +238,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                   aspectRatio: 1,
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
-                    padding: const EdgeInsets.all(40),
+                    padding: const EdgeInsets.all(32),
                     color: order.isPaid
                         ? Colors.green.shade200
                         : Colors.red.shade700,
@@ -261,7 +261,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
-                    top: 10,
+                    top: 8,
                     left: 16,
                     right: 16,
                     bottom: 16,
@@ -427,7 +427,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                 child: ListView(
                   controller: _controller,
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(16),
                   children: [
                     _makeEventInfo(foodEvent),
                     _makeOrderInfo(foodEvent),
@@ -472,7 +472,7 @@ class __ProductTileState extends State<_ProductTile> {
       title: Row(
         children: [
           Text(widget.product.name),
-          const SizedBox(width: 5),
+          const SizedBox(width: 6),
           Text(
             '€${widget.product.price}',
             style: Theme.of(context).textTheme.caption!.copyWith(

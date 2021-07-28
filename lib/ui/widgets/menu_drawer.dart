@@ -54,15 +54,15 @@ class MenuDrawer extends StatelessWidget {
                       ),
                     ),
                     Positioned(
-                      left: 20,
-                      bottom: 10,
+                      left: 16,
+                      bottom: 8,
                       child: Text(
                         me.displayName,
                         style: Theme.of(context).primaryTextTheme.headline5,
                       ),
                     ),
                     SafeArea(
-                      minimum: const EdgeInsets.all(20),
+                      minimum: const EdgeInsets.all(16),
                       child: Container(
                         width: 80,
                         height: 80,
@@ -112,15 +112,15 @@ class MenuDrawer extends StatelessWidget {
                       ),
                     ),
                     Positioned(
-                      left: 20,
-                      bottom: 10,
+                      left: 16,
+                      bottom: 8,
                       child: Text(
                         'Loading...',
                         style: Theme.of(context).primaryTextTheme.headline5,
                       ),
                     ),
                     SafeArea(
-                      minimum: const EdgeInsets.all(20),
+                      minimum: const EdgeInsets.all(16),
                       child: Container(
                         width: 80,
                         height: 80,

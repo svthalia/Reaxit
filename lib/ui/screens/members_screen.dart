@@ -190,12 +190,12 @@ class MemberListScrollView extends StatelessWidget {
       ),
       slivers: [
         SliverPadding(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(8),
           sliver: SliverGrid(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
             ),
             delegate: SliverChildBuilderDelegate(
               (context, index) => MemberTile(
@@ -207,7 +207,7 @@ class MemberListScrollView extends StatelessWidget {
         ),
         if (listState.isLoadingMore)
           const SliverPadding(
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.all(8),
             sliver: SliverList(
               delegate: SliverChildListDelegate.fixed([
                 Center(

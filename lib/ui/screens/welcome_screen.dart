@@ -49,7 +49,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   Widget _makeArticle(FrontpageArticle article) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-        vertical: 10,
+        vertical: 12,
       ),
       child: Column(
         children: [
@@ -93,7 +93,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       curve: Curves.ease,
       duration: const Duration(milliseconds: 300),
       child: Padding(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -125,7 +125,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       padding: const EdgeInsets.only(
                         left: 6,
                         bottom: 6,
-                        top: 10,
+                        top: 12,
                       ),
                       child: Text(
                         dayText,
@@ -139,7 +139,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
             }).toList(),
             if (events.isEmpty)
               const Padding(
-                padding: EdgeInsets.all(10),
+                padding: EdgeInsets.all(8),
                 child: Text(
                   'There are no upcoming events.',
                   textAlign: TextAlign.center,
@@ -224,7 +224,7 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
           itemBuilder: (context, index, _) {
             final slide = widget.slides[index];
             return Padding(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(12),
               child: Card(
                 elevation: 8,
                 child: Link(
@@ -248,11 +248,11 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
             widget.slides.length,
             (index) => AnimatedContainer(
               duration: const Duration(milliseconds: 300),
-              width: 8.0,
-              height: 8.0,
+              width: 8,
+              height: 8,
               margin: const EdgeInsets.symmetric(
-                vertical: 10.0,
-                horizontal: 2.0,
+                vertical: 12,
+                horizontal: 2,
               ),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,

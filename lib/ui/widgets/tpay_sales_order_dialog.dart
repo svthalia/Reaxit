@@ -60,7 +60,7 @@ class _TPaySalesOrderDialogState extends State<TPaySalesOrderDialog>
                 key: const ValueKey('enable'),
                 width: double.infinity,
                 child: Tooltip(
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
                   padding: const EdgeInsets.all(8),
                   message: 'To start using Thalia Pay, sign '
                       'a direct debit mandate on the website.',

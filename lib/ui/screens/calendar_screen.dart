@@ -12,8 +12,6 @@ import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 
-// TODO: Styling
-// TODO: Change padding/margin insets everywhere to 4, 8, 12, 16.
 class CalendarScreen extends StatefulWidget {
   @override
   _CalendarScreenState createState() => _CalendarScreenState();
@@ -263,7 +261,7 @@ class CalendarScrollView extends StatelessWidget {
         ),
         if (listState.isLoadingMore)
           const SliverPadding(
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.all(12),
             sliver: SliverToBoxAdapter(
               child: Center(
                 child: CircularProgressIndicator(),
