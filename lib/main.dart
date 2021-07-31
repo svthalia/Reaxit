@@ -7,12 +7,14 @@ import 'package:reaxit/blocs/event_list_bloc.dart';
 import 'package:reaxit/blocs/full_member_cubit.dart';
 import 'package:reaxit/blocs/member_list_bloc.dart';
 import 'package:reaxit/blocs/payment_user_cubit.dart';
+import 'package:reaxit/blocs/setting_cubit.dart';
 import 'package:reaxit/blocs/theme_bloc.dart';
 import 'package:reaxit/blocs/welcome_cubit.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/theme.dart';
 import 'package:reaxit/ui/router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 Future<void> main() async {
   await SentryFlutter.init(
@@ -41,12 +43,15 @@ class _ThaliAppState extends State<ThaliApp> {
   late final ThaliaRouterDelegate _routerDelegate;
   late final ThaliaRouteInformationParser _routeInformationParser;
 
+  final _firebaseInitialization = Firebase.initializeApp();
+
   @override
   void initState() {
     super.initState();
     _routeInformationParser = ThaliaRouteInformationParser();
     _routerDelegate = ThaliaRouterDelegate(
       authBloc: BlocProvider.of<AuthBloc>(context),
+      firebaseInitialization: _firebaseInitialization,
     );
   }
 
@@ -108,6 +113,13 @@ class _ThaliAppState extends State<ThaliApp> {
                         authState.apiRepository,
                       )..add(const AlbumListEvent.load()),
                       lazy: false,
+                    ),
+                    BlocProvider(
+                      create: (_) => SettingsCubit(
+                        authState.apiRepository,
+                        _firebaseInitialization,
+                      )..load(),
+                      lazy: true,
                     ),
                   ],
                   child: MaterialApp.router(

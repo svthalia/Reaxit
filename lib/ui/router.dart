@@ -39,7 +39,7 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
 
   List<MaterialPage> get stack => _stack;
 
-  final _firebaseInitialization = Firebase.initializeApp();
+  final Future<FirebaseApp> _firebaseInitialization;
 
   /// Setup push notification handlers.
   Future<void> _setupFirebaseMessaging() async {
@@ -107,8 +107,11 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
     }
   }
 
-  ThaliaRouterDelegate({required this.authBloc})
-      : navigatorKey = GlobalKey<NavigatorState>() {
+  ThaliaRouterDelegate(
+      {required this.authBloc,
+      required Future<FirebaseApp> firebaseInitialization})
+      : navigatorKey = GlobalKey<NavigatorState>(),
+        _firebaseInitialization = firebaseInitialization {
     _setupFirebaseMessaging();
     authSubscription = authBloc.stream.listen((state) {
       if (state is LoggedInAuthState) {

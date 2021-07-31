@@ -7,6 +7,7 @@ import 'package:reaxit/models/push_notification_category.dart';
 import 'package:reaxit/models/device.dart';
 import 'package:reaxit/push_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class SettingsState extends Equatable {
   /// This can only be null when [isLoading] or [hasException] is true.
@@ -72,8 +73,10 @@ class SettingsState extends Equatable {
 
 class SettingsCubit extends Cubit<SettingsState> {
   final ApiRepository api;
+  final Future<FirebaseApp> firebaseInitialization;
 
-  SettingsCubit(this.api) : super(const SettingsState.loading());
+  SettingsCubit(this.api, this.firebaseInitialization)
+      : super(const SettingsState.loading());
 
   Future<void> setSetting(String key, bool value) async {
     if (state.device != null && state.categories != null) {
@@ -108,6 +111,7 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
+    // TODO: Await initialization! Probably pass the initialization future through the constructor of this cubit.
     var token = await FirebaseMessaging.instance.getToken();
     var prefs = await SharedPreferences.getInstance();
     var deviceRegistrationId = prefs.getInt(deviceRegistrationIdPreferenceName);

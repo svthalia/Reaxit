@@ -13,22 +13,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  late final SettingsCubit _settingCubit;
-
-  @override
-  void initState() {
-    super.initState();
-    _settingCubit = SettingsCubit(
-      RepositoryProvider.of<ApiRepository>(context),
-    )..load();
-  }
-
-  @override
-  void dispose() {
-    _settingCubit.close();
-    super.dispose();
-  }
-
   Widget _makeSetting(PushNotificationCategory category, bool enabled) {
     Widget? subtitle;
     if (category.description.isNotEmpty) {
@@ -48,7 +32,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       value: enabled,
       onChanged: (value) async {
         try {
-          await _settingCubit.setSetting(category.key, value);
+          await BlocProvider.of<SettingsCubit>(context).setSetting(
+            category.key,
+            value,
+          );
         } on ApiException {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             behavior: SnackBarBehavior.floating,
@@ -67,11 +54,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       appBar: ThaliaAppBar(title: const Text('Settings')),
       drawer: MenuDrawer(),
       body: BlocBuilder<SettingsCubit, SettingsState>(
-        bloc: _settingCubit,
         builder: (context, state) {
           if (state.hasException) {
             return RefreshIndicator(
-              onRefresh: () => _settingCubit.load(),
+              onRefresh: () => BlocProvider.of<SettingsCubit>(context).load(),
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
