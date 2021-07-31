@@ -238,12 +238,12 @@ class CalendarScrollView extends StatelessWidget {
                     width: double.infinity,
                     child: Material(
                       child: Padding(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
                         child: Text(
                           month.year == DateTime.now().year
-                              ? monthFormatter.format(month)
-                              : monthYearFormatter.format(month),
-                          style: Theme.of(context).textTheme.headline5,
+                              ? monthFormatter.format(month).toUpperCase()
+                              : monthYearFormatter.format(month).toUpperCase(),
+                          style: Theme.of(context).textTheme.subtitle1,
                         ),
                       ),
                     ),
@@ -286,25 +286,35 @@ class _DayCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: 70,
-          alignment: Alignment.topRight,
-          padding: const EdgeInsets.only(right: 12),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                day.day.toString(),
-                textAlign: TextAlign.right,
-                style: Theme.of(context).textTheme.headline3,
-              ),
-              Text(
-                dayFormatter.format(day).toUpperCase(),
-                textAlign: TextAlign.right,
-                style: Theme.of(context).textTheme.caption,
-              ),
-            ],
+        SizedBox(
+          width: 60,
+          // alignment: Alignment.top,
+          // padding: const EdgeInsets.only(right: 12),
+          child: Padding(
+            padding: const EdgeInsets.only(right: 12, top: 4),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  dayFormatter.format(day).toUpperCase(),
+                  style: Theme.of(context).textTheme.caption!.apply(
+                      color: Theme.of(context)
+                          .textTheme
+                          .caption!
+                          .color!
+                          .withOpacity(0.5)),
+                ),
+                Text(
+                  day.day.toString(),
+                  style: Theme.of(context).textTheme.headline3,
+                  strutStyle: const StrutStyle(
+                    forceStrutHeight: true,
+                    leading: 2.2,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         Expanded(
