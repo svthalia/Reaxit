@@ -57,7 +57,7 @@ For a full Android build that allows deployment you need:
   keyAlias=appsigning
   ```
  2. The Google Play API key (google-play.json) placed in the root of this project
- 3. The Google Play services file (google-services.json) placed in the `android` folder
+ 3. The Google Play services file (google-services.json) placed in the `android/app/` folder
 
 For a full iOS build that allows deployment you need:
  1. The password for [Fastlane Match](https://docs.fastlane.tools/actions/match/) set to the environment variable `MATCH_PASSWORD`, or ready for entering when you execute a fastlane command
