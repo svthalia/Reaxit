@@ -111,7 +111,10 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
-    // TODO: Await initialization! Probably pass the initialization future through the constructor of this cubit.
+
+    // Make sure firebase has been initialized.
+    await firebaseInitialization;
+
     var token = await FirebaseMessaging.instance.getToken();
     var prefs = await SharedPreferences.getInstance();
     var deviceRegistrationId = prefs.getInt(deviceRegistrationIdPreferenceName);
