@@ -241,8 +241,12 @@ class CalendarScrollView extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         child: Text(
                           month.year == DateTime.now().year
-                              ? monthFormatter.format(month).toUpperCase()
-                              : monthYearFormatter.format(month).toUpperCase(),
+                              ? monthFormatter
+                                  .format(month.toLocal())
+                                  .toUpperCase()
+                              : monthYearFormatter
+                                  .format(month.toLocal())
+                                  .toUpperCase(),
                           style: Theme.of(context).textTheme.subtitle1,
                         ),
                       ),
@@ -297,7 +301,7 @@ class _DayCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  dayFormatter.format(day).toUpperCase(),
+                  dayFormatter.format(day.toLocal()).toUpperCase(),
                   style: Theme.of(context).textTheme.caption!.apply(
                       color: Theme.of(context)
                           .textTheme
@@ -338,8 +342,8 @@ class _EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final startTime = timeFormatter.format(event.start);
-    final endTime = timeFormatter.format(event.end);
+    final startTime = timeFormatter.format(event.start.toLocal());
+    final endTime = timeFormatter.format(event.end.toLocal());
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(

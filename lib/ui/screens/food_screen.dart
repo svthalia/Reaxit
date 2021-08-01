@@ -50,8 +50,8 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
   }
 
   Widget _makeEventInfo(FoodEvent foodEvent) {
-    var start = timeFormatter.format(foodEvent.start);
-    var end = timeFormatter.format(foodEvent.end);
+    var start = timeFormatter.format(foodEvent.start.toLocal());
+    var end = timeFormatter.format(foodEvent.end.toLocal());
 
     Text subtitle;
     if (!foodEvent.hasStarted()) {
