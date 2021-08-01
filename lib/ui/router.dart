@@ -240,9 +240,7 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
           MaterialPage(child: CalendarScreen()),
           MaterialPage(child: EventScreen(pk: pk))
         ]);
-      // TODO: Check whether 0, 1 or 2 backslashes are needed.
-      // ignore: unnecessary_string_escapes
-    } else if (RegExp('^/members/photos/([a-z0-9\-_]+)/?\$').hasMatch(path)) {
+    } else if (RegExp('^/members/photos/([a-z0-9-_]+)/?\$').hasMatch(path)) {
       _stack
         ..clear()
         ..addAll([
@@ -257,9 +255,7 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
           MaterialPage(child: MembersScreen()),
           MaterialPage(child: ProfileScreen(pk: pk))
         ]);
-      // TODO: Check whether 0, 1 or 2 backslashes are needed.
-      // ignore: unnecessary_string_escapes
-    } else if (RegExp('^/sales/order/([a-f0-9\-]+)/pay/?\$').hasMatch(path)) {
+    } else if (RegExp('^/sales/order/([a-f0-9-]+)/pay/?\$').hasMatch(path)) {
       final pk = segments[2];
       if (navigatorKey.currentContext != null) {
         unawaited(showDialog(
