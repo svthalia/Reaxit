@@ -75,7 +75,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             icon: const Icon(Icons.add_a_photo_outlined),
                             onPressed: () async {
                               final picker = ImagePicker();
-                              final pickedFile = await picker.getImage(
+                              final pickedFile = await picker.pickImage(
                                 source: ImageSource.camera,
                                 preferredCameraDevice: CameraDevice.front,
                               );
@@ -127,7 +127,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 const Icon(Icons.add_photo_alternate_outlined),
                             onPressed: () async {
                               final picker = ImagePicker();
-                              final pickedFile = await picker.getImage(
+                              final pickedFile = await picker.pickImage(
                                 source: ImageSource.gallery,
                               );
                               final imagePath = pickedFile?.path;
@@ -139,8 +139,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               );
                               if (croppedFile == null) return;
-                              final scaffoldMessenger =
-                                  ScaffoldMessenger.of(context);
+                              final scaffoldMessenger = ScaffoldMessenger.of(
+                                context,
+                              );
                               // Not ThaliaRouterDelegate since this is a dialog.
                               Navigator.of(context).pop();
                               scaffoldMessenger.showSnackBar(const SnackBar(
