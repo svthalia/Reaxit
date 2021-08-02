@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/member.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 typedef FullMemberState = DetailState<FullMember>;
 
@@ -16,6 +17,10 @@ class FullMemberCubit extends Cubit<FullMemberState> {
     emit(state.copyWith(isLoading: true));
     try {
       final member = await api.getMe();
+      // Set username for sentry.
+      Sentry.configureScope(
+        (scope) => scope.user = SentryUser(username: member.displayName),
+      );
       emit(FullMemberState.result(result: member));
     } on ApiException catch (exception) {
       emit(FullMemberState.failure(message: _failureMessage(exception)));

@@ -147,6 +147,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         logOut: () => add(LogOutAuthEvent()),
       );
     } else {
+      // Clear username for sentry.
+      Sentry.configureScope((scope) => scope.user = null);
       yield LoggedOutAuthState();
     }
   }
@@ -219,6 +221,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       key: _credentialsStorageKey,
       iOptions: const IOSOptions(accessibility: IOSAccessibility.first_unlock),
     );
+    // Clear username for sentry.
+    Sentry.configureScope((scope) => scope.user = null);
     yield LoggedOutAuthState();
   }
 }
