@@ -46,8 +46,8 @@ dependencies:
   json_annotation: ^4.0.1
 
   # BLoC.
-  flutter_bloc: ^7.0.0
-  equatable: ^2.0.0
+  flutter_bloc: ^7.1.0
+  equatable: ^2.0.3
 
   # Persistent storage.
   shared_preferences: ^2.0.5
@@ -83,7 +83,8 @@ dependencies:
   carousel_slider: ^4.0.0-nullsafety.0
 
   # Firebase for push notifications.
-  firebase_messaging: ^10.0.2
+  firebase_core: ^1.4.0
+  firebase_messaging: ^10.0.4
 
   # Push notifications in app. 
   overlay_support: ^1.2.1
