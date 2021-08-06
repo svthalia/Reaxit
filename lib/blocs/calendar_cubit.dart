@@ -224,6 +224,9 @@ class CalendarCubit extends Cubit<CalendarState> {
       events.addAll(partnerEvents);
       events.sort((a, b) => a.start.compareTo(b.start));
 
+      // If `load()` and `more()` cause jank, the expensive operations
+      // on the events could be moved to an isolate in `compute()`.
+
       _remainingEvents.clear();
 
       // Remove the last partner events and day parts of events that could fill
@@ -339,7 +342,4 @@ class CalendarCubit extends Cubit<CalendarState> {
         return 'An unknown error occurred.';
     }
   }
-
-  // TODO: Explore doing the expensive operations in load() and more() in
-  //  an isolate with compute().
 }
