@@ -46,11 +46,11 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'description': instance.description,
       'start': instance.start.toIso8601String(),
       'end': instance.end.toIso8601String(),
+      'location': instance.location,
       'category': _$EventCategoryEnumMap[instance.category],
       'registration_start': instance.registrationStart?.toIso8601String(),
       'registration_end': instance.registrationEnd?.toIso8601String(),
       'cancel_deadline': instance.cancelDeadline?.toIso8601String(),
-      'location': instance.location,
       'price': instance.price,
       'fine': instance.fine,
       'num_participants': instance.numParticipants,
@@ -113,4 +113,27 @@ Map<String, dynamic> _$EventPermissionsToJson(EventPermissions instance) =>
       'cancel_registration': instance.cancelRegistration,
       'update_registration': instance.updateRegistration,
       'manage_event': instance.manageEvent,
+    };
+
+PartnerEvent _$PartnerEventFromJson(Map<String, dynamic> json) {
+  return PartnerEvent(
+    json['pk'] as int,
+    json['title'] as String,
+    json['description'] as String,
+    DateTime.parse(json['start'] as String),
+    DateTime.parse(json['end'] as String),
+    json['location'] as String,
+    Uri.parse(json['url'] as String),
+  );
+}
+
+Map<String, dynamic> _$PartnerEventToJson(PartnerEvent instance) =>
+    <String, dynamic>{
+      'pk': instance.pk,
+      'title': instance.title,
+      'description': instance.description,
+      'start': instance.start.toIso8601String(),
+      'end': instance.end.toIso8601String(),
+      'location': instance.location,
+      'url': instance.url.toString(),
     };

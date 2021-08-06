@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:reaxit/api_repository.dart';
+import 'package:reaxit/blocs/calendar_cubit.dart';
 import 'package:reaxit/blocs/event_cubit.dart';
-import 'package:reaxit/blocs/event_list_bloc.dart';
 import 'package:reaxit/blocs/payment_user_cubit.dart';
 import 'package:reaxit/blocs/registrations_cubit.dart';
 import 'package:reaxit/blocs/welcome_cubit.dart';
@@ -135,9 +135,7 @@ class _EventScreenState extends State<EventScreen>
                         ),
                       );
                     }
-                    BlocProvider.of<EventListBloc>(context).add(
-                      EventListEvent.load(),
-                    );
+                    BlocProvider.of<CalendarCubit>(context).load();
                   } on ApiException {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       behavior: SnackBarBehavior.floating,
@@ -163,9 +161,7 @@ class _EventScreenState extends State<EventScreen>
                   try {
                     await _eventCubit.register(event.pk);
                     await _registrationsCubit.load(event.pk);
-                    BlocProvider.of<EventListBloc>(context).add(
-                      EventListEvent.load(),
-                    );
+                    BlocProvider.of<CalendarCubit>(context).load();
                   } on ApiException {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       behavior: SnackBarBehavior.floating,
@@ -201,9 +197,7 @@ class _EventScreenState extends State<EventScreen>
                     ));
                   }
                   await _registrationsCubit.load(event.pk);
-                  BlocProvider.of<EventListBloc>(context).add(
-                    EventListEvent.load(),
-                  );
+                  BlocProvider.of<CalendarCubit>(context).load();
                   await BlocProvider.of<WelcomeCubit>(context).load();
                 },
                 icon: const Icon(Icons.delete_forever_outlined),
@@ -226,9 +220,7 @@ class _EventScreenState extends State<EventScreen>
                       registrationPk: event.userRegistration!.pk,
                     );
                     await _registrationsCubit.load(event.pk);
-                    BlocProvider.of<EventListBloc>(context).add(
-                      EventListEvent.load(),
-                    );
+                    BlocProvider.of<CalendarCubit>(context).load();
                   } on ApiException {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       behavior: SnackBarBehavior.floating,

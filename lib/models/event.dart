@@ -5,18 +5,34 @@ part 'event.g.dart';
 
 enum EventCategory { alumni, education, career, leisure, association, other }
 
+abstract class BaseEvent {
+  abstract final int pk;
+  abstract final String title;
+  abstract final String description;
+  abstract final DateTime start;
+  abstract final DateTime end;
+  abstract final String location;
+}
+
 @JsonSerializable(fieldRename: FieldRename.snake)
-class Event {
+class Event implements BaseEvent {
+  @override
   final int pk;
+  @override
   final String title;
+  @override
   final String description;
+  @override
   final DateTime start;
+  @override
   final DateTime end;
+  @override
+  final String location;
+
   final EventCategory category;
   final DateTime? registrationStart;
   final DateTime? registrationEnd;
   final DateTime? cancelDeadline;
-  final String location;
   final String price;
   final String fine;
   final int numParticipants;
@@ -85,4 +101,35 @@ class EventPermissions {
 
   factory EventPermissions.fromJson(Map<String, dynamic> json) =>
       _$EventPermissionsFromJson(json);
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class PartnerEvent implements BaseEvent {
+  @override
+  final int pk;
+  @override
+  final String title;
+  @override
+  final String description;
+  @override
+  final DateTime start;
+  @override
+  final DateTime end;
+  @override
+  final String location;
+
+  final Uri url;
+
+  factory PartnerEvent.fromJson(Map<String, dynamic> json) =>
+      _$PartnerEventFromJson(json);
+
+  const PartnerEvent(
+    this.pk,
+    this.title,
+    this.description,
+    this.start,
+    this.end,
+    this.location,
+    this.url,
+  );
 }

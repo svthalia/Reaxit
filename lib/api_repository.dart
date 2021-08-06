@@ -159,6 +159,44 @@ class ApiRepository {
     );
   }
 
+  /// Get a list of [PartnerEvent]s.
+  ///
+  /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
+  /// total number of [PartnerEvents] that can be returned.
+  /// Use `search` to filter on name, `ordering` to order with values in
+  /// {'start', 'end', '-start', '-end'}, and `start` and/or `end` to filter on
+  /// a time range.
+  Future<ListResponse<PartnerEvent>> getPartnerEvents({
+    String? search,
+    int? limit,
+    int? offset,
+    String? ordering,
+    DateTime? start,
+    DateTime? end,
+  }) async {
+    assert(
+      ordering == null || ['start', 'end', '-start', '-end'].contains(ordering),
+      'Invalid ordering parameter: $ordering',
+    );
+    final uri = _baseUri.replace(
+      path: '$_basePath/partners/events/',
+      queryParameters: {
+        if (search != null) 'search': search,
+        if (limit != null) 'limit': limit.toString(),
+        if (offset != null) 'offset': offset.toString(),
+        if (ordering != null) 'ordering': ordering,
+        if (start != null) 'start': start.toLocal().toIso8601String(),
+        if (end != null) 'end': end.toLocal().toIso8601String(),
+      },
+    );
+
+    final response = await _handleExceptions(() => client.get(uri));
+    return ListResponse<PartnerEvent>.fromJson(
+      _jsonDecode(response),
+      (json) => PartnerEvent.fromJson(json as Map<String, dynamic>),
+    );
+  }
+
   /// Get the [EventRegistration]s for the [Event] with the `pk`.
   ///
   /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
