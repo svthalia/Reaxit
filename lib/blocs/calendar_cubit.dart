@@ -1,15 +1,19 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/models/event.dart';
 
 /// Wrapper around a [BaseEvent] to be shown in the calendar.
 /// This allows to split an event into multiple parts, to show on every day in an event
 class CalendarEvent {
+  static final _timeFormatter = DateFormat('HH:mm');
+
   final BaseEvent parentEvent;
   final DateTime start;
   final DateTime end;
   final String title;
+  final String label;
 
   int get pk => parentEvent.pk;
   String get location => parentEvent.location;
@@ -19,6 +23,7 @@ class CalendarEvent {
     required this.title,
     required this.start,
     required this.end,
+    required this.label,
   });
 
   static List<CalendarEvent> splitEventIntoCalendarEvents(BaseEvent event) {
@@ -39,6 +44,9 @@ class CalendarEvent {
 
     final daySpan = endDate.difference(startDate).inDays + 1;
 
+    final startTime = _timeFormatter.format(event.start.toLocal());
+    final endTime = _timeFormatter.format(event.end.toLocal());
+
     if (daySpan == 1) {
       return [
         CalendarEvent._(
@@ -46,29 +54,31 @@ class CalendarEvent {
           title: event.title,
           start: event.start,
           end: event.end,
+          label: '$startTime - $endTime | ${event.location}',
         )
       ];
     } else {
       return [
         CalendarEvent._(
-          parentEvent: event,
-          title: event.title + ' day 1/$daySpan',
-          start: event.start,
-          end: startDate.add(const Duration(days: 1)),
-        ),
+            parentEvent: event,
+            title: event.title + ' day 1/$daySpan',
+            start: event.start,
+            end: startDate.add(const Duration(days: 1)),
+            label: 'From $startTime | ${event.location}'),
         for (var day in Iterable.generate(daySpan - 2, (i) => i + 2))
           CalendarEvent._(
             parentEvent: event,
             title: event.title + ' day $day/$daySpan',
             start: startDate.add(Duration(days: day - 1)),
             end: startDate.add(Duration(days: day)),
+            label: event.location,
           ),
         CalendarEvent._(
-          parentEvent: event,
-          title: event.title + ' day $daySpan/$daySpan',
-          start: endDate,
-          end: event.end,
-        ),
+            parentEvent: event,
+            title: event.title + ' day $daySpan/$daySpan',
+            start: endDate,
+            end: event.end,
+            label: 'Until $endTime | ${event.location}'),
       ];
     }
   }

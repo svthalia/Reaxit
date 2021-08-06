@@ -344,12 +344,8 @@ class _EventCard extends StatelessWidget {
 
   const _EventCard(this.event, {Key? key}) : super(key: key);
 
-  static final timeFormatter = DateFormat('HH:mm');
-
   @override
   Widget build(BuildContext context) {
-    final startTime = timeFormatter.format(event.start.toLocal());
-    final endTime = timeFormatter.format(event.end.toLocal());
     Color color;
     if (event is Event && (event as Event).isRegistered) {
       color = const Color(0xFFE62272);
@@ -399,7 +395,7 @@ class _EventCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '$startTime - $endTime | ${event.location}',
+                    event.label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodyText2!.copyWith(
