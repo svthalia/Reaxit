@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:reaxit/blocs/album_list_bloc.dart';
 import 'package:reaxit/blocs/auth_bloc.dart';
-import 'package:reaxit/blocs/event_list_bloc.dart';
+import 'package:reaxit/blocs/calendar_cubit.dart';
 import 'package:reaxit/blocs/full_member_cubit.dart';
 import 'package:reaxit/blocs/member_list_bloc.dart';
 import 'package:reaxit/blocs/payment_user_cubit.dart';
@@ -97,9 +97,9 @@ class _ThaliAppState extends State<ThaliApp> {
                       lazy: false,
                     ),
                     BlocProvider(
-                      create: (_) => EventListBloc(
+                      create: (_) => CalendarCubit(
                         authState.apiRepository,
-                      )..add(EventListEvent.load()),
+                      )..load(),
                       lazy: false,
                     ),
                     BlocProvider(

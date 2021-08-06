@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/api_repository.dart';
-import 'package:reaxit/blocs/event_list_bloc.dart';
+import 'package:reaxit/blocs/calendar_cubit.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/ui/router.dart';
 import 'package:reaxit/ui/screens/event_screen.dart';
@@ -11,6 +11,7 @@ import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
+import 'package:url_launcher/link.dart';
 
 class CalendarScreen extends StatefulWidget {
   @override
@@ -19,11 +20,11 @@ class CalendarScreen extends StatefulWidget {
 
 class _CalendarScreenState extends State<CalendarScreen> {
   late ScrollController _controller;
-  late EventListBloc _bloc;
+  late CalendarCubit _cubit;
 
   @override
   void initState() {
-    _bloc = BlocProvider.of<EventListBloc>(context);
+    _cubit = BlocProvider.of<CalendarCubit>(context);
     _controller = ScrollController()..addListener(_scrollListener);
     super.initState();
   }
@@ -32,8 +33,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
       // Only request loading more if that's not already happening.
-      if (!_bloc.state.isLoadingMore) {
-        _bloc.add(EventListEvent.more());
+      if (!_cubit.state.isLoadingMore) {
+        _cubit.more();
       }
     }
   }
@@ -56,11 +57,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
               showSearch(
                 context: context,
                 delegate: CalendarSearchDelegate(
-                  EventListBloc(
-                    RepositoryProvider.of<ApiRepository>(
-                      context,
-                      listen: false,
-                    ),
+                  CalendarCubit(
+                    RepositoryProvider.of<ApiRepository>(context),
                   ),
                 ),
               );
@@ -71,19 +69,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
       drawer: MenuDrawer(),
       body: RefreshIndicator(
         onRefresh: () async {
-          _bloc.add(EventListEvent.load());
-          await _bloc.stream.firstWhere(
-            (state) => !state.isLoading,
-          );
+          await _cubit.load();
         },
-        child: BlocBuilder<EventListBloc, EventListState>(
-          builder: (context, listState) {
-            if (listState.hasException) {
-              return ErrorScrollView(listState.message!);
+        child: BlocBuilder<CalendarCubit, CalendarState>(
+          builder: (context, calendarState) {
+            if (calendarState.hasException) {
+              return ErrorScrollView(calendarState.message!);
             } else {
               return CalendarScrollView(
                 controller: _controller,
-                listState: listState,
+                calendarState: calendarState,
               );
             }
           },
@@ -95,9 +90,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
 class CalendarSearchDelegate extends SearchDelegate {
   late final ScrollController _controller;
-  final EventListBloc _bloc;
+  final CalendarCubit _cubit;
 
-  CalendarSearchDelegate(this._bloc) {
+  CalendarSearchDelegate(this._cubit) {
     _controller = ScrollController()..addListener(_scrollListener);
   }
 
@@ -105,8 +100,8 @@ class CalendarSearchDelegate extends SearchDelegate {
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
       // Only request loading more if that's not already happening.
-      if (!_bloc.state.isLoadingMore) {
-        _bloc.add(EventListEvent.more());
+      if (!_cubit.state.isLoadingMore) {
+        _cubit.more();
       }
     }
   }
@@ -137,16 +132,16 @@ class CalendarSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    _bloc.add(EventListEvent.load(search: query));
-    return BlocBuilder<EventListBloc, EventListState>(
-      bloc: _bloc,
+    return BlocBuilder<CalendarCubit, CalendarState>(
+      bloc: _cubit..search(query),
       builder: (context, listState) {
+        print(listState.results);
         if (listState.hasException) {
           return ErrorScrollView(listState.message!);
         } else {
           return CalendarScrollView(
             controller: _controller,
-            listState: listState,
+            calendarState: listState,
           );
         }
       },
@@ -155,16 +150,15 @@ class CalendarSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    _bloc.add(EventListEvent.load(search: query));
-    return BlocBuilder<EventListBloc, EventListState>(
-      bloc: _bloc,
+    return BlocBuilder<CalendarCubit, CalendarState>(
+      bloc: _cubit..search(query),
       builder: (context, listState) {
         if (listState.hasException) {
           return ErrorScrollView(listState.message!);
         } else {
           return CalendarScrollView(
             controller: _controller,
-            listState: listState,
+            calendarState: listState,
           );
         }
       },
@@ -177,22 +171,24 @@ class CalendarSearchDelegate extends SearchDelegate {
 /// The events are grouped by month, and date.
 ///
 /// This does not take care of communicating with a Bloc. The [controller]
-/// should do that. The [listState] also must not have an exception.
+/// should do that. The [calendarState] also must not have an exception.
 class CalendarScrollView extends StatelessWidget {
   static final monthFormatter = DateFormat('MMMM');
   static final monthYearFormatter = DateFormat('MMMM yyyy');
 
   final ScrollController controller;
-  final EventListState listState;
+  final CalendarState calendarState;
 
   const CalendarScrollView({
     Key? key,
     required this.controller,
-    required this.listState,
+    required this.calendarState,
   }) : super(key: key);
 
-  static Map<DateTime, List<Event>> _groupByMonth(List<Event> eventList) {
-    return groupBy<Event, DateTime>(
+  static Map<DateTime, List<CalendarEvent>> _groupByMonth(
+    List<CalendarEvent> eventList,
+  ) {
+    return groupBy<CalendarEvent, DateTime>(
       eventList,
       (event) => DateTime(
         event.start.year,
@@ -201,8 +197,10 @@ class CalendarScrollView extends StatelessWidget {
     );
   }
 
-  static Map<DateTime, List<Event>> _groupByDay(List<Event> eventList) {
-    return groupBy<Event, DateTime>(
+  static Map<DateTime, List<CalendarEvent>> _groupByDay(
+    List<CalendarEvent> eventList,
+  ) {
+    return groupBy<CalendarEvent, DateTime>(
       eventList,
       (event) => DateTime(
         event.start.year,
@@ -214,7 +212,7 @@ class CalendarScrollView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final monthGroupedEvents = _groupByMonth(listState.results);
+    final monthGroupedEvents = _groupByMonth(calendarState.results);
     final months = monthGroupedEvents.keys.toList();
 
     return CustomScrollView(
@@ -263,7 +261,7 @@ class CalendarScrollView extends StatelessWidget {
             ),
           ),
         ),
-        if (listState.isLoadingMore)
+        if (calendarState.isLoadingMore)
           const SliverPadding(
             padding: EdgeInsets.all(12),
             sliver: SliverToBoxAdapter(
@@ -277,7 +275,7 @@ class CalendarScrollView extends StatelessWidget {
 
 class _DayCard extends StatelessWidget {
   final DateTime day;
-  final List<Event> events;
+  final List<CalendarEvent> events;
 
   static final dayFormatter = DateFormat(DateFormat.ABBR_WEEKDAY);
 
@@ -334,7 +332,7 @@ class _DayCard extends StatelessWidget {
 }
 
 class _EventCard extends StatelessWidget {
-  final Event event;
+  final CalendarEvent event;
 
   const _EventCard(this.event, {Key? key}) : super(key: key);
 
@@ -344,44 +342,63 @@ class _EventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final startTime = timeFormatter.format(event.start.toLocal());
     final endTime = timeFormatter.format(event.end.toLocal());
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Material(
-        borderRadius: const BorderRadius.all(Radius.circular(2)),
-        type: MaterialType.card,
-        color: event.isRegistered ? const Color(0xFFE62272) : Colors.grey[800],
-        child: InkWell(
-          onTap: () {
-            ThaliaRouterDelegate.of(context).push(
-              MaterialPage(child: EventScreen(pk: event.pk)),
-            );
-          },
-          // Prevent painting ink outside of the card.
+    Color color;
+    if (event is Event && (event as Event).isRegistered) {
+      color = const Color(0xFFE62272);
+    } else if (event is PartnerEvent) {
+      color = Colors.black;
+    } else {
+      color = Colors.grey[800]!;
+    }
+
+    return Link(
+      uri: event is PartnerEvent ? (event as PartnerEvent).url : null,
+      builder: (context, followLink) => Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: Material(
           borderRadius: const BorderRadius.all(Radius.circular(2)),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  event.title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+          type: MaterialType.card,
+          color: color,
+          child: InkWell(
+            onTap: followLink ??
+                () {
+                  ThaliaRouterDelegate.of(context).push(
+                    MaterialPage(
+                        child: EventScreen(
+                      pk: event.pk,
+                      event: event.parentEvent is Event
+                          ? event.parentEvent as Event
+                          : null,
+                    )),
+                  );
+                },
+            // Prevent painting ink outside of the card.
+            borderRadius: const BorderRadius.all(Radius.circular(2)),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    event.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                Text(
-                  '$startTime - $endTime | ${event.location}',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                        color: Colors.white.withOpacity(0.8),
-                      ),
-                ),
-              ],
+                  Text(
+                    '$startTime - $endTime | ${event.location}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                          color: Colors.white.withOpacity(0.8),
+                        ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
