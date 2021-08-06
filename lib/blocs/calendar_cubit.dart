@@ -199,6 +199,8 @@ class CalendarCubit extends Cubit<CalendarState> {
         offset: 0,
       );
 
+      final isDone = eventsResponse.results.length == eventsResponse.count;
+
       _nextOffset = firstPageSize;
 
       // Get all partner events.
@@ -227,7 +229,7 @@ class CalendarCubit extends Cubit<CalendarState> {
       // Remove the last partner events and day parts of events that could fill
       // fill up the calendar further then where the first not-loaded event will
       // go later.
-      if (eventsResponse.results.length != eventsResponse.count) {
+      if (!isDone) {
         while (events.isNotEmpty &&
             (events.last.parentEvent is PartnerEvent ||
                 events.last.start != events.last.parentEvent.start)) {
@@ -251,10 +253,7 @@ class CalendarCubit extends Cubit<CalendarState> {
           ));
         }
       } else {
-        emit(CalendarState.success(
-          results: events,
-          isDone: eventsResponse.results.length == eventsResponse.count,
-        ));
+        emit(CalendarState.success(results: events, isDone: isDone));
       }
     } on ApiException catch (exception) {
       emit(CalendarState.failure(message: _failureMessage(exception)));
@@ -281,6 +280,9 @@ class CalendarCubit extends Cubit<CalendarState> {
         offset: _nextOffset,
       );
 
+      final isDone =
+          _nextOffset + eventsResponse.results.length == eventsResponse.count;
+
       _nextOffset += pageSize;
 
       final newEvents = [
@@ -300,9 +302,9 @@ class CalendarCubit extends Cubit<CalendarState> {
       ];
 
       // Remove the last partner events and day parts of events that could fill
-      // fill up the calendar further then where the first not-loaded event will
-      // go later.
-      if (eventsResponse.results.length != eventsResponse.count) {
+      // up the calendar further then where the first not-loaded event will go
+      // later.
+      if (!isDone) {
         while (events.isNotEmpty &&
             (events.last.parentEvent is PartnerEvent ||
                 events.last.start != events.last.parentEvent.start)) {
@@ -310,17 +312,7 @@ class CalendarCubit extends Cubit<CalendarState> {
         }
       }
 
-      if (start != null) {
-        // Remove the past days of current long-running events.
-        while (events.isNotEmpty && events.first.end.isBefore(start)) {
-          events.removeAt(0);
-        }
-      }
-
-      emit(CalendarState.success(
-        results: events,
-        isDone: eventsResponse.results.length != eventsResponse.count,
-      ));
+      emit(CalendarState.success(results: events, isDone: isDone));
     } on ApiException catch (exception) {
       emit(CalendarState.failure(message: _failureMessage(exception)));
     }
