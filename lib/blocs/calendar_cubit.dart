@@ -235,9 +235,11 @@ class CalendarCubit extends Cubit<CalendarState> {
         }
       }
 
-      // Remove the past days of current long-running events.
-      while (events.isNotEmpty && events.first.end.isBefore(_lastLoadTime!)) {
-        events.removeAt(0);
+      if (start != null) {
+        // Remove the past days of current long-running events.
+        while (events.isNotEmpty && events.first.end.isBefore(start)) {
+          events.removeAt(0);
+        }
       }
 
       if (eventsResponse.results.isEmpty) {
@@ -267,7 +269,6 @@ class CalendarCubit extends Cubit<CalendarState> {
 
     emit(_state.copyWith(isLoadingMore: true));
     try {
-      await Future.delayed(Duration(seconds: 3));
       final query = _searchQuery;
       final start = query == null ? _lastLoadTime : null;
 
@@ -309,9 +310,11 @@ class CalendarCubit extends Cubit<CalendarState> {
         }
       }
 
-      // Remove the past days of current long-running events.
-      while (events.isNotEmpty && events.first.end.isBefore(_lastLoadTime!)) {
-        events.removeAt(0);
+      if (start != null) {
+        // Remove the past days of current long-running events.
+        while (events.isNotEmpty && events.first.end.isBefore(start)) {
+          events.removeAt(0);
+        }
       }
 
       emit(CalendarState.success(
@@ -330,7 +333,6 @@ class CalendarCubit extends Cubit<CalendarState> {
     // TODO: Debounce the call to load: e.g. wait for 100ms and then load,
     //  saving a future so that later `search` calls within the 100ms wait
     //  do not trigger an additional `load` call.
-    print('search: "$query"');
     if (query != _searchQuery) {
       _searchQuery = query;
       await load();
@@ -345,4 +347,7 @@ class CalendarCubit extends Cubit<CalendarState> {
         return 'An unknown error occurred.';
     }
   }
+
+  // TODO: Explore doing the expensive operations in load() and more() in
+  //  an isolate with compute().
 }

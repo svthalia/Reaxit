@@ -135,7 +135,6 @@ class CalendarSearchDelegate extends SearchDelegate {
     return BlocBuilder<CalendarCubit, CalendarState>(
       bloc: _cubit..search(query),
       builder: (context, listState) {
-        print(listState.results);
         if (listState.hasException) {
           return ErrorScrollView(listState.message!);
         } else {
@@ -231,6 +230,11 @@ class CalendarScrollView extends StatelessWidget {
 
                 final dayGroupedEvents = _groupByDay(events);
                 final days = dayGroupedEvents.keys.toList();
+
+                // TODO: StickyHeaders currently cause silent exceptions
+                //  when they build. This is only visible while catching
+                //  'All Exceptions', and does not affect the user. See
+                //  https://github.com/fluttercommunity/flutter_sticky_headers/issues/39.
                 return StickyHeader(
                   header: SizedBox(
                     width: double.infinity,
@@ -250,11 +254,14 @@ class CalendarScrollView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  content: Column(children: [
-                    const SizedBox(height: 8),
-                    for (final day in days)
-                      _DayCard(day: day, events: dayGroupedEvents[day]!),
-                  ]),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(height: 8),
+                      for (final day in days)
+                        _DayCard(day: day, events: dayGroupedEvents[day]!),
+                    ],
+                  ),
                 );
               },
               childCount: monthGroupedEvents.length,
@@ -322,6 +329,7 @@ class _DayCard extends StatelessWidget {
         Expanded(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [for (final event in events) _EventCard(event)],
           ),
@@ -377,6 +385,7 @@ class _EventCard extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -405,5 +414,4 @@ class _EventCard extends StatelessWidget {
       ),
     );
   }
-  // TODO: Add partner events.
 }
