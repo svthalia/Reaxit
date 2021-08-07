@@ -105,6 +105,9 @@ dev_dependencies:
   # Linting.
   flutter_lints: ^1.0.4
 
+  # Generating splash screens.
+  flutter_native_splash: ^1.2.1
+
 # The following section is specific to Flutter.
 flutter:
 
