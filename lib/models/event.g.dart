@@ -37,6 +37,7 @@ Event _$EventFromJson(Map<String, dynamic> json) {
         ? null
         : UserEventRegistration.fromJson(
             json['user_registration'] as Map<String, dynamic>),
+    json['cancel_too_late_message'] as String?,
   );
 }
 
@@ -56,11 +57,12 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'num_participants': instance.numParticipants,
       'max_participants': instance.maxParticipants,
       'no_registration_message': instance.noRegistrationMessage,
+      'cancel_too_late_message': instance.cancelTooLateMessage,
       'has_fields': instance.hasFields,
       'food_event': instance.foodEvent,
       'maps_url': instance.mapsUrl,
       'user_permissions': instance.userPermissions,
-      'user_registration': instance.userRegistration,
+      'user_registration': instance.registration,
     };
 
 K _$enumDecode<K, V>(

@@ -255,7 +255,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _makeStudiesFact(ListMember member) {
-    return Container(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -301,7 +301,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _makeBirthdayFact(ListMember member) {
-    return Container(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -322,7 +322,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _makeWebsiteFact(ListMember member) {
-    return Container(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
