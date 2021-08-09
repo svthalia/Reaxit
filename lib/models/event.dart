@@ -5,6 +5,14 @@ part 'event.g.dart';
 
 enum EventCategory { alumni, education, career, leisure, association, other }
 
+enum RegistrationStatus {
+  notRegistered,
+  registered,
+  inQueue,
+  cancelled,
+  lateCancelled
+}
+
 abstract class BaseEvent {
   abstract final int pk;
   abstract final String title;
@@ -38,21 +46,42 @@ class Event implements BaseEvent {
   final int numParticipants;
   final int? maxParticipants;
   final String? noRegistrationMessage;
+  final String? cancelTooLateMessage;
   final bool hasFields;
   final int? foodEvent;
   final String mapsUrl;
   final EventPermissions userPermissions;
-  final UserEventRegistration? userRegistration;
+  @JsonKey(name: 'user_registration')
+  final UserEventRegistration? registration;
   // final Commitee organiser;
   // final Slide? slide;
 
   bool get hasFoodEvent => foodEvent != null;
 
-  bool get isRegistered => userRegistration != null;
-  bool get isInQueue => userRegistration?.isInQueue ?? false;
-  bool get isInvited => userRegistration?.isInvited ?? false;
+  bool get isRegistered => registration != null;
+  bool get isInQueue => registration?.isInQueue ?? false;
+  bool get isInvited => registration?.isInvited ?? false;
+
   bool get registrationIsRequired => registrationStart != null;
+
+  // TODO: Optional registrations.
+  bool get registrationIsOptional => !registrationIsRequired;
+
   bool get paymentIsRequired => double.tryParse(price) != 0;
+
+  bool get reachedMaxParticipants =>
+      maxParticipants != null && numParticipants >= maxParticipants!;
+
+  bool cancelDeadlinePassed() =>
+      cancelDeadline?.isBefore(DateTime.now()) ?? false;
+  bool registrationStarted() =>
+      registrationStart?.isBefore(DateTime.now()) ?? false;
+  bool registrationClosed() =>
+      registrationEnd?.isBefore(DateTime.now()) ?? false;
+  bool registrationIsOpen() => registrationStarted() && !registrationClosed();
+
+  bool hasStarted() => start.isBefore(DateTime.now());
+  bool hasEnded() => end.isBefore(DateTime.now());
 
   bool get canCreateRegistration => userPermissions.createRegistration;
   bool get canUpdateRegistration => userPermissions.updateRegistration;
@@ -81,7 +110,8 @@ class Event implements BaseEvent {
     this.foodEvent,
     this.mapsUrl,
     this.userPermissions,
-    this.userRegistration,
+    this.registration,
+    this.cancelTooLateMessage,
   );
 }
 

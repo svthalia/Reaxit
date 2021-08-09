@@ -38,6 +38,11 @@ class UserEventRegistration {
   /// retrieved through [ApiRepository.getEvent].
   @JsonKey(ignore: true)
   bool get tpayAllowed => _tpayAllowed ?? false;
+
+  // TODO: Cancelled registrations.
+  bool get isLateCancelled => false;
+  bool get isCancelled => false;
+
   @JsonKey(ignore: true)
   set tpayAllowed(bool value) => _tpayAllowed = value;
 
@@ -136,4 +141,12 @@ class AdminEventRegistration
 
   factory AdminEventRegistration.fromJson(Map<String, dynamic> json) =>
       _$AdminEventRegistrationFromJson(json);
+
+  @override
+  // TODO: Implement isCancelled.
+  bool get isCancelled => false;
+
+  @override
+  // TODO: Implement isLateCancelled.
+  bool get isLateCancelled => false;
 }

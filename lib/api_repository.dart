@@ -111,9 +111,9 @@ class ApiRepository {
     if (event.isRegistered) {
       try {
         await getEventRegistrationPayable(
-          registrationPk: event.userRegistration!.pk,
+          registrationPk: event.registration!.pk,
         );
-        event.userRegistration!.tpayAllowed = true;
+        event.registration!.tpayAllowed = true;
       } on ApiException catch (exception) {
         if (exception != ApiException.notAllowed) rethrow;
       }
