@@ -33,6 +33,8 @@ UserEventRegistration _$UserEventRegistrationFromJson(
     json['payment'] == null
         ? null
         : Payment.fromJson(json['payment'] as Map<String, dynamic>),
+    json['is_cancelled'] as bool,
+    json['is_late_cancellation'] as bool,
   );
 }
 
@@ -44,6 +46,8 @@ Map<String, dynamic> _$UserEventRegistrationToJson(
       'queue_position': instance.queuePosition,
       'date': instance.date.toIso8601String(),
       'payment': instance.payment,
+      'is_cancelled': instance.isCancelled,
+      'is_late_cancellation': instance.isLateCancellation,
     };
 
 AdminEventRegistration _$AdminEventRegistrationFromJson(

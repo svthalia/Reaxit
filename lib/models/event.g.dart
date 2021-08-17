@@ -37,7 +37,8 @@ Event _$EventFromJson(Map<String, dynamic> json) {
         ? null
         : UserEventRegistration.fromJson(
             json['user_registration'] as Map<String, dynamic>),
-    json['cancel_too_late_message'] as String?,
+    json['cancel_too_late_message'] as String,
+    json['optional_registrations'] as bool,
   );
 }
 
@@ -49,6 +50,8 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'end': instance.end.toIso8601String(),
       'location': instance.location,
       'category': _$EventCategoryEnumMap[instance.category],
+      'has_fields': instance.hasFields,
+      'optional_registrations': instance.optionalRegistrations,
       'registration_start': instance.registrationStart?.toIso8601String(),
       'registration_end': instance.registrationEnd?.toIso8601String(),
       'cancel_deadline': instance.cancelDeadline?.toIso8601String(),
@@ -56,9 +59,8 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'fine': instance.fine,
       'num_participants': instance.numParticipants,
       'max_participants': instance.maxParticipants,
-      'no_registration_message': instance.noRegistrationMessage,
       'cancel_too_late_message': instance.cancelTooLateMessage,
-      'has_fields': instance.hasFields,
+      'no_registration_message': instance.noRegistrationMessage,
       'food_event': instance.foodEvent,
       'maps_url': instance.mapsUrl,
       'user_permissions': instance.userPermissions,
