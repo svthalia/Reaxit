@@ -9,6 +9,9 @@ typedef EventState = DetailState<Event>;
 class EventCubit extends Cubit<EventState> {
   final ApiRepository api;
 
+  // TODO: Include event pk in constructor, and remove it from all methods.
+  // TODO: Maybe: combine with RegistrationsCubit.
+
   EventCubit(this.api) : super(const EventState.loading());
 
   Future<void> load(int pk) async {

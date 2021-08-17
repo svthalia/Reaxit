@@ -28,6 +28,15 @@ class UserEventRegistration {
   final DateTime date;
   final Payment? payment;
 
+  final bool isCancelled;
+  final bool isLateCancellation;
+
+  bool get isRegistered => !isCancelled;
+  bool get isInQueue => !isCancelled && queuePosition != null;
+  bool get isInvited => !isCancelled && queuePosition == null;
+
+  bool get isPaid => payment != null;
+
   @JsonKey(ignore: true)
   bool? _tpayAllowed;
 
@@ -39,16 +48,8 @@ class UserEventRegistration {
   @JsonKey(ignore: true)
   bool get tpayAllowed => _tpayAllowed ?? false;
 
-  // TODO: Cancelled registrations.
-  bool get isLateCancelled => false;
-  bool get isCancelled => false;
-
   @JsonKey(ignore: true)
   set tpayAllowed(bool value) => _tpayAllowed = value;
-
-  bool get isInQueue => queuePosition != null;
-  bool get isInvited => queuePosition == null;
-  bool get isPaid => payment != null;
 
   factory UserEventRegistration.fromJson(Map<String, dynamic> json) =>
       _$UserEventRegistrationFromJson(json);
@@ -59,12 +60,13 @@ class UserEventRegistration {
     this.queuePosition,
     this.date,
     this.payment,
+    this.isCancelled,
+    this.isLateCancellation,
   );
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class AdminEventRegistration
-    implements EventRegistration, UserEventRegistration {
+class AdminEventRegistration implements EventRegistration {
   @override
   final int pk;
   @override
@@ -72,36 +74,13 @@ class AdminEventRegistration
   @override
   final String? name;
 
-  @override
   final bool present;
-  @override
   final int? queuePosition;
-  @override
   final DateTime date;
-  @override
   final Payment? payment;
 
-  @override
-  @JsonKey(ignore: true)
-  bool? _tpayAllowed;
-
-  /// Whether this registration can be paid with Thalia Pay.
-  /// See https://github.com/svthalia/concrexit/issues/1784.
-  ///
-  /// Warning: this is not properly set on orders retrieved
-  /// through [ApiRepository.getEvents].
-  @override
-  @JsonKey(ignore: true)
-  bool get tpayAllowed => _tpayAllowed ?? false;
-  @override
-  @JsonKey(ignore: true)
-  set tpayAllowed(bool value) => _tpayAllowed = value;
-
-  @override
   bool get isInQueue => queuePosition != null;
-  @override
   bool get isInvited => queuePosition == null;
-  @override
   bool get isPaid => payment != null;
 
   AdminEventRegistration(
@@ -141,12 +120,4 @@ class AdminEventRegistration
 
   factory AdminEventRegistration.fromJson(Map<String, dynamic> json) =>
       _$AdminEventRegistrationFromJson(json);
-
-  @override
-  // TODO: Implement isCancelled.
-  bool get isCancelled => false;
-
-  @override
-  // TODO: Implement isLateCancelled.
-  bool get isLateCancelled => false;
 }

@@ -38,16 +38,24 @@ class Event implements BaseEvent {
   final String location;
 
   final EventCategory category;
+
+  final bool hasFields;
+
+  @JsonKey(name: 'optional_registrations')
+  final bool optionalRegistrations;
+
   final DateTime? registrationStart;
   final DateTime? registrationEnd;
   final DateTime? cancelDeadline;
+
   final String price;
   final String fine;
+
   final int numParticipants;
   final int? maxParticipants;
+
+  final String cancelTooLateMessage;
   final String? noRegistrationMessage;
-  final String? cancelTooLateMessage;
-  final bool hasFields;
   final int? foodEvent;
   final String mapsUrl;
   final EventPermissions userPermissions;
@@ -58,14 +66,15 @@ class Event implements BaseEvent {
 
   bool get hasFoodEvent => foodEvent != null;
 
-  bool get isRegistered => registration != null;
+  bool get isRegistered => registration?.isRegistered ?? false;
   bool get isInQueue => registration?.isInQueue ?? false;
   bool get isInvited => registration?.isInvited ?? false;
 
-  bool get registrationIsRequired => registrationStart != null;
+  bool get registrationIsRequired =>
+      registrationStart != null || registrationEnd != null;
 
-  // TODO: Optional registrations.
-  bool get registrationIsOptional => !registrationIsRequired;
+  bool get registrationIsOptional =>
+      optionalRegistrations && !registrationIsRequired;
 
   bool get paymentIsRequired => double.tryParse(price) != 0;
 
@@ -112,6 +121,7 @@ class Event implements BaseEvent {
     this.userPermissions,
     this.registration,
     this.cancelTooLateMessage,
+    this.optionalRegistrations,
   );
 }
 

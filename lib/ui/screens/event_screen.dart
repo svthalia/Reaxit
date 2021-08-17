@@ -205,7 +205,7 @@ class _EventScreenState extends State<EventScreen>
       }
     } else {
       final registration = event.registration!;
-      if (registration.isLateCancelled) {
+      if (registration.isLateCancellation) {
         // Your registration is cancelled after the deadline.
         textSpans.add(const TextSpan(
           text: 'Your registration is cancelled after the deadline. ',
@@ -270,19 +270,23 @@ class _EventScreenState extends State<EventScreen>
             ));
           }
         }
-        if (event.cancelDeadlinePassed()) {
-          // Cancel too late message, cancel button with fine warning.
-          textSpans.add(TextSpan(
-            text: event.cancelTooLateMessage,
-          ));
-          final text = 'The deadline has passed, are you sure you want '
-              'to cancel your registration and pay the estimated full costs of '
-              '€${event.fine}? You will not be able to undo this!';
-          registrationButton = _makeCancelRegistrationButton(event, text);
+        if (event.canCancelRegistration) {
+          if (event.cancelDeadlinePassed()) {
+            // Cancel too late message, cancel button with fine warning.
+            textSpans.add(TextSpan(
+              text: event.cancelTooLateMessage,
+            ));
+            final text = 'The deadline has passed, are you sure you want '
+                'to cancel your registration and pay the estimated full costs of '
+                '€${event.fine}? You will not be able to undo this!';
+            registrationButton = _makeCancelRegistrationButton(event, text);
+          } else {
+            // Cancel button.
+            const text = 'Are you sure you want to cancel your registration?';
+            registrationButton = _makeCancelRegistrationButton(event, text);
+          }
         } else {
-          // Cancel button.
-          const text = 'Are you sure you want to cancel your registration?';
-          registrationButton = _makeCancelRegistrationButton(event, text);
+          registrationButton = const SizedBox.shrink();
         }
       }
     }
@@ -405,19 +409,110 @@ class _EventScreenState extends State<EventScreen>
   // Create the info for events with optional registration.
   Widget _makeOptionalRegistrationInfo(Event event) {
     assert(event.registrationIsOptional);
-    // final textTheme = Theme.of(context).textTheme;
+    final textTheme = Theme.of(context).textTheme;
 
-    // TODO: Implement optional registrations.
-    return const Text('Optional registrations');
+    final textSpans = <TextSpan>[];
+    Widget registrationButton = const SizedBox.shrink();
+
+    if (event.isInvited) {
+      textSpans.add(const TextSpan(text: 'You are registered.'));
+      if (event.canCancelRegistration) {
+        registrationButton = _makeIWontBeThereButton(event);
+      }
+    } else if (event.canCreateRegistration) {
+      textSpans.add(const TextSpan(
+        text: 'Even though registration is not required for this event, you '
+            'can still register to give an indication of who will be there, as '
+            'well as mark the event as "registered" in your calendar.',
+      ));
+      registrationButton = _makeIllBeThereButton(event);
+    }
+
+    late Widget updateButton;
+    if (event.canUpdateRegistration) {
+      updateButton = _makeUpdateButton(event);
+    } else {
+      updateButton = const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SizedBox(height: 4),
+        Text.rich(
+          TextSpan(children: textSpans),
+          style: textTheme.bodyText2,
+        ),
+        const SizedBox(height: 4),
+        registrationButton,
+        updateButton,
+      ],
+    );
   }
 
   // Create the info for events without registration.
   Widget _makeNoRegistrationInfo(Event event) {
-    assert(event.registrationIsOptional);
-    // final textTheme = Theme.of(context).textTheme;
+    assert(!event.registrationIsOptional && !event.registrationIsRequired);
+    final textTheme = Theme.of(context).textTheme;
 
-    // TODO: Implement no registrations.
-    return const Text('Optional registrations');
+    final textSpans = <TextSpan>[];
+    if (event.noRegistrationMessage?.isNotEmpty ?? false) {
+      textSpans.add(TextSpan(text: event.noRegistrationMessage));
+    } else {
+      textSpans.add(const TextSpan(text: 'No registration required.'));
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SizedBox(height: 4),
+        Text.rich(
+          TextSpan(children: textSpans),
+          style: textTheme.bodyText2,
+        ),
+      ],
+    );
+  }
+
+  Widget _makeIllBeThereButton(Event event) {
+    return ElevatedButton.icon(
+      onPressed: () async {
+        try {
+          await _eventCubit.register(event.pk);
+          await _registrationsCubit.load(event.pk);
+          BlocProvider.of<CalendarCubit>(context).load();
+        } on ApiException {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Could not register for the event.'),
+          ));
+        }
+      },
+      icon: const Icon(Icons.check),
+      label: const Text("I'LL BE THERE"),
+    );
+  }
+
+  Widget _makeIWontBeThereButton(Event event) {
+    return ElevatedButton.icon(
+      onPressed: () async {
+        try {
+          await _eventCubit.cancelRegistration(
+            eventPk: event.pk,
+            registrationPk: event.registration!.pk,
+          );
+          await _registrationsCubit.load(event.pk);
+          BlocProvider.of<CalendarCubit>(context).load();
+        } on ApiException {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Could not cancel your registration.'),
+          ));
+        }
+      },
+      icon: const Icon(Icons.clear),
+      label: const Text("I WON'T BE THERE"),
+    );
   }
 
   Widget _makeCreateRegistrationButton(Event event) {
