@@ -15,10 +15,8 @@ class FoodAdminCubit extends Cubit<FoodAdminState> {
 
   String? get searchQuery => _searchQuery;
 
-  FoodAdminCubit(
-    this.api, {
-    required this.foodEventPk,
-  }) : super(const FoodAdminState.loading());
+  FoodAdminCubit(this.api, {required this.foodEventPk})
+      : super(const FoodAdminState.loading());
 
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));

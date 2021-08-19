@@ -241,5 +241,5 @@ class EventAdminCubit extends Cubit<EventAdminState> {
     }
   }
 
-  // TODO: Change other cubits to use the search mechanism used here.
+  // TODO: Someday: change other cubits to use the search mechanism used here.
 }
