@@ -34,7 +34,7 @@ UserEventRegistration _$UserEventRegistrationFromJson(
         ? null
         : Payment.fromJson(json['payment'] as Map<String, dynamic>),
     json['is_cancelled'] as bool,
-    json['is_late_cancellation'] as bool,
+    json['is_late_cancellation'] as bool? ?? false,
   );
 }
 
