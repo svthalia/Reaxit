@@ -558,11 +558,13 @@ class _EventScreenState extends State<EventScreen>
             final registration = await _eventCubit.register();
             if (event.hasFields) {
               ThaliaRouterDelegate.of(context).push(
-                MaterialPage(
+                TypedMaterialPage(
                   child: RegistrationScreen(
                     eventPk: event.pk,
                     registrationPk: registration.pk,
                   ),
+                  name: 'Registration(event: ${event.pk}, '
+                      'registration: ${registration.pk})',
                 ),
               );
             }
@@ -588,11 +590,13 @@ class _EventScreenState extends State<EventScreen>
           final registration = await _eventCubit.register();
           if (event.hasFields) {
             ThaliaRouterDelegate.of(context).push(
-              MaterialPage(
+              TypedMaterialPage(
                 child: RegistrationScreen(
                   eventPk: event.pk,
                   registrationPk: registration.pk,
                 ),
+                name: 'Registration(event: ${event.pk}, '
+                    'registration: ${registration.pk})',
               ),
             );
           }
@@ -669,11 +673,13 @@ class _EventScreenState extends State<EventScreen>
     return ElevatedButton.icon(
       onPressed: () {
         ThaliaRouterDelegate.of(context).push(
-          MaterialPage(
+          TypedMaterialPage(
             child: RegistrationScreen(
               eventPk: event.pk,
               registrationPk: event.registration!.pk,
             ),
+            name: 'Registration(event: ${event.pk}, '
+                'registration: ${event.registration!.pk})',
           ),
         );
       },
@@ -929,7 +935,10 @@ class _EventScreenState extends State<EventScreen>
                     icon: const Icon(Icons.settings),
                     onPressed: () {
                       ThaliaRouterDelegate.of(context).push(
-                        MaterialPage(child: EventAdminScreen(pk: event.pk)),
+                        TypedMaterialPage(
+                          child: EventAdminScreen(pk: event.pk),
+                          name: 'EventAdmin(${event.pk})',
+                        ),
                       );
                     },
                   ),

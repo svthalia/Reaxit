@@ -30,11 +30,9 @@ class EventDetailCard extends StatelessWidget {
       child: InkWell(
         onTap: () {
           ThaliaRouterDelegate.of(context).push(
-            MaterialPage(
-              child: EventScreen(
-                pk: event.pk,
-                event: event,
-              ),
+            TypedMaterialPage(
+              child: EventScreen(pk: event.pk, event: event),
+              name: 'Event(${event.pk})',
             ),
           );
         },
@@ -107,11 +105,9 @@ class EventDetailCard extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       ThaliaRouterDelegate.of(context).push(
-                        MaterialPage(
-                          child: EventScreen(
-                            pk: event.pk,
-                            event: event,
-                          ),
+                        TypedMaterialPage(
+                          child: EventScreen(pk: event.pk, event: event),
+                          name: 'Event(${event.pk})',
                         ),
                       );
                     },
@@ -124,11 +120,12 @@ class EventDetailCard extends StatelessWidget {
                       icon: const Icon(Icons.local_pizza),
                       onPressed: () {
                         ThaliaRouterDelegate.of(context).push(
-                          MaterialPage(
+                          TypedMaterialPage(
                             child: FoodScreen(
                               pk: event.foodEvent!,
                               event: event,
                             ),
+                            name: 'FoodEvent(${event.foodEvent})',
                           ),
                         );
                       },

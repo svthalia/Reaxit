@@ -13,11 +13,9 @@ class MemberTile extends StatelessWidget {
     return InkWell(
       onTap: () {
         ThaliaRouterDelegate.of(context).push(
-          MaterialPage(
-            child: ProfileScreen(
-              pk: member.pk,
-              member: member,
-            ),
+          TypedMaterialPage(
+            child: ProfileScreen(pk: member.pk, member: member),
+            name: 'Profile(${member.pk})',
           ),
         );
       },

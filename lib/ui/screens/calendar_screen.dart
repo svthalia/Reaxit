@@ -367,13 +367,15 @@ class _EventCard extends StatelessWidget {
             onTap: followLink ??
                 () {
                   ThaliaRouterDelegate.of(context).push(
-                    MaterialPage(
-                        child: EventScreen(
-                      pk: event.pk,
-                      event: event.parentEvent is Event
-                          ? event.parentEvent as Event
-                          : null,
-                    )),
+                    TypedMaterialPage(
+                      child: EventScreen(
+                        pk: event.pk,
+                        event: event.parentEvent is Event
+                            ? event.parentEvent as Event
+                            : null,
+                      ),
+                      name: 'Event(${event.pk})',
+                    ),
                   );
                 },
             // Prevent painting ink outside of the card.
