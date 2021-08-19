@@ -8,16 +8,17 @@ typedef EventState = DetailState<Event>;
 
 class EventCubit extends Cubit<EventState> {
   final ApiRepository api;
+  final int eventPk;
 
-  // TODO: Include event pk in constructor, and remove it from all methods.
-  // TODO: Maybe: combine with RegistrationsCubit.
+  // TODO: Someday: combine with RegistrationsCubit.
 
-  EventCubit(this.api) : super(const EventState.loading());
+  EventCubit(this.api, {required this.eventPk})
+      : super(const EventState.loading());
 
-  Future<void> load(int pk) async {
+  Future<void> load() async {
     emit(state.copyWith(isLoading: true));
     try {
-      final event = await api.getEvent(pk: pk);
+      final event = await api.getEvent(pk: eventPk);
       emit(EventState.result(result: event));
     } on ApiException catch (exception) {
       emit(EventState.failure(message: _failureMessage(exception)));
@@ -27,10 +28,10 @@ class EventCubit extends Cubit<EventState> {
   /// Register for the [Event] with the `pk`.
   ///
   /// This throws an [ApiException] if registration fails.
-  Future<EventRegistration> register(int pk) async {
-    final registration = await api.registerForEvent(pk);
+  Future<EventRegistration> register() async {
+    final registration = await api.registerForEvent(eventPk);
     // Reload the event for updated registration status.
-    await load(pk);
+    await load();
     return registration;
   }
 
@@ -39,7 +40,6 @@ class EventCubit extends Cubit<EventState> {
   ///
   /// This throws an [ApiException] if deregistering fails.
   Future<void> cancelRegistration({
-    required int eventPk,
     required int registrationPk,
   }) async {
     await api.cancelRegistration(
@@ -47,16 +47,15 @@ class EventCubit extends Cubit<EventState> {
       registrationPk: registrationPk,
     );
     // Reload the event for updated registration status.
-    await load(eventPk);
+    await load();
   }
 
   /// Pay your registration for the event using Thalia Pay.
   Future<void> thaliaPayRegistration({
-    required int eventPk,
     required int registrationPk,
   }) async {
     await api.thaliaPayRegistration(registrationPk: registrationPk);
-    await load(eventPk);
+    await load();
   }
 
   String _failureMessage(ApiException exception) {

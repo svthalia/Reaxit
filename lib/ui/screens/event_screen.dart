@@ -42,8 +42,8 @@ class _EventScreenState extends State<EventScreen>
   @override
   void initState() {
     final api = RepositoryProvider.of<ApiRepository>(context);
-    _eventCubit = EventCubit(api)..load(widget.pk);
-    _registrationsCubit = RegistrationsCubit(api)..load(widget.pk);
+    _eventCubit = EventCubit(api, eventPk: widget.pk)..load();
+    _registrationsCubit = RegistrationsCubit(api, eventPk: widget.pk)..load();
     super.initState();
   }
 
@@ -74,7 +74,7 @@ class _EventScreenState extends State<EventScreen>
     );
   }
 
-  // TODO: Add animations back in.
+  // TODO: Someday: add animations back in.
 
   /// Create all info of an event until the description, including buttons.
   Widget _makeEventInfo(Event event) {
@@ -478,8 +478,8 @@ class _EventScreenState extends State<EventScreen>
     return ElevatedButton.icon(
       onPressed: () async {
         try {
-          await _eventCubit.register(event.pk);
-          await _registrationsCubit.load(event.pk);
+          await _eventCubit.register();
+          await _registrationsCubit.load();
           BlocProvider.of<CalendarCubit>(context).load();
         } on ApiException {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -498,10 +498,9 @@ class _EventScreenState extends State<EventScreen>
       onPressed: () async {
         try {
           await _eventCubit.cancelRegistration(
-            eventPk: event.pk,
             registrationPk: event.registration!.pk,
           );
-          await _registrationsCubit.load(event.pk);
+          await _registrationsCubit.load();
           BlocProvider.of<CalendarCubit>(context).load();
         } on ApiException {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -556,7 +555,7 @@ class _EventScreenState extends State<EventScreen>
 
         if (confirmed) {
           try {
-            final registration = await _eventCubit.register(event.pk);
+            final registration = await _eventCubit.register();
             if (event.hasFields) {
               ThaliaRouterDelegate.of(context).push(
                 MaterialPage(
@@ -574,7 +573,7 @@ class _EventScreenState extends State<EventScreen>
               content: Text('Could not register for the event.'),
             ));
           }
-          await _registrationsCubit.load(event.pk);
+          await _registrationsCubit.load();
         }
       },
       icon: const Icon(Icons.create_outlined),
@@ -586,7 +585,7 @@ class _EventScreenState extends State<EventScreen>
     return ElevatedButton.icon(
       onPressed: () async {
         try {
-          final registration = await _eventCubit.register(event.pk);
+          final registration = await _eventCubit.register();
           if (event.hasFields) {
             ThaliaRouterDelegate.of(context).push(
               MaterialPage(
@@ -604,7 +603,7 @@ class _EventScreenState extends State<EventScreen>
             content: Text('Could not join the waiting list for the event.'),
           ));
         }
-        await _registrationsCubit.load(event.pk);
+        await _registrationsCubit.load();
       },
       icon: const Icon(Icons.create_outlined),
       label: const Text('JOIN QUEUE'),
@@ -648,7 +647,6 @@ class _EventScreenState extends State<EventScreen>
         if (confirmed ?? false) {
           try {
             await _eventCubit.cancelRegistration(
-              eventPk: event.pk,
               registrationPk: event.registration!.pk,
             );
           } on ApiException {
@@ -658,7 +656,7 @@ class _EventScreenState extends State<EventScreen>
             ));
           }
         }
-        await _registrationsCubit.load(event.pk);
+        await _registrationsCubit.load();
         BlocProvider.of<CalendarCubit>(context).load();
         await BlocProvider.of<WelcomeCubit>(context).load();
       },
@@ -753,7 +751,6 @@ class _EventScreenState extends State<EventScreen>
             if (confirmed ?? false) {
               try {
                 await _eventCubit.thaliaPayRegistration(
-                  eventPk: event.pk,
                   registrationPk: event.registration!.pk,
                 );
               } on ApiException {
@@ -905,8 +902,8 @@ class _EventScreenState extends State<EventScreen>
             body: RefreshIndicator(
               onRefresh: () async {
                 // Await both loads.
-                var eventFuture = _eventCubit.load(widget.pk);
-                await _registrationsCubit.load(widget.pk);
+                var eventFuture = _eventCubit.load();
+                await _registrationsCubit.load();
                 await eventFuture;
               },
               child: ErrorScrollView(state.message!),
@@ -939,7 +936,7 @@ class _EventScreenState extends State<EventScreen>
               ],
             ),
             body: RefreshIndicator(
-              onRefresh: () => _eventCubit.load(widget.pk),
+              onRefresh: () => _eventCubit.load(),
               child: BlocBuilder<RegistrationsCubit, RegistrationsState>(
                 bloc: _registrationsCubit,
                 builder: (context, state) {

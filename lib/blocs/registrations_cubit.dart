@@ -7,13 +7,15 @@ typedef RegistrationsState = DetailState<List<EventRegistration>>;
 
 class RegistrationsCubit extends Cubit<RegistrationsState> {
   final ApiRepository api;
+  final int eventPk;
 
-  RegistrationsCubit(this.api) : super(const RegistrationsState.loading());
+  RegistrationsCubit(this.api, {required this.eventPk})
+      : super(const RegistrationsState.loading());
 
-  Future<void> load(int pk) async {
+  Future<void> load() async {
     emit(state.copyWith(isLoading: true));
     try {
-      final listResponse = await api.getEventRegistrations(pk: pk);
+      final listResponse = await api.getEventRegistrations(pk: eventPk);
       if (listResponse.results.isNotEmpty) {
         emit(RegistrationsState.result(result: listResponse.results));
       } else {
