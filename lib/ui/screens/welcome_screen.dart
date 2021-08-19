@@ -177,7 +177,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   _makeUpcomingEvents(state.upcomingEvents!),
                   TextButton(
                     onPressed: () => ThaliaRouterDelegate.of(context).replace(
-                      MaterialPage(child: CalendarScreen()),
+                      TypedMaterialPage(
+                        child: CalendarScreen(),
+                        name: 'Calendar',
+                      ),
                     ),
                     child: const Text('SHOW THE ENTIRE AGENDA'),
                   ),

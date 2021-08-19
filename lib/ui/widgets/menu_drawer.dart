@@ -25,8 +25,9 @@ class MenuDrawer extends StatelessWidget {
               final me = state.result!;
               return InkWell(
                 onTap: () {
-                  routerDelegate.push(MaterialPage(
+                  routerDelegate.push(TypedMaterialPage(
                     child: ProfileScreen(pk: me.pk, member: me),
+                    name: 'Profile(${me.pk} (me))',
                   ));
                 },
                 child: Stack(
@@ -153,7 +154,7 @@ class MenuDrawer extends StatelessWidget {
                 Navigator.of(context).pop();
               } else {
                 routerDelegate.replace(
-                  MaterialPage(child: WelcomeScreen()),
+                  TypedMaterialPage(child: WelcomeScreen(), name: 'Welcome'),
                 );
               }
             },
@@ -167,7 +168,7 @@ class MenuDrawer extends StatelessWidget {
                 Navigator.of(context).pop();
               } else {
                 routerDelegate.replace(
-                  MaterialPage(child: CalendarScreen()),
+                  TypedMaterialPage(child: CalendarScreen(), name: 'Calendar'),
                 );
               }
             },
@@ -181,7 +182,7 @@ class MenuDrawer extends StatelessWidget {
                 Navigator.of(context).pop();
               } else {
                 routerDelegate.replace(
-                  MaterialPage(child: MembersScreen()),
+                  TypedMaterialPage(child: MembersScreen(), name: 'Members'),
                 );
               }
             },
@@ -195,7 +196,7 @@ class MenuDrawer extends StatelessWidget {
                 Navigator.of(context).pop();
               } else {
                 routerDelegate.replace(
-                  MaterialPage(child: AlbumsScreen()),
+                  TypedMaterialPage(child: AlbumsScreen(), name: 'Albums'),
                 );
               }
             },
@@ -209,7 +210,7 @@ class MenuDrawer extends StatelessWidget {
                 Navigator.of(context).pop();
               } else {
                 routerDelegate.replace(
-                  MaterialPage(child: SettingsScreen()),
+                  TypedMaterialPage(child: SettingsScreen(), name: 'Settings'),
                 );
               }
             },

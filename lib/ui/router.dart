@@ -21,6 +21,34 @@ import 'package:url_launcher/link.dart';
 import 'package:reaxit/push_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+/// Utility class that adds a key to [MaterialPage], and requires a `name`.
+///
+/// Including a key makes sure that transitions are animated when a page is
+/// replaced. If we don't specify a key (or overwrite `canUpdate`), the
+/// transition from e.g. `[MaterialPage(child: WelcomeScreen())]` to
+/// `[MaterialPage(child: AlbumsScreen())]` would not animate, as both pages
+/// have the same runtimeType and key, so `old.canUpdateFrom(new)` is true.
+///
+/// The `name` argument is required in order to provide useful debugging info,
+/// for example in the Sentry logs.
+class TypedMaterialPage extends MaterialPage {
+  TypedMaterialPage({
+    required Widget child,
+    required String name,
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+  }) : super(
+          child: child,
+          fullscreenDialog: fullscreenDialog,
+          maintainState: false,
+          name: name,
+          key: ValueKey(child.runtimeType),
+        );
+
+  // TODO: Someday: Create a Page subclass for each screen, that specifies the
+  //  name, arguments, and possibly custom transitions.
+}
+
 class ThaliaRouterDelegate extends RouterDelegate<Uri>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<Uri> {
   static ThaliaRouterDelegate of(BuildContext context) {
@@ -30,14 +58,15 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
   }
 
   final AuthBloc authBloc;
-  late final StreamSubscription authSubscription;
 
   @override
   final GlobalKey<NavigatorState> navigatorKey;
 
-  final List<MaterialPage> _stack = [const MaterialPage(child: LoginScreen())];
+  final List<TypedMaterialPage> _stack = [
+    TypedMaterialPage(child: WelcomeScreen(), name: 'Welcome'),
+  ];
 
-  List<MaterialPage> get stack => _stack;
+  List<TypedMaterialPage> get stack => _stack;
 
   final Future<FirebaseApp> _firebaseInitialization;
 
@@ -113,19 +142,6 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
       : navigatorKey = GlobalKey<NavigatorState>(),
         _firebaseInitialization = firebaseInitialization {
     _setupFirebaseMessaging();
-    authSubscription = authBloc.stream.listen((state) {
-      if (state is LoggedInAuthState) {
-        replaceStack([MaterialPage(child: WelcomeScreen())]);
-      } else if (state is LoggedOutAuthState) {
-        replaceStack([const MaterialPage(child: LoginScreen())]);
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    authSubscription.cancel();
-    super.dispose();
   }
 
   @override
@@ -161,9 +177,9 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
           ));
         }
       },
-      // Listener for setting up push notifications.
-      child: BlocListener<AuthBloc, AuthState>(
+      child: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, authState) async {
+          // Setting up pushnotifications on login.
           if (authState is LoggedInAuthState) {
             // Make sure firebase has been initialized.
             await _firebaseInitialization;
@@ -175,13 +191,18 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
             });
           }
         },
-        child: Navigator(
-          key: navigatorKey,
-          onPopPage: _onPopPage,
-          // Copy the stack with `.toList()` to have the navigator update.
-          pages: _stack.toList(),
-          observers: [SentryNavigatorObserver()],
-        ),
+        builder: (context, authState) {
+          if (authState is! LoggedInAuthState) {
+            return const LoginScreen();
+          }
+          return Navigator(
+            key: navigatorKey,
+            onPopPage: _onPopPage,
+            // Copy the stack with `.toList()` to have the navigator update.
+            pages: _stack.toList(),
+            observers: [SentryNavigatorObserver()],
+          );
+        },
       ),
     );
   }
@@ -214,13 +235,13 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
       _stack
         ..clear()
         ..addAll([
-          MaterialPage(child: WelcomeScreen()),
+          TypedMaterialPage(child: WelcomeScreen(), name: 'Welcome'),
         ]);
     } else if (RegExp('^/pizzas/?\$').hasMatch(path)) {
       _stack
         ..clear()
         ..addAll([
-          MaterialPage(child: WelcomeScreen()),
+          TypedMaterialPage(child: WelcomeScreen(), name: 'Welcome'),
           // TODO: Get the right foodevent, probably using a disambiguation dialog
           //  that is a SimpleDialog and shortly creates its own cubit to load the
           //  possible foodevents.
@@ -230,30 +251,33 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
       _stack
         ..clear()
         ..addAll([
-          MaterialPage(child: CalendarScreen()),
+          TypedMaterialPage(child: CalendarScreen(), name: 'Calendar'),
         ]);
     } else if (RegExp('^/events/([0-9]+)/?\$').hasMatch(path)) {
       final pk = int.parse(segments[1]);
       _stack
         ..clear()
         ..addAll([
-          MaterialPage(child: CalendarScreen()),
-          MaterialPage(child: EventScreen(pk: pk))
+          TypedMaterialPage(child: CalendarScreen(), name: 'Calendar'),
+          TypedMaterialPage(child: EventScreen(pk: pk), name: 'Event($pk)'),
         ]);
     } else if (RegExp('^/members/photos/([a-z0-9-_]+)/?\$').hasMatch(path)) {
       _stack
         ..clear()
         ..addAll([
-          MaterialPage(child: AlbumsScreen()),
-          MaterialPage(child: AlbumScreen(slug: segments[2]))
+          TypedMaterialPage(child: AlbumsScreen(), name: 'Albums'),
+          TypedMaterialPage(
+            child: AlbumScreen(slug: segments[2]),
+            name: 'Album(${segments[2]})',
+          ),
         ]);
     } else if (RegExp('^/members/([0-9]+)/?\$').hasMatch(path)) {
       final pk = int.parse(segments[1]);
       _stack
         ..clear()
         ..addAll([
-          MaterialPage(child: MembersScreen()),
-          MaterialPage(child: ProfileScreen(pk: pk))
+          TypedMaterialPage(child: MembersScreen(), name: 'Members'),
+          TypedMaterialPage(child: ProfileScreen(pk: pk), name: 'Profile($pk)'),
         ]);
     } else if (RegExp('^/sales/order/([a-f0-9-]+)/pay/?\$').hasMatch(path)) {
       final pk = segments[2];
@@ -269,7 +293,7 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
   }
 
   /// Adds a page to the top of the stack.
-  void push(MaterialPage page) {
+  void push(TypedMaterialPage page) {
     _stack.add(page);
     notifyListeners();
   }
@@ -280,11 +304,8 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
     notifyListeners();
   }
 
-  // TODO: Fix missing animations. The old page is currently swapped for the
-  //  new one. Instead, it should be rendered over it before removing the old one.
-
   /// Replaces the top of the stack.
-  void replace(MaterialPage page) {
+  void replace(TypedMaterialPage page) {
     _stack
       ..removeLast()
       ..add(page);
@@ -292,7 +313,7 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
   }
 
   /// Replaces the current stack.
-  void replaceStack(List<MaterialPage> stack) {
+  void replaceStack(List<TypedMaterialPage> stack) {
     _stack
       ..clear()
       ..addAll(stack);

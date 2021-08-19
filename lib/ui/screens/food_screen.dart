@@ -414,8 +414,9 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                       icon: const Icon(Icons.settings),
                       onPressed: () {
                         ThaliaRouterDelegate.of(context).push(
-                          MaterialPage(
+                          TypedMaterialPage(
                             child: FoodAdminScreen(pk: foodEvent.pk),
+                            name: 'FoodAdmin(${foodEvent.pk})',
                           ),
                         );
                       },

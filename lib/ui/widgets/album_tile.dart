@@ -13,11 +13,9 @@ class AlbumTile extends StatelessWidget {
     return InkWell(
       onTap: () {
         ThaliaRouterDelegate.of(context).push(
-          MaterialPage(
-            child: AlbumScreen(
-              slug: album.slug,
-              album: album,
-            ),
+          TypedMaterialPage(
+            child: AlbumScreen(slug: album.slug, album: album),
+            name: 'Album(${album.slug})',
           ),
         );
       },
