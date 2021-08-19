@@ -34,7 +34,7 @@ class EventScreen extends StatefulWidget {
 
 class _EventScreenState extends State<EventScreen>
     with TickerProviderStateMixin {
-  static final dateTimeFormatter = DateFormat('d MMMM y, HH:mm');
+  static final dateTimeFormatter = DateFormat('d MMM y, HH:mm');
 
   late final EventCubit _eventCubit;
   late final RegistrationsCubit _registrationsCubit;
@@ -176,7 +176,7 @@ class _EventScreenState extends State<EventScreen>
     final textTheme = Theme.of(context).textTheme;
 
     final textSpans = <TextSpan>[];
-    late Widget registrationButton;
+    Widget registrationButton = const SizedBox.shrink();
 
     if (event.registration == null) {
       if (!event.registrationStarted()) {
@@ -285,8 +285,6 @@ class _EventScreenState extends State<EventScreen>
             const text = 'Are you sure you want to cancel your registration?';
             registrationButton = _makeCancelRegistrationButton(event, text);
           }
-        } else {
-          registrationButton = const SizedBox.shrink();
         }
       }
     }
@@ -426,6 +424,12 @@ class _EventScreenState extends State<EventScreen>
             'well as mark the event as "registered" in your calendar.',
       ));
       registrationButton = _makeIllBeThereButton(event);
+    }
+
+    if (event.noRegistrationMessage?.isNotEmpty ?? false) {
+      textSpans.add(TextSpan(text: event.noRegistrationMessage));
+    } else {
+      textSpans.add(const TextSpan(text: 'No registration required.'));
     }
 
     late Widget updateButton;
@@ -808,7 +812,10 @@ class _EventScreenState extends State<EventScreen>
 
   Widget _makeDescription(Event event) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 4,
+      ),
       child: HtmlWidget(
         event.description,
         onTapUrl: (String url) async {
