@@ -29,6 +29,8 @@ class UserEventRegistration {
   final Payment? payment;
 
   final bool isCancelled;
+
+  @JsonKey(defaultValue: false)
   final bool isLateCancellation;
 
   bool get isRegistered => !isCancelled;
