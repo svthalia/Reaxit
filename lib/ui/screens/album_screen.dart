@@ -62,65 +62,73 @@ class _AlbumScreenState extends State<AlbumScreen> {
       barrierColor: Colors.black.withOpacity(0.92),
       builder: (context) {
         final pageController = PageController(initialPage: index);
-        return Material(
-          color: Colors.transparent,
-          child: Stack(
-            children: [
-              PhotoViewGallery.builder(
-                backgroundDecoration: const BoxDecoration(
-                  color: Colors.transparent,
-                ),
-                itemCount: album.photos.length,
-                builder: (context, i) => PhotoViewGalleryPageOptions(
-                  heroAttributes: PhotoViewHeroAttributes(
-                    tag: 'photo_${album.photos[i].pk}',
+        return Dismissible(
+          key: UniqueKey(),
+          direction: DismissDirection.down,
+          onDismissed: (_) => Navigator.of(context).pop(),
+          child: Material(
+            color: Colors.transparent,
+            child: Stack(
+              children: [
+                PhotoViewGallery.builder(
+                  loadingBuilder: (_, __) => const Center(
+                    child: CircularProgressIndicator(),
                   ),
-                  imageProvider: NetworkImage(album.photos[i].full),
-                  minScale: PhotoViewComputedScale.contained * 0.8,
-                  maxScale: PhotoViewComputedScale.covered * 2,
-                ),
-                pageController: pageController,
-              ),
-              SafeArea(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    CloseButton(
-                      color: Theme.of(context).primaryIconTheme.color,
+                  backgroundDecoration: const BoxDecoration(
+                    color: Colors.transparent,
+                  ),
+                  itemCount: album.photos.length,
+                  builder: (context, i) => PhotoViewGalleryPageOptions(
+                    heroAttributes: PhotoViewHeroAttributes(
+                      tag: 'photo_${album.photos[i].pk}',
                     ),
-                    IconButton(
-                      color: Theme.of(context).primaryIconTheme.color,
-                      icon: Icon(
-                        Platform.isIOS ? Icons.ios_share : Icons.share,
+                    imageProvider: NetworkImage(album.photos[i].full),
+                    minScale: PhotoViewComputedScale.contained * 0.8,
+                    maxScale: PhotoViewComputedScale.covered * 2,
+                  ),
+                  pageController: pageController,
+                ),
+                SafeArea(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CloseButton(
+                        color: Theme.of(context).primaryIconTheme.color,
                       ),
-                      onPressed: () async {
-                        var i = pageController.page!.round();
-                        if (i < 0 || i >= album.photos.length) i = index;
-                        final url = Uri.parse(album.photos[i].full);
-                        try {
-                          final response = await http.get(url);
-                          if (response.statusCode != 200) throw Exception();
-                          final baseTempDir = await getTemporaryDirectory();
-                          final tempDir = await baseTempDir.createTemp();
-                          final tempFile = File(
-                            '${tempDir.path}/${url.pathSegments.last}',
-                          );
-                          await tempFile.writeAsBytes(response.bodyBytes);
-                          await Share.shareFiles([tempFile.path]);
-                        } catch (_) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              behavior: SnackBarBehavior.floating,
-                              content: Text('Could not share the image.'),
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  ],
+                      IconButton(
+                        color: Theme.of(context).primaryIconTheme.color,
+                        icon: Icon(
+                          Platform.isIOS ? Icons.ios_share : Icons.share,
+                        ),
+                        onPressed: () async {
+                          var i = pageController.page!.round();
+                          if (i < 0 || i >= album.photos.length) i = index;
+                          final url = Uri.parse(album.photos[i].full);
+                          try {
+                            final response = await http.get(url);
+                            if (response.statusCode != 200) throw Exception();
+                            final baseTempDir = await getTemporaryDirectory();
+                            final tempDir = await baseTempDir.createTemp();
+                            final tempFile = File(
+                              '${tempDir.path}/${url.pathSegments.last}',
+                            );
+                            await tempFile.writeAsBytes(response.bodyBytes);
+                            await Share.shareFiles([tempFile.path]);
+                          } catch (_) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                behavior: SnackBarBehavior.floating,
+                                content: Text('Could not share the image.'),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
