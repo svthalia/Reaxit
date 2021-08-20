@@ -127,25 +127,35 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     if (stored != null) {
       final credentials = Credentials.fromJson(stored);
-      yield LoggedInAuthState(
-        client: Client(
-          credentials,
-          identifier: config.apiIdentifier,
-          secret: config.apiSecret,
-          onCredentialsRefreshed: (credentials) async {
-            const storage = FlutterSecureStorage();
-            await storage.write(
-              key: _credentialsStorageKey,
-              value: credentials.toJson(),
-              iOptions: const IOSOptions(
-                accessibility: IOSAccessibility.first_unlock,
-              ),
-            );
-          },
-          httpClient: SentryHttpClient(),
-        ),
-        logOut: () => add(LogOutAuthEvent()),
-      );
+
+      // Log out if not all required scopes are available. After an update that
+      // introduces a new scope, this will cause the app to log out and get new
+      // credentials with the required scopes, instead of just getting 403's
+      // until you manually log out.
+      final scopes = credentials.scopes?.toSet() ?? <String>{};
+      if (scopes.containsAll(config.oauthScopes)) {
+        yield LoggedInAuthState(
+          client: Client(
+            credentials,
+            identifier: config.apiIdentifier,
+            secret: config.apiSecret,
+            onCredentialsRefreshed: (credentials) async {
+              const storage = FlutterSecureStorage();
+              await storage.write(
+                key: _credentialsStorageKey,
+                value: credentials.toJson(),
+                iOptions: const IOSOptions(
+                  accessibility: IOSAccessibility.first_unlock,
+                ),
+              );
+            },
+            httpClient: SentryHttpClient(),
+          ),
+          logOut: () => add(LogOutAuthEvent()),
+        );
+      } else {
+        add(LogOutAuthEvent());
+      }
     } else {
       // Clear username for sentry.
       Sentry.configureScope((scope) => scope.user = null);
