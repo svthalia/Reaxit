@@ -20,6 +20,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:url_launcher/link.dart';
 import 'package:reaxit/push_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Utility class that adds a key to [MaterialPage], and requires a `name`.
 ///
@@ -114,9 +115,14 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
     });
 
     // User clicked on push notification outside of app and the app was still
-    // in the background. Open the deeplink in the notification.
+    // in the background. Open the url or show a dialog.
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      if (navigatorKey.currentContext != null) {
+      if (message.data.containsKey('url') && message.data['url'] is String) {
+        final uri = Uri.tryParse(message.data['url'] as String);
+        if (uri != null && await canLaunch(uri.toString())) {
+          await launch(uri.toString(), forceSafariVC: false);
+        }
+      } else if (navigatorKey.currentContext != null) {
         showDialog(
           context: navigatorKey.currentContext!,
           builder: (context) => PushNotificationDialog(message),
@@ -125,12 +131,18 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
     });
 
     // User got a push notification outside of the app while the app was not
-    // running in the background. Open the deeplink in the notification.
+    // running in the background. Open the url or show a dialog.
     if (initialMessage != null) {
-      if (navigatorKey.currentContext != null) {
+      final message = initialMessage;
+      if (message.data.containsKey('url') && message.data['url'] is String) {
+        final uri = Uri.tryParse(message.data['url'] as String);
+        if (uri != null && await canLaunch(uri.toString())) {
+          await launch(uri.toString(), forceSafariVC: false);
+        }
+      } else if (navigatorKey.currentContext != null) {
         showDialog(
           context: navigatorKey.currentContext!,
-          builder: (context) => PushNotificationDialog(initialMessage),
+          builder: (context) => PushNotificationDialog(message),
         );
       }
     }

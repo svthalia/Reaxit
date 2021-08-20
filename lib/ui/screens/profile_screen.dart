@@ -256,10 +256,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Align(
       alignment: Alignment.topCenter,
       child: Padding(
-        padding: const EdgeInsets.only(top: 12),
+        padding: const EdgeInsets.only(top: 8, bottom: 4),
         child: Text(
-          'Honorary Member',
-          style: Theme.of(context).textTheme.headline6,
+          'HONORARY MEMBER',
+          style: Theme.of(context).textTheme.subtitle1,
         ),
       ),
     );
