@@ -16,12 +16,13 @@ import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 
 class FoodScreen extends StatefulWidget {
   /// The pk that of the [FoodEvent] to show.
-  final int pk;
+  /// If null, the current food event is found and used.
+  final int? pk;
 
   /// The [Event] to which the [FoodEvent] belongs.
   final Event? event;
 
-  FoodScreen({required this.pk, this.event}) : super(key: ValueKey(pk));
+  FoodScreen({this.pk, this.event}) : super(key: ValueKey(pk));
 
   @override
   _FoodScreenState createState() => _FoodScreenState();
@@ -38,7 +39,8 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
   void initState() {
     _foodCubit = FoodCubit(
       RepositoryProvider.of<ApiRepository>(context),
-    )..load(widget.pk);
+      foodEventPk: widget.pk,
+    )..load();
     super.initState();
   }
 
@@ -124,7 +126,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
 
                   if (confirmed ?? false) {
                     try {
-                      await _foodCubit.cancelOrder(foodEvent.pk);
+                      await _foodCubit.cancelOrder();
                     } on ApiException {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         behavior: SnackBarBehavior.floating,
@@ -214,7 +216,6 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                   if (confirmed ?? false) {
                     try {
                       await _foodCubit.thaliaPayOrder(
-                        eventPk: foodEvent.pk,
                         orderPk: order.pk,
                       );
                     } on ApiException {
@@ -390,7 +391,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                 title: const Text('ORDER FOOD'),
               ),
               body: RefreshIndicator(
-                onRefresh: () => _foodCubit.load(widget.pk),
+                onRefresh: () => _foodCubit.load(),
                 child: ErrorScrollView(state.message!),
               ),
             );
@@ -424,7 +425,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                 ],
               ),
               body: RefreshIndicator(
-                onRefresh: () => _foodCubit.load(widget.pk),
+                onRefresh: () => _foodCubit.load(),
                 child: ListView(
                   controller: _controller,
                   physics: const AlwaysScrollableScrollPhysics(),
@@ -508,7 +509,6 @@ class __ProductTileState extends State<_ProductTile> {
   Future<void> _placeOrder(FoodEvent foodEvent) async {
     try {
       await BlocProvider.of<FoodCubit>(context).placeOrder(
-        eventPk: foodEvent.pk,
         productPk: widget.product.pk,
       );
     } on ApiException {
@@ -554,7 +554,6 @@ class __ProductTileState extends State<_ProductTile> {
     if (confirmed ?? false) {
       try {
         await BlocProvider.of<FoodCubit>(context).changeOrder(
-          eventPk: foodEvent.pk,
           productPk: widget.product.pk,
         );
       } on ApiException {
