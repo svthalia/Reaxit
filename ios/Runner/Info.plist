@@ -30,7 +30,6 @@
 				<key>CFBundleURLSchemes</key>
 				<array>
 					<string>https</string>
-					<string>thaliapp</string>
 				</array>
 			</dict>
 		</array>

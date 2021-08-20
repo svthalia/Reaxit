@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:overlay_support/overlay_support.dart';
-import 'package:pedantic/pedantic.dart';
 import 'package:reaxit/blocs/auth_bloc.dart';
 import 'package:reaxit/ui/screens/album_screen.dart';
 import 'package:reaxit/ui/screens/albums_screen.dart';
@@ -15,7 +14,6 @@ import 'package:reaxit/ui/screens/login_screen.dart';
 import 'package:reaxit/ui/screens/members_screen.dart';
 import 'package:reaxit/ui/screens/profile_screen.dart';
 import 'package:reaxit/ui/screens/welcome_screen.dart';
-import 'package:reaxit/ui/widgets/tpay_sales_order_dialog.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:url_launcher/link.dart';
 import 'package:reaxit/push_notifications.dart';
@@ -291,15 +289,18 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
           TypedMaterialPage(child: MembersScreen(), name: 'Members'),
           TypedMaterialPage(child: ProfileScreen(pk: pk), name: 'Profile($pk)'),
         ]);
-    } else if (RegExp('^/sales/order/([a-f0-9-]+)/pay/?\$').hasMatch(path)) {
-      final pk = segments[2];
-      if (navigatorKey.currentContext != null) {
-        unawaited(showDialog(
-          context: navigatorKey.currentContext!,
-          builder: (context) => TPaySalesOrderDialog(pk: pk),
-        ));
-      }
     }
+    // TODO: Add SalesOrderDialog back in, waiting for
+    //  https://github.com/svthalia/concrexit/issues/1785.
+    // else if (RegExp('^/sales/order/([a-f0-9-]+)/pay/?\$').hasMatch(path)) {
+    //   final pk = segments[2];
+    //   if (navigatorKey.currentContext != null) {
+    //     unawaited(showDialog(
+    //       context: navigatorKey.currentContext!,
+    //       builder: (context) => TPaySalesOrderDialog(pk: pk),
+    //     ));
+    //   }
+    // }
 
     return SynchronousFuture(null);
   }
