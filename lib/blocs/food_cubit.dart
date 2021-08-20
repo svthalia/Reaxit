@@ -71,13 +71,24 @@ class FoodState extends Equatable {
 class FoodCubit extends Cubit<FoodState> {
   final ApiRepository api;
 
-  FoodCubit(this.api) : super(const FoodState.loading());
+  int? _foodEventPk;
 
-  Future<void> load(int pk) async {
+  FoodCubit(this.api, {int? foodEventPk})
+      : _foodEventPk = foodEventPk,
+        super(const FoodState.loading());
+
+  Future<void> load() async {
     emit(state.copyWith(isLoading: true));
     try {
-      final event = await api.getFoodEvent(pk);
-      final products = await api.getFoodEventProducts(pk);
+      late final FoodEvent event;
+      if (_foodEventPk == null) {
+        event = await api.getCurrentFoodEvent();
+        _foodEventPk = event.pk;
+      } else {
+        event = await api.getFoodEvent(_foodEventPk!);
+      }
+
+      final products = await api.getFoodEventProducts(_foodEventPk!);
       emit(FoodState.result(foodEvent: event, products: products.results));
     } on ApiException catch (exception) {
       emit(FoodState.failure(message: _failureMessage(exception)));
@@ -85,42 +96,53 @@ class FoodCubit extends Cubit<FoodState> {
   }
 
   Future<FoodOrder> placeOrder({
-    required int eventPk,
     required int productPk,
   }) async {
+    if (_foodEventPk == null) {
+      final event = await api.getCurrentFoodEvent();
+      _foodEventPk = event.pk;
+    }
+
     final order = await api.placeFoodOrder(
-      eventPk: eventPk,
+      eventPk: _foodEventPk!,
       productPk: productPk,
     );
-    await load(eventPk);
+    await load();
     return order;
   }
 
   Future<FoodOrder> changeOrder({
-    required int eventPk,
     required int productPk,
   }) async {
+    if (_foodEventPk == null) {
+      final event = await api.getCurrentFoodEvent();
+      _foodEventPk = event.pk;
+    }
+
     final order = await api.changeFoodOrder(
-      eventPk: eventPk,
+      eventPk: _foodEventPk!,
       productPk: productPk,
     );
-    await load(eventPk);
+    await load();
     return order;
   }
 
-  /// Cancel you order for the [FoodEvent] with the `pk`.
-  Future<void> cancelOrder(int pk) async {
-    await api.cancelFoodOrder(pk);
-    await load(pk);
+  /// Cancel you order.
+  Future<void> cancelOrder() async {
+    if (_foodEventPk == null) {
+      final event = await api.getCurrentFoodEvent();
+      _foodEventPk = event.pk;
+    }
+    await api.cancelFoodOrder(_foodEventPk!);
+    await load();
   }
 
-  /// Pay your order `orderPk` for the event `eventPk` using Thalia Pay.
+  /// Pay your order `orderPk` using Thalia Pay.
   Future<void> thaliaPayOrder({
-    required int eventPk,
     required int orderPk,
   }) async {
     await api.thaliaPayFoodOrder(foodOrderPk: orderPk);
-    await load(eventPk);
+    await load();
   }
 
   String _failureMessage(ApiException exception) {

@@ -494,7 +494,7 @@ class ApiRepository {
       'Invalid ordering parameter: $ordering',
     );
     final uri = _baseUri.replace(
-      path: '$_basePath/events/',
+      path: '$_basePath/food/events/',
       queryParameters: {
         if (limit != null) 'limit': limit.toString(),
         if (offset != null) 'offset': offset.toString(),
@@ -509,6 +509,53 @@ class ApiRepository {
       _jsonDecode(response),
       (json) => FoodEvent.fromJson(json as Map<String, dynamic>),
     );
+  }
+
+  /// Get the [FoodEvent] that is currently going on.
+  Future<FoodEvent> getCurrentFoodEvent() async {
+    final now = DateTime.now().toLocal();
+    final uri = _baseUri.replace(
+      path: '$_basePath/food/events/',
+      queryParameters: {
+        'ordering': 'start',
+        'start': now.subtract(const Duration(hours: 8)).toIso8601String(),
+        'end': now.add(const Duration(hours: 8)).toIso8601String(),
+      },
+    );
+    final response = await _handleExceptions(() => client.get(uri));
+    final events = ListResponse<FoodEvent>.fromJson(
+      _jsonDecode(response),
+      (json) => FoodEvent.fromJson(json as Map<String, dynamic>),
+    ).results;
+
+    if (events.isEmpty) {
+      throw ApiException.notFound;
+    } else if (events.length == 1) {
+      final foodEvent = events.first;
+      if (foodEvent.hasOrder) {
+        try {
+          await getFoodOrderPayable(foodOrderPk: foodEvent.order!.pk);
+          foodEvent.order!.tpayAllowed = true;
+        } on ApiException catch (exception) {
+          if (exception != ApiException.notAllowed) rethrow;
+        }
+      }
+      return foodEvent;
+    } else {
+      final foodEvent = events.firstWhere(
+        (event) => event.end.isAfter(now),
+        orElse: () => events.first,
+      );
+      if (foodEvent.hasOrder) {
+        try {
+          await getFoodOrderPayable(foodOrderPk: foodEvent.order!.pk);
+          foodEvent.order!.tpayAllowed = true;
+        } on ApiException catch (exception) {
+          if (exception != ApiException.notAllowed) rethrow;
+        }
+      }
+      return foodEvent;
+    }
   }
 
   /// Get the [FoodOrder] for the [FoodEvent] with the `pk`.
@@ -904,10 +951,9 @@ class ApiRepository {
         (json) =>
             PushNotificationCategory.fromJson(json as Map<String, dynamic>));
   }
-}
-
-// TODO: Move json parsing of lists into isolates?
-// TODO: Change ApiException to a class that can contain a string?
+// TODO: Someday: move json parsing of lists into isolates?
+// TODO: Someday: change ApiException to a class that can contain a string?
 //  We can then display more specific error messages to the user based on
 //  the message returned from the server, instead of only the status code.
 //  This may especially be useful for the sales order payments.
+}

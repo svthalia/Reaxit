@@ -10,6 +10,7 @@ import 'package:reaxit/ui/screens/album_screen.dart';
 import 'package:reaxit/ui/screens/albums_screen.dart';
 import 'package:reaxit/ui/screens/calendar_screen.dart';
 import 'package:reaxit/ui/screens/event_screen.dart';
+import 'package:reaxit/ui/screens/food_screen.dart';
 import 'package:reaxit/ui/screens/login_screen.dart';
 import 'package:reaxit/ui/screens/members_screen.dart';
 import 'package:reaxit/ui/screens/profile_screen.dart';
@@ -252,10 +253,7 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
         ..clear()
         ..addAll([
           TypedMaterialPage(child: WelcomeScreen(), name: 'Welcome'),
-          // TODO: Get the right foodevent, probably using a disambiguation dialog
-          //  that is a SimpleDialog and shortly creates its own cubit to load the
-          //  possible foodevents.
-          // MaterialPage(child: FoodScreen()),
+          TypedMaterialPage(child: FoodScreen(), name: 'FoodEvent(current)'),
         ]);
     } else if (RegExp('^/events/?\$').hasMatch(path)) {
       _stack
