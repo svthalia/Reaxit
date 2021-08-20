@@ -145,6 +145,7 @@ class MenuDrawer extends StatelessWidget {
               );
             }
           }),
+          const Divider(height: 0, thickness: 1),
           ListTile(
             title: const Text('Welcome'),
             leading: const Icon(Icons.home),
@@ -215,7 +216,7 @@ class MenuDrawer extends StatelessWidget {
               }
             },
           ),
-          const Divider(),
+          const Divider(height: 0, thickness: 1),
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Log out'),
@@ -225,7 +226,6 @@ class MenuDrawer extends StatelessWidget {
               );
             },
           ),
-          const Divider(),
           AboutListTile(
             icon: const Icon(Icons.info_outline),
             dense: true,
