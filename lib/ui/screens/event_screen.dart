@@ -62,13 +62,12 @@ class _EventScreenState extends State<EventScreen>
       ),
       builder: (context, followLink) => GestureDetector(
         onTap: followLink,
-        child: Center(
-          child: FadeInImage.assetNetwork(
-            fadeInDuration: const Duration(milliseconds: 300),
-            fadeOutDuration: const Duration(milliseconds: 300),
-            placeholder: 'assets/img/map_placeholder.png',
-            image: event.mapsUrl,
-          ),
+        child: FadeInImage.assetNetwork(
+          fit: BoxFit.cover,
+          fadeInDuration: const Duration(milliseconds: 300),
+          fadeOutDuration: const Duration(milliseconds: 300),
+          placeholder: 'assets/img/map_placeholder.png',
+          image: event.mapsUrl,
         ),
       ),
     );
