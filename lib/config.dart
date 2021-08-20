@@ -47,3 +47,5 @@ const List<String> oauthScopes = [
   // 'sales:read',
   // 'sales:write',
 ];
+
+const Duration searchDebounceTime = Duration(milliseconds: 200);

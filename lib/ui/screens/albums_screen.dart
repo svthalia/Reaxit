@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reaxit/blocs/album_list_bloc.dart';
+import 'package:reaxit/blocs/album_list_cubit.dart';
 import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/ui/widgets/album_tile.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
@@ -14,11 +14,11 @@ class AlbumsScreen extends StatefulWidget {
 
 class _AlbumsScreenState extends State<AlbumsScreen> {
   late ScrollController _controller;
-  late AlbumListBloc _bloc;
+  late AlbumListCubit _cubit;
 
   @override
   void initState() {
-    _bloc = BlocProvider.of<AlbumListBloc>(context);
+    _cubit = BlocProvider.of<AlbumListCubit>(context);
     _controller = ScrollController()..addListener(_scrollListener);
     super.initState();
   }
@@ -27,8 +27,8 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
       // Only request loading more if that's not already happening.
-      if (!_bloc.state.isLoadingMore) {
-        _bloc.add(const AlbumListEvent.more());
+      if (!_cubit.state.isLoadingMore) {
+        _cubit.more();
       }
     }
   }
@@ -51,7 +51,7 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
               showSearch(
                 context: context,
                 delegate: AlbumsSearchDelegate(
-                  AlbumListBloc(
+                  AlbumListCubit(
                     RepositoryProvider.of<ApiRepository>(
                       context,
                       listen: false,
@@ -66,12 +66,9 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
       drawer: MenuDrawer(),
       body: RefreshIndicator(
         onRefresh: () async {
-          _bloc.add(const AlbumListEvent.load());
-          await _bloc.stream.firstWhere(
-            (state) => !state.isLoading,
-          );
+          await _cubit.load();
         },
-        child: BlocBuilder<AlbumListBloc, AlbumListState>(
+        child: BlocBuilder<AlbumListCubit, AlbumListState>(
           builder: (context, listState) {
             if (listState.hasException) {
               return ErrorScrollView(listState.message!);
@@ -90,9 +87,9 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
 
 class AlbumsSearchDelegate extends SearchDelegate {
   late final ScrollController _controller;
-  final AlbumListBloc _bloc;
+  final AlbumListCubit _cubit;
 
-  AlbumsSearchDelegate(this._bloc) {
+  AlbumsSearchDelegate(this._cubit) {
     _controller = ScrollController()..addListener(_scrollListener);
   }
 
@@ -100,8 +97,8 @@ class AlbumsSearchDelegate extends SearchDelegate {
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
       // Only request loading more if that's not already happening.
-      if (!_bloc.state.isLoadingMore) {
-        _bloc.add(const AlbumListEvent.more());
+      if (!_cubit.state.isLoadingMore) {
+        _cubit.more();
       }
     }
   }
@@ -132,9 +129,8 @@ class AlbumsSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    _bloc.add(AlbumListEvent.load(search: query));
-    return BlocBuilder<AlbumListBloc, AlbumListState>(
-      bloc: _bloc,
+    return BlocBuilder<AlbumListCubit, AlbumListState>(
+      bloc: _cubit..search(query),
       builder: (context, listState) {
         if (listState.hasException) {
           return ErrorScrollView(listState.message!);
@@ -150,9 +146,8 @@ class AlbumsSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    _bloc.add(AlbumListEvent.load(search: query));
-    return BlocBuilder<AlbumListBloc, AlbumListState>(
-      bloc: _bloc,
+    return BlocBuilder<AlbumListCubit, AlbumListState>(
+      bloc: _cubit..search(query),
       builder: (context, listState) {
         if (listState.hasException) {
           return ErrorScrollView(listState.message!);

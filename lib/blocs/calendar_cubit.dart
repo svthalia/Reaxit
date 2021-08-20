@@ -1,7 +1,10 @@
-import 'package:equatable/equatable.dart';
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/api_repository.dart';
+import 'package:reaxit/blocs/list_state.dart';
+import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/models/event.dart';
 
 /// Wrapper around a [BaseEvent] to be shown in the calendar.
@@ -84,86 +87,6 @@ class CalendarEvent {
   }
 }
 
-class ListState<T> extends Equatable {
-  /// The results to be shown. These are outdated if `isLoading` is true.
-  final List<T> results;
-
-  /// A message describing why there are no results.
-  final String? message;
-
-  /// Different results are being loaded. The results are outdated.
-  final bool isLoading;
-
-  /// More of the same results are being loaded. The results are not outdated.
-  final bool isLoadingMore;
-
-  /// The last results have been loaded. There are no more pages left.
-  final bool isDone;
-
-  bool get hasException => message != null;
-
-  const ListState({
-    required this.results,
-    required this.message,
-    required this.isLoading,
-    required this.isLoadingMore,
-    required this.isDone,
-  });
-
-  ListState<T> copyWith({
-    List<T>? results,
-    String? message,
-    bool? isLoading,
-    bool? isLoadingMore,
-    bool? isDone,
-  }) =>
-      ListState<T>(
-        results: results ?? this.results,
-        message: message ?? this.message,
-        isLoading: isLoading ?? this.isLoading,
-        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-        isDone: isDone ?? this.isDone,
-      );
-
-  @override
-  List<Object?> get props => [
-        results,
-        message,
-        isLoading,
-        isLoadingMore,
-        isDone,
-      ];
-
-  @override
-  String toString() {
-    return 'ListState<$T>(isLoading: $isLoading, isLoadingMore: $isLoadingMore,'
-        ' isDone: $isDone, message: $message, ${results.length} ${T}s)';
-  }
-
-  const ListState.loading({required this.results})
-      : message = null,
-        isLoading = true,
-        isLoadingMore = false,
-        isDone = true;
-
-  const ListState.loadingMore({required this.results})
-      : message = null,
-        isLoading = false,
-        isLoadingMore = true,
-        isDone = true;
-
-  const ListState.success({required this.results, required this.isDone})
-      : message = null,
-        isLoading = false,
-        isLoadingMore = false;
-
-  const ListState.failure({required String this.message})
-      : results = const [],
-        isLoading = false,
-        isLoadingMore = false,
-        isDone = true;
-}
-
 typedef CalendarState = ListState<CalendarEvent>;
 
 class CalendarCubit extends Cubit<CalendarState> {
@@ -178,12 +101,15 @@ class CalendarCubit extends Cubit<CalendarState> {
   /// The last used search query. Can be set through `this.search(query)`.
   String? get searchQuery => _searchQuery;
 
-  /// The time used as filter, stored so that later
-  /// paginated requests have the correct offset.
-  DateTime? _lastLoadTime;
+  /// A timer used to debounce calls to `this.load()` from `this.search()`.
+  Timer? _searchDebounceTimer;
 
   /// The offset to be used for the next paginated request.
   int _nextOffset = 0;
+
+  /// The time used as filter, stored so that later
+  /// paginated requests have the correct offset.
+  DateTime? _lastLoadTime;
 
   /// A list of events that have been removed from the previous results
   /// in order to prevent them filling up the calendar further then where
@@ -284,7 +210,7 @@ class CalendarCubit extends Cubit<CalendarState> {
       final query = _searchQuery;
       final start = query == null ? _lastLoadTime : null;
 
-      // Get first page of events.
+      // Get next page of events.
       final eventsResponse = await api.getEvents(
         start: start,
         search: query,
@@ -334,13 +260,11 @@ class CalendarCubit extends Cubit<CalendarState> {
   /// Set this cubit's `searchQuery` and load the events for that query.
   ///
   /// Use `null` as argument to remove the search query.
-  Future<void> search(String? query) async {
-    // TODO: Debounce the call to load: e.g. wait for 100ms and then load,
-    //  saving a future so that later `search` calls within the 100ms wait
-    //  do not trigger an additional `load` call.
+  void search(String? query) {
     if (query != _searchQuery) {
       _searchQuery = query;
-      await load();
+      _searchDebounceTimer?.cancel();
+      _searchDebounceTimer = Timer(config.searchDebounceTime, load);
     }
   }
 

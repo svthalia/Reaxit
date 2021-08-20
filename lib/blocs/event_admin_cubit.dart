@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:reaxit/api_repository.dart';
+import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/event_registration.dart';
 import 'package:reaxit/models/payment.dart';
@@ -70,7 +73,11 @@ class EventAdminCubit extends Cubit<EventAdminState> {
   /// The last used search query. Can be set through `this.search(query)`.
   String? _searchQuery;
 
+  /// The last used search query. Can be set through `this.search(query)`.
   String? get searchQuery => _searchQuery;
+
+  /// A timer used to debounce calls to `loadRegistrations()` from `search()`.
+  Timer? _searchDebounceTimer;
 
   EventAdminCubit(
     this.api, {
@@ -144,13 +151,14 @@ class EventAdminCubit extends Cubit<EventAdminState> {
   /// Set this cubit's `searchQuery` and load the registrations for that query.
   ///
   /// Use `null` as argument to remove the search query.
-  Future<void> search(String? query) async {
-    // TODO: Debounce the call to load: e.g. wait for 100ms and then load,
-    //  saving a future so that later `search` calls within the 100ms wait
-    //  do not trigger an additional `loadRegistrations` call.
+  void search(String? query) {
     if (query != _searchQuery) {
       _searchQuery = query;
-      await loadRegistrations();
+      _searchDebounceTimer?.cancel();
+      _searchDebounceTimer = Timer(
+        config.searchDebounceTime,
+        loadRegistrations,
+      );
     }
   }
 
@@ -240,6 +248,4 @@ class EventAdminCubit extends Cubit<EventAdminState> {
         return 'An unknown error occurred.';
     }
   }
-
-  // TODO: Someday: change other cubits to use the search mechanism used here.
 }
