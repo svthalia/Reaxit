@@ -225,6 +225,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Sentry.configureScope((scope) => scope.user = null);
     yield LoggedOutAuthState();
   }
-}
 
-// TODO: make AuthBloc a cubit?
+  // TODO: Someday: make AuthBloc a cubit?
+}

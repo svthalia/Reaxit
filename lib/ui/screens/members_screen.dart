@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api_repository.dart';
-import 'package:reaxit/blocs/member_list_bloc.dart';
+import 'package:reaxit/blocs/member_list_cubit.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/member_tile.dart';
@@ -14,11 +14,11 @@ class MembersScreen extends StatefulWidget {
 
 class _MembersScreenState extends State<MembersScreen> {
   late ScrollController _controller;
-  late MemberListBloc _memberListBloc;
+  late MemberListCubit _cubit;
 
   @override
   void initState() {
-    _memberListBloc = BlocProvider.of<MemberListBloc>(context);
+    _cubit = BlocProvider.of<MemberListCubit>(context);
     _controller = ScrollController()..addListener(_scrollListener);
     super.initState();
   }
@@ -27,8 +27,8 @@ class _MembersScreenState extends State<MembersScreen> {
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
       // Only request loading more if that's not already happening.
-      if (!_memberListBloc.state.isLoadingMore) {
-        _memberListBloc.add(const MemberListEvent.more());
+      if (!_cubit.state.isLoadingMore) {
+        _cubit.more();
       }
     }
   }
@@ -51,7 +51,7 @@ class _MembersScreenState extends State<MembersScreen> {
               showSearch(
                 context: context,
                 delegate: MembersSearchDelegate(
-                  MemberListBloc(
+                  MemberListCubit(
                     RepositoryProvider.of<ApiRepository>(
                       context,
                       listen: false,
@@ -66,12 +66,9 @@ class _MembersScreenState extends State<MembersScreen> {
       drawer: MenuDrawer(),
       body: RefreshIndicator(
         onRefresh: () async {
-          _memberListBloc.add(const MemberListEvent.load());
-          await _memberListBloc.stream.firstWhere(
-            (state) => !state.isLoading,
-          );
+          await _cubit.load();
         },
-        child: BlocBuilder<MemberListBloc, MemberListState>(
+        child: BlocBuilder<MemberListCubit, MemberListState>(
           builder: (context, listState) {
             if (listState.hasException) {
               return ErrorScrollView(listState.message!);
@@ -89,10 +86,10 @@ class _MembersScreenState extends State<MembersScreen> {
 }
 
 class MembersSearchDelegate extends SearchDelegate {
-  final MemberListBloc _bloc;
+  final MemberListCubit _cubit;
   late final ScrollController _controller;
 
-  MembersSearchDelegate(this._bloc) {
+  MembersSearchDelegate(this._cubit) {
     _controller = ScrollController()..addListener(_scrollListener);
   }
 
@@ -100,8 +97,8 @@ class MembersSearchDelegate extends SearchDelegate {
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
       // Only request loading more if that's not already happening.
-      if (!_bloc.state.isLoadingMore) {
-        _bloc.add(const MemberListEvent.more());
+      if (!_cubit.state.isLoadingMore) {
+        _cubit.more();
       }
     }
   }
@@ -132,9 +129,8 @@ class MembersSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    _bloc.add(MemberListEvent.load(search: query));
-    return BlocBuilder<MemberListBloc, MemberListState>(
-      bloc: _bloc,
+    return BlocBuilder<MemberListCubit, MemberListState>(
+      bloc: _cubit..search(query),
       builder: (context, listState) {
         if (listState.hasException) {
           return ErrorScrollView(listState.message!);
@@ -150,9 +146,8 @@ class MembersSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    _bloc.add(MemberListEvent.load(search: query));
-    return BlocBuilder<MemberListBloc, MemberListState>(
-      bloc: _bloc,
+    return BlocBuilder<MemberListCubit, MemberListState>(
+      bloc: _cubit..search(query),
       builder: (context, listState) {
         if (listState.hasException) {
           return ErrorScrollView(listState.message!);
@@ -169,7 +164,7 @@ class MembersSearchDelegate extends SearchDelegate {
 
 /// A ScrollView that shows a grid of [MemberTile]s.
 ///
-/// This does not take care of communicating with a Bloc. The [controller]
+/// This does not take care of communicating with a Cubit. The [controller]
 /// should do that. The [listState] also must not have an exception.
 class MemberListScrollView extends StatelessWidget {
   final ScrollController controller;

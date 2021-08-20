@@ -62,6 +62,5 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeMode> {
     }
     yield event.newMode;
   }
+  // TODO: Someday: make ThemeBloc a cubit?
 }
-
-// TODO: make ThemeBloc a cubit?

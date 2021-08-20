@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api_repository.dart';
+import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/food_order.dart';
 import 'package:reaxit/models/payment.dart';
@@ -13,7 +16,11 @@ class FoodAdminCubit extends Cubit<FoodAdminState> {
   /// The last used search query. Can be set through `this.search(query)`.
   String? _searchQuery;
 
+  /// The last used search query. Can be set through `this.search(query)`.
   String? get searchQuery => _searchQuery;
+
+  /// A timer used to debounce calls to `this.load()` from `this.search()`.
+  Timer? _searchDebounceTimer;
 
   FoodAdminCubit(this.api, {required this.foodEventPk})
       : super(const FoodAdminState.loading());
@@ -47,13 +54,11 @@ class FoodAdminCubit extends Cubit<FoodAdminState> {
   /// Set this cubit's `searchQuery` and load the orders for that query.
   ///
   /// Use `null` as argument to remove the search query.
-  Future<void> search(String? query) async {
-    // TODO: Debounce the call to load: e.g. wait for 100ms and then load,
-    //  saving a future so that later `search` calls within the 100ms wait
-    //  do not trigger an additional `load` call.
+  void search(String? query) {
     if (query != _searchQuery) {
       _searchQuery = query;
-      await load();
+      _searchDebounceTimer?.cancel();
+      _searchDebounceTimer = Timer(config.searchDebounceTime, load);
     }
   }
 
