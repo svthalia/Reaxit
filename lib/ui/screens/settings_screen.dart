@@ -16,7 +16,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _makeSetting(PushNotificationCategory category, bool enabled) {
     Widget? subtitle;
     if (category.description.isNotEmpty) {
-      subtitle = Text(category.description);
+      subtitle = Padding(
+        padding: const EdgeInsets.only(bottom: 2),
+        child: Text(
+          category.description,
+          maxLines: 2,
+        ),
+      );
     }
 
     if (category.key == 'general') {
@@ -24,7 +30,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       return SwitchListTile(
         value: true,
         onChanged: null,
-        title: Text(category.name),
+        title: Text(category.name.toUpperCase()),
         subtitle: subtitle,
       );
     }
@@ -43,7 +49,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ));
         }
       },
-      title: Text(category.name),
+      title: Text(category.name.toUpperCase()),
       subtitle: subtitle,
     );
   }
@@ -51,7 +57,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ThaliaAppBar(title: const Text('Settings')),
+      appBar: ThaliaAppBar(title: const Text('SETTINGS')),
       drawer: MenuDrawer(),
       body: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, state) {

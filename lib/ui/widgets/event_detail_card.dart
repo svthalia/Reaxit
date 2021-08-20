@@ -18,7 +18,7 @@ class EventDetailCard extends StatelessWidget {
     final description = Bidi.stripHtmlIfNeeded(event.description);
 
     var indicatorColor = Colors.transparent;
-    if (event.isRegistered && !event.isInQueue) {
+    if (event.isInvited) {
       indicatorColor = const Color(0xFFE62272);
     } else if (event.isInQueue) {
       indicatorColor = Colors.yellow;
