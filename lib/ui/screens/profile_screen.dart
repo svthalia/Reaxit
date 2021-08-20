@@ -47,139 +47,150 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (context) {
         final fullMemberCubit = BlocProvider.of<FullMemberCubit>(context);
         final isMe = fullMemberCubit.state.result?.pk == member.pk;
-        return Material(
-          color: Colors.transparent,
-          child: Stack(
-            children: [
-              PhotoView(
-                imageProvider: NetworkImage(member.photo.full),
-                heroAttributes: PhotoViewHeroAttributes(
-                  tag: 'member_${member.pk}',
+        return Dismissible(
+          key: UniqueKey(),
+          behavior: HitTestBehavior.translucent,
+          direction: DismissDirection.down,
+          onDismissed: (_) => Navigator.of(context).pop(),
+          child: Material(
+            color: Colors.transparent,
+            child: Stack(
+              children: [
+                PhotoView(
+                  imageProvider: NetworkImage(member.photo.full),
+                  heroAttributes: PhotoViewHeroAttributes(
+                    tag: 'member_${member.pk}',
+                  ),
+                  backgroundDecoration:
+                      const BoxDecoration(color: Colors.transparent),
+                  minScale: PhotoViewComputedScale.contained * 0.8,
+                  maxScale: PhotoViewComputedScale.covered * 1.2,
                 ),
-                backgroundDecoration:
-                    const BoxDecoration(color: Colors.transparent),
-                minScale: PhotoViewComputedScale.contained * 0.8,
-                maxScale: PhotoViewComputedScale.covered * 1.2,
-              ),
-              SafeArea(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    CloseButton(
-                      color: Theme.of(context).primaryIconTheme.color,
-                    ),
-                    if (isMe)
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.add_a_photo_outlined),
-                            onPressed: () async {
-                              final picker = ImagePicker();
-                              final pickedFile = await picker.pickImage(
-                                source: ImageSource.camera,
-                                preferredCameraDevice: CameraDevice.front,
-                              );
-                              final imagePath = pickedFile?.path;
-                              if (imagePath == null) return;
-                              final croppedFile = await ImageCropper.cropImage(
+                SafeArea(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CloseButton(
+                        color: Theme.of(context).primaryIconTheme.color,
+                      ),
+                      if (isMe)
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.add_a_photo_outlined),
+                              onPressed: () async {
+                                final picker = ImagePicker();
+                                final pickedFile = await picker.pickImage(
+                                  source: ImageSource.camera,
+                                  preferredCameraDevice: CameraDevice.front,
+                                );
+                                final imagePath = pickedFile?.path;
+                                if (imagePath == null) return;
+                                final croppedFile =
+                                    await ImageCropper.cropImage(
+                                        sourcePath: imagePath,
+                                        iosUiSettings: const IOSUiSettings(
+                                          title: 'Crop',
+                                        ),
+                                        compressFormat:
+                                            ImageCompressFormat.jpg);
+                                if (croppedFile == null) return;
+                                final scaffoldMessenger =
+                                    ScaffoldMessenger.of(context);
+                                // Not ThaliaRouterDelegate since this is a dialog.
+                                Navigator.of(context).pop();
+                                scaffoldMessenger.showSnackBar(const SnackBar(
+                                  behavior: SnackBarBehavior.floating,
+                                  content: Text(
+                                    'Uploading your new profile picture...',
+                                  ),
+                                ));
+                                try {
+                                  await fullMemberCubit
+                                      .updateAvatar(croppedFile);
+                                  // The member that is displayed is currently
+                                  // taken from the MemberCubit. If needed, we
+                                  // could make the ProfileScreen listen to the
+                                  // FullMemberCubit instead in case the member is
+                                  // the current user. That would be nicer if we
+                                  // want to allow the user to update multiple
+                                  // fields. As long as that isn't the case, we
+                                  // also need to reload the MemberCubit below.
+                                  await _memberCubit.load(member.pk);
+                                  scaffoldMessenger.hideCurrentSnackBar();
+                                } on ApiException {
+                                  scaffoldMessenger.hideCurrentSnackBar();
+                                  scaffoldMessenger.showSnackBar(const SnackBar(
+                                    behavior: SnackBarBehavior.floating,
+                                    content: Text(
+                                      'Uploading your avatar failed.',
+                                    ),
+                                  ));
+                                }
+                              },
+                              color: Theme.of(context).primaryIconTheme.color,
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                  Icons.add_photo_alternate_outlined),
+                              onPressed: () async {
+                                final picker = ImagePicker();
+                                final pickedFile = await picker.pickImage(
+                                  source: ImageSource.gallery,
+                                );
+                                final imagePath = pickedFile?.path;
+                                if (imagePath == null) return;
+                                final croppedFile =
+                                    await ImageCropper.cropImage(
                                   sourcePath: imagePath,
                                   iosUiSettings: const IOSUiSettings(
                                     title: 'Crop',
                                   ),
-                                  compressFormat: ImageCompressFormat.jpg);
-                              if (croppedFile == null) return;
-                              final scaffoldMessenger =
-                                  ScaffoldMessenger.of(context);
-                              // Not ThaliaRouterDelegate since this is a dialog.
-                              Navigator.of(context).pop();
-                              scaffoldMessenger.showSnackBar(const SnackBar(
-                                behavior: SnackBarBehavior.floating,
-                                content: Text(
-                                  'Uploading your new profile picture...',
-                                ),
-                              ));
-                              try {
-                                await fullMemberCubit.updateAvatar(croppedFile);
-                                // The member that is displayed is currently
-                                // taken from the MemberCubit. If needed, we
-                                // could make the ProfileScreen listen to the
-                                // FullMemberCubit instead in case the member is
-                                // the current user. That would be nicer if we
-                                // want to allow the user to update multiple
-                                // fields. As long as that isn't the case, we
-                                // also need to reload the MemberCubit below.
-                                await _memberCubit.load(member.pk);
-                                scaffoldMessenger.hideCurrentSnackBar();
-                              } on ApiException {
-                                scaffoldMessenger.hideCurrentSnackBar();
+                                );
+                                if (croppedFile == null) return;
+                                final scaffoldMessenger = ScaffoldMessenger.of(
+                                  context,
+                                );
+                                // Not ThaliaRouterDelegate since this is a dialog.
+                                Navigator.of(context).pop();
                                 scaffoldMessenger.showSnackBar(const SnackBar(
                                   behavior: SnackBarBehavior.floating,
                                   content: Text(
-                                    'Uploading your avatar failed.',
+                                    'Uploading your new profile picture...',
                                   ),
                                 ));
-                              }
-                            },
-                            color: Theme.of(context).primaryIconTheme.color,
-                          ),
-                          IconButton(
-                            icon:
-                                const Icon(Icons.add_photo_alternate_outlined),
-                            onPressed: () async {
-                              final picker = ImagePicker();
-                              final pickedFile = await picker.pickImage(
-                                source: ImageSource.gallery,
-                              );
-                              final imagePath = pickedFile?.path;
-                              if (imagePath == null) return;
-                              final croppedFile = await ImageCropper.cropImage(
-                                sourcePath: imagePath,
-                                iosUiSettings: const IOSUiSettings(
-                                  title: 'Crop',
-                                ),
-                              );
-                              if (croppedFile == null) return;
-                              final scaffoldMessenger = ScaffoldMessenger.of(
-                                context,
-                              );
-                              // Not ThaliaRouterDelegate since this is a dialog.
-                              Navigator.of(context).pop();
-                              scaffoldMessenger.showSnackBar(const SnackBar(
-                                behavior: SnackBarBehavior.floating,
-                                content: Text(
-                                  'Uploading your new profile picture...',
-                                ),
-                              ));
-                              try {
-                                await fullMemberCubit.updateAvatar(croppedFile);
-                                // The member that is displayed is currently
-                                // taken from the MemberCubit. If needed, we
-                                // could make the ProfileScreen listen to the
-                                // FullMemberCubit instead in case the member is
-                                // the current user. That would be nicer if we
-                                // want to allow the user to update multiple
-                                // fields. As long as that isn't the case, we
-                                // also need to reload the MemberCubit below.
-                                await _memberCubit.load(member.pk);
-                                scaffoldMessenger.hideCurrentSnackBar();
-                              } on ApiException {
-                                scaffoldMessenger.hideCurrentSnackBar();
-                                scaffoldMessenger.showSnackBar(const SnackBar(
-                                  behavior: SnackBarBehavior.floating,
-                                  content: Text(
-                                    'Uploading your avatar failed.',
-                                  ),
-                                ));
-                              }
-                            },
-                            color: Theme.of(context).primaryIconTheme.color,
-                          ),
-                        ],
-                      ),
-                  ],
+                                try {
+                                  await fullMemberCubit
+                                      .updateAvatar(croppedFile);
+                                  // The member that is displayed is currently
+                                  // taken from the MemberCubit. If needed, we
+                                  // could make the ProfileScreen listen to the
+                                  // FullMemberCubit instead in case the member is
+                                  // the current user. That would be nicer if we
+                                  // want to allow the user to update multiple
+                                  // fields. As long as that isn't the case, we
+                                  // also need to reload the MemberCubit below.
+                                  await _memberCubit.load(member.pk);
+                                  scaffoldMessenger.hideCurrentSnackBar();
+                                } on ApiException {
+                                  scaffoldMessenger.hideCurrentSnackBar();
+                                  scaffoldMessenger.showSnackBar(const SnackBar(
+                                    behavior: SnackBarBehavior.floating,
+                                    content: Text(
+                                      'Uploading your avatar failed.',
+                                    ),
+                                  ));
+                                }
+                              },
+                              color: Theme.of(context).primaryIconTheme.color,
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
