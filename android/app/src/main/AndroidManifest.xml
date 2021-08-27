@@ -60,7 +60,14 @@
             </intent-filter>
         </activity>
 
-         <!-- OAuth callback -->
+        <!-- Push notifications icon -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+        <meta-data android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/magenta" />
+
+        <!-- OAuth callback -->
         <activity android:name="com.linusu.flutter_web_auth.CallbackActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
