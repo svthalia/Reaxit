@@ -162,7 +162,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
         if (state.hasException) {
           return Scaffold(
             appBar: ThaliaAppBar(
-              title: Text(widget.album?.title ?? 'ALBUM'),
+              title: Text(widget.album?.title.toUpperCase() ?? 'ALBUM'),
               actions: [_makeShareAlbumButton(widget.slug)],
             ),
             body: ErrorScrollView(state.message!),
@@ -170,7 +170,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
         } else if (state.isLoading) {
           return Scaffold(
             appBar: ThaliaAppBar(
-              title: Text(widget.album?.title ?? 'ALBUM'),
+              title: Text(widget.album?.title.toUpperCase() ?? 'ALBUM'),
               actions: [_makeShareAlbumButton(widget.slug)],
             ),
             body: const Center(child: CircularProgressIndicator()),
@@ -178,7 +178,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
         } else {
           return Scaffold(
             appBar: ThaliaAppBar(
-              title: Text(state.result!.title),
+              title: Text(state.result!.title.toUpperCase()),
               actions: [_makeShareAlbumButton(widget.slug)],
             ),
             body: Scrollbar(
