@@ -6,6 +6,7 @@ import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/blocs/list_state.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/models/event.dart';
+import 'package:reaxit/models/list_response.dart';
 
 /// Wrapper around a [BaseEvent] to be shown in the calendar.
 /// This allows to split an event into multiple parts, to show on every day in an event
@@ -19,6 +20,7 @@ class CalendarEvent {
   final String label;
 
   int get pk => parentEvent.pk;
+
   String get location => parentEvent.location;
 
   CalendarEvent._({
@@ -127,24 +129,32 @@ class CalendarCubit extends Cubit<CalendarState> {
       final start = query == null ? _lastLoadTime : null;
 
       // Get first page of events.
-      final eventsResponse = await api.getEvents(
+      final eventsResponse = await api
+          .getEvents(
         start: start,
         search: query,
         ordering: 'start',
         limit: firstPageSize,
         offset: 0,
-      );
+      )
+          .catchError((e) {
+        return const ListResponse<Event>(0, []);
+      });
 
       final isDone = eventsResponse.results.length == eventsResponse.count;
 
       _nextOffset = firstPageSize;
 
       // Get all partner events.
-      final partnerEventsResponse = await api.getPartnerEvents(
+      final partnerEventsResponse = await api
+          .getPartnerEvents(
         start: start,
         search: query,
         ordering: 'start',
-      );
+      )
+          .catchError((e) {
+        return const ListResponse<PartnerEvent>(0, []);
+      });
 
       // Split multi-day events.
       final events = eventsResponse.results
@@ -183,7 +193,7 @@ class CalendarCubit extends Cubit<CalendarState> {
         }
       }
 
-      if (eventsResponse.results.isEmpty) {
+      if (events.isEmpty) {
         if (query?.isEmpty ?? true) {
           emit(const CalendarState.failure(message: 'There are no events.'));
         } else {

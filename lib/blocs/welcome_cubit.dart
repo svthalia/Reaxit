@@ -4,6 +4,7 @@ import 'package:meta/meta.dart';
 import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/frontpage_article.dart';
+import 'package:reaxit/models/list_response.dart';
 import 'package:reaxit/models/slide.dart';
 
 class WelcomeState extends Equatable {
@@ -80,12 +81,20 @@ class WelcomeCubit extends Cubit<WelcomeState> {
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
     try {
-      final slidesResponse = await api.getSlides();
-      final articlesResponse = await api.getFrontpageArticles();
-      final eventsResponse = await api.getEvents(
+      final slidesResponse = await api.getSlides().catchError((e) {
+        return const ListResponse<Slide>(0, []);
+      });
+      final articlesResponse = await api.getFrontpageArticles().catchError((e) {
+        return const ListResponse<FrontpageArticle>(0, []);
+      });
+      final eventsResponse = await api
+          .getEvents(
         start: DateTime.now(),
         limit: 3,
-      );
+      )
+          .catchError((e) {
+        return const ListResponse<Event>(0, []);
+      });
 
       // Filter out SVG slides, as long as concrexit does not offer an alternative.
       final slides = slidesResponse.results
