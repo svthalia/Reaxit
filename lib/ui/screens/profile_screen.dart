@@ -203,7 +203,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       expandedHeight: 200,
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
-        title: Text(member?.displayName ?? 'PROFILE'),
+        title: Text(
+          member?.displayName ?? 'PROFILE',
+          textAlign: TextAlign.center,
+        ),
+        centerTitle: true,
         background: Builder(
           builder: (context) {
             return GestureDetector(
