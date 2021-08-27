@@ -98,27 +98,49 @@ class ApiRepository {
       throw ApiException.unknownError;
     } on ApiException catch (_) {
       rethrow;
-    } catch (_) {
+    }
+  }
+
+  /// Handler to surround all public methods as follows:
+  ///
+  /// ```dart
+  /// try {
+  ///   // Method content ...
+  /// } catch (e) {
+  ///   _catch(e);
+  /// }
+  /// ```
+  ///
+  /// This prevents the ApiRepository from throwing any exceptions other than
+  /// ApiExceptions.
+  static Never _catch(Object exception) {
+    if (exception is ApiException) {
+      throw exception;
+    } else {
       throw ApiException.unknownError;
     }
   }
 
   /// Get the [Event] with the `pk`.
   Future<Event> getEvent({required int pk}) async {
-    final uri = _baseUri.replace(path: '$_basePath/events/$pk/');
-    final response = await _handleExceptions(() => client.get(uri));
-    final event = Event.fromJson(_jsonDecode(response));
-    if (event.isRegistered) {
-      try {
-        await getEventRegistrationPayable(
-          registrationPk: event.registration!.pk,
-        );
-        event.registration!.tpayAllowed = true;
-      } on ApiException catch (exception) {
-        if (exception != ApiException.notAllowed) rethrow;
+    try {
+      final uri = _baseUri.replace(path: '$_basePath/events/$pk/');
+      final response = await _handleExceptions(() => client.get(uri));
+      final event = Event.fromJson(_jsonDecode(response));
+      if (event.isRegistered) {
+        try {
+          await getEventRegistrationPayable(
+            registrationPk: event.registration!.pk,
+          );
+          event.registration!.tpayAllowed = true;
+        } on ApiException catch (exception) {
+          if (exception != ApiException.notAllowed) rethrow;
+        }
       }
+      return event;
+    } catch (e) {
+      _catch(e);
     }
-    return event;
   }
 
   /// Get a list of [Event]s.
@@ -140,23 +162,27 @@ class ApiRepository {
       ordering == null || ['start', 'end', '-start', '-end'].contains(ordering),
       'Invalid ordering parameter: $ordering',
     );
-    final uri = _baseUri.replace(
-      path: '$_basePath/events/',
-      queryParameters: {
-        if (search != null) 'search': search,
-        if (limit != null) 'limit': limit.toString(),
-        if (offset != null) 'offset': offset.toString(),
-        if (ordering != null) 'ordering': ordering,
-        if (start != null) 'start': start.toLocal().toIso8601String(),
-        if (end != null) 'end': end.toLocal().toIso8601String(),
-      },
-    );
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/events/',
+        queryParameters: {
+          if (search != null) 'search': search,
+          if (limit != null) 'limit': limit.toString(),
+          if (offset != null) 'offset': offset.toString(),
+          if (ordering != null) 'ordering': ordering,
+          if (start != null) 'start': start.toLocal().toIso8601String(),
+          if (end != null) 'end': end.toLocal().toIso8601String(),
+        },
+      );
 
-    final response = await _handleExceptions(() => client.get(uri));
-    return ListResponse<Event>.fromJson(
-      _jsonDecode(response),
-      (json) => Event.fromJson(json as Map<String, dynamic>),
-    );
+      final response = await _handleExceptions(() => client.get(uri));
+      return ListResponse<Event>.fromJson(
+        _jsonDecode(response),
+        (json) => Event.fromJson(json as Map<String, dynamic>),
+      );
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Get a list of [PartnerEvent]s.
@@ -178,23 +204,27 @@ class ApiRepository {
       ordering == null || ['start', 'end', '-start', '-end'].contains(ordering),
       'Invalid ordering parameter: $ordering',
     );
-    final uri = _baseUri.replace(
-      path: '$_basePath/partners/events/',
-      queryParameters: {
-        if (search != null) 'search': search,
-        if (limit != null) 'limit': limit.toString(),
-        if (offset != null) 'offset': offset.toString(),
-        if (ordering != null) 'ordering': ordering,
-        if (start != null) 'start': start.toLocal().toIso8601String(),
-        if (end != null) 'end': end.toLocal().toIso8601String(),
-      },
-    );
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/partners/events/',
+        queryParameters: {
+          if (search != null) 'search': search,
+          if (limit != null) 'limit': limit.toString(),
+          if (offset != null) 'offset': offset.toString(),
+          if (ordering != null) 'ordering': ordering,
+          if (start != null) 'start': start.toLocal().toIso8601String(),
+          if (end != null) 'end': end.toLocal().toIso8601String(),
+        },
+      );
 
-    final response = await _handleExceptions(() => client.get(uri));
-    return ListResponse<PartnerEvent>.fromJson(
-      _jsonDecode(response),
-      (json) => PartnerEvent.fromJson(json as Map<String, dynamic>),
-    );
+      final response = await _handleExceptions(() => client.get(uri));
+      return ListResponse<PartnerEvent>.fromJson(
+        _jsonDecode(response),
+        (json) => PartnerEvent.fromJson(json as Map<String, dynamic>),
+      );
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Get the [EventRegistration]s for the [Event] with the `pk`.
@@ -210,26 +240,35 @@ class ApiRepository {
     int? limit,
     int? offset,
   }) async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/events/$pk/registrations/',
-      queryParameters: {
-        if (limit != null) 'limit': limit.toString(),
-        if (offset != null) 'offset': offset.toString(),
-      },
-    );
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/events/$pk/registrations/',
+        queryParameters: {
+          if (limit != null) 'limit': limit.toString(),
+          if (offset != null) 'offset': offset.toString(),
+        },
+      );
 
-    final response = await _handleExceptions(() => client.get(uri));
-    return ListResponse<EventRegistration>.fromJson(
-      _jsonDecode(response),
-      (json) => EventRegistration.fromJson(json as Map<String, dynamic>),
-    );
+      final response = await _handleExceptions(() => client.get(uri));
+      return ListResponse<EventRegistration>.fromJson(
+        _jsonDecode(response),
+        (json) => EventRegistration.fromJson(json as Map<String, dynamic>),
+      );
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Register for the [Event] with the `pk`.
   Future<EventRegistration> registerForEvent(int pk) async {
-    final uri = _baseUri.replace(path: '$_basePath/events/$pk/registrations/');
-    final response = await _handleExceptions(() => client.post(uri));
-    return EventRegistration.fromJson(_jsonDecode(response));
+    try {
+      final uri =
+          _baseUri.replace(path: '$_basePath/events/$pk/registrations/');
+      final response = await _handleExceptions(() => client.post(uri));
+      return EventRegistration.fromJson(_jsonDecode(response));
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Cancel the [EventRegistration] with `registrationPk`
@@ -238,10 +277,14 @@ class ApiRepository {
     required int eventPk,
     required int registrationPk,
   }) async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/events/$eventPk/registrations/$registrationPk/',
-    );
-    await _handleExceptions(() => client.delete(uri));
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/events/$eventPk/registrations/$registrationPk/',
+      );
+      await _handleExceptions(() => client.delete(uri));
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Get the [RegistrationField]s of [EventRegistration] `registrationPk`
@@ -252,17 +295,22 @@ class ApiRepository {
     required int eventPk,
     required int registrationPk,
   }) async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/events/$eventPk/registrations/$registrationPk/fields/',
-    );
-    final response = await _handleExceptions(() => client.get(uri));
-    var json = _jsonDecode(response);
-    return json.map(
-      (key, jsonField) => MapEntry(
-        key,
-        RegistrationField.fromJson(jsonField as Map<String, dynamic>),
-      ),
-    );
+    try {
+      final uri = _baseUri.replace(
+        path:
+            '$_basePath/events/$eventPk/registrations/$registrationPk/fields/',
+      );
+      final response = await _handleExceptions(() => client.get(uri));
+      var json = _jsonDecode(response);
+      return json.map(
+        (key, jsonField) => MapEntry(
+          key,
+          RegistrationField.fromJson(jsonField as Map<String, dynamic>),
+        ),
+      );
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Update the [RegistrationField]s of EventRegistration] `registrationPk`
@@ -275,15 +323,20 @@ class ApiRepository {
     required int registrationPk,
     required Map<String, RegistrationField> fields,
   }) async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/events/$eventPk/registrations/$registrationPk/fields/',
-    );
-    final body = jsonEncode(
-      fields.map((key, field) => MapEntry(key, field.value)),
-    );
-    await _handleExceptions(
-      () => client.put(uri, body: body, headers: _jsonHeader),
-    );
+    try {
+      final uri = _baseUri.replace(
+        path:
+            '$_basePath/events/$eventPk/registrations/$registrationPk/fields/',
+      );
+      final body = jsonEncode(
+        fields.map((key, field) => MapEntry(key, field.value)),
+      );
+      await _handleExceptions(
+        () => client.put(uri, body: body, headers: _jsonHeader),
+      );
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Get the [AdminEventRegistration]s of the [Event] with the `pk`.
@@ -313,21 +366,25 @@ class ApiRepository {
           ].contains(ordering),
       'Invalid ordering parameter: $ordering',
     );
-    final uri = _baseUri.replace(
-      path: '$_basePath/admin/events/$pk/registrations/',
-      queryParameters: {
-        if (limit != null) 'limit': limit.toString(),
-        if (offset != null) 'offset': offset.toString(),
-        if (ordering != null) 'ordering': ordering,
-        if (search != null) 'search': search,
-        if (cancelled != null) 'cancelled': cancelled,
-      },
-    );
-    final response = await _handleExceptions(() => client.get(uri));
-    return ListResponse<AdminEventRegistration>.fromJson(
-      _jsonDecode(response),
-      (json) => AdminEventRegistration.fromJson(json as Map<String, dynamic>),
-    );
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/admin/events/$pk/registrations/',
+        queryParameters: {
+          if (limit != null) 'limit': limit.toString(),
+          if (offset != null) 'offset': offset.toString(),
+          if (ordering != null) 'ordering': ordering,
+          if (search != null) 'search': search,
+          if (cancelled != null) 'cancelled': cancelled,
+        },
+      );
+      final response = await _handleExceptions(() => client.get(uri));
+      return ListResponse<AdminEventRegistration>.fromJson(
+        _jsonDecode(response),
+        (json) => AdminEventRegistration.fromJson(json as Map<String, dynamic>),
+      );
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Mark registration `registrationPk` for [Event] `eventPk` as `present`.
@@ -336,14 +393,18 @@ class ApiRepository {
     required int registrationPk,
     required bool present,
   }) async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/admin/events/$eventPk/registrations/$registrationPk/',
-    );
-    final body = jsonEncode({'present': present});
-    final response = await _handleExceptions(
-      () => client.patch(uri, body: body, headers: _jsonHeader),
-    );
-    return AdminEventRegistration.fromJson(_jsonDecode(response));
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/admin/events/$eventPk/registrations/$registrationPk/',
+      );
+      final body = jsonEncode({'present': present});
+      final response = await _handleExceptions(
+        () => client.patch(uri, body: body, headers: _jsonHeader),
+      );
+      return AdminEventRegistration.fromJson(_jsonDecode(response));
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Mark registration `registrationPk` as paid with `paymentType`.
@@ -356,38 +417,46 @@ class ApiRepository {
       path: '$_basePath/admin/payments/payables/events'
           '/eventregistration/$registrationPk/',
     );
-    late String typeString;
-    switch (paymentType) {
-      case PaymentType.cardPayment:
-        typeString = 'card_payment';
-        break;
-      case PaymentType.cashPayment:
-        typeString = 'cash_payment';
-        break;
-      case PaymentType.wirePayment:
-        typeString = 'wire_payment';
-        break;
-      case PaymentType.tpayPayment:
-        // This case should never occur.
-        typeString = 'tpay_payment';
-        break;
+    try {
+      late String typeString;
+      switch (paymentType) {
+        case PaymentType.cardPayment:
+          typeString = 'card_payment';
+          break;
+        case PaymentType.cashPayment:
+          typeString = 'cash_payment';
+          break;
+        case PaymentType.wirePayment:
+          typeString = 'wire_payment';
+          break;
+        case PaymentType.tpayPayment:
+          // This case should never occur.
+          typeString = 'tpay_payment';
+          break;
+      }
+      final body = jsonEncode({'payment_type': typeString});
+      final response = await _handleExceptions(
+        () => client.patch(uri, body: body, headers: _jsonHeader),
+      );
+      return Payable.fromJson(_jsonDecode(response));
+    } catch (e) {
+      _catch(e);
     }
-    final body = jsonEncode({'payment_type': typeString});
-    final response = await _handleExceptions(
-      () => client.patch(uri, body: body, headers: _jsonHeader),
-    );
-    return Payable.fromJson(_jsonDecode(response));
   }
 
   /// Delete the payment for registration `registrationPk`.
   Future<void> markNotPaidAdminEventRegistration({
     required int registrationPk,
   }) async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/admin/payments/payables/events'
-          '/eventregistration/$registrationPk/',
-    );
-    await _handleExceptions(() => client.delete(uri));
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/admin/payments/payables/events'
+            '/eventregistration/$registrationPk/',
+      );
+      await _handleExceptions(() => client.delete(uri));
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Get the [FoodOrder]s of the [FoodEvent] with the `pk`.
@@ -400,19 +469,23 @@ class ApiRepository {
     int? offset,
     String? search,
   }) async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/admin/food/events/$pk/orders/',
-      queryParameters: {
-        if (limit != null) 'limit': limit.toString(),
-        if (offset != null) 'offset': offset.toString(),
-        if (search != null) 'search': search,
-      },
-    );
-    final response = await _handleExceptions(() => client.get(uri));
-    return ListResponse<FoodOrder>.fromJson(
-      _jsonDecode(response),
-      (json) => FoodOrder.fromJson(json as Map<String, dynamic>),
-    );
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/admin/food/events/$pk/orders/',
+        queryParameters: {
+          if (limit != null) 'limit': limit.toString(),
+          if (offset != null) 'offset': offset.toString(),
+          if (search != null) 'search': search,
+        },
+      );
+      final response = await _handleExceptions(() => client.get(uri));
+      return ListResponse<FoodOrder>.fromJson(
+        _jsonDecode(response),
+        (json) => FoodOrder.fromJson(json as Map<String, dynamic>),
+      );
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Mark food order `orderPk` as paid with `paymentType`.
@@ -421,58 +494,70 @@ class ApiRepository {
     required PaymentType paymentType,
   }) async {
     assert(paymentType != PaymentType.tpayPayment);
-    final uri = _baseUri.replace(
-      path: '$_basePath/admin/payments/payables/'
-          'pizzas/foodorder/$orderPk/',
-    );
-    late String typeString;
-    switch (paymentType) {
-      case PaymentType.cardPayment:
-        typeString = 'card_payment';
-        break;
-      case PaymentType.cashPayment:
-        typeString = 'cash_payment';
-        break;
-      case PaymentType.wirePayment:
-        typeString = 'wire_payment';
-        break;
-      case PaymentType.tpayPayment:
-        // This case should never occur.
-        typeString = 'tpay_payment';
-        break;
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/admin/payments/payables/'
+            'pizzas/foodorder/$orderPk/',
+      );
+      late String typeString;
+      switch (paymentType) {
+        case PaymentType.cardPayment:
+          typeString = 'card_payment';
+          break;
+        case PaymentType.cashPayment:
+          typeString = 'cash_payment';
+          break;
+        case PaymentType.wirePayment:
+          typeString = 'wire_payment';
+          break;
+        case PaymentType.tpayPayment:
+          // This case should never occur.
+          typeString = 'tpay_payment';
+          break;
+      }
+      final body = jsonEncode({'payment_type': typeString});
+      final response = await _handleExceptions(
+        () => client.patch(uri, body: body, headers: _jsonHeader),
+      );
+      return Payable.fromJson(_jsonDecode(response));
+    } catch (e) {
+      _catch(e);
     }
-    final body = jsonEncode({'payment_type': typeString});
-    final response = await _handleExceptions(
-      () => client.patch(uri, body: body, headers: _jsonHeader),
-    );
-    return Payable.fromJson(_jsonDecode(response));
   }
 
   /// Delete the payment for food order `orderPk`.
   Future<void> markNotPaidAdminFoodOrder({
     required int orderPk,
   }) async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/admin/payments/payables/'
-          'pizzas/foodorder/$orderPk/',
-    );
-    await _handleExceptions(() => client.delete(uri));
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/admin/payments/payables/'
+            'pizzas/foodorder/$orderPk/',
+      );
+      await _handleExceptions(() => client.delete(uri));
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Get the [FoodEvent] with the `pk`.
   Future<FoodEvent> getFoodEvent(int pk) async {
-    final uri = _baseUri.replace(path: '$_basePath/food/events/$pk/');
-    final response = await _handleExceptions(() => client.get(uri));
-    final foodEvent = FoodEvent.fromJson(_jsonDecode(response));
-    if (foodEvent.hasOrder) {
-      try {
-        await getFoodOrderPayable(foodOrderPk: foodEvent.order!.pk);
-        foodEvent.order!.tpayAllowed = true;
-      } on ApiException catch (exception) {
-        if (exception != ApiException.notAllowed) rethrow;
+    try {
+      final uri = _baseUri.replace(path: '$_basePath/food/events/$pk/');
+      final response = await _handleExceptions(() => client.get(uri));
+      final foodEvent = FoodEvent.fromJson(_jsonDecode(response));
+      if (foodEvent.hasOrder) {
+        try {
+          await getFoodOrderPayable(foodOrderPk: foodEvent.order!.pk);
+          foodEvent.order!.tpayAllowed = true;
+        } on ApiException catch (exception) {
+          if (exception != ApiException.notAllowed) rethrow;
+        }
       }
+      return foodEvent;
+    } catch (e) {
+      _catch(e);
     }
-    return foodEvent;
   }
 
   /// Get a list of [FoodEvent]s.
@@ -493,89 +578,105 @@ class ApiRepository {
       ordering == null || ['start', 'end', '-start', '-end'].contains(ordering),
       'Invalid ordering parameter: $ordering',
     );
-    final uri = _baseUri.replace(
-      path: '$_basePath/food/events/',
-      queryParameters: {
-        if (limit != null) 'limit': limit.toString(),
-        if (offset != null) 'offset': offset.toString(),
-        if (ordering != null) 'ordering': ordering,
-        if (start != null) 'start': start.toLocal().toIso8601String(),
-        if (end != null) 'end': end.toLocal().toIso8601String(),
-      },
-    );
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/food/events/',
+        queryParameters: {
+          if (limit != null) 'limit': limit.toString(),
+          if (offset != null) 'offset': offset.toString(),
+          if (ordering != null) 'ordering': ordering,
+          if (start != null) 'start': start.toLocal().toIso8601String(),
+          if (end != null) 'end': end.toLocal().toIso8601String(),
+        },
+      );
 
-    final response = await _handleExceptions(() => client.get(uri));
-    return ListResponse<FoodEvent>.fromJson(
-      _jsonDecode(response),
-      (json) => FoodEvent.fromJson(json as Map<String, dynamic>),
-    );
+      final response = await _handleExceptions(() => client.get(uri));
+      return ListResponse<FoodEvent>.fromJson(
+        _jsonDecode(response),
+        (json) => FoodEvent.fromJson(json as Map<String, dynamic>),
+      );
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Get the [FoodEvent] that is currently going on.
   Future<FoodEvent> getCurrentFoodEvent() async {
-    final now = DateTime.now().toLocal();
-    final uri = _baseUri.replace(
-      path: '$_basePath/food/events/',
-      queryParameters: {
-        'ordering': 'start',
-        'start': now.subtract(const Duration(hours: 8)).toIso8601String(),
-        'end': now.add(const Duration(hours: 8)).toIso8601String(),
-      },
-    );
-    final response = await _handleExceptions(() => client.get(uri));
-    final events = ListResponse<FoodEvent>.fromJson(
-      _jsonDecode(response),
-      (json) => FoodEvent.fromJson(json as Map<String, dynamic>),
-    ).results;
-
-    if (events.isEmpty) {
-      throw ApiException.notFound;
-    } else if (events.length == 1) {
-      final foodEvent = events.first;
-      if (foodEvent.hasOrder) {
-        try {
-          await getFoodOrderPayable(foodOrderPk: foodEvent.order!.pk);
-          foodEvent.order!.tpayAllowed = true;
-        } on ApiException catch (exception) {
-          if (exception != ApiException.notAllowed) rethrow;
-        }
-      }
-      return foodEvent;
-    } else {
-      final foodEvent = events.firstWhere(
-        (event) => event.end.isAfter(now),
-        orElse: () => events.first,
+    try {
+      final now = DateTime.now().toLocal();
+      final uri = _baseUri.replace(
+        path: '$_basePath/food/events/',
+        queryParameters: {
+          'ordering': 'start',
+          'start': now.subtract(const Duration(hours: 8)).toIso8601String(),
+          'end': now.add(const Duration(hours: 8)).toIso8601String(),
+        },
       );
-      if (foodEvent.hasOrder) {
-        try {
-          await getFoodOrderPayable(foodOrderPk: foodEvent.order!.pk);
-          foodEvent.order!.tpayAllowed = true;
-        } on ApiException catch (exception) {
-          if (exception != ApiException.notAllowed) rethrow;
+      final response = await _handleExceptions(() => client.get(uri));
+      final events = ListResponse<FoodEvent>.fromJson(
+        _jsonDecode(response),
+        (json) => FoodEvent.fromJson(json as Map<String, dynamic>),
+      ).results;
+
+      if (events.isEmpty) {
+        throw ApiException.notFound;
+      } else if (events.length == 1) {
+        final foodEvent = events.first;
+        if (foodEvent.hasOrder) {
+          try {
+            await getFoodOrderPayable(foodOrderPk: foodEvent.order!.pk);
+            foodEvent.order!.tpayAllowed = true;
+          } on ApiException catch (exception) {
+            if (exception != ApiException.notAllowed) rethrow;
+          }
         }
+        return foodEvent;
+      } else {
+        final foodEvent = events.firstWhere(
+          (event) => event.end.isAfter(now),
+          orElse: () => events.first,
+        );
+        if (foodEvent.hasOrder) {
+          try {
+            await getFoodOrderPayable(foodOrderPk: foodEvent.order!.pk);
+            foodEvent.order!.tpayAllowed = true;
+          } on ApiException catch (exception) {
+            if (exception != ApiException.notAllowed) rethrow;
+          }
+        }
+        return foodEvent;
       }
-      return foodEvent;
+    } catch (e) {
+      _catch(e);
     }
   }
 
   /// Get the [FoodOrder] for the [FoodEvent] with the `pk`.
   Future<FoodOrder> getFoodOrder(int pk) async {
-    final uri = _baseUri.replace(path: '$_basePath/food/events/$pk/order/');
-    final response = await _handleExceptions(() => client.get(uri));
-    final foodOrder = FoodOrder.fromJson(_jsonDecode(response));
     try {
-      await getFoodOrderPayable(foodOrderPk: foodOrder.pk);
-      foodOrder.tpayAllowed = true;
-    } on ApiException catch (exception) {
-      if (exception != ApiException.notAllowed) rethrow;
+      final uri = _baseUri.replace(path: '$_basePath/food/events/$pk/order/');
+      final response = await _handleExceptions(() => client.get(uri));
+      final foodOrder = FoodOrder.fromJson(_jsonDecode(response));
+      try {
+        await getFoodOrderPayable(foodOrderPk: foodOrder.pk);
+        foodOrder.tpayAllowed = true;
+      } on ApiException catch (exception) {
+        if (exception != ApiException.notAllowed) rethrow;
+      }
+      return foodOrder;
+    } catch (e) {
+      _catch(e);
     }
-    return foodOrder;
   }
 
   /// Cancel your [FoodOrder] for the [FoodEvent] with the `pk`.
   Future<void> cancelFoodOrder(int pk) async {
-    final uri = _baseUri.replace(path: '$_basePath/food/events/$pk/order/');
-    await _handleExceptions(() => client.delete(uri));
+    try {
+      final uri = _baseUri.replace(path: '$_basePath/food/events/$pk/order/');
+      await _handleExceptions(() => client.delete(uri));
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Place an order [Product] `productPk` on [FoodEvent] `eventPk`.
@@ -583,21 +684,25 @@ class ApiRepository {
     required int eventPk,
     required int productPk,
   }) async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/food/events/$eventPk/order/',
-    );
-    final body = jsonEncode({'product': productPk});
-    final response = await _handleExceptions(
-      () => client.post(uri, body: body, headers: _jsonHeader),
-    );
-    final foodOrder = FoodOrder.fromJson(_jsonDecode(response));
     try {
-      await getFoodOrderPayable(foodOrderPk: foodOrder.pk);
-      foodOrder.tpayAllowed = true;
-    } on ApiException catch (exception) {
-      if (exception != ApiException.notAllowed) rethrow;
+      final uri = _baseUri.replace(
+        path: '$_basePath/food/events/$eventPk/order/',
+      );
+      final body = jsonEncode({'product': productPk});
+      final response = await _handleExceptions(
+        () => client.post(uri, body: body, headers: _jsonHeader),
+      );
+      final foodOrder = FoodOrder.fromJson(_jsonDecode(response));
+      try {
+        await getFoodOrderPayable(foodOrderPk: foodOrder.pk);
+        foodOrder.tpayAllowed = true;
+      } on ApiException catch (exception) {
+        if (exception != ApiException.notAllowed) rethrow;
+      }
+      return foodOrder;
+    } catch (e) {
+      _catch(e);
     }
-    return foodOrder;
   }
 
   /// Change your order to [Product] `productPk` on [FoodEvent] `eventPk`.
@@ -605,21 +710,25 @@ class ApiRepository {
     required int eventPk,
     required int productPk,
   }) async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/food/events/$eventPk/order/',
-    );
-    final body = jsonEncode({'product': productPk});
-    final response = await _handleExceptions(
-      () => client.put(uri, body: body, headers: _jsonHeader),
-    );
-    final foodOrder = FoodOrder.fromJson(_jsonDecode(response));
     try {
-      await getFoodOrderPayable(foodOrderPk: foodOrder.pk);
-      foodOrder.tpayAllowed = true;
-    } on ApiException catch (exception) {
-      if (exception != ApiException.notAllowed) rethrow;
+      final uri = _baseUri.replace(
+        path: '$_basePath/food/events/$eventPk/order/',
+      );
+      final body = jsonEncode({'product': productPk});
+      final response = await _handleExceptions(
+        () => client.put(uri, body: body, headers: _jsonHeader),
+      );
+      final foodOrder = FoodOrder.fromJson(_jsonDecode(response));
+      try {
+        await getFoodOrderPayable(foodOrderPk: foodOrder.pk);
+        foodOrder.tpayAllowed = true;
+      } on ApiException catch (exception) {
+        if (exception != ApiException.notAllowed) rethrow;
+      }
+      return foodOrder;
+    } catch (e) {
+      _catch(e);
     }
-    return foodOrder;
   }
 
   /// Get a list of [Product]s for the [FoodEvent] with the `pk`.
@@ -633,19 +742,23 @@ class ApiRepository {
     int? offset,
     String? search,
   }) async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/food/events/$pk/products/',
-      queryParameters: {
-        if (limit != null) 'limit': limit.toString(),
-        if (offset != null) 'offset': offset.toString(),
-      },
-    );
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/food/events/$pk/products/',
+        queryParameters: {
+          if (limit != null) 'limit': limit.toString(),
+          if (offset != null) 'offset': offset.toString(),
+        },
+      );
 
-    final response = await _handleExceptions(() => client.get(uri));
-    return ListResponse<Product>.fromJson(
-      _jsonDecode(response),
-      (json) => Product.fromJson(json as Map<String, dynamic>),
-    );
+      final response = await _handleExceptions(() => client.get(uri));
+      return ListResponse<Product>.fromJson(
+        _jsonDecode(response),
+        (json) => Product.fromJson(json as Map<String, dynamic>),
+      );
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Get a [Payable].
@@ -654,12 +767,16 @@ class ApiRepository {
     required String modelName,
     required String payablePk,
   }) async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/payments/payables/$appLabel/$modelName/$payablePk/',
-    );
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/payments/payables/$appLabel/$modelName/$payablePk/',
+      );
 
-    final response = await _handleExceptions(() => client.get(uri));
-    return Payable.fromJson(_jsonDecode(response));
+      final response = await _handleExceptions(() => client.get(uri));
+      return Payable.fromJson(_jsonDecode(response));
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Make a Thalia Pay [Payment].
@@ -678,20 +795,28 @@ class ApiRepository {
     required String modelName,
     required String payablePk,
   }) async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/payments/payables/$appLabel/'
-          '$modelName/${Uri.encodeComponent(payablePk)}/',
-    );
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/payments/payables/$appLabel/'
+            '$modelName/${Uri.encodeComponent(payablePk)}/',
+      );
 
-    final response = await _handleExceptions(() => client.patch(uri));
-    return Payable.fromJson(_jsonDecode(response));
+      final response = await _handleExceptions(() => client.patch(uri));
+      return Payable.fromJson(_jsonDecode(response));
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Get the [PaymentUser] of the currently logged in member.
   Future<PaymentUser> getPaymentUser() async {
-    final uri = _baseUri.replace(path: '$_basePath/payments/users/me/');
-    final response = await _handleExceptions(() => client.get(uri));
-    return PaymentUser.fromJson(_jsonDecode(response));
+    try {
+      final uri = _baseUri.replace(path: '$_basePath/payments/users/me/');
+      final response = await _handleExceptions(() => client.get(uri));
+      return PaymentUser.fromJson(_jsonDecode(response));
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Get the [Payable] for the [FoodOrder] with the `foodOrderPk`.
@@ -744,9 +869,13 @@ class ApiRepository {
 
   /// Get the [Member] with the `pk`.
   Future<Member> getMember({required int pk}) async {
-    final uri = _baseUri.replace(path: '$_basePath/members/$pk/');
-    final response = await _handleExceptions(() => client.get(uri));
-    return Member.fromJson(_jsonDecode(response));
+    try {
+      final uri = _baseUri.replace(path: '$_basePath/members/$pk/');
+      final response = await _handleExceptions(() => client.get(uri));
+      return Member.fromJson(_jsonDecode(response));
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Get a list of [ListMember]s.
@@ -774,65 +903,85 @@ class ApiRepository {
           ].contains(ordering),
       'Invalid ordering parameter: $ordering',
     );
-    final uri = _baseUri.replace(
-      path: '$_basePath/members/',
-      queryParameters: {
-        if (search != null) 'search': search,
-        if (limit != null) 'limit': limit.toString(),
-        if (offset != null) 'offset': offset.toString(),
-        if (ordering != null) 'ordering': ordering,
-      },
-    );
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/members/',
+        queryParameters: {
+          if (search != null) 'search': search,
+          if (limit != null) 'limit': limit.toString(),
+          if (offset != null) 'offset': offset.toString(),
+          if (ordering != null) 'ordering': ordering,
+        },
+      );
 
-    final response = await _handleExceptions(() => client.get(uri));
-    return ListResponse<ListMember>.fromJson(
-      _jsonDecode(response),
-      (json) => ListMember.fromJson(json as Map<String, dynamic>),
-    );
+      final response = await _handleExceptions(() => client.get(uri));
+      return ListResponse<ListMember>.fromJson(
+        _jsonDecode(response),
+        (json) => ListMember.fromJson(json as Map<String, dynamic>),
+      );
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Get the logged in [FullMember].
   Future<FullMember> getMe() async {
-    final uri = _baseUri.replace(path: '$_basePath/members/me/');
-    final response = await _handleExceptions(() => client.get(uri));
-    return FullMember.fromJson(_jsonDecode(response));
+    try {
+      final uri = _baseUri.replace(path: '$_basePath/members/me/');
+      final response = await _handleExceptions(() => client.get(uri));
+      return FullMember.fromJson(_jsonDecode(response));
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Update the avatar of the logged in member.
   ///
   /// `file` should be a jpg image.
   Future<void> updateAvatar(File file) async {
-    final uri = _baseUri.replace(path: '$_basePath/members/me/');
-    final request = http.MultipartRequest('PATCH', uri);
-    request.files.add(
-      await http.MultipartFile.fromPath(
-        'profile.photo',
-        file.path,
-        contentType: MediaType('image', 'jpeg'),
-      ),
-    );
-    await _handleExceptions(() async {
-      final streamedResponse = await client.send(request);
-      return http.Response.fromStream(streamedResponse);
-    });
+    try {
+      final uri = _baseUri.replace(path: '$_basePath/members/me/');
+      final request = http.MultipartRequest('PATCH', uri);
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'profile.photo',
+          file.path,
+          contentType: MediaType('image', 'jpeg'),
+        ),
+      );
+      await _handleExceptions(() async {
+        final streamedResponse = await client.send(request);
+        return http.Response.fromStream(streamedResponse);
+      });
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Update the description of the logged in member.
   Future<void> updateDescription(String description) async {
-    final uri = _baseUri.replace(path: '$_basePath/members/me/');
-    final body = jsonEncode({
-      'profile': {'profile_description': description}
-    });
-    await _handleExceptions(
-      () => client.patch(uri, body: body, headers: _jsonHeader),
-    );
+    try {
+      final uri = _baseUri.replace(path: '$_basePath/members/me/');
+      final body = jsonEncode({
+        'profile': {'profile_description': description}
+      });
+      await _handleExceptions(
+        () => client.patch(uri, body: body, headers: _jsonHeader),
+      );
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Get the [Album] with the `slug`.
   Future<Album> getAlbum({required String slug}) async {
-    final uri = _baseUri.replace(path: '$_basePath/photos/albums/$slug/');
-    final response = await _handleExceptions(() => client.get(uri));
-    return Album.fromJson(_jsonDecode(response));
+    try {
+      final uri = _baseUri.replace(path: '$_basePath/photos/albums/$slug/');
+      final response = await _handleExceptions(() => client.get(uri));
+      return Album.fromJson(_jsonDecode(response));
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Get a list of [ListAlbum]s.
@@ -845,20 +994,24 @@ class ApiRepository {
     int? limit,
     int? offset,
   }) async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/photos/albums/',
-      queryParameters: {
-        if (search != null) 'search': search,
-        if (limit != null) 'limit': limit.toString(),
-        if (offset != null) 'offset': offset.toString(),
-      },
-    );
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/photos/albums/',
+        queryParameters: {
+          if (search != null) 'search': search,
+          if (limit != null) 'limit': limit.toString(),
+          if (offset != null) 'offset': offset.toString(),
+        },
+      );
 
-    final response = await _handleExceptions(() => client.get(uri));
-    return ListResponse<ListAlbum>.fromJson(
-      _jsonDecode(response),
-      (json) => ListAlbum.fromJson(json as Map<String, dynamic>),
-    );
+      final response = await _handleExceptions(() => client.get(uri));
+      return ListResponse<ListAlbum>.fromJson(
+        _jsonDecode(response),
+        (json) => ListAlbum.fromJson(json as Map<String, dynamic>),
+      );
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Get a list of [Slide]s.
@@ -869,19 +1022,23 @@ class ApiRepository {
     int? limit,
     int? offset,
   }) async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/announcements/slides/',
-      queryParameters: {
-        if (limit != null) 'limit': limit.toString(),
-        if (offset != null) 'offset': offset.toString(),
-      },
-    );
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/announcements/slides/',
+        queryParameters: {
+          if (limit != null) 'limit': limit.toString(),
+          if (offset != null) 'offset': offset.toString(),
+        },
+      );
 
-    final response = await _handleExceptions(() => client.get(uri));
-    return ListResponse<Slide>.fromJson(
-      _jsonDecode(response),
-      (json) => Slide.fromJson(json as Map<String, dynamic>),
-    );
+      final response = await _handleExceptions(() => client.get(uri));
+      return ListResponse<Slide>.fromJson(
+        _jsonDecode(response),
+        (json) => Slide.fromJson(json as Map<String, dynamic>),
+      );
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Get a list of [FrontpageArticle]s.
@@ -892,35 +1049,47 @@ class ApiRepository {
     int? limit,
     int? offset,
   }) async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/announcements/frontpage-articles/',
-      queryParameters: {
-        if (limit != null) 'limit': limit.toString(),
-        if (offset != null) 'offset': offset.toString(),
-      },
-    );
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/announcements/frontpage-articles/',
+        queryParameters: {
+          if (limit != null) 'limit': limit.toString(),
+          if (offset != null) 'offset': offset.toString(),
+        },
+      );
 
-    final response = await _handleExceptions(() => client.get(uri));
-    return ListResponse<FrontpageArticle>.fromJson(
-      _jsonDecode(response),
-      (json) => FrontpageArticle.fromJson(json as Map<String, dynamic>),
-    );
+      final response = await _handleExceptions(() => client.get(uri));
+      return ListResponse<FrontpageArticle>.fromJson(
+        _jsonDecode(response),
+        (json) => FrontpageArticle.fromJson(json as Map<String, dynamic>),
+      );
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   Future<Device> getDevice({required int id}) async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/pushnotifications/devices/$id/',
-    );
-    final response = await _handleExceptions(() => client.get(uri));
-    return Device.fromJson(_jsonDecode(response));
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/pushnotifications/devices/$id/',
+      );
+      final response = await _handleExceptions(() => client.get(uri));
+      return Device.fromJson(_jsonDecode(response));
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   Future<Device> putDevice({required int id, required Device device}) async {
-    final uri =
-        _baseUri.replace(path: '$_basePath/pushnotifications/devices/$id/');
-    final response = await _handleExceptions(() => client.put(uri,
-        body: jsonEncode(device.toJson()), headers: _jsonHeader));
-    return Device.fromJson(_jsonDecode(response));
+    try {
+      final uri =
+          _baseUri.replace(path: '$_basePath/pushnotifications/devices/$id/');
+      final response = await _handleExceptions(() => client.put(uri,
+          body: jsonEncode(device.toJson()), headers: _jsonHeader));
+      return Device.fromJson(_jsonDecode(response));
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   /// Register a device for token.
@@ -929,27 +1098,36 @@ class ApiRepository {
     required String type,
     required bool active,
   }) async {
-    final uri = _baseUri.replace(path: '$_basePath/pushnotifications/devices/');
-    final body = jsonEncode({
-      'registration_id': token,
-      'active': active,
-      'type': type,
-    });
-    final response = await _handleExceptions(
-      () => client.post(uri, body: body, headers: _jsonHeader),
-    );
-    return Device.fromJson(_jsonDecode(response));
+    try {
+      final uri =
+          _baseUri.replace(path: '$_basePath/pushnotifications/devices/');
+      final body = jsonEncode({
+        'registration_id': token,
+        'active': active,
+        'type': type,
+      });
+      final response = await _handleExceptions(
+        () => client.post(uri, body: body, headers: _jsonHeader),
+      );
+      return Device.fromJson(_jsonDecode(response));
+    } catch (e) {
+      _catch(e);
+    }
   }
 
   Future<ListResponse<PushNotificationCategory>> getCategories() async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/pushnotifications/categories/',
-    );
-    final response = await _handleExceptions(() => client.get(uri));
-    return ListResponse<PushNotificationCategory>.fromJson(
-        _jsonDecode(response),
-        (json) =>
-            PushNotificationCategory.fromJson(json as Map<String, dynamic>));
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/pushnotifications/categories/',
+      );
+      final response = await _handleExceptions(() => client.get(uri));
+      return ListResponse<PushNotificationCategory>.fromJson(
+          _jsonDecode(response),
+          (json) =>
+              PushNotificationCategory.fromJson(json as Map<String, dynamic>));
+    } catch (e) {
+      _catch(e);
+    }
   }
 // TODO: Someday: move json parsing of lists into isolates?
 // TODO: Someday: change ApiException to a class that can contain a string?
