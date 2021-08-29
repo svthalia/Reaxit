@@ -1,3 +1,6 @@
+import 'dart:math';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -26,17 +29,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
   static final dateFormatter = DateFormat('d MMMM y');
   late final MemberCubit _memberCubit;
 
+  // Constants to determine padding for app bar title on android.
+  static const basePadding = 16.0;
+  static const collapsedPadding = 56.0;
+  static const expandedHeight = 200.0;
+
+  /// ValueNotifier for the left-side padding of the app bar title on android.
+  final ValueNotifier<double> _appBarTitlePaddingNotifier = ValueNotifier(16.0);
+  final _scrollController = ScrollController();
+
+  /// Calculate the left-side padding of the app bar title on android.
+  double get _horizontalTitlePadding {
+    if (_scrollController.hasClients) {
+      return min(
+        basePadding + collapsedPadding,
+        basePadding +
+            (collapsedPadding * _scrollController.offset) /
+                (expandedHeight - kToolbarHeight),
+      );
+    }
+    return basePadding;
+  }
+
   @override
   void initState() {
     _memberCubit = MemberCubit(
       RepositoryProvider.of<ApiRepository>(context),
     )..load(widget.pk);
+
+    _scrollController.addListener(() {
+      _appBarTitlePaddingNotifier.value = _horizontalTitlePadding;
+    });
+
     super.initState();
   }
 
   @override
   void dispose() {
     _memberCubit.close();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -198,16 +229,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   SliverAppBar _makeAppBar([ListMember? member]) {
+    final isAndroid = Theme.of(context).platform == TargetPlatform.android;
     return SliverAppBar(
       brightness: Brightness.dark,
-      expandedHeight: 200,
+      expandedHeight: expandedHeight,
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
-        title: Text(
-          member?.displayName ?? 'PROFILE',
-          textAlign: TextAlign.center,
-        ),
-        centerTitle: true,
+        centerTitle: !isAndroid,
+        title: isAndroid
+            // Rebuilds whenever the listenable is changed
+            // by the scroll controller listener.
+            ? ValueListenableBuilder<double>(
+                valueListenable: _appBarTitlePaddingNotifier,
+                builder: (context, value, child) {
+                  return Padding(
+                    padding: EdgeInsets.only(left: value),
+                    child: Text(
+                      member?.displayName ?? 'PROFILE',
+                      textAlign: TextAlign.left,
+                    ),
+                  );
+                },
+              )
+            // Just centered text on iOS.
+            : Text(
+                member?.displayName ?? 'PROFILE',
+                textAlign: TextAlign.center,
+              ),
+        // Bottom padding of only 14 instead of 16 because by default (16) there
+        // is a misalignment of the baseline compared to the standard AppBar.
+        titlePadding: const EdgeInsets.only(bottom: 14),
         background: Builder(
           builder: (context) {
             return GestureDetector(
@@ -461,6 +512,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         builder: (context, state) {
           if (state.hasException) {
             return CustomScrollView(
+              controller: _scrollController,
               slivers: [
                 _makeAppBar(),
                 SliverFillRemaining(
@@ -470,6 +522,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             );
           } else if (state.isLoading && widget.member == null) {
             return CustomScrollView(
+              controller: _scrollController,
               slivers: [
                 _makeAppBar(),
                 const SliverFillRemaining(
@@ -479,6 +532,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             );
           } else {
             return CustomScrollView(
+              controller: _scrollController,
               slivers: [
                 _makeAppBar((state.result ?? widget.member)!),
                 _makeFactsSliver((state.result ?? widget.member)!),
