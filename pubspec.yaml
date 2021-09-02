@@ -65,7 +65,7 @@ dependencies:
   flutter_widget_from_html_core: ^0.6.0
 
   # Sentry error reporting.
-  sentry_flutter: ^5.1.0
+  sentry_flutter: ^6.0.0
 
   # Share menu.
   share: ^2.0.1
