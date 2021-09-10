@@ -66,6 +66,7 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
                     return const Center(child: CircularProgressIndicator());
                   } else {
                     return ListView.separated(
+                      key: const PageStorageKey('food-admin'),
                       itemBuilder: (context, index) => _OrderTile(
                         order: state.result![index],
                       ),
@@ -225,6 +226,7 @@ class FoodAdminSearchDelegate extends SearchDelegate {
             return const Center(child: CircularProgressIndicator());
           } else {
             return ListView.separated(
+              key: const PageStorageKey('food-admin-search'),
               itemBuilder: (context, index) => _OrderTile(
                 order: state.result![index],
               ),
@@ -249,6 +251,7 @@ class FoodAdminSearchDelegate extends SearchDelegate {
             return const Center(child: CircularProgressIndicator());
           } else {
             return ListView.separated(
+              key: const PageStorageKey('food-admin-search'),
               itemBuilder: (context, index) => _OrderTile(
                 order: state.result![index],
               ),

@@ -32,8 +32,7 @@ class EventScreen extends StatefulWidget {
   _EventScreenState createState() => _EventScreenState();
 }
 
-class _EventScreenState extends State<EventScreen>
-    with TickerProviderStateMixin {
+class _EventScreenState extends State<EventScreen> {
   static final dateTimeFormatter = DateFormat('d MMM y, HH:mm');
 
   late final EventCubit _eventCubit;
@@ -799,7 +798,7 @@ class _EventScreenState extends State<EventScreen>
                 ));
               }
             },
-          style: TextStyle(color: Theme.of(context).accentColor),
+          style: TextStyle(color: Theme.of(context).primaryColor),
         ),
         const TextSpan(
           text: ', that you understand them and '
@@ -826,6 +825,7 @@ class _EventScreenState extends State<EventScreen>
               content: Text('Could not open "$url".'),
             ));
           }
+          return true;
         },
       ),
     );
@@ -956,6 +956,7 @@ class _EventScreenState extends State<EventScreen>
                 bloc: _registrationsCubit,
                 builder: (context, state) {
                   return CustomScrollView(
+                    key: const PageStorageKey('event'),
                     slivers: [
                       SliverToBoxAdapter(
                         child: Column(

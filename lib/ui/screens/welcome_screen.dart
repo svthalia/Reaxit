@@ -21,8 +21,7 @@ class WelcomeScreen extends StatefulWidget {
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen>
-    with TickerProviderStateMixin {
+class _WelcomeScreenState extends State<WelcomeScreen> {
   static final dateFormatter = DateFormat('EEEE d MMMM');
 
   static Map<DateTime, List<Event>> _groupByDay(List<Event> events) {
@@ -38,7 +37,6 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
   Widget _makeSlides(List<Slide> slides) {
     return AnimatedSize(
-      vsync: this,
       curve: Curves.ease,
       duration: const Duration(milliseconds: 300),
       child:
@@ -65,7 +63,6 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
   Widget _makeArticles(List<FrontpageArticle> articles) {
     return AnimatedSize(
-      vsync: this,
       curve: Curves.ease,
       duration: const Duration(milliseconds: 300),
       child: articles.isNotEmpty
@@ -89,7 +86,6 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   Widget _makeUpcomingEvents(List<Event> events) {
     final dayGroupedEvents = _groupByDay(events);
     return AnimatedSize(
-      vsync: this,
       curve: Curves.ease,
       duration: const Duration(milliseconds: 300),
       child: Padding(
@@ -166,6 +162,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
               return const Center(child: CircularProgressIndicator());
             } else {
               return ListView(
+                key: const PageStorageKey('welcome'),
                 physics: const AlwaysScrollableScrollPhysics(),
                 children: [
                   _makeSlides(state.slides!),

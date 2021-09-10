@@ -33,7 +33,7 @@ const List<String> oauthScopes = [
   'events:admin',
   'food:read',
   'food:order',
-//   'food:admin',
+  'food:admin',
   'members:read',
   'photos:read',
   'profile:read',
@@ -43,7 +43,7 @@ const List<String> oauthScopes = [
   'payments:read',
   'payments:write',
   'payments:admin',
-//   'partners:read',
+  'partners:read',
   // 'sales:read',
   // 'sales:write',
 ];

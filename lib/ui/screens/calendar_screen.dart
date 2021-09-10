@@ -77,6 +77,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               return ErrorScrollView(calendarState.message!);
             } else {
               return CalendarScrollView(
+                key: const PageStorageKey('calendar'),
                 controller: _controller,
                 calendarState: calendarState,
               );
@@ -139,6 +140,7 @@ class CalendarSearchDelegate extends SearchDelegate {
           return ErrorScrollView(listState.message!);
         } else {
           return CalendarScrollView(
+            key: const PageStorageKey('calendar-search'),
             controller: _controller,
             calendarState: listState,
           );
@@ -156,6 +158,7 @@ class CalendarSearchDelegate extends SearchDelegate {
           return ErrorScrollView(listState.message!);
         } else {
           return CalendarScrollView(
+            key: const PageStorageKey('calendar-search'),
             controller: _controller,
             calendarState: listState,
           );

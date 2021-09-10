@@ -74,6 +74,7 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
               return ErrorScrollView(listState.message!);
             } else {
               return AlbumListScrollView(
+                key: const PageStorageKey('albums'),
                 controller: _controller,
                 listState: listState,
               );
@@ -136,6 +137,7 @@ class AlbumsSearchDelegate extends SearchDelegate {
           return ErrorScrollView(listState.message!);
         } else {
           return AlbumListScrollView(
+            key: const PageStorageKey('albums-search'),
             controller: _controller,
             listState: listState,
           );
@@ -153,6 +155,7 @@ class AlbumsSearchDelegate extends SearchDelegate {
           return ErrorScrollView(listState.message!);
         } else {
           return AlbumListScrollView(
+            key: const PageStorageKey('albums-search'),
             controller: _controller,
             listState: listState,
           );

@@ -74,6 +74,7 @@ class _MembersScreenState extends State<MembersScreen> {
               return ErrorScrollView(listState.message!);
             } else {
               return MemberListScrollView(
+                key: const PageStorageKey('members'),
                 controller: _controller,
                 listState: listState,
               );
@@ -136,6 +137,7 @@ class MembersSearchDelegate extends SearchDelegate {
           return ErrorScrollView(listState.message!);
         } else {
           return MemberListScrollView(
+            key: const PageStorageKey('members-search'),
             controller: _controller,
             listState: listState,
           );
@@ -153,6 +155,7 @@ class MembersSearchDelegate extends SearchDelegate {
           return ErrorScrollView(listState.message!);
         } else {
           return MemberListScrollView(
+            key: const PageStorageKey('members-search'),
             controller: _controller,
             listState: listState,
           );

@@ -70,6 +70,7 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                     return const Center(child: CircularProgressIndicator());
                   } else {
                     return ListView.separated(
+                      key: const PageStorageKey('event-admin'),
                       itemBuilder: (context, index) => _RegistrationTile(
                         registration: state.registrations![index],
                         requiresPayment: state.event!.paymentIsRequired,
@@ -275,6 +276,7 @@ class EventAdminSearchDelegate extends SearchDelegate {
             return const Center(child: CircularProgressIndicator());
           } else {
             return ListView.separated(
+              key: const PageStorageKey('event-admin-search'),
               itemBuilder: (context, index) => _RegistrationTile(
                 registration: state.registrations![index],
                 requiresPayment: state.event!.paymentIsRequired,
@@ -300,6 +302,7 @@ class EventAdminSearchDelegate extends SearchDelegate {
             return const Center(child: CircularProgressIndicator());
           } else {
             return ListView.separated(
+              key: const PageStorageKey('event-admin-search'),
               itemBuilder: (context, index) => _RegistrationTile(
                 registration: state.registrations![index],
                 requiresPayment: state.event!.paymentIsRequired,
