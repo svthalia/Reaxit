@@ -13,8 +13,7 @@ class TPaySalesOrderDialog extends StatefulWidget {
   _TPaySalesOrderDialogState createState() => _TPaySalesOrderDialogState();
 }
 
-class _TPaySalesOrderDialogState extends State<TPaySalesOrderDialog>
-    with TickerProviderStateMixin {
+class _TPaySalesOrderDialogState extends State<TPaySalesOrderDialog> {
   late final SalesOrderCubit _salesOrderCubit;
 
   @override
@@ -125,7 +124,6 @@ class _TPaySalesOrderDialogState extends State<TPaySalesOrderDialog>
             return AlertDialog(
               title: const Text('Pay for order'),
               content: AnimatedSize(
-                vsync: this,
                 duration: const Duration(milliseconds: 300),
                 child: content,
               ),
@@ -139,7 +137,6 @@ class _TPaySalesOrderDialogState extends State<TPaySalesOrderDialog>
                   label: const Text('CANCEL'),
                 ),
                 AnimatedSize(
-                  vsync: this,
                   curve: Curves.ease,
                   duration: const Duration(milliseconds: 200),
                   child: payButton,

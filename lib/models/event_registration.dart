@@ -49,8 +49,6 @@ class UserEventRegistration {
   /// retrieved through [ApiRepository.getEvent].
   @JsonKey(ignore: true)
   bool get tpayAllowed => _tpayAllowed ?? false;
-
-  @JsonKey(ignore: true)
   set tpayAllowed(bool value) => _tpayAllowed = value;
 
   factory UserEventRegistration.fromJson(Map<String, dynamic> json) =>

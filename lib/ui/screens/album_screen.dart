@@ -183,6 +183,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
             ),
             body: Scrollbar(
               child: GridView.builder(
+                key: const PageStorageKey('album'),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisSpacing: 4,
                   mainAxisSpacing: 4,

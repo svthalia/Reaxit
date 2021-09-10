@@ -28,7 +28,7 @@ class FoodScreen extends StatefulWidget {
   _FoodScreenState createState() => _FoodScreenState();
 }
 
-class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
+class _FoodScreenState extends State<FoodScreen> {
   static final timeFormatter = DateFormat('HH:mm');
 
   late final FoodCubit _foodCubit;
@@ -291,7 +291,6 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                         Text(order.product.description),
                       ],
                       AnimatedSize(
-                        vsync: this,
                         curve: Curves.ease,
                         duration: const Duration(milliseconds: 200),
                         child: AnimatedSwitcher(
@@ -304,7 +303,6 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                         ),
                       ),
                       AnimatedSize(
-                        vsync: this,
                         curve: Curves.ease,
                         duration: const Duration(milliseconds: 200),
                         child: AnimatedSwitcher(
@@ -321,7 +319,6 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
                         ),
                       ),
                       AnimatedSize(
-                        vsync: this,
                         curve: Curves.ease,
                         duration: const Duration(milliseconds: 200),
                         child: AnimatedSwitcher(
@@ -346,7 +343,6 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
         }
 
         return AnimatedSize(
-          vsync: this,
           curve: Curves.ease,
           duration: const Duration(milliseconds: 200),
           alignment: Alignment.topCenter,
@@ -427,6 +423,7 @@ class _FoodScreenState extends State<FoodScreen> with TickerProviderStateMixin {
               body: RefreshIndicator(
                 onRefresh: () => _foodCubit.load(),
                 child: ListView(
+                  key: const PageStorageKey('food'),
                   controller: _controller,
                   physics: const AlwaysScrollableScrollPhysics(),
                   padding: const EdgeInsets.all(16),

@@ -23,7 +23,6 @@ class FoodOrder {
   /// through [ApiRepository.getFoodEvents].
   @JsonKey(ignore: true)
   bool get tpayAllowed => _tpayAllowed ?? false;
-  @JsonKey(ignore: true)
   set tpayAllowed(bool value) => _tpayAllowed = value;
 
   bool get isPaid => payment != null;

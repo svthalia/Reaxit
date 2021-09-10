@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -231,7 +232,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   SliverAppBar _makeAppBar([ListMember? member]) {
     final isAndroid = Theme.of(context).platform == TargetPlatform.android;
     return SliverAppBar(
-      brightness: Brightness.dark,
+      systemOverlayStyle: SystemUiOverlayStyle.dark,
       expandedHeight: expandedHeight,
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
@@ -532,6 +533,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             );
           } else {
             return CustomScrollView(
+              key: const PageStorageKey('profile'),
               controller: _scrollController,
               slivers: [
                 _makeAppBar((state.result ?? widget.member)!),
@@ -592,8 +594,7 @@ class _DescriptionFact extends StatefulWidget {
   __DescriptionFactState createState() => __DescriptionFactState();
 }
 
-class __DescriptionFactState extends State<_DescriptionFact>
-    with TickerProviderStateMixin {
+class __DescriptionFactState extends State<_DescriptionFact> {
   bool isEditting = false;
   late final TextEditingController _controller;
   late final FullMemberCubit _fullMemberCubit;
@@ -633,7 +634,6 @@ class __DescriptionFactState extends State<_DescriptionFact>
           Padding(
             padding: const EdgeInsets.all(4),
             child: AnimatedSize(
-              vsync: this,
               duration: const Duration(milliseconds: 200),
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 200),
