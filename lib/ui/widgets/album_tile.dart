@@ -1,6 +1,6 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:reaxit/models/album.dart';
-import 'package:reaxit/ui/router.dart';
 import 'package:reaxit/ui/screens/album_screen.dart';
 
 class AlbumTile extends StatelessWidget {
@@ -10,26 +10,18 @@ class AlbumTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        ThaliaRouterDelegate.of(context).push(
-          TypedMaterialPage(
-            child: AlbumScreen(slug: album.slug, album: album),
-            name: 'Album(${album.slug})',
-          ),
-        );
-      },
-      child: Stack(
+    return OpenContainer(
+      routeSettings: RouteSettings(name: 'Album(${album.slug})'),
+      transitionType: ContainerTransitionType.fadeThrough,
+      closedShape: const RoundedRectangleBorder(),
+      closedBuilder: (context, __) => Stack(
         fit: StackFit.expand,
         children: [
-          Hero(
-            tag: 'album_${album.slug}',
-            child: FadeInImage.assetNetwork(
-              placeholder: 'assets/img/album_placeholder.png',
-              image: album.cover.medium,
-              fit: BoxFit.cover,
-              fadeInDuration: const Duration(milliseconds: 200),
-            ),
+          FadeInImage.assetNetwork(
+            placeholder: 'assets/img/album_placeholder.png',
+            image: album.cover.medium,
+            fit: BoxFit.cover,
+            fadeInDuration: const Duration(milliseconds: 200),
           ),
           Container(
             padding: const EdgeInsets.all(8),
@@ -53,6 +45,7 @@ class AlbumTile extends StatelessWidget {
           )
         ],
       ),
+      openBuilder: (_, __) => AlbumScreen(slug: album.slug, album: album),
     );
   }
 }

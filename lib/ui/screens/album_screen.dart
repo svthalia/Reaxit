@@ -45,13 +45,10 @@ class _AlbumScreenState extends State<AlbumScreen> {
   Widget _makePhotoCard(Album album, int index) {
     return GestureDetector(
       onTap: () => _showPhotoGallery(album, index),
-      child: Hero(
-        tag: 'photo_${album.photos[index].pk}',
-        child: FadeInImage.assetNetwork(
-          placeholder: 'assets/img/photo_placeholder.png',
-          image: album.photos[index].small,
-          fit: BoxFit.cover,
-        ),
+      child: FadeInImage.assetNetwork(
+        placeholder: 'assets/img/photo_placeholder.png',
+        image: album.photos[index].small,
+        fit: BoxFit.cover,
       ),
     );
   }
@@ -79,9 +76,6 @@ class _AlbumScreenState extends State<AlbumScreen> {
                   ),
                   itemCount: album.photos.length,
                   builder: (context, i) => PhotoViewGalleryPageOptions(
-                    heroAttributes: PhotoViewHeroAttributes(
-                      tag: 'photo_${album.photos[i].pk}',
-                    ),
                     imageProvider: NetworkImage(album.photos[i].full),
                     minScale: PhotoViewComputedScale.contained * 0.8,
                     maxScale: PhotoViewComputedScale.covered * 2,

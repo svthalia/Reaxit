@@ -90,9 +90,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 PhotoView(
                   imageProvider: NetworkImage(member.photo.full),
-                  heroAttributes: PhotoViewHeroAttributes(
-                    tag: 'member_${member.pk}',
-                  ),
                   backgroundDecoration:
                       const BoxDecoration(color: Colors.transparent),
                   minScale: PhotoViewComputedScale.contained * 0.8,
@@ -272,20 +269,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Container(
                     decoration: const BoxDecoration(color: Color(0xFFC5C5C5)),
                   ),
-                  Hero(
-                    tag: 'member_${widget.pk}',
-                    child: member != null
-                        ? FadeInImage.assetNetwork(
-                            placeholder: 'assets/img/default-avatar.jpg',
-                            image: member.photo.small,
-                            fit: BoxFit.cover,
-                            fadeInDuration: const Duration(milliseconds: 300),
-                          )
-                        : Image.asset(
-                            'assets/img/default-avatar.jpg',
-                            fit: BoxFit.cover,
-                          ),
-                  ),
+                  member != null
+                      ? FadeInImage.assetNetwork(
+                          placeholder: 'assets/img/default-avatar.jpg',
+                          image: member.photo.small,
+                          fit: BoxFit.cover,
+                          fadeInDuration: const Duration(milliseconds: 300),
+                        )
+                      : Image.asset(
+                          'assets/img/default-avatar.jpg',
+                          fit: BoxFit.cover,
+                        ),
                   _BlackGradient()
                 ],
               ),
