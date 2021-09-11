@@ -12,7 +12,7 @@ import 'package:reaxit/models/album.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/config.dart' as config;
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 
 /// Screen that loads and shows a the Album of the member with `slug`.
 class AlbumScreen extends StatefulWidget {
