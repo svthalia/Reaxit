@@ -17,7 +17,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v1
         with:
-          flutter-version: 2.2.3
+          flutter-version: 2.5.0
 
       - name: Pods cache
         uses: actions/cache@v2
@@ -91,7 +91,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v1
         with:
-          flutter-version: 2.2.3
+          flutter-version: 2.5.0
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
