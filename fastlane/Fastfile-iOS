@@ -64,7 +64,7 @@ platform :ios do
       scheme: "Runner",
       export_method: "ad-hoc"
     )
-    sh("mv ../Runner.ipa ../build/ios/ThaliApp.ipa")
+    sh("mkdir -p ../build/ios && mv ../Runner.ipa ../build/ios/ThaliApp.ipa")
   end
 
   desc "Push a new internal build to TestFlight"
