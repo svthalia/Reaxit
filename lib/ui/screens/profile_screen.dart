@@ -322,39 +322,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: 4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(child: _fieldLabel('Study programme')),
-              Flexible(child: _fieldLabel('Cohort')),
-            ],
-          ),
+          _fieldLabel('Study programme'),
           const SizedBox(height: 4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Text(
-                    member.programme == Programme.computingscience
-                        ? 'Computing Science'
-                        : 'Information Science',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                ),
-              ),
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Text(
-                    member.startingYear!.toString(),
-                    style: const TextStyle(fontSize: 22),
-                  ),
-                ),
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.all(4),
+            child: Text(
+              member.programme == Programme.computingscience
+                  ? 'Computing Science'
+                  : 'Information Science',
+              style: const TextStyle(fontSize: 18),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _makeCohortFact(ListMember member) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SizedBox(height: 4),
+          _fieldLabel('Cohort'),
+          const SizedBox(height: 4),
+          Padding(
+            padding: const EdgeInsets.all(4),
+            child: Text(
+              member.startingYear!.toString(),
+              style: const TextStyle(fontSize: 18),
+            ),
           ),
         ],
       ),
@@ -419,8 +417,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
         _DescriptionFact(member: member, cubit: _memberCubit),
         _factDivider(),
-        if (member.startingYear != null && member.programme != null) ...[
+        if (member.programme != null) ...[
           _makeStudiesFact(member),
+          _factDivider(),
+        ],
+        if (member.startingYear != null) ...[
+          _makeCohortFact(member),
           _factDivider(),
         ],
         if (member.birthday != null) ...[
