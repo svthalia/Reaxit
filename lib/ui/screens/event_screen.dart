@@ -798,7 +798,7 @@ class _EventScreenState extends State<EventScreen> {
                 ));
               }
             },
-          style: TextStyle(color: Theme.of(context).primaryColor),
+          style: TextStyle(color: Theme.of(context).colorScheme.primary),
         ),
         const TextSpan(
           text: ', that you understand them and '
