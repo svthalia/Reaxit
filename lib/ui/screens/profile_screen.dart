@@ -322,29 +322,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: 4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(child: _fieldLabel('Study programme')),
-            ],
-          ),
+          _fieldLabel('Study programme'),
           const SizedBox(height: 4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Text(
-                    member.programme == Programme.computingscience
-                        ? 'Computing Science'
-                        : 'Information Science',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                ),
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.all(4),
+            child: Text(
+              member.programme == Programme.computingscience
+                  ? 'Computing Science'
+                  : 'Information Science',
+              style: const TextStyle(fontSize: 18),
+            ),
           ),
         ],
       ),
@@ -358,27 +345,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: 4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(child: _fieldLabel('Cohort')),
-            ],
-          ),
+          _fieldLabel('Cohort'),
           const SizedBox(height: 4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Text(
-                    member.startingYear!.toString(),
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                ),
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.all(4),
+            child: Text(
+              member.startingYear!.toString(),
+              style: const TextStyle(fontSize: 18),
+            ),
           ),
         ],
       ),
