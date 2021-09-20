@@ -84,6 +84,7 @@ class WelcomeCubit extends Cubit<WelcomeState> {
       final articlesResponse = await api.getFrontpageArticles();
       final eventsResponse = await api.getEvents(
         start: DateTime.now(),
+        ordering: 'start',
         limit: 3,
       );
 
