@@ -843,7 +843,7 @@ class _EventScreenState extends State<EventScreen> {
       );
     } else if (state.hasException) {
       return SliverPadding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
+        padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
         sliver: SliverToBoxAdapter(
           child: Center(child: Text(state.message!)),
         ),
