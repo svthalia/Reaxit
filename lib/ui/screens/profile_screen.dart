@@ -229,7 +229,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   SliverAppBar _makeAppBar([ListMember? member]) {
     final isAndroid = Theme.of(context).platform == TargetPlatform.android;
     return SliverAppBar(
-      systemOverlayStyle: SystemUiOverlayStyle.dark,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
       expandedHeight: expandedHeight,
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(

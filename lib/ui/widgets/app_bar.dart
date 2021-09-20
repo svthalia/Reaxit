@@ -10,7 +10,7 @@ class ThaliaAppBar extends AppBar {
           title: title,
           actions: actions,
           leading: leading,
-          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
           // The bottom decoration only needs to be shown
           // in dark mode, but is invisible in light mode,
           // so we can just leave it there.
