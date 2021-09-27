@@ -46,14 +46,14 @@ dependencies:
   json_annotation: ^4.1.0
 
   # BLoC.
-  flutter_bloc: ^7.2.0
+  flutter_bloc: ^7.3.0
   equatable: ^2.0.3
 
   # Persistent storage.
-  shared_preferences: ^2.0.7
+  shared_preferences: ^2.0.8
 
   # Opening urls.
-  url_launcher: ^6.0.10
+  url_launcher: ^6.0.11
 
   # Authenticating in browser.
   flutter_web_auth: ^0.3.1
@@ -65,16 +65,16 @@ dependencies:
   flutter_widget_from_html_core: ^0.7.0
 
   # Sentry error reporting.
-  sentry_flutter: ^6.0.0
+  sentry_flutter: ^6.0.1
 
   # Share menu.
   share_plus: ^2.1.4
 
   # Path for temporary files.
-  path_provider: ^2.0.3
+  path_provider: ^2.0.5
   
   # Access camera and gallery.
-  image_picker: ^0.8.4
+  image_picker: ^0.8.4+2
 
   # Resize images.
   image_cropper: ^1.4.1
@@ -103,7 +103,7 @@ dev_dependencies:
   build_runner: ^2.1.2
 
   # JSON parsing.
-  json_serializable: ^5.0.0
+  json_serializable: ^5.0.2
 
   # Linting.
   flutter_lints: ^1.0.4

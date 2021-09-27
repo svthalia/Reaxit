@@ -90,10 +90,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 PhotoView(
                   imageProvider: NetworkImage(member.photo.full),
-                  backgroundDecoration:
-                      const BoxDecoration(color: Colors.transparent),
                   minScale: PhotoViewComputedScale.contained * 0.8,
                   maxScale: PhotoViewComputedScale.covered * 1.2,
+                  loadingBuilder: (_, __) => const CircularProgressIndicator(),
+                  backgroundDecoration: const BoxDecoration(
+                    color: Colors.transparent,
+                  ),
                 ),
                 SafeArea(
                   child: Row(
@@ -272,7 +274,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   member != null
                       ? FadeInImage.assetNetwork(
                           placeholder: 'assets/img/default-avatar.jpg',
-                          image: member.photo.small,
+                          image: member.photo.medium,
                           fit: BoxFit.cover,
                           fadeInDuration: const Duration(milliseconds: 300),
                         )
