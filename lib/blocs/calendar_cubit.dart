@@ -31,7 +31,14 @@ class CalendarEvent {
 
   static List<CalendarEvent> splitEventIntoCalendarEvents(BaseEvent event) {
     final localStart = event.start.toLocal();
-    final localEnd = event.end.toLocal();
+    late final DateTime localEnd;
+
+    // Prevent having a card for 'Until 00:00' when an event ends at midnight.
+    if (event.end.toLocal().hour == 0 && event.end.toLocal().minute == 0) {
+      localEnd = event.end.toLocal().subtract(const Duration(minutes: 1));
+    } else {
+      localEnd = event.end.toLocal();
+    }
 
     final startDate = DateTime(
       localStart.year,

@@ -69,7 +69,7 @@ class MenuDrawer extends StatelessWidget {
                         height: 80,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: NetworkImage(me.photo.small),
+                            image: NetworkImage(me.photo.medium),
                             fit: BoxFit.cover,
                           ),
                           borderRadius: BorderRadius.circular(40),

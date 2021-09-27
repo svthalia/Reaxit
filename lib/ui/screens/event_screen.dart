@@ -790,7 +790,7 @@ class _EventScreenState extends State<EventScreen> {
           recognizer: TapGestureRecognizer()
             ..onTap = () async {
               if (await canLaunch(url)) {
-                await launch(url);
+                await launch(url, forceSafariVC: false);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   behavior: SnackBarBehavior.floating,
@@ -818,7 +818,7 @@ class _EventScreenState extends State<EventScreen> {
         event.description,
         onTapUrl: (String url) async {
           if (await canLaunch(url)) {
-            await launch(url);
+            await launch(url, forceSafariVC: false);
           } else {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               behavior: SnackBarBehavior.floating,

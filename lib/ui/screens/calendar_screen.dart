@@ -300,8 +300,6 @@ class _DayCard extends StatelessWidget {
       children: [
         SizedBox(
           width: 60,
-          // alignment: Alignment.top,
-          // padding: const EdgeInsets.only(right: 12),
           child: Padding(
             padding: const EdgeInsets.only(right: 12, top: 4),
             child: Column(
@@ -350,9 +348,10 @@ class _EventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color color;
-    if (event is Event && (event as Event).isRegistered) {
+    if (event.parentEvent is Event &&
+        (event.parentEvent as Event).isRegistered) {
       color = const Color(0xFFE62272);
-    } else if (event is PartnerEvent) {
+    } else if (event.parentEvent is PartnerEvent) {
       color = Colors.black;
     } else {
       color = Colors.grey[800]!;
