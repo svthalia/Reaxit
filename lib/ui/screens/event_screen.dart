@@ -16,13 +16,12 @@ import 'package:reaxit/models/payment.dart';
 import 'package:reaxit/ui/router.dart';
 import 'package:reaxit/ui/screens/event_admin_screen.dart';
 import 'package:reaxit/ui/screens/registration_screen.dart';
+import 'package:reaxit/ui/screens/food_screen.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/member_tile.dart';
 import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import 'food_screen.dart';
 
 class EventScreen extends StatefulWidget {
   final int pk;
