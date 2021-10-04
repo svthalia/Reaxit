@@ -22,6 +22,8 @@ import 'package:reaxit/ui/widgets/member_tile.dart';
 import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'food_screen.dart';
+
 class EventScreen extends StatefulWidget {
   final int pk;
   final Event? event;
@@ -88,6 +90,7 @@ class _EventScreenState extends State<EventScreen> {
             _makeOptionalRegistrationInfo(event)
           else
             _makeNoRegistrationInfo(event),
+          if (event.hasFoodEvent) _makeFoodButton(event),
         ],
       ),
     );
@@ -687,6 +690,27 @@ class _EventScreenState extends State<EventScreen> {
       },
       icon: const Icon(Icons.build),
       label: const Text('UPDATE REGISTRATION'),
+    );
+  }
+
+  Widget _makeFoodButton(Event event) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: () {
+          ThaliaRouterDelegate.of(context).push(
+            TypedMaterialPage(
+              child: FoodScreen(
+                pk: event.foodEvent!,
+                event: event,
+              ),
+              name: 'FoodEvent(${event.foodEvent})',
+            ),
+          );
+        },
+        icon: const Icon(Icons.local_pizza),
+        label: const Text('ORDER FOOD'),
+      ),
     );
   }
 
