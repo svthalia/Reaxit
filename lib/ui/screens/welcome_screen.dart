@@ -213,7 +213,7 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
         CarouselSlider.builder(
           options: CarouselOptions(
             disableCenter: true,
-            aspectRatio: 1.8,
+            aspectRatio: 1075 / 430,
             viewportFraction: 1,
             autoPlay: true,
             onPageChanged: (index, _) => setState(() {
