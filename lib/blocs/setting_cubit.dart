@@ -112,29 +112,33 @@ class SettingsCubit extends Cubit<SettingsState> {
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
 
-    // Make sure firebase has been initialized.
-    await firebaseInitialization;
-
-    var token = await FirebaseMessaging.instance.getToken();
-    var prefs = await SharedPreferences.getInstance();
-    var deviceRegistrationId = prefs.getInt(deviceRegistrationIdPreferenceName);
-    if (token == null) {
-      emit(const SettingsState.failure(message: 'No device token found.'));
-    } else if (deviceRegistrationId == null) {
-      emit(const SettingsState.failure(
-        message: 'Failed to register device for push notifications.',
-      ));
-    } else {
-      try {
+    try {
+      // Make sure firebase has been initialized.
+      await firebaseInitialization;
+      
+      var token = await FirebaseMessaging.instance.getToken();
+      var prefs = await SharedPreferences.getInstance();
+      var deviceRegistrationId = prefs.getInt(
+        deviceRegistrationIdPreferenceName,
+      );
+      if (token == null) {
+        emit(const SettingsState.failure(message: 'No device token found.'));
+      } else if (deviceRegistrationId == null) {
+        emit(const SettingsState.failure(
+          message: 'Failed to register device for push notifications.',
+        ));
+      } else {
         final device = await api.getDevice(id: deviceRegistrationId);
         final categories = await api.getCategories();
         emit(SettingsState.result(
           device: device,
           categories: categories.results,
         ));
-      } on ApiException catch (exception) {
-        emit(SettingsState.failure(message: _failureMessage(exception)));
       }
+    } on ApiException catch (exception) {
+      emit(SettingsState.failure(message: _failureMessage(exception)));
+    } catch (_) {
+      emit(SettingsState.failure(message: 'An unknown exception occurred'))
     }
   }
 
