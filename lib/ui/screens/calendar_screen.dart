@@ -358,7 +358,9 @@ class _EventCard extends StatelessWidget {
     }
 
     return Link(
-      uri: event is PartnerEvent ? (event as PartnerEvent).url : null,
+      uri: event.parentEvent is PartnerEvent
+          ? (event.parentEvent as PartnerEvent).url
+          : null,
       builder: (context, followLink) => Padding(
         padding: const EdgeInsets.only(bottom: 12),
         child: Material(
