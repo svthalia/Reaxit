@@ -366,20 +366,21 @@ class _EventCard extends StatelessWidget {
           type: MaterialType.card,
           color: color,
           child: InkWell(
-            onTap: followLink ??
-                () {
-                  ThaliaRouterDelegate.of(context).push(
-                    TypedMaterialPage(
-                      child: EventScreen(
-                        pk: event.pk,
-                        event: event.parentEvent is Event
-                            ? event.parentEvent as Event
-                            : null,
+            onTap: event.parentEvent is PartnerEvent
+                ? followLink
+                : () {
+                    ThaliaRouterDelegate.of(context).push(
+                      TypedMaterialPage(
+                        child: EventScreen(
+                          pk: event.pk,
+                          event: event.parentEvent is Event
+                              ? event.parentEvent as Event
+                              : null,
+                        ),
+                        name: 'Event(${event.pk})',
                       ),
-                      name: 'Event(${event.pk})',
-                    ),
-                  );
-                },
+                    );
+                  },
             // Prevent painting ink outside of the card.
             borderRadius: const BorderRadius.all(Radius.circular(2)),
             child: Padding(
