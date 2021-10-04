@@ -33,7 +33,7 @@ dependencies:
   intl: ^0.17.0
 
   # Networking basics.
-  http: ^0.13.3
+  http: ^0.13.4
   http_parser: ^4.0.0
 
   # OAuth2 authorized http Client.
@@ -68,7 +68,7 @@ dependencies:
   sentry_flutter: ^6.0.1
 
   # Share menu.
-  share_plus: ^2.1.4
+  share_plus: ^2.2.0
 
   # Path for temporary files.
   path_provider: ^2.0.5

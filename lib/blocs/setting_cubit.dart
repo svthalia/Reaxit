@@ -115,7 +115,7 @@ class SettingsCubit extends Cubit<SettingsState> {
     try {
       // Make sure firebase has been initialized.
       await firebaseInitialization;
-      
+
       var token = await FirebaseMessaging.instance.getToken();
       var prefs = await SharedPreferences.getInstance();
       var deviceRegistrationId = prefs.getInt(
@@ -138,7 +138,9 @@ class SettingsCubit extends Cubit<SettingsState> {
     } on ApiException catch (exception) {
       emit(SettingsState.failure(message: _failureMessage(exception)));
     } catch (_) {
-      emit(SettingsState.failure(message: 'An unknown exception occurred'))
+      emit(const SettingsState.failure(
+        message: 'An unknown exception occurred',
+      ));
     }
   }
 
