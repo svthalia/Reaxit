@@ -12,23 +12,27 @@ String deviceRegistrationIdPreferenceName = 'deviceRegistrationId';
 ///
 /// Return whether pushnotifications have been set up successfully.
 Future<bool> registerPushNotifications(ApiRepository api) async {
-  final settings = await FirebaseMessaging.instance.requestPermission(
-    alert: true,
-    announcement: true,
-    badge: true,
-    carPlay: false,
-    criticalAlert: false,
-    provisional: false,
-    sound: true,
-  );
+  try {
+    final settings = await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      announcement: true,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
 
-  if (settings.authorizationStatus != AuthorizationStatus.authorized) {
+    if (settings.authorizationStatus != AuthorizationStatus.authorized) {
+      return false;
+    }
+
+    final token = await FirebaseMessaging.instance.getToken();
+    if (token == null) return false;
+    return await registerPushNotificationsToken(api, token);
+  } catch (_) {
     return false;
   }
-
-  final token = await FirebaseMessaging.instance.getToken();
-  if (token == null) return false;
-  return await registerPushNotificationsToken(api, token);
 }
 
 /// Register a Firebase Cloud Messaging token to the api, and store it.
