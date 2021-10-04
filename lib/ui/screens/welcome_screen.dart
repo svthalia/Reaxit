@@ -212,8 +212,8 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
       children: [
         CarouselSlider.builder(
           options: CarouselOptions(
+            aspectRatio: 2.1,
             disableCenter: true,
-            aspectRatio: 1075 / 430,
             viewportFraction: 1,
             autoPlay: true,
             onPageChanged: (index, _) => setState(() {
@@ -223,18 +223,23 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
           itemCount: widget.slides.length,
           itemBuilder: (context, index, _) {
             final slide = widget.slides[index];
-            return Padding(
-              padding: const EdgeInsets.all(12),
-              child: Card(
-                elevation: 8,
-                child: Link(
-                  uri: slide.url,
-                  builder: (context, followLink) => InkWell(
-                    onTap: followLink,
-                    child: FadeInImage.assetNetwork(
-                      fit: BoxFit.cover,
-                      placeholder: 'assets/img/slide_placeholder.png',
-                      image: slide.content.large,
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Card(
+                  elevation: 8,
+                  child: AspectRatio(
+                    aspectRatio: 1075 / 430,
+                    child: Link(
+                      uri: slide.url,
+                      builder: (context, followLink) => InkWell(
+                        onTap: followLink,
+                        child: FadeInImage.assetNetwork(
+                          fit: BoxFit.cover,
+                          placeholder: 'assets/img/slide_placeholder.png',
+                          image: slide.content.large,
+                        ),
+                      ),
                     ),
                   ),
                 ),
