@@ -49,3 +49,5 @@ const List<String> oauthScopes = [
 ];
 
 const Duration searchDebounceTime = Duration(milliseconds: 200);
+
+const String versionNumber = 'v3.0.0';

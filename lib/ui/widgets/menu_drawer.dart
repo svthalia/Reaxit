@@ -9,6 +9,7 @@ import 'package:reaxit/ui/screens/members_screen.dart';
 import 'package:reaxit/ui/screens/profile_screen.dart';
 import 'package:reaxit/ui/screens/settings_screen.dart';
 import 'package:reaxit/ui/screens/welcome_screen.dart';
+import 'package:reaxit/config.dart' as config;
 import 'package:url_launcher/link.dart';
 
 class MenuDrawer extends StatelessWidget {
@@ -229,7 +230,7 @@ class MenuDrawer extends StatelessWidget {
           AboutListTile(
             icon: const Icon(Icons.info_outline),
             dense: true,
-            applicationVersion: 'v2.0.1',
+            applicationVersion: config.versionNumber,
             applicationIcon: Image.asset(
               Theme.of(context).brightness == Brightness.light
                   ? 'assets/img/logo-t-zwart.png'
