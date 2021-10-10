@@ -447,7 +447,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: achievement.periods!.map((Period period) {
           final since = dateFormatter.format(period.since);
           final until = (period.until != null)
-              ? dateFormatter.format(period.since)
+              ? dateFormatter.format(period.until!)
               : 'Present';
           final dates = '$since - $until';
           var leading = '';
