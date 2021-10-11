@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/blocs/event_admin_cubit.dart';
 import 'package:reaxit/models/event_registration.dart';
@@ -241,12 +242,24 @@ class EventAdminSearchDelegate extends SearchDelegate {
   }
 
   @override
+  ThemeData appBarTheme(BuildContext context) {
+    final theme = super.appBarTheme(context);
+    return theme.copyWith(
+      textTheme: theme.textTheme.copyWith(
+        headline6: GoogleFonts.openSans(
+          textStyle: Theme.of(context).textTheme.headline6,
+        ),
+      ),
+    );
+  }
+
+  @override
   List<Widget> buildActions(BuildContext context) {
     if (query.isNotEmpty) {
       return <Widget>[
         IconButton(
           tooltip: 'Clear search bar',
-          icon: const Icon(Icons.delete),
+          icon: const Icon(Icons.clear),
           onPressed: () {
             query = '';
           },
@@ -259,7 +272,7 @@ class EventAdminSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildLeading(BuildContext context) {
-    return CloseButton(
+    return BackButton(
       onPressed: () => close(context, null),
     );
   }
