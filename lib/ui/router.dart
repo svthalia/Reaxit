@@ -40,7 +40,7 @@ class TypedMaterialPage extends MaterialPage {
   }) : super(
           child: child,
           fullscreenDialog: fullscreenDialog,
-          maintainState: false,
+          maintainState: maintainState,
           name: name,
           key: ValueKey(child.runtimeType),
         );
