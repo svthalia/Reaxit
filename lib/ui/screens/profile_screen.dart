@@ -293,156 +293,120 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _fieldLabel(String title) {
-    return Text(title, style: Theme.of(context).textTheme.subtitle2);
-  }
-
-  Divider _factDivider() {
-    return const Divider(
-      height: 3,
-      indent: 20,
-      endIndent: 20,
-    );
+    return Text(title, style: Theme.of(context).textTheme.caption);
   }
 
   Widget _makeHonoraryFact() {
     return Align(
       alignment: Alignment.topCenter,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 8, bottom: 4),
-        child: Text(
-          'HONORARY MEMBER',
-          style: Theme.of(context).textTheme.subtitle1,
-        ),
+      child: Text(
+        'HONORARY MEMBER',
+        style: Theme.of(context).textTheme.subtitle1,
       ),
     );
   }
 
   Widget _makeStudiesFact(ListMember member) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SizedBox(height: 4),
-          _fieldLabel('Study programme'),
-          const SizedBox(height: 4),
-          Padding(
-            padding: const EdgeInsets.all(4),
-            child: Text(
-              member.programme == Programme.computingscience
-                  ? 'Computing Science'
-                  : 'Information Science',
-              style: const TextStyle(fontSize: 18),
-            ),
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _fieldLabel('Study programme'),
+        const SizedBox(height: 4),
+        Text(
+          member.programme == Programme.computingscience
+              ? 'Computing Science'
+              : 'Information Science',
+          style: Theme.of(context).textTheme.subtitle2,
+        ),
+      ],
     );
   }
 
   Widget _makeCohortFact(ListMember member) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SizedBox(height: 4),
-          _fieldLabel('Cohort'),
-          const SizedBox(height: 4),
-          Padding(
-            padding: const EdgeInsets.all(4),
-            child: Text(
-              member.startingYear!.toString(),
-              style: const TextStyle(fontSize: 18),
-            ),
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _fieldLabel('Cohort'),
+        const SizedBox(height: 4),
+        Text(
+          member.startingYear!.toString(),
+          style: Theme.of(context).textTheme.subtitle2,
+        ),
+      ],
     );
   }
 
   Widget _makeBirthdayFact(ListMember member) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SizedBox(height: 4),
-          _fieldLabel('Birthday'),
-          const SizedBox(height: 4),
-          Padding(
-            padding: const EdgeInsets.all(4),
-            child: Text(
-              dateFormatter.format(member.birthday!),
-              style: const TextStyle(fontSize: 18),
-            ),
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _fieldLabel('Birthday'),
+        const SizedBox(height: 4),
+        Text(
+          dateFormatter.format(member.birthday!),
+          style: Theme.of(context).textTheme.subtitle2,
+        ),
+      ],
     );
   }
 
   Widget _makeWebsiteFact(ListMember member) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SizedBox(height: 4),
-          _fieldLabel('Website'),
-          const SizedBox(height: 4),
-          Padding(
-            padding: const EdgeInsets.all(4),
-            child: Link(
-              uri: member.website!,
-              target: LinkTarget.blank,
-              builder: (context, followLink) => GestureDetector(
-                onTap: followLink,
-                child: Text(
-                  member.website!.toString(),
-                  style: const TextStyle(fontSize: 18),
-                ),
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _fieldLabel('Website'),
+        const SizedBox(height: 4),
+        Link(
+          uri: member.website!,
+          target: LinkTarget.blank,
+          builder: (context, followLink) => GestureDetector(
+            onTap: followLink,
+            child: Text(
+              member.website!.toString(),
+              style: Theme.of(context).textTheme.subtitle2,
             ),
           ),
-        ],
+        ),
+      ],
+    );
+  }
+
+  SliverToBoxAdapter _makeFactsSliver(ListMember member) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
+        child: Column(children: [
+          if (member.membershipType == MembershipType.honorary) ...[
+            _makeHonoraryFact(),
+            const Divider(),
+          ],
+          _DescriptionFact(member: member, cubit: _memberCubit),
+          const Divider(),
+          if (member.programme != null) ...[
+            _makeStudiesFact(member),
+            const Divider(),
+          ],
+          if (member.startingYear != null) ...[
+            _makeCohortFact(member),
+            const Divider(),
+          ],
+          if (member.birthday != null) ...[
+            _makeBirthdayFact(member),
+            const Divider(),
+          ],
+          if (member.website != null) ...[
+            _makeWebsiteFact(member),
+            const Divider(),
+          ],
+        ]),
       ),
     );
   }
 
-  SliverList _makeFactsSliver(ListMember member) {
-    return SliverList(
-      delegate: SliverChildListDelegate.fixed([
-        if (member.membershipType == MembershipType.honorary) ...[
-          _makeHonoraryFact(),
-          _factDivider(),
-        ],
-        _DescriptionFact(member: member, cubit: _memberCubit),
-        _factDivider(),
-        if (member.programme != null) ...[
-          _makeStudiesFact(member),
-          _factDivider(),
-        ],
-        if (member.startingYear != null) ...[
-          _makeCohortFact(member),
-          _factDivider(),
-        ],
-        if (member.birthday != null) ...[
-          _makeBirthdayFact(member),
-          _factDivider(),
-        ],
-        if (member.website != null) ...[
-          _makeWebsiteFact(member),
-          _factDivider(),
-        ],
-      ]),
-    );
-  }
-
   Widget _makeAchievementTile(Achievement achievement) {
-    Widget? periodCol;
+    Widget? periodColumn;
     if (achievement.periods != null) {
-      periodCol = Column(
+      periodColumn = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: achievement.periods!.map((Period period) {
           final since = dateFormatter.format(period.since);
@@ -464,39 +428,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return ListTile(
       title: Text(
         achievement.name,
-        style: const TextStyle(fontSize: 18),
+        style: Theme.of(context).textTheme.subtitle1,
       ),
-      subtitle: periodCol,
-      contentPadding: EdgeInsets.zero,
+      subtitle: periodColumn,
+      dense: true,
     );
   }
 
-  SliverPadding _makeAchievementsSliver(Member member) {
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      sliver: SliverList(
-        delegate: SliverChildListDelegate([
-          const SizedBox(height: 4),
+  SliverToBoxAdapter _makeAchievementsSliver(Member member) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           _fieldLabel('Achievements for Thalia'),
-          ...ListTile.divideTiles(
-            context: context,
-            tiles: member.achievements.map(_makeAchievementTile),
+          Card(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            child: Column(
+              children: [
+                ...ListTile.divideTiles(
+                  context: context,
+                  tiles: member.achievements.map(_makeAchievementTile),
+                )
+              ],
+            ),
           )
         ]),
       ),
     );
   }
 
-  SliverPadding _makeSocietiesSliver(Member member) {
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      sliver: SliverList(
-        delegate: SliverChildListDelegate([
-          const SizedBox(height: 4),
+  SliverToBoxAdapter _makeSocietiesSliver(Member member) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           _fieldLabel('Societies'),
-          ...ListTile.divideTiles(
-            context: context,
-            tiles: member.societies.map(_makeAchievementTile),
+          Card(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            child: Column(
+              children: [
+                ...ListTile.divideTiles(
+                  context: context,
+                  tiles: member.societies.map(_makeAchievementTile),
+                )
+              ],
+            ),
           )
         ]),
       ),
@@ -614,102 +590,92 @@ class __DescriptionFactState extends State<_DescriptionFact> {
   }
 
   Widget _fieldLabel(String title) {
-    return Text(title, style: Theme.of(context).textTheme.subtitle2);
+    return Text(title, style: Theme.of(context).textTheme.caption);
   }
 
   @override
   Widget build(BuildContext context) {
     final fullMemberCubit = BlocProvider.of<FullMemberCubit>(context);
     final isMe = fullMemberCubit.state.result?.pk == widget.member.pk;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SizedBox(height: 4),
-          _fieldLabel('About ${widget.member.displayName}'),
-          const SizedBox(height: 4),
-          Padding(
-            padding: const EdgeInsets.all(4),
-            child: AnimatedSize(
-              duration: const Duration(milliseconds: 200),
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: isEditting
-                    ? Row(
-                        key: const ValueKey(true),
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _controller,
-                              maxLines: null,
-                              style: Theme.of(context).textTheme.bodyText2,
-                            ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.check),
-                            tooltip: 'Edit your description',
-                            onPressed: () async {
-                              try {
-                                await _fullMemberCubit.updateDescription(
-                                  _controller.text,
-                                );
-                                await widget.cubit.load(widget.member.pk);
-                              } on ApiException {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    behavior: SnackBarBehavior.floating,
-                                    content: Text(
-                                      'Uploading your avatar failed.',
-                                    ),
-                                  ),
-                                );
-                              }
-                              setState(() => isEditting = false);
-                            },
-                          ),
-                        ],
-                      )
-                    : Row(
-                        key: const ValueKey(false),
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              (widget.member.profileDescription?.isEmpty ??
-                                      true)
-                                  ? "This member hasn't created a description yet."
-                                  : widget.member.profileDescription!,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2!
-                                  .copyWith(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _fieldLabel('About ${widget.member.displayName}'),
+        const SizedBox(height: 4),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 200),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            child: isEditting
+                ? Row(
+                    key: const ValueKey(true),
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _controller,
+                          maxLines: null,
+                          style: Theme.of(context).textTheme.bodyText2,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.check),
+                        tooltip: 'Edit your description',
+                        onPressed: () async {
+                          try {
+                            await _fullMemberCubit.updateDescription(
+                              _controller.text,
+                            );
+                            await widget.cubit.load(widget.member.pk);
+                          } on ApiException {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                behavior: SnackBarBehavior.floating,
+                                content: Text(
+                                  'Uploading your avatar failed.',
+                                ),
+                              ),
+                            );
+                          }
+                          setState(() => isEditting = false);
+                        },
+                      ),
+                    ],
+                  )
+                : Row(
+                    key: const ValueKey(false),
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          (widget.member.profileDescription?.isEmpty ?? true)
+                              ? "This member hasn't created a description yet."
+                              : widget.member.profileDescription!,
+                          style:
+                              Theme.of(context).textTheme.bodyText2!.copyWith(
                                     fontStyle: (widget.member.profileDescription
                                                 ?.isEmpty ??
                                             true)
                                         ? FontStyle.italic
                                         : FontStyle.normal,
                                   ),
-                            ),
-                          ),
-                          if (isMe)
-                            IconButton(
-                              tooltip: 'Edit your description',
-                              icon: const Icon(Icons.edit_outlined),
-                              onPressed: () {
-                                setState(() => isEditting = true);
-                              },
-                            ),
-                        ],
+                        ),
                       ),
-              ),
-            ),
+                      if (isMe)
+                        IconButton(
+                          tooltip: 'Edit your description',
+                          icon: const Icon(Icons.edit_outlined),
+                          onPressed: () {
+                            setState(() => isEditting = true);
+                          },
+                        ),
+                    ],
+                  ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
