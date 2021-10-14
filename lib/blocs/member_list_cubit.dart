@@ -99,7 +99,12 @@ class MemberListCubit extends Cubit<MemberListState> {
     if (query != _searchQuery) {
       _searchQuery = query;
       _searchDebounceTimer?.cancel();
-      _searchDebounceTimer = Timer(config.searchDebounceTime, load);
+      if (query?.isEmpty ?? false) {
+        /// Don't get results when the query is empty.
+        emit(const MemberListState.loading(results: []));
+      } else {
+        _searchDebounceTimer = Timer(config.searchDebounceTime, load);
+      }
     }
   }
 

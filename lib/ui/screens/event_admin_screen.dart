@@ -237,9 +237,7 @@ class __RegistrationTileState extends State<_RegistrationTile> {
 class EventAdminSearchDelegate extends SearchDelegate {
   final EventAdminCubit _adminCubit;
 
-  EventAdminSearchDelegate(this._adminCubit) {
-    _adminCubit.load();
-  }
+  EventAdminSearchDelegate(this._adminCubit);
 
   @override
   ThemeData appBarTheme(BuildContext context) {
@@ -285,17 +283,15 @@ class EventAdminSearchDelegate extends SearchDelegate {
         builder: (context, state) {
           if (state.hasException) {
             return ErrorScrollView(state.message!);
-          } else if (state.registrations == null) {
-            return const Center(child: CircularProgressIndicator());
           } else {
             return ListView.separated(
               key: const PageStorageKey('event-admin-search'),
               itemBuilder: (context, index) => _RegistrationTile(
-                registration: state.registrations![index],
+                registration: state.registrations[index],
                 requiresPayment: state.event!.paymentIsRequired,
               ),
               separatorBuilder: (_, __) => const Divider(),
-              itemCount: state.registrations!.length,
+              itemCount: state.registrations.length,
             );
           }
         },
@@ -311,17 +307,15 @@ class EventAdminSearchDelegate extends SearchDelegate {
         builder: (context, state) {
           if (state.hasException) {
             return ErrorScrollView(state.message!);
-          } else if (state.registrations == null) {
-            return const Center(child: CircularProgressIndicator());
           } else {
             return ListView.separated(
               key: const PageStorageKey('event-admin-search'),
               itemBuilder: (context, index) => _RegistrationTile(
-                registration: state.registrations![index],
+                registration: state.registrations[index],
                 requiresPayment: state.event!.paymentIsRequired,
               ),
               separatorBuilder: (_, __) => const Divider(),
-              itemCount: state.registrations!.length,
+              itemCount: state.registrations.length,
             );
           }
         },

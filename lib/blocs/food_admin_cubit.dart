@@ -58,7 +58,12 @@ class FoodAdminCubit extends Cubit<FoodAdminState> {
     if (query != _searchQuery) {
       _searchQuery = query;
       _searchDebounceTimer?.cancel();
-      _searchDebounceTimer = Timer(config.searchDebounceTime, load);
+      if (query?.isEmpty ?? false) {
+        /// Don't get results when the query is empty.
+        emit(const FoodAdminState.loading());
+      } else {
+        _searchDebounceTimer = Timer(config.searchDebounceTime, load);
+      }
     }
   }
 
