@@ -166,8 +166,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 physics: const AlwaysScrollableScrollPhysics(),
                 children: [
                   _makeSlides(state.slides!),
-                  if (state.slides!.isNotEmpty)
-                    const Divider(indent: 16, endIndent: 16, height: 8),
+                  if (state.slides!.isNotEmpty) const Divider(height: 0),
                   _makeArticles(state.articles!),
                   if (state.articles!.isNotEmpty)
                     const Divider(indent: 16, endIndent: 16, height: 8),
@@ -208,12 +207,12 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Stack(
+      alignment: Alignment.bottomCenter,
       children: [
         CarouselSlider.builder(
           options: CarouselOptions(
-            aspectRatio: 2.1,
-            disableCenter: true,
+            aspectRatio: 1075 / 430,
             viewportFraction: 1,
             autoPlay: true,
             onPageChanged: (index, _) => setState(() {
@@ -223,25 +222,14 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
           itemCount: widget.slides.length,
           itemBuilder: (context, index, _) {
             final slide = widget.slides[index];
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Card(
-                  elevation: 8,
-                  child: AspectRatio(
-                    aspectRatio: 1075 / 430,
-                    child: Link(
-                      uri: slide.url,
-                      builder: (context, followLink) => InkWell(
-                        onTap: followLink,
-                        child: FadeInImage.assetNetwork(
-                          fit: BoxFit.cover,
-                          placeholder: 'assets/img/slide_placeholder.png',
-                          image: slide.content.large,
-                        ),
-                      ),
-                    ),
-                  ),
+            return Link(
+              uri: slide.url,
+              builder: (context, followLink) => InkWell(
+                onTap: followLink,
+                child: FadeInImage.assetNetwork(
+                  fit: BoxFit.cover,
+                  placeholder: 'assets/img/slide_placeholder.png',
+                  image: slide.content.large,
                 ),
               ),
             );
@@ -253,19 +241,17 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
             widget.slides.length,
             (index) => AnimatedContainer(
               duration: const Duration(milliseconds: 300),
-              width: 8,
-              height: 8,
+              width: 6,
+              height: 6,
               margin: const EdgeInsets.symmetric(
-                vertical: 12,
+                vertical: 6,
                 horizontal: 2,
               ),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color.lerp(
-                  Theme.of(context).dividerColor,
-                  Colors.grey,
-                  _current == index ? 0.5 : 0,
-                ),
+                color: Theme.of(context).dividerColor.withOpacity(
+                      _current == index ? 0.6 : 0.4,
+                    ),
               ),
             ),
           ),
