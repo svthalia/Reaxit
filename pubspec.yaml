@@ -103,7 +103,7 @@ dev_dependencies:
   build_runner: ^2.1.2
 
   # JSON parsing.
-  json_serializable: ^5.0.2
+  json_serializable: ^6.0.0
 
   # Linting.
   flutter_lints: ^1.0.4
