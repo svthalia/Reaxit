@@ -944,6 +944,7 @@ class _EventScreenState extends State<EventScreen> {
               actions: [
                 if (event.userPermissions.manageEvent)
                   IconButton(
+                    padding: const EdgeInsets.all(16),
                     icon: const Icon(Icons.settings),
                     onPressed: () {
                       ThaliaRouterDelegate.of(context).push(

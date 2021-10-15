@@ -52,6 +52,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         title: const Text('CALENDAR'),
         actions: [
           IconButton(
+            padding: const EdgeInsets.all(16),
             icon: const Icon(Icons.search),
             onPressed: () {
               showSearch(
@@ -112,6 +113,7 @@ class CalendarSearchDelegate extends SearchDelegate {
     if (query.isNotEmpty) {
       return <Widget>[
         IconButton(
+          padding: const EdgeInsets.all(16),
           tooltip: 'Clear search bar',
           icon: const Icon(Icons.delete),
           onPressed: () {

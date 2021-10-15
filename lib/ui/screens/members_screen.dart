@@ -46,6 +46,7 @@ class _MembersScreenState extends State<MembersScreen> {
         title: const Text('MEMBERS'),
         actions: [
           IconButton(
+            padding: const EdgeInsets.all(16),
             icon: const Icon(Icons.search),
             onPressed: () {
               showSearch(
@@ -109,6 +110,7 @@ class MembersSearchDelegate extends SearchDelegate {
     if (query.isNotEmpty) {
       return <Widget>[
         IconButton(
+          padding: const EdgeInsets.all(16),
           tooltip: 'Clear search bar',
           icon: const Icon(Icons.delete),
           onPressed: () {

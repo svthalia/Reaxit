@@ -33,6 +33,7 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
               title: const Text('ORDERS'),
               actions: [
                 IconButton(
+                  padding: const EdgeInsets.all(16),
                   icon: const Icon(Icons.search),
                   onPressed: () {
                     showSearch(
@@ -195,6 +196,7 @@ class FoodAdminSearchDelegate extends SearchDelegate {
     if (query.isNotEmpty) {
       return <Widget>[
         IconButton(
+          padding: const EdgeInsets.all(16),
           tooltip: 'Clear search bar',
           icon: const Icon(Icons.delete),
           onPressed: () {
