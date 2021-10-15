@@ -88,7 +88,7 @@ class MenuDrawer extends StatelessWidget {
               );
             } else {
               return InkWell(
-                onTap: () {},
+                onTap: null,
                 child: Stack(
                   children: [
                     Container(
@@ -229,7 +229,6 @@ class MenuDrawer extends StatelessWidget {
           ),
           AboutListTile(
             icon: const Icon(Icons.info_outline),
-            dense: true,
             applicationVersion: config.versionNumber,
             applicationIcon: Image.asset(
               Theme.of(context).brightness == Brightness.light
@@ -242,7 +241,7 @@ class MenuDrawer extends StatelessWidget {
                 'There is an app for everything.',
                 style: Theme.of(context).textTheme.bodyText1,
               ),
-              const Divider(),
+              const SizedBox(height: 8),
               Link(
                 uri: Uri.parse(
                   'https://github.com/svthalia/Reaxit/releases',
@@ -263,7 +262,6 @@ class MenuDrawer extends StatelessWidget {
                   label: const Text('FEEDBACK'),
                 ),
               ),
-              const Divider(),
             ],
           ),
         ],

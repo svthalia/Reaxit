@@ -67,12 +67,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  const _ThemeModeCard(),
-                  const Divider(),
                   Text(
-                    'Notifications',
+                    'THEME',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyText1,
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                  const _ThemeModeCard(),
+                  const SizedBox(height: 16),
+                  Text(
+                    'NOTIFICATIONS',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.subtitle1,
                   ),
                   Center(child: Text(state.message!)),
                 ],
@@ -82,12 +87,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                const _ThemeModeCard(),
-                const Divider(),
                 Text(
-                  'Notifications',
+                  'THEME',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyText1,
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
+                const _ThemeModeCard(),
+                const SizedBox(height: 16),
+                Text(
+                  'NOTIFICATIONS',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.subtitle1,
                 ),
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 16),
@@ -99,12 +109,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                const _ThemeModeCard(),
-                const Divider(),
                 Text(
-                  'Notifications',
+                  'THEME',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyText1,
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
+                const _ThemeModeCard(),
+                const SizedBox(height: 16),
+                Text(
+                  'NOTIFICATIONS',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.subtitle1,
                 ),
                 Card(
                   child: Column(
@@ -139,15 +154,15 @@ class _ThemeModeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: const Icon(Icons.brightness_6_sharp),
         title: Text(
-          'Theme',
-          style: Theme.of(context).textTheme.bodyText1,
+          'COLOR SCHEME',
+          style: Theme.of(context).textTheme.subtitle1,
         ),
         trailing: BlocBuilder<ThemeBloc, ThemeMode>(
           builder: (context, themeMode) {
             return DropdownButton(
               value: themeMode,
+              style: Theme.of(context).textTheme.bodyText2,
               onChanged: (ThemeMode? newMode) async {
                 BlocProvider.of<ThemeBloc>(context).add(
                   ThemeChangeEvent(newMode!),
