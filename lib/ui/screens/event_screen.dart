@@ -60,15 +60,25 @@ class _EventScreenState extends State<EventScreen> {
         'https://maps.${Platform.isIOS ? 'apple' : 'google'}.com'
         '/maps?daddr=${Uri.encodeComponent(event.location)}',
       ),
-      builder: (context, followLink) => GestureDetector(
-        onTap: followLink,
-        child: FadeInImage.assetNetwork(
-          fit: BoxFit.cover,
-          fadeInDuration: const Duration(milliseconds: 300),
-          fadeOutDuration: const Duration(milliseconds: 300),
-          placeholder: 'assets/img/map_placeholder.png',
-          image: event.mapsUrl,
-        ),
+      builder: (context, followLink) => Stack(
+        fit: StackFit.loose,
+        children: [
+          FadeInImage.assetNetwork(
+            fit: BoxFit.fitWidth,
+            fadeInDuration: const Duration(milliseconds: 300),
+            fadeOutDuration: const Duration(milliseconds: 300),
+            placeholder: 'assets/img/map_placeholder.png',
+            image: event.mapsUrl,
+          ),
+          Positioned.fill(
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: followLink,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

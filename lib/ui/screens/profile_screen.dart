@@ -261,30 +261,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
         titlePadding: const EdgeInsets.only(bottom: 14),
         background: Builder(
           builder: (context) {
-            return GestureDetector(
-              onTap: member != null
-                  ? () => _showAvatarView(context, member)
-                  : null,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Container(
-                    decoration: const BoxDecoration(color: Color(0xFFC5C5C5)),
+            return Stack(
+              fit: StackFit.expand,
+              children: [
+                Container(
+                  decoration: const BoxDecoration(color: Color(0xFFC5C5C5)),
+                ),
+                member != null
+                    ? FadeInImage.assetNetwork(
+                        placeholder: 'assets/img/default-avatar.jpg',
+                        image: member.photo.medium,
+                        fit: BoxFit.cover,
+                        fadeInDuration: const Duration(milliseconds: 300),
+                      )
+                    : Image.asset(
+                        'assets/img/default-avatar.jpg',
+                        fit: BoxFit.cover,
+                      ),
+                _BlackGradient(),
+                Positioned.fill(
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: member != null
+                          ? () => _showAvatarView(context, member)
+                          : null,
+                    ),
                   ),
-                  member != null
-                      ? FadeInImage.assetNetwork(
-                          placeholder: 'assets/img/default-avatar.jpg',
-                          image: member.photo.medium,
-                          fit: BoxFit.cover,
-                          fadeInDuration: const Duration(milliseconds: 300),
-                        )
-                      : Image.asset(
-                          'assets/img/default-avatar.jpg',
-                          fit: BoxFit.cover,
-                        ),
-                  _BlackGradient()
-                ],
-              ),
+                ),
+              ],
             );
           },
         ),

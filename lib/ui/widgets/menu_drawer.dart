@@ -21,17 +21,10 @@ class MenuDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           BlocBuilder<FullMemberCubit, FullMemberState>(
-              builder: (context, state) {
-            if (state.result != null) {
-              final me = state.result!;
-              return InkWell(
-                onTap: () {
-                  routerDelegate.push(TypedMaterialPage(
-                    child: ProfileScreen(pk: me.pk, member: me),
-                    name: 'Profile(${me.pk} (me))',
-                  ));
-                },
-                child: Stack(
+            builder: (context, state) {
+              if (state.result != null) {
+                final me = state.result!;
+                return Stack(
                   children: [
                     Container(
                       height: 180,
@@ -83,13 +76,23 @@ class MenuDrawer extends StatelessWidget {
                         ),
                       ),
                     ),
+                    Positioned.fill(
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            routerDelegate.push(TypedMaterialPage(
+                              child: ProfileScreen(pk: me.pk, member: me),
+                              name: 'Profile(${me.pk} (me))',
+                            ));
+                          },
+                        ),
+                      ),
+                    ),
                   ],
-                ),
-              );
-            } else {
-              return InkWell(
-                onTap: () {},
-                child: Stack(
+                );
+              } else {
+                return Stack(
                   children: [
                     Container(
                       height: 180,
@@ -141,11 +144,17 @@ class MenuDrawer extends StatelessWidget {
                         ),
                       ),
                     ),
+                    Positioned.fill(
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(onTap: () {}),
+                      ),
+                    ),
                   ],
-                ),
-              );
-            }
-          }),
+                );
+              }
+            },
+          ),
           const Divider(height: 0, thickness: 1),
           ListTile(
             title: const Text('Welcome'),
