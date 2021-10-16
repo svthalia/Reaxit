@@ -111,12 +111,12 @@ class _EventScreenState extends State<EventScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 4),
+        const SizedBox(height: 8),
         Text(
           event.title.toUpperCase(),
           style: textTheme.headline6,
         ),
-        const Divider(),
+        const Divider(height: 24),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -142,7 +142,7 @@ class _EventScreenState extends State<EventScreen> {
             ),
           ],
         ),
-        const Divider(),
+        const SizedBox(height: 12),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -166,7 +166,7 @@ class _EventScreenState extends State<EventScreen> {
             ),
           ],
         ),
-        const Divider(),
+        const Divider(height: 24),
       ],
     );
   }
@@ -327,18 +327,18 @@ class _EventScreenState extends State<EventScreen> {
                         'Registration start:',
                         style: labelStyle,
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 8),
                     ],
                     Text(
                       'Registration deadline:',
                       style: labelStyle,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 8),
                     Text(
                       'Cancellation deadline:',
                       style: labelStyle,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 8),
                     Text(
                       'Number of registrations:',
                       style: labelStyle,
@@ -357,20 +357,20 @@ class _EventScreenState extends State<EventScreen> {
                           ),
                           style: dataStyle,
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 8),
                       ],
                       Text(
                         dateTimeFormatter
                             .format(event.registrationEnd!.toLocal()),
                         style: dataStyle,
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 8),
                       Text(
                         dateTimeFormatter
                             .format(event.cancelDeadline!.toLocal()),
                         style: dataStyle,
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 8),
                       Text(
                         event.maxParticipants == null
                             ? '${event.numParticipants} registrations'
@@ -383,12 +383,12 @@ class _EventScreenState extends State<EventScreen> {
                 ),
               ],
             ),
-            const Divider(),
+            const Divider(height: 24),
             Text.rich(
               TextSpan(children: textSpans),
               style: dataStyle,
             ),
-            // const SizedBox(height: 4),
+            const SizedBox(height: 4),
             registrationButton,
             updateButton,
             paymentButton,
@@ -441,6 +441,7 @@ class _EventScreenState extends State<EventScreen> {
           TextSpan(children: textSpans),
           style: dataStyle,
         ),
+        const SizedBox(height: 4),
         registrationButton,
         updateButton,
       ],
@@ -467,6 +468,7 @@ class _EventScreenState extends State<EventScreen> {
           TextSpan(children: textSpans),
           style: dataStyle,
         ),
+        const SizedBox(height: 4),
       ],
     );
   }
