@@ -148,6 +148,7 @@ class __RegistrationTileState extends State<_RegistrationTile> {
       if (registration.isPaid &&
           registration.payment!.type == PaymentType.tpayPayment) {
         paymentDropdown = DropdownButton<PaymentType?>(
+          style: Theme.of(context).textTheme.bodyText2,
           items: const [
             DropdownMenuItem(
               value: PaymentType.tpayPayment,
@@ -175,6 +176,7 @@ class __RegistrationTileState extends State<_RegistrationTile> {
         );
       } else {
         paymentDropdown = DropdownButton<PaymentType?>(
+          style: Theme.of(context).textTheme.bodyText2,
           items: const [
             DropdownMenuItem(
               value: PaymentType.cardPayment,

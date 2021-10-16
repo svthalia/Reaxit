@@ -102,6 +102,7 @@ class __OderTileState extends State<_OrderTile> {
     late Widget paymentDropdown;
     if (order.isPaid && order.payment!.type == PaymentType.tpayPayment) {
       paymentDropdown = DropdownButton<PaymentType?>(
+        style: Theme.of(context).textTheme.bodyText2,
         items: const [
           DropdownMenuItem(
             value: PaymentType.tpayPayment,
@@ -129,6 +130,7 @@ class __OderTileState extends State<_OrderTile> {
       );
     } else {
       paymentDropdown = DropdownButton<PaymentType?>(
+        style: Theme.of(context).textTheme.bodyText2,
         items: const [
           DropdownMenuItem(
             value: PaymentType.cardPayment,
