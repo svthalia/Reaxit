@@ -124,6 +124,7 @@ class _EventScreenState extends State<EventScreen> {
             Text('Until', style: textTheme.caption)
           ],
         ),
+        const SizedBox(height: 4),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -150,6 +151,7 @@ class _EventScreenState extends State<EventScreen> {
             Text('Price', style: textTheme.caption)
           ],
         ),
+        const SizedBox(height: 4),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

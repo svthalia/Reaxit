@@ -386,23 +386,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const Divider(),
           ],
           _DescriptionFact(member: member, cubit: _memberCubit),
-          const Divider(),
+          const Divider(height: 24),
           if (member.programme != null) ...[
             _makeStudiesFact(member),
-            const Divider(),
           ],
           if (member.startingYear != null) ...[
+            const SizedBox(height: 12),
             _makeCohortFact(member),
-            const Divider(),
           ],
           if (member.birthday != null) ...[
+            const SizedBox(height: 12),
             _makeBirthdayFact(member),
-            const Divider(),
           ],
           if (member.website != null) ...[
+            const SizedBox(height: 12),
             _makeWebsiteFact(member),
-            const Divider(),
           ],
+          const Divider(height: 24),
         ]),
       ),
     );
@@ -518,19 +518,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 _makeAppBar((state.result ?? widget.member)!),
                 _makeFactsSliver((state.result ?? widget.member)!),
                 if (!state.isLoading) ...[
-                  if (state.result!.achievements.isNotEmpty)
+                  if (state.result!.achievements.isNotEmpty) ...[
                     _makeAchievementsSliver(state.result!),
-                  if (state.result!.societies.isNotEmpty)
+                    const SliverPadding(padding: EdgeInsets.only(bottom: 12)),
+                  ],
+                  if (state.result!.societies.isNotEmpty) ...[
                     _makeSocietiesSliver(state.result!),
-                ] else
+                  ],
+                ] else ...[
                   const SliverPadding(
-                    padding: EdgeInsets.all(8),
+                    padding: EdgeInsets.all(16),
                     sliver: SliverToBoxAdapter(
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                      child: Center(child: CircularProgressIndicator()),
                     ),
                   ),
+                ],
+                const SliverToBoxAdapter(child: SizedBox(height: 32))
               ],
             );
           }
