@@ -69,7 +69,8 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                   } else if (state.isLoading) {
                     return const Center(child: CircularProgressIndicator());
                   } else {
-                    return ListView.separated(
+                    return Scrollbar(
+                        child: ListView.separated(
                       key: const PageStorageKey('event-admin'),
                       itemBuilder: (context, index) => _RegistrationTile(
                         registration: state.registrations![index],
@@ -77,7 +78,7 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                       ),
                       separatorBuilder: (_, __) => const Divider(),
                       itemCount: state.registrations!.length,
-                    );
+                    ));
                   }
                 },
               ),

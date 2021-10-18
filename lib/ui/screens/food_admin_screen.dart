@@ -65,14 +65,15 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
                   } else if (state.isLoading) {
                     return const Center(child: CircularProgressIndicator());
                   } else {
-                    return ListView.separated(
+                    return Scrollbar(
+                        child: ListView.separated(
                       key: const PageStorageKey('food-admin'),
                       itemBuilder: (context, index) => _OrderTile(
                         order: state.result![index],
                       ),
                       separatorBuilder: (_, __) => const Divider(),
                       itemCount: state.result!.length,
-                    );
+                    ));
                   }
                 },
               ),
