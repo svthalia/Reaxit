@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/blocs/food_admin_cubit.dart';
 import 'package:reaxit/models/food_order.dart';
@@ -34,16 +35,18 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.search),
-                  onPressed: () {
-                    showSearch(
-                      context: context,
-                      delegate: FoodAdminSearchDelegate(
-                        FoodAdminCubit(
-                          RepositoryProvider.of<ApiRepository>(context),
-                          foodEventPk: widget.pk,
-                        ),
-                      ),
+                  onPressed: () async {
+                    final searchCubit = FoodAdminCubit(
+                      RepositoryProvider.of<ApiRepository>(context),
+                      foodEventPk: widget.pk,
                     );
+
+                    await showSearch(
+                      context: context,
+                      delegate: FoodAdminSearchDelegate(searchCubit),
+                    );
+
+                    searchCubit.close();
 
                     // After the search dialog closes, refresh the results,
                     // since the search screen may have changed stuff through
@@ -188,7 +191,20 @@ class __OderTileState extends State<_OrderTile> {
 
 class FoodAdminSearchDelegate extends SearchDelegate {
   final FoodAdminCubit _adminCubit;
+
   FoodAdminSearchDelegate(this._adminCubit);
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    final theme = super.appBarTheme(context);
+    return theme.copyWith(
+      textTheme: theme.textTheme.copyWith(
+        headline6: GoogleFonts.openSans(
+          textStyle: Theme.of(context).textTheme.headline6,
+        ),
+      ),
+    );
+  }
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -196,7 +212,7 @@ class FoodAdminSearchDelegate extends SearchDelegate {
       return <Widget>[
         IconButton(
           tooltip: 'Clear search bar',
-          icon: const Icon(Icons.delete),
+          icon: const Icon(Icons.clear),
           onPressed: () {
             query = '';
           },
@@ -209,7 +225,7 @@ class FoodAdminSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildLeading(BuildContext context) {
-    return CloseButton(
+    return BackButton(
       onPressed: () => close(context, null),
     );
   }
@@ -222,8 +238,8 @@ class FoodAdminSearchDelegate extends SearchDelegate {
         builder: (context, state) {
           if (state.hasException) {
             return ErrorScrollView(state.message!);
-          } else if (state.result == null) {
-            return const Center(child: CircularProgressIndicator());
+          } else if (state.isLoading) {
+            return const SizedBox.shrink();
           } else {
             return ListView.separated(
               key: const PageStorageKey('food-admin-search'),
@@ -247,8 +263,8 @@ class FoodAdminSearchDelegate extends SearchDelegate {
         builder: (context, state) {
           if (state.hasException) {
             return ErrorScrollView(state.message!);
-          } else if (state.result == null) {
-            return const Center(child: CircularProgressIndicator());
+          } else if (state.isLoading) {
+            return const SizedBox.shrink();
           } else {
             return ListView.separated(
               key: const PageStorageKey('food-admin-search'),

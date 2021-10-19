@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/blocs/calendar_cubit.dart';
@@ -53,15 +54,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: CalendarSearchDelegate(
-                  CalendarCubit(
-                    RepositoryProvider.of<ApiRepository>(context),
-                  ),
-                ),
+            onPressed: () async {
+              final searchCubit = CalendarCubit(
+                RepositoryProvider.of<ApiRepository>(context),
               );
+
+              await showSearch(
+                context: context,
+                delegate: CalendarSearchDelegate(searchCubit),
+              );
+
+              searchCubit.close();
             },
           ),
         ],
@@ -97,6 +100,18 @@ class CalendarSearchDelegate extends SearchDelegate {
     _controller = ScrollController()..addListener(_scrollListener);
   }
 
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    final theme = super.appBarTheme(context);
+    return theme.copyWith(
+      textTheme: theme.textTheme.copyWith(
+        headline6: GoogleFonts.openSans(
+          textStyle: Theme.of(context).textTheme.headline6,
+        ),
+      ),
+    );
+  }
+
   void _scrollListener() {
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
@@ -113,7 +128,7 @@ class CalendarSearchDelegate extends SearchDelegate {
       return <Widget>[
         IconButton(
           tooltip: 'Clear search bar',
-          icon: const Icon(Icons.delete),
+          icon: const Icon(Icons.clear),
           onPressed: () {
             query = '';
           },
@@ -126,7 +141,7 @@ class CalendarSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildLeading(BuildContext context) {
-    return CloseButton(
+    return BackButton(
       onPressed: () => close(context, null),
     );
   }
