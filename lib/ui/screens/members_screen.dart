@@ -193,40 +193,42 @@ class MemberListScrollView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      controller: controller,
-      physics: const RangeMaintainingScrollPhysics(
-        parent: AlwaysScrollableScrollPhysics(),
-      ),
-      slivers: [
-        SliverPadding(
-          padding: const EdgeInsets.all(8),
-          sliver: SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8,
-            ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => MemberTile(
-                member: listState.results[index],
+    return Scrollbar(
+        controller: controller,
+        child: CustomScrollView(
+          controller: controller,
+          physics: const RangeMaintainingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.all(8),
+              sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) => MemberTile(
+                    member: listState.results[index],
+                  ),
+                  childCount: listState.results.length,
+                ),
               ),
-              childCount: listState.results.length,
             ),
-          ),
-        ),
-        if (listState.isLoadingMore)
-          const SliverPadding(
-            padding: EdgeInsets.all(8),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate.fixed([
-                Center(
-                  child: CircularProgressIndicator(),
-                )
-              ]),
-            ),
-          ),
-      ],
-    );
+            if (listState.isLoadingMore)
+              const SliverPadding(
+                padding: EdgeInsets.all(8),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate.fixed([
+                    Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  ]),
+                ),
+              ),
+          ],
+        ));
   }
 }

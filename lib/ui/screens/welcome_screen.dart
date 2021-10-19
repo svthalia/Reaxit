@@ -161,7 +161,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             } else if (!state.hasResults) {
               return const Center(child: CircularProgressIndicator());
             } else {
-              return ListView(
+              return Scrollbar(
+                  child: ListView(
                 key: const PageStorageKey('welcome'),
                 physics: const AlwaysScrollableScrollPhysics(),
                 children: [
@@ -181,7 +182,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     child: const Text('SHOW THE ENTIRE AGENDA'),
                   ),
                 ],
-              );
+              ));
             }
           },
         ),
