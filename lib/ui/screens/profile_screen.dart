@@ -616,7 +616,7 @@ class __DescriptionFactState extends State<_DescriptionFact> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.check),
-                        tooltip: 'Edit your description',
+                        tooltip: 'Edit your avatar',
                         onPressed: () async {
                           try {
                             await _fullMemberCubit.updateDescription(
@@ -628,7 +628,7 @@ class __DescriptionFactState extends State<_DescriptionFact> {
                               const SnackBar(
                                 behavior: SnackBarBehavior.floating,
                                 content: Text(
-                                  'Uploading your avatar failed.',
+                                  'Updating your description failed.',
                                 ),
                               ),
                             );
@@ -674,5 +674,3 @@ class __DescriptionFactState extends State<_DescriptionFact> {
     );
   }
 }
-
-// TODO: Add photo index/total indicator to gallery.
