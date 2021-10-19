@@ -523,7 +523,7 @@ class _EventScreenState extends State<EventScreen> {
                           rootNavigator: true,
                         ).pop(false),
                         icon: const Icon(Icons.clear),
-                        label: const Text('No'),
+                        label: const Text('NO'),
                       ),
                       ElevatedButton.icon(
                         onPressed: () => Navigator.of(
@@ -620,7 +620,7 @@ class _EventScreenState extends State<EventScreen> {
                     rootNavigator: true,
                   ).pop(false),
                   icon: const Icon(Icons.clear),
-                  label: const Text('No'),
+                  label: const Text('NO'),
                 ),
                 ElevatedButton.icon(
                   onPressed: () => Navigator.of(
@@ -837,6 +837,13 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
+  Widget _makeRegistrationsHeader() {
+    return Padding(
+        padding: EdgeInsets.only(left: 16),
+        child:
+            Text("Registrations", style: Theme.of(context).textTheme.caption));
+  }
+
   SliverPadding _makeRegistrations(RegistrationsState state) {
     if (state.isLoading) {
       return const SliverPadding(
@@ -856,7 +863,7 @@ class _EventScreenState extends State<EventScreen> {
       );
     } else {
       return SliverPadding(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
         sliver: SliverGrid(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
@@ -974,6 +981,7 @@ class _EventScreenState extends State<EventScreen> {
                             const Divider(),
                             _makeDescription(event),
                             const Divider(),
+                            _makeRegistrationsHeader(),
                           ],
                         ),
                       ),
