@@ -408,6 +408,7 @@ class _FoodScreenState extends State<FoodScreen> {
                 actions: [
                   if (foodEvent.canManage)
                     IconButton(
+                      padding: const EdgeInsets.all(16),
                       icon: const Icon(Icons.settings),
                       onPressed: () {
                         ThaliaRouterDelegate.of(context).push(

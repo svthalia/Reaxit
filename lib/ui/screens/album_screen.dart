@@ -131,6 +131,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
 
   Widget _makeShareAlbumButton(String slug) {
     return IconButton(
+      padding: const EdgeInsets.all(16),
       color: Theme.of(context).primaryIconTheme.color,
       icon: Icon(
         Platform.isIOS ? Icons.ios_share : Icons.share,

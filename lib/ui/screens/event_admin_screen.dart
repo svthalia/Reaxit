@@ -35,6 +35,7 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
               title: const Text('REGISTRATIONS'),
               actions: [
                 IconButton(
+                  padding: const EdgeInsets.all(16),
                   icon: const Icon(Icons.search),
                   onPressed: () async {
                     final searchCubit = EventAdminCubit(
@@ -260,6 +261,7 @@ class EventAdminSearchDelegate extends SearchDelegate {
     if (query.isNotEmpty) {
       return <Widget>[
         IconButton(
+          padding: const EdgeInsets.all(16),
           tooltip: 'Clear search bar',
           icon: const Icon(Icons.clear),
           onPressed: () {

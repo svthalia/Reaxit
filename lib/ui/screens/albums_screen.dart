@@ -47,6 +47,7 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
         title: const Text('ALBUMS'),
         actions: [
           IconButton(
+            padding: const EdgeInsets.all(16),
             icon: const Icon(Icons.search),
             onPressed: () async {
               final searchCubit = AlbumListCubit(
@@ -121,6 +122,7 @@ class AlbumsSearchDelegate extends SearchDelegate {
     if (query.isNotEmpty) {
       return <Widget>[
         IconButton(
+          padding: const EdgeInsets.all(16),
           tooltip: 'Clear search bar',
           icon: const Icon(Icons.clear),
           onPressed: () {
