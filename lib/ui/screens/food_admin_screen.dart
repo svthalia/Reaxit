@@ -236,6 +236,8 @@ class FoodAdminSearchDelegate extends SearchDelegate {
         builder: (context, state) {
           if (state.hasException) {
             return ErrorScrollView(state.message!);
+          } else if (state.isLoading) {
+            return const SizedBox.shrink();
           } else {
             return ListView.separated(
               key: const PageStorageKey('food-admin-search'),
@@ -259,6 +261,8 @@ class FoodAdminSearchDelegate extends SearchDelegate {
         builder: (context, state) {
           if (state.hasException) {
             return ErrorScrollView(state.message!);
+          } else if (state.isLoading) {
+            return const SizedBox.shrink();
           } else {
             return ListView.separated(
               key: const PageStorageKey('food-admin-search'),
