@@ -75,14 +75,15 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                     return const Center(child: CircularProgressIndicator());
                   } else {
                     return Scrollbar(
-                        child: ListView.separated(
-                      key: const PageStorageKey('event-admin'),
-                      itemBuilder: (context, index) => _RegistrationTile(
-                        registration: state.registrations[index],
-                        requiresPayment: state.event!.paymentIsRequired,
+                      child: ListView.separated(
+                        key: const PageStorageKey('event-admin'),
+                        itemBuilder: (context, index) => _RegistrationTile(
+                          registration: state.registrations[index],
+                          requiresPayment: state.event!.paymentIsRequired,
+                        ),
+                        separatorBuilder: (_, __) => const Divider(),
+                        itemCount: state.registrations.length,
                       ),
-                      separatorBuilder: (_, __) => const Divider(),
-                      itemCount: state.registrations.length,
                     );
                   }
                 },
