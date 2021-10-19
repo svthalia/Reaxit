@@ -13,8 +13,8 @@ class EventAdminState extends Equatable {
   /// This can only be null when [isLoading] or [hasException] is true.
   final Event? event;
 
-  /// This can only be null when [isLoading] or [hasException] is true.
-  final List<AdminEventRegistration>? registrations;
+  /// These may be outdated when [isLoading] is true.
+  final List<AdminEventRegistration> registrations;
 
   final String? message;
   final bool isLoading;
@@ -28,9 +28,7 @@ class EventAdminState extends Equatable {
     required this.isLoading,
     required this.message,
   }) : assert(
-          (event != null && registrations != null) ||
-              isLoading ||
-              message != null,
+          event != null || isLoading || message != null,
           'event can only be null when isLoading or hasException is true.',
         );
 
@@ -52,17 +50,17 @@ class EventAdminState extends Equatable {
 
   const EventAdminState.result({
     required Event this.event,
-    required List<AdminEventRegistration> this.registrations,
+    required this.registrations,
   })  : message = null,
         isLoading = false;
 
-  const EventAdminState.loading({this.event, this.registrations})
+  const EventAdminState.loading({this.event, required this.registrations})
       : message = null,
         isLoading = true;
 
   const EventAdminState.failure({required String this.message})
       : event = null,
-        registrations = null,
+        registrations = const [],
         isLoading = false;
 }
 
@@ -82,7 +80,7 @@ class EventAdminCubit extends Cubit<EventAdminState> {
   EventAdminCubit(
     this.api, {
     required this.eventPk,
-  }) : super(const EventAdminState.loading());
+  }) : super(const EventAdminState.loading(registrations: []));
 
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
@@ -155,10 +153,18 @@ class EventAdminCubit extends Cubit<EventAdminState> {
     if (query != _searchQuery) {
       _searchQuery = query;
       _searchDebounceTimer?.cancel();
-      _searchDebounceTimer = Timer(
-        config.searchDebounceTime,
-        loadRegistrations,
-      );
+      if (query?.isEmpty ?? false) {
+        /// Don't get results when the query is empty.
+        emit(EventAdminState.loading(
+          event: state.event,
+          registrations: const [],
+        ));
+      } else {
+        _searchDebounceTimer = Timer(
+          config.searchDebounceTime,
+          loadRegistrations,
+        );
+      }
     }
   }
 
@@ -171,9 +177,9 @@ class EventAdminCubit extends Cubit<EventAdminState> {
       registrationPk: registrationPk,
       present: present,
     );
-    if (state.registrations != null) {
+    if (state.registrations.isNotEmpty) {
       emit(state.copyWith(
-        registrations: state.registrations!.map(
+        registrations: state.registrations.map(
           (registration) {
             if (registration.pk == registrationPk) {
               return registration.copyWithPresent(present);
@@ -197,10 +203,10 @@ class EventAdminCubit extends Cubit<EventAdminState> {
         registrationPk: registrationPk,
         paymentType: paymentType,
       );
-      if (state.registrations != null) {
+      if (state.registrations.isNotEmpty) {
         emit(
           state.copyWith(
-            registrations: state.registrations!.map(
+            registrations: state.registrations.map(
               (registration) {
                 if (registration.pk == registrationPk) {
                   return registration.copyWithPayment(payable.payment);
@@ -218,10 +224,10 @@ class EventAdminCubit extends Cubit<EventAdminState> {
       await api.markNotPaidAdminEventRegistration(
         registrationPk: registrationPk,
       );
-      if (state.registrations != null) {
+      if (state.registrations.isNotEmpty) {
         emit(
           state.copyWith(
-            registrations: state.registrations!.map(
+            registrations: state.registrations.map(
               (registration) {
                 if (registration.pk == registrationPk) {
                   return registration.copyWithPayment(null);

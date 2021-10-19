@@ -942,6 +942,7 @@ class _EventScreenState extends State<EventScreen> {
               actions: [
                 if (event.userPermissions.manageEvent)
                   IconButton(
+                    padding: const EdgeInsets.all(16),
                     icon: const Icon(Icons.settings),
                     onPressed: () {
                       ThaliaRouterDelegate.of(context).push(
@@ -959,7 +960,8 @@ class _EventScreenState extends State<EventScreen> {
               child: BlocBuilder<RegistrationsCubit, RegistrationsState>(
                 bloc: _registrationsCubit,
                 builder: (context, state) {
-                  return CustomScrollView(
+                  return Scrollbar(
+                      child: CustomScrollView(
                     key: const PageStorageKey('event'),
                     slivers: [
                       SliverToBoxAdapter(
@@ -977,7 +979,7 @@ class _EventScreenState extends State<EventScreen> {
                       ),
                       _makeRegistrations(state),
                     ],
-                  );
+                  ));
                 },
               ),
             ),

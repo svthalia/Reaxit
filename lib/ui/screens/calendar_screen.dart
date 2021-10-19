@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/blocs/calendar_cubit.dart';
@@ -52,16 +53,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
         title: const Text('CALENDAR'),
         actions: [
           IconButton(
+            padding: const EdgeInsets.all(16),
             icon: const Icon(Icons.search),
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: CalendarSearchDelegate(
-                  CalendarCubit(
-                    RepositoryProvider.of<ApiRepository>(context),
-                  ),
-                ),
+            onPressed: () async {
+              final searchCubit = CalendarCubit(
+                RepositoryProvider.of<ApiRepository>(context),
               );
+
+              await showSearch(
+                context: context,
+                delegate: CalendarSearchDelegate(searchCubit),
+              );
+
+              searchCubit.close();
             },
           ),
         ],
@@ -97,6 +101,18 @@ class CalendarSearchDelegate extends SearchDelegate {
     _controller = ScrollController()..addListener(_scrollListener);
   }
 
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    final theme = super.appBarTheme(context);
+    return theme.copyWith(
+      textTheme: theme.textTheme.copyWith(
+        headline6: GoogleFonts.openSans(
+          textStyle: Theme.of(context).textTheme.headline6,
+        ),
+      ),
+    );
+  }
+
   void _scrollListener() {
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
@@ -112,8 +128,9 @@ class CalendarSearchDelegate extends SearchDelegate {
     if (query.isNotEmpty) {
       return <Widget>[
         IconButton(
+          padding: const EdgeInsets.all(16),
           tooltip: 'Clear search bar',
-          icon: const Icon(Icons.delete),
+          icon: const Icon(Icons.clear),
           onPressed: () {
             query = '';
           },
@@ -126,7 +143,7 @@ class CalendarSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildLeading(BuildContext context) {
-    return CloseButton(
+    return BackButton(
       onPressed: () => close(context, null),
     );
   }
@@ -217,69 +234,71 @@ class CalendarScrollView extends StatelessWidget {
     final monthGroupedEvents = _groupByMonth(calendarState.results);
     final months = monthGroupedEvents.keys.toList();
 
-    return CustomScrollView(
-      controller: controller,
-      physics: const RangeMaintainingScrollPhysics(
-        parent: AlwaysScrollableScrollPhysics(),
-      ),
-      slivers: [
-        SliverPadding(
-          padding: const EdgeInsets.all(12),
-          sliver: SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final month = months[index];
-                final events = monthGroupedEvents[month]!;
+    return Scrollbar(
+        controller: controller,
+        child: CustomScrollView(
+          controller: controller,
+          physics: const RangeMaintainingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.all(12),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final month = months[index];
+                    final events = monthGroupedEvents[month]!;
 
-                final dayGroupedEvents = _groupByDay(events);
-                final days = dayGroupedEvents.keys.toList();
+                    final dayGroupedEvents = _groupByDay(events);
+                    final days = dayGroupedEvents.keys.toList();
 
-                // TODO: StickyHeaders currently cause silent exceptions
-                //  when they build. This is only visible while catching
-                //  'All Exceptions', and does not affect the user. See
-                //  https://github.com/fluttercommunity/flutter_sticky_headers/issues/39.
-                return StickyHeader(
-                  header: SizedBox(
-                    width: double.infinity,
-                    child: Material(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Text(
-                          month.year == DateTime.now().year
-                              ? monthFormatter
-                                  .format(month.toLocal())
-                                  .toUpperCase()
-                              : monthYearFormatter
-                                  .format(month.toLocal())
-                                  .toUpperCase(),
-                          style: Theme.of(context).textTheme.subtitle1,
+                    // TODO: StickyHeaders currently cause silent exceptions
+                    //  when they build. This is only visible while catching
+                    //  'All Exceptions', and does not affect the user. See
+                    //  https://github.com/fluttercommunity/flutter_sticky_headers/issues/39.
+                    return StickyHeader(
+                      header: SizedBox(
+                        width: double.infinity,
+                        child: Material(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Text(
+                              month.year == DateTime.now().year
+                                  ? monthFormatter
+                                      .format(month.toLocal())
+                                      .toUpperCase()
+                                  : monthYearFormatter
+                                      .format(month.toLocal())
+                                      .toUpperCase(),
+                              style: Theme.of(context).textTheme.subtitle1,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const SizedBox(height: 8),
-                      for (final day in days)
-                        _DayCard(day: day, events: dayGroupedEvents[day]!),
-                    ],
-                  ),
-                );
-              },
-              childCount: monthGroupedEvents.length,
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(height: 8),
+                          for (final day in days)
+                            _DayCard(day: day, events: dayGroupedEvents[day]!),
+                        ],
+                      ),
+                    );
+                  },
+                  childCount: monthGroupedEvents.length,
+                ),
+              ),
             ),
-          ),
-        ),
-        if (calendarState.isLoadingMore)
-          const SliverPadding(
-            padding: EdgeInsets.all(12),
-            sliver: SliverToBoxAdapter(
-              child: Center(child: CircularProgressIndicator()),
-            ),
-          ),
-      ],
-    );
+            if (calendarState.isLoadingMore)
+              const SliverPadding(
+                padding: EdgeInsets.all(12),
+                sliver: SliverToBoxAdapter(
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              ),
+          ],
+        ));
   }
 }
 
