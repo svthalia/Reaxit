@@ -398,7 +398,7 @@ class _EventScreenState extends State<EventScreen> {
     Widget registrationButton = const SizedBox.shrink();
 
     if (event.isInvited) {
-      textSpans.add(const TextSpan(text: 'You are registered.'));
+      textSpans.add(const TextSpan(text: 'You are registered. '));
       if (event.canCancelRegistration) {
         registrationButton = _makeIWontBeThereButton(event);
       }

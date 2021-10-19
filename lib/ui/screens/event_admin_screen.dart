@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/blocs/event_admin_cubit.dart';
 import 'package:reaxit/models/event_registration.dart';
@@ -36,15 +37,18 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                 IconButton(
                   icon: const Icon(Icons.search),
                   onPressed: () async {
+                    final searchCubit = EventAdminCubit(
+                      RepositoryProvider.of<ApiRepository>(context),
+                      eventPk: widget.pk,
+                    );
+
                     await showSearch(
                       context: context,
-                      delegate: EventAdminSearchDelegate(
-                        EventAdminCubit(
-                          RepositoryProvider.of<ApiRepository>(context),
-                          eventPk: widget.pk,
-                        ),
-                      ),
+                      delegate: EventAdminSearchDelegate(searchCubit),
                     );
+
+                    searchCubit.close();
+
                     // After the search dialog closes, refresh the results,
                     // since the search screen may have changed stuff through
                     // its own EventAdminCubit, that do not show up in the cubit
@@ -73,12 +77,12 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                         child: ListView.separated(
                       key: const PageStorageKey('event-admin'),
                       itemBuilder: (context, index) => _RegistrationTile(
-                        registration: state.registrations![index],
+                        registration: state.registrations[index],
                         requiresPayment: state.event!.paymentIsRequired,
                       ),
                       separatorBuilder: (_, __) => const Divider(),
-                      itemCount: state.registrations!.length,
-                    ));
+                      itemCount: state.registrations.length,
+                    );
                   }
                 },
               ),
@@ -237,8 +241,18 @@ class __RegistrationTileState extends State<_RegistrationTile> {
 class EventAdminSearchDelegate extends SearchDelegate {
   final EventAdminCubit _adminCubit;
 
-  EventAdminSearchDelegate(this._adminCubit) {
-    _adminCubit.load();
+  EventAdminSearchDelegate(this._adminCubit);
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    final theme = super.appBarTheme(context);
+    return theme.copyWith(
+      textTheme: theme.textTheme.copyWith(
+        headline6: GoogleFonts.openSans(
+          textStyle: Theme.of(context).textTheme.headline6,
+        ),
+      ),
+    );
   }
 
   @override
@@ -247,7 +261,7 @@ class EventAdminSearchDelegate extends SearchDelegate {
       return <Widget>[
         IconButton(
           tooltip: 'Clear search bar',
-          icon: const Icon(Icons.delete),
+          icon: const Icon(Icons.clear),
           onPressed: () {
             query = '';
           },
@@ -260,7 +274,7 @@ class EventAdminSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildLeading(BuildContext context) {
-    return CloseButton(
+    return BackButton(
       onPressed: () => close(context, null),
     );
   }
@@ -273,17 +287,15 @@ class EventAdminSearchDelegate extends SearchDelegate {
         builder: (context, state) {
           if (state.hasException) {
             return ErrorScrollView(state.message!);
-          } else if (state.registrations == null) {
-            return const Center(child: CircularProgressIndicator());
           } else {
             return ListView.separated(
               key: const PageStorageKey('event-admin-search'),
               itemBuilder: (context, index) => _RegistrationTile(
-                registration: state.registrations![index],
+                registration: state.registrations[index],
                 requiresPayment: state.event!.paymentIsRequired,
               ),
               separatorBuilder: (_, __) => const Divider(),
-              itemCount: state.registrations!.length,
+              itemCount: state.registrations.length,
             );
           }
         },
@@ -299,17 +311,15 @@ class EventAdminSearchDelegate extends SearchDelegate {
         builder: (context, state) {
           if (state.hasException) {
             return ErrorScrollView(state.message!);
-          } else if (state.registrations == null) {
-            return const Center(child: CircularProgressIndicator());
           } else {
             return ListView.separated(
               key: const PageStorageKey('event-admin-search'),
               itemBuilder: (context, index) => _RegistrationTile(
-                registration: state.registrations![index],
+                registration: state.registrations[index],
                 requiresPayment: state.event!.paymentIsRequired,
               ),
               separatorBuilder: (_, __) => const Divider(),
-              itemCount: state.registrations!.length,
+              itemCount: state.registrations.length,
             );
           }
         },
