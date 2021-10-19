@@ -54,15 +54,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: CalendarSearchDelegate(
-                  CalendarCubit(
-                    RepositoryProvider.of<ApiRepository>(context),
-                  ),
-                ),
+            onPressed: () async {
+              final searchCubit = CalendarCubit(
+                RepositoryProvider.of<ApiRepository>(context),
               );
+
+              await showSearch(
+                context: context,
+                delegate: CalendarSearchDelegate(searchCubit),
+              );
+
+              searchCubit.close();
             },
           ),
         ],

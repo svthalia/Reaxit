@@ -48,18 +48,17 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: AlbumsSearchDelegate(
-                  AlbumListCubit(
-                    RepositoryProvider.of<ApiRepository>(
-                      context,
-                      listen: false,
-                    ),
-                  ),
-                ),
+            onPressed: () async {
+              final searchCubit = AlbumListCubit(
+                RepositoryProvider.of<ApiRepository>(context),
               );
+
+              await showSearch(
+                context: context,
+                delegate: AlbumsSearchDelegate(searchCubit),
+              );
+
+              searchCubit.close();
             },
           ),
         ],

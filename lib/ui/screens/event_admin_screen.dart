@@ -37,15 +37,18 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                 IconButton(
                   icon: const Icon(Icons.search),
                   onPressed: () async {
+                    final searchCubit = EventAdminCubit(
+                      RepositoryProvider.of<ApiRepository>(context),
+                      eventPk: widget.pk,
+                    );
+
                     await showSearch(
                       context: context,
-                      delegate: EventAdminSearchDelegate(
-                        EventAdminCubit(
-                          RepositoryProvider.of<ApiRepository>(context),
-                          eventPk: widget.pk,
-                        ),
-                      ),
+                      delegate: EventAdminSearchDelegate(searchCubit),
                     );
+
+                    searchCubit.close();
+
                     // After the search dialog closes, refresh the results,
                     // since the search screen may have changed stuff through
                     // its own EventAdminCubit, that do not show up in the cubit

@@ -48,18 +48,17 @@ class _MembersScreenState extends State<MembersScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: MembersSearchDelegate(
-                  MemberListCubit(
-                    RepositoryProvider.of<ApiRepository>(
-                      context,
-                      listen: false,
-                    ),
-                  ),
-                ),
+            onPressed: () async {
+              final searchCubit = MemberListCubit(
+                RepositoryProvider.of<ApiRepository>(context),
               );
+
+              await showSearch(
+                context: context,
+                delegate: MembersSearchDelegate(searchCubit),
+              );
+
+              searchCubit.close();
             },
           ),
         ],

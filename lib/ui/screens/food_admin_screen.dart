@@ -35,16 +35,18 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.search),
-                  onPressed: () {
-                    showSearch(
-                      context: context,
-                      delegate: FoodAdminSearchDelegate(
-                        FoodAdminCubit(
-                          RepositoryProvider.of<ApiRepository>(context),
-                          foodEventPk: widget.pk,
-                        ),
-                      ),
+                  onPressed: () async {
+                    final searchCubit = FoodAdminCubit(
+                      RepositoryProvider.of<ApiRepository>(context),
+                      foodEventPk: widget.pk,
                     );
+
+                    await showSearch(
+                      context: context,
+                      delegate: FoodAdminSearchDelegate(searchCubit),
+                    );
+
+                    searchCubit.close();
 
                     // After the search dialog closes, refresh the results,
                     // since the search screen may have changed stuff through
