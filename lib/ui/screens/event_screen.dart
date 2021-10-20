@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -57,7 +55,7 @@ class _EventScreenState extends State<EventScreen> {
   Widget _makeMap(Event event) {
     return Link(
       uri: Uri.parse(
-        'https://maps.${Platform.isIOS ? 'apple' : 'google'}.com'
+        'https://maps.${Theme.of(context).platform == TargetPlatform.iOS ? 'apple' : 'google'}.com'
         '/maps?daddr=${Uri.encodeComponent(event.location)}',
       ),
       builder: (context, followLink) => GestureDetector(
