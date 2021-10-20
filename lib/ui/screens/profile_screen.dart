@@ -88,7 +88,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 imageProvider: NetworkImage(member.photo.full),
                 minScale: PhotoViewComputedScale.contained * 0.8,
                 maxScale: PhotoViewComputedScale.covered * 1.2,
-                loadingBuilder: (_, __) => const CircularProgressIndicator(),
+                loadingBuilder: (_, __) => const Center(
+                  child: CircularProgressIndicator(),
+                ),
                 backgroundDecoration: const BoxDecoration(
                   color: Colors.transparent,
                 ),
