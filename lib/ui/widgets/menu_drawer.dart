@@ -9,8 +9,6 @@ import 'package:reaxit/ui/screens/members_screen.dart';
 import 'package:reaxit/ui/screens/profile_screen.dart';
 import 'package:reaxit/ui/screens/settings_screen.dart';
 import 'package:reaxit/ui/screens/welcome_screen.dart';
-import 'package:reaxit/config.dart' as config;
-import 'package:url_launcher/link.dart';
 
 class MenuDrawer extends StatelessWidget {
   @override
@@ -226,43 +224,6 @@ class MenuDrawer extends StatelessWidget {
                 LogOutAuthEvent(),
               );
             },
-          ),
-          AboutListTile(
-            icon: const Icon(Icons.info_outline),
-            applicationVersion: config.versionNumber,
-            applicationIcon: Image.asset(
-              Theme.of(context).brightness == Brightness.light
-                  ? 'assets/img/logo-t-zwart.png'
-                  : 'assets/img/logo-t-wit.png',
-              width: 80,
-            ),
-            aboutBoxChildren: [
-              Text(
-                'There is an app for everything.',
-                style: Theme.of(context).textTheme.bodyText1,
-              ),
-              const SizedBox(height: 8),
-              Link(
-                uri: Uri.parse(
-                  'https://github.com/svthalia/Reaxit/releases',
-                ),
-                builder: (context, followLink) => OutlinedButton.icon(
-                  onPressed: followLink,
-                  icon: const Icon(Icons.history),
-                  label: const Text('CHANGELOG'),
-                ),
-              ),
-              Link(
-                uri: Uri.parse(
-                  'https://github.com/svthalia/Reaxit/issues',
-                ),
-                builder: (context, followLink) => OutlinedButton.icon(
-                  onPressed: followLink,
-                  icon: const Icon(Icons.bug_report_outlined),
-                  label: const Text('FEEDBACK'),
-                ),
-              ),
-            ],
           ),
         ],
       ),

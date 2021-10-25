@@ -106,28 +106,22 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               String dayText;
               switch (day.difference(today).inDays) {
                 case 0:
-                  dayText = 'TODAY';
+                  dayText = 'Today';
                   break;
                 case 1:
-                  dayText = 'TOMORROW';
+                  dayText = 'Tomorrow';
                   break;
                 default:
-                  dayText = dateFormatter.format(day).toUpperCase();
+                  dayText = dateFormatter.format(day);
               }
               return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 6,
-                        bottom: 6,
-                        top: 12,
-                      ),
-                      child: Text(
-                        dayText,
-                        textAlign: TextAlign.left,
-                        style: Theme.of(context).textTheme.caption,
-                      ),
+                    const SizedBox(height: 8),
+                    Text(
+                      dayText,
+                      textAlign: TextAlign.left,
+                      style: Theme.of(context).textTheme.caption,
                     ),
                     for (final event in dayEvents)
                       EventDetailCard(event: event),

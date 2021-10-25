@@ -27,6 +27,7 @@ class EventDetailCard extends StatelessWidget {
     }
 
     return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: InkWell(
         onTap: () {
           ThaliaRouterDelegate.of(context).push(

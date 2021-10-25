@@ -6,6 +6,8 @@ import 'package:reaxit/blocs/theme_bloc.dart';
 import 'package:reaxit/models/push_notification_category.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
+import 'package:reaxit/config.dart' as config;
+import 'package:url_launcher/link.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -56,6 +58,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: ThaliaAppBar(title: const Text('SETTINGS')),
       drawer: MenuDrawer(),
@@ -67,18 +70,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  Text(
-                    'THEME',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.subtitle1,
-                  ),
+                  Text('About', style: textTheme.caption),
+                  const _AboutCard(),
+                  const SizedBox(height: 8),
+                  Text('Theme', style: textTheme.caption),
                   const _ThemeModeCard(),
-                  const SizedBox(height: 16),
-                  Text(
-                    'NOTIFICATIONS',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.subtitle1,
-                  ),
+                  const SizedBox(height: 8),
+                  Text('Notifications', style: textTheme.caption),
                   Center(child: Text(state.message!)),
                 ],
               ),
@@ -87,18 +85,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                Text(
-                  'THEME',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
+                Text('About', style: textTheme.caption),
+                const _AboutCard(),
+                const SizedBox(height: 8),
+                Text('Theme', style: textTheme.caption),
                 const _ThemeModeCard(),
-                const SizedBox(height: 16),
-                Text(
-                  'NOTIFICATIONS',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
+                const SizedBox(height: 8),
+                Text('Notifications', style: textTheme.caption),
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 16),
                   child: Center(child: CircularProgressIndicator()),
@@ -109,19 +102,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                Text(
-                  'THEME',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
+                Text('About', style: textTheme.caption),
+                const _AboutCard(),
+                const SizedBox(height: 8),
+                Text('Theme', style: textTheme.caption),
                 const _ThemeModeCard(),
-                const SizedBox(height: 16),
-                Text(
-                  'NOTIFICATIONS',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
+                const SizedBox(height: 8),
+                Text('Notifications', style: textTheme.caption),
                 Card(
+                  margin: const EdgeInsets.symmetric(vertical: 8),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,6 +142,7 @@ class _ThemeModeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
         title: Text(
           'COLOR SCHEME',
@@ -202,6 +192,85 @@ class _ThemeModeCard extends StatelessWidget {
               ],
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+class _AboutCard extends StatelessWidget {
+  const _AboutCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Image.asset(
+                  Theme.of(context).brightness == Brightness.light
+                      ? 'assets/img/logo-t-zwart.png'
+                      : 'assets/img/logo-t-wit.png',
+                  width: 80,
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: ListBody(
+                      children: <Widget>[
+                        const SizedBox(height: 4),
+                        Text(
+                          'ThaliApp',
+                          style: Theme.of(context).textTheme.headline5,
+                        ),
+                        Text(
+                          config.versionNumber,
+                          style: Theme.of(context).textTheme.bodyText2,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'There is an app for everything.',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+            const SizedBox(height: 8),
+            Link(
+              uri: Uri.parse(
+                'https://github.com/svthalia/Reaxit/releases',
+              ),
+              builder: (context, followLink) => OutlinedButton.icon(
+                onPressed: followLink,
+                icon: const Icon(Icons.history),
+                label: const Text('CHANGELOG'),
+              ),
+            ),
+            Link(
+              uri: Uri.parse(
+                'https://github.com/svthalia/Reaxit/issues',
+              ),
+              builder: (context, followLink) => OutlinedButton.icon(
+                onPressed: followLink,
+                icon: const Icon(Icons.bug_report_outlined),
+                label: const Text('FEEDBACK'),
+              ),
+            ),
+            OutlinedButton.icon(
+              onPressed: () => showLicensePage(context: context),
+              label: const Text('VIEW LICENSES'),
+              icon: const Icon(Icons.info_outline),
+            )
+          ],
         ),
       ),
     );
