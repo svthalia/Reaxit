@@ -70,28 +70,36 @@ class CalendarEvent {
     } else {
       return [
         CalendarEvent._(
-            parentEvent: event,
-            title: event.title + ' day 1/$daySpan',
-            start: event.start,
-            end: startDate.add(const Duration(days: 1)),
-            label: 'From $startTime | ${event.location}'),
+          parentEvent: event,
+          title: event.title + ' day 1/$daySpan',
+          start: event.start,
+          end: _addDays(startDate, 1),
+          label: 'From $startTime | ${event.location}',
+        ),
         for (var day in Iterable.generate(daySpan - 2, (i) => i + 2))
           CalendarEvent._(
             parentEvent: event,
             title: event.title + ' day $day/$daySpan',
-            start: startDate.add(Duration(days: day - 1)),
-            end: startDate.add(Duration(days: day)),
+            start: _addDays(startDate, day - 1),
+            end: _addDays(startDate, day),
             label: event.location,
           ),
         CalendarEvent._(
-            parentEvent: event,
-            title: event.title + ' day $daySpan/$daySpan',
-            start: endDate,
-            end: event.end,
-            label: 'Until $endTime | ${event.location}'),
+          parentEvent: event,
+          title: event.title + ' day $daySpan/$daySpan',
+          start: endDate,
+          end: event.end,
+          label: 'Until $endTime | ${event.location}',
+        ),
       ];
     }
   }
+
+  static DateTime _addDays(DateTime x, int days) => DateTime(
+        x.year,
+        x.month,
+        x.day + days,
+      );
 }
 
 typedef CalendarState = ListState<CalendarEvent>;
