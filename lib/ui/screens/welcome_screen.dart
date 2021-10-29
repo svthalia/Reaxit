@@ -106,13 +106,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               String dayText;
               switch (day.difference(today).inDays) {
                 case 0:
-                  dayText = 'Today';
+                  dayText = 'TODAY';
                   break;
                 case 1:
-                  dayText = 'Tomorrow';
+                  dayText = 'TOMORROW';
                   break;
                 default:
-                  dayText = dateFormatter.format(day);
+                  dayText = dateFormatter.format(day).toUpperCase();
               }
               return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

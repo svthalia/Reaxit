@@ -293,7 +293,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _fieldLabel(String title) {
-    return Text(title, style: Theme.of(context).textTheme.caption);
+    return Text(
+      title.toUpperCase(),
+      style: Theme.of(context).textTheme.caption,
+    );
   }
 
   Widget _makeHonoraryFact() {
@@ -590,7 +593,10 @@ class __DescriptionFactState extends State<_DescriptionFact> {
   }
 
   Widget _fieldLabel(String title) {
-    return Text(title, style: Theme.of(context).textTheme.caption);
+    return Text(
+      title.toUpperCase(),
+      style: Theme.of(context).textTheme.caption,
+    );
   }
 
   @override

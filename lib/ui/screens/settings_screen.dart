@@ -70,13 +70,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  Text('About', style: textTheme.caption),
+                  Text('ABOUT', style: textTheme.caption),
                   const _AboutCard(),
                   const SizedBox(height: 8),
-                  Text('Theme', style: textTheme.caption),
+                  Text('THEME', style: textTheme.caption),
                   const _ThemeModeCard(),
                   const SizedBox(height: 8),
-                  Text('Notifications', style: textTheme.caption),
+                  Text('NOTIFICATIONS', style: textTheme.caption),
                   Center(child: Text(state.message!)),
                 ],
               ),
@@ -85,13 +85,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                Text('About', style: textTheme.caption),
+                Text('ABOUT', style: textTheme.caption),
                 const _AboutCard(),
                 const SizedBox(height: 8),
-                Text('Theme', style: textTheme.caption),
+                Text('THEME', style: textTheme.caption),
                 const _ThemeModeCard(),
                 const SizedBox(height: 8),
-                Text('Notifications', style: textTheme.caption),
+                Text('NOTIFICATIONS', style: textTheme.caption),
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 16),
                   child: Center(child: CircularProgressIndicator()),
@@ -102,13 +102,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                Text('About', style: textTheme.caption),
+                Text('ABOUT', style: textTheme.caption),
                 const _AboutCard(),
                 const SizedBox(height: 8),
-                Text('Theme', style: textTheme.caption),
+                Text('THEME', style: textTheme.caption),
                 const _ThemeModeCard(),
                 const SizedBox(height: 8),
-                Text('Notifications', style: textTheme.caption),
+                Text('NOTIFICATIONS', style: textTheme.caption),
                 Card(
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   child: Column(

@@ -110,8 +110,8 @@ class _EventScreenState extends State<EventScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('From', style: textTheme.caption),
-            Text('Until', style: textTheme.caption)
+            Text('FROM', style: textTheme.caption),
+            Text('UNTIL', style: textTheme.caption)
           ],
         ),
         Row(
@@ -136,8 +136,8 @@ class _EventScreenState extends State<EventScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Location', style: textTheme.caption),
-            Text('Price', style: textTheme.caption)
+            Text('LOCATION', style: textTheme.caption),
+            Text('PRICE', style: textTheme.caption)
           ],
         ),
         Row(
