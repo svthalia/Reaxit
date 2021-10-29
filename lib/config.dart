@@ -1,5 +1,5 @@
 /// This file specifies configuration options that can be passed
-/// at compile time through environment variables.
+/// at compile time through `--dart-define`s, as is done by fastlane.
 ///
 /// The default values can be used on the staging server. If some variables are
 /// specified, be sure to specify all.
@@ -51,3 +51,14 @@ const List<String> oauthScopes = [
 const Duration searchDebounceTime = Duration(milliseconds: 200);
 
 const String versionNumber = 'v3.0.0';
+
+final Uri feedbackUri = Uri.parse(
+  'https://github.com/svthalia/Reaxit/issues',
+);
+
+final Uri changelogUri = Uri.parse(
+  'https://github.com/svthalia/Reaxit/releases',
+);
+
+const String termsAndConditionsUrl =
+    'https://staging.thalia.nu/event-registration-terms/';

@@ -215,8 +215,8 @@ class _AboutCard extends StatelessWidget {
               children: <Widget>[
                 Image.asset(
                   Theme.of(context).brightness == Brightness.light
-                      ? 'assets/img/logo-t-zwart.png'
-                      : 'assets/img/logo-t-wit.png',
+                      ? 'assets/img/logo-black.png'
+                      : 'assets/img/logo-white.png',
                   width: 80,
                 ),
                 Expanded(
@@ -246,9 +246,7 @@ class _AboutCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Link(
-              uri: Uri.parse(
-                'https://github.com/svthalia/Reaxit/releases',
-              ),
+              uri: config.changelogUri,
               builder: (context, followLink) => OutlinedButton.icon(
                 onPressed: followLink,
                 icon: const Icon(Icons.history),
@@ -256,9 +254,7 @@ class _AboutCard extends StatelessWidget {
               ),
             ),
             Link(
-              uri: Uri.parse(
-                'https://github.com/svthalia/Reaxit/issues',
-              ),
+              uri: config.feedbackUri,
               builder: (context, followLink) => OutlinedButton.icon(
                 onPressed: followLink,
                 icon: const Icon(Icons.bug_report_outlined),
@@ -266,7 +262,18 @@ class _AboutCard extends StatelessWidget {
               ),
             ),
             OutlinedButton.icon(
-              onPressed: () => showLicensePage(context: context),
+              onPressed: () => showLicensePage(
+                context: context,
+                applicationVersion: config.versionNumber,
+                applicationIcon: Builder(builder: (context) {
+                  return Image.asset(
+                    Theme.of(context).brightness == Brightness.light
+                        ? 'assets/img/logo-black.png'
+                        : 'assets/img/logo-white.png',
+                    width: 80,
+                  );
+                }),
+              ),
               label: const Text('VIEW LICENSES'),
               icon: const Icon(Icons.info_outline),
             )
