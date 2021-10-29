@@ -454,7 +454,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 )
               ],
             ),
-          )
+          ),
+          const SizedBox(height: 8),
         ]),
       ),
     );
@@ -476,7 +477,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 )
               ],
             ),
-          )
+          ),
+          const SizedBox(height: 8),
         ]),
       ),
     );
@@ -520,9 +522,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _makeAchievementsSliver(state.result!),
                   if (state.result!.societies.isNotEmpty)
                     _makeSocietiesSliver(state.result!),
+                  const SliverPadding(padding: EdgeInsets.all(4))
                 ] else
                   const SliverPadding(
-                    padding: EdgeInsets.all(8),
+                    padding: EdgeInsets.all(16),
                     sliver: SliverToBoxAdapter(
                       child: Center(
                         child: CircularProgressIndicator(),
@@ -659,13 +662,13 @@ class __DescriptionFactState extends State<_DescriptionFact> {
                           (widget.member.profileDescription?.isEmpty ?? true)
                               ? "This member hasn't created a description yet."
                               : widget.member.profileDescription!,
-                          style:
-                              Theme.of(context).textTheme.bodyText2!.copyWith(
-                                    fontStyle: (widget.member.profileDescription
-                                                ?.isEmpty ??
-                                            true)
-                                        ? FontStyle.italic
-                                        : FontStyle.normal,
+                          style: (widget.member.profileDescription?.isEmpty ??
+                                  true)
+                              ? Theme.of(context).textTheme.bodyText2!.copyWith(
+                                    fontStyle: FontStyle.italic,
+                                  )
+                              : Theme.of(context).textTheme.bodyText2!.copyWith(
+                                    fontStyle: FontStyle.normal,
                                   ),
                         ),
                       ),
