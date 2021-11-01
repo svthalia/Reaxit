@@ -293,10 +293,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _fieldLabel(String title) {
-    return Text(
-      title.toUpperCase(),
-      style: Theme.of(context).textTheme.caption,
-    );
+    return Text(title, style: Theme.of(context).textTheme.caption);
   }
 
   Widget _makeHonoraryFact() {
@@ -313,7 +310,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _fieldLabel('Study programme'),
+        _fieldLabel('STUDY PROGRAMME'),
         const SizedBox(height: 4),
         Text(
           member.programme == Programme.computingscience
@@ -329,7 +326,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _fieldLabel('Cohort'),
+        _fieldLabel('COHORT'),
         const SizedBox(height: 4),
         Text(
           member.startingYear!.toString(),
@@ -343,7 +340,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _fieldLabel('Birthday'),
+        _fieldLabel('BIRTHDAY'),
         const SizedBox(height: 4),
         Text(
           dateFormatter.format(member.birthday!),
@@ -357,7 +354,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _fieldLabel('Website'),
+        _fieldLabel('WEBSITE'),
         const SizedBox(height: 4),
         Link(
           uri: member.website!,
@@ -443,7 +440,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _fieldLabel('Achievements for Thalia'),
+          _fieldLabel('ACHIEVEMENTS FOR THALIA'),
           Card(
             margin: const EdgeInsets.symmetric(vertical: 8),
             child: Column(
@@ -466,7 +463,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _fieldLabel('Societies'),
+          _fieldLabel('SOCIETIES'),
           Card(
             margin: const EdgeInsets.symmetric(vertical: 8),
             child: Column(
@@ -596,10 +593,7 @@ class __DescriptionFactState extends State<_DescriptionFact> {
   }
 
   Widget _fieldLabel(String title) {
-    return Text(
-      title.toUpperCase(),
-      style: Theme.of(context).textTheme.caption,
-    );
+    return Text(title, style: Theme.of(context).textTheme.caption);
   }
 
   @override
@@ -609,7 +603,7 @@ class __DescriptionFactState extends State<_DescriptionFact> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _fieldLabel('About ${widget.member.displayName}'),
+        _fieldLabel('ABOUT ${widget.member.displayName.toUpperCase()}'),
         const SizedBox(height: 4),
         AnimatedSize(
           duration: const Duration(milliseconds: 200),
