@@ -15,7 +15,10 @@ class EventDetailCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final start = timeFormatter.format(event.start.toLocal());
     final end = timeFormatter.format(event.end.toLocal());
-    final description = Bidi.stripHtmlIfNeeded(event.description);
+
+    // Remove HTML tags.
+    final description =
+        event.description.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), '');
 
     var indicatorColor = Colors.transparent;
     if (event.isInvited) {
