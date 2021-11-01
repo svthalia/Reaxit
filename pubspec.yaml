@@ -17,7 +17,7 @@ publish_to: 'none'
 version: 3.0.0+1
 
 environment:
-  sdk: '>=2.13.0 <3.0.0'
+  sdk: '>=2.14.0 <3.0.0'
 
 dependencies:
   flutter:
@@ -43,7 +43,7 @@ dependencies:
   flutter_secure_storage: ^4.2.1
 
   # JSON parsing.
-  json_annotation: ^4.1.0
+  json_annotation: ^4.3.0
 
   # BLoC.
   flutter_bloc: ^7.3.0
@@ -59,22 +59,22 @@ dependencies:
   flutter_web_auth: ^0.3.1
 
   # Modal photo views.
-  photo_view: ^0.12.0
+  photo_view: ^0.13.0
 
   # HTML widget.
-  flutter_widget_from_html_core: ^0.7.0
+  flutter_widget_from_html_core: ^0.8.1
 
   # Sentry error reporting.
   sentry_flutter: ^6.0.1
 
   # Share menu.
-  share_plus: ^2.2.0
+  share_plus: ^3.0.4
 
   # Path for temporary files.
-  path_provider: ^2.0.5
+  path_provider: ^2.0.6
   
   # Access camera and gallery.
-  image_picker: ^0.8.4+2
+  image_picker: ^0.8.4+4
 
   # Resize images.
   image_cropper: ^1.4.1
@@ -83,8 +83,8 @@ dependencies:
   carousel_slider: ^4.0.0
 
   # Firebase for push notifications.
-  firebase_core: ^1.6.0
-  firebase_messaging: ^10.0.7
+  firebase_core: ^1.8.0
+  firebase_messaging: ^10.0.9
 
   # Push notifications in app. 
   overlay_support: ^1.2.1
@@ -93,7 +93,7 @@ dependencies:
   sticky_headers: ^0.2.0
 
   # Predefined animations
-  animations: ^2.0.1
+  animations: ^2.0.2
 
 dev_dependencies:
   flutter_test:
@@ -103,7 +103,7 @@ dev_dependencies:
   build_runner: ^2.1.2
 
   # JSON parsing.
-  json_serializable: ^5.0.2
+  json_serializable: ^6.0.1
 
   # Linting.
   flutter_lints: ^1.0.4
