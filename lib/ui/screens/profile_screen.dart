@@ -302,7 +302,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _fieldLabel('Study programme'),
+        _fieldLabel('STUDY PROGRAMME'),
         const SizedBox(height: 4),
         Text(
           member.programme == Programme.computingscience
@@ -318,7 +318,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _fieldLabel('Cohort'),
+        _fieldLabel('COHORT'),
         const SizedBox(height: 4),
         Text(
           member.startingYear!.toString(),
@@ -332,7 +332,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _fieldLabel('Birthday'),
+        _fieldLabel('BIRTHDAY'),
         const SizedBox(height: 4),
         Text(
           dateFormatter.format(member.birthday!),
@@ -346,7 +346,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _fieldLabel('Website'),
+        _fieldLabel('WEBSITE'),
         const SizedBox(height: 4),
         Link(
           uri: member.website!,
@@ -432,7 +432,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _fieldLabel('Achievements for Thalia'),
+          _fieldLabel('ACHIEVEMENTS FOR THALIA'),
           Card(
             margin: const EdgeInsets.symmetric(vertical: 8),
             child: Column(
@@ -443,7 +443,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 )
               ],
             ),
-          )
+          ),
+          const SizedBox(height: 8),
         ]),
       ),
     );
@@ -454,7 +455,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _fieldLabel('Societies'),
+          _fieldLabel('SOCIETIES'),
           Card(
             margin: const EdgeInsets.symmetric(vertical: 8),
             child: Column(
@@ -465,7 +466,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 )
               ],
             ),
-          )
+          ),
+          const SizedBox(height: 8),
         ]),
       ),
     );
@@ -509,9 +511,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _makeAchievementsSliver(state.result!),
                   if (state.result!.societies.isNotEmpty)
                     _makeSocietiesSliver(state.result!),
+                  const SliverPadding(padding: EdgeInsets.all(4))
                 ] else
                   const SliverPadding(
-                    padding: EdgeInsets.all(8),
+                    padding: EdgeInsets.all(16),
                     sliver: SliverToBoxAdapter(
                       child: Center(
                         child: CircularProgressIndicator(),
@@ -592,7 +595,7 @@ class __DescriptionFactState extends State<_DescriptionFact> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _fieldLabel('About ${widget.member.displayName}'),
+        _fieldLabel('ABOUT ${widget.member.displayName.toUpperCase()}'),
         const SizedBox(height: 4),
         AnimatedSize(
           duration: const Duration(milliseconds: 200),
@@ -645,13 +648,13 @@ class __DescriptionFactState extends State<_DescriptionFact> {
                           (widget.member.profileDescription?.isEmpty ?? true)
                               ? "This member hasn't created a description yet."
                               : widget.member.profileDescription!,
-                          style:
-                              Theme.of(context).textTheme.bodyText2!.copyWith(
-                                    fontStyle: (widget.member.profileDescription
-                                                ?.isEmpty ??
-                                            true)
-                                        ? FontStyle.italic
-                                        : FontStyle.normal,
+                          style: (widget.member.profileDescription?.isEmpty ??
+                                  true)
+                              ? Theme.of(context).textTheme.bodyText2!.copyWith(
+                                    fontStyle: FontStyle.italic,
+                                  )
+                              : Theme.of(context).textTheme.bodyText2!.copyWith(
+                                    fontStyle: FontStyle.normal,
                                   ),
                         ),
                       ),

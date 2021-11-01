@@ -20,6 +20,7 @@ import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/member_tile.dart';
 import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:reaxit/config.dart' as config;
 
 class EventScreen extends StatefulWidget {
   final int pk;
@@ -108,8 +109,8 @@ class _EventScreenState extends State<EventScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('From', style: textTheme.caption),
-            Text('Until', style: textTheme.caption)
+            Text('FROM', style: textTheme.caption),
+            Text('UNTIL', style: textTheme.caption)
           ],
         ),
         Row(
@@ -134,8 +135,8 @@ class _EventScreenState extends State<EventScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Location', style: textTheme.caption),
-            Text('Price', style: textTheme.caption)
+            Text('LOCATION', style: textTheme.caption),
+            Text('PRICE', style: textTheme.caption)
           ],
         ),
         Row(
@@ -783,7 +784,7 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   TextSpan _makeTermsAndConditions(Event event) {
-    const url = 'https://staging.thalia.nu/event-registration-terms/';
+    const url = config.termsAndConditionsUrl;
     return TextSpan(
       children: [
         const TextSpan(
