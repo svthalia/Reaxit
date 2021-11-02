@@ -1,6 +1,6 @@
-import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:reaxit/models/album.dart';
+import 'package:reaxit/ui/router.dart';
 import 'package:reaxit/ui/screens/album_screen.dart';
 
 class AlbumTile extends StatelessWidget {
@@ -10,42 +10,64 @@ class AlbumTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OpenContainer(
-      routeSettings: RouteSettings(name: 'Album(${album.slug})'),
-      transitionType: ContainerTransitionType.fadeThrough,
-      closedShape: const RoundedRectangleBorder(),
-      closedBuilder: (context, __) => Stack(
-        fit: StackFit.expand,
-        children: [
-          FadeInImage.assetNetwork(
-            placeholder: 'assets/img/album_placeholder.png',
-            image: album.cover.medium,
-            fit: BoxFit.cover,
-            fadeInDuration: const Duration(milliseconds: 200),
-          ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            alignment: Alignment.bottomLeft,
-            decoration: BoxDecoration(
-              color: Colors.black,
-              gradient: LinearGradient(
-                begin: FractionalOffset.topCenter,
-                end: FractionalOffset.bottomCenter,
-                colors: [
-                  Colors.black.withOpacity(0.0),
-                  Colors.black.withOpacity(0.5),
-                ],
-                stops: const [0.4, 1.0],
-              ),
-            ),
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        FadeInImage.assetNetwork(
+          placeholder: 'assets/img/album_placeholder.png',
+          image: album.cover.medium,
+          fit: BoxFit.cover,
+          fadeInDuration: const Duration(milliseconds: 200),
+        ),
+        const _BlackGradient(),
+        Align(
+          alignment: Alignment.bottomLeft,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
             child: Text(
               album.title,
               style: Theme.of(context).primaryTextTheme.bodyText2,
             ),
-          )
-        ],
+          ),
+        ),
+        Positioned.fill(
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                ThaliaRouterDelegate.of(context).push(
+                  TypedMaterialPage(
+                    child: AlbumScreen(slug: album.slug, album: album),
+                    name: 'Album(${album.slug})',
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _BlackGradient extends StatelessWidget {
+  static const _black00 = Color(0x00000000);
+  static const _black50 = Color(0x80000000);
+
+  const _BlackGradient();
+
+  @override
+  Widget build(BuildContext context) {
+    return const DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.black,
+        gradient: LinearGradient(
+          begin: FractionalOffset.topCenter,
+          end: FractionalOffset.bottomCenter,
+          colors: [_black00, _black50],
+          stops: [0.4, 1.0],
+        ),
       ),
-      openBuilder: (_, __) => AlbumScreen(slug: album.slug, album: album),
     );
   }
 }

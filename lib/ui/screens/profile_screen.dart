@@ -274,7 +274,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           'assets/img/default-avatar.jpg',
                           fit: BoxFit.cover,
                         ),
-                  _BlackGradient()
+                  const _BlackGradient()
                 ],
               ),
             );
@@ -531,19 +531,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
 }
 
 class _BlackGradient extends StatelessWidget {
+  static const _black00 = Color(0x00000000);
+  static const _black40 = Color(0x66000000);
+
+  const _BlackGradient();
+
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return const DecoratedBox(
       decoration: BoxDecoration(
         color: Colors.black,
         gradient: LinearGradient(
           begin: FractionalOffset.topCenter,
           end: FractionalOffset.bottomCenter,
-          colors: [
-            Colors.black.withOpacity(0.0),
-            Colors.black.withOpacity(0.3),
-          ],
-          stops: const [0.5, 1.0],
+          colors: [_black00, _black40],
+          stops: [0.5, 1.0],
         ),
       ),
     );
