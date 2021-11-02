@@ -873,7 +873,7 @@ class _EventScreenState extends State<EventScreen> {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      Image.asset('assets/image/default-avatar.jpg'),
+                      Image.asset('assets/img/default-avatar.jpg'),
                       Container(
                         padding: const EdgeInsets.all(8),
                         alignment: Alignment.bottomLeft,
