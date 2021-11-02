@@ -9,12 +9,11 @@ part of 'list_response.dart';
 ListResponse<T> _$ListResponseFromJson<T>(
   Map<String, dynamic> json,
   T Function(Object? json) fromJsonT,
-) {
-  return ListResponse<T>(
-    json['count'] as int,
-    (json['results'] as List<dynamic>).map(fromJsonT).toList(),
-  );
-}
+) =>
+    ListResponse<T>(
+      json['count'] as int,
+      (json['results'] as List<dynamic>).map(fromJsonT).toList(),
+    );
 
 Map<String, dynamic> _$ListResponseToJson<T>(
   ListResponse<T> instance,
