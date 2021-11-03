@@ -1,9 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/auth_bloc.dart';
 import 'package:reaxit/blocs/full_member_cubit.dart';
-import 'package:reaxit/cache_manager.dart';
 import 'package:reaxit/ui/router.dart';
 import 'package:reaxit/ui/screens/albums_screen.dart';
 import 'package:reaxit/ui/screens/calendar_screen.dart';
@@ -11,6 +9,7 @@ import 'package:reaxit/ui/screens/members_screen.dart';
 import 'package:reaxit/ui/screens/profile_screen.dart';
 import 'package:reaxit/ui/screens/settings_screen.dart';
 import 'package:reaxit/ui/screens/welcome_screen.dart';
+import 'package:reaxit/ui/widgets/cached_image.dart';
 
 class MenuDrawer extends StatelessWidget {
   @override
@@ -70,12 +69,8 @@ class MenuDrawer extends StatelessWidget {
                         height: 80,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: CachedNetworkImageProvider(
+                            image: CachedImageProvider(
                               me.photo.medium,
-                              cacheManager: ThaliaCacheManager(),
-                              cacheKey: Uri.parse(me.photo.medium)
-                                  .replace(query: '')
-                                  .toString(),
                             ),
                             fit: BoxFit.cover,
                           ),

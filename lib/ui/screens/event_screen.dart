@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,7 +9,6 @@ import 'package:reaxit/blocs/event_cubit.dart';
 import 'package:reaxit/blocs/payment_user_cubit.dart';
 import 'package:reaxit/blocs/registrations_cubit.dart';
 import 'package:reaxit/blocs/welcome_cubit.dart';
-import 'package:reaxit/cache_manager.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/payment.dart';
 import 'package:reaxit/ui/router.dart';
@@ -18,6 +16,7 @@ import 'package:reaxit/ui/screens/event_admin_screen.dart';
 import 'package:reaxit/ui/screens/registration_screen.dart';
 import 'package:reaxit/ui/screens/food_screen.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
+import 'package:reaxit/ui/widgets/cached_image.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/member_tile.dart';
 import 'package:url_launcher/link.dart';
@@ -63,17 +62,10 @@ class _EventScreenState extends State<EventScreen> {
       ),
       builder: (context, followLink) => GestureDetector(
         onTap: followLink,
-        child: CachedNetworkImage(
-          cacheManager: ThaliaCacheManager(),
-          cacheKey: Uri.parse(event.mapsUrl).replace(query: '').toString(),
+        child: CachedImage(
           imageUrl: event.mapsUrl,
+          placeholder: 'assets/img/map_placeholder.png',
           fit: BoxFit.cover,
-          fadeOutDuration: const Duration(milliseconds: 200),
-          fadeInDuration: const Duration(milliseconds: 200),
-          placeholder: (_, __) => Image.asset(
-            'assets/img/map_placeholder.png',
-            fit: BoxFit.cover,
-          ),
         ),
       ),
     );

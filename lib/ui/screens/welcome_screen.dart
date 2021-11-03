@@ -1,17 +1,16 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/blocs/welcome_cubit.dart';
-import 'package:reaxit/cache_manager.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/frontpage_article.dart';
 import 'package:reaxit/models/slide.dart';
 import 'package:reaxit/ui/router.dart';
 import 'package:reaxit/ui/screens/calendar_screen.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
+import 'package:reaxit/ui/widgets/cached_image.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/event_detail_card.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
@@ -224,19 +223,9 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
               uri: slide.url,
               builder: (context, followLink) => InkWell(
                 onTap: followLink,
-                child: CachedNetworkImage(
-                  cacheManager: ThaliaCacheManager(),
-                  cacheKey: Uri.parse(slide.content.full)
-                      .replace(query: '')
-                      .toString(),
+                child: CachedImage(
                   imageUrl: slide.content.full,
-                  fit: BoxFit.cover,
-                  fadeOutDuration: const Duration(milliseconds: 200),
-                  fadeInDuration: const Duration(milliseconds: 200),
-                  placeholder: (_, __) => Image.asset(
-                    'assets/img/slide_placeholder.png',
-                    fit: BoxFit.cover,
-                  ),
+                  placeholder: 'assets/img/slide_placeholder.png',
                 ),
               ),
             );
