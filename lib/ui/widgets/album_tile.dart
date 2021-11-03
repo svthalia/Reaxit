@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:reaxit/cache_manager.dart';
 import 'package:reaxit/models/album.dart';
 import 'package:reaxit/ui/router.dart';
 import 'package:reaxit/ui/screens/album_screen.dart';
@@ -13,11 +15,17 @@ class AlbumTile extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        FadeInImage.assetNetwork(
-          placeholder: 'assets/img/album_placeholder.png',
-          image: album.cover.medium,
+        CachedNetworkImage(
+          cacheManager: ThaliaCacheManager(),
+          cacheKey: Uri.parse(album.cover.small).replace(query: '').toString(),
+          imageUrl: album.cover.small,
           fit: BoxFit.cover,
+          fadeOutDuration: const Duration(milliseconds: 200),
           fadeInDuration: const Duration(milliseconds: 200),
+          placeholder: (_, __) => Image.asset(
+            'assets/img/album_placeholder.png',
+            fit: BoxFit.cover,
+          ),
         ),
         const _BlackGradient(),
         Align(

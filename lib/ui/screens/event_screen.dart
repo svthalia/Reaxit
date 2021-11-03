@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +10,7 @@ import 'package:reaxit/blocs/event_cubit.dart';
 import 'package:reaxit/blocs/payment_user_cubit.dart';
 import 'package:reaxit/blocs/registrations_cubit.dart';
 import 'package:reaxit/blocs/welcome_cubit.dart';
+import 'package:reaxit/cache_manager.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/payment.dart';
 import 'package:reaxit/ui/router.dart';
@@ -61,12 +63,17 @@ class _EventScreenState extends State<EventScreen> {
       ),
       builder: (context, followLink) => GestureDetector(
         onTap: followLink,
-        child: FadeInImage.assetNetwork(
+        child: CachedNetworkImage(
+          cacheManager: ThaliaCacheManager(),
+          cacheKey: Uri.parse(event.mapsUrl).replace(query: '').toString(),
+          imageUrl: event.mapsUrl,
           fit: BoxFit.cover,
-          fadeInDuration: const Duration(milliseconds: 300),
-          fadeOutDuration: const Duration(milliseconds: 300),
-          placeholder: 'assets/img/map_placeholder.png',
-          image: event.mapsUrl,
+          fadeOutDuration: const Duration(milliseconds: 200),
+          fadeInDuration: const Duration(milliseconds: 200),
+          placeholder: (_, __) => Image.asset(
+            'assets/img/map_placeholder.png',
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );

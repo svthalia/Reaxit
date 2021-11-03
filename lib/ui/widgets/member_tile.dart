@@ -1,5 +1,7 @@
 import 'package:animations/animations.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:reaxit/cache_manager.dart';
 import 'package:reaxit/models/member.dart';
 import 'package:reaxit/ui/screens/profile_screen.dart';
 
@@ -19,11 +21,19 @@ class MemberTile extends StatelessWidget {
         return Stack(
           fit: StackFit.expand,
           children: [
-            FadeInImage.assetNetwork(
-              placeholder: 'assets/img/default-avatar.jpg',
-              image: member.photo.medium,
+            CachedNetworkImage(
+              cacheManager: ThaliaCacheManager(),
+              cacheKey: Uri.parse(
+                member.photo.small,
+              ).replace(query: '').toString(),
+              imageUrl: member.photo.small,
               fit: BoxFit.cover,
+              fadeOutDuration: const Duration(milliseconds: 200),
               fadeInDuration: const Duration(milliseconds: 200),
+              placeholder: (_, __) => Image.asset(
+                'assets/img/default-avatar.jpg',
+                fit: BoxFit.cover,
+              ),
             ),
             const _BlackGradient(),
             Align(

@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/auth_bloc.dart';
 import 'package:reaxit/blocs/full_member_cubit.dart';
+import 'package:reaxit/cache_manager.dart';
 import 'package:reaxit/ui/router.dart';
 import 'package:reaxit/ui/screens/albums_screen.dart';
 import 'package:reaxit/ui/screens/calendar_screen.dart';
@@ -68,7 +70,13 @@ class MenuDrawer extends StatelessWidget {
                         height: 80,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: NetworkImage(me.photo.medium),
+                            image: CachedNetworkImageProvider(
+                              me.photo.medium,
+                              cacheManager: ThaliaCacheManager(),
+                              cacheKey: Uri.parse(me.photo.medium)
+                                  .replace(query: '')
+                                  .toString(),
+                            ),
                             fit: BoxFit.cover,
                           ),
                           borderRadius: BorderRadius.circular(40),
