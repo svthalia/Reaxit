@@ -55,9 +55,11 @@ class _EventScreenState extends State<EventScreen> {
 
   Widget _makeMap(Event event) {
     return Link(
-      uri: Uri.parse(
-        'https://maps.${Theme.of(context).platform == TargetPlatform.iOS ? 'apple' : 'google'}.com'
-        '/maps?daddr=${Uri.encodeComponent(event.location)}',
+      uri: Uri(
+        scheme: Theme.of(context).platform == TargetPlatform.iOS
+            ? 'maps'
+            : 'comgooglemaps',
+        queryParameters: {'daddr': event.location},
       ),
       builder: (context, followLink) => GestureDetector(
         onTap: followLink,
