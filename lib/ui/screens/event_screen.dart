@@ -869,7 +869,7 @@ class _EventScreenState extends State<EventScreen> {
                   member: state.result![index].member!,
                 );
               } else {
-                return NameOnlyMemberTile(
+                return DefaultMemberTile(
                   name: state.result![index].name!,
                 );
               }

@@ -72,10 +72,11 @@ class _BlackGradient extends StatelessWidget {
   }
 }
 
-class NameOnlyMemberTile extends StatelessWidget {
+/// A replacement for [MemberTile] for when the person is not actually a member.
+class DefaultMemberTile extends StatelessWidget {
   final String name;
 
-  const NameOnlyMemberTile({Key? key, required this.name}) : super(key: key);
+  const DefaultMemberTile({Key? key, required this.name}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
