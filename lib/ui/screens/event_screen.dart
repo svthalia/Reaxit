@@ -869,33 +869,8 @@ class _EventScreenState extends State<EventScreen> {
                   member: state.result![index].member!,
                 );
               } else {
-                return InkWell(
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Image.asset('assets/image/default-avatar.jpg'),
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        alignment: Alignment.bottomLeft,
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          gradient: LinearGradient(
-                            begin: FractionalOffset.topCenter,
-                            end: FractionalOffset.bottomCenter,
-                            colors: [
-                              Colors.black.withOpacity(0.0),
-                              Colors.black.withOpacity(0.5),
-                            ],
-                            stops: const [0.4, 1.0],
-                          ),
-                        ),
-                        child: Text(
-                          state.result![index].name!,
-                          style: Theme.of(context).primaryTextTheme.bodyText2,
-                        ),
-                      )
-                    ],
-                  ),
+                return DefaultMemberTile(
+                  name: state.result![index].name!,
                 );
               }
             },

@@ -6,16 +6,14 @@ part of 'payment.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Payment _$PaymentFromJson(Map<String, dynamic> json) {
-  return Payment(
-    json['pk'] as String,
-    json['topic'] as String,
-    json['notes'] as String?,
-    _$enumDecode(_$PaymentTypeEnumMap, json['type']),
-    json['amount'] as String,
-    DateTime.parse(json['created_at'] as String),
-  );
-}
+Payment _$PaymentFromJson(Map<String, dynamic> json) => Payment(
+      json['pk'] as String,
+      json['topic'] as String,
+      json['notes'] as String?,
+      _$enumDecode(_$PaymentTypeEnumMap, json['type']),
+      json['amount'] as String,
+      DateTime.parse(json['created_at'] as String),
+    );
 
 Map<String, dynamic> _$PaymentToJson(Payment instance) => <String, dynamic>{
       'pk': instance.pk,
