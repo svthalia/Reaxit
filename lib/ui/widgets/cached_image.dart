@@ -5,7 +5,7 @@ import 'package:reaxit/config.dart' as config;
 
 /// A [BaseCacheManager] with customized configurations.
 class _ThaliaCacheManager extends CacheManager with ImageCacheManager {
-  static const key = 'thaliaCachedDate';
+  static const key = 'thaliaCachedData';
 
   static final _ThaliaCacheManager _instance = _ThaliaCacheManager._();
   factory _ThaliaCacheManager() => _instance;
@@ -29,6 +29,13 @@ class CachedImage extends CachedNetworkImage {
   }) : super(
           imageUrl: imageUrl,
           cacheManager: _ThaliaCacheManager(),
+
+          /// Remove the query part of the url from its key in the cache.
+          /// Private images from concrexit have a signature in the url that
+          /// expires every 3 hours. Removing this signature makes sure that
+          /// the same cache object can be used regardless of the signature.
+          /// This assumes that the qurey part is only used for authentication,
+          /// not to identify the image, so the remaining path is a unique key.
           cacheKey: Uri.parse(imageUrl).replace(query: '').toString(),
           fit: fit,
           fadeOutDuration: fadeOutDuration,
