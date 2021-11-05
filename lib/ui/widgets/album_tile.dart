@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:reaxit/models/album.dart';
 import 'package:reaxit/ui/router.dart';
 import 'package:reaxit/ui/screens/album_screen.dart';
+import 'package:reaxit/ui/widgets/cached_image.dart';
 
 class AlbumTile extends StatelessWidget {
   final ListAlbum album;
@@ -13,11 +14,9 @@ class AlbumTile extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        FadeInImage.assetNetwork(
+        CachedImage(
+          imageUrl: album.cover.small,
           placeholder: 'assets/img/album_placeholder.png',
-          image: album.cover.medium,
-          fit: BoxFit.cover,
-          fadeInDuration: const Duration(milliseconds: 200),
         ),
         const _BlackGradient(),
         Align(

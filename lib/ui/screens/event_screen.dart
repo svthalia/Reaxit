@@ -16,6 +16,7 @@ import 'package:reaxit/ui/screens/event_admin_screen.dart';
 import 'package:reaxit/ui/screens/registration_screen.dart';
 import 'package:reaxit/ui/screens/food_screen.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
+import 'package:reaxit/ui/widgets/cached_image.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/member_tile.dart';
 import 'package:url_launcher/link.dart';
@@ -61,12 +62,10 @@ class _EventScreenState extends State<EventScreen> {
       ),
       builder: (context, followLink) => GestureDetector(
         onTap: followLink,
-        child: FadeInImage.assetNetwork(
-          fit: BoxFit.cover,
-          fadeInDuration: const Duration(milliseconds: 300),
-          fadeOutDuration: const Duration(milliseconds: 300),
+        child: CachedImage(
+          imageUrl: event.mapsUrl,
           placeholder: 'assets/img/map_placeholder.png',
-          image: event.mapsUrl,
+          fit: BoxFit.cover,
         ),
       ),
     );

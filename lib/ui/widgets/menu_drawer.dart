@@ -9,6 +9,7 @@ import 'package:reaxit/ui/screens/members_screen.dart';
 import 'package:reaxit/ui/screens/profile_screen.dart';
 import 'package:reaxit/ui/screens/settings_screen.dart';
 import 'package:reaxit/ui/screens/welcome_screen.dart';
+import 'package:reaxit/ui/widgets/cached_image.dart';
 
 class MenuDrawer extends StatelessWidget {
   @override
@@ -68,7 +69,9 @@ class MenuDrawer extends StatelessWidget {
                         height: 80,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: NetworkImage(me.photo.medium),
+                            image: CachedImageProvider(
+                              me.photo.medium,
+                            ),
                             fit: BoxFit.cover,
                           ),
                           borderRadius: BorderRadius.circular(40),

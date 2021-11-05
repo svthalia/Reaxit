@@ -62,3 +62,12 @@ final Uri changelogUri = Uri.parse(
 
 const String termsAndConditionsUrl =
     'https://staging.thalia.nu/event-registration-terms/';
+
+/// The period after which objects are removed from the cache when not used.
+const Duration cacheStalePeriod = Duration(days: 30);
+
+/// The maximum number of objects in the cache.
+///
+/// Assuming most cached images are 'small' (300x300), the
+/// storage used will be +- 20KB * [cacheMaxObjects].
+const int cacheMaxObjects = 2000;

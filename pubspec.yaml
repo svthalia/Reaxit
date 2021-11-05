@@ -45,7 +45,7 @@ dependencies:
   # JSON parsing.
   json_annotation: ^4.3.0
 
-  # BLoC.
+  # BLoC state management.
   flutter_bloc: ^7.3.0
   equatable: ^2.0.3
 
@@ -92,8 +92,12 @@ dependencies:
   # Sticky headers for calendar.
   sticky_headers: ^0.2.0
 
-  # Predefined animations
+  # Predefined animations.
   animations: ^2.0.2
+
+  # Cached images.
+  cached_network_image: ^3.1.0
+  flutter_cache_manager: ^3.1.2
 
 dev_dependencies:
   flutter_test:
