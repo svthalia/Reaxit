@@ -122,7 +122,7 @@ class _ThaliAppState extends State<ThaliApp> {
                         authState.apiRepository,
                         _firebaseInitialization,
                       )..load(),
-                      lazy: true,
+                      lazy: false,
                     ),
                   ],
                   child: MaterialApp.router(
