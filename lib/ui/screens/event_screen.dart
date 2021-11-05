@@ -55,12 +55,14 @@ class _EventScreenState extends State<EventScreen> {
 
   Widget _makeMap(Event event) {
     return Link(
-      uri: Uri(
-        scheme: Theme.of(context).platform == TargetPlatform.iOS
-            ? 'maps'
-            : 'comgooglemaps',
-        queryParameters: {'daddr': event.location},
-      ),
+      uri: Theme.of(context).platform == TargetPlatform.iOS
+          ? Uri(scheme: 'maps', queryParameters: {'daddr': event.location})
+          : Uri(
+              scheme: 'https',
+              host: 'www.google.com',
+              path: 'maps/search',
+              queryParameters: {'api': 1, 'query': event.location},
+            ),
       builder: (context, followLink) => GestureDetector(
         onTap: followLink,
         child: FadeInImage.assetNetwork(
