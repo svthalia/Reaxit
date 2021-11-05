@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api_repository.dart';
@@ -9,53 +10,7 @@ import 'package:reaxit/ui/widgets/menu_drawer.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:url_launcher/link.dart';
 
-class SettingsScreen extends StatefulWidget {
-  @override
-  _SettingsScreenState createState() => _SettingsScreenState();
-}
-
-class _SettingsScreenState extends State<SettingsScreen> {
-  Widget _makeSetting(PushNotificationCategory category, bool enabled) {
-    Widget? subtitle;
-    if (category.description.isNotEmpty) {
-      subtitle = Padding(
-        padding: const EdgeInsets.only(bottom: 2),
-        child: Text(
-          category.description,
-          maxLines: 2,
-        ),
-      );
-    }
-
-    if (category.key == 'general') {
-      // The general category is always enabled and can't be disabled.
-      return SwitchListTile(
-        value: true,
-        onChanged: null,
-        title: Text(category.name.toUpperCase()),
-        subtitle: subtitle,
-      );
-    }
-    return SwitchListTile(
-      value: enabled,
-      onChanged: (value) async {
-        try {
-          await BlocProvider.of<SettingsCubit>(context).setSetting(
-            category.key,
-            value,
-          );
-        } on ApiException {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            behavior: SnackBarBehavior.floating,
-            content: Text('Could not change your notification settings.'),
-          ));
-        }
-      },
-      title: Text(category.name.toUpperCase()),
-      subtitle: subtitle,
-    );
-  }
-
+class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -70,14 +25,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  Text('ABOUT', style: textTheme.caption),
-                  const _AboutCard(),
-                  const SizedBox(height: 8),
                   Text('THEME', style: textTheme.caption),
                   const _ThemeModeCard(),
                   const SizedBox(height: 8),
                   Text('NOTIFICATIONS', style: textTheme.caption),
                   Center(child: Text(state.message!)),
+                  const SizedBox(height: 8),
+                  Text('ABOUT', style: textTheme.caption),
+                  const _AboutCard(),
                 ],
               ),
             );
@@ -85,9 +40,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                Text('ABOUT', style: textTheme.caption),
-                const _AboutCard(),
-                const SizedBox(height: 8),
                 Text('THEME', style: textTheme.caption),
                 const _ThemeModeCard(),
                 const SizedBox(height: 8),
@@ -96,15 +48,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   padding: EdgeInsets.symmetric(vertical: 16),
                   child: Center(child: CircularProgressIndicator()),
                 ),
+                const SizedBox(height: 8),
+                Text('ABOUT', style: textTheme.caption),
+                const _AboutCard(),
               ],
             );
           } else {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                Text('ABOUT', style: textTheme.caption),
-                const _AboutCard(),
-                const SizedBox(height: 8),
                 Text('THEME', style: textTheme.caption),
                 const _ThemeModeCard(),
                 const SizedBox(height: 8),
@@ -116,22 +68,100 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: ListTile.divideTiles(
                       context: context,
-                      tiles: state.categories!.map(
-                        (category) => _makeSetting(
-                          category,
-                          state.device!.receiveCategory.contains(
-                            category.key,
+                      tiles: [
+                        for (final category in state.categories!)
+                          _NotificationSettingTile(
+                            category: category,
+                            enabled: state.device!.receiveCategory.contains(
+                              category.key,
+                            ),
                           ),
-                        ),
-                      ),
+                      ],
                     ).toList(),
                   ),
-                )
+                ),
+                const SizedBox(height: 8),
+                Text('ABOUT', style: textTheme.caption),
+                const _AboutCard(),
               ],
             );
           }
         },
       ),
+    );
+  }
+}
+
+class _NotificationSettingTile extends StatefulWidget {
+  final PushNotificationCategory category;
+  final bool enabled;
+
+  _NotificationSettingTile({
+    required this.category,
+    required this.enabled,
+  }) : super(key: ValueKey(category.key));
+
+  @override
+  __NotificationSettingTileState createState() =>
+      __NotificationSettingTileState();
+}
+
+class __NotificationSettingTileState extends State<_NotificationSettingTile> {
+  late bool enabled;
+  @override
+  void initState() {
+    super.initState();
+    enabled = widget.enabled;
+  }
+
+  @override
+  void didUpdateWidget(covariant _NotificationSettingTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    enabled = widget.enabled;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Widget? subtitle;
+    if (widget.category.description.isNotEmpty) {
+      subtitle = Padding(
+        padding: const EdgeInsets.only(bottom: 2),
+        child: Text(
+          widget.category.description,
+          maxLines: 2,
+        ),
+      );
+    }
+
+    if (widget.category.key == 'general') {
+      // The general category is always enabled and can't be disabled.
+      return SwitchListTile(
+        value: true,
+        onChanged: null,
+        title: Text(widget.category.name.toUpperCase()),
+        subtitle: subtitle,
+      );
+    }
+    return SwitchListTile(
+      value: enabled,
+      onChanged: (value) async {
+        final oldValue = enabled;
+        try {
+          setState(() => enabled = value);
+          await BlocProvider.of<SettingsCubit>(context).setSetting(
+            widget.category.key,
+            value,
+          );
+        } on ApiException {
+          setState(() => enabled = oldValue);
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Could not change your notification settings.'),
+          ));
+        }
+      },
+      title: Text(widget.category.name.toUpperCase()),
+      subtitle: subtitle,
     );
   }
 }
