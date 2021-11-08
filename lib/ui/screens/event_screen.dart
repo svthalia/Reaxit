@@ -34,6 +34,8 @@ class EventScreen extends StatefulWidget {
 class _EventScreenState extends State<EventScreen> {
   static final dateTimeFormatter = DateFormat('d MMM y, HH:mm');
 
+  late ScrollController _controller;
+
   late final EventCubit _eventCubit;
   late final RegistrationsCubit _registrationsCubit;
 
@@ -42,7 +44,18 @@ class _EventScreenState extends State<EventScreen> {
     final api = RepositoryProvider.of<ApiRepository>(context);
     _eventCubit = EventCubit(api, eventPk: widget.pk)..load();
     _registrationsCubit = RegistrationsCubit(api, eventPk: widget.pk)..load();
+    _controller = ScrollController()..addListener(_scrollListener);
     super.initState();
+  }
+
+  void _scrollListener() {
+    if (_controller.position.pixels >=
+        _controller.position.maxScrollExtent - 300) {
+      // Only request loading more if that's not already happening.
+      if (!_registrationsCubit.state.isLoadingMore) {
+        _registrationsCubit.more();
+      }
+    }
   }
 
   @override
@@ -962,6 +975,7 @@ class _EventScreenState extends State<EventScreen> {
                 builder: (context, state) {
                   return Scrollbar(
                       child: CustomScrollView(
+                    controller: _controller,
                     key: const PageStorageKey('event'),
                     slivers: [
                       SliverToBoxAdapter(
