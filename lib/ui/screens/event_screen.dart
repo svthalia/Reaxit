@@ -949,37 +949,39 @@ class _EventScreenState extends State<EventScreen> {
                 bloc: _registrationsCubit,
                 builder: (context, listState) {
                   return Scrollbar(
-                      child: CustomScrollView(
                     controller: _controller,
-                    key: const PageStorageKey('event'),
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            _makeMap(event),
-                            const Divider(height: 0),
-                            _makeEventInfo(event),
-                            const Divider(),
-                            _makeDescription(event),
-                            const Divider(),
-                          ],
-                        ),
-                      ),
-                      _makeRegistrations(listState),
-                      if (listState.isLoadingMore)
-                        const SliverPadding(
-                          padding: EdgeInsets.all(8),
-                          sliver: SliverList(
-                            delegate: SliverChildListDelegate.fixed([
-                              Center(
-                                child: CircularProgressIndicator(),
-                              )
-                            ]),
+                    child: CustomScrollView(
+                      controller: _controller,
+                      key: const PageStorageKey('event'),
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _makeMap(event),
+                              const Divider(height: 0),
+                              _makeEventInfo(event),
+                              const Divider(),
+                              _makeDescription(event),
+                              const Divider(),
+                            ],
                           ),
                         ),
-                    ],
-                  ));
+                        _makeRegistrations(listState),
+                        if (listState.isLoadingMore)
+                          const SliverPadding(
+                            padding: EdgeInsets.all(8),
+                            sliver: SliverList(
+                              delegate: SliverChildListDelegate.fixed([
+                                Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                              ]),
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
                 },
               ),
             ),

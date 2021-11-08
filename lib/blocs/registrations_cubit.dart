@@ -1,8 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api_repository.dart';
+import 'package:reaxit/blocs/list_state.dart';
 import 'package:reaxit/models/event_registration.dart';
-
-import 'list_state.dart';
 
 typedef RegistrationsState = ListState<EventRegistration>;
 
@@ -51,7 +50,10 @@ class RegistrationsCubit extends Cubit<RegistrationsState> {
 
     try {
       var listResponse = await api.getEventRegistrations(
-          pk: eventPk, limit: pageSize, offset: _nextOffset);
+        pk: eventPk,
+        limit: pageSize,
+        offset: _nextOffset,
+      );
 
       final registrations = state.results + listResponse.results;
       final isDone = registrations.length == listResponse.count;
