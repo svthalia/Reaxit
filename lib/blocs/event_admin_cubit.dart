@@ -88,10 +88,7 @@ class EventAdminCubit extends Cubit<EventAdminState> {
       final query = _searchQuery;
       final event = await api.getEvent(pk: eventPk);
       final registrations = await api.getAdminEventRegistrations(
-        pk: eventPk,
-        search: query,
-        limit: 999999999
-      );
+          pk: eventPk, search: query, limit: 999999999);
       if (registrations.results.isEmpty) {
         if (query?.isEmpty ?? true) {
           emit(const EventAdminState.failure(
@@ -120,10 +117,7 @@ class EventAdminCubit extends Cubit<EventAdminState> {
       try {
         final query = _searchQuery;
         final registrations = await api.getAdminEventRegistrations(
-          pk: eventPk,
-          search: query,
-          limit: 999999999
-        );
+            pk: eventPk, search: query, limit: 999999999);
         if (registrations.results.isEmpty) {
           if (query?.isEmpty ?? true) {
             emit(const EventAdminState.failure(

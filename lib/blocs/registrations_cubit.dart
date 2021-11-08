@@ -1,7 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api_repository.dart';
-import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/event_registration.dart';
 
 import 'list_state.dart';
@@ -25,17 +23,15 @@ class RegistrationsCubit extends Cubit<RegistrationsState> {
     emit(state.copyWith(isLoading: true));
     try {
       final listResponse = await api.getEventRegistrations(
-          pk: eventPk,
-          limit: firstPageSize,
-          offset: 0);
+          pk: eventPk, limit: firstPageSize, offset: 0);
 
-      final isDone  = listResponse.results.length == listResponse.count;
+      final isDone = listResponse.results.length == listResponse.count;
 
       _nextOffset = firstPageSize;
 
-
       if (listResponse.results.isNotEmpty) {
-        emit(RegistrationsState.success(results: listResponse.results, isDone: isDone));
+        emit(RegistrationsState.success(
+            results: listResponse.results, isDone: isDone));
       } else {
         emit(const RegistrationsState.failure(
           message: 'There are no registrations yet.',
@@ -55,20 +51,14 @@ class RegistrationsCubit extends Cubit<RegistrationsState> {
 
     try {
       var listResponse = await api.getEventRegistrations(
-          pk: eventPk,
-          limit:pageSize,
-          offset: _nextOffset
-      );
+          pk: eventPk, limit: pageSize, offset: _nextOffset);
 
       final registrations = state.results + listResponse.results;
       final isDone = registrations.length == listResponse.count;
 
       _nextOffset += pageSize;
 
-      emit(RegistrationsState.success(
-          results: registrations,
-          isDone: isDone
-      ));
+      emit(RegistrationsState.success(results: registrations, isDone: isDone));
     } on ApiException catch (exception) {
       emit(RegistrationsState.failure(message: _failureMessage(exception)));
     }
