@@ -32,6 +32,7 @@ class FoodAdminCubit extends Cubit<FoodAdminState> {
       final orders = await api.getAdminFoodOrders(
         pk: foodEventPk,
         search: query,
+        limit: 999999999
       );
       if (orders.results.isEmpty) {
         if (query?.isEmpty ?? true) {
