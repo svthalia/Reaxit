@@ -10,6 +10,7 @@ import 'package:reaxit/models/slide.dart';
 import 'package:reaxit/ui/router.dart';
 import 'package:reaxit/ui/screens/calendar_screen.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
+import 'package:reaxit/ui/widgets/cached_image.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/event_detail_card.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
@@ -117,17 +118,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 6,
-                        bottom: 6,
-                        top: 12,
-                      ),
-                      child: Text(
-                        dayText,
-                        textAlign: TextAlign.left,
-                        style: Theme.of(context).textTheme.caption,
-                      ),
+                    const SizedBox(height: 8),
+                    Text(
+                      dayText,
+                      textAlign: TextAlign.left,
+                      style: Theme.of(context).textTheme.caption,
                     ),
                     for (final event in dayEvents)
                       EventDetailCard(event: event),
@@ -216,6 +211,7 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
             aspectRatio: 1075 / 430,
             viewportFraction: 1,
             autoPlay: true,
+            autoPlayInterval: const Duration(seconds: 6),
             onPageChanged: (index, _) => setState(() {
               _current = index;
             }),
@@ -227,10 +223,9 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
               uri: slide.url,
               builder: (context, followLink) => InkWell(
                 onTap: followLink,
-                child: FadeInImage.assetNetwork(
-                  fit: BoxFit.cover,
+                child: CachedImage(
+                  imageUrl: slide.content.full,
                   placeholder: 'assets/img/slide_placeholder.png',
-                  image: slide.content.large,
                 ),
               ),
             );

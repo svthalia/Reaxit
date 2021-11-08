@@ -16,10 +16,12 @@ import 'package:reaxit/ui/screens/event_admin_screen.dart';
 import 'package:reaxit/ui/screens/registration_screen.dart';
 import 'package:reaxit/ui/screens/food_screen.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
+import 'package:reaxit/ui/widgets/cached_image.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/member_tile.dart';
 import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:reaxit/config.dart' as config;
 
 class EventScreen extends StatefulWidget {
   final int pk;
@@ -73,12 +75,10 @@ class _EventScreenState extends State<EventScreen> {
       ),
       builder: (context, followLink) => GestureDetector(
         onTap: followLink,
-        child: FadeInImage.assetNetwork(
-          fit: BoxFit.cover,
-          fadeInDuration: const Duration(milliseconds: 300),
-          fadeOutDuration: const Duration(milliseconds: 300),
+        child: CachedImage(
+          imageUrl: event.mapsUrl,
           placeholder: 'assets/img/map_placeholder.png',
-          image: event.mapsUrl,
+          fit: BoxFit.cover,
         ),
       ),
     );
@@ -121,8 +121,8 @@ class _EventScreenState extends State<EventScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('From', style: textTheme.caption),
-            Text('Until', style: textTheme.caption)
+            Text('FROM', style: textTheme.caption),
+            Text('UNTIL', style: textTheme.caption)
           ],
         ),
         Row(
@@ -147,8 +147,8 @@ class _EventScreenState extends State<EventScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Location', style: textTheme.caption),
-            Text('Price', style: textTheme.caption)
+            Text('LOCATION', style: textTheme.caption),
+            Text('PRICE', style: textTheme.caption)
           ],
         ),
         Row(
@@ -796,7 +796,7 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   TextSpan _makeTermsAndConditions(Event event) {
-    const url = 'https://staging.thalia.nu/event-registration-terms/';
+    const url = config.termsAndConditionsUrl;
     return TextSpan(
       children: [
         const TextSpan(
@@ -881,33 +881,8 @@ class _EventScreenState extends State<EventScreen> {
                   member: state.result![index].member!,
                 );
               } else {
-                return InkWell(
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Image.asset('assets/image/default-avatar.jpg'),
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        alignment: Alignment.bottomLeft,
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          gradient: LinearGradient(
-                            begin: FractionalOffset.topCenter,
-                            end: FractionalOffset.bottomCenter,
-                            colors: [
-                              Colors.black.withOpacity(0.0),
-                              Colors.black.withOpacity(0.5),
-                            ],
-                            stops: const [0.4, 1.0],
-                          ),
-                        ),
-                        child: Text(
-                          state.result![index].name!,
-                          style: Theme.of(context).primaryTextTheme.bodyText2,
-                        ),
-                      )
-                    ],
-                  ),
+                return DefaultMemberTile(
+                  name: state.result![index].name!,
                 );
               }
             },

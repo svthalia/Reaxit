@@ -15,7 +15,10 @@ class EventDetailCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final start = timeFormatter.format(event.start.toLocal());
     final end = timeFormatter.format(event.end.toLocal());
-    final description = Bidi.stripHtmlIfNeeded(event.description);
+
+    // Remove HTML tags.
+    final description =
+        event.description.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), '');
 
     var indicatorColor = Colors.transparent;
     if (event.isInvited) {
@@ -27,6 +30,7 @@ class EventDetailCard extends StatelessWidget {
     }
 
     return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: InkWell(
         onTap: () {
           ThaliaRouterDelegate.of(context).push(
