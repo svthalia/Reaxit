@@ -876,17 +876,17 @@ class _EventScreenState extends State<EventScreen> {
           ),
           delegate: SliverChildBuilderDelegate(
             (context, index) {
-              if (state.result![index].member != null) {
+              if (state.results[index].member != null) {
                 return MemberTile(
-                  member: state.result![index].member!,
+                  member: state.results[index].member!,
                 );
               } else {
                 return DefaultMemberTile(
-                  name: state.result![index].name!,
+                  name: state.results[index].name!,
                 );
               }
             },
-            childCount: state.result!.length,
+            childCount: state.results.length,
           ),
         ),
       );
@@ -947,7 +947,7 @@ class _EventScreenState extends State<EventScreen> {
               onRefresh: () => _eventCubit.load(),
               child: BlocBuilder<RegistrationsCubit, RegistrationsState>(
                 bloc: _registrationsCubit,
-                builder: (context, state) {
+                builder: (context, listState) {
                   return Scrollbar(
                       child: CustomScrollView(
                     controller: _controller,
@@ -966,7 +966,18 @@ class _EventScreenState extends State<EventScreen> {
                           ],
                         ),
                       ),
-                      _makeRegistrations(state),
+                      _makeRegistrations(listState),
+                      if (listState.isLoadingMore)
+                        const SliverPadding(
+                          padding: EdgeInsets.all(8),
+                          sliver: SliverList(
+                            delegate: SliverChildListDelegate.fixed([
+                              Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            ]),
+                          ),
+                        ),
                     ],
                   ));
                 },
