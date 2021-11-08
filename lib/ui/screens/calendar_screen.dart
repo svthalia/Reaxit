@@ -235,70 +235,71 @@ class CalendarScrollView extends StatelessWidget {
     final months = monthGroupedEvents.keys.toList();
 
     return Scrollbar(
+      controller: controller,
+      child: CustomScrollView(
         controller: controller,
-        child: CustomScrollView(
-          controller: controller,
-          physics: const RangeMaintainingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics(),
-          ),
-          slivers: [
-            SliverPadding(
-              padding: const EdgeInsets.all(12),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final month = months[index];
-                    final events = monthGroupedEvents[month]!;
+        physics: const RangeMaintainingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.all(12),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final month = months[index];
+                  final events = monthGroupedEvents[month]!;
 
-                    final dayGroupedEvents = _groupByDay(events);
-                    final days = dayGroupedEvents.keys.toList();
+                  final dayGroupedEvents = _groupByDay(events);
+                  final days = dayGroupedEvents.keys.toList();
 
-                    // TODO: StickyHeaders currently cause silent exceptions
-                    //  when they build. This is only visible while catching
-                    //  'All Exceptions', and does not affect the user. See
-                    //  https://github.com/fluttercommunity/flutter_sticky_headers/issues/39.
-                    return StickyHeader(
-                      header: SizedBox(
-                        width: double.infinity,
-                        child: Material(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: Text(
-                              month.year == DateTime.now().year
-                                  ? monthFormatter
-                                      .format(month.toLocal())
-                                      .toUpperCase()
-                                  : monthYearFormatter
-                                      .format(month.toLocal())
-                                      .toUpperCase(),
-                              style: Theme.of(context).textTheme.subtitle1,
-                            ),
+                  // TODO: StickyHeaders currently cause silent exceptions
+                  //  when they build. This is only visible while catching
+                  //  'All Exceptions', and does not affect the user. See
+                  //  https://github.com/fluttercommunity/flutter_sticky_headers/issues/39.
+                  return StickyHeader(
+                    header: SizedBox(
+                      width: double.infinity,
+                      child: Material(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Text(
+                            month.year == DateTime.now().year
+                                ? monthFormatter
+                                    .format(month.toLocal())
+                                    .toUpperCase()
+                                : monthYearFormatter
+                                    .format(month.toLocal())
+                                    .toUpperCase(),
+                            style: Theme.of(context).textTheme.subtitle1,
                           ),
                         ),
                       ),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(height: 8),
-                          for (final day in days)
-                            _DayCard(day: day, events: dayGroupedEvents[day]!),
-                        ],
-                      ),
-                    );
-                  },
-                  childCount: monthGroupedEvents.length,
-                ),
+                    ),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(height: 8),
+                        for (final day in days)
+                          _DayCard(day: day, events: dayGroupedEvents[day]!),
+                      ],
+                    ),
+                  );
+                },
+                childCount: monthGroupedEvents.length,
               ),
             ),
-            if (calendarState.isLoadingMore)
-              const SliverPadding(
-                padding: EdgeInsets.all(12),
-                sliver: SliverToBoxAdapter(
-                  child: Center(child: CircularProgressIndicator()),
-                ),
+          ),
+          if (calendarState.isLoadingMore)
+            const SliverPadding(
+              padding: EdgeInsets.all(12),
+              sliver: SliverToBoxAdapter(
+                child: Center(child: CircularProgressIndicator()),
               ),
-          ],
-        ));
+            ),
+        ],
+      ),
+    );
   }
 }
 

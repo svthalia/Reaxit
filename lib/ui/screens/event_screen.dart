@@ -36,6 +36,8 @@ class EventScreen extends StatefulWidget {
 class _EventScreenState extends State<EventScreen> {
   static final dateTimeFormatter = DateFormat('d MMM y, HH:mm');
 
+  late ScrollController _controller;
+
   late final EventCubit _eventCubit;
   late final RegistrationsCubit _registrationsCubit;
 
@@ -44,7 +46,18 @@ class _EventScreenState extends State<EventScreen> {
     final api = RepositoryProvider.of<ApiRepository>(context);
     _eventCubit = EventCubit(api, eventPk: widget.pk)..load();
     _registrationsCubit = RegistrationsCubit(api, eventPk: widget.pk)..load();
+    _controller = ScrollController()..addListener(_scrollListener);
     super.initState();
+  }
+
+  void _scrollListener() {
+    if (_controller.position.pixels >=
+        _controller.position.maxScrollExtent - 300) {
+      // Only request loading more if that's not already happening.
+      if (!_registrationsCubit.state.isLoadingMore) {
+        _registrationsCubit.more();
+      }
+    }
   }
 
   @override
@@ -863,17 +876,17 @@ class _EventScreenState extends State<EventScreen> {
           ),
           delegate: SliverChildBuilderDelegate(
             (context, index) {
-              if (state.result![index].member != null) {
+              if (state.results[index].member != null) {
                 return MemberTile(
-                  member: state.result![index].member!,
+                  member: state.results[index].member!,
                 );
               } else {
                 return DefaultMemberTile(
-                  name: state.result![index].name!,
+                  name: state.results[index].name!,
                 );
               }
             },
-            childCount: state.result!.length,
+            childCount: state.results.length,
           ),
         ),
       );
@@ -934,27 +947,41 @@ class _EventScreenState extends State<EventScreen> {
               onRefresh: () => _eventCubit.load(),
               child: BlocBuilder<RegistrationsCubit, RegistrationsState>(
                 bloc: _registrationsCubit,
-                builder: (context, state) {
+                builder: (context, listState) {
                   return Scrollbar(
-                      child: CustomScrollView(
-                    key: const PageStorageKey('event'),
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            _makeMap(event),
-                            const Divider(height: 0),
-                            _makeEventInfo(event),
-                            const Divider(),
-                            _makeDescription(event),
-                            const Divider(),
-                          ],
+                    controller: _controller,
+                    child: CustomScrollView(
+                      controller: _controller,
+                      key: const PageStorageKey('event'),
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _makeMap(event),
+                              const Divider(height: 0),
+                              _makeEventInfo(event),
+                              const Divider(),
+                              _makeDescription(event),
+                              const Divider(),
+                            ],
+                          ),
                         ),
-                      ),
-                      _makeRegistrations(state),
-                    ],
-                  ));
+                        _makeRegistrations(listState),
+                        if (listState.isLoadingMore)
+                          const SliverPadding(
+                            padding: EdgeInsets.all(8),
+                            sliver: SliverList(
+                              delegate: SliverChildListDelegate.fixed([
+                                Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                              ]),
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
                 },
               ),
             ),
