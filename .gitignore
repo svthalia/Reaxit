@@ -43,9 +43,7 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
-# Google services
-google-services.json
-GoogleService-Info.plist
+# Secrets
 google-play.json
 app-store.p8
 
