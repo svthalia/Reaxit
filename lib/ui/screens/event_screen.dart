@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,10 +16,12 @@ import 'package:reaxit/ui/screens/event_admin_screen.dart';
 import 'package:reaxit/ui/screens/registration_screen.dart';
 import 'package:reaxit/ui/screens/food_screen.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
+import 'package:reaxit/ui/widgets/cached_image.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/member_tile.dart';
 import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:reaxit/config.dart' as config;
 
 class EventScreen extends StatefulWidget {
   final int pk;
@@ -36,6 +36,8 @@ class EventScreen extends StatefulWidget {
 class _EventScreenState extends State<EventScreen> {
   static final dateTimeFormatter = DateFormat('d MMM y, HH:mm');
 
+  late ScrollController _controller;
+
   late final EventCubit _eventCubit;
   late final RegistrationsCubit _registrationsCubit;
 
@@ -44,7 +46,18 @@ class _EventScreenState extends State<EventScreen> {
     final api = RepositoryProvider.of<ApiRepository>(context);
     _eventCubit = EventCubit(api, eventPk: widget.pk)..load();
     _registrationsCubit = RegistrationsCubit(api, eventPk: widget.pk)..load();
+    _controller = ScrollController()..addListener(_scrollListener);
     super.initState();
+  }
+
+  void _scrollListener() {
+    if (_controller.position.pixels >=
+        _controller.position.maxScrollExtent - 300) {
+      // Only request loading more if that's not already happening.
+      if (!_registrationsCubit.state.isLoadingMore) {
+        _registrationsCubit.more();
+      }
+    }
   }
 
   @override
@@ -57,18 +70,16 @@ class _EventScreenState extends State<EventScreen> {
   Widget _makeMap(Event event) {
     return Link(
       uri: Uri.parse(
-        'https://maps.${Platform.isIOS ? 'apple' : 'google'}.com'
+        'https://maps.${Theme.of(context).platform == TargetPlatform.iOS ? 'apple' : 'google'}.com'
         '/maps?daddr=${Uri.encodeComponent(event.location)}',
       ),
       builder: (context, followLink) => Stack(
         fit: StackFit.loose,
         children: [
-          FadeInImage.assetNetwork(
-            fit: BoxFit.fitWidth,
-            fadeInDuration: const Duration(milliseconds: 300),
-            fadeOutDuration: const Duration(milliseconds: 300),
+          CachedImage(
+            imageUrl: event.mapsUrl,
             placeholder: 'assets/img/map_placeholder.png',
-            image: event.mapsUrl,
+            fit: BoxFit.cover,
           ),
           Positioned.fill(
             child: Material(
@@ -120,8 +131,8 @@ class _EventScreenState extends State<EventScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('From', style: textTheme.caption),
-            Text('Until', style: textTheme.caption)
+            Text('FROM', style: textTheme.caption),
+            Text('UNTIL', style: textTheme.caption)
           ],
         ),
         const SizedBox(height: 4),
@@ -147,8 +158,8 @@ class _EventScreenState extends State<EventScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Location', style: textTheme.caption),
-            Text('Price', style: textTheme.caption)
+            Text('LOCATION', style: textTheme.caption),
+            Text('PRICE', style: textTheme.caption)
           ],
         ),
         const SizedBox(height: 4),
@@ -799,7 +810,7 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   TextSpan _makeTermsAndConditions(Event event) {
-    const url = 'https://staging.thalia.nu/event-registration-terms/';
+    const url = config.termsAndConditionsUrl;
     return TextSpan(
       children: [
         const TextSpan(
@@ -853,9 +864,9 @@ class _EventScreenState extends State<EventScreen> {
 
   Widget _makeRegistrationsHeader() {
     return Padding(
-        padding: EdgeInsets.only(left: 16),
+        padding: const EdgeInsets.only(left: 16),
         child:
-            Text("Registrations", style: Theme.of(context).textTheme.caption));
+            Text('Registrations', style: Theme.of(context).textTheme.caption));
   }
 
   SliverPadding _makeRegistrations(RegistrationsState state) {
@@ -886,42 +897,17 @@ class _EventScreenState extends State<EventScreen> {
           ),
           delegate: SliverChildBuilderDelegate(
             (context, index) {
-              if (state.result![index].member != null) {
+              if (state.results[index].member != null) {
                 return MemberTile(
-                  member: state.result![index].member!,
+                  member: state.results[index].member!,
                 );
               } else {
-                return InkWell(
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Image.asset('assets/image/default-avatar.jpg'),
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        alignment: Alignment.bottomLeft,
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          gradient: LinearGradient(
-                            begin: FractionalOffset.topCenter,
-                            end: FractionalOffset.bottomCenter,
-                            colors: [
-                              Colors.black.withOpacity(0.0),
-                              Colors.black.withOpacity(0.5),
-                            ],
-                            stops: const [0.4, 1.0],
-                          ),
-                        ),
-                        child: Text(
-                          state.result![index].name!,
-                          style: Theme.of(context).primaryTextTheme.bodyText2,
-                        ),
-                      )
-                    ],
-                  ),
+                return DefaultMemberTile(
+                  name: state.results[index].name!,
                 );
               }
             },
-            childCount: state.result!.length,
+            childCount: state.results.length,
           ),
         ),
       );
@@ -965,6 +951,7 @@ class _EventScreenState extends State<EventScreen> {
               actions: [
                 if (event.userPermissions.manageEvent)
                   IconButton(
+                    padding: const EdgeInsets.all(16),
                     icon: const Icon(Icons.settings),
                     onPressed: () {
                       ThaliaRouterDelegate.of(context).push(
@@ -981,26 +968,41 @@ class _EventScreenState extends State<EventScreen> {
               onRefresh: () => _eventCubit.load(),
               child: BlocBuilder<RegistrationsCubit, RegistrationsState>(
                 bloc: _registrationsCubit,
-                builder: (context, state) {
-                  return CustomScrollView(
-                    key: const PageStorageKey('event'),
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            _makeMap(event),
-                            const Divider(height: 0),
-                            _makeEventInfo(event),
-                            const Divider(),
-                            _makeDescription(event),
-                            const Divider(),
-                            _makeRegistrationsHeader(),
-                          ],
+                builder: (context, listState) {
+                  return Scrollbar(
+                    controller: _controller,
+                    child: CustomScrollView(
+                      controller: _controller,
+                      key: const PageStorageKey('event'),
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _makeMap(event),
+                              const Divider(height: 0),
+                              _makeEventInfo(event),
+                              const Divider(),
+                              _makeDescription(event),
+                              const Divider(),
+                              _makeRegistrationsHeader(),
+                            ],
+                          ),
                         ),
-                      ),
-                      _makeRegistrations(state),
-                    ],
+                        _makeRegistrations(listState),
+                        if (listState.isLoadingMore)
+                          const SliverPadding(
+                            padding: EdgeInsets.all(8),
+                            sliver: SliverList(
+                              delegate: SliverChildListDelegate.fixed([
+                                Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                              ]),
+                            ),
+                          ),
+                      ],
+                    ),
                   );
                 },
               ),

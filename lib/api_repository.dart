@@ -21,6 +21,7 @@ import 'package:reaxit/models/product.dart';
 import 'package:reaxit/models/registration_field.dart';
 import 'package:reaxit/models/slide.dart';
 import 'package:reaxit/models/device.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 final Uri _baseUri = Uri(
   scheme: 'https',
@@ -96,6 +97,8 @@ class ApiRepository {
       throw ApiException.notLoggedIn;
     } on FormatException catch (_) {
       throw ApiException.unknownError;
+    } on http.ClientException catch (_) {
+      throw ApiException.unknownError;
     } on ApiException catch (_) {
       rethrow;
     }
@@ -117,6 +120,7 @@ class ApiRepository {
     if (exception is ApiException) {
       throw exception;
     } else {
+      Sentry.captureException(exception);
       throw ApiException.unknownError;
     }
   }

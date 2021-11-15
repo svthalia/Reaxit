@@ -30,9 +30,7 @@ class FoodAdminCubit extends Cubit<FoodAdminState> {
     try {
       final query = _searchQuery;
       final orders = await api.getAdminFoodOrders(
-        pk: foodEventPk,
-        search: query,
-      );
+          pk: foodEventPk, search: query, limit: 999999999);
       if (orders.results.isEmpty) {
         if (query?.isEmpty ?? true) {
           emit(const FoodAdminState.failure(
@@ -58,7 +56,12 @@ class FoodAdminCubit extends Cubit<FoodAdminState> {
     if (query != _searchQuery) {
       _searchQuery = query;
       _searchDebounceTimer?.cancel();
-      _searchDebounceTimer = Timer(config.searchDebounceTime, load);
+      if (query?.isEmpty ?? false) {
+        /// Don't get results when the query is empty.
+        emit(const FoodAdminState.loading());
+      } else {
+        _searchDebounceTimer = Timer(config.searchDebounceTime, load);
+      }
     }
   }
 

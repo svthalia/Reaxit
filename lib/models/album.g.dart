@@ -6,15 +6,13 @@ part of 'album.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ListAlbum _$ListAlbumFromJson(Map<String, dynamic> json) {
-  return ListAlbum(
-    json['slug'] as String,
-    json['title'] as String,
-    json['accessible'] as bool,
-    json['shareable'] as bool,
-    AlbumPhoto.fromJson(json['cover'] as Map<String, dynamic>),
-  );
-}
+ListAlbum _$ListAlbumFromJson(Map<String, dynamic> json) => ListAlbum(
+      json['slug'] as String,
+      json['title'] as String,
+      json['accessible'] as bool,
+      json['shareable'] as bool,
+      AlbumPhoto.fromJson(json['cover'] as Map<String, dynamic>),
+    );
 
 Map<String, dynamic> _$ListAlbumToJson(ListAlbum instance) => <String, dynamic>{
       'slug': instance.slug,
@@ -24,18 +22,16 @@ Map<String, dynamic> _$ListAlbumToJson(ListAlbum instance) => <String, dynamic>{
       'cover': instance.cover,
     };
 
-Album _$AlbumFromJson(Map<String, dynamic> json) {
-  return Album(
-    json['slug'] as String,
-    json['title'] as String,
-    json['accessible'] as bool,
-    json['shareable'] as bool,
-    AlbumPhoto.fromJson(json['cover'] as Map<String, dynamic>),
-    (json['photos'] as List<dynamic>)
-        .map((e) => AlbumPhoto.fromJson(e as Map<String, dynamic>))
-        .toList(),
-  );
-}
+Album _$AlbumFromJson(Map<String, dynamic> json) => Album(
+      json['slug'] as String,
+      json['title'] as String,
+      json['accessible'] as bool,
+      json['shareable'] as bool,
+      AlbumPhoto.fromJson(json['cover'] as Map<String, dynamic>),
+      (json['photos'] as List<dynamic>)
+          .map((e) => AlbumPhoto.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
 
 Map<String, dynamic> _$AlbumToJson(Album instance) => <String, dynamic>{
       'slug': instance.slug,

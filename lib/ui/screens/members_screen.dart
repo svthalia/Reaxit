@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:reaxit/api_repository.dart';
 import 'package:reaxit/blocs/member_list_cubit.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
@@ -46,19 +47,19 @@ class _MembersScreenState extends State<MembersScreen> {
         title: const Text('MEMBERS'),
         actions: [
           IconButton(
+            padding: const EdgeInsets.all(16),
             icon: const Icon(Icons.search),
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: MembersSearchDelegate(
-                  MemberListCubit(
-                    RepositoryProvider.of<ApiRepository>(
-                      context,
-                      listen: false,
-                    ),
-                  ),
-                ),
+            onPressed: () async {
+              final searchCubit = MemberListCubit(
+                RepositoryProvider.of<ApiRepository>(context),
               );
+
+              await showSearch(
+                context: context,
+                delegate: MembersSearchDelegate(searchCubit),
+              );
+
+              searchCubit.close();
             },
           ),
         ],
@@ -105,12 +106,25 @@ class MembersSearchDelegate extends SearchDelegate {
   }
 
   @override
+  ThemeData appBarTheme(BuildContext context) {
+    final theme = super.appBarTheme(context);
+    return theme.copyWith(
+      textTheme: theme.textTheme.copyWith(
+        headline6: GoogleFonts.openSans(
+          textStyle: Theme.of(context).textTheme.headline6,
+        ),
+      ),
+    );
+  }
+
+  @override
   List<Widget> buildActions(BuildContext context) {
     if (query.isNotEmpty) {
       return <Widget>[
         IconButton(
+          padding: const EdgeInsets.all(16),
           tooltip: 'Clear search bar',
-          icon: const Icon(Icons.delete),
+          icon: const Icon(Icons.clear),
           onPressed: () {
             query = '';
           },
@@ -123,7 +137,7 @@ class MembersSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildLeading(BuildContext context) {
-    return CloseButton(
+    return BackButton(
       onPressed: () => close(context, null),
     );
   }
@@ -181,40 +195,42 @@ class MemberListScrollView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      controller: controller,
-      physics: const RangeMaintainingScrollPhysics(
-        parent: AlwaysScrollableScrollPhysics(),
-      ),
-      slivers: [
-        SliverPadding(
-          padding: const EdgeInsets.all(8),
-          sliver: SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8,
-            ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => MemberTile(
-                member: listState.results[index],
+    return Scrollbar(
+        controller: controller,
+        child: CustomScrollView(
+          controller: controller,
+          physics: const RangeMaintainingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.all(8),
+              sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) => MemberTile(
+                    member: listState.results[index],
+                  ),
+                  childCount: listState.results.length,
+                ),
               ),
-              childCount: listState.results.length,
             ),
-          ),
-        ),
-        if (listState.isLoadingMore)
-          const SliverPadding(
-            padding: EdgeInsets.all(8),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate.fixed([
-                Center(
-                  child: CircularProgressIndicator(),
-                )
-              ]),
-            ),
-          ),
-      ],
-    );
+            if (listState.isLoadingMore)
+              const SliverPadding(
+                padding: EdgeInsets.all(8),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate.fixed([
+                    Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  ]),
+                ),
+              ),
+          ],
+        ));
   }
 }

@@ -6,13 +6,12 @@ part of 'frontpage_article.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-FrontpageArticle _$FrontpageArticleFromJson(Map<String, dynamic> json) {
-  return FrontpageArticle(
-    json['pk'] as int,
-    json['title'] as String,
-    json['content'] as String,
-  );
-}
+FrontpageArticle _$FrontpageArticleFromJson(Map<String, dynamic> json) =>
+    FrontpageArticle(
+      json['pk'] as int,
+      json['title'] as String,
+      json['content'] as String,
+    );
 
 Map<String, dynamic> _$FrontpageArticleToJson(FrontpageArticle instance) =>
     <String, dynamic>{

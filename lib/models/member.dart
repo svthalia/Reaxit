@@ -91,6 +91,7 @@ class Profile {
   final Photo photo;
   final Programme? programme;
   final int? startingYear;
+  @JsonKey(fromJson: _nonEmptyUriFromJson)
   final Uri? website;
   final String? profileDescription;
 
@@ -198,4 +199,9 @@ class Achievement {
       this.earliest, this.latest);
   factory Achievement.fromJson(Map<String, dynamic> json) =>
       _$AchievementFromJson(json);
+}
+
+Uri? _nonEmptyUriFromJson(String? json) {
+  if (json == null || json.isEmpty) return null;
+  return Uri.tryParse(json);
 }
