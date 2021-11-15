@@ -512,13 +512,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 _makeAppBar((state.result ?? widget.member)!),
                 _makeFactsSliver((state.result ?? widget.member)!),
                 if (!state.isLoading) ...[
-                  if (state.result!.achievements.isNotEmpty) ...[
+                  if (state.result!.achievements.isNotEmpty)
                     _makeAchievementsSliver(state.result!),
-                    const SliverPadding(padding: EdgeInsets.only(bottom: 12)),
-                  ],
-                  if (state.result!.societies.isNotEmpty) ...[
+                  if (state.result!.societies.isNotEmpty)
                     _makeSocietiesSliver(state.result!),
-                  ],
                 ] else ...[
                   const SliverPadding(
                     padding: EdgeInsets.all(16),
