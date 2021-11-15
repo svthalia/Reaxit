@@ -118,6 +118,7 @@ class _EventScreenState extends State<EventScreen> {
 
   /// Create the title, start, end, location and price of an event.
   Widget _makeBasicEventInfo(Event event) {
+    // TODO: Explore left-aligned stuff.
     final textTheme = Theme.of(context).textTheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,6 +187,10 @@ class _EventScreenState extends State<EventScreen> {
 
   // Create the info for events with required registration.
   Widget _makeRequiredRegistrationInfo(Event event) {
+    // TODO: Create buttons correctly (based on permissions): It is not possible
+    //  to register again for an event that you have cancelled your registration
+    //  for when the registration deadline has not passed yet (example at the
+    //  time of writing: Thalympics).
     assert(event.registrationIsRequired);
     final textTheme = Theme.of(context).textTheme;
     final dataStyle = textTheme.bodyText2!.apply(fontSizeDelta: -1);
@@ -862,17 +867,22 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  Widget _makeRegistrationsHeader() {
-    return Padding(
-        padding: const EdgeInsets.only(left: 16),
-        child:
-            Text('Registrations', style: Theme.of(context).textTheme.caption));
+  SliverPadding _makeRegistrationsHeader(RegistrationsState state) {
+    return SliverPadding(
+      padding: const EdgeInsets.only(left: 16),
+      sliver: SliverToBoxAdapter(
+        child: Text(
+          'REGISTRATIONS',
+          style: Theme.of(context).textTheme.caption,
+        ),
+      ),
+    );
   }
 
   SliverPadding _makeRegistrations(RegistrationsState state) {
     if (state.isLoading) {
       return const SliverPadding(
-        padding: EdgeInsets.symmetric(horizontal: 8),
+        padding: EdgeInsets.all(16),
         sliver: SliverToBoxAdapter(
           child: Center(
             child: CircularProgressIndicator(),
@@ -881,10 +891,8 @@ class _EventScreenState extends State<EventScreen> {
       );
     } else if (state.hasException) {
       return SliverPadding(
-        padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
-        sliver: SliverToBoxAdapter(
-          child: Center(child: Text(state.message!)),
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+        sliver: SliverToBoxAdapter(child: Text(state.message!)),
       );
     } else {
       return SliverPadding(
@@ -921,9 +929,7 @@ class _EventScreenState extends State<EventScreen> {
       builder: (context, state) {
         if (state.hasException) {
           return Scaffold(
-            appBar: ThaliaAppBar(
-              title: Text(widget.event?.title.toUpperCase() ?? 'EVENT'),
-            ),
+            appBar: ThaliaAppBar(title: const Text('EVENT')),
             body: RefreshIndicator(
               onRefresh: () async {
                 // Await both loads.
@@ -939,15 +945,13 @@ class _EventScreenState extends State<EventScreen> {
             state.result == null) {
           return Scaffold(
             appBar: ThaliaAppBar(title: const Text('EVENT')),
-            body: const Center(
-              child: CircularProgressIndicator(),
-            ),
+            body: const Center(child: CircularProgressIndicator()),
           );
         } else {
           final event = (state.result ?? widget.event)!;
           return Scaffold(
             appBar: ThaliaAppBar(
-              title: Text(event.title.toUpperCase()),
+              title: const Text('EVENT'),
               actions: [
                 if (event.userPermissions.manageEvent)
                   IconButton(
@@ -984,23 +988,26 @@ class _EventScreenState extends State<EventScreen> {
                               _makeEventInfo(event),
                               const Divider(),
                               _makeDescription(event),
-                              const Divider(),
-                              _makeRegistrationsHeader(),
                             ],
                           ),
                         ),
-                        _makeRegistrations(listState),
-                        if (listState.isLoadingMore)
-                          const SliverPadding(
-                            padding: EdgeInsets.all(8),
-                            sliver: SliverList(
-                              delegate: SliverChildListDelegate.fixed([
-                                Center(
-                                  child: CircularProgressIndicator(),
-                                )
-                              ]),
+                        if (event.registrationIsOptional ||
+                            event.registrationIsRequired) ...[
+                          const SliverToBoxAdapter(child: Divider()),
+                          _makeRegistrationsHeader(listState),
+                          _makeRegistrations(listState),
+                          if (listState.isLoadingMore)
+                            const SliverPadding(
+                              padding: EdgeInsets.all(8),
+                              sliver: SliverList(
+                                delegate: SliverChildListDelegate.fixed([
+                                  Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                ]),
+                              ),
                             ),
-                          ),
+                        ],
                       ],
                     ),
                   );
