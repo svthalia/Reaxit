@@ -97,6 +97,8 @@ class ApiRepository {
       throw ApiException.notLoggedIn;
     } on FormatException catch (_) {
       throw ApiException.unknownError;
+    } on http.ClientException catch (_) {
+      throw ApiException.unknownError;
     } on ApiException catch (_) {
       rethrow;
     }
