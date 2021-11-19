@@ -118,10 +118,9 @@ class _EventScreenState extends State<EventScreen> {
 
   /// Create the title, start, end, location and price of an event.
   Widget _makeBasicEventInfo(Event event) {
-    // TODO: Explore left-aligned stuff.
     final textTheme = Theme.of(context).textTheme;
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const SizedBox(height: 8),
         Text(
@@ -130,54 +129,73 @@ class _EventScreenState extends State<EventScreen> {
         ),
         const Divider(height: 24),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('FROM', style: textTheme.caption),
-            Text('UNTIL', style: textTheme.caption)
-          ],
-        ),
-        const SizedBox(height: 4),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Flexible(
-              child: Text(
-                dateTimeFormatter.format(event.start.toLocal()),
-                style: textTheme.subtitle2,
+              fit: FlexFit.tight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('FROM', style: textTheme.caption),
+                  const SizedBox(height: 4),
+                  Text(
+                    dateTimeFormatter.format(event.start.toLocal()),
+                    style: textTheme.subtitle2,
+                  ),
+                ],
               ),
             ),
             const SizedBox(width: 8),
             Flexible(
-              child: Text(
-                dateTimeFormatter.format(event.end.toLocal()),
-                style: textTheme.subtitle2,
+              fit: FlexFit.tight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('UNTIL', style: textTheme.caption),
+                  const SizedBox(height: 4),
+                  Text(
+                    dateTimeFormatter.format(event.end.toLocal()),
+                    style: textTheme.subtitle2,
+                  ),
+                ],
               ),
-            ),
+            )
           ],
         ),
         const SizedBox(height: 12),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('LOCATION', style: textTheme.caption),
-            Text('PRICE', style: textTheme.caption)
-          ],
-        ),
-        const SizedBox(height: 4),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
           children: [
             Flexible(
-              child: Text(
-                event.location,
-                style: textTheme.subtitle2,
+              fit: FlexFit.tight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('LOCATION', style: textTheme.caption),
+                  const SizedBox(height: 4),
+                  Text(
+                    event.location,
+                    style: textTheme.subtitle2,
+                  ),
+                ],
               ),
             ),
             const SizedBox(width: 8),
-            Text(
-              '€${event.price}',
-              style: textTheme.subtitle2,
-            ),
+            Flexible(
+              fit: FlexFit.tight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('PRICE', style: textTheme.caption),
+                  const SizedBox(height: 4),
+                  Text(
+                    '€${event.price}',
+                    style: textTheme.subtitle2,
+                  ),
+                ],
+              ),
+            )
           ],
         ),
         const Divider(height: 24),
@@ -334,69 +352,79 @@ class _EventScreenState extends State<EventScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // const SizedBox(height: 4),
+            if (event.registrationStart!.isAfter(DateTime.now())) ...[
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Flexible(
+                    fit: FlexFit.tight,
+                    child: Text('Registration start:', style: labelStyle),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    fit: FlexFit.tight,
+                    child: Text(
+                      dateTimeFormatter
+                          .format(event.registrationStart!.toLocal()),
+                      style: dataStyle,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+            ],
             Row(
+              mainAxisSize: MainAxisSize.max,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (event.registrationStart!.isAfter(DateTime.now())) ...[
-                      Text(
-                        'Registration start:',
-                        style: labelStyle,
-                      ),
-                      const SizedBox(height: 8),
-                    ],
-                    Text(
-                      'Registration deadline:',
-                      style: labelStyle,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Cancellation deadline:',
-                      style: labelStyle,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Number of registrations:',
-                      style: labelStyle,
-                    ),
-                  ],
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: Text('Registration deadline:', style: labelStyle),
                 ),
                 const SizedBox(width: 8),
                 Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (event.registrationStart!.isAfter(DateTime.now())) ...[
-                        Text(
-                          dateTimeFormatter.format(
-                            event.registrationStart!.toLocal(),
-                          ),
-                          style: dataStyle,
-                        ),
-                        const SizedBox(height: 8),
-                      ],
-                      Text(
-                        dateTimeFormatter
-                            .format(event.registrationEnd!.toLocal()),
-                        style: dataStyle,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        dateTimeFormatter
-                            .format(event.cancelDeadline!.toLocal()),
-                        style: dataStyle,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        event.maxParticipants == null
-                            ? '${event.numParticipants} registrations'
-                            : '${event.numParticipants} registrations '
-                                '(${event.maxParticipants} max)',
-                        style: dataStyle,
-                      ),
-                    ],
+                  fit: FlexFit.tight,
+                  child: Text(
+                    dateTimeFormatter.format(event.registrationEnd!.toLocal()),
+                    style: dataStyle,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: Text('Cancellation deadline:', style: labelStyle),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: Text(
+                    dateTimeFormatter.format(event.cancelDeadline!.toLocal()),
+                    style: dataStyle,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: Text('Number of registrations:', style: labelStyle),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: Text(
+                    event.maxParticipants == null
+                        ? '${event.numParticipants} registrations'
+                        : '${event.numParticipants} registrations '
+                            '(${event.maxParticipants} max)',
+                    style: dataStyle,
                   ),
                 ),
               ],
