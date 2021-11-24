@@ -73,13 +73,23 @@ class _EventScreenState extends State<EventScreen> {
         'https://maps.${Theme.of(context).platform == TargetPlatform.iOS ? 'apple' : 'google'}.com'
         '/maps?daddr=${Uri.encodeComponent(event.location)}',
       ),
-      builder: (context, followLink) => GestureDetector(
-        onTap: followLink,
-        child: CachedImage(
-          imageUrl: event.mapsUrl,
-          placeholder: 'assets/img/map_placeholder.png',
-          fit: BoxFit.cover,
-        ),
+      builder: (context, followLink) => Stack(
+        fit: StackFit.loose,
+        children: [
+          CachedImage(
+            imageUrl: event.mapsUrl,
+            placeholder: 'assets/img/map_placeholder.png',
+            fit: BoxFit.cover,
+          ),
+          Positioned.fill(
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: followLink,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -110,64 +120,85 @@ class _EventScreenState extends State<EventScreen> {
   Widget _makeBasicEventInfo(Event event) {
     final textTheme = Theme.of(context).textTheme;
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SizedBox(height: 4),
+        const SizedBox(height: 8),
         Text(
           event.title.toUpperCase(),
           style: textTheme.headline6,
         ),
-        const Divider(),
+        const Divider(height: 24),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('FROM', style: textTheme.caption),
-            Text('UNTIL', style: textTheme.caption)
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Flexible(
-              child: Text(
-                dateTimeFormatter.format(event.start.toLocal()),
-                style: textTheme.subtitle2,
+              fit: FlexFit.tight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('FROM', style: textTheme.caption),
+                  const SizedBox(height: 4),
+                  Text(
+                    dateTimeFormatter.format(event.start.toLocal()),
+                    style: textTheme.subtitle2,
+                  ),
+                ],
               ),
             ),
             const SizedBox(width: 8),
             Flexible(
-              child: Text(
-                dateTimeFormatter.format(event.end.toLocal()),
-                style: textTheme.subtitle2,
+              fit: FlexFit.tight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('UNTIL', style: textTheme.caption),
+                  const SizedBox(height: 4),
+                  Text(
+                    dateTimeFormatter.format(event.end.toLocal()),
+                    style: textTheme.subtitle2,
+                  ),
+                ],
               ),
-            ),
+            )
           ],
         ),
-        const Divider(),
+        const SizedBox(height: 12),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('LOCATION', style: textTheme.caption),
-            Text('PRICE', style: textTheme.caption)
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
           children: [
             Flexible(
-              child: Text(
-                event.location,
-                style: textTheme.subtitle2,
+              fit: FlexFit.tight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('LOCATION', style: textTheme.caption),
+                  const SizedBox(height: 4),
+                  Text(
+                    event.location,
+                    style: textTheme.subtitle2,
+                  ),
+                ],
               ),
             ),
             const SizedBox(width: 8),
-            Text(
-              '€${event.price}',
-              style: textTheme.subtitle2,
-            ),
+            Flexible(
+              fit: FlexFit.tight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('PRICE', style: textTheme.caption),
+                  const SizedBox(height: 4),
+                  Text(
+                    '€${event.price}',
+                    style: textTheme.subtitle2,
+                  ),
+                ],
+              ),
+            )
           ],
         ),
-        const Divider(),
+        const Divider(height: 24),
       ],
     );
   }
@@ -184,8 +215,36 @@ class _EventScreenState extends State<EventScreen> {
 
     final textSpans = <TextSpan>[];
     Widget registrationButton = const SizedBox.shrink();
+    Widget updateButton = const SizedBox.shrink();
 
-    if (event.registration == null) {
+    if (event.canCreateRegistration) {
+      if (event.reachedMaxParticipants) {
+        registrationButton = _makeJoinQueueButton(event);
+      } else {
+        registrationButton = _makeCreateRegistrationButton(event);
+      }
+    } else if (event.canCancelRegistration) {
+      if (event.cancelDeadlinePassed()) {
+        // Cancel too late message, cancel button with fine warning.
+        textSpans.add(TextSpan(
+          text: event.cancelTooLateMessage,
+        ));
+        final text = 'The deadline has passed, are you sure you want '
+            'to cancel your registration and pay the estimated full costs of '
+            '€${event.fine}? You will not be able to undo this!';
+        registrationButton = _makeCancelRegistrationButton(event, text);
+      } else {
+        // Cancel button.
+        const text = 'Are you sure you want to cancel your registration?';
+        registrationButton = _makeCancelRegistrationButton(event, text);
+      }
+    }
+
+    if (event.canUpdateRegistration) {
+      updateButton = _makeUpdateButton(event);
+    }
+
+    if (event.canCreateRegistration || !event.isRegistered) {
       if (!event.registrationStarted()) {
         // Registration will open ....
         final registrationStart = dateTimeFormatter.format(
@@ -197,13 +256,6 @@ class _EventScreenState extends State<EventScreen> {
       } else if (event.registrationIsOpen()) {
         // Terms and conditions, register button.
         textSpans.add(_makeTermsAndConditions(event));
-        if (event.canCreateRegistration) {
-          if (event.reachedMaxParticipants) {
-            registrationButton = _makeJoinQueueButton(event);
-          } else {
-            registrationButton = _makeCreateRegistrationButton(event);
-          }
-        }
       } else if (event.registrationClosed()) {
         // Registration is no longer possible.
         textSpans.add(const TextSpan(
@@ -227,18 +279,6 @@ class _EventScreenState extends State<EventScreen> {
         textSpans.add(TextSpan(
           text: 'Queue position ${registration.queuePosition}. ',
         ));
-        if (event.canCancelRegistration) {
-          if (event.cancelDeadlinePassed()) {
-            // Cancellation possible without fine, cancel button.
-            textSpans.add(const TextSpan(
-              text: 'Cancellation while on the waiting list will not result in '
-                  'having to pay a fine. Do note that you will be unable to re-'
-                  'register. ',
-            ));
-          }
-          const text = 'Are you sure you want to cancel your registration?';
-          registrationButton = _makeCancelRegistrationButton(event, text);
-        }
       } else if (registration.isInvited) {
         // You are registered.
         textSpans.add(const TextSpan(
@@ -277,34 +317,11 @@ class _EventScreenState extends State<EventScreen> {
             ));
           }
         }
-        if (event.canCancelRegistration) {
-          if (event.cancelDeadlinePassed()) {
-            // Cancel too late message, cancel button with fine warning.
-            textSpans.add(TextSpan(
-              text: event.cancelTooLateMessage,
-            ));
-            final text = 'The deadline has passed, are you sure you want '
-                'to cancel your registration and pay the estimated full costs of '
-                '€${event.fine}? You will not be able to undo this!';
-            registrationButton = _makeCancelRegistrationButton(event, text);
-          } else {
-            // Cancel button.
-            const text = 'Are you sure you want to cancel your registration?';
-            registrationButton = _makeCancelRegistrationButton(event, text);
-          }
-        }
       }
     }
 
     return BlocBuilder<PaymentUserCubit, PaymentUserState>(
       builder: (context, paymentUserState) {
-        late Widget updateButton;
-        if (event.canUpdateRegistration) {
-          updateButton = _makeUpdateButton(event);
-        } else {
-          updateButton = const SizedBox.shrink();
-        }
-
         late Widget paymentButton;
         if (event.isInvited &&
             event.paymentIsRequired &&
@@ -317,79 +334,89 @@ class _EventScreenState extends State<EventScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // const SizedBox(height: 4),
+            if (event.registrationStart!.isAfter(DateTime.now())) ...[
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Flexible(
+                    fit: FlexFit.tight,
+                    child: Text('Registration start:', style: labelStyle),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    fit: FlexFit.tight,
+                    child: Text(
+                      dateTimeFormatter
+                          .format(event.registrationStart!.toLocal()),
+                      style: dataStyle,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+            ],
             Row(
+              mainAxisSize: MainAxisSize.max,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (event.registrationStart!.isAfter(DateTime.now())) ...[
-                      Text(
-                        'Registration start:',
-                        style: labelStyle,
-                      ),
-                      const SizedBox(height: 4),
-                    ],
-                    Text(
-                      'Registration deadline:',
-                      style: labelStyle,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Cancellation deadline:',
-                      style: labelStyle,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Number of registrations:',
-                      style: labelStyle,
-                    ),
-                  ],
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: Text('Registration deadline:', style: labelStyle),
                 ),
                 const SizedBox(width: 8),
                 Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (event.registrationStart!.isAfter(DateTime.now())) ...[
-                        Text(
-                          dateTimeFormatter.format(
-                            event.registrationStart!.toLocal(),
-                          ),
-                          style: dataStyle,
-                        ),
-                        const SizedBox(height: 4),
-                      ],
-                      Text(
-                        dateTimeFormatter
-                            .format(event.registrationEnd!.toLocal()),
-                        style: dataStyle,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        dateTimeFormatter
-                            .format(event.cancelDeadline!.toLocal()),
-                        style: dataStyle,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        event.maxParticipants == null
-                            ? '${event.numParticipants} registrations'
-                            : '${event.numParticipants} registrations '
-                                '(${event.maxParticipants} max)',
-                        style: dataStyle,
-                      ),
-                    ],
+                  fit: FlexFit.tight,
+                  child: Text(
+                    dateTimeFormatter.format(event.registrationEnd!.toLocal()),
+                    style: dataStyle,
                   ),
                 ),
               ],
             ),
-            const Divider(),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: Text('Cancellation deadline:', style: labelStyle),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: Text(
+                    dateTimeFormatter.format(event.cancelDeadline!.toLocal()),
+                    style: dataStyle,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: Text('Number of registrations:', style: labelStyle),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: Text(
+                    event.maxParticipants == null
+                        ? '${event.numParticipants} registrations'
+                        : '${event.numParticipants} registrations '
+                            '(${event.maxParticipants} max)',
+                    style: dataStyle,
+                  ),
+                ),
+              ],
+            ),
+            const Divider(height: 24),
             Text.rich(
               TextSpan(children: textSpans),
               style: dataStyle,
             ),
-            // const SizedBox(height: 4),
+            const SizedBox(height: 4),
             registrationButton,
             updateButton,
             paymentButton,
@@ -407,12 +434,12 @@ class _EventScreenState extends State<EventScreen> {
 
     final textSpans = <TextSpan>[];
     Widget registrationButton = const SizedBox.shrink();
+    if (event.canCancelRegistration) {
+      registrationButton = _makeIWontBeThereButton(event);
+    }
 
     if (event.isInvited) {
       textSpans.add(const TextSpan(text: 'You are registered. '));
-      if (event.canCancelRegistration) {
-        registrationButton = _makeIWontBeThereButton(event);
-      }
     } else if (event.canCreateRegistration) {
       textSpans.add(const TextSpan(
         text: 'Even though registration is not required for this event, you '
@@ -428,11 +455,9 @@ class _EventScreenState extends State<EventScreen> {
       textSpans.add(const TextSpan(text: 'No registration required.'));
     }
 
-    late Widget updateButton;
+    Widget updateButton = const SizedBox.shrink();
     if (event.canUpdateRegistration) {
       updateButton = _makeUpdateButton(event);
-    } else {
-      updateButton = const SizedBox.shrink();
     }
 
     return Column(
@@ -442,6 +467,7 @@ class _EventScreenState extends State<EventScreen> {
           TextSpan(children: textSpans),
           style: dataStyle,
         ),
+        const SizedBox(height: 4),
         registrationButton,
         updateButton,
       ],
@@ -468,6 +494,7 @@ class _EventScreenState extends State<EventScreen> {
           TextSpan(children: textSpans),
           style: dataStyle,
         ),
+        const SizedBox(height: 4),
       ],
     );
   }
@@ -534,7 +561,7 @@ class _EventScreenState extends State<EventScreen> {
                           rootNavigator: true,
                         ).pop(false),
                         icon: const Icon(Icons.clear),
-                        label: const Text('No'),
+                        label: const Text('NO'),
                       ),
                       ElevatedButton.icon(
                         onPressed: () => Navigator.of(
@@ -631,7 +658,7 @@ class _EventScreenState extends State<EventScreen> {
                     rootNavigator: true,
                   ).pop(false),
                   icon: const Icon(Icons.clear),
-                  label: const Text('No'),
+                  label: const Text('NO'),
                 ),
                 ElevatedButton.icon(
                   onPressed: () => Navigator.of(
@@ -848,10 +875,22 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
+  SliverPadding _makeRegistrationsHeader(RegistrationsState state) {
+    return SliverPadding(
+      padding: const EdgeInsets.only(left: 16),
+      sliver: SliverToBoxAdapter(
+        child: Text(
+          'REGISTRATIONS',
+          style: Theme.of(context).textTheme.caption,
+        ),
+      ),
+    );
+  }
+
   SliverPadding _makeRegistrations(RegistrationsState state) {
-    if (state.isLoading) {
+    if (state.isLoading && state.results.isEmpty) {
       return const SliverPadding(
-        padding: EdgeInsets.symmetric(horizontal: 8),
+        padding: EdgeInsets.all(16),
         sliver: SliverToBoxAdapter(
           child: Center(
             child: CircularProgressIndicator(),
@@ -860,14 +899,12 @@ class _EventScreenState extends State<EventScreen> {
       );
     } else if (state.hasException) {
       return SliverPadding(
-        padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
-        sliver: SliverToBoxAdapter(
-          child: Center(child: Text(state.message!)),
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+        sliver: SliverToBoxAdapter(child: Text(state.message!)),
       );
     } else {
       return SliverPadding(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
         sliver: SliverGrid(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
@@ -918,9 +955,7 @@ class _EventScreenState extends State<EventScreen> {
             state.result == null) {
           return Scaffold(
             appBar: ThaliaAppBar(title: const Text('EVENT')),
-            body: const Center(
-              child: CircularProgressIndicator(),
-            ),
+            body: const Center(child: CircularProgressIndicator()),
           );
         } else {
           final event = (state.result ?? widget.event)!;
@@ -963,22 +998,24 @@ class _EventScreenState extends State<EventScreen> {
                               _makeEventInfo(event),
                               const Divider(),
                               _makeDescription(event),
-                              const Divider(),
                             ],
                           ),
                         ),
-                        _makeRegistrations(listState),
-                        if (listState.isLoadingMore)
-                          const SliverPadding(
-                            padding: EdgeInsets.all(8),
-                            sliver: SliverList(
-                              delegate: SliverChildListDelegate.fixed([
-                                Center(
-                                  child: CircularProgressIndicator(),
-                                )
-                              ]),
+                        if (event.registrationIsOptional ||
+                            event.registrationIsRequired) ...[
+                          const SliverToBoxAdapter(child: Divider()),
+                          _makeRegistrationsHeader(listState),
+                          _makeRegistrations(listState),
+                          if (listState.isLoadingMore)
+                            const SliverPadding(
+                              padding: EdgeInsets.all(8),
+                              sliver: SliverList(
+                                delegate: SliverChildListDelegate.fixed([
+                                  Center(child: CircularProgressIndicator()),
+                                ]),
+                              ),
                             ),
-                          ),
+                        ],
                       ],
                     ),
                   );

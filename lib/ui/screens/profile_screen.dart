@@ -253,30 +253,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
         titlePadding: const EdgeInsets.only(bottom: 14),
         background: Builder(
           builder: (context) {
-            return GestureDetector(
-              onTap: member != null
-                  ? () => _showAvatarView(context, member)
-                  : null,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Container(
-                    decoration: const BoxDecoration(color: Color(0xFFC5C5C5)),
+            return Stack(
+              fit: StackFit.expand,
+              children: [
+                Container(
+                  decoration: const BoxDecoration(color: Color(0xFFC5C5C5)),
+                ),
+                member != null
+                    ? FadeInImage.assetNetwork(
+                        placeholder: 'assets/img/default-avatar.jpg',
+                        image: member.photo.medium,
+                        fit: BoxFit.cover,
+                        fadeInDuration: const Duration(milliseconds: 300),
+                      )
+                    : Image.asset(
+                        'assets/img/default-avatar.jpg',
+                        fit: BoxFit.cover,
+                      ),
+                const _BlackGradient(),
+                Positioned.fill(
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: member != null
+                          ? () => _showAvatarView(context, member)
+                          : null,
+                    ),
                   ),
-                  member != null
-                      ? FadeInImage.assetNetwork(
-                          placeholder: 'assets/img/default-avatar.jpg',
-                          image: member.photo.medium,
-                          fit: BoxFit.cover,
-                          fadeInDuration: const Duration(milliseconds: 300),
-                        )
-                      : Image.asset(
-                          'assets/img/default-avatar.jpg',
-                          fit: BoxFit.cover,
-                        ),
-                  const _BlackGradient()
-                ],
-              ),
+                ),
+              ],
             );
           },
         ),
@@ -373,23 +378,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const Divider(),
           ],
           _DescriptionFact(member: member, cubit: _memberCubit),
-          const Divider(),
+          const Divider(height: 24),
           if (member.programme != null) ...[
             _makeStudiesFact(member),
-            const Divider(),
           ],
           if (member.startingYear != null) ...[
+            const SizedBox(height: 12),
             _makeCohortFact(member),
-            const Divider(),
           ],
           if (member.birthday != null) ...[
+            const SizedBox(height: 12),
             _makeBirthdayFact(member),
-            const Divider(),
           ],
           if (member.website != null) ...[
+            const SizedBox(height: 12),
             _makeWebsiteFact(member),
-            const Divider(),
           ],
+          const Divider(height: 24),
         ]),
       ),
     );
@@ -511,16 +516,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _makeAchievementsSliver(state.result!),
                   if (state.result!.societies.isNotEmpty)
                     _makeSocietiesSliver(state.result!),
-                  const SliverPadding(padding: EdgeInsets.all(4))
-                ] else
+                ] else ...[
                   const SliverPadding(
                     padding: EdgeInsets.all(16),
                     sliver: SliverToBoxAdapter(
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                      child: Center(child: CircularProgressIndicator()),
                     ),
                   ),
+                ],
+                const SliverToBoxAdapter(child: SizedBox(height: 32))
               ],
             );
           }
