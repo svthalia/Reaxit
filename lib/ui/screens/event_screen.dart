@@ -205,10 +205,6 @@ class _EventScreenState extends State<EventScreen> {
 
   // Create the info for events with required registration.
   Widget _makeRequiredRegistrationInfo(Event event) {
-    // TODO: Create buttons correctly (based on permissions): It is not possible
-    //  to register again for an event that you have cancelled your registration
-    //  for when the registration deadline has not passed yet (example at the
-    //  time of writing: Thalympics).
     assert(event.registrationIsRequired);
     final textTheme = Theme.of(context).textTheme;
     final dataStyle = textTheme.bodyText2!.apply(fontSizeDelta: -1);
@@ -219,8 +215,36 @@ class _EventScreenState extends State<EventScreen> {
 
     final textSpans = <TextSpan>[];
     Widget registrationButton = const SizedBox.shrink();
+    Widget updateButton = const SizedBox.shrink();
 
-    if (event.registration == null) {
+    if (event.canCreateRegistration) {
+      if (event.reachedMaxParticipants) {
+        registrationButton = _makeJoinQueueButton(event);
+      } else {
+        registrationButton = _makeCreateRegistrationButton(event);
+      }
+    } else if (event.canCancelRegistration) {
+      if (event.cancelDeadlinePassed()) {
+        // Cancel too late message, cancel button with fine warning.
+        textSpans.add(TextSpan(
+          text: event.cancelTooLateMessage,
+        ));
+        final text = 'The deadline has passed, are you sure you want '
+            'to cancel your registration and pay the estimated full costs of '
+            '€${event.fine}? You will not be able to undo this!';
+        registrationButton = _makeCancelRegistrationButton(event, text);
+      } else {
+        // Cancel button.
+        const text = 'Are you sure you want to cancel your registration?';
+        registrationButton = _makeCancelRegistrationButton(event, text);
+      }
+    }
+
+    if (event.canUpdateRegistration) {
+      updateButton = _makeUpdateButton(event);
+    }
+
+    if (event.canCreateRegistration || !event.isRegistered) {
       if (!event.registrationStarted()) {
         // Registration will open ....
         final registrationStart = dateTimeFormatter.format(
@@ -232,13 +256,6 @@ class _EventScreenState extends State<EventScreen> {
       } else if (event.registrationIsOpen()) {
         // Terms and conditions, register button.
         textSpans.add(_makeTermsAndConditions(event));
-        if (event.canCreateRegistration) {
-          if (event.reachedMaxParticipants) {
-            registrationButton = _makeJoinQueueButton(event);
-          } else {
-            registrationButton = _makeCreateRegistrationButton(event);
-          }
-        }
       } else if (event.registrationClosed()) {
         // Registration is no longer possible.
         textSpans.add(const TextSpan(
@@ -262,18 +279,6 @@ class _EventScreenState extends State<EventScreen> {
         textSpans.add(TextSpan(
           text: 'Queue position ${registration.queuePosition}. ',
         ));
-        if (event.canCancelRegistration) {
-          if (event.cancelDeadlinePassed()) {
-            // Cancellation possible without fine, cancel button.
-            textSpans.add(const TextSpan(
-              text: 'Cancellation while on the waiting list will not result in '
-                  'having to pay a fine. Do note that you will be unable to re-'
-                  'register. ',
-            ));
-          }
-          const text = 'Are you sure you want to cancel your registration?';
-          registrationButton = _makeCancelRegistrationButton(event, text);
-        }
       } else if (registration.isInvited) {
         // You are registered.
         textSpans.add(const TextSpan(
@@ -312,34 +317,11 @@ class _EventScreenState extends State<EventScreen> {
             ));
           }
         }
-        if (event.canCancelRegistration) {
-          if (event.cancelDeadlinePassed()) {
-            // Cancel too late message, cancel button with fine warning.
-            textSpans.add(TextSpan(
-              text: event.cancelTooLateMessage,
-            ));
-            final text = 'The deadline has passed, are you sure you want '
-                'to cancel your registration and pay the estimated full costs of '
-                '€${event.fine}? You will not be able to undo this!';
-            registrationButton = _makeCancelRegistrationButton(event, text);
-          } else {
-            // Cancel button.
-            const text = 'Are you sure you want to cancel your registration?';
-            registrationButton = _makeCancelRegistrationButton(event, text);
-          }
-        }
       }
     }
 
     return BlocBuilder<PaymentUserCubit, PaymentUserState>(
       builder: (context, paymentUserState) {
-        late Widget updateButton;
-        if (event.canUpdateRegistration) {
-          updateButton = _makeUpdateButton(event);
-        } else {
-          updateButton = const SizedBox.shrink();
-        }
-
         late Widget paymentButton;
         if (event.isInvited &&
             event.paymentIsRequired &&
@@ -452,12 +434,12 @@ class _EventScreenState extends State<EventScreen> {
 
     final textSpans = <TextSpan>[];
     Widget registrationButton = const SizedBox.shrink();
+    if (event.canCancelRegistration) {
+      registrationButton = _makeIWontBeThereButton(event);
+    }
 
     if (event.isInvited) {
       textSpans.add(const TextSpan(text: 'You are registered. '));
-      if (event.canCancelRegistration) {
-        registrationButton = _makeIWontBeThereButton(event);
-      }
     } else if (event.canCreateRegistration) {
       textSpans.add(const TextSpan(
         text: 'Even though registration is not required for this event, you '
@@ -473,11 +455,9 @@ class _EventScreenState extends State<EventScreen> {
       textSpans.add(const TextSpan(text: 'No registration required.'));
     }
 
-    late Widget updateButton;
+    Widget updateButton = const SizedBox.shrink();
     if (event.canUpdateRegistration) {
       updateButton = _makeUpdateButton(event);
-    } else {
-      updateButton = const SizedBox.shrink();
     }
 
     return Column(
@@ -908,7 +888,7 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   SliverPadding _makeRegistrations(RegistrationsState state) {
-    if (state.isLoading) {
+    if (state.isLoading && state.results.isEmpty) {
       return const SliverPadding(
         padding: EdgeInsets.all(16),
         sliver: SliverToBoxAdapter(
@@ -1029,9 +1009,7 @@ class _EventScreenState extends State<EventScreen> {
                               padding: EdgeInsets.all(8),
                               sliver: SliverList(
                                 delegate: SliverChildListDelegate.fixed([
-                                  Center(
-                                    child: CircularProgressIndicator(),
-                                  )
+                                  Center(child: CircularProgressIndicator()),
                                 ]),
                               ),
                             ),
