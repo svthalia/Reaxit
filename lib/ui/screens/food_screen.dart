@@ -467,19 +467,20 @@ class __ProductTileState extends State<_ProductTile> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      horizontalTitleGap: 4,
-      leading: const Icon(Icons.local_pizza),
-      title: Row(
-        children: [
-          Text(widget.product.name),
-          const SizedBox(width: 6),
-          Text(
-            '€${widget.product.price}',
-            style: Theme.of(context).textTheme.caption!.copyWith(
-              fontFeatures: const [FontFeature.tabularFigures()],
+      title: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(text: widget.product.name + ' '),
+            TextSpan(
+              text: '€${widget.product.price}',
+              style: Theme.of(context).textTheme.caption!.copyWith(
+                fontFeatures: const [FontFeature.tabularFigures()],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ),
       subtitle: widget.product.description.isNotEmpty
           ? Text(widget.product.description)
