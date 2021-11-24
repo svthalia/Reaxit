@@ -77,14 +77,6 @@ class _EventScreenState extends State<EventScreen> {
               path: 'maps',
               queryParameters: {'daddr': event.location},
             ),
-      uri: Theme.of(context).platform == TargetPlatform.iOS
-          ? Uri(scheme: 'maps', queryParameters: {'daddr': event.location})
-          : Uri(
-              scheme: 'https',
-              host: 'maps.google.com',
-              path: 'maps',
-              queryParameters: {'daddr': event.location},
-            ),
       builder: (context, followLink) => Stack(
         fit: StackFit.loose,
         children: [
