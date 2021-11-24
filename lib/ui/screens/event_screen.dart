@@ -59,9 +59,9 @@ class _EventScreenState extends State<EventScreen> {
           ? Uri(scheme: 'maps', queryParameters: {'daddr': event.location})
           : Uri(
               scheme: 'https',
-              host: 'www.google.com',
-              path: 'maps/search',
-              queryParameters: {'api': 1, 'query': event.location},
+              host: 'maps.google.com',
+              path: 'maps',
+              queryParameters: {'daddr': event.location},
             ),
       builder: (context, followLink) => GestureDetector(
         onTap: followLink,
