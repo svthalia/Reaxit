@@ -937,7 +937,9 @@ class _EventScreenState extends State<EventScreen> {
       builder: (context, state) {
         if (state.hasException) {
           return Scaffold(
-            appBar: ThaliaAppBar(title: const Text('EVENT')),
+            appBar: ThaliaAppBar(
+              title: Text(widget.event?.title.toUpperCase() ?? 'EVENT'),
+            ),
             body: RefreshIndicator(
               onRefresh: () async {
                 // Await both loads.
@@ -959,7 +961,7 @@ class _EventScreenState extends State<EventScreen> {
           final event = (state.result ?? widget.event)!;
           return Scaffold(
             appBar: ThaliaAppBar(
-              title: const Text('EVENT'),
+              title: Text(event.title.toUpperCase()),
               actions: [
                 if (event.userPermissions.manageEvent)
                   IconButton(
