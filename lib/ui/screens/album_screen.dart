@@ -177,13 +177,13 @@ class _AlbumScreenState extends State<AlbumScreen> {
               child: GridView.builder(
                 key: const PageStorageKey('album'),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisSpacing: 4,
-                  mainAxisSpacing: 4,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
                   crossAxisCount: 3,
                 ),
                 itemCount: state.result!.photos.length,
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(4),
+                padding: const EdgeInsets.all(8),
                 itemBuilder: (context, index) => _makePhotoCard(
                   state.result!,
                   index,

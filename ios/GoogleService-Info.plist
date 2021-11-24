@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>488731759938-vkauvr25l1n4te0urfe721pi60hetttu.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.488731759938-vkauvr25l1n4te0urfe721pi60hetttu</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>488731759938-doctddnhajp9teh4t1dktdcd18he6g6k.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBTFj7iwysI-luA9aP_XFLsQh2CQP-gxqc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>488731759938</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.thaliapp</string>
+	<key>PROJECT_ID</key>
+	<string>thalia-493a0</string>
+	<key>STORAGE_BUCKET</key>
+	<string>thalia-493a0.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:488731759938:ios:ce90d9e7effcbbfb</string>
+	<key>DATABASE_URL</key>
+	<string>https://thalia-493a0.firebaseio.com</string>
+</dict>
+</plist>

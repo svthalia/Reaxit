@@ -253,30 +253,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
         titlePadding: const EdgeInsets.only(bottom: 14),
         background: Builder(
           builder: (context) {
-            return GestureDetector(
-              onTap: member != null
-                  ? () => _showAvatarView(context, member)
-                  : null,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Container(
-                    decoration: const BoxDecoration(color: Color(0xFFC5C5C5)),
+            return Stack(
+              fit: StackFit.expand,
+              children: [
+                Container(
+                  decoration: const BoxDecoration(color: Color(0xFFC5C5C5)),
+                ),
+                member != null
+                    ? FadeInImage.assetNetwork(
+                        placeholder: 'assets/img/default-avatar.jpg',
+                        image: member.photo.medium,
+                        fit: BoxFit.cover,
+                        fadeInDuration: const Duration(milliseconds: 300),
+                      )
+                    : Image.asset(
+                        'assets/img/default-avatar.jpg',
+                        fit: BoxFit.cover,
+                      ),
+                const _BlackGradient(),
+                Positioned.fill(
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: member != null
+                          ? () => _showAvatarView(context, member)
+                          : null,
+                    ),
                   ),
-                  member != null
-                      ? FadeInImage.assetNetwork(
-                          placeholder: 'assets/img/default-avatar.jpg',
-                          image: member.photo.medium,
-                          fit: BoxFit.cover,
-                          fadeInDuration: const Duration(milliseconds: 300),
-                        )
-                      : Image.asset(
-                          'assets/img/default-avatar.jpg',
-                          fit: BoxFit.cover,
-                        ),
-                  _BlackGradient()
-                ],
-              ),
+                ),
+              ],
             );
           },
         ),
@@ -373,23 +378,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const Divider(),
           ],
           _DescriptionFact(member: member, cubit: _memberCubit),
-          const Divider(),
+          const Divider(height: 24),
           if (member.programme != null) ...[
             _makeStudiesFact(member),
-            const Divider(),
           ],
           if (member.startingYear != null) ...[
+            const SizedBox(height: 12),
             _makeCohortFact(member),
-            const Divider(),
           ],
           if (member.birthday != null) ...[
+            const SizedBox(height: 12),
             _makeBirthdayFact(member),
-            const Divider(),
           ],
           if (member.website != null) ...[
+            const SizedBox(height: 12),
             _makeWebsiteFact(member),
-            const Divider(),
           ],
+          const Divider(height: 24),
         ]),
       ),
     );
@@ -511,16 +516,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _makeAchievementsSliver(state.result!),
                   if (state.result!.societies.isNotEmpty)
                     _makeSocietiesSliver(state.result!),
-                  const SliverPadding(padding: EdgeInsets.all(4))
-                ] else
+                ] else ...[
                   const SliverPadding(
                     padding: EdgeInsets.all(16),
                     sliver: SliverToBoxAdapter(
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                      child: Center(child: CircularProgressIndicator()),
                     ),
                   ),
+                ],
+                const SliverToBoxAdapter(child: SizedBox(height: 32))
               ],
             );
           }
@@ -531,19 +535,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
 }
 
 class _BlackGradient extends StatelessWidget {
+  static const _black00 = Color(0x00000000);
+  static const _black40 = Color(0x66000000);
+
+  const _BlackGradient();
+
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return const DecoratedBox(
       decoration: BoxDecoration(
         color: Colors.black,
         gradient: LinearGradient(
           begin: FractionalOffset.topCenter,
           end: FractionalOffset.bottomCenter,
-          colors: [
-            Colors.black.withOpacity(0.0),
-            Colors.black.withOpacity(0.3),
-          ],
-          stops: const [0.5, 1.0],
+          colors: [_black00, _black40],
+          stops: [0.5, 1.0],
         ),
       ),
     );

@@ -6,15 +6,14 @@ part of 'event_registration.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-EventRegistration _$EventRegistrationFromJson(Map<String, dynamic> json) {
-  return EventRegistration(
-    json['pk'] as int,
-    json['member'] == null
-        ? null
-        : ListMember.fromJson(json['member'] as Map<String, dynamic>),
-    json['name'] as String?,
-  );
-}
+EventRegistration _$EventRegistrationFromJson(Map<String, dynamic> json) =>
+    EventRegistration(
+      json['pk'] as int,
+      json['member'] == null
+          ? null
+          : ListMember.fromJson(json['member'] as Map<String, dynamic>),
+      json['name'] as String?,
+    );
 
 Map<String, dynamic> _$EventRegistrationToJson(EventRegistration instance) =>
     <String, dynamic>{
@@ -24,19 +23,18 @@ Map<String, dynamic> _$EventRegistrationToJson(EventRegistration instance) =>
     };
 
 UserEventRegistration _$UserEventRegistrationFromJson(
-    Map<String, dynamic> json) {
-  return UserEventRegistration(
-    json['pk'] as int,
-    json['present'] as bool?,
-    json['queue_position'] as int?,
-    DateTime.parse(json['date'] as String),
-    json['payment'] == null
-        ? null
-        : Payment.fromJson(json['payment'] as Map<String, dynamic>),
-    json['is_cancelled'] as bool,
-    json['is_late_cancellation'] as bool? ?? false,
-  );
-}
+        Map<String, dynamic> json) =>
+    UserEventRegistration(
+      json['pk'] as int,
+      json['present'] as bool?,
+      json['queue_position'] as int?,
+      DateTime.parse(json['date'] as String),
+      json['payment'] == null
+          ? null
+          : Payment.fromJson(json['payment'] as Map<String, dynamic>),
+      json['is_cancelled'] as bool,
+      json['is_late_cancellation'] as bool? ?? false,
+    );
 
 Map<String, dynamic> _$UserEventRegistrationToJson(
         UserEventRegistration instance) =>
@@ -51,21 +49,20 @@ Map<String, dynamic> _$UserEventRegistrationToJson(
     };
 
 AdminEventRegistration _$AdminEventRegistrationFromJson(
-    Map<String, dynamic> json) {
-  return AdminEventRegistration(
-    json['pk'] as int,
-    json['member'] == null
-        ? null
-        : ListMember.fromJson(json['member'] as Map<String, dynamic>),
-    json['name'] as String?,
-    json['present'] as bool,
-    json['queue_position'] as int?,
-    DateTime.parse(json['date'] as String),
-    json['payment'] == null
-        ? null
-        : Payment.fromJson(json['payment'] as Map<String, dynamic>),
-  );
-}
+        Map<String, dynamic> json) =>
+    AdminEventRegistration(
+      json['pk'] as int,
+      json['member'] == null
+          ? null
+          : ListMember.fromJson(json['member'] as Map<String, dynamic>),
+      json['name'] as String?,
+      json['present'] as bool,
+      json['queue_position'] as int?,
+      DateTime.parse(json['date'] as String),
+      json['payment'] == null
+          ? null
+          : Payment.fromJson(json['payment'] as Map<String, dynamic>),
+    );
 
 Map<String, dynamic> _$AdminEventRegistrationToJson(
         AdminEventRegistration instance) =>

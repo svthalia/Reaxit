@@ -10,6 +10,7 @@ import 'package:reaxit/models/slide.dart';
 import 'package:reaxit/ui/router.dart';
 import 'package:reaxit/ui/screens/calendar_screen.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
+import 'package:reaxit/ui/widgets/cached_image.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/event_detail_card.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
@@ -210,6 +211,7 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
             aspectRatio: 1075 / 430,
             viewportFraction: 1,
             autoPlay: true,
+            autoPlayInterval: const Duration(seconds: 6),
             onPageChanged: (index, _) => setState(() {
               _current = index;
             }),
@@ -221,10 +223,9 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
               uri: slide.url,
               builder: (context, followLink) => InkWell(
                 onTap: followLink,
-                child: FadeInImage.assetNetwork(
-                  fit: BoxFit.cover,
+                child: CachedImage(
+                  imageUrl: slide.content.full,
                   placeholder: 'assets/img/slide_placeholder.png',
-                  image: slide.content.large,
                 ),
               ),
             );
