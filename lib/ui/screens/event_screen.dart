@@ -69,10 +69,14 @@ class _EventScreenState extends State<EventScreen> {
 
   Widget _makeMap(Event event) {
     return Link(
-      uri: Uri.parse(
-        'https://maps.${Theme.of(context).platform == TargetPlatform.iOS ? 'apple' : 'google'}.com'
-        '/maps?daddr=${Uri.encodeComponent(event.location)}',
-      ),
+      uri: Theme.of(context).platform == TargetPlatform.iOS
+          ? Uri(scheme: 'maps', queryParameters: {'daddr': event.location})
+          : Uri(
+              scheme: 'https',
+              host: 'maps.google.com',
+              path: 'maps',
+              queryParameters: {'daddr': event.location},
+            ),
       builder: (context, followLink) => Stack(
         fit: StackFit.loose,
         children: [
