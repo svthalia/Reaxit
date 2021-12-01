@@ -903,12 +903,12 @@ class _EventScreenState extends State<EventScreen> {
       );
     } else if (state.hasException) {
       return SliverPadding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 16),
         sliver: SliverToBoxAdapter(child: Text(state.message!)),
       );
     } else {
       return SliverPadding(
-        padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
         sliver: SliverGrid(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
