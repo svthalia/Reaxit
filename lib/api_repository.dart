@@ -378,7 +378,7 @@ class ApiRepository {
           if (offset != null) 'offset': offset.toString(),
           if (ordering != null) 'ordering': ordering,
           if (search != null) 'search': search,
-          if (cancelled != null) 'cancelled': cancelled,
+          if (cancelled != null) 'cancelled': cancelled.toString(),
         },
       );
       final response = await _handleExceptions(() => client.get(uri));

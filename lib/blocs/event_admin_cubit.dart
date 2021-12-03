@@ -91,6 +91,7 @@ class EventAdminCubit extends Cubit<EventAdminState> {
         pk: eventPk,
         search: query,
         limit: 999999999,
+        cancelled: false,
       );
       if (registrations.results.isEmpty) {
         if (query?.isEmpty ?? true) {
@@ -123,6 +124,7 @@ class EventAdminCubit extends Cubit<EventAdminState> {
           pk: eventPk,
           search: query,
           limit: 999999999,
+          cancelled: false,
         );
         if (registrations.results.isEmpty) {
           if (query?.isEmpty ?? true) {
