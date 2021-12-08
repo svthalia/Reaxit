@@ -11,6 +11,7 @@ class ListGroup {
   final int pk;
   final String name;
   final MemberGroupType type;
+  final String description;
   final DateTime? since;
   final DateTime? until;
   final String contactAddress;
@@ -20,6 +21,7 @@ class ListGroup {
       this.pk,
       this.name,
       this.type,
+      this.description,
       this.since,
       this.until,
       this.contactAddress,
@@ -38,12 +40,13 @@ class Group extends ListGroup {
       int pk,
       String name,
       MemberGroupType type,
+      String description,
       DateTime? since,
       DateTime? until,
       String contactAddress,
       Photo photo,
       this.members,
-      ) : super(pk, name, type, since, until, contactAddress, photo);
+      ) : super(pk, name, type, description, since, until, contactAddress, photo);
 
   factory Group.fromJson(Map<String, dynamic> json) =>
       _$GroupFromJson(json);
