@@ -68,16 +68,7 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   Widget _makeMap(Event event) {
-    return Link(
-      uri: Theme.of(context).platform == TargetPlatform.iOS
-          ? Uri(scheme: 'maps', queryParameters: {'daddr': event.location})
-          : Uri(
-              scheme: 'https',
-              host: 'maps.google.com',
-              path: 'maps',
-              queryParameters: {'daddr': event.location},
-            ),
-      builder: (context, followLink) => Stack(
+return Stack(
         fit: StackFit.loose,
         children: [
           CachedImage(
@@ -89,13 +80,25 @@ class _EventScreenState extends State<EventScreen> {
             child: Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: followLink,
+                onTap: () {
+                  Uri url = Theme.of(context).platform == TargetPlatform.iOS
+                      ? Uri(scheme: 'maps', queryParameters: {'daddr': event.location})
+                      : Uri(
+                    scheme: 'https',
+                    host: 'maps.google.com',
+                    path: 'maps',
+                    queryParameters: {'daddr': event.location},
+                  );
+                  launch(url.toString(),
+                    forceSafariVC: false,
+                    forceWebView: false,
+                  );
+                },
               ),
             ),
           ),
         ],
-      ),
-    );
+      );
   }
 
   // TODO: Someday: add animations back in.
