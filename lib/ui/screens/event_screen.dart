@@ -19,6 +19,7 @@ import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/cached_image.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/member_tile.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:reaxit/config.dart' as config;
@@ -837,9 +838,9 @@ class _EventScreenState extends State<EventScreen> {
           text: 'terms and conditions',
           recognizer: TapGestureRecognizer()
             ..onTap = () async {
-              if (await canLaunch(url)) {
-                await launch(url, forceSafariVC: false);
-              } else {
+              try {
+                await launch(url, forceSafariVC: false, forceWebView: false);
+              } catch (_) {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   behavior: SnackBarBehavior.floating,
                   content: Text('Could not open "$url".'),
@@ -934,6 +935,28 @@ class _EventScreenState extends State<EventScreen> {
     }
   }
 
+  Widget _makeShareEventButton(int pk) {
+    return IconButton(
+      padding: const EdgeInsets.all(16),
+      color: Theme.of(context).primaryIconTheme.color,
+      icon: Icon(
+        Theme.of(context).platform == TargetPlatform.iOS
+            ? Icons.ios_share
+            : Icons.share,
+      ),
+      onPressed: () async {
+        try {
+          await Share.share('https://${config.apiHost}/events/$pk/');
+        } catch (_) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            duration: Duration(seconds: 1),
+            content: Text('Could not share the event.'),
+          ));
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<EventCubit, EventState>(
@@ -943,6 +966,7 @@ class _EventScreenState extends State<EventScreen> {
           return Scaffold(
             appBar: ThaliaAppBar(
               title: Text(widget.event?.title.toUpperCase() ?? 'EVENT'),
+              actions: [_makeShareEventButton(widget.pk)],
             ),
             body: RefreshIndicator(
               onRefresh: () async {
@@ -958,7 +982,10 @@ class _EventScreenState extends State<EventScreen> {
             widget.event == null &&
             state.result == null) {
           return Scaffold(
-            appBar: ThaliaAppBar(title: const Text('EVENT')),
+            appBar: ThaliaAppBar(
+              title: const Text('EVENT'),
+              actions: [_makeShareEventButton(widget.pk)],
+            ),
             body: const Center(child: CircularProgressIndicator()),
           );
         } else {
@@ -967,6 +994,7 @@ class _EventScreenState extends State<EventScreen> {
             appBar: ThaliaAppBar(
               title: Text(event.title.toUpperCase()),
               actions: [
+                _makeShareEventButton(widget.pk),
                 if (event.userPermissions.manageEvent)
                   IconButton(
                     padding: const EdgeInsets.all(16),
