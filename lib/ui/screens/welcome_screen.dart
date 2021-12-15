@@ -14,7 +14,6 @@ import 'package:reaxit/ui/widgets/cached_image.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/event_detail_card.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
-import 'package:url_launcher/link.dart';
 import 'package:collection/collection.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -221,17 +220,20 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
           itemBuilder: (context, index, _) {
             final slide = widget.slides[index];
             return InkWell(
-                onTap: slide.url != null ? () {
-                   launch(slide.url.toString(),
-                    forceSafariVC: false,
-                    forceWebView: false,
-                  );
-                } : null,
-                child: CachedImage(
-                  imageUrl: slide.content.full,
-                  placeholder: 'assets/img/slide_placeholder.png',
-                ),
-              );
+              onTap: slide.url != null
+                  ? () async {
+                      await launch(
+                        slide.url.toString(),
+                        forceSafariVC: false,
+                        forceWebView: false,
+                      );
+                    }
+                  : null,
+              child: CachedImage(
+                imageUrl: slide.content.full,
+                placeholder: 'assets/img/slide_placeholder.png',
+              ),
+            );
           },
         ),
         Row(

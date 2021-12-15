@@ -16,7 +16,6 @@ import 'package:reaxit/ui/screens/members_screen.dart';
 import 'package:reaxit/ui/screens/profile_screen.dart';
 import 'package:reaxit/ui/screens/welcome_screen.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:url_launcher/link.dart';
 import 'package:reaxit/push_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -91,18 +90,21 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
 
             return SafeArea(
               child: Card(
-                child: Link(
-                  uri: uri,
-                  builder: (context, followLink) => ListTile(
-                    onTap: followLink,
-                    title: Text(message.notification!.title ?? '', maxLines: 1),
-                    subtitle:
-                        Text(message.notification!.body ?? '', maxLines: 2),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () =>
-                          OverlaySupportEntry.of(context)!.dismiss(),
-                    ),
+                child: ListTile(
+                  onTap: uri != null
+                      ? () async {
+                          await launch(
+                            uri.toString(),
+                            forceSafariVC: false,
+                            forceWebView: false,
+                          );
+                        }
+                      : null,
+                  title: Text(message.notification!.title ?? '', maxLines: 1),
+                  subtitle: Text(message.notification!.body ?? '', maxLines: 2),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => OverlaySupportEntry.of(context)!.dismiss(),
                   ),
                 ),
               ),
@@ -118,8 +120,12 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       if (message.data.containsKey('url') && message.data['url'] is String) {
         final uri = Uri.tryParse(message.data['url'] as String);
-        if (uri != null && await canLaunch(uri.toString())) {
-          await launch(uri.toString(), forceSafariVC: false);
+        if (uri != null) {
+          await launch(
+            uri.toString(),
+            forceSafariVC: false,
+            forceWebView: false,
+          );
         }
       } else if (navigatorKey.currentContext != null) {
         showDialog(
@@ -135,8 +141,12 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
       final message = initialMessage;
       if (message.data.containsKey('url') && message.data['url'] is String) {
         final uri = Uri.tryParse(message.data['url'] as String);
-        if (uri != null && await canLaunch(uri.toString())) {
-          await launch(uri.toString(), forceSafariVC: false);
+        if (uri != null) {
+          await launch(
+            uri.toString(),
+            forceSafariVC: false,
+            forceWebView: false,
+          );
         }
       } else if (navigatorKey.currentContext != null) {
         showDialog(

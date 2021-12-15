@@ -12,7 +12,7 @@ import 'package:reaxit/blocs/full_member_cubit.dart';
 import 'package:reaxit/blocs/member_cubit.dart';
 import 'package:reaxit/models/member.dart';
 import 'package:reaxit/ui/widgets/error_center.dart';
-import 'package:url_launcher/link.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Screen that loads and shows a the profile of the member with `pk`.
 class ProfileScreen extends StatefulWidget {
@@ -470,15 +470,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: [
         _fieldLabel('WEBSITE'),
         const SizedBox(height: 4),
-        Link(
-          uri: member.website!,
-          target: LinkTarget.blank,
-          builder: (context, followLink) => GestureDetector(
-            onTap: followLink,
-            child: Text(
-              member.website!.toString(),
-              style: Theme.of(context).textTheme.subtitle2,
-            ),
+        GestureDetector(
+          onTap: member.website != null
+              ? () async {
+                  await launch(
+                    member.website!.toString(),
+                    forceSafariVC: false,
+                    forceWebView: false,
+                  );
+                }
+              : null,
+          child: Text(
+            member.website!.toString(),
+            style: Theme.of(context).textTheme.subtitle2,
           ),
         ),
       ],

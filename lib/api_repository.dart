@@ -95,6 +95,8 @@ class ApiRepository {
     } on oauth2.AuthorizationException catch (_) {
       logOut();
       throw ApiException.notLoggedIn;
+    } on SocketException catch (_) {
+      throw ApiException.noInternet;
     } on FormatException catch (_) {
       throw ApiException.unknownError;
     } on http.ClientException catch (_) {

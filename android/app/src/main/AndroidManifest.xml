@@ -89,20 +89,4 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
-
-    <!-- Specify url schemes that may be queried. Required since API level 30. -->
-    <queries>
-        <intent>
-            <action android:name="android.intent.action.VIEW" />
-            <data android:scheme="https" />
-        </intent>
-        <intent>
-            <action android:name="android.intent.action.VIEW" />
-            <data android:scheme="http"/>
-        </intent>
-        <intent>
-            <action android:name="android.intent.action.VIEW" />
-            <data android:scheme="google.navigation" />
-        </intent>
-    </queries>
 </manifest>
