@@ -11,7 +11,8 @@ class BoardsCubit extends Cubit<DetailState<List<ListGroup>>> {
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
     try {
-      final listResponse = await api.getGroups(limit: 1000,offset: 0,type: MemberGroupType.society);
+      final listResponse = await api.getGroups(
+          limit: 1000, offset: 0, type: MemberGroupType.society);
       if (listResponse.results.isNotEmpty) {
         emit(DetailState.result(result: listResponse.results));
       } else {

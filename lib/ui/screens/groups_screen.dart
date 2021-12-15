@@ -9,17 +9,17 @@ import 'package:reaxit/models/group.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
 
-class GroupsScreen extends StatefulWidget{
+class GroupsScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _GroupsScreenState();
-
 }
 
-class _GroupsScreenState extends State<GroupsScreen> with SingleTickerProviderStateMixin {
+class _GroupsScreenState extends State<GroupsScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
-  void initState(){
+  void initState() {
     _tabController = TabController(length: 3, vsync: this);
     super.initState();
   }
@@ -29,7 +29,7 @@ class _GroupsScreenState extends State<GroupsScreen> with SingleTickerProviderSt
     return Scaffold(
       appBar: ThaliaAppBar(
         title: const Text('GROUPS'),
-        actions:[
+        actions: [
           IconButton(
             padding: const EdgeInsets.all(16),
             icon: const Icon(Icons.search),
@@ -49,7 +49,7 @@ class _GroupsScreenState extends State<GroupsScreen> with SingleTickerProviderSt
         ),
       ),
       drawer: MenuDrawer(),
-      body:TabBarView(
+      body: TabBarView(
         controller: _tabController,
         children: [
           BlocBuilder<CommitteesCubit, DetailState<List<ListGroup>>>(
@@ -107,5 +107,4 @@ class _GroupsScreenState extends State<GroupsScreen> with SingleTickerProviderSt
       ),
     );
   }
-  
 }

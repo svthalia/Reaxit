@@ -18,15 +18,15 @@ class ListGroup {
   final Photo photo;
 
   const ListGroup(
-      this.pk,
-      this.name,
-      this.type,
-      this.description,
-      this.since,
-      this.until,
-      this.contactAddress,
-      this.photo,
-      );
+    this.pk,
+    this.name,
+    this.type,
+    this.description,
+    this.since,
+    this.until,
+    this.contactAddress,
+    this.photo,
+  );
 
   factory ListGroup.fromJson(Map<String, dynamic> json) =>
       _$ListGroupFromJson(json);
@@ -37,17 +37,16 @@ class Group extends ListGroup {
   final List<ListMember> members;
 
   const Group(
-      int pk,
-      String name,
-      MemberGroupType type,
-      String description,
-      DateTime? since,
-      DateTime? until,
-      String contactAddress,
-      Photo photo,
-      this.members,
-      ) : super(pk, name, type, description, since, until, contactAddress, photo);
+    int pk,
+    String name,
+    MemberGroupType type,
+    String description,
+    DateTime? since,
+    DateTime? until,
+    String contactAddress,
+    Photo photo,
+    this.members,
+  ) : super(pk, name, type, description, since, until, contactAddress, photo);
 
-  factory Group.fromJson(Map<String, dynamic> json) =>
-      _$GroupFromJson(json);
+  factory Group.fromJson(Map<String, dynamic> json) => _$GroupFromJson(json);
 }

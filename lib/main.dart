@@ -145,7 +145,6 @@ class _ThaliAppState extends State<ThaliApp> {
                       )..load(),
                       lazy: false,
                     )
-
                   ],
                   child: MaterialApp.router(
                     key: _materialAppKey,

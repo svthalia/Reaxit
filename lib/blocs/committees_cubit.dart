@@ -6,12 +6,14 @@ import 'package:reaxit/models/group.dart';
 class CommitteesCubit extends Cubit<DetailState<List<ListGroup>>> {
   final ApiRepository api;
 
-  CommitteesCubit(this.api) : super(const DetailState<List<ListGroup>>.loading());
+  CommitteesCubit(this.api)
+      : super(const DetailState<List<ListGroup>>.loading());
 
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
     try {
-      final listResponse = await api.getGroups(limit: 1000,offset: 0,type: MemberGroupType.committee);
+      final listResponse = await api.getGroups(
+          limit: 1000, offset: 0, type: MemberGroupType.committee);
       if (listResponse.results.isNotEmpty) {
         emit(DetailState.result(result: listResponse.results));
       } else {

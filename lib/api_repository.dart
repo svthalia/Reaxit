@@ -1140,30 +1140,29 @@ class ApiRepository {
   ///
   /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
   /// total number of [ListGroup]s that can be returned.
-  Future<ListResponse<ListGroup>> getGroups({
-    int? limit,
-    int? offset,
-    MemberGroupType? type,
-    DateTime? start,
-    DateTime? end,
-    String? search
-  }) async {
+  Future<ListResponse<ListGroup>> getGroups(
+      {int? limit,
+      int? offset,
+      MemberGroupType? type,
+      DateTime? start,
+      DateTime? end,
+      String? search}) async {
     final uri = _baseUri.replace(
       path: '$_basePath/activemembers/groups/',
       queryParameters: {
         if (limit != null) 'limit': limit.toString(),
         if (offset != null) 'offset': offset.toString(),
         if (type != null) 'type': type.toString(),
-        if (start != null) 'start' : start.toIso8601String(),
-        if (end != null) 'end' : end.toIso8601String(),
-        if (search != null) 'search' : search
+        if (start != null) 'start': start.toIso8601String(),
+        if (end != null) 'end': end.toIso8601String(),
+        if (search != null) 'search': search
       },
     );
 
     final response = await _handleExceptions(() => client.get(uri));
     return ListResponse<ListGroup>.fromJson(
       _jsonDecode(response),
-          (json) => ListGroup.fromJson(json as Map<String, dynamic>),
+      (json) => ListGroup.fromJson(json as Map<String, dynamic>),
     );
   }
 
