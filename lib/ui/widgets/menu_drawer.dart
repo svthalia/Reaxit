@@ -5,6 +5,7 @@ import 'package:reaxit/blocs/full_member_cubit.dart';
 import 'package:reaxit/ui/router.dart';
 import 'package:reaxit/ui/screens/albums_screen.dart';
 import 'package:reaxit/ui/screens/calendar_screen.dart';
+import 'package:reaxit/ui/screens/groups_screen.dart';
 import 'package:reaxit/ui/screens/members_screen.dart';
 import 'package:reaxit/ui/screens/profile_screen.dart';
 import 'package:reaxit/ui/screens/settings_screen.dart';
@@ -209,6 +210,20 @@ class MenuDrawer extends StatelessWidget {
               } else {
                 routerDelegate.replace(
                   TypedMaterialPage(child: AlbumsScreen(), name: 'Albums'),
+                );
+              }
+            },
+          ),
+          ListTile(
+            title: const Text('Photos'),
+            leading: const Icon(Icons.groups),
+            selected: routerDelegate.stack.last.child is GroupsScreen,
+            onTap: () {
+              if (routerDelegate.stack.last.child is GroupsScreen) {
+                Navigator.of(context).pop();
+              } else {
+                routerDelegate.replace(
+                  TypedMaterialPage(child: GroupsScreen(), name: 'Groups'),
                 );
               }
             },

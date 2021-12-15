@@ -6,6 +6,7 @@ class ThaliaAppBar extends AppBar {
     Widget? title,
     List<Widget>? actions,
     Widget? leading,
+    PreferredSizeWidget? bottom,
   }) : super(
           title: title,
           actions: actions,
@@ -14,7 +15,7 @@ class ThaliaAppBar extends AppBar {
           // The bottom decoration only needs to be shown
           // in dark mode, but is invisible in light mode,
           // so we can just leave it there.
-          bottom: PreferredSize(
+          bottom: bottom ?? PreferredSize(
             preferredSize: const Size.fromHeight(0),
             child: Container(
               decoration: const BoxDecoration(
