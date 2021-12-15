@@ -93,9 +93,9 @@ class EventAdminCubit extends Cubit<EventAdminState> {
         limit: 999999999,
         cancelled: false,
       );
-  
+
       // temporary fix, remove when api is updated
-      registrations.results.removeWhere((r) => r.queuePosition != null); 
+      registrations.results.removeWhere((r) => r.queuePosition != null);
       if (registrations.results.isEmpty) {
         if (query?.isEmpty ?? true) {
           emit(const EventAdminState.failure(
@@ -129,6 +129,9 @@ class EventAdminCubit extends Cubit<EventAdminState> {
           limit: 999999999,
           cancelled: false,
         );
+
+        // temporary fix, remove when api is updated
+        registrations.results.removeWhere((r) => r.queuePosition != null);
         if (registrations.results.isEmpty) {
           if (query?.isEmpty ?? true) {
             emit(const EventAdminState.failure(
