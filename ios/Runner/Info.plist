@@ -45,9 +45,9 @@
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
 		<key>NSCameraUsageDescription</key>
-		<string>$(PRODUCT_NAME) would like to use your camera so you can create a new profile picture</string>
+		<string>ThaliApp would like to use your camera so you can create a new profile picture.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
-		<string>$(PRODUCT_NAME) would like access to your photo gallery so you can choose an existing photo as your profile picture</string>
+		<string>ThaliApp would like access to your photo gallery so you can choose an existing photo as your profile picture, and so you can save photos to your gallery.</string>
 		<key>UIBackgroundModes</key>
 		<array>
 			<string>fetch</string>
