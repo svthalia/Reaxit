@@ -7,7 +7,7 @@ import 'package:reaxit/ui/widgets/cached_image.dart';
 class MemberTile extends StatelessWidget {
   final ListMember member;
 
-  const MemberTile({Key? key, required this.member}) : super(key: key);
+  MemberTile({required this.member}) : super(key: ValueKey(member.pk));
 
   @override
   Widget build(BuildContext context) {
