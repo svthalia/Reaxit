@@ -14,8 +14,8 @@ import 'package:reaxit/ui/widgets/cached_image.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/event_detail_card.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
-import 'package:url_launcher/link.dart';
 import 'package:collection/collection.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WelcomeScreen extends StatefulWidget {
   @override
@@ -219,14 +219,19 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
           itemCount: widget.slides.length,
           itemBuilder: (context, index, _) {
             final slide = widget.slides[index];
-            return Link(
-              uri: slide.url,
-              builder: (context, followLink) => InkWell(
-                onTap: followLink,
-                child: CachedImage(
-                  imageUrl: slide.content.full,
-                  placeholder: 'assets/img/slide_placeholder.png',
-                ),
+            return InkWell(
+              onTap: slide.url != null
+                  ? () async {
+                      await launch(
+                        slide.url.toString(),
+                        forceSafariVC: false,
+                        forceWebView: false,
+                      );
+                    }
+                  : null,
+              child: CachedImage(
+                imageUrl: slide.content.full,
+                placeholder: 'assets/img/slide_placeholder.png',
               ),
             );
           },

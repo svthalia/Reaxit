@@ -20,7 +20,6 @@ import 'package:reaxit/ui/widgets/cached_image.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/member_tile.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:reaxit/config.dart' as config;
 
@@ -69,33 +68,39 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   Widget _makeMap(Event event) {
-    return Link(
-      uri: Theme.of(context).platform == TargetPlatform.iOS
-          ? Uri(scheme: 'maps', queryParameters: {'daddr': event.location})
-          : Uri(
-              scheme: 'https',
-              host: 'maps.google.com',
-              path: 'maps',
-              queryParameters: {'daddr': event.location},
+    return Stack(
+      fit: StackFit.loose,
+      children: [
+        CachedImage(
+          imageUrl: event.mapsUrl,
+          placeholder: 'assets/img/map_placeholder.png',
+          fit: BoxFit.cover,
+        ),
+        Positioned.fill(
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                Uri url = Theme.of(context).platform == TargetPlatform.iOS
+                    ? Uri(
+                        scheme: 'maps',
+                        queryParameters: {'daddr': event.location})
+                    : Uri(
+                        scheme: 'https',
+                        host: 'maps.google.com',
+                        path: 'maps',
+                        queryParameters: {'daddr': event.location},
+                      );
+                launch(
+                  url.toString(),
+                  forceSafariVC: false,
+                  forceWebView: false,
+                );
+              },
             ),
-      builder: (context, followLink) => Stack(
-        fit: StackFit.loose,
-        children: [
-          CachedImage(
-            imageUrl: event.mapsUrl,
-            placeholder: 'assets/img/map_placeholder.png',
-            fit: BoxFit.cover,
           ),
-          Positioned.fill(
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: followLink,
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -839,7 +844,11 @@ class _EventScreenState extends State<EventScreen> {
           recognizer: TapGestureRecognizer()
             ..onTap = () async {
               try {
-                await launch(url, forceSafariVC: false, forceWebView: false);
+                await launch(
+                  url,
+                  forceSafariVC: false,
+                  forceWebView: false,
+                );
               } catch (_) {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   behavior: SnackBarBehavior.floating,
@@ -866,9 +875,13 @@ class _EventScreenState extends State<EventScreen> {
       child: HtmlWidget(
         event.description,
         onTapUrl: (String url) async {
-          if (await canLaunch(url)) {
-            await launch(url, forceSafariVC: false);
-          } else {
+          try {
+            await launch(
+              url,
+              forceSafariVC: false,
+              forceWebView: false,
+            );
+          } catch (_) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               behavior: SnackBarBehavior.floating,
               content: Text('Could not open "$url".'),
