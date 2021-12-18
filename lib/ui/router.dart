@@ -19,6 +19,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:reaxit/push_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:reaxit/config.dart' as config;
 
 /// Utility class that adds a key to [MaterialPage], and requires a `name`.
 ///
@@ -93,11 +94,19 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
                 child: ListTile(
                   onTap: uri != null
                       ? () async {
-                          await launch(
-                            uri.toString(),
-                            forceSafariVC: false,
-                            forceWebView: false,
-                          );
+                          if (uri != null) {
+                            if (uri.host == config.apiHost &&
+                                _isDeepLink(uri)) {
+                              setNewRoutePath(
+                                  Uri(path: uri.path, query: uri.query));
+                            } else {
+                              await launch(
+                                uri.toString(),
+                                forceSafariVC: false,
+                                forceWebView: false,
+                              );
+                            }
+                          }
                         }
                       : null,
                   title: Text(message.notification!.title ?? '', maxLines: 1),
@@ -121,11 +130,15 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
       if (message.data.containsKey('url') && message.data['url'] is String) {
         final uri = Uri.tryParse(message.data['url'] as String);
         if (uri != null) {
-          await launch(
-            uri.toString(),
-            forceSafariVC: false,
-            forceWebView: false,
-          );
+          if (uri.host == config.apiHost && _isDeepLink(uri)) {
+            setNewRoutePath(Uri(path: uri.path, query: uri.query));
+          } else {
+            await launch(
+              uri.toString(),
+              forceSafariVC: false,
+              forceWebView: false,
+            );
+          }
         }
       } else if (navigatorKey.currentContext != null) {
         showDialog(
@@ -142,11 +155,15 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
       if (message.data.containsKey('url') && message.data['url'] is String) {
         final uri = Uri.tryParse(message.data['url'] as String);
         if (uri != null) {
-          await launch(
-            uri.toString(),
-            forceSafariVC: false,
-            forceWebView: false,
-          );
+          if (uri.host == config.apiHost && _isDeepLink(uri)) {
+            setNewRoutePath(Uri(path: uri.path, query: uri.query));
+          } else {
+            await launch(
+              uri.toString(),
+              forceSafariVC: false,
+              forceWebView: false,
+            );
+          }
         }
       } else if (navigatorKey.currentContext != null) {
         showDialog(
@@ -163,6 +180,20 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
       : navigatorKey = GlobalKey<NavigatorState>(),
         _firebaseInitialization = firebaseInitialization {
     _setupFirebaseMessaging();
+  }
+
+  /// Returns true if [uri] is a deep link that can be handled by the app.
+  static bool _isDeepLink(Uri uri) {
+    final path = uri.path;
+    if (path == '/') return true;
+    if (RegExp('^/pizzas/?\$').hasMatch(path)) return true;
+    if (RegExp('^/events/?\$').hasMatch(path)) return true;
+    if (RegExp('^/events/([0-9]+)/?\$').hasMatch(path)) return true;
+    if (RegExp('^/members/photos/([a-z0-9-_]+)/?\$').hasMatch(path)) {
+      return true;
+    }
+    if (RegExp('^/members/([0-9]+)/?\$').hasMatch(path)) return true;
+    return false;
   }
 
   @override
@@ -258,6 +289,7 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
         ..addAll([
           TypedMaterialPage(child: WelcomeScreen(), name: 'Welcome'),
         ]);
+      notifyListeners();
     } else if (RegExp('^/pizzas/?\$').hasMatch(path)) {
       _stack
         ..clear()
@@ -265,12 +297,14 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
           TypedMaterialPage(child: WelcomeScreen(), name: 'Welcome'),
           TypedMaterialPage(child: FoodScreen(), name: 'FoodEvent(current)'),
         ]);
+      notifyListeners();
     } else if (RegExp('^/events/?\$').hasMatch(path)) {
       _stack
         ..clear()
         ..addAll([
           TypedMaterialPage(child: CalendarScreen(), name: 'Calendar'),
         ]);
+      notifyListeners();
     } else if (RegExp('^/events/([0-9]+)/?\$').hasMatch(path)) {
       final pk = int.parse(segments[1]);
       _stack
@@ -279,6 +313,7 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
           TypedMaterialPage(child: CalendarScreen(), name: 'Calendar'),
           TypedMaterialPage(child: EventScreen(pk: pk), name: 'Event($pk)'),
         ]);
+      notifyListeners();
     } else if (RegExp('^/members/photos/([a-z0-9-_]+)/?\$').hasMatch(path)) {
       _stack
         ..clear()
@@ -289,6 +324,7 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
             name: 'Album(${segments[2]})',
           ),
         ]);
+      notifyListeners();
     } else if (RegExp('^/members/([0-9]+)/?\$').hasMatch(path)) {
       final pk = int.parse(segments[1]);
       _stack
@@ -297,6 +333,7 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
           TypedMaterialPage(child: MembersScreen(), name: 'Members'),
           TypedMaterialPage(child: ProfileScreen(pk: pk), name: 'Profile($pk)'),
         ]);
+      notifyListeners();
     }
     // TODO: Add SalesOrderDialog back in, waiting for
     //  https://github.com/svthalia/concrexit/issues/1785.
