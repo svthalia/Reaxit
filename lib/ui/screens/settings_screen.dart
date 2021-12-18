@@ -8,7 +8,7 @@ import 'package:reaxit/models/push_notification_category.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
 import 'package:reaxit/config.dart' as config;
-import 'package:url_launcher/link.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreen extends StatelessWidget {
   @override
@@ -275,21 +275,27 @@ class _AboutCard extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyText1,
             ),
             const SizedBox(height: 8),
-            Link(
-              uri: config.changelogUri,
-              builder: (context, followLink) => OutlinedButton.icon(
-                onPressed: followLink,
-                icon: const Icon(Icons.history),
-                label: const Text('CHANGELOG'),
-              ),
+            OutlinedButton.icon(
+              onPressed: () async {
+                await launch(
+                  config.changelogUri.toString(),
+                  forceSafariVC: false,
+                  forceWebView: false,
+                );
+              },
+              icon: const Icon(Icons.history),
+              label: const Text('CHANGELOG'),
             ),
-            Link(
-              uri: config.feedbackUri,
-              builder: (context, followLink) => OutlinedButton.icon(
-                onPressed: followLink,
-                icon: const Icon(Icons.bug_report_outlined),
-                label: const Text('FEEDBACK'),
-              ),
+            OutlinedButton.icon(
+              onPressed: () async {
+                await launch(
+                  config.feedbackUri.toString(),
+                  forceSafariVC: false,
+                  forceWebView: false,
+                );
+              },
+              icon: const Icon(Icons.bug_report_outlined),
+              label: const Text('FEEDBACK'),
             ),
             OutlinedButton.icon(
               onPressed: () => showLicensePage(

@@ -4,7 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:reaxit/api_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/link.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 String deviceRegistrationIdPreferenceName = 'deviceRegistrationId';
 
@@ -93,25 +93,29 @@ class PushNotificationDialog extends StatelessWidget {
 
     return AlertDialog(
       title: Text(message.notification!.title!),
-      content: Text(
-        message.notification!.body!,
-        style: Theme.of(context).textTheme.bodyText2,
-      ),
+      content: (message.notification!.body != null &&
+              message.notification!.body!.isNotEmpty)
+          ? Text(
+              message.notification!.body!,
+              style: Theme.of(context).textTheme.bodyText2,
+            )
+          : null,
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('CLOSE'),
         ),
         if (uri != null)
-          Link(
-            uri: uri,
-            builder: (context, followLink) => OutlinedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                followLink?.call();
-              },
-              child: const Text('OPEN'),
-            ),
+          OutlinedButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              await launch(
+                uri!.toString(),
+                forceSafariVC: false,
+                forceWebView: false,
+              );
+            },
+            child: const Text('OPEN'),
           ),
       ],
     );

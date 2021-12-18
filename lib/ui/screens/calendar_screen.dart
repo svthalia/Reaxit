@@ -12,7 +12,7 @@ import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
-import 'package:url_launcher/link.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CalendarScreen extends StatefulWidget {
   @override
@@ -377,60 +377,61 @@ class _EventCard extends StatelessWidget {
       color = Colors.grey[800]!;
     }
 
-    return Link(
-      uri: event.parentEvent is PartnerEvent
-          ? (event.parentEvent as PartnerEvent).url
-          : null,
-      builder: (context, followLink) => Padding(
-        padding: const EdgeInsets.only(bottom: 12),
-        child: Material(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Material(
+        borderRadius: const BorderRadius.all(Radius.circular(2)),
+        type: MaterialType.card,
+        color: color,
+        child: InkWell(
+          onTap: () {
+            if (event.parentEvent is PartnerEvent) {
+              launch(
+                (event.parentEvent as PartnerEvent).url.toString(),
+                forceSafariVC: false,
+                forceWebView: false,
+              );
+            } else {
+              ThaliaRouterDelegate.of(context).push(
+                TypedMaterialPage(
+                  child: EventScreen(
+                    pk: event.pk,
+                    event: event.parentEvent is Event
+                        ? event.parentEvent as Event
+                        : null,
+                  ),
+                  name: 'Event(${event.pk})',
+                ),
+              );
+            }
+          },
+          // Prevent painting ink outside of the card.
           borderRadius: const BorderRadius.all(Radius.circular(2)),
-          type: MaterialType.card,
-          color: color,
-          child: InkWell(
-            onTap: event.parentEvent is PartnerEvent
-                ? followLink
-                : () {
-                    ThaliaRouterDelegate.of(context).push(
-                      TypedMaterialPage(
-                        child: EventScreen(
-                          pk: event.pk,
-                          event: event.parentEvent is Event
-                              ? event.parentEvent as Event
-                              : null,
-                        ),
-                        name: 'Event(${event.pk})',
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  event.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  event.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                        color: Colors.white.withOpacity(0.8),
                       ),
-                    );
-                  },
-            // Prevent painting ink outside of the card.
-            borderRadius: const BorderRadius.all(Radius.circular(2)),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    event.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    event.label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                          color: Colors.white.withOpacity(0.8),
-                        ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
