@@ -32,11 +32,15 @@ class AlbumListCubit extends Cubit<AlbumListState> {
     emit(state.copyWith(isLoading: true));
     try {
       final query = _searchQuery;
-      var albumsResponse = await api.getAlbums(
+      final albumsResponse = await api.getAlbums(
         search: query,
         limit: firstPageSize,
         offset: 0,
       );
+
+      // Discard result if _searchQuery has
+      // changed since the request was made.
+      if (query != _searchQuery) return;
 
       final isDone = albumsResponse.results.length == albumsResponse.count;
 
@@ -72,11 +76,15 @@ class AlbumListCubit extends Cubit<AlbumListState> {
       final query = _searchQuery;
 
       // Get next page of albums.
-      var albumsResponse = await api.getAlbums(
+      final albumsResponse = await api.getAlbums(
         search: query,
         limit: pageSize,
         offset: _nextOffset,
       );
+
+      // Discard result if _searchQuery has
+      // changed since the request was made.
+      if (query != _searchQuery) return;
 
       final albums = state.results + albumsResponse.results;
       final isDone = albums.length == albumsResponse.count;
