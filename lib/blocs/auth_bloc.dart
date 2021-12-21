@@ -6,7 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:oauth2/oauth2.dart';
-import 'package:reaxit/api_repository.dart';
+import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/api/concrexit_api_repository.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -70,10 +71,10 @@ class LoggingInAuthState extends AuthState {
 class LoggedInAuthState extends AuthState {
   final ApiRepository apiRepository;
 
-  LoggedInAuthState({required Client client, required void Function() logOut})
-      : apiRepository = ApiRepository(
+  LoggedInAuthState({required Client client, required void Function() onLogOut})
+      : apiRepository = ConcrexitApiRepository(
           client: client,
-          logOut: logOut,
+          onLogOut: onLogOut,
         );
 
   @override
@@ -151,7 +152,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             },
             httpClient: SentryHttpClient(),
           ),
-          logOut: () => add(LogOutAuthEvent()),
+          onLogOut: () => add(LogOutAuthEvent()),
         );
       } else {
         add(LogOutAuthEvent());
@@ -208,7 +209,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
       yield LoggedInAuthState(
         client: client,
-        logOut: () => add(LogOutAuthEvent()),
+        onLogOut: () => add(LogOutAuthEvent()),
       );
     } on PlatformException catch (exception) {
       yield FailureAuthState(message: exception.message);
@@ -222,9 +223,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Stream<AuthState> _mapLogOutAuthEventToState() async* {
-    var state = this.state;
+    final state = this.state;
     if (state is LoggedInAuthState) {
-      state.apiRepository.client.close();
+      state.apiRepository.close();
     }
     const storage = FlutterSecureStorage();
     await storage.delete(
