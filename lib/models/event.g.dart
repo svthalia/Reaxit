@@ -12,7 +12,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       json['description'] as String,
       DateTime.parse(json['start'] as String),
       DateTime.parse(json['end'] as String),
-      _$enumDecode(_$EventCategoryEnumMap, json['category']),
+      $enumDecode(_$EventCategoryEnumMap, json['category']),
       json['registration_start'] == null
           ? null
           : DateTime.parse(json['registration_start'] as String),
@@ -65,32 +65,6 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'user_permissions': instance.userPermissions,
       'user_registration': instance.registration,
     };
-
-K _$enumDecode<K, V>(
-  Map<K, V> enumValues,
-  Object? source, {
-  K? unknownValue,
-}) {
-  if (source == null) {
-    throw ArgumentError(
-      'A value must be provided. Supported values: '
-      '${enumValues.values.join(', ')}',
-    );
-  }
-
-  return enumValues.entries.singleWhere(
-    (e) => e.value == source,
-    orElse: () {
-      if (unknownValue == null) {
-        throw ArgumentError(
-          '`$source` is not one of the supported values: '
-          '${enumValues.values.join(', ')}',
-        );
-      }
-      return MapEntry(unknownValue, enumValues.values.first);
-    },
-  ).key;
-}
 
 const _$EventCategoryEnumMap = {
   EventCategory.alumni: 'alumni',

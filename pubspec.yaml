@@ -115,6 +115,9 @@ dev_dependencies:
   # Generating splash screens.
   flutter_native_splash: ^1.2.3
 
+  # Mocks for testing.
+  mockito: ^5.0.17
+
 # The following section is specific to Flutter.
 flutter:
 
