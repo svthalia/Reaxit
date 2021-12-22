@@ -32,11 +32,15 @@ class MemberListCubit extends Cubit<MemberListState> {
     emit(state.copyWith(isLoading: true));
     try {
       final query = _searchQuery;
-      var membersResponse = await api.getMembers(
+      final membersResponse = await api.getMembers(
         search: query,
         limit: firstPageSize,
         offset: 0,
       );
+
+      // Discard result if _searchQuery has
+      // changed since the request was made.
+      if (query != _searchQuery) return;
 
       final isDone = membersResponse.results.length == membersResponse.count;
 
@@ -72,11 +76,15 @@ class MemberListCubit extends Cubit<MemberListState> {
       final query = _searchQuery;
 
       // Get next page of albums.
-      var membersResponse = await api.getMembers(
+      final membersResponse = await api.getMembers(
         search: query,
         limit: pageSize,
         offset: _nextOffset,
       );
+
+      // Discard result if _searchQuery has
+      // changed since the request was made.
+      if (query != _searchQuery) return;
 
       final members = state.results + membersResponse.results;
       final isDone = members.length == membersResponse.count;
