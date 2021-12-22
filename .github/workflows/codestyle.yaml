@@ -15,7 +15,8 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v1
         with:
-          flutter-version: 2.8.1
+          flutter-version: '2.6.x'
+          channel: 'beta'
 
       - name: Formatting
         run: flutter format --set-exit-if-changed .
@@ -30,7 +31,8 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v1
         with:
-          flutter-version: 2.8.1
+          flutter-version: '2.6.x'
+          channel: 'beta'
 
       - name: Analyze
         run: flutter analyze
