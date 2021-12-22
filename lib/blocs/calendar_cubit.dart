@@ -150,6 +150,10 @@ class CalendarCubit extends Cubit<CalendarState> {
         offset: 0,
       );
 
+      // Discard result if _searchQuery has
+      // changed since the request was made.
+      if (query != _searchQuery) return;
+
       final isDone = eventsResponse.results.length == eventsResponse.count;
 
       _nextOffset = firstPageSize;
@@ -233,6 +237,10 @@ class CalendarCubit extends Cubit<CalendarState> {
         limit: pageSize,
         offset: _nextOffset,
       );
+
+      // Discard result if _searchQuery has
+      // changed since the request was made.
+      if (query != _searchQuery) return;
 
       final isDone =
           _nextOffset + eventsResponse.results.length == eventsResponse.count;

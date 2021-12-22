@@ -87,12 +87,16 @@ class EventAdminCubit extends Cubit<EventAdminState> {
     try {
       final query = _searchQuery;
       final event = await api.getEvent(pk: eventPk);
-      var registrations = await api.getAdminEventRegistrations(
+      final registrations = await api.getAdminEventRegistrations(
         pk: eventPk,
         search: query,
         limit: 999999999,
         cancelled: false,
       );
+
+      // Discard result if _searchQuery has
+      // changed since the request was made.
+      if (query != _searchQuery) return;
 
       // temporary fix, remove when api is updated
       registrations.results.removeWhere((r) => r.queuePosition != null);
@@ -129,6 +133,10 @@ class EventAdminCubit extends Cubit<EventAdminState> {
           limit: 999999999,
           cancelled: false,
         );
+
+        // Discard result if _searchQuery has
+        // changed since the request was made.
+        if (query != _searchQuery) return;
 
         // temporary fix, remove when api is updated
         registrations.results.removeWhere((r) => r.queuePosition != null);
