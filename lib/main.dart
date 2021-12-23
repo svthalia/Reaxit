@@ -3,13 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:reaxit/blocs/album_list_cubit.dart';
-import 'package:reaxit/blocs/auth_bloc.dart';
+import 'package:reaxit/blocs/auth_cubit.dart';
 import 'package:reaxit/blocs/calendar_cubit.dart';
 import 'package:reaxit/blocs/full_member_cubit.dart';
 import 'package:reaxit/blocs/member_list_cubit.dart';
 import 'package:reaxit/blocs/payment_user_cubit.dart';
 import 'package:reaxit/blocs/setting_cubit.dart';
-import 'package:reaxit/blocs/theme_bloc.dart';
+import 'package:reaxit/blocs/theme_cubit.dart';
 import 'package:reaxit/blocs/welcome_cubit.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/theme.dart';
@@ -26,10 +26,10 @@ Future<void> main() async {
     },
     appRunner: () async {
       runApp(BlocProvider(
-        create: (_) => ThemeBloc()..add(ThemeLoadEvent()),
+        create: (_) => ThemeCubit()..load(),
         lazy: false,
         child: BlocProvider(
-          create: (context) => AuthBloc()..add(LoadAuthEvent()),
+          create: (context) => AuthCubit()..load(),
           child: ThaliApp(),
         ),
       ));
@@ -53,7 +53,7 @@ class _ThaliAppState extends State<ThaliApp> {
     super.initState();
     _routeInformationParser = ThaliaRouteInformationParser();
     _routerDelegate = ThaliaRouterDelegate(
-      authBloc: BlocProvider.of<AuthBloc>(context),
+      authBloc: BlocProvider.of<AuthCubit>(context),
       firebaseInitialization: _firebaseInitialization,
     );
   }
@@ -72,9 +72,9 @@ class _ThaliAppState extends State<ThaliApp> {
 
   @override
   Widget build(BuildContext context) {
-    return OverlaySupport(child: BlocBuilder<ThemeBloc, ThemeMode>(
+    return OverlaySupport(child: BlocBuilder<ThemeCubit, ThemeMode>(
       builder: (context, themeMode) {
-        return BlocBuilder<AuthBloc, AuthState>(
+        return BlocBuilder<AuthCubit, AuthState>(
           builder: (context, authState) {
             if (authState is LoggedInAuthState) {
               return RepositoryProvider.value(

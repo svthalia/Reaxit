@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reaxit/blocs/auth_bloc.dart';
+import 'package:reaxit/blocs/auth_cubit.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -20,7 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
+    return BlocBuilder<AuthCubit, AuthState>(
       buildWhen: (previous, current) =>
           current is LoggedOutAuthState ||
           current is LoadingAuthState ||
@@ -72,10 +72,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPrimary: Colors.white,
                     ),
                     onPressed: () {
-                      BlocProvider.of<AuthBloc>(
+                      BlocProvider.of<AuthCubit>(
                         context,
                         listen: false,
-                      ).add(LogInAuthEvent());
+                      ).logIn();
                     },
                     child: const Text('LOGIN'),
                   ),
