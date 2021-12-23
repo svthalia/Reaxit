@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs/setting_cubit.dart';
-import 'package:reaxit/blocs/theme_bloc.dart';
+import 'package:reaxit/blocs/theme_cubit.dart';
 import 'package:reaxit/models/push_notification_category.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
@@ -177,15 +177,13 @@ class _ThemeModeCard extends StatelessWidget {
           'COLOR SCHEME',
           style: Theme.of(context).textTheme.subtitle1,
         ),
-        trailing: BlocBuilder<ThemeBloc, ThemeMode>(
+        trailing: BlocBuilder<ThemeCubit, ThemeMode>(
           builder: (context, themeMode) {
             return DropdownButton(
               value: themeMode,
               style: Theme.of(context).textTheme.bodyText2,
               onChanged: (ThemeMode? newMode) async {
-                BlocProvider.of<ThemeBloc>(context).add(
-                  ThemeChangeEvent(newMode!),
-                );
+                BlocProvider.of<ThemeCubit>(context).change(newMode!);
               },
               items: [
                 DropdownMenuItem(

@@ -105,21 +105,10 @@ class LogOutAuthEvent extends AuthEvent {}
 
 class LogInAuthEvent extends AuthEvent {}
 
-class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc() : super(LoadingAuthState());
+class AuthCubit extends Cubit<AuthState> {
+  AuthCubit() : super(LoadingAuthState());
 
-  @override
-  Stream<AuthState> mapEventToState(AuthEvent event) async* {
-    if (event is LoadAuthEvent) {
-      yield* _mapLoadAuthEventToState();
-    } else if (event is LogInAuthEvent) {
-      yield* _mapLogInAuthEventToState();
-    } else if (event is LogOutAuthEvent) {
-      yield* _mapLogOutAuthEventToState();
-    }
-  }
-
-  Stream<AuthState> _mapLoadAuthEventToState() async* {
+  Future<void> load() async {
     const storage = FlutterSecureStorage();
     final stored = await storage.read(
       key: _credentialsStorageKey,
@@ -135,7 +124,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // until you manually log out.
       final scopes = credentials.scopes?.toSet() ?? <String>{};
       if (scopes.containsAll(config.oauthScopes)) {
-        yield LoggedInAuthState(
+        emit(LoggedInAuthState(
           client: Client(
             credentials,
             identifier: config.apiIdentifier,
@@ -152,20 +141,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             },
             httpClient: SentryHttpClient(),
           ),
-          onLogOut: () => add(LogOutAuthEvent()),
-        );
+          onLogOut: logOut,
+        ));
       } else {
-        add(LogOutAuthEvent());
+        logOut();
       }
     } else {
       // Clear username for sentry.
       Sentry.configureScope((scope) => scope.user = null);
-      yield LoggedOutAuthState();
+      emit(LoggedOutAuthState());
     }
   }
 
-  Stream<AuthState> _mapLogInAuthEventToState() async* {
-    yield LoadingAuthState();
+  Future<void> logIn() async {
+    emit(LoadingAuthState());
 
     final grant = AuthorizationCodeGrant(
       config.apiIdentifier,
@@ -207,22 +196,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         iOptions:
             const IOSOptions(accessibility: IOSAccessibility.first_unlock),
       );
-      yield LoggedInAuthState(
+      emit(LoggedInAuthState(
         client: client,
-        onLogOut: () => add(LogOutAuthEvent()),
-      );
+        onLogOut: logOut,
+      ));
     } on PlatformException catch (exception) {
-      yield FailureAuthState(message: exception.message);
+      emit(FailureAuthState(message: exception.message));
     } on SocketException catch (_) {
-      yield const FailureAuthState(message: 'No internet.');
+      emit(const FailureAuthState(message: 'No internet.'));
     } on AuthorizationException catch (_) {
-      yield const FailureAuthState(message: 'Authorization failed.');
+      emit(const FailureAuthState(message: 'Authorization failed.'));
     } catch (_) {
-      yield const FailureAuthState(message: 'An unknown error occurred.');
+      emit(const FailureAuthState(message: 'An unknown error occurred.'));
     }
   }
 
-  Stream<AuthState> _mapLogOutAuthEventToState() async* {
+  Future<void> logOut() async {
     final state = this.state;
     if (state is LoggedInAuthState) {
       state.apiRepository.close();
@@ -234,8 +223,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
     // Clear username for sentry.
     Sentry.configureScope((scope) => scope.user = null);
-    yield LoggedOutAuthState();
+    emit(LoggedOutAuthState());
   }
-
-  // TODO: Someday: make AuthBloc a cubit?
 }

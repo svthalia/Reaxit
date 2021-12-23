@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reaxit/blocs/auth_bloc.dart';
+import 'package:reaxit/blocs/auth_cubit.dart';
 import 'package:reaxit/blocs/full_member_cubit.dart';
 import 'package:reaxit/ui/router.dart';
 import 'package:reaxit/ui/screens/albums_screen.dart';
@@ -232,9 +232,7 @@ class MenuDrawer extends StatelessWidget {
             leading: const Icon(Icons.logout),
             title: const Text('Log out'),
             onTap: () async {
-              BlocProvider.of<AuthBloc>(context).add(
-                LogOutAuthEvent(),
-              );
+              BlocProvider.of<AuthCubit>(context).logOut();
             },
           ),
         ],

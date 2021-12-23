@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:overlay_support/overlay_support.dart';
-import 'package:reaxit/blocs/auth_bloc.dart';
+import 'package:reaxit/blocs/auth_cubit.dart';
 import 'package:reaxit/ui/screens/album_screen.dart';
 import 'package:reaxit/ui/screens/albums_screen.dart';
 import 'package:reaxit/ui/screens/calendar_screen.dart';
@@ -56,7 +56,7 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
     return delegate as ThaliaRouterDelegate;
   }
 
-  final AuthBloc authBloc;
+  final AuthCubit authBloc;
 
   @override
   final GlobalKey<NavigatorState> navigatorKey;
@@ -168,7 +168,7 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
   @override
   Widget build(BuildContext context) {
     // Listener that creates SnackBars.
-    return BlocListener<AuthBloc, AuthState>(
+    return BlocListener<AuthCubit, AuthState>(
       listenWhen: (previous, current) {
         if (previous is LoggedInAuthState && current is LoggedOutAuthState) {
           return true;
@@ -198,7 +198,7 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
           ));
         }
       },
-      child: BlocConsumer<AuthBloc, AuthState>(
+      child: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, authState) async {
           // Setting up pushnotifications on login.
           if (authState is LoggedInAuthState) {
