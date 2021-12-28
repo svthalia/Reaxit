@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:clock/clock.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
@@ -569,7 +570,7 @@ class ConcrexitApiRepository implements ApiRepository {
   @override
   Future<FoodEvent> getCurrentFoodEvent() async {
     try {
-      final now = DateTime.now().toLocal();
+      final now = clock.now().toLocal();
       final uri = _baseUri.replace(
         path: '$_basePath/food/events/',
         queryParameters: {

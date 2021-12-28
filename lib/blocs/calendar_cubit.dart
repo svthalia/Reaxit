@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:clock/clock.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/api/api_repository.dart';
@@ -137,7 +138,7 @@ class CalendarCubit extends Cubit<CalendarState> {
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
     try {
-      _lastLoadTime = DateTime.now();
+      _lastLoadTime = clock.now();
       final query = _searchQuery;
       final start = query == null ? _lastLoadTime : null;
 

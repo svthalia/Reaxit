@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
@@ -83,7 +84,7 @@ class WelcomeCubit extends Cubit<WelcomeState> {
       final slidesResponse = await api.getSlides();
       final articlesResponse = await api.getFrontpageArticles();
       final eventsResponse = await api.getEvents(
-        start: DateTime.now(),
+        start: clock.now(),
         ordering: 'start',
         limit: 3,
       );

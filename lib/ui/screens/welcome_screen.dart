@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
@@ -101,7 +102,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             ),
             ...dayGroupedEvents.entries.map<Widget>((entry) {
               final day = entry.key;
-              final now = DateTime.now();
+              final now = clock.now();
               final today = DateTime(now.year, now.month, now.day);
               final dayEvents = entry.value;
               String dayText;

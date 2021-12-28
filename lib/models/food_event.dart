@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/food_order.dart';
@@ -17,8 +18,8 @@ class FoodEvent {
 
   bool get hasOrder => order != null;
 
-  bool hasEnded() => DateTime.now().isAfter(end);
-  bool hasStarted() => DateTime.now().isAfter(start);
+  bool hasEnded() => clock.now().isAfter(end);
+  bool hasStarted() => clock.now().isAfter(start);
 
   bool canOrder() => hasStarted() && !hasEnded();
   bool canChangeOrder() =>

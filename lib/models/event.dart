@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:reaxit/models/event_registration.dart';
 
@@ -81,16 +82,14 @@ class Event implements BaseEvent {
   bool get reachedMaxParticipants =>
       maxParticipants != null && numParticipants >= maxParticipants!;
 
-  bool cancelDeadlinePassed() =>
-      cancelDeadline?.isBefore(DateTime.now()) ?? false;
+  bool cancelDeadlinePassed() => cancelDeadline?.isBefore(clock.now()) ?? false;
   bool registrationStarted() =>
-      registrationStart?.isBefore(DateTime.now()) ?? false;
-  bool registrationClosed() =>
-      registrationEnd?.isBefore(DateTime.now()) ?? false;
+      registrationStart?.isBefore(clock.now()) ?? false;
+  bool registrationClosed() => registrationEnd?.isBefore(clock.now()) ?? false;
   bool registrationIsOpen() => registrationStarted() && !registrationClosed();
 
-  bool hasStarted() => start.isBefore(DateTime.now());
-  bool hasEnded() => end.isBefore(DateTime.now());
+  bool hasStarted() => start.isBefore(clock.now());
+  bool hasEnded() => end.isBefore(clock.now());
 
   bool get canCreateRegistration => userPermissions.createRegistration;
   bool get canUpdateRegistration => userPermissions.updateRegistration;

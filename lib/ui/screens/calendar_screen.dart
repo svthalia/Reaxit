@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -264,7 +265,7 @@ class CalendarScrollView extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           child: Text(
-                            month.year == DateTime.now().year
+                            month.year == clock.now().year
                                 ? monthFormatter
                                     .format(month.toLocal())
                                     .toUpperCase()

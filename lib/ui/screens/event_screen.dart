@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -344,7 +345,7 @@ class _EventScreenState extends State<EventScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (event.registrationStart!.isAfter(DateTime.now())) ...[
+            if (event.registrationStart!.isAfter(clock.now())) ...[
               Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
