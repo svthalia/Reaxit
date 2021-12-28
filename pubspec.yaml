@@ -46,7 +46,7 @@ dependencies:
   json_annotation: ^4.3.0
 
   # BLoC state management.
-  flutter_bloc: ^7.3.0
+  flutter_bloc: ^8.0.0
   equatable: ^2.0.3
 
   # Persistent storage.
@@ -99,6 +99,9 @@ dependencies:
   cached_network_image: ^3.1.0
   flutter_cache_manager: ^3.1.2
 
+  # Testable time.
+  clock: ^1.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -116,7 +119,10 @@ dev_dependencies:
   flutter_native_splash: ^1.2.3
 
   # Mocks for testing.
-  mockito: ^5.0.17
+  mocktail: ^0.2.0
+
+  # Testing with BLoC.
+  bloc_test: ^9.0.1
 
 # The following section is specific to Flutter.
 flutter:
