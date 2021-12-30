@@ -7,7 +7,7 @@ import 'package:reaxit/ui/widgets/cached_image.dart';
 class AlbumTile extends StatelessWidget {
   final ListAlbum album;
 
-  const AlbumTile({Key? key, required this.album}) : super(key: key);
+  AlbumTile({Key? key, required this.album}) : super(key: ValueKey(album.slug));
 
   @override
   Widget build(BuildContext context) {
