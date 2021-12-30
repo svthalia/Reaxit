@@ -309,8 +309,8 @@ class _DayCard extends StatelessWidget {
 
   static final dayFormatter = DateFormat(DateFormat.ABBR_WEEKDAY);
 
-  const _DayCard({Key? key, required this.day, required this.events})
-      : super(key: key);
+  _DayCard({required this.day, required this.events})
+      : super(key: ValueKey(day));
 
   @override
   Widget build(BuildContext context) {
@@ -363,7 +363,7 @@ class _DayCard extends StatelessWidget {
 class _EventCard extends StatelessWidget {
   final CalendarEvent event;
 
-  const _EventCard(this.event, {Key? key}) : super(key: key);
+  _EventCard(this.event) : super(key: ObjectKey(event));
 
   @override
   Widget build(BuildContext context) {

@@ -21,7 +21,7 @@ class CalendarEvent {
   int get pk => parentEvent.pk;
   String get location => parentEvent.location;
 
-  CalendarEvent._({
+  const CalendarEvent._({
     required this.parentEvent,
     required this.title,
     required this.start,
