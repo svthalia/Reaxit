@@ -34,10 +34,8 @@ jobs:
 
       - name: Decode secrets
         env:
-          FIREBASE_CONFIG: ${{ secrets.FIREBASE_CONFIG_PLIST }}
           APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
         run: |
-          echo $FIREBASE_CONFIG > $GITHUB_WORKSPACE/ios/GoogleService-Info.plist
           echo $APPLE_API_KEY | base64 --decode > $GITHUB_WORKSPACE/app-store.p8
 
       - name: Build app
@@ -73,7 +71,6 @@ jobs:
 
       - name: Decode secrets
         env:
-          FIREBASE_CONFIG: ${{ secrets.FIREBASE_CONFIG_JSON }}
           GOOGLE_PLAY_CONFIG: ${{ secrets.GOOGLE_PLAY_CONFIG_JSON }}
           RELEASE_CONFIG_STORE_FILE: ${{ secrets.ANDROID_RELEASE_CONFIG_STORE_FILE }}
           RELEASE_CONFIG_STORE_PASS: ${{ secrets.ANDROID_RELEASE_CONFIG_STORE_PASS }}
@@ -81,7 +78,7 @@ jobs:
           RELEASE_CONFIG_KEY_ALIAS: ${{ secrets.ANDROID_RELEASE_CONFIG_KEY_ALIAS }}
         run: |
           echo $GOOGLE_PLAY_CONFIG > $GITHUB_WORKSPACE/google-play.json
-          echo $FIREBASE_CONFIG > $GITHUB_WORKSPACE/android/app/google-services.json
+
           echo "storeFile=$RELEASE_CONFIG_STORE_FILE" > $GITHUB_WORKSPACE/android/key.properties
           echo "storePassword=$RELEASE_CONFIG_STORE_PASS" >> $GITHUB_WORKSPACE/android/key.properties
           echo "keyPassword=$RELEASE_CONFIG_KEY_PASS" >> $GITHUB_WORKSPACE/android/key.properties
