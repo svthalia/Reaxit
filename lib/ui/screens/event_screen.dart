@@ -34,7 +34,7 @@ class EventScreen extends StatefulWidget {
 }
 
 class _EventScreenState extends State<EventScreen> {
-  static final dateTimeFormatter = DateFormat('d MMM y, HH:mm');
+  static final dateTimeFormatter = DateFormat('E d MMM y, HH:mm');
 
   late ScrollController _controller;
 
