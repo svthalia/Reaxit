@@ -40,7 +40,7 @@ dependencies:
   oauth2: ^2.0.0
 
   # Secure storage for OAuth2 credentials.
-  flutter_secure_storage: ^4.2.1
+  flutter_secure_storage: ^5.0.2
 
   # JSON parsing.
   json_annotation: ^4.3.0
@@ -50,22 +50,22 @@ dependencies:
   equatable: ^2.0.3
 
   # Persistent storage.
-  shared_preferences: ^2.0.8
+  shared_preferences: ^2.0.11
 
   # Opening urls.
   url_launcher: ^6.0.11
 
   # Authenticating in browser.
-  flutter_web_auth: ^0.3.1
+  flutter_web_auth: ^0.4.0
 
   # Modal photo views.
   photo_view: ^0.13.0
 
   # HTML widget.
-  flutter_widget_from_html_core: ^0.8.1
+  flutter_widget_from_html_core: ^0.8.4
 
   # Sentry error reporting.
-  sentry_flutter: ^6.0.1
+  sentry_flutter: ^6.2.2
 
   # Share menu.
   share_plus: ^3.0.4
@@ -83,8 +83,8 @@ dependencies:
   carousel_slider: ^4.0.0
 
   # Firebase for push notifications.
-  firebase_core: ^1.8.0
-  firebase_messaging: ^10.0.9
+  firebase_core: ^1.11.0
+  firebase_messaging: ^11.2.5
 
   # Push notifications in app. 
   overlay_support: ^1.2.1
