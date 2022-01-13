@@ -40,6 +40,25 @@ class ListMember {
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
+class AdminListMember extends ListMember {
+  final String firstName;
+  final String lastName;
+
+  String get fullName => '$firstName $lastName';
+
+  const AdminListMember(
+    int pk,
+    MembershipType? membershipType,
+    Profile profile,
+    this.firstName,
+    this.lastName,
+  ) : super(pk, membershipType, profile);
+
+  factory AdminListMember.fromJson(Map<String, dynamic> json) =>
+      _$AdminListMemberFromJson(json);
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
 class Member extends ListMember {
   final List<Achievement> achievements;
   final List<Achievement> societies;

@@ -70,7 +70,7 @@ class AdminEventRegistration implements EventRegistration {
   @override
   final int pk;
   @override
-  final ListMember? member;
+  final AdminListMember? member;
   @override
   final String? name;
 

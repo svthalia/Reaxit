@@ -54,7 +54,7 @@ AdminEventRegistration _$AdminEventRegistrationFromJson(
       json['pk'] as int,
       json['member'] == null
           ? null
-          : ListMember.fromJson(json['member'] as Map<String, dynamic>),
+          : AdminListMember.fromJson(json['member'] as Map<String, dynamic>),
       json['name'] as String?,
       json['present'] as bool,
       json['queue_position'] as int?,

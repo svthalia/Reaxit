@@ -149,11 +149,11 @@ abstract class ApiRepository {
     required int registrationPk,
   });
 
-  /// Get the [FoodOrder]s of the [FoodEvent] with the `pk`.
+  /// Get the [AdminFoodOrder]s of the [FoodEvent] with the `pk`.
   ///
   /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
   /// total number of orders that can be returned.
-  Future<ListResponse<FoodOrder>> getAdminFoodOrders({
+  Future<ListResponse<AdminFoodOrder>> getAdminFoodOrders({
     required int pk,
     int? limit,
     int? offset,

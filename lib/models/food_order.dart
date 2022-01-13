@@ -44,3 +44,54 @@ class FoodOrder {
   FoodOrder copyWithPayment(Payment? newPayment) =>
       FoodOrder(pk, member, name, product, newPayment);
 }
+
+/// Copy of [FoodOrder] where `member` is a [AdminListMember].
+@JsonSerializable(fieldRename: FieldRename.snake)
+class AdminFoodOrder implements FoodOrder {
+  @override
+  final int pk;
+  @override
+  final AdminListMember? member;
+  @override
+  final String? name;
+  @override
+  final Product product;
+  @override
+  final Payment? payment;
+
+  @override
+  @JsonKey(ignore: true)
+  bool? _tpayAllowed;
+
+  /// Whether this order can be paid with Thalia Pay.
+  /// See https://github.com/svthalia/concrexit/issues/1784.
+  ///
+  /// Warning: this is not properly set on orders retrieved
+  /// through [ApiRepository.getFoodEvents].
+  @override
+  @JsonKey(ignore: true)
+  bool get tpayAllowed => _tpayAllowed ?? false;
+  @override
+  set tpayAllowed(bool value) => _tpayAllowed = value;
+
+  @override
+  bool get isPaid => payment != null;
+
+  factory AdminFoodOrder.fromJson(Map<String, dynamic> json) =>
+      _$AdminFoodOrderFromJson(json);
+
+  AdminFoodOrder(
+    this.pk,
+    this.member,
+    this.name,
+    this.product,
+    this.payment,
+  ) : assert(
+          member != null || name != null,
+          'Either a member or name must be given. $member, $name',
+        );
+
+  @override
+  AdminFoodOrder copyWithPayment(Payment? newPayment) =>
+      AdminFoodOrder(pk, member, name, product, newPayment);
+}
