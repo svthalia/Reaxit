@@ -238,11 +238,17 @@ class _FoodScreenState extends State<FoodScreen> {
                 AspectRatio(
                   aspectRatio: 1,
                   child: AnimatedContainer(
+                    decoration: BoxDecoration(
+                      color: order.isPaid
+                          ? Colors.green.shade200
+                          : Colors.red.shade700,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(4),
+                        topRight: Radius.circular(4),
+                      ),
+                    ),
                     duration: const Duration(milliseconds: 300),
                     padding: const EdgeInsets.all(32),
-                    color: order.isPaid
-                        ? Colors.green.shade200
-                        : Colors.red.shade700,
                     child: FittedBox(
                       fit: BoxFit.contain,
                       child: AnimatedSwitcher(
