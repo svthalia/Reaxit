@@ -14,11 +14,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v1
+      - name: Flutter cache
+        uses: actions/cache@v2
         with:
-          flutter-version: '2.6.x'
+          path: ${{ runner.tool_cache }}/flutter
+          key: ${{ runner.os }}-flutter-2.6.0-beta
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
           channel: 'beta'
+          flutter-version: 2.6.0
+          
+      - name: Flutter version
+        run: flutter --version
 
       - name: Pods cache
         uses: actions/cache@v2
@@ -85,11 +94,20 @@ jobs:
           java-version: 8
           distribution: zulu
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v1
+      - name: Flutter cache
+        uses: actions/cache@v2
         with:
-          flutter-version: '2.6.x'
+          path: ${{ runner.tool_cache }}/flutter
+          key: ${{ runner.os }}-flutter-2.6.0-beta
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
           channel: 'beta'
+          flutter-version: 2.6.0
+          
+      - name: Flutter version
+        run: flutter --version
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
