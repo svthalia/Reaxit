@@ -40,7 +40,7 @@ dependencies:
   oauth2: ^2.0.0
 
   # Secure storage for OAuth2 credentials.
-  flutter_secure_storage: ^4.2.1
+  flutter_secure_storage: ^5.0.0
 
   # JSON parsing.
   json_annotation: ^4.3.0
