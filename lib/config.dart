@@ -4,11 +4,13 @@
 /// The default values can be used on the staging server. If some variables are
 /// specified, be sure to specify all.
 
+/// The domain of the concrexit server.
 const String apiHost = String.fromEnvironment(
   'THALIA_API_HOST',
   defaultValue: 'staging.thalia.nu',
 );
 
+/// The OAuth client secret used to connect to the API.
 const String apiSecret = String.fromEnvironment(
   'THALIA_OAUTH_APP_SECRET',
   defaultValue:
@@ -16,13 +18,16 @@ const String apiSecret = String.fromEnvironment(
       '3WaWmJxfRq8bv5ElVOpjRZwabAGOZ0DbuHhW3chAMaNlOmwXixNfUJIKIBzlnr7I',
 );
 
+/// The OAuth client id used to connect to the API.
 const String apiIdentifier = String.fromEnvironment(
   'THALIA_OAUTH_APP_ID',
   defaultValue: '3zlt7pqGVMiUCGxOnKTZEpytDUN7haeFBP2kVkig',
 );
 
+/// The Sentry DSN used to report errors to.
 const String sentryDSN = String.fromEnvironment('SENTRY_DSN');
 
+/// The scopes to request permission for when connecting to the API.
 const List<String> oauthScopes = [
   'read',
   'write',
@@ -48,6 +53,8 @@ const List<String> oauthScopes = [
   // 'sales:write',
 ];
 
+/// The time to wait before fetching results
+/// from the API after typing in a search bar.
 const Duration searchDebounceTime = Duration(milliseconds: 200);
 
 const String versionNumber = 'v3.0.2';
@@ -61,7 +68,7 @@ final Uri changelogUri = Uri.parse(
 );
 
 const String termsAndConditionsUrl =
-    'https://staging.thalia.nu/event-registration-terms/';
+    'https://thalia.nu/event-registration-terms/';
 
 /// The period after which objects are removed from the cache when not used.
 const Duration cacheStalePeriod = Duration(days: 30);
