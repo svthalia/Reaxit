@@ -103,6 +103,8 @@ class ApiRepository {
       throw ApiException.unknownError;
     } on http.ClientException catch (_) {
       throw ApiException.unknownError;
+    } on OSError catch (_) {
+      throw ApiException.unknownError;
     } on ApiException catch (_) {
       rethrow;
     }
