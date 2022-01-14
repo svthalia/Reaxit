@@ -95,10 +95,11 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
                   onTap: uri != null
                       ? () async {
                           if (uri != null) {
-                            if (uri.host == config.apiHost &&
-                                _isDeepLink(uri)) {
-                              setNewRoutePath(
-                                  Uri(path: uri.path, query: uri.query));
+                            if (_isDeepLink(uri)) {
+                              setNewRoutePath(Uri(
+                                path: uri.path,
+                                query: uri.query,
+                              ));
                             } else {
                               await launch(
                                 uri.toString(),
@@ -130,7 +131,7 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
       if (message.data.containsKey('url') && message.data['url'] is String) {
         final uri = Uri.tryParse(message.data['url'] as String);
         if (uri != null) {
-          if (uri.host == config.apiHost && _isDeepLink(uri)) {
+          if (_isDeepLink(uri)) {
             setNewRoutePath(Uri(path: uri.path, query: uri.query));
           } else {
             await launch(
@@ -155,7 +156,7 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
       if (message.data.containsKey('url') && message.data['url'] is String) {
         final uri = Uri.tryParse(message.data['url'] as String);
         if (uri != null) {
-          if (uri.host == config.apiHost && _isDeepLink(uri)) {
+          if (_isDeepLink(uri)) {
             setNewRoutePath(Uri(path: uri.path, query: uri.query));
           } else {
             await launch(
@@ -184,17 +185,20 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
 
   /// Returns true if [uri] is a deep link that can be handled by the app.
   static bool _isDeepLink(Uri uri) {
-    final path = uri.path;
-    if (path == '/') return true;
-    if (RegExp('^/pizzas/?\$').hasMatch(path)) return true;
-    if (RegExp('^/events/?\$').hasMatch(path)) return true;
-    if (RegExp('^/events/([0-9]+)/?\$').hasMatch(path)) return true;
-    if (RegExp('^/members/photos/([a-z0-9-_]+)/?\$').hasMatch(path)) {
-      return true;
-    }
-    if (RegExp('^/members/([0-9]+)/?\$').hasMatch(path)) return true;
-    return false;
+    if (uri.host != config.apiHost) return false;
+    return _deepLinkRegExps.any((re) => re.hasMatch(uri.path));
   }
+
+  /// The [RegExp]s that can used as deep links. This list should
+  /// be kept in sync with the links handled in [setNewRoutePath].
+  static final List<RegExp> _deepLinkRegExps = <RegExp>[
+    RegExp('^/\$'),
+    RegExp('^/pizzas/?\$'),
+    RegExp('^/pizzas/?\$'),
+    RegExp('^/events/?\$'),
+    RegExp('^/events/([0-9]+)/?\$'),
+    RegExp('^/members/photos/([a-z0-9-_]+)/?\$'),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -282,6 +286,8 @@ class ThaliaRouterDelegate extends RouterDelegate<Uri>
     var path = configuration.path;
     var segments = configuration.pathSegments;
 
+    // Handlers for deep links. [_deepLinkRegExps] should
+    // be kept in sync with the links that are handled here.
     if (segments.isEmpty) {
       // Handle "/".
       _stack
