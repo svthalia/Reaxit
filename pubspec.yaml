@@ -62,7 +62,7 @@ dependencies:
   photo_view: ^0.13.0
 
   # HTML widget.
-  flutter_widget_from_html_core: 0.8.1
+  flutter_widget_from_html_core: 0.8.4
 
   # Sentry error reporting.
   sentry_flutter: ^6.2.2
