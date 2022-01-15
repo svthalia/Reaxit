@@ -46,7 +46,7 @@ dependencies:
   json_annotation: ^4.3.0
 
   # BLoC state management.
-  flutter_bloc: ^7.3.0
+  flutter_bloc: ^8.0.0
   equatable: ^2.0.3
 
   # Persistent storage.
