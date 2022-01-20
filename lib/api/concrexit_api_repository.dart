@@ -1003,41 +1003,15 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
-  Future<Device> getDevice({required int id}) async {
-    try {
-      final uri = _baseUri.replace(
-        path: '$_basePath/pushnotifications/devices/$id/',
-      );
-      final response = await _handleExceptions(() => _client.get(uri));
-      return Device.fromJson(_jsonDecode(response));
-    } catch (e) {
-      _catch(e);
-    }
-  }
-
-  @override
-  Future<Device> putDevice({required int id, required Device device}) async {
-    try {
-      final uri =
-          _baseUri.replace(path: '$_basePath/pushnotifications/devices/$id/');
-      final response = await _handleExceptions(() => _client.put(uri,
-          body: jsonEncode(device.toJson()), headers: _jsonHeader));
-      return Device.fromJson(_jsonDecode(response));
-    } catch (e) {
-      _catch(e);
-    }
-  }
-
-  /// Register a device for token.
-  @override
   Future<Device> registerDevice({
     required String token,
     required String type,
-    required bool active,
+    bool active = true,
   }) async {
     try {
-      final uri =
-          _baseUri.replace(path: '$_basePath/pushnotifications/devices/');
+      final uri = _baseUri.replace(
+        path: '$_basePath/pushnotifications/devices/',
+      );
       final body = jsonEncode({
         'registration_id': token,
         'active': active,
@@ -1053,6 +1027,73 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
+  Future<Device> getDevice({required int pk}) async {
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/pushnotifications/devices/$pk/',
+      );
+      final response = await _handleExceptions(() => _client.get(uri));
+      return Device.fromJson(_jsonDecode(response));
+    } catch (e) {
+      _catch(e);
+    }
+  }
+
+  @override
+  Future<Device> disableDevice({required int pk}) async {
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/pushnotifications/devices/$pk/',
+      );
+      final body = jsonEncode({'active': false});
+      final response = await _handleExceptions(
+        () => _client.patch(uri, body: body, headers: _jsonHeader),
+      );
+      return Device.fromJson(_jsonDecode(response));
+    } catch (e) {
+      _catch(e);
+    }
+  }
+
+  @override
+  Future<Device> updateDeviceToken({
+    required int pk,
+    required String token,
+  }) async {
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/pushnotifications/devices/$pk/',
+      );
+      final body = jsonEncode({'registration_id': token});
+      final response = await _handleExceptions(
+        () => _client.patch(uri, body: body, headers: _jsonHeader),
+      );
+      return Device.fromJson(_jsonDecode(response));
+    } catch (e) {
+      _catch(e);
+    }
+  }
+
+  @override
+  Future<Device> updateDeviceReceiveCategory({
+    required int pk,
+    required List<String> receiveCategory,
+  }) async {
+    try {
+      final uri = _baseUri.replace(
+        path: '$_basePath/pushnotifications/devices/$pk/',
+      );
+      final body = jsonEncode({'receive_category': receiveCategory});
+      final response = await _handleExceptions(
+        () => _client.patch(uri, body: body, headers: _jsonHeader),
+      );
+      return Device.fromJson(_jsonDecode(response));
+    } catch (e) {
+      _catch(e);
+    }
+  }
+
+  @override
   Future<ListResponse<PushNotificationCategory>> getCategories() async {
     try {
       final uri = _baseUri.replace(
@@ -1060,9 +1101,11 @@ class ConcrexitApiRepository implements ApiRepository {
       );
       final response = await _handleExceptions(() => _client.get(uri));
       return ListResponse<PushNotificationCategory>.fromJson(
-          _jsonDecode(response),
-          (json) =>
-              PushNotificationCategory.fromJson(json as Map<String, dynamic>));
+        _jsonDecode(response),
+        (json) => PushNotificationCategory.fromJson(
+          json as Map<String, dynamic>,
+        ),
+      );
     } catch (e) {
       _catch(e);
     }

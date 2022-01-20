@@ -303,16 +303,33 @@ abstract class ApiRepository {
     int? offset,
   });
 
-  Future<Device> getDevice({required int id});
-
-  Future<Device> putDevice({required int id, required Device device});
-
-  /// Register a device for token.
+  /// Create a new [Device] for receiving push notifications.
+  ///
+  /// This is used to let the backend know where to send notifications. The
+  /// `type` should be one of {'android', 'ios'}. This method creates a new
+  /// device. When the token changes, do not create a new device, but use
+  /// [updateDeviceToken].
   Future<Device> registerDevice({
     required String token,
     required String type,
-    required bool active,
+    bool active = true,
   });
 
+  /// Get the [Device] with the `pk`.
+  Future<Device> getDevice({required int pk});
+
+  /// Set `active` to `false` for the [Device] with the `pk`.
+  Future<Device> disableDevice({required int pk});
+
+  /// Update the `token` of the [Device] with the `pk`.
+  Future<Device> updateDeviceToken({required int pk, required String token});
+
+  /// Update the `receiveCategory` of the [Device] with the `pk`.
+  Future<Device> updateDeviceReceiveCategory({
+    required int pk,
+    required List<String> receiveCategory,
+  });
+
+  /// Get the list of all [PushNoficationCategory]s.
   Future<ListResponse<PushNotificationCategory>> getCategories();
 }

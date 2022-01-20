@@ -60,6 +60,31 @@ class SettingsScreen extends StatelessWidget {
                 const _ThemeModeCard(),
                 const SizedBox(height: 8),
                 Text('NOTIFICATIONS', style: textTheme.caption),
+                if (!state.hasPermissions!) ...[
+                  Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    child: Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(12),
+                            child: Icon(Icons.notifications_off_outlined),
+                          ),
+                          Expanded(
+                            child: Text(
+                              'Notifications are disabled. Enable '
+                              'them in your device settings.',
+                              style: textTheme.bodyText2!.copyWith(
+                                color: textTheme.caption!.color,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
                 Card(
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   child: Column(
