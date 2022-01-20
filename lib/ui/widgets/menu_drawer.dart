@@ -1,20 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:reaxit/blocs/auth_cubit.dart';
 import 'package:reaxit/blocs/full_member_cubit.dart';
-import 'package:reaxit/ui/router.dart';
-import 'package:reaxit/ui/screens/albums_screen.dart';
-import 'package:reaxit/ui/screens/calendar_screen.dart';
-import 'package:reaxit/ui/screens/members_screen.dart';
-import 'package:reaxit/ui/screens/profile_screen.dart';
-import 'package:reaxit/ui/screens/settings_screen.dart';
-import 'package:reaxit/ui/screens/welcome_screen.dart';
 import 'package:reaxit/ui/widgets/cached_image.dart';
 
 class MenuDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final routerDelegate = ThaliaRouterDelegate.of(context);
+    final router = GoRouter.of(context);
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -81,12 +75,11 @@ class MenuDrawer extends StatelessWidget {
                       child: Material(
                         color: Colors.transparent,
                         child: InkWell(
-                          onTap: () {
-                            routerDelegate.push(TypedMaterialPage(
-                              child: ProfileScreen(pk: me.pk, member: me),
-                              name: 'Profile(${me.pk} (me))',
-                            ));
-                          },
+                          onTap: () => context.pushNamed(
+                            'member',
+                            params: {'memberPk': me.pk.toString()},
+                            extra: me,
+                          ),
                         ),
                       ),
                     ),
@@ -160,70 +153,60 @@ class MenuDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Welcome'),
             leading: const Icon(Icons.home),
-            selected: routerDelegate.stack.last.child is WelcomeScreen,
+            selected: router.location == '/welcome',
             onTap: () {
-              if (routerDelegate.stack.last.child is WelcomeScreen) {
+              if (router.location == '/welcome') {
                 Navigator.of(context).pop();
               } else {
-                routerDelegate.replace(
-                  TypedMaterialPage(child: WelcomeScreen(), name: 'Welcome'),
-                );
+                context.goNamed('welcome');
               }
             },
           ),
           ListTile(
             title: const Text('Calendar'),
             leading: const Icon(Icons.event),
-            selected: routerDelegate.stack.last.child is CalendarScreen,
+            selected: router.location == '/events',
             onTap: () {
-              if (routerDelegate.stack.last.child is CalendarScreen) {
+              if (router.location == '/events') {
                 Navigator.of(context).pop();
               } else {
-                routerDelegate.replace(
-                  TypedMaterialPage(child: CalendarScreen(), name: 'Calendar'),
-                );
+                context.goNamed('calendar');
               }
             },
           ),
           ListTile(
             title: const Text('Member list'),
             leading: const Icon(Icons.people),
-            selected: routerDelegate.stack.last.child is MembersScreen,
+            selected: router.location == '/members',
             onTap: () {
-              if (routerDelegate.stack.last.child is MembersScreen) {
+              if (router.location == '/members') {
                 Navigator.of(context).pop();
               } else {
-                routerDelegate.replace(
-                  TypedMaterialPage(child: MembersScreen(), name: 'Members'),
-                );
+                context.goNamed('members');
               }
             },
           ),
           ListTile(
             title: const Text('Photos'),
             leading: const Icon(Icons.photo),
-            selected: routerDelegate.stack.last.child is AlbumsScreen,
+            selected: router.location == '/albums',
             onTap: () {
-              if (routerDelegate.stack.last.child is AlbumsScreen) {
+              if (router.location == '/albums') {
                 Navigator.of(context).pop();
               } else {
-                routerDelegate.replace(
-                  TypedMaterialPage(child: AlbumsScreen(), name: 'Albums'),
-                );
+                context.goNamed('albums');
               }
             },
           ),
           ListTile(
             title: const Text('Settings'),
             leading: const Icon(Icons.settings),
-            selected: routerDelegate.stack.last.child is SettingsScreen,
+            selected: router.location == '/settings',
             onTap: () {
-              if (routerDelegate.stack.last.child is SettingsScreen) {
+              if (router.location == '/settings') {
                 Navigator.of(context).pop();
               } else {
-                routerDelegate.replace(
-                  TypedMaterialPage(child: SettingsScreen(), name: 'Settings'),
-                );
+                context.goNamed('settings');
               }
             },
           ),

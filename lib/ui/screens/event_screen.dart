@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs/calendar_cubit.dart';
@@ -11,10 +12,6 @@ import 'package:reaxit/blocs/registrations_cubit.dart';
 import 'package:reaxit/blocs/welcome_cubit.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/payment.dart';
-import 'package:reaxit/ui/router.dart';
-import 'package:reaxit/ui/screens/event_admin_screen.dart';
-import 'package:reaxit/ui/screens/registration_screen.dart';
-import 'package:reaxit/ui/screens/food_screen.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/cached_image.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
@@ -103,8 +100,6 @@ class _EventScreenState extends State<EventScreen> {
       ],
     );
   }
-
-  // TODO: Someday: add animations back in.
 
   /// Create all info of an event until the description, including buttons.
   Widget _makeEventInfo(Event event) {
@@ -592,15 +587,10 @@ class _EventScreenState extends State<EventScreen> {
           try {
             final registration = await _eventCubit.register();
             if (event.hasFields) {
-              ThaliaRouterDelegate.of(context).push(
-                TypedMaterialPage(
-                  child: RegistrationScreen(
-                    eventPk: event.pk,
-                    registrationPk: registration.pk,
-                  ),
-                  name: 'Registration(event: ${event.pk}, '
-                      'registration: ${registration.pk})',
-                ),
+              context.pushNamed(
+                'event-registration',
+                params: {'eventPk': event.pk.toString()},
+                extra: registration,
               );
             }
             BlocProvider.of<CalendarCubit>(context).load();
@@ -624,15 +614,10 @@ class _EventScreenState extends State<EventScreen> {
         try {
           final registration = await _eventCubit.register();
           if (event.hasFields) {
-            ThaliaRouterDelegate.of(context).push(
-              TypedMaterialPage(
-                child: RegistrationScreen(
-                  eventPk: event.pk,
-                  registrationPk: registration.pk,
-                ),
-                name: 'Registration(event: ${event.pk}, '
-                    'registration: ${registration.pk})',
-              ),
+            context.pushNamed(
+              'event-registration',
+              params: {'eventPk': event.pk.toString()},
+              extra: registration,
             );
           }
           BlocProvider.of<CalendarCubit>(context).load();
@@ -706,18 +691,11 @@ class _EventScreenState extends State<EventScreen> {
 
   Widget _makeUpdateButton(Event event) {
     return ElevatedButton.icon(
-      onPressed: () {
-        ThaliaRouterDelegate.of(context).push(
-          TypedMaterialPage(
-            child: RegistrationScreen(
-              eventPk: event.pk,
-              registrationPk: event.registration!.pk,
-            ),
-            name: 'Registration(event: ${event.pk}, '
-                'registration: ${event.registration!.pk})',
-          ),
-        );
-      },
+      onPressed: () => context.pushNamed(
+        'event-registration',
+        params: {'eventPk': event.pk.toString()},
+        extra: event.registration,
+      ),
       icon: const Icon(Icons.build),
       label: const Text('UPDATE REGISTRATION'),
     );
@@ -727,17 +705,7 @@ class _EventScreenState extends State<EventScreen> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
-        onPressed: () {
-          ThaliaRouterDelegate.of(context).push(
-            TypedMaterialPage(
-              child: FoodScreen(
-                pk: event.foodEvent!,
-                event: event,
-              ),
-              name: 'FoodEvent(${event.foodEvent})',
-            ),
-          );
-        },
+        onPressed: () => context.pushNamed('food', extra: event),
         icon: const Icon(Icons.local_pizza),
         label: const Text('ORDER FOOD'),
       ),
@@ -1012,14 +980,10 @@ class _EventScreenState extends State<EventScreen> {
                   IconButton(
                     padding: const EdgeInsets.all(16),
                     icon: const Icon(Icons.settings),
-                    onPressed: () {
-                      ThaliaRouterDelegate.of(context).push(
-                        TypedMaterialPage(
-                          child: EventAdminScreen(pk: event.pk),
-                          name: 'EventAdmin(${event.pk})',
-                        ),
-                      );
-                    },
+                    onPressed: () => context.pushNamed(
+                      'event-admin',
+                      params: {'eventPk': event.pk.toString()},
+                    ),
                   ),
               ],
             ),

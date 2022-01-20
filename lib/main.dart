@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:reaxit/blocs/album_list_cubit.dart';
 import 'package:reaxit/blocs/auth_cubit.dart';
@@ -12,14 +13,16 @@ import 'package:reaxit/blocs/setting_cubit.dart';
 import 'package:reaxit/blocs/theme_cubit.dart';
 import 'package:reaxit/blocs/welcome_cubit.dart';
 import 'package:reaxit/config.dart' as config;
-import 'package:reaxit/theme.dart';
-import 'package:reaxit/ui/router.dart';
+import 'package:reaxit/routes.dart';
+import 'package:reaxit/ui/screens/login_screen.dart';
+import 'package:reaxit/ui/theme.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await Firebase.initializeApp();
   await SentryFlutter.init(
     (options) {
       options.dsn = config.sentryDSN;
@@ -43,39 +46,75 @@ class ThaliApp extends StatefulWidget {
 }
 
 class _ThaliAppState extends State<ThaliApp> {
-  late final ThaliaRouterDelegate _routerDelegate;
-  late final ThaliaRouteInformationParser _routeInformationParser;
-
-  final _firebaseInitialization = Firebase.initializeApp();
+  late final GoRouter _router;
+  late final AuthCubit _authCubit;
 
   @override
   void initState() {
     super.initState();
-    _routeInformationParser = ThaliaRouteInformationParser();
-    _routerDelegate = ThaliaRouterDelegate(
-      authBloc: BlocProvider.of<AuthCubit>(context),
-      firebaseInitialization: _firebaseInitialization,
-    );
-  }
+    _authCubit = BlocProvider.of<AuthCubit>(context);
+    _router = GoRouter(
+      // The list of routes is kept in a separate
+      // file to keep the code readable and clean.
+      routes: routes,
 
-  @override
-  void dispose() {
-    _routerDelegate.dispose();
-    super.dispose();
-  }
+      // Provide navigation breadcrumbs to Sentry.
+      observers: [SentryNavigatorObserver()],
 
-  /// This key prevents initializing a new [MaterialApp] state and, through
-  /// that, a new [Router] state, that would otherwise unintentionally make
-  /// an additional call to [ThaliaRouterDelegate.setInitialRoutePath] on
-  /// authentication events.
-  final _materialAppKey = GlobalKey();
+      // Redirect to `/login?from=<original-path>` if the user is not
+      // logged in. If the user is logged in, and there is an original
+      // path in the query parameters, redirect to that original path.
+      redirect: (GoRouterState state) {
+        final loggedIn = _authCubit.state is LoggedInAuthState;
+        final goingToLogin = state.location.startsWith('/login');
 
-  @override
-  Widget build(BuildContext context) {
-    return OverlaySupport(child: BlocBuilder<ThemeCubit, ThemeMode>(
-      builder: (context, themeMode) {
-        return BlocBuilder<AuthCubit, AuthState>(
+        if (!loggedIn && !goingToLogin) {
+          return Uri(path: '/login', queryParameters: {
+            'from': state.location,
+          }).toString();
+        } else if (loggedIn && goingToLogin) {
+          return Uri.parse(state.location).queryParameters['from'] ?? '/';
+        } else {
+          return null;
+        }
+      },
+
+      // Refresh to look for redirects whenever auth state changes.
+      refreshListenable: GoRouterRefreshStream(_authCubit.stream),
+
+      // This adds listeners for authentication status snackbars and setting up
+      // push notifications. This surrounds the navigator with providers when
+      // logged in, and replaces it with a [LoginScreen] when not logged in.
+      navigatorBuilder: (context, state, navigator) {
+        return BlocConsumer<AuthCubit, AuthState>(
+          listenWhen: (previous, current) {
+            if (previous is LoggedInAuthState &&
+                current is LoggedOutAuthState) {
+              return true;
+            } else if (current is FailureAuthState) {
+              return true;
+            }
+            return false;
+          },
+
+          // Listen to display login status snackbars and set up notifications.
+          listener: (context, state) async {
+            // Show a snackbar when the user logs out or logging in fails.
+            if (state is LoggedOutAuthState) {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                behavior: SnackBarBehavior.floating,
+                content: Text('Logged out.'),
+              ));
+            } else if (state is FailureAuthState) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                behavior: SnackBarBehavior.floating,
+                content: Text(state.message ?? 'Logging in failed.'),
+              ));
+            }
+          },
+
           builder: (context, authState) {
+            // Build with cubits provided when logged in.
             if (authState is LoggedInAuthState) {
               return RepositoryProvider.value(
                 value: authState.apiRepository,
@@ -118,38 +157,59 @@ class _ThaliAppState extends State<ThaliApp> {
                       lazy: false,
                     ),
                     BlocProvider(
+                      // The SettingsCubit must not be lazy, since
+                      // it handles setting up push notifications.
                       create: (_) => SettingsCubit(
                         authState.apiRepository,
-                        _firebaseInitialization,
                       )..load(),
                       lazy: false,
                     ),
                   ],
-                  child: MaterialApp.router(
-                    key: _materialAppKey,
-                    title: 'ThaliApp',
-                    theme: lightTheme,
-                    darkTheme: darkTheme,
-                    themeMode: themeMode,
-                    routerDelegate: _routerDelegate,
-                    routeInformationParser: _routeInformationParser,
-                  ),
+                  child: navigator,
                 ),
               );
+            } else if (authState is LoggedOutAuthState) {
+              // Don't show the navigator (which is animating from a logged-in
+              // stack towards only the login screen). This prevents getting
+              // `ProviderNotFoundException`s during the animation, caused by
+              // the cubits no longer being provided after logging out.
+              // There is no transition shown when logging out, because
+              // there is temporarily no navigator rendering an animation.
+              return const LoginScreen();
+              // TODO: This is hacky. There should be a neat way to handle this.
             } else {
-              return MaterialApp.router(
-                key: _materialAppKey,
-                title: 'ThaliApp',
-                theme: lightTheme,
-                darkTheme: darkTheme,
-                themeMode: themeMode,
-                routerDelegate: _routerDelegate,
-                routeInformationParser: _routeInformationParser,
-              );
+              return navigator;
             }
           },
         );
       },
-    ));
+    );
+
+    // TODO: handle push notifications.
+    // TODO: handle deep links in push notifications.
+  }
+
+  @override
+  void dispose() {
+    _router.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ThemeCubit, ThemeMode>(
+      builder: (context, themeMode) {
+        return OverlaySupport.global(
+          child: MaterialApp.router(
+            title: 'ThaliApp',
+            theme: lightTheme,
+            darkTheme: darkTheme,
+            themeMode: themeMode,
+            routerDelegate: _router.routerDelegate,
+            routeInformationParser: _router.routeInformationParser,
+          ),
+        );
+      },
+    );
   }
 }

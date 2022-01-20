@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:reaxit/models/album.dart';
-import 'package:reaxit/ui/router.dart';
-import 'package:reaxit/ui/screens/album_screen.dart';
 import 'package:reaxit/ui/widgets/cached_image.dart';
 
 class AlbumTile extends StatelessWidget {
@@ -33,14 +32,11 @@ class AlbumTile extends StatelessWidget {
           child: Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: () {
-                ThaliaRouterDelegate.of(context).push(
-                  TypedMaterialPage(
-                    child: AlbumScreen(slug: album.slug, album: album),
-                    name: 'Album(${album.slug})',
-                  ),
-                );
-              },
+              onTap: () => context.pushNamed(
+                'album',
+                params: {'albumSlug': album.slug},
+                extra: album,
+              ),
             ),
           ),
         ),

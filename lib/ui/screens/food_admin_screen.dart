@@ -18,8 +18,6 @@ class FoodAdminScreen extends StatefulWidget {
 }
 
 class _FoodAdminScreenState extends State<FoodAdminScreen> {
-  // TODO: Someday: add ordering and filter.
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(

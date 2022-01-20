@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs/food_cubit.dart';
@@ -9,8 +10,6 @@ import 'package:reaxit/blocs/payment_user_cubit.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/food_event.dart';
 import 'package:reaxit/models/product.dart';
-import 'package:reaxit/ui/router.dart';
-import 'package:reaxit/ui/screens/food_admin_screen.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 
@@ -416,14 +415,10 @@ class _FoodScreenState extends State<FoodScreen> {
                     IconButton(
                       padding: const EdgeInsets.all(16),
                       icon: const Icon(Icons.settings),
-                      onPressed: () {
-                        ThaliaRouterDelegate.of(context).push(
-                          TypedMaterialPage(
-                            child: FoodAdminScreen(pk: foodEvent.pk),
-                            name: 'FoodAdmin(${foodEvent.pk})',
-                          ),
-                        );
-                      },
+                      onPressed: () => context.pushNamed(
+                        'food-admin',
+                        extra: foodEvent.pk,
+                      ),
                     ),
                 ],
               ),
