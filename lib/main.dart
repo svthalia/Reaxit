@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,8 +17,11 @@ import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/routes.dart';
 import 'package:reaxit/ui/screens/login_screen.dart';
 import 'package:reaxit/ui/theme.dart';
+import 'package:reaxit/ui/widgets/push_notification_dialog.dart';
+import 'package:reaxit/ui/widgets/push_notification_overlay.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,6 +52,76 @@ class ThaliApp extends StatefulWidget {
 class _ThaliAppState extends State<ThaliApp> {
   late final GoRouter _router;
   late final AuthCubit _authCubit;
+
+  Future<void> _setupPushNotificationHandlers() async {
+    // User got a push notification while the app is running.
+    // Display a notification inside the app.
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      showOverlayNotification(
+        (context) => PushNotificationOverlay(message),
+        duration: const Duration(milliseconds: 4000),
+      );
+    });
+
+    // User clicked on push notification outside of the app and the
+    // app was still in the background. Open the url or show a dialog.
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      final navigatorKey = _router.routerDelegate.navigatorKey;
+      if (message.data.containsKey('url') && message.data['url'] is String) {
+        final uri = Uri.tryParse(message.data['url'] as String);
+        if (uri != null) {
+          if (isDeepLink(uri)) {
+            _router.go(Uri(
+              path: uri.path,
+              query: uri.query,
+            ).toString());
+          } else {
+            await launch(
+              uri.toString(),
+              forceSafariVC: false,
+              forceWebView: false,
+            );
+          }
+        }
+      } else if (navigatorKey.currentContext != null) {
+        showDialog(
+          context: navigatorKey.currentContext!,
+          builder: (context) => PushNotificationDialog(message),
+        );
+      }
+    });
+
+    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+
+    // User got a push notification outside of the app while the app was not
+    // running in the background. Open the url or show a dialog.
+    if (initialMessage != null) {
+      final navigatorKey = _router.routerDelegate.navigatorKey;
+      final message = initialMessage;
+      if (message.data.containsKey('url') && message.data['url'] is String) {
+        final uri = Uri.tryParse(message.data['url'] as String);
+        if (uri != null) {
+          if (isDeepLink(uri)) {
+            _router.go(Uri(
+              path: uri.path,
+              query: uri.query,
+            ).toString());
+          } else {
+            await launch(
+              uri.toString(),
+              forceSafariVC: false,
+              forceWebView: false,
+            );
+          }
+        }
+      } else if (navigatorKey.currentContext != null) {
+        showDialog(
+          context: navigatorKey.currentContext!,
+          builder: (context) => PushNotificationDialog(message),
+        );
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -185,8 +259,7 @@ class _ThaliAppState extends State<ThaliApp> {
       },
     );
 
-    // TODO: handle push notifications.
-    // TODO: handle deep links in push notifications.
+    _setupPushNotificationHandlers();
   }
 
   @override

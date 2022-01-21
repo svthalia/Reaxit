@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/models/album.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/event_registration.dart';
@@ -17,6 +18,23 @@ import 'package:reaxit/ui/screens/profile_screen.dart';
 import 'package:reaxit/ui/screens/registration_screen.dart';
 import 'package:reaxit/ui/screens/settings_screen.dart';
 import 'package:reaxit/ui/screens/welcome_screen.dart';
+
+/// Returns true if [uri] is a deep link that can be handled by the app.
+bool isDeepLink(Uri uri) {
+  if (uri.host != config.apiHost) return false;
+  return _deepLinkRegExps.any((re) => re.hasMatch(uri.path));
+}
+
+/// The [RegExp]s that can used as deep links. This list should
+/// contain all deep links that should be handled by the app.
+final List<RegExp> _deepLinkRegExps = <RegExp>[
+  RegExp('^/\$'),
+  RegExp('^/pizzas/?\$'),
+  RegExp('^/pizzas/?\$'),
+  RegExp('^/events/?\$'),
+  RegExp('^/events/([0-9]+)/?\$'),
+  RegExp('^/members/photos/([a-z0-9-_]+)/?\$'),
+];
 
 final List<GoRoute> routes = [
   GoRoute(path: '/', redirect: (_) => '/welcome'),
