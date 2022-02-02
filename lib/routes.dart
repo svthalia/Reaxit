@@ -12,6 +12,7 @@ import 'package:reaxit/ui/screens/event_admin_screen.dart';
 import 'package:reaxit/ui/screens/event_screen.dart';
 import 'package:reaxit/ui/screens/food_admin_screen.dart';
 import 'package:reaxit/ui/screens/food_screen.dart';
+import 'package:reaxit/ui/screens/groups_screen.dart';
 import 'package:reaxit/ui/screens/login_screen.dart';
 import 'package:reaxit/ui/screens/members_screen.dart';
 import 'package:reaxit/ui/screens/profile_screen.dart';
@@ -213,4 +214,12 @@ final List<GoRoute> routes = [
       child: const LoginScreen(),
     ),
   ),
+  GoRoute(
+    path: '/groups',
+    name: 'groups',
+    pageBuilder: (context, state) => MaterialPage(
+      key: state.pageKey,
+      child: GroupsScreen(), //TODO: make url arguments work
+    )
+  )
 ];
