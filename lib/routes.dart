@@ -44,8 +44,12 @@ final List<GoRoute> routes = [
     pageBuilder: (context, state) => CustomTransitionPage(
       key: state.pageKey,
       child: WelcomeScreen(),
+      transitionDuration: const Duration(milliseconds: 200),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(opacity: animation, child: child);
+        return FadeTransition(
+          opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
+          child: child,
+        );
       },
     ),
   ),
@@ -55,8 +59,12 @@ final List<GoRoute> routes = [
     pageBuilder: (context, state) => CustomTransitionPage(
       key: state.pageKey,
       child: CalendarScreen(),
+      transitionDuration: const Duration(milliseconds: 200),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(opacity: animation, child: child);
+        return FadeTransition(
+          opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
+          child: child,
+        );
       },
     ),
     routes: [
@@ -108,8 +116,12 @@ final List<GoRoute> routes = [
     pageBuilder: (context, state) => CustomTransitionPage(
       key: state.pageKey,
       child: MembersScreen(),
+      transitionDuration: const Duration(milliseconds: 200),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(opacity: animation, child: child);
+        return FadeTransition(
+          opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
+          child: child,
+        );
       },
     ),
     routes: [
@@ -132,8 +144,12 @@ final List<GoRoute> routes = [
     pageBuilder: (context, state) => CustomTransitionPage(
       key: state.pageKey,
       child: AlbumsScreen(),
+      transitionDuration: const Duration(milliseconds: 200),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(opacity: animation, child: child);
+        return FadeTransition(
+          opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
+          child: child,
+        );
       },
     ),
     routes: [
@@ -156,21 +172,27 @@ final List<GoRoute> routes = [
     pageBuilder: (context, state) => CustomTransitionPage(
       key: state.pageKey,
       child: SettingsScreen(),
+      transitionDuration: const Duration(milliseconds: 200),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(opacity: animation, child: child);
+        return FadeTransition(
+          opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
+          child: child,
+        );
       },
     ),
   ),
   GoRoute(
       path: '/pizzas',
       name: 'food',
-      pageBuilder: (context, state) => MaterialPage(
-            key: state.pageKey,
-            child: FoodScreen(
-              pk: (state.extra as Event?)?.foodEvent,
-              event: state.extra as Event?,
-            ),
+      pageBuilder: (context, state) {
+        return MaterialPage(
+          key: state.pageKey,
+          child: FoodScreen(
+            pk: (state.extra as Event?)?.foodEvent,
+            event: state.extra as Event?,
           ),
+        );
+      },
       routes: [
         GoRoute(
           path: 'admin',
