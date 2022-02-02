@@ -26,6 +26,10 @@ Reading material
 - [API reference](https://api.flutter.dev)
 - [Widget of the week videos](https://youtube.com/playlist?list=PLjxrf2q8roU23XGwz3Km7sQZFTdB996iG)
 
+Reaxit uses the following packages:
+- [go_router](https://pub.dev/packages/go_router) for easy routing and deep linking. 
+- [flutter_bloc](https://pub.dev/packages/flutter_bloc) for state management.
+
 Fastlane
 ----------------
 
