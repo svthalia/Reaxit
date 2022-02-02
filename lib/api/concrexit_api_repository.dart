@@ -24,8 +24,6 @@ import 'package:reaxit/models/slide.dart';
 import 'package:reaxit/models/device.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-import 'models/group.dart';
-
 final Uri _baseUri = Uri(
   scheme: 'https',
   host: config.apiHost,
@@ -1112,37 +1110,6 @@ class ConcrexitApiRepository implements ApiRepository {
       _catch(e);
     }
   }
-
-  /// Get a list of groups.
-  ///
-  /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
-  /// total number of [ListGroup]s that can be returned.
-  Future<ListResponse<ListGroup>> getGroups(
-      {int? limit,
-      int? offset,
-      MemberGroupType? type,
-      DateTime? start,
-      DateTime? end,
-      String? search}) async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/activemembers/groups/',
-      queryParameters: {
-        if (limit != null) 'limit': limit.toString(),
-        if (offset != null) 'offset': offset.toString(),
-        if (type != null) 'type': type.toString(),
-        if (start != null) 'start': start.toIso8601String(),
-        if (end != null) 'end': end.toIso8601String(),
-        if (search != null) 'search': search
-      },
-    );
-
-    final response = await _handleExceptions(() => client.get(uri));
-    return ListResponse<ListGroup>.fromJson(
-      _jsonDecode(response),
-      (json) => ListGroup.fromJson(json as Map<String, dynamic>),
-    );
-  }
-
 // TODO: Someday: move json parsing of lists into isolates?
 // TODO: Someday: change ApiException to a class that can contain a string?
 //  We can then display more specific error messages to the user based on
