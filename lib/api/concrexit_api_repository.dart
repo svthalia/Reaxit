@@ -1125,12 +1125,18 @@ class ConcrexitApiRepository implements ApiRepository {
     DateTime? end,
     String? search
   }) async {
+    const memberGroupTypeMap = {
+      MemberGroupType.committee: 'committee',
+      MemberGroupType.society: 'society',
+      MemberGroupType.board: 'board',
+    };
+
     final uri = _baseUri.replace(
       path: '$_basePath/activemembers/groups/',
       queryParameters: {
         if (limit != null) 'limit': limit.toString(),
         if (offset != null) 'offset': offset.toString(),
-        if (type != null) 'type': type.toString(),
+        if (type != null) 'type': memberGroupTypeMap[type],
         if (start != null) 'start' : start.toIso8601String(),
         if (end != null) 'end' : end.toIso8601String(),
         if (search != null) 'search' : search
