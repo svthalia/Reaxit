@@ -12,7 +12,7 @@ class BoardsCubit extends Cubit<DetailState<List<ListGroup>>> {
     emit(state.copyWith(isLoading: true));
     try {
       final listResponse = await api.getGroups(
-          limit: 1000, offset: 0, type: MemberGroupType.society);
+          limit: 1000, offset: 0, type: MemberGroupType.board);
       if (listResponse.results.isNotEmpty) {
         emit(DetailState.result(result: listResponse.results));
       } else {
