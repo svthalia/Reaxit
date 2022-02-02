@@ -19,9 +19,9 @@ Device _$DeviceFromJson(Map<String, dynamic> json) => Device(
 
 Map<String, dynamic> _$DeviceToJson(Device instance) => <String, dynamic>{
       'pk': instance.pk,
-      'registration_id': instance.registrationId,
       'active': instance.active,
       'date_created': instance.dateCreated,
       'type': instance.type,
       'receive_category': instance.receiveCategory,
+      'registration_id': instance.token,
     };

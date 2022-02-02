@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/models/event.dart';
-import 'package:reaxit/ui/router.dart';
-import 'package:reaxit/ui/screens/event_screen.dart';
-import 'package:reaxit/ui/screens/food_screen.dart';
 
 class EventDetailCard extends StatelessWidget {
   static final timeFormatter = DateFormat('HH:mm');
@@ -32,14 +30,11 @@ class EventDetailCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: InkWell(
-        onTap: () {
-          ThaliaRouterDelegate.of(context).push(
-            TypedMaterialPage(
-              child: EventScreen(pk: event.pk, event: event),
-              name: 'Event(${event.pk})',
-            ),
-          );
-        },
+        onTap: () => context.pushNamed(
+          'event',
+          params: {'eventPk': event.pk.toString()},
+          extra: event,
+        ),
         // Prevent painting ink outside of the card.
         borderRadius: const BorderRadius.all(Radius.circular(4)),
         child: Column(
@@ -107,14 +102,11 @@ class EventDetailCard extends StatelessWidget {
               child: Row(
                 children: [
                   ElevatedButton(
-                    onPressed: () {
-                      ThaliaRouterDelegate.of(context).push(
-                        TypedMaterialPage(
-                          child: EventScreen(pk: event.pk, event: event),
-                          name: 'Event(${event.pk})',
-                        ),
-                      );
-                    },
+                    onPressed: () => context.pushNamed(
+                      'event',
+                      params: {'eventPk': event.pk.toString()},
+                      extra: event,
+                    ),
                     child: const Text('MORE INFO'),
                   ),
                   if (event.hasFoodEvent) ...[
@@ -122,17 +114,7 @@ class EventDetailCard extends StatelessWidget {
                     ElevatedButton.icon(
                       label: const Text('FOOD'),
                       icon: const Icon(Icons.local_pizza),
-                      onPressed: () {
-                        ThaliaRouterDelegate.of(context).push(
-                          TypedMaterialPage(
-                            child: FoodScreen(
-                              pk: event.foodEvent!,
-                              event: event,
-                            ),
-                            name: 'FoodEvent(${event.foodEvent})',
-                          ),
-                        );
-                      },
+                      onPressed: () => context.pushNamed('food', extra: event),
                     ),
                   ]
                 ],
