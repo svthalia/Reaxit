@@ -23,6 +23,10 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'blocs/boards_cubit.dart';
+import 'blocs/committees_cubit.dart';
+import 'blocs/societies_cubit.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -238,6 +242,24 @@ class _ThaliAppState extends State<ThaliApp> {
                       )..load(),
                       lazy: false,
                     ),
+                    BlocProvider(
+                      create: (_) => CommitteesCubit(
+                        authState.apiRepository,
+                      )..load(),
+                      lazy: false,
+                    ),
+                    BlocProvider(
+                      create: (_) => BoardsCubit(
+                        authState.apiRepository,
+                      )..load(),
+                      lazy: false,
+                    ),
+                    BlocProvider(
+                      create: (_) => SocietiesCubit(
+                        authState.apiRepository,
+                      )..load(),
+                      lazy: false,
+                    )
                   ],
                   child: navigator,
                 ),
