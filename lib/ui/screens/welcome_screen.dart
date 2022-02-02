@@ -2,13 +2,12 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/blocs/welcome_cubit.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/frontpage_article.dart';
 import 'package:reaxit/models/slide.dart';
-import 'package:reaxit/ui/router.dart';
-import 'package:reaxit/ui/screens/calendar_screen.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/cached_image.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
@@ -168,12 +167,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     const Divider(indent: 16, endIndent: 16, height: 8),
                   _makeUpcomingEvents(state.upcomingEvents!),
                   TextButton(
-                    onPressed: () => ThaliaRouterDelegate.of(context).replace(
-                      TypedMaterialPage(
-                        child: CalendarScreen(),
-                        name: 'Calendar',
-                      ),
-                    ),
+                    onPressed: () => context.goNamed('calendar'),
                     child: const Text('SHOW THE ENTIRE AGENDA'),
                   ),
                 ],

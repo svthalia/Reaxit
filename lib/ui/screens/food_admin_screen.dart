@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:reaxit/api_repository.dart';
+import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs/food_admin_cubit.dart';
 import 'package:reaxit/models/food_order.dart';
 import 'package:reaxit/models/payment.dart';
@@ -18,8 +18,6 @@ class FoodAdminScreen extends StatefulWidget {
 }
 
 class _FoodAdminScreenState extends State<FoodAdminScreen> {
-  // TODO: Someday: add ordering and filter.
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reaxit/api_repository.dart';
+import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs/setting_cubit.dart';
-import 'package:reaxit/blocs/theme_bloc.dart';
+import 'package:reaxit/blocs/theme_cubit.dart';
 import 'package:reaxit/models/push_notification_category.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
@@ -60,6 +60,31 @@ class SettingsScreen extends StatelessWidget {
                 const _ThemeModeCard(),
                 const SizedBox(height: 8),
                 Text('NOTIFICATIONS', style: textTheme.caption),
+                if (!state.hasPermissions!) ...[
+                  Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    child: Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(12),
+                            child: Icon(Icons.notifications_off_outlined),
+                          ),
+                          Expanded(
+                            child: Text(
+                              'Notifications are disabled. Enable '
+                              'them in your device settings.',
+                              style: textTheme.bodyText2!.copyWith(
+                                color: textTheme.caption!.color,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
                 Card(
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   child: Column(
@@ -177,15 +202,13 @@ class _ThemeModeCard extends StatelessWidget {
           'COLOR SCHEME',
           style: Theme.of(context).textTheme.subtitle1,
         ),
-        trailing: BlocBuilder<ThemeBloc, ThemeMode>(
+        trailing: BlocBuilder<ThemeCubit, ThemeMode>(
           builder: (context, themeMode) {
             return DropdownButton(
               value: themeMode,
               style: Theme.of(context).textTheme.bodyText2,
               onChanged: (ThemeMode? newMode) async {
-                BlocProvider.of<ThemeBloc>(context).add(
-                  ThemeChangeEvent(newMode!),
-                );
+                BlocProvider.of<ThemeCubit>(context).change(newMode!);
               },
               items: [
                 DropdownMenuItem(
