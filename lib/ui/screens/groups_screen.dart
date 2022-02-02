@@ -7,6 +7,7 @@ import 'package:reaxit/blocs/committees_cubit.dart';
 import 'package:reaxit/blocs/societies_cubit.dart';
 import 'package:reaxit/models/group.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
+import 'package:reaxit/ui/widgets/group_tile.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
 
 class GroupsScreen extends StatefulWidget {
@@ -59,13 +60,7 @@ class _GroupsScreenState extends State<GroupsScreen>
               } else if (state.isLoading) {
                 return Text('loading');
               } else {
-                return ListView.builder(
-                  itemCount: state.result!.length,
-                  itemBuilder: (context, index) {
-                    final group = state.result![index];
-                    return ListTile(title: Text(group.name));
-                  },
-                );
+                return GroupListScrollView(groups: state.result!);
               }
             },
           ),
@@ -76,13 +71,7 @@ class _GroupsScreenState extends State<GroupsScreen>
               } else if (state.isLoading) {
                 return Text('loading');
               } else {
-                return ListView.builder(
-                  itemCount: state.result!.length,
-                  itemBuilder: (context, index) {
-                    final group = state.result![index];
-                    return ListTile(title: Text(group.name));
-                  },
-                );
+                return GroupListScrollView(groups: state.result!);
               }
             },
           ),
@@ -93,18 +82,48 @@ class _GroupsScreenState extends State<GroupsScreen>
               } else if (state.isLoading) {
                 return Text('loading');
               } else {
-                return ListView.builder(
-                  itemCount: state.result!.length,
-                  itemBuilder: (context, index) {
-                    final group = state.result![index];
-                    return ListTile(title: Text(group.name));
-                  },
-                );
+                return GroupListScrollView(groups: state.result!);
               }
             },
           )
         ],
       ),
     );
+  }
+}
+
+class GroupListScrollView extends StatelessWidget {
+  final List<ListGroup> groups;
+
+  const GroupListScrollView({
+    Key? key,
+    required this.groups
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scrollbar(
+        child: CustomScrollView(
+          physics: const RangeMaintainingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.all(8),
+              sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                      (context, index) => GroupTile(group: groups[index],
+                      ),
+                  childCount: groups.length,
+                ),
+              ),
+            ),
+          ],
+        ));
   }
 }
