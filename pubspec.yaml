@@ -17,7 +17,7 @@ publish_to: 'none'
 version: 3.0.2+1
 
 environment:
-  sdk: '>=2.14.0 <3.0.0'
+  sdk: '>=2.16.0 <3.0.0'
 
 dependencies:
   flutter:
@@ -43,10 +43,10 @@ dependencies:
   flutter_secure_storage: ^5.0.2
 
   # JSON parsing.
-  json_annotation: ^4.3.0
+  json_annotation: ^4.4.0
 
   # BLoC state management.
-  flutter_bloc: ^7.3.0
+  flutter_bloc: ^8.0.1
   equatable: ^2.0.3
 
   # Persistent storage.
@@ -56,16 +56,16 @@ dependencies:
   url_launcher: ^6.0.11
 
   # Authenticating in browser.
-  flutter_web_auth: ^0.3.2
+  flutter_web_auth: ^0.4.0
 
   # Modal photo views.
   photo_view: ^0.13.0
 
   # HTML widget.
-  flutter_widget_from_html_core: 0.8.1
+  flutter_widget_from_html_core: ^0.8.4
 
   # Sentry error reporting.
-  sentry_flutter: ^6.2.2
+  sentry_flutter: ^6.3.0
 
   # Share menu.
   share_plus: ^3.0.4
@@ -83,8 +83,8 @@ dependencies:
   carousel_slider: ^4.0.0
 
   # Firebase for push notifications.
-  firebase_core: ^1.11.0
-  firebase_messaging: ^11.2.5
+  firebase_core: ^1.12.0
+  firebase_messaging: ^11.2.6
 
   # Push notifications in app. 
   overlay_support: ^1.2.1

@@ -6,10 +6,8 @@ Color magenta = const Color(0xFFE62272);
 ColorScheme lightColorScheme = ColorScheme(
   primary: magenta,
   onPrimary: Colors.white,
-  primaryVariant: magenta,
   secondary: magenta,
   onSecondary: Colors.black,
-  secondaryVariant: magenta,
   surface: Colors.white,
   onSurface: Colors.black,
   background: Colors.grey[50]!,
@@ -22,10 +20,8 @@ ColorScheme lightColorScheme = ColorScheme(
 ColorScheme darkColorScheme = ColorScheme(
   primary: magenta,
   onPrimary: Colors.white,
-  primaryVariant: magenta,
   secondary: magenta,
   onSecondary: Colors.black,
-  secondaryVariant: magenta,
   surface: const Color(0xFF212121),
   onSurface: Colors.white,
   background: const Color(0xFF111111),
