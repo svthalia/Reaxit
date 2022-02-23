@@ -7,6 +7,7 @@ import 'package:reaxit/blocs/committees_cubit.dart';
 import 'package:reaxit/blocs/societies_cubit.dart';
 import 'package:reaxit/models/group.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
+import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/group_tile.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
 
@@ -56,9 +57,16 @@ class _GroupsScreenState extends State<GroupsScreen>
           BlocBuilder<CommitteesCubit, DetailState<List<ListGroup>>>(
             builder: (context, state) {
               if (state.hasException) {
-                return Text('exception');
+                return ErrorScrollView(state.message!);
               } else if (state.isLoading) {
-                return Text('loading');
+                return const SliverPadding(
+                  padding: EdgeInsets.all(16),
+                  sliver: SliverToBoxAdapter(
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                );
               } else {
                 return GroupListScrollView(groups: state.result!);
               }
@@ -67,9 +75,16 @@ class _GroupsScreenState extends State<GroupsScreen>
           BlocBuilder<SocietiesCubit, DetailState<List<ListGroup>>>(
             builder: (context, state) {
               if (state.hasException) {
-                return Text('exception');
+                return ErrorScrollView(state.message!);
               } else if (state.isLoading) {
-                return Text('loading');
+                return const SliverPadding(
+                  padding: EdgeInsets.all(16),
+                  sliver: SliverToBoxAdapter(
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                );
               } else {
                 return GroupListScrollView(groups: state.result!);
               }
@@ -78,9 +93,16 @@ class _GroupsScreenState extends State<GroupsScreen>
           BlocBuilder<BoardsCubit, DetailState<List<ListGroup>>>(
             builder: (context, state) {
               if (state.hasException) {
-                return Text('exception');
+                return ErrorScrollView(state.message!);
               } else if (state.isLoading) {
-                return Text('loading');
+                return const SliverPadding(
+                  padding: EdgeInsets.all(16),
+                  sliver: SliverToBoxAdapter(
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                );
               } else {
                 return GroupListScrollView(groups: state.result!);
               }
