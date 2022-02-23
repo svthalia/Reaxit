@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:reaxit/models/album.dart';
+import 'package:reaxit/models/group.dart';
 import 'package:reaxit/models/push_notification_category.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/event_registration.dart';
@@ -332,4 +333,13 @@ abstract class ApiRepository {
 
   /// Get the list of all [PushNoficationCategory]s.
   Future<ListResponse<PushNotificationCategory>> getCategories();
+
+  /// Get a list of groups.
+  Future<ListResponse<ListGroup>> getGroups(
+      {int? limit,
+      int? offset,
+      MemberGroupType? type,
+      DateTime? start,
+      DateTime? end,
+      String? search});
 }

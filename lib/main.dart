@@ -13,6 +13,9 @@ import 'package:reaxit/blocs/payment_user_cubit.dart';
 import 'package:reaxit/blocs/setting_cubit.dart';
 import 'package:reaxit/blocs/theme_cubit.dart';
 import 'package:reaxit/blocs/welcome_cubit.dart';
+import 'package:reaxit/blocs/boards_cubit.dart';
+import 'package:reaxit/blocs/committees_cubit.dart';
+import 'package:reaxit/blocs/societies_cubit.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/routes.dart';
 import 'package:reaxit/ui/screens/login_screen.dart';
@@ -238,6 +241,24 @@ class _ThaliAppState extends State<ThaliApp> {
                       )..load(),
                       lazy: false,
                     ),
+                    BlocProvider(
+                      create: (_) => CommitteesCubit(
+                        authState.apiRepository,
+                      )..load(),
+                      lazy: false,
+                    ),
+                    BlocProvider(
+                      create: (_) => BoardsCubit(
+                        authState.apiRepository,
+                      )..load(),
+                      lazy: false,
+                    ),
+                    BlocProvider(
+                      create: (_) => SocietiesCubit(
+                        authState.apiRepository,
+                      )..load(),
+                      lazy: false,
+                    )
                   ],
                   child: navigator,
                 ),

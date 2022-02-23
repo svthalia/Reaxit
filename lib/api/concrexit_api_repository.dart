@@ -7,6 +7,7 @@ import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/models/album.dart';
+import 'package:reaxit/models/group.dart';
 import 'package:reaxit/models/push_notification_category.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/event_registration.dart';
@@ -1109,6 +1110,42 @@ class ConcrexitApiRepository implements ApiRepository {
     } catch (e) {
       _catch(e);
     }
+  }
+
+  /// Get a list of groups.
+  ///
+  /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
+  /// total number of [ListGroup]s that can be returned.
+  Future<ListResponse<ListGroup>> getGroups(
+      {int? limit,
+      int? offset,
+      MemberGroupType? type,
+      DateTime? start,
+      DateTime? end,
+      String? search}) async {
+    const memberGroupTypeMap = {
+      MemberGroupType.committee: 'committee',
+      MemberGroupType.society: 'society',
+      MemberGroupType.board: 'board',
+    };
+
+    final uri = _baseUri.replace(
+      path: '$_basePath/activemembers/groups/',
+      queryParameters: {
+        if (limit != null) 'limit': limit.toString(),
+        if (offset != null) 'offset': offset.toString(),
+        if (type != null) 'type': memberGroupTypeMap[type],
+        if (start != null) 'start': start.toIso8601String(),
+        if (end != null) 'end': end.toIso8601String(),
+        if (search != null) 'search': search
+      },
+    );
+
+    final response = await _handleExceptions(() => _client.get(uri));
+    return ListResponse<ListGroup>.fromJson(
+      _jsonDecode(response),
+      (json) => ListGroup.fromJson(json as Map<String, dynamic>),
+    );
   }
 // TODO: Someday: move json parsing of lists into isolates?
 // TODO: Someday: change ApiException to a class that can contain a string?
