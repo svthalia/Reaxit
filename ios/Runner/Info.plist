@@ -48,6 +48,8 @@
 		<string>ThaliApp would like to use your camera so you can create a new profile picture.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>ThaliApp would like access to your photo gallery so you can choose an existing photo as your profile picture, and so you can save photos to your gallery.</string>
+		<key>NSCalendarsUsageDescription</key>
+		<string>ThaliApp would like access to your calendar so you can add events to your calendar.</string>
 		<key>UIBackgroundModes</key>
 		<array>
 			<string>fetch</string>
