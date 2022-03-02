@@ -10,6 +10,7 @@ import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/group_tile.dart';
 import 'package:reaxit/ui/widgets/menu_drawer.dart';
+import 'package:collection/collection.dart';
 
 class GroupsScreen extends StatefulWidget {
   @override
@@ -121,12 +122,22 @@ class GroupListScrollView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    ListGroup? activeBoard;
+    activeBoard = groups.firstWhereOrNull((element) => element.isActiveBoard());
+    groups.remove(activeBoard);
+
     return Scrollbar(
         child: CustomScrollView(
       physics: const RangeMaintainingScrollPhysics(
         parent: AlwaysScrollableScrollPhysics(),
       ),
       slivers: [
+        if (activeBoard != null)
+          SliverPadding(
+          padding: const EdgeInsets.all(8),
+          sliver: SliverToBoxAdapter(child: GroupTile(group: activeBoard)),
+        ),
         SliverPadding(
           padding: const EdgeInsets.all(8),
           sliver: SliverGrid(
