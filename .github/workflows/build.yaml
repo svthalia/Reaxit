@@ -54,7 +54,7 @@ jobs:
         run: bundle exec fastlane ios deploy_adhoc
 
       - name: Upload IPA
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ThaliApp.ipa
           path: ios/build
@@ -127,7 +127,7 @@ jobs:
         run: bundle exec fastlane android deploy_adhoc
 
       - name: Upload APK
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: app-release.apk
           path: build/app/outputs/flutter-apk/app-release.apk
