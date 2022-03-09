@@ -92,7 +92,6 @@ class _AlbumScreenState extends State<AlbumScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         behavior: SnackBarBehavior.floating,
-                        duration: Duration(seconds: 2),
                         content: Text('Succesfully saved the image.'),
                       ),
                     );
@@ -100,7 +99,6 @@ class _AlbumScreenState extends State<AlbumScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         behavior: SnackBarBehavior.floating,
-                        duration: Duration(seconds: 2),
                         content: Text('Could not download the image.'),
                       ),
                     );
@@ -175,7 +173,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
           await Share.share('https://${config.apiHost}/members/photos/$slug/');
         } catch (_) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            duration: Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
             content: Text('Could not share the album.'),
           ));
         }
