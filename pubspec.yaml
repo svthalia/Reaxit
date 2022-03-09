@@ -81,6 +81,7 @@ dependencies:
   
   # Access camera and gallery.
   image_picker: ^0.8.4+4
+  gallery_saver: ^2.3.2
 
   # Resize images.
   image_cropper: ^1.4.1

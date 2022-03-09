@@ -930,7 +930,7 @@ class _EventScreenState extends State<EventScreen> {
           await Share.share('https://${config.apiHost}/events/$pk/');
         } catch (_) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            duration: Duration(seconds: 1),
+            behavior: SnackBarBehavior.floating,
             content: Text('Could not share the event.'),
           ));
         }

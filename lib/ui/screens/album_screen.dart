@@ -13,6 +13,7 @@ import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:share_plus/share_plus.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 
 /// Screen that loads and shows a the Album of the member with `slug`.
 class AlbumScreen extends StatefulWidget {
@@ -70,6 +71,40 @@ class _AlbumScreenState extends State<AlbumScreen> {
               color: Theme.of(context).primaryIconTheme.color,
             ),
             actions: [
+              IconButton(
+                padding: const EdgeInsets.all(16),
+                color: Theme.of(context).primaryIconTheme.color,
+                icon: const Icon(Icons.download),
+                onPressed: () async {
+                  var i = pageController.page!.round();
+                  if (i < 0 || i >= album.photos.length) i = index;
+                  final url = Uri.parse(album.photos[i].full);
+                  try {
+                    final response = await http.get(url);
+                    if (response.statusCode != 200) throw Exception();
+                    final baseTempDir = await getTemporaryDirectory();
+                    final tempDir = await baseTempDir.createTemp();
+                    final tempFile = File(
+                      '${tempDir.path}/${url.pathSegments.last}',
+                    );
+                    await tempFile.writeAsBytes(response.bodyBytes);
+                    await GallerySaver.saveImage(tempFile.path);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: Text('Succesfully saved the image.'),
+                      ),
+                    );
+                  } catch (_) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: Text('Could not download the image.'),
+                      ),
+                    );
+                  }
+                },
+              ),
               IconButton(
                 padding: const EdgeInsets.all(16),
                 color: Theme.of(context).primaryIconTheme.color,
@@ -138,7 +173,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
           await Share.share('https://${config.apiHost}/members/photos/$slug/');
         } catch (_) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            duration: Duration(seconds: 1),
+            behavior: SnackBarBehavior.floating,
             content: Text('Could not share the album.'),
           ));
         }

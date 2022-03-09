@@ -212,7 +212,6 @@ class __RegistrationTileState extends State<_RegistrationTile> {
                 content: Text(value != null
                     ? 'Could not mark $name as paid.'
                     : 'Could not mark $name as not paid.'),
-                duration: const Duration(seconds: 1),
               ));
             }
           },
