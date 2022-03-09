@@ -105,7 +105,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                         final imagePath = pickedFile?.path;
                         if (imagePath == null) return;
-                        final croppedFile = await ImageCropper.cropImage(
+                        final croppedFile = await ImageCropper().cropImage(
                             sourcePath: imagePath,
                             iosUiSettings: const IOSUiSettings(
                               title: 'Crop',
@@ -161,7 +161,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                         final imagePath = pickedFile?.path;
                         if (imagePath == null) return;
-                        final croppedFile = await ImageCropper.cropImage(
+                        final croppedFile = await ImageCropper().cropImage(
                           sourcePath: imagePath,
                           iosUiSettings: const IOSUiSettings(
                             title: 'Crop',
@@ -306,7 +306,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   );
                   final imagePath = pickedFile?.path;
                   if (imagePath == null) return;
-                  final croppedFile = await ImageCropper.cropImage(
+                  final croppedFile = await ImageCropper().cropImage(
                       sourcePath: imagePath,
                       iosUiSettings: const IOSUiSettings(
                         title: 'Crop',
@@ -361,7 +361,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   );
                   final imagePath = pickedFile?.path;
                   if (imagePath == null) return;
-                  final croppedFile = await ImageCropper.cropImage(
+                  final croppedFile = await ImageCropper().cropImage(
                     sourcePath: imagePath,
                     iosUiSettings: const IOSUiSettings(
                       title: 'Crop',
