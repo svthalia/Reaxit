@@ -951,10 +951,9 @@ class _EventScreenState extends State<EventScreen> {
             ),
             body: RefreshIndicator(
               onRefresh: () async {
-                // Await both loads.
-                var eventFuture = _eventCubit.load();
-                await _registrationsCubit.load();
-                await eventFuture;
+                // Await only the event info.
+                _registrationsCubit.load();
+                await _eventCubit.load();
               },
               child: ErrorScrollView(state.message!),
             ),
@@ -988,7 +987,11 @@ class _EventScreenState extends State<EventScreen> {
               ],
             ),
             body: RefreshIndicator(
-              onRefresh: () => _eventCubit.load(),
+              onRefresh: () async {
+                // Await only the event info.
+                _registrationsCubit.load();
+                await _eventCubit.load();
+              },
               child: BlocBuilder<RegistrationsCubit, RegistrationsState>(
                 bloc: _registrationsCubit,
                 builder: (context, listState) {
