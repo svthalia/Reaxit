@@ -96,7 +96,7 @@ final List<GoRoute> routes = [
               key: state.pageKey,
               child: RegistrationScreen(
                 eventPk: int.parse(state.params['eventPk']!),
-                registrationPk: (state.extra as EventRegistration).pk,
+                registrationPk: (state.extra as UserEventRegistration).pk,
               ),
             ),
           ),
