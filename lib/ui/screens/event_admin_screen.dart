@@ -123,7 +123,7 @@ class __RegistrationTileState extends State<_RegistrationTile> {
   @override
   Widget build(BuildContext context) {
     final registration = widget.registration;
-    final name = registration.member?.displayName ?? registration.name!;
+    final name = registration.member?.fullName ?? registration.name!;
 
     final presentCheckbox = Checkbox(
       value: present,

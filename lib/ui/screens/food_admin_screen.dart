@@ -88,7 +88,7 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
 }
 
 class _OrderTile extends StatefulWidget {
-  final FoodOrder order;
+  final AdminFoodOrder order;
 
   _OrderTile({required this.order}) : super(key: ValueKey(order.pk));
 
@@ -100,7 +100,7 @@ class __OderTileState extends State<_OrderTile> {
   @override
   Widget build(BuildContext context) {
     final order = widget.order;
-    final name = order.member?.displayName ?? order.name!;
+    final name = order.member?.fullName ?? order.name!;
 
     late Widget paymentDropdown;
     if (order.isPaid && order.payment!.type == PaymentType.tpayPayment) {

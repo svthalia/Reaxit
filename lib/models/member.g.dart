@@ -25,6 +25,24 @@ const _$MembershipTypeEnumMap = {
   MembershipType.honorary: 'honorary',
 };
 
+AdminListMember _$AdminListMemberFromJson(Map<String, dynamic> json) =>
+    AdminListMember(
+      json['pk'] as int,
+      $enumDecodeNullable(_$MembershipTypeEnumMap, json['membership_type']),
+      Profile.fromJson(json['profile'] as Map<String, dynamic>),
+      json['first_name'] as String,
+      json['last_name'] as String,
+    );
+
+Map<String, dynamic> _$AdminListMemberToJson(AdminListMember instance) =>
+    <String, dynamic>{
+      'pk': instance.pk,
+      'membership_type': _$MembershipTypeEnumMap[instance.membershipType],
+      'profile': instance.profile,
+      'first_name': instance.firstName,
+      'last_name': instance.lastName,
+    };
+
 Member _$MemberFromJson(Map<String, dynamic> json) => Member(
       json['pk'] as int,
       $enumDecodeNullable(_$MembershipTypeEnumMap, json['membership_type']),

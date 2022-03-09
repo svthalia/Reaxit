@@ -7,7 +7,7 @@ import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/food_order.dart';
 import 'package:reaxit/models/payment.dart';
 
-typedef FoodAdminState = DetailState<List<FoodOrder>>;
+typedef FoodAdminState = DetailState<List<AdminFoodOrder>>;
 
 class FoodAdminCubit extends Cubit<FoodAdminState> {
   final ApiRepository api;

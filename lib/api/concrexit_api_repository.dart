@@ -437,7 +437,7 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
-  Future<ListResponse<FoodOrder>> getAdminFoodOrders({
+  Future<ListResponse<AdminFoodOrder>> getAdminFoodOrders({
     required int pk,
     int? limit,
     int? offset,
@@ -453,9 +453,9 @@ class ConcrexitApiRepository implements ApiRepository {
         },
       );
       final response = await _handleExceptions(() => _client.get(uri));
-      return ListResponse<FoodOrder>.fromJson(
+      return ListResponse<AdminFoodOrder>.fromJson(
         _jsonDecode(response),
-        (json) => FoodOrder.fromJson(json as Map<String, dynamic>),
+        (json) => AdminFoodOrder.fromJson(json as Map<String, dynamic>),
       );
     } catch (e) {
       _catch(e);
