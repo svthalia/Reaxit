@@ -1,3 +1,4 @@
+import 'package:add_2_calendar/add_2_calendar.dart' as add2calendar;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -938,6 +939,23 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
+  Widget _makeCalendarExportButton(Event event) {
+    return IconButton(
+      padding: const EdgeInsets.all(16),
+      color: Theme.of(context).primaryIconTheme.color,
+      icon: const Icon(Icons.edit_calendar_outlined),
+      onPressed: () async {
+        final exportableEvent = add2calendar.Event(
+          title: event.title,
+          location: event.location,
+          startDate: event.start,
+          endDate: event.end,
+        );
+        await add2calendar.Add2Calendar.addEvent2Cal(exportableEvent);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<EventCubit, EventState>(
@@ -974,6 +992,7 @@ class _EventScreenState extends State<EventScreen> {
             appBar: ThaliaAppBar(
               title: Text(event.title.toUpperCase()),
               actions: [
+                _makeCalendarExportButton(event),
                 _makeShareEventButton(widget.pk),
                 if (event.userPermissions.manageEvent)
                   IconButton(
