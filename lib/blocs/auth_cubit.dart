@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -123,7 +124,11 @@ class AuthCubit extends Cubit<AuthState> {
           onLogOut: logOut,
         );
 
-        _setupPushNotifications(apiRepository);
+        try {
+          _setupPushNotifications(apiRepository);
+        } on FirebaseException {
+          // Ignore.
+        }
 
         emit(LoggedInAuthState(apiRepository: apiRepository));
       } else {
@@ -245,58 +250,66 @@ class AuthCubit extends Cubit<AuthState> {
   ///
   /// Returns whether push notifications have been set up successfully or not.
   Future<bool> _setupPushNotifications(ApiRepository api) async {
-    // Request permissions for push notifications.
-    // We set up push notifications regardless of whether the user gives
-    // permission, so we don't need to keep track of the permission state,
-    // and the user can simply get push notifications working by enabling
-    // the permissions in the phone's settings.
-    FirebaseMessaging.instance.requestPermission(
-      alert: true,
-      announcement: true,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
+    try {
+      // Request permissions for push notifications.
+      // We set up push notifications regardless of whether the user gives
+      // permission, so we don't need to keep track of the permission state,
+      // and the user can simply get push notifications working by enabling
+      // the permissions in the phone's settings.
+      FirebaseMessaging.instance.requestPermission(
+        alert: true,
+        announcement: true,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
 
-    final token = await FirebaseMessaging.instance.getToken();
-    final prefs = await SharedPreferences.getInstance();
-    final devicePk = prefs.getInt(_devicePkPreferenceKey);
+      final token = await FirebaseMessaging.instance.getToken();
+      final prefs = await SharedPreferences.getInstance();
+      final devicePk = prefs.getInt(_devicePkPreferenceKey);
 
-    if (devicePk == null) {
-      // There is no device in the backend yet.
-      try {
-        await _registerNewDevice(prefs: prefs, api: api, token: token);
-      } on ApiException {
-        return false;
-      }
-    } else {
-      // There already is a device in the backend.
-      try {
-        // Update the existing device.
-        final device = await api.updateDeviceToken(pk: devicePk, token: token!);
+      if (devicePk == null) {
+        // There is no device in the backend yet.
+        try {
+          await _registerNewDevice(prefs: prefs, api: api, token: token);
+        } on ApiException {
+          return false;
+        }
+      } else {
+        // There already is a device in the backend.
+        try {
+          // Update the existing device.
+          final device = await api.updateDeviceToken(
+            pk: devicePk,
+            token: token!,
+          );
 
-        // Handle refreshing of tokens.
-        _fmTokenSubscription = FirebaseMessaging.instance.onTokenRefresh.listen(
-          (token) => api.updateDeviceToken(pk: device.pk, token: token),
-        );
-      } on ApiException catch (exception) {
-        if (exception == ApiException.notFound) {
-          // The device was deleted from the backend.
-          // Delete the device from the local storage.
-          prefs.remove(_devicePkPreferenceKey);
+          // Handle refreshing of tokens.
+          _fmTokenSubscription =
+              FirebaseMessaging.instance.onTokenRefresh.listen(
+            (token) => api.updateDeviceToken(pk: device.pk, token: token),
+          );
+        } on ApiException catch (exception) {
+          if (exception == ApiException.notFound) {
+            // The device was deleted from the backend.
+            // Delete the device from the local storage.
+            prefs.remove(_devicePkPreferenceKey);
 
-          try {
-            await _registerNewDevice(prefs: prefs, api: api, token: token);
-          } on ApiException {
-            return false;
+            try {
+              await _registerNewDevice(prefs: prefs, api: api, token: token);
+            } on ApiException {
+              return false;
+            }
           }
         }
       }
-    }
 
-    return true;
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 
   /// Register a new [Device] in the backend. May throw an [ApiException].
