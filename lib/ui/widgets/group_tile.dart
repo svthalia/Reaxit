@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:reaxit/models/group.dart';
 import 'package:reaxit/ui/screens/groups_screen.dart';
 
+import '../screens/group_screen.dart';
 import 'cached_image.dart';
 
 class GroupTile extends StatelessWidget {
@@ -47,7 +48,7 @@ class GroupTile extends StatelessWidget {
         );
       },
       //TODO: GroupScreen
-      openBuilder: (_, __) => GroupsScreen(),
+      openBuilder: (_, __) => GroupScreen(pk: group.pk, group: group)
       //openBuilder: (_, __) => ProfileScreen(pk: member.pk, member: member),
     );
   }

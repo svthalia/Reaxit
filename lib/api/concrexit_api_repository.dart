@@ -1147,6 +1147,22 @@ class ConcrexitApiRepository implements ApiRepository {
       (json) => ListGroup.fromJson(json as Map<String, dynamic>),
     );
   }
+
+  /// Get a list of groups.
+  ///
+  /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
+  /// total number of [ListGroup]s that can be returned.
+  Future<Group> getGroup(
+      {required int pk}) async {
+
+    final uri = _baseUri.replace(
+      path: '$_basePath/activemembers/groups/'+pk.toString()+'/',
+      queryParameters: {},
+    );
+
+    final response = await _handleExceptions(() => _client.get(uri));
+    return Group.fromJson(_jsonDecode(response));
+  }
 // TODO: Someday: move json parsing of lists into isolates?
 // TODO: Someday: change ApiException to a class that can contain a string?
 //  We can then display more specific error messages to the user based on

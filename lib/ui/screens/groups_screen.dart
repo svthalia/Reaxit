@@ -117,15 +117,15 @@ class _GroupsScreenState extends State<GroupsScreen>
 
 class GroupListScrollView extends StatelessWidget {
   final List<ListGroup> groups;
+  final ListGroup? activeBoard;
 
-  const GroupListScrollView({Key? key, required this.groups}) : super(key: key);
+  GroupListScrollView({Key? key, required List<ListGroup> groups}) :
+    activeBoard = groups.firstWhereOrNull((element) => element.isActiveBoard()),
+        groups = groups.where((element) => ! element.isActiveBoard()).toList().reversed.toList(), super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
-
-    ListGroup? activeBoard;
-    activeBoard = groups.firstWhereOrNull((element) => element.isActiveBoard());
-    groups.remove(activeBoard);
 
     return Scrollbar(
         child: CustomScrollView(
@@ -134,10 +134,10 @@ class GroupListScrollView extends StatelessWidget {
       ),
       slivers: [
         if (activeBoard != null)
-          SliverPadding(
-          padding: const EdgeInsets.all(8),
-          sliver: SliverToBoxAdapter(child: GroupTile(group: activeBoard)),
-        ),
+          SliverToBoxAdapter(child: Padding(padding: const EdgeInsets.all(8), child: AspectRatio(aspectRatio: 3/2,child:GroupTile(group: activeBoard!)))),
+
+          //  SliverToBoxAdapter(child: Padding(padding: const EdgeInsets.all(8), child: GroupTile(group: activeBoard))),
+        //  SliverToBoxAdapter(child: Padding(padding: const EdgeInsets.all(8), child: GroupTile(group: activeBoard))),
         SliverPadding(
           padding: const EdgeInsets.all(8),
           sliver: SliverGrid(
