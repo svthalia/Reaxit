@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/models/album.dart';
 import 'package:reaxit/models/event.dart';
-import 'package:reaxit/models/event_registration.dart';
 import 'package:reaxit/models/member.dart';
 import 'package:reaxit/ui/screens/album_screen.dart';
 import 'package:reaxit/ui/screens/albums_screen.dart';
@@ -90,13 +89,13 @@ final List<GoRoute> routes = [
             ),
           ),
           GoRoute(
-            path: 'registration',
+            path: 'registration/:registrationPk',
             name: 'event-registration',
             pageBuilder: (context, state) => MaterialPage(
               key: state.pageKey,
               child: RegistrationScreen(
                 eventPk: int.parse(state.params['eventPk']!),
-                registrationPk: (state.extra as UserEventRegistration).pk,
+                registrationPk: int.parse(state.params['registrationPk']!),
               ),
             ),
           ),
