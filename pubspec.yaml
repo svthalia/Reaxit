@@ -74,7 +74,7 @@ dependencies:
   sentry_flutter: ^6.3.0
 
   # Share menu.
-  share_plus: ^4.0.0
+  share_plus: ^4.0.3
 
   # Path for temporary files.
   path_provider: ^2.0.6
