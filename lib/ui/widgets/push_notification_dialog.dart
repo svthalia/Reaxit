@@ -16,8 +16,8 @@ class PushNotificationDialog extends StatelessWidget {
     }
 
     return AlertDialog(
-      title: Text(message.notification!.title!),
-      content: (message.notification!.body != null &&
+      title: Text(message.notification?.title ?? 'Notification'),
+      content: (message.notification?.body != null &&
               message.notification!.body!.isNotEmpty)
           ? Text(
               message.notification!.body!,
