@@ -50,7 +50,7 @@ const List<String> oauthScopes = [
 
 const Duration searchDebounceTime = Duration(milliseconds: 200);
 
-const String versionNumber = 'v3.1.1';
+const String versionNumber = 'v3.1.2';
 
 final Uri feedbackUri = Uri.parse(
   'https://github.com/svthalia/Reaxit/issues',
