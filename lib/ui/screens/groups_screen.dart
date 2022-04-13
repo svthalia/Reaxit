@@ -31,15 +31,6 @@ class _GroupsScreenState extends State<GroupsScreen>
     return Scaffold(
       appBar: ThaliaAppBar(
         title: const Text('GROUPS'),
-        actions: [
-          IconButton(
-            padding: const EdgeInsets.all(16),
-            icon: const Icon(Icons.search),
-            onPressed: () async {
-              //TODO: Implement group search
-            },
-          ),
-        ],
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
