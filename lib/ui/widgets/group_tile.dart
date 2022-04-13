@@ -1,8 +1,6 @@
 import 'package:animations/animations.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:reaxit/models/group.dart';
-import 'package:reaxit/ui/screens/groups_screen.dart';
 
 import '../screens/group_screen.dart';
 import 'cached_image.dart';

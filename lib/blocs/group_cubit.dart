@@ -16,12 +16,7 @@ class GroupCubit extends Cubit<GroupState> {
     emit(state.copyWith(isLoading: true));
     try {
       final groupResponse = await api.getGroup(pk: pk);
-      if (groupResponse != null) {
-        emit(DetailState.result(result: groupResponse));
-      } else {
-        emit(const DetailState.failure(
-            message: 'There exists no group with this pk.'));
-      }
+      emit(DetailState.result(result: groupResponse));
     } on ApiException catch (exception) {
       emit(DetailState.failure(message: _failureMessage(exception)));
     }

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs/group_cubit.dart';
-import 'package:reaxit/blocs/member_list_cubit.dart';
 import 'package:reaxit/models/group.dart';
 import 'package:reaxit/models/member.dart';
 import 'package:reaxit/ui/widgets/cached_image.dart';
@@ -34,16 +33,6 @@ class _GroupScreenState extends State<GroupScreen> {
     _groupCubit = GroupCubit(api, pk: widget.pk)..load();
     _controller = ScrollController(); //..addListener(_scrollListener());
     super.initState();
-  }
-
-  void _scrollListener() {
-    if (_controller.position.pixels >=
-        _controller.position.maxScrollExtent - 300) {
-      // Only request loading more if that's not already happening.
-      // if (!_registrationsCubit.state.isLoadingMore) {
-      //   _registrationsCubit.more();
-      // }
-    }
   }
 
   @override
@@ -84,18 +73,6 @@ class _GroupScreenState extends State<GroupScreen> {
             return true;
           },
         ));
-  }
-
-  Widget _makeDescriptionHeader(ListGroup group) {
-    return SliverPadding(
-      padding: const EdgeInsets.only(left: 16),
-      sliver: SliverToBoxAdapter(
-        child: Text(
-          'DESCRIPTION',
-          style: Theme.of(context).textTheme.caption,
-        ),
-      ),
-    );
   }
 
   Widget _makeMembersHeader(ListGroup group) {
