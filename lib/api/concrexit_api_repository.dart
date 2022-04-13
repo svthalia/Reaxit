@@ -1152,11 +1152,9 @@ class ConcrexitApiRepository implements ApiRepository {
   ///
   /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
   /// total number of [ListGroup]s that can be returned.
-  Future<Group> getGroup(
-      {required int pk}) async {
-
+  Future<Group> getGroup({required int pk}) async {
     final uri = _baseUri.replace(
-      path: '$_basePath/activemembers/groups/'+pk.toString()+'/',
+      path: '$_basePath/activemembers/groups/' + pk.toString() + '/',
       queryParameters: {},
     );
 

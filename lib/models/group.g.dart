@@ -44,7 +44,8 @@ Group _$GroupFromJson(Map<String, dynamic> json) => Group(
       json['contact_address'] as String,
       Photo.fromJson(json['photo'] as Map<String, dynamic>),
       (json['members'] as List<dynamic>)
-          .map((e) => ListMember.fromJson(e as Map<String, dynamic>))
+          .map(
+              (e) => ListMember.fromJson((e as Map<String, dynamic>)["member"]))
           .toList(),
     );
 

@@ -3,11 +3,14 @@ import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/group.dart';
 
-class GroupCubit extends Cubit<DetailState<Group>> {
+typedef GroupState = DetailState<Group>;
+
+class GroupCubit extends Cubit<GroupState> {
   final ApiRepository api;
   final int pk;
 
-  GroupCubit(this.api, {required this.pk}) : super(const DetailState<Group>.loading());
+  GroupCubit(this.api, {required this.pk})
+      : super(const DetailState<Group>.loading());
 
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
@@ -16,7 +19,8 @@ class GroupCubit extends Cubit<DetailState<Group>> {
       if (groupResponse != null) {
         emit(DetailState.result(result: groupResponse));
       } else {
-        emit(const DetailState.failure(message: 'There exists no group with this pk.'));
+        emit(const DetailState.failure(
+            message: 'There exists no group with this pk.'));
       }
     } on ApiException catch (exception) {
       emit(DetailState.failure(message: _failureMessage(exception)));

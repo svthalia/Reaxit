@@ -16,8 +16,9 @@ class ListGroup {
   final DateTime? until;
   final String contactAddress;
   final Photo photo;
-  bool isActiveBoard () => type == MemberGroupType.board && (until?.isAfter(DateTime.now()) ?? false);
-
+  bool isActiveBoard() =>
+      type == MemberGroupType.board &&
+      (until?.isAfter(DateTime.now()) ?? false);
 
   const ListGroup(
     this.pk,

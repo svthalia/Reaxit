@@ -343,6 +343,5 @@ abstract class ApiRepository {
       DateTime? end,
       String? search});
 
-  Future<Group> getGroup(
-      {required int pk});
+  Future<Group> getGroup({required int pk});
 }
