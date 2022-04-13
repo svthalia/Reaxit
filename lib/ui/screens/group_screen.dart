@@ -47,7 +47,7 @@ class _GroupScreenState extends State<GroupScreen> {
       children: [
         CachedImage(
             imageUrl: group.photo.full,
-            placeholder: 'assets/img/default-avatag.jpg')
+            placeholder: 'assets/img/default-avatar.jpg')
       ],
     );
   }
