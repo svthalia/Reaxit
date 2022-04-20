@@ -1148,7 +1148,7 @@ class ConcrexitApiRepository implements ApiRepository {
   @override
   Future<Group> getGroup({required int pk}) async {
     final uri = _baseUri.replace(
-      path: '$_basePath/activemembers/groups/' + pk.toString() + '/',
+      path: '$_basePath/activemembers/groups/$pk/',
       queryParameters: {},
     );
 
