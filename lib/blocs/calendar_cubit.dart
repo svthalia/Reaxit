@@ -177,7 +177,18 @@ class CalendarCubit extends Cubit<CalendarState> {
 
       // Merge the two lists.
       events.addAll(partnerEvents);
-      events.sort((a, b) => a.start.compareTo(b.start));
+      events.sort((a, b) {
+        if (searchQuery == null) {
+          return a.start.compareTo(b.start);
+        } else {
+          // Sorts on isBeforeNow > date
+          int result =
+              a.end.isBefore(DateTime.now()) && b.end.isBefore(DateTime.now())
+                  ? 0
+                  : (a.end.isBefore(DateTime.now()) ? 1 : -1);
+          return result == 0 ? a.start.compareTo(b.start) : result;
+        }
+      });
 
       // If `load()` and `more()` cause jank, the expensive operations
       // on the events could be moved to an isolate in `compute()`.
