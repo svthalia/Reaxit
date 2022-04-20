@@ -12,6 +12,10 @@ import 'package:reaxit/ui/widgets/menu_drawer.dart';
 import 'package:collection/collection.dart';
 
 class GroupsScreen extends StatefulWidget {
+  final MemberGroupType? startScreen;
+
+  const GroupsScreen({this.startScreen});
+
   @override
   State<StatefulWidget> createState() => _GroupsScreenState();
 }
@@ -23,6 +27,29 @@ class _GroupsScreenState extends State<GroupsScreen>
   @override
   void initState() {
     _tabController = TabController(length: 3, vsync: this);
+    switch (widget.startScreen) {
+      case MemberGroupType.committee:
+        _tabController.animateTo(
+          0,
+          duration: Duration.zero,
+        );
+        break;
+      case MemberGroupType.society:
+        _tabController.animateTo(
+          1,
+          duration: Duration.zero,
+        );
+        break;
+      case MemberGroupType.board:
+        _tabController.animateTo(
+          2,
+          duration: Duration.zero,
+        );
+        break;
+      default:
+        break;
+    }
+
     super.initState();
   }
 
@@ -134,9 +161,6 @@ class GroupListScrollView extends StatelessWidget {
                   child: AspectRatio(
                       aspectRatio: 3 / 2,
                       child: GroupTile(group: activeBoard!)))),
-
-        //  SliverToBoxAdapter(child: Padding(padding: const EdgeInsets.all(8), child: GroupTile(group: activeBoard))),
-        //  SliverToBoxAdapter(child: Padding(padding: const EdgeInsets.all(8), child: GroupTile(group: activeBoard))),
         SliverPadding(
           padding: const EdgeInsets.all(8),
           sliver: SliverGrid(

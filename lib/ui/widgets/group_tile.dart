@@ -45,9 +45,7 @@ class GroupTile extends StatelessWidget {
             ],
           );
         },
-        openBuilder: (_, __) => GroupScreen(pk: group.pk)
-        //openBuilder: (_, __) => ProfileScreen(pk: member.pk, member: member),
-        );
+        openBuilder: (_, __) => GroupScreen(pk: group.pk));
   }
 }
 
@@ -113,5 +111,3 @@ class DefaultMemberTile extends StatelessWidget {
     );
   }
 }
-//TODO: Add a group tile
-//TODO: Add a group screen

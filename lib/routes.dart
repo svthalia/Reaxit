@@ -4,6 +4,7 @@ import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/models/album.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/event_registration.dart';
+import 'package:reaxit/models/group.dart';
 import 'package:reaxit/models/member.dart';
 import 'package:reaxit/ui/screens/album_screen.dart';
 import 'package:reaxit/ui/screens/albums_screen.dart';
@@ -12,6 +13,7 @@ import 'package:reaxit/ui/screens/event_admin_screen.dart';
 import 'package:reaxit/ui/screens/event_screen.dart';
 import 'package:reaxit/ui/screens/food_admin_screen.dart';
 import 'package:reaxit/ui/screens/food_screen.dart';
+import 'package:reaxit/ui/screens/group_screen.dart';
 import 'package:reaxit/ui/screens/login_screen.dart';
 import 'package:reaxit/ui/screens/groups_screen.dart';
 import 'package:reaxit/ui/screens/members_screen.dart';
@@ -215,10 +217,86 @@ final List<GoRoute> routes = [
     ),
   ),
   GoRoute(
-      path: '/groups',
-      name: 'groups',
-      pageBuilder: (context, state) => MaterialPage(
-            key: state.pageKey,
-            child: GroupsScreen(), //TODO: make url arguments work
-          ))
+    path: '/association/committees/:groupSlug',
+    redirect: (state) => '/committees/${state.params['groupSlug']}',
+  ),
+  GoRoute(
+    path: '/association/societies/:groupSlug',
+    redirect: (state) => '/societies/${state.params['groupSlug']}',
+  ),
+  GoRoute(
+    path: '/association/boards/:groupSlug',
+    redirect: (state) => '/boards/${state.params['groupSlug']}',
+  ),
+  GoRoute(
+    path: '/association/committees',
+    redirect: (state) => '/committees',
+  ),
+  GoRoute(
+    path: '/association/societies',
+    redirect: (state) => '/societies',
+  ),
+  GoRoute(
+    path: '/association/boards',
+    redirect: (state) => '/boards',
+  ),
+  GoRoute(
+    path: '/groups',
+    name: 'groups',
+    pageBuilder: (context, state) => MaterialPage(
+      key: state.pageKey,
+      child: const GroupsScreen(),
+    ),
+  ),
+  GoRoute(
+    path: '/committees',
+    name: 'committees',
+    pageBuilder: (context, state) => MaterialPage(
+        key: state.pageKey,
+        child: const GroupsScreen(
+          startScreen: MemberGroupType.committee,
+        )),
+    routes: [
+      GoRoute(
+          path: ':committeePk',
+          name: 'committee',
+          pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: GroupScreen(pk: int.parse(state.params['committeePk']!))))
+    ],
+  ),
+  GoRoute(
+    path: '/societies',
+    name: 'societies',
+    pageBuilder: (context, state) => MaterialPage(
+        key: state.pageKey,
+        child: const GroupsScreen(
+          startScreen: MemberGroupType.society,
+        )),
+    routes: [
+      GoRoute(
+          path: ':societyPk',
+          name: 'society',
+          pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: GroupScreen(pk: int.parse(state.params['societyPk']!))))
+    ],
+  ),
+  GoRoute(
+    path: '/boards',
+    name: 'boards',
+    pageBuilder: (context, state) => MaterialPage(
+        key: state.pageKey,
+        child: const GroupsScreen(
+          startScreen: MemberGroupType.board,
+        )),
+    routes: [
+      GoRoute(
+          path: ':boardPk',
+          name: 'board',
+          pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: GroupScreen(pk: int.parse(state.params['boardPk']!))))
+    ],
+  )
 ];

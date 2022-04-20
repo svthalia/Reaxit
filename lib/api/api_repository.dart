@@ -335,13 +335,21 @@ abstract class ApiRepository {
   Future<ListResponse<PushNotificationCategory>> getCategories();
 
   /// Get a list of groups.
-  Future<ListResponse<ListGroup>> getGroups(
-      {int? limit,
-      int? offset,
-      MemberGroupType? type,
-      DateTime? start,
-      DateTime? end,
-      String? search});
+  ///
+  /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
+  /// total number of [ListGroup]s that can be returned.
+  Future<ListResponse<ListGroup>> getGroups({
+    int? limit,
+    int? offset,
+    MemberGroupType? type,
+    DateTime? start,
+    DateTime? end,
+    String? search,
+  });
 
+  /// Get a list of groups.
+  ///
+  /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
+  /// total number of [ListGroup]s that can be returned.
   Future<Group> getGroup({required int pk});
 }

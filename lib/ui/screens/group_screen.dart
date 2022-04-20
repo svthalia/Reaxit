@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:go_router/go_router.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs/group_cubit.dart';
 import 'package:reaxit/models/group.dart';
@@ -8,6 +9,7 @@ import 'package:reaxit/models/member.dart';
 import 'package:reaxit/ui/widgets/cached_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../routes.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/error_scroll_view.dart';
 import '../widgets/member_tile.dart';
@@ -23,15 +25,12 @@ class GroupScreen extends StatefulWidget {
 }
 
 class _GroupScreenState extends State<GroupScreen> {
-  late ScrollController _controller;
-
   late final GroupCubit _groupCubit;
 
   @override
   void initState() {
     final api = RepositoryProvider.of<ApiRepository>(context);
     _groupCubit = GroupCubit(api, pk: widget.pk)..load();
-    _controller = ScrollController(); //..addListener(_scrollListener());
     super.initState();
   }
 
@@ -54,10 +53,18 @@ class _GroupScreenState extends State<GroupScreen> {
 
   Widget _makeDescription(ListGroup group) {
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
-        child: HtmlWidget(
-          group.description,
-          onTapUrl: (String url) async {
+      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
+      child: HtmlWidget(
+        group.description,
+        onTapUrl: (String url) async {
+          final uri = Uri(path: url);
+          if (isDeepLink(uri)) {
+            context.go(Uri(
+              path: uri.path,
+              query: uri.query,
+            ).toString());
+            return true;
+          } else {
             try {
               await launch(
                 url,
@@ -71,8 +78,10 @@ class _GroupScreenState extends State<GroupScreen> {
               ));
             }
             return true;
-          },
-        ));
+          }
+        },
+      ),
+    );
   }
 
   Widget _makeMembersHeader(ListGroup group) {
@@ -92,7 +101,9 @@ class _GroupScreenState extends State<GroupScreen> {
       return const SliverPadding(
         padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
         sliver: SliverToBoxAdapter(
-            child: Center(child: Text('This group has no members.'))),
+            child: Center(
+          child: Text('This group has no members.'),
+        )),
       );
     } else {
       return SliverPadding(
@@ -170,9 +181,7 @@ class _GroupScreenState extends State<GroupScreen> {
               body: RefreshIndicator(
                   onRefresh: () => _groupCubit.load(),
                   child: Scrollbar(
-                    controller: _controller,
                     child: CustomScrollView(
-                      controller: _controller,
                       key: const PageStorageKey('event'),
                       slivers: [
                         SliverToBoxAdapter(
@@ -190,7 +199,7 @@ class _GroupScreenState extends State<GroupScreen> {
                         //_makeDescriptionHeader(group),
                         //const SliverToBoxAdapter(child: Divider()),
                         _makeMembersHeader(group),
-                        _makeMembers(group.members)
+                        _makeMembers(group.members),
                       ],
                     ),
                   )),

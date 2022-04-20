@@ -12,7 +12,10 @@ class BoardsCubit extends Cubit<DetailState<List<ListGroup>>> {
     emit(state.copyWith(isLoading: true));
     try {
       final listResponse = await api.getGroups(
-          limit: 1000, offset: 0, type: MemberGroupType.board);
+        limit: 1000,
+        offset: 0,
+        type: MemberGroupType.board,
+      );
       if (listResponse.results.isNotEmpty) {
         emit(DetailState.result(result: listResponse.results));
       } else {
@@ -27,6 +30,8 @@ class BoardsCubit extends Cubit<DetailState<List<ListGroup>>> {
     switch (exception) {
       case ApiException.noInternet:
         return 'Not connected to the internet.';
+      case ApiException.notFound:
+        return 'This page could not be found.';
       default:
         return 'An unknown error occurred.';
     }
