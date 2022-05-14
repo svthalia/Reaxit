@@ -94,7 +94,7 @@ dependencies:
   firebase_messaging: ^11.2.6
 
   # Push notifications in app. 
-  overlay_support: ^1.2.1
+  overlay_support: ^2.0.0
 
   # Sticky headers for calendar.
   sticky_headers: ^0.2.0
