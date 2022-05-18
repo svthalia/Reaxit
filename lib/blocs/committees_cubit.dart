@@ -3,27 +3,28 @@ import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/group.dart';
 
-class CommitteesCubit extends Cubit<DetailState<List<ListGroup>>> {
+typedef CommitteesState = DetailState<List<ListGroup>>;
+
+class CommitteesCubit extends Cubit<CommitteesState> {
   final ApiRepository api;
 
-  CommitteesCubit(this.api)
-      : super(const DetailState<List<ListGroup>>.loading());
+  CommitteesCubit(this.api) : super(const CommitteesState.loading());
 
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
     try {
       final listResponse = await api.getGroups(
         limit: 1000,
-        offset: 0,
         type: MemberGroupType.committee,
       );
       if (listResponse.results.isNotEmpty) {
-        emit(DetailState.result(result: listResponse.results));
+        emit(CommitteesState.result(result: listResponse.results));
       } else {
-        emit(const DetailState.failure(message: 'There are no committees.'));
+        emit(
+            const CommitteesState.failure(message: 'There are no committees.'));
       }
     } on ApiException catch (exception) {
-      emit(DetailState.failure(message: _failureMessage(exception)));
+      emit(CommitteesState.failure(message: _failureMessage(exception)));
     }
   }
 
@@ -31,8 +32,6 @@ class CommitteesCubit extends Cubit<DetailState<List<ListGroup>>> {
     switch (exception) {
       case ApiException.noInternet:
         return 'Not connected to the internet.';
-      case ApiException.notFound:
-        return 'This page could not be found.';
       default:
         return 'An unknown error occurred.';
     }

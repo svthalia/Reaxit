@@ -9,10 +9,10 @@ import 'package:reaxit/models/member.dart';
 import 'package:reaxit/ui/widgets/cached_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../routes.dart';
-import '../widgets/app_bar.dart';
-import '../widgets/error_scroll_view.dart';
-import '../widgets/member_tile.dart';
+import 'package:reaxit/routes.dart';
+import 'package:reaxit/ui/widgets/app_bar.dart';
+import 'package:reaxit/ui/widgets/error_scroll_view.dart';
+import 'package:reaxit/ui/widgets/member_tile.dart';
 
 class GroupScreen extends StatefulWidget {
   final int pk;
@@ -45,8 +45,9 @@ class _GroupScreenState extends State<GroupScreen> {
       fit: StackFit.loose,
       children: [
         CachedImage(
-            imageUrl: group.photo.full,
-            placeholder: 'assets/img/default-avatar.jpg')
+          imageUrl: group.photo.full,
+          placeholder: 'assets/img/default-avatar.jpg',
+        )
       ],
     );
   }
@@ -101,9 +102,8 @@ class _GroupScreenState extends State<GroupScreen> {
       return const SliverPadding(
         padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
         sliver: SliverToBoxAdapter(
-            child: Center(
-          child: Text('This group has no members.'),
-        )),
+          child: Center(child: Text('This group has no members.')),
+        ),
       );
     } else {
       return SliverPadding(
@@ -150,61 +150,54 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<GroupCubit, GroupState>(
-        bloc: _groupCubit,
-        builder: (context, state) {
-          if (state.hasException) {
-            return Scaffold(
-              appBar: ThaliaAppBar(
-                title: Text(widget.group?.name.toUpperCase() ?? 'GROUP'),
-              ),
-              body: RefreshIndicator(
-                onRefresh: () async {
-                  // Await the load.
-                  await _groupCubit.load();
-                },
-                child: ErrorScrollView(state.message!),
-              ),
-            );
-          } else if (state.isLoading &&
-              widget.group == null &&
-              state.result == null) {
-            return Scaffold(
-              appBar: ThaliaAppBar(
-                title: const Text('GROUP'),
-              ),
-              body: const Center(child: CircularProgressIndicator()),
-            );
-          } else {
-            final group = (state.result ?? widget.group)!;
-            return Scaffold(
-              appBar: ThaliaAppBar(title: Text(group.name.toUpperCase())),
-              body: RefreshIndicator(
-                  onRefresh: () => _groupCubit.load(),
-                  child: Scrollbar(
-                    child: CustomScrollView(
-                      key: const PageStorageKey('event'),
-                      slivers: [
-                        SliverToBoxAdapter(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              _makeImage(group),
-                              const Divider(height: 0),
-                              _makeGroupInfo(group)
-                              //const Divider(),
-                              //_makeMembers(group.members)
-                            ],
-                          ),
-                        ),
-                        //_makeDescriptionHeader(group),
-                        //const SliverToBoxAdapter(child: Divider()),
-                        _makeMembersHeader(group),
-                        _makeMembers(group.members),
-                      ],
+      bloc: _groupCubit,
+      builder: (context, state) {
+        if (state.hasException) {
+          return Scaffold(
+            appBar: ThaliaAppBar(
+              title: Text(widget.group?.name.toUpperCase() ?? 'GROUP'),
+            ),
+            body: RefreshIndicator(
+              onRefresh: () => _groupCubit.load(),
+              child: ErrorScrollView(state.message!),
+            ),
+          );
+        } else if (state.isLoading &&
+            widget.group == null &&
+            state.result == null) {
+          return Scaffold(
+            appBar: ThaliaAppBar(title: const Text('GROUP')),
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        } else {
+          final group = (state.result ?? widget.group)!;
+          return Scaffold(
+            appBar: ThaliaAppBar(title: Text(group.name.toUpperCase())),
+            body: RefreshIndicator(
+              onRefresh: () => _groupCubit.load(),
+              child: Scrollbar(
+                child: CustomScrollView(
+                  key: const PageStorageKey('group'),
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _makeImage(group),
+                          const Divider(height: 0),
+                          _makeGroupInfo(group)
+                        ],
+                      ),
                     ),
-                  )),
-            );
-          }
-        });
+                    _makeMembersHeader(group),
+                    _makeMembers(group.members),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+      },
+    );
   }
 }

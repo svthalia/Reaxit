@@ -3,27 +3,27 @@ import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/group.dart';
 
-class SocietiesCubit extends Cubit<DetailState<List<ListGroup>>> {
+typedef SocietiesState = DetailState<List<ListGroup>>;
+
+class SocietiesCubit extends Cubit<SocietiesState> {
   final ApiRepository api;
 
-  SocietiesCubit(this.api)
-      : super(const DetailState<List<ListGroup>>.loading());
+  SocietiesCubit(this.api) : super(const SocietiesState.loading());
 
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
     try {
       final listResponse = await api.getGroups(
         limit: 1000,
-        offset: 0,
         type: MemberGroupType.society,
       );
       if (listResponse.results.isNotEmpty) {
-        emit(DetailState.result(result: listResponse.results));
+        emit(SocietiesState.result(result: listResponse.results));
       } else {
-        emit(const DetailState.failure(message: 'There are no societies.'));
+        emit(const SocietiesState.failure(message: 'There are no societies.'));
       }
     } on ApiException catch (exception) {
-      emit(DetailState.failure(message: _failureMessage(exception)));
+      emit(SocietiesState.failure(message: _failureMessage(exception)));
     }
   }
 

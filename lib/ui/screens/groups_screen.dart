@@ -26,29 +26,22 @@ class _GroupsScreenState extends State<GroupsScreen>
 
   @override
   void initState() {
-    _tabController = TabController(length: 3, vsync: this);
-    switch (widget.startScreen) {
-      case MemberGroupType.committee:
-        _tabController.animateTo(
-          0,
-          duration: Duration.zero,
-        );
-        break;
-      case MemberGroupType.society:
-        _tabController.animateTo(
-          1,
-          duration: Duration.zero,
-        );
-        break;
-      case MemberGroupType.board:
-        _tabController.animateTo(
-          2,
-          duration: Duration.zero,
-        );
-        break;
-      default:
-        break;
+    late final int initialIndex;
+    if (widget.startScreen == MemberGroupType.board) {
+      initialIndex = 0;
+    } else if (widget.startScreen == MemberGroupType.committee) {
+      initialIndex = 1;
+    } else if (widget.startScreen == MemberGroupType.society) {
+      initialIndex = 2;
+    } else {
+      initialIndex = 0;
     }
+
+    _tabController = TabController(
+      length: 3,
+      initialIndex: initialIndex,
+      vsync: this,
+    );
 
     super.initState();
   }
@@ -77,13 +70,9 @@ class _GroupsScreenState extends State<GroupsScreen>
               if (state.hasException) {
                 return ErrorScrollView(state.message!);
               } else if (state.isLoading) {
-                return const SliverPadding(
+                return const Padding(
                   padding: EdgeInsets.all(16),
-                  sliver: SliverToBoxAdapter(
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
+                  child: Center(child: CircularProgressIndicator()),
                 );
               } else {
                 return GroupListScrollView(groups: state.result!);
@@ -95,13 +84,9 @@ class _GroupsScreenState extends State<GroupsScreen>
               if (state.hasException) {
                 return ErrorScrollView(state.message!);
               } else if (state.isLoading) {
-                return const SliverPadding(
+                return const Padding(
                   padding: EdgeInsets.all(16),
-                  sliver: SliverToBoxAdapter(
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
+                  child: Center(child: CircularProgressIndicator()),
                 );
               } else {
                 return GroupListScrollView(groups: state.result!);
@@ -113,13 +98,9 @@ class _GroupsScreenState extends State<GroupsScreen>
               if (state.hasException) {
                 return ErrorScrollView(state.message!);
               } else if (state.isLoading) {
-                return const SliverPadding(
+                return const Padding(
                   padding: EdgeInsets.all(16),
-                  sliver: SliverToBoxAdapter(
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
+                  child: Center(child: CircularProgressIndicator()),
                 );
               } else {
                 return GroupListScrollView(groups: state.result!);
@@ -137,8 +118,9 @@ class GroupListScrollView extends StatelessWidget {
   final ListGroup? activeBoard;
 
   GroupListScrollView({Key? key, required List<ListGroup> groups})
-      : activeBoard =
-            groups.firstWhereOrNull((element) => element.isActiveBoard()),
+      : activeBoard = groups.firstWhereOrNull(
+          (element) => element.isActiveBoard(),
+        ),
         groups = groups
             .where((element) => !element.isActiveBoard())
             .toList()
@@ -149,35 +131,37 @@ class GroupListScrollView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scrollbar(
-        child: CustomScrollView(
-      physics: const RangeMaintainingScrollPhysics(
-        parent: AlwaysScrollableScrollPhysics(),
-      ),
-      slivers: [
-        if (activeBoard != null)
-          SliverToBoxAdapter(
+      child: CustomScrollView(
+        physics: const RangeMaintainingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
+        slivers: [
+          if (activeBoard != null)
+            SliverToBoxAdapter(
               child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: AspectRatio(
-                      aspectRatio: 3 / 2,
-                      child: GroupTile(group: activeBoard!)))),
-        SliverPadding(
-          padding: const EdgeInsets.all(8),
-          sliver: SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8,
-            ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => GroupTile(
-                group: groups[index],
+                padding: const EdgeInsets.all(8),
+                child: AspectRatio(
+                  aspectRatio: 3 / 2,
+                  child: GroupTile(group: activeBoard!),
+                ),
               ),
-              childCount: groups.length,
+            ),
+          SliverPadding(
+            padding: const EdgeInsets.all(8),
+            sliver: SliverGrid(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => GroupTile(group: groups[index]),
+                childCount: groups.length,
+              ),
             ),
           ),
-        ),
-      ],
-    ));
+        ],
+      ),
+    );
   }
 }

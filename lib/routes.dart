@@ -252,51 +252,54 @@ final List<GoRoute> routes = [
     path: '/committees',
     name: 'committees',
     pageBuilder: (context, state) => MaterialPage(
-        key: state.pageKey,
-        child: const GroupsScreen(
-          startScreen: MemberGroupType.committee,
-        )),
+      key: state.pageKey,
+      child: const GroupsScreen(startScreen: MemberGroupType.committee),
+    ),
     routes: [
       GoRoute(
-          path: ':committeePk',
-          name: 'committee',
-          pageBuilder: (context, state) => MaterialPage(
-              key: state.pageKey,
-              child: GroupScreen(pk: int.parse(state.params['committeePk']!))))
+        path: ':committeePk',
+        name: 'committee',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: GroupScreen(pk: int.parse(state.params['committeePk']!)),
+        ),
+      )
     ],
   ),
   GoRoute(
     path: '/societies',
     name: 'societies',
     pageBuilder: (context, state) => MaterialPage(
-        key: state.pageKey,
-        child: const GroupsScreen(
-          startScreen: MemberGroupType.society,
-        )),
+      key: state.pageKey,
+      child: const GroupsScreen(startScreen: MemberGroupType.society),
+    ),
     routes: [
       GoRoute(
-          path: ':societyPk',
-          name: 'society',
-          pageBuilder: (context, state) => MaterialPage(
-              key: state.pageKey,
-              child: GroupScreen(pk: int.parse(state.params['societyPk']!))))
+        path: ':societyPk',
+        name: 'society',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: GroupScreen(pk: int.parse(state.params['societyPk']!)),
+        ),
+      )
     ],
   ),
   GoRoute(
     path: '/boards',
     name: 'boards',
     pageBuilder: (context, state) => MaterialPage(
-        key: state.pageKey,
-        child: const GroupsScreen(
-          startScreen: MemberGroupType.board,
-        )),
+      key: state.pageKey,
+      child: const GroupsScreen(startScreen: MemberGroupType.board),
+    ),
     routes: [
       GoRoute(
-          path: ':boardPk',
-          name: 'board',
-          pageBuilder: (context, state) => MaterialPage(
-              key: state.pageKey,
-              child: GroupScreen(pk: int.parse(state.params['boardPk']!))))
+        path: ':boardPk',
+        name: 'board',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: GroupScreen(pk: int.parse(state.params['boardPk']!)),
+        ),
+      )
     ],
   )
 ];

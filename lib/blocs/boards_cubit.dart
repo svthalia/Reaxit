@@ -3,26 +3,27 @@ import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/group.dart';
 
-class BoardsCubit extends Cubit<DetailState<List<ListGroup>>> {
+typedef BoardsState = DetailState<List<ListGroup>>;
+
+class BoardsCubit extends Cubit<BoardsState> {
   final ApiRepository api;
 
-  BoardsCubit(this.api) : super(const DetailState<List<ListGroup>>.loading());
+  BoardsCubit(this.api) : super(const BoardsState.loading());
 
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
     try {
       final listResponse = await api.getGroups(
         limit: 1000,
-        offset: 0,
         type: MemberGroupType.board,
       );
       if (listResponse.results.isNotEmpty) {
-        emit(DetailState.result(result: listResponse.results));
+        emit(BoardsState.result(result: listResponse.results));
       } else {
-        emit(const DetailState.failure(message: 'There are no boards.'));
+        emit(const BoardsState.failure(message: 'There are no boards.'));
       }
     } on ApiException catch (exception) {
-      emit(DetailState.failure(message: _failureMessage(exception)));
+      emit(BoardsState.failure(message: _failureMessage(exception)));
     }
   }
 
@@ -30,8 +31,6 @@ class BoardsCubit extends Cubit<DetailState<List<ListGroup>>> {
     switch (exception) {
       case ApiException.noInternet:
         return 'Not connected to the internet.';
-      case ApiException.notFound:
-        return 'This page could not be found.';
       default:
         return 'An unknown error occurred.';
     }

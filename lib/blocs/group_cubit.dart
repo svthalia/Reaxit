@@ -26,6 +26,8 @@ class GroupCubit extends Cubit<GroupState> {
     switch (exception) {
       case ApiException.noInternet:
         return 'Not connected to the internet.';
+      case ApiException.notFound:
+        return 'The group does not exist.';
       default:
         return 'An unknown error occurred.';
     }

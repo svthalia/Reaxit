@@ -13,39 +13,40 @@ class GroupTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OpenContainer(
-        tappable: false,
-        routeSettings: RouteSettings(name: 'Group(${group.pk})'),
-        transitionType: ContainerTransitionType.fadeThrough,
-        closedShape: const RoundedRectangleBorder(),
-        closedBuilder: (context, openContainer) {
-          return Stack(
-            fit: StackFit.expand,
-            children: [
-              CachedImage(
-                imageUrl: group.photo.small,
-                placeholder: 'assets/img/default-avatar.jpg',
-              ),
-              const _BlackGradient(),
-              Align(
-                alignment: Alignment.bottomLeft,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    group.name,
-                    style: Theme.of(context).primaryTextTheme.bodyText2,
-                  ),
+      tappable: false,
+      routeSettings: RouteSettings(name: 'Group(${group.pk})'),
+      transitionType: ContainerTransitionType.fadeThrough,
+      closedShape: const RoundedRectangleBorder(),
+      closedBuilder: (context, openContainer) {
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            CachedImage(
+              imageUrl: group.photo.small,
+              placeholder: 'assets/img/default-avatar.jpg',
+            ),
+            const _BlackGradient(),
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  group.name,
+                  style: Theme.of(context).primaryTextTheme.bodyText2,
                 ),
               ),
-              Positioned.fill(
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(onTap: openContainer),
-                ),
+            ),
+            Positioned.fill(
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(onTap: openContainer),
               ),
-            ],
-          );
-        },
-        openBuilder: (_, __) => GroupScreen(pk: group.pk));
+            ),
+          ],
+        );
+      },
+      openBuilder: (_, __) => GroupScreen(pk: group.pk),
+    );
   }
 }
 

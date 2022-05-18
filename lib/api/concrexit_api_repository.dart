@@ -1113,13 +1113,14 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
-  Future<ListResponse<ListGroup>> getGroups(
-      {int? limit,
-      int? offset,
-      MemberGroupType? type,
-      DateTime? start,
-      DateTime? end,
-      String? search}) async {
+  Future<ListResponse<ListGroup>> getGroups({
+    int? limit,
+    int? offset,
+    MemberGroupType? type,
+    DateTime? start,
+    DateTime? end,
+    String? search,
+  }) async {
     const memberGroupTypeMap = {
       MemberGroupType.committee: 'committee',
       MemberGroupType.society: 'society',
@@ -1147,11 +1148,7 @@ class ConcrexitApiRepository implements ApiRepository {
 
   @override
   Future<Group> getGroup({required int pk}) async {
-    final uri = _baseUri.replace(
-      path: '$_basePath/activemembers/groups/$pk/',
-      queryParameters: {},
-    );
-
+    final uri = _baseUri.replace(path: '$_basePath/activemembers/groups/$pk/');
     final response = await _handleExceptions(() => _client.get(uri));
     return Group.fromJson(_jsonDecode(response));
   }
