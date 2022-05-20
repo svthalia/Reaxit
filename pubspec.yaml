@@ -27,7 +27,7 @@ dependencies:
   meta: ^1.7.0
 
   # Fonts.
-  google_fonts: ^2.1.0
+  google_fonts: ^3.0.0
 
   # DateTime formatting.
   intl: ^0.17.0
