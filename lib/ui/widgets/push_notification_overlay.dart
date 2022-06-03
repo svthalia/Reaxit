@@ -27,11 +27,7 @@ class PushNotificationOverlay extends StatelessWidget {
                       query: uri.query,
                     ).toString());
                   } else {
-                    await launch(
-                      uri.toString(),
-                      forceSafariVC: false,
-                      forceWebView: false,
-                    );
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
                   }
                 }
               : null,

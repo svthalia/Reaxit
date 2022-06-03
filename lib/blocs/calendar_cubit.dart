@@ -71,7 +71,7 @@ class CalendarEvent {
       return [
         CalendarEvent._(
           parentEvent: event,
-          title: event.title + ' day 1/$daySpan',
+          title: '${event.title} day 1/$daySpan',
           start: event.start,
           end: _addDays(startDate, 1),
           label: 'From $startTime | ${event.location}',
@@ -79,14 +79,14 @@ class CalendarEvent {
         for (var day in Iterable.generate(daySpan - 2, (i) => i + 2))
           CalendarEvent._(
             parentEvent: event,
-            title: event.title + ' day $day/$daySpan',
+            title: '${event.title} day $day/$daySpan',
             start: _addDays(startDate, day - 1),
             end: _addDays(startDate, day),
             label: event.location,
           ),
         CalendarEvent._(
           parentEvent: event,
-          title: event.title + ' day $daySpan/$daySpan',
+          title: '${event.title} day $daySpan/$daySpan',
           start: endDate,
           end: event.end,
           label: 'Until $endTime | ${event.location}',
@@ -219,12 +219,12 @@ class CalendarCubit extends Cubit<CalendarState> {
   }
 
   Future<void> more() async {
-    final _state = state;
+    final oldState = state;
 
     // Ignore calls to `more()` if there is no data, or already more coming.
-    if (_state.isDone || _state.isLoading || _state.isLoadingMore) return;
+    if (oldState.isDone || oldState.isLoading || oldState.isLoadingMore) return;
 
-    emit(_state.copyWith(isLoadingMore: true));
+    emit(oldState.copyWith(isLoadingMore: true));
     try {
       final query = _searchQuery;
       final start = query == null ? _lastLoadTime : null;
@@ -259,7 +259,7 @@ class CalendarCubit extends Cubit<CalendarState> {
       newEvents.sort((a, b) => a.start.compareTo(b.start));
 
       final events = [
-        ..._state.results,
+        ...oldState.results,
         ...newEvents,
       ];
 

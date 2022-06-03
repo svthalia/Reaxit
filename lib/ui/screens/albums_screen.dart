@@ -10,7 +10,7 @@ import 'package:reaxit/ui/widgets/menu_drawer.dart';
 
 class AlbumsScreen extends StatefulWidget {
   @override
-  _AlbumsScreenState createState() => _AlbumsScreenState();
+  State<AlbumsScreen> createState() => _AlbumsScreenState();
 }
 
 class _AlbumsScreenState extends State<AlbumsScreen> {

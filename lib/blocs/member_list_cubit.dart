@@ -66,12 +66,12 @@ class MemberListCubit extends Cubit<MemberListState> {
   }
 
   Future<void> more() async {
-    final _state = state;
+    final oldState = state;
 
     // Ignore calls to `more()` if there is no data, or already more coming.
-    if (_state.isDone || _state.isLoading || _state.isLoadingMore) return;
+    if (oldState.isDone || oldState.isLoading || oldState.isLoadingMore) return;
 
-    emit(_state.copyWith(isLoadingMore: true));
+    emit(oldState.copyWith(isLoadingMore: true));
     try {
       final query = _searchQuery;
 

@@ -15,7 +15,7 @@ class RegistrationScreen extends StatefulWidget {
       : super(key: ValueKey(registrationPk));
 
   @override
-  _RegistrationScreenState createState() => _RegistrationScreenState();
+  State<RegistrationScreen> createState() => _RegistrationScreenState();
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
@@ -95,7 +95,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               maxLines: 5,
                               decoration: InputDecoration(
                                 labelText: field.isRequired
-                                    ? field.label + ' *'
+                                    ? '${field.label} *'
                                     : field.label,
                                 hintText: 'Lorem ipsum...',
                               ),
@@ -134,7 +134,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               ],
                               decoration: InputDecoration(
                                 labelText: field.isRequired
-                                    ? field.label + ' *'
+                                    ? '${field.label} *'
                                     : field.label,
                                 hintText: '123...',
                               ),

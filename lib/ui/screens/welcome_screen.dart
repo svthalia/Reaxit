@@ -18,7 +18,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class WelcomeScreen extends StatefulWidget {
   @override
-  _WelcomeScreenState createState() => _WelcomeScreenState();
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
@@ -189,7 +189,7 @@ class SlidesCarousel extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _SlidesCarouselState createState() => _SlidesCarouselState();
+  State<SlidesCarousel> createState() => _SlidesCarouselState();
 }
 
 class _SlidesCarouselState extends State<SlidesCarousel> {
@@ -216,10 +216,9 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
             return InkWell(
               onTap: slide.url != null
                   ? () async {
-                      await launch(
-                        slide.url.toString(),
-                        forceSafariVC: false,
-                        forceWebView: false,
+                      await launchUrl(
+                        slide.url!,
+                        mode: LaunchMode.externalApplication,
                       );
                     }
                   : null,
