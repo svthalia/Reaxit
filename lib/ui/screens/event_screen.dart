@@ -29,7 +29,7 @@ class EventScreen extends StatefulWidget {
   EventScreen({required this.pk, this.event}) : super(key: ValueKey(pk));
 
   @override
-  _EventScreenState createState() => _EventScreenState();
+  State<EventScreen> createState() => _EventScreenState();
 }
 
 class _EventScreenState extends State<EventScreen> {
@@ -83,18 +83,15 @@ class _EventScreenState extends State<EventScreen> {
                 Uri url = Theme.of(context).platform == TargetPlatform.iOS
                     ? Uri(
                         scheme: 'maps',
-                        queryParameters: {'daddr': event.location})
+                        queryParameters: {'daddr': event.location},
+                      )
                     : Uri(
                         scheme: 'https',
                         host: 'maps.google.com',
                         path: 'maps',
                         queryParameters: {'daddr': event.location},
                       );
-                launch(
-                  url.toString(),
-                  forceSafariVC: false,
-                  forceWebView: false,
-                );
+                launchUrl(url, mode: LaunchMode.externalNonBrowserApplication);
               },
             ),
           ),
@@ -510,9 +507,10 @@ class _EventScreenState extends State<EventScreen> {
     return ElevatedButton.icon(
       onPressed: () async {
         try {
+          final calendarCubit = BlocProvider.of<CalendarCubit>(context);
           await _eventCubit.register();
           await _registrationsCubit.load();
-          BlocProvider.of<CalendarCubit>(context).load();
+          calendarCubit.load();
         } on ApiException {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             behavior: SnackBarBehavior.floating,
@@ -529,11 +527,12 @@ class _EventScreenState extends State<EventScreen> {
     return ElevatedButton.icon(
       onPressed: () async {
         try {
+          final calendarCubit = BlocProvider.of<CalendarCubit>(context);
           await _eventCubit.cancelRegistration(
             registrationPk: event.registration!.pk,
           );
           await _registrationsCubit.load();
-          BlocProvider.of<CalendarCubit>(context).load();
+          calendarCubit.load();
         } on ApiException {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             behavior: SnackBarBehavior.floating,
@@ -806,7 +805,7 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   TextSpan _makeTermsAndConditions(Event event) {
-    const url = config.termsAndConditionsUrl;
+    final url = config.termsAndConditionsUrl;
     return TextSpan(
       children: [
         const TextSpan(
@@ -817,15 +816,11 @@ class _EventScreenState extends State<EventScreen> {
           recognizer: TapGestureRecognizer()
             ..onTap = () async {
               try {
-                await launch(
-                  url,
-                  forceSafariVC: false,
-                  forceWebView: false,
-                );
+                await launchUrl(url, mode: LaunchMode.externalApplication);
               } catch (_) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   behavior: SnackBarBehavior.floating,
-                  content: Text('Could not open "$url".'),
+                  content: Text('Could not open "${url.toString()}".'),
                 ));
               }
             },
@@ -857,10 +852,9 @@ class _EventScreenState extends State<EventScreen> {
             return true;
           } else {
             try {
-              await launch(
-                url,
-                forceSafariVC: false,
-                forceWebView: false,
+              await launchUrl(
+                Uri.parse(url),
+                mode: LaunchMode.externalApplication,
               );
             } catch (_) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(

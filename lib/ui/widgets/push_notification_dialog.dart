@@ -36,11 +36,7 @@ class PushNotificationDialog extends StatelessWidget {
               if (isDeepLink(uri!)) {
                 context.go(Uri(path: uri.path, query: uri.query).toString());
               } else {
-                await launch(
-                  uri.toString(),
-                  forceSafariVC: false,
-                  forceWebView: false,
-                );
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
               }
             },
             child: const Text('OPEN'),

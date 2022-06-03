@@ -15,7 +15,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class CalendarScreen extends StatefulWidget {
   @override
-  _CalendarScreenState createState() => _CalendarScreenState();
+  State<CalendarScreen> createState() => _CalendarScreenState();
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
@@ -252,10 +252,6 @@ class CalendarScrollView extends StatelessWidget {
                   final dayGroupedEvents = _groupByDay(events);
                   final days = dayGroupedEvents.keys.toList();
 
-                  // TODO: StickyHeaders currently cause silent exceptions
-                  //  when they build. This is only visible while catching
-                  //  'All Exceptions', and does not affect the user. See
-                  //  https://github.com/fluttercommunity/flutter_sticky_headers/issues/39.
                   return StickyHeader(
                     header: SizedBox(
                       width: double.infinity,
@@ -385,10 +381,9 @@ class _EventCard extends StatelessWidget {
         child: InkWell(
           onTap: () {
             if (event.parentEvent is PartnerEvent) {
-              launch(
-                (event.parentEvent as PartnerEvent).url.toString(),
-                forceSafariVC: false,
-                forceWebView: false,
+              launchUrl(
+                (event.parentEvent as PartnerEvent).url,
+                mode: LaunchMode.externalApplication,
               );
             } else {
               context.pushNamed(
