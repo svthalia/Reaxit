@@ -276,12 +276,17 @@ class _FoodScreenState extends State<FoodScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Row(
+                        textBaseline: TextBaseline.alphabetic,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
                         children: [
-                          Text(
-                            order.product.name,
-                            style: Theme.of(context).textTheme.headline6,
+                          Expanded(
+                            child: Text(
+                              order.product.name,
+                              style: Theme.of(context).textTheme.headline6,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
                           ),
                           Text(
                             order.isPaid

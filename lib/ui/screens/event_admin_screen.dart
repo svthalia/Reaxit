@@ -126,6 +126,7 @@ class __RegistrationTileState extends State<_RegistrationTile> {
     final name = registration.member?.fullName ?? registration.name!;
 
     final presentCheckbox = Checkbox(
+      visualDensity: VisualDensity.compact,
       value: present,
       onChanged: (value) async {
         final oldValue = present;
@@ -222,7 +223,12 @@ class __RegistrationTileState extends State<_RegistrationTile> {
     }
 
     return ListTile(
-      title: Text(name, maxLines: 1),
+      horizontalTitleGap: 8,
+      title: Text(
+        name,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
