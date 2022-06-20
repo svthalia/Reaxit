@@ -91,7 +91,7 @@ dependencies:
   overlay_support: ^1.2.1
 
   # Sticky headers for calendar.
-  sticky_headers: ^0.2.0
+  sticky_headers: ^0.3.0
 
   # Predefined animations.
   animations: ^2.0.2
