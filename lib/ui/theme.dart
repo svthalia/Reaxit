@@ -102,19 +102,32 @@ TextTheme generatedTextTheme = TextTheme(
 );
 
 ThemeData lightBaseTheme = ThemeData.from(
+  useMaterial3: true,
   colorScheme: lightColorScheme,
   textTheme: generatedTextTheme,
 );
 
 ThemeData lightTheme = lightBaseTheme.copyWith(
-  primaryTextTheme:
-      ThemeData.light().primaryTextTheme.merge(generatedTextTheme),
-  floatingActionButtonTheme: lightBaseTheme.floatingActionButtonTheme.copyWith(
-    foregroundColor: Colors.white,
-  ),
+    primaryTextTheme: ThemeData.light().primaryTextTheme.merge(generatedTextTheme),
+    floatingActionButtonTheme: lightBaseTheme.floatingActionButtonTheme.copyWith(
+      foregroundColor: Colors.white,
+    ),
+    // The following 3 defs have been added since we going against Material 3's
+    // internal design philosophy, to match the original app.
+    //todo: Consider using their colour palette directly with seed colours
+    appBarTheme: AppBarTheme(backgroundColor: magenta, foregroundColor: Colors.white),
+    cardTheme: const CardTheme(surfaceTintColor: Colors.white),
+    elevatedButtonTheme:  ElevatedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(magenta),
+        foregroundColor: MaterialStateProperty.all<Color>(Colors.white)
+      )
+    )
 );
 
+
 ThemeData darkTheme = ThemeData.from(
+  useMaterial3: true,
   colorScheme: darkColorScheme,
   textTheme: generatedTextTheme,
 ).copyWith(
