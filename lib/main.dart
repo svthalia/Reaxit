@@ -272,6 +272,7 @@ class _ThaliAppState extends State<ThaliApp> {
             themeMode: themeMode,
             routerDelegate: _router.routerDelegate,
             routeInformationParser: _router.routeInformationParser,
+            routeInformationProvider: _router.routeInformationProvider,
           ),
         );
       },
