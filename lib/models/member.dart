@@ -4,7 +4,9 @@ import 'package:reaxit/models/photo.dart';
 part 'member.g.dart';
 
 enum Programme { computingscience, informationscience }
+
 enum MembershipType { member, benefactor, honorary }
+
 enum DisplayNamePreference {
   full,
   nickname,
