@@ -843,7 +843,8 @@ class _EventScreenState extends State<EventScreen> {
       child: HtmlWidget(
         event.description,
         onTapUrl: (String url) async {
-          final uri = Uri.parse(url);
+          Uri uri = Uri.parse(url);
+          if (uri.scheme.isEmpty) uri = uri.replace(scheme: 'https');
           if (isDeepLink(uri)) {
             context.go(Uri(
               path: uri.path,
@@ -852,10 +853,7 @@ class _EventScreenState extends State<EventScreen> {
             return true;
           } else {
             try {
-              await launchUrl(
-                Uri.parse(url),
-                mode: LaunchMode.externalApplication,
-              );
+              await launchUrl(uri, mode: LaunchMode.externalApplication);
             } catch (_) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 behavior: SnackBarBehavior.floating,

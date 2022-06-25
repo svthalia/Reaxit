@@ -14,6 +14,7 @@ class PushNotificationOverlay extends StatelessWidget {
     Uri? uri;
     if (message.data.containsKey('url') && message.data['url'] is String) {
       uri = Uri.tryParse(message.data['url'] as String);
+      if (uri?.scheme.isEmpty ?? false) uri = uri!.replace(scheme: 'https');
     }
 
     return SafeArea(

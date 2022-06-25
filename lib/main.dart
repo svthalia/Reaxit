@@ -68,8 +68,9 @@ class _ThaliAppState extends State<ThaliApp> {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       final navigatorKey = _router.routerDelegate.navigatorKey;
       if (message.data.containsKey('url') && message.data['url'] is String) {
-        final uri = Uri.tryParse(message.data['url'] as String);
+        Uri? uri = Uri.tryParse(message.data['url'] as String);
         if (uri != null) {
+          if (uri.scheme.isEmpty) uri = uri.replace(scheme: 'https');
           if (isDeepLink(uri)) {
             _router.go(Uri(
               path: uri.path,
@@ -95,8 +96,9 @@ class _ThaliAppState extends State<ThaliApp> {
       final navigatorKey = _router.routerDelegate.navigatorKey;
       final message = initialMessage;
       if (message.data.containsKey('url') && message.data['url'] is String) {
-        final uri = Uri.tryParse(message.data['url'] as String);
+        Uri? uri = Uri.tryParse(message.data['url'] as String);
         if (uri != null) {
+          if (uri.scheme.isEmpty) uri = uri.replace(scheme: 'https');
           if (isDeepLink(uri)) {
             _router.go(Uri(
               path: uri.path,
