@@ -136,7 +136,7 @@ class AuthCubit extends Cubit<AuthState> {
       }
     } else {
       // Clear username for sentry.
-      Sentry.configureScope((scope) => scope.user = null);
+      Sentry.configureScope((scope) => scope.setUser(null));
       emit(LoggedOutAuthState());
     }
   }
@@ -239,7 +239,7 @@ class AuthCubit extends Cubit<AuthState> {
     );
 
     // Clear username for sentry.
-    Sentry.configureScope((scope) => scope.user = null);
+    Sentry.configureScope((scope) => scope.setUser(null));
     emit(LoggedOutAuthState());
   }
 
