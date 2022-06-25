@@ -13,6 +13,7 @@ import 'package:reaxit/blocs/registrations_cubit.dart';
 import 'package:reaxit/blocs/welcome_cubit.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/payment.dart';
+import 'package:reaxit/routes.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/cached_image.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
@@ -847,17 +848,26 @@ class _EventScreenState extends State<EventScreen> {
       child: HtmlWidget(
         event.description,
         onTapUrl: (String url) async {
-          try {
-            await launch(
-              url,
-              forceSafariVC: false,
-              forceWebView: false,
-            );
-          } catch (_) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              behavior: SnackBarBehavior.floating,
-              content: Text('Could not open "$url".'),
-            ));
+          final uri = Uri.parse(url);
+          if (isDeepLink(uri)) {
+            context.go(Uri(
+              path: uri.path,
+              query: uri.query,
+            ).toString());
+            return true;
+          } else {
+            try {
+              await launch(
+                url,
+                forceSafariVC: false,
+                forceWebView: false,
+              );
+            } catch (_) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                behavior: SnackBarBehavior.floating,
+                content: Text('Could not open "$url".'),
+              ));
+            }
           }
           return true;
         },

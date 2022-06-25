@@ -8,6 +8,7 @@ import 'package:reaxit/blocs/welcome_cubit.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/frontpage_article.dart';
 import 'package:reaxit/models/slide.dart';
+import 'package:reaxit/routes.dart';
 import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/cached_image.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
@@ -55,7 +56,33 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             article.title.toUpperCase(),
             style: Theme.of(context).textTheme.subtitle1,
           ),
-          HtmlWidget(article.content),
+          HtmlWidget(
+            article.content,
+            onTapUrl: (String url) async {
+              final uri = Uri(path: url);
+              if (isDeepLink(uri)) {
+                context.go(Uri(
+                  path: uri.path,
+                  query: uri.query,
+                ).toString());
+                return true;
+              } else {
+                try {
+                  await launch(
+                    url,
+                    forceSafariVC: false,
+                    forceWebView: false,
+                  );
+                } catch (_) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    content: Text('Could not open "$url".'),
+                  ));
+                }
+                return true;
+              }
+            },
+          ),
         ],
       ),
     );
