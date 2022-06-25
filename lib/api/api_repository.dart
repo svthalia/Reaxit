@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:reaxit/models/album.dart';
 import 'package:reaxit/models/push_notification_category.dart';
 import 'package:reaxit/models/event.dart';
@@ -265,8 +263,8 @@ abstract class ApiRepository {
 
   /// Update the avatar of the logged in member.
   ///
-  /// `file` should be a jpg image.
-  Future<void> updateAvatar(File file);
+  /// `filePath` should be the path of a jpg image.
+  Future<void> updateAvatar(String file);
 
   /// Update the description of the logged in member.
   Future<void> updateDescription(String description);

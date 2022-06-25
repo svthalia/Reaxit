@@ -10,7 +10,7 @@ import 'package:reaxit/ui/widgets/menu_drawer.dart';
 
 class MembersScreen extends StatefulWidget {
   @override
-  _MembersScreenState createState() => _MembersScreenState();
+  State<MembersScreen> createState() => _MembersScreenState();
 }
 
 class _MembersScreenState extends State<MembersScreen> {

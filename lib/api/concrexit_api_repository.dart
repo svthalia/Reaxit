@@ -884,14 +884,14 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
-  Future<void> updateAvatar(File file) async {
+  Future<void> updateAvatar(String filePath) async {
     try {
       final uri = _baseUri.replace(path: '$_basePath/members/me/');
       final request = http.MultipartRequest('PATCH', uri);
       request.files.add(
         await http.MultipartFile.fromPath(
           'profile.photo',
-          file.path,
+          filePath,
           contentType: MediaType('image', 'jpeg'),
         ),
       );

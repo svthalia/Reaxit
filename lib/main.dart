@@ -46,7 +46,7 @@ Future<void> main() async {
 
 class ThaliApp extends StatefulWidget {
   @override
-  _ThaliAppState createState() => _ThaliAppState();
+  State<ThaliApp> createState() => _ThaliAppState();
 }
 
 class _ThaliAppState extends State<ThaliApp> {
@@ -76,11 +76,7 @@ class _ThaliAppState extends State<ThaliApp> {
               query: uri.query,
             ).toString());
           } else {
-            await launch(
-              uri.toString(),
-              forceSafariVC: false,
-              forceWebView: false,
-            );
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
           }
         }
       } else if (navigatorKey.currentContext != null) {
@@ -107,11 +103,7 @@ class _ThaliAppState extends State<ThaliApp> {
               query: uri.query,
             ).toString());
           } else {
-            await launch(
-              uri.toString(),
-              forceSafariVC: false,
-              forceWebView: false,
-            );
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
           }
         }
       } else if (navigatorKey.currentContext != null) {
@@ -280,6 +272,7 @@ class _ThaliAppState extends State<ThaliApp> {
             themeMode: themeMode,
             routerDelegate: _router.routerDelegate,
             routeInformationParser: _router.routeInformationParser,
+            routeInformationProvider: _router.routeInformationProvider,
           ),
         );
       },

@@ -299,10 +299,9 @@ class _AboutCard extends StatelessWidget {
             const SizedBox(height: 8),
             OutlinedButton.icon(
               onPressed: () async {
-                await launch(
-                  config.changelogUri.toString(),
-                  forceSafariVC: false,
-                  forceWebView: false,
+                await launchUrl(
+                  config.changelogUri,
+                  mode: LaunchMode.externalApplication,
                 );
               },
               icon: const Icon(Icons.history),
@@ -310,10 +309,9 @@ class _AboutCard extends StatelessWidget {
             ),
             OutlinedButton.icon(
               onPressed: () async {
-                await launch(
-                  config.feedbackUri.toString(),
-                  forceSafariVC: false,
-                  forceWebView: false,
+                await launchUrl(
+                  config.feedbackUri,
+                  mode: LaunchMode.externalApplication,
                 );
               },
               icon: const Icon(Icons.bug_report_outlined),

@@ -22,7 +22,7 @@ class ProfileScreen extends StatefulWidget {
   ProfileScreen({required this.pk, this.member}) : super(key: ValueKey(pk));
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
@@ -106,14 +106,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         final imagePath = pickedFile?.path;
                         if (imagePath == null) return;
                         final croppedFile = await ImageCropper().cropImage(
-                            sourcePath: imagePath,
-                            iosUiSettings: const IOSUiSettings(
-                              title: 'Crop',
-                            ),
-                            compressFormat: ImageCompressFormat.jpg);
+                          sourcePath: imagePath,
+                          uiSettings: [IOSUiSettings(title: 'Crop')],
+                          compressFormat: ImageCompressFormat.jpg,
+                        );
                         if (croppedFile == null) return;
                         final scaffoldMessenger = ScaffoldMessenger.of(context);
-                        // Not ThaliaRouterDelegate since this is a dialog.
                         Navigator.of(context).pop();
                         scaffoldMessenger.showSnackBar(const SnackBar(
                           behavior: SnackBarBehavior.floating,
@@ -163,15 +161,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         if (imagePath == null) return;
                         final croppedFile = await ImageCropper().cropImage(
                           sourcePath: imagePath,
-                          iosUiSettings: const IOSUiSettings(
-                            title: 'Crop',
-                          ),
+                          uiSettings: [IOSUiSettings(title: 'Crop')],
                         );
                         if (croppedFile == null) return;
-                        final scaffoldMessenger = ScaffoldMessenger.of(
-                          context,
-                        );
-                        // Not ThaliaRouterDelegate since this is a dialog.
+                        final scaffoldMessenger = ScaffoldMessenger.of(context);
                         Navigator.of(context).pop();
                         scaffoldMessenger.showSnackBar(const SnackBar(
                           behavior: SnackBarBehavior.floating,
@@ -308,13 +301,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   if (imagePath == null) return;
                   final croppedFile = await ImageCropper().cropImage(
                       sourcePath: imagePath,
-                      iosUiSettings: const IOSUiSettings(
-                        title: 'Crop',
-                      ),
+                      uiSettings: [IOSUiSettings(title: 'Crop')],
                       compressFormat: ImageCompressFormat.jpg);
                   if (croppedFile == null) return;
                   final scaffoldMessenger = ScaffoldMessenger.of(context);
-                  // Not ThaliaRouterDelegate since this is a dialog.
                   scaffoldMessenger.showSnackBar(const SnackBar(
                     behavior: SnackBarBehavior.floating,
                     content: Text(
@@ -363,14 +353,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   if (imagePath == null) return;
                   final croppedFile = await ImageCropper().cropImage(
                     sourcePath: imagePath,
-                    iosUiSettings: const IOSUiSettings(
-                      title: 'Crop',
-                    ),
+                    uiSettings: [IOSUiSettings(title: 'Crop')],
                   );
                   if (croppedFile == null) return;
-                  final scaffoldMessenger = ScaffoldMessenger.of(
-                    context,
-                  );
+                  final scaffoldMessenger = ScaffoldMessenger.of(context);
                   scaffoldMessenger.showSnackBar(const SnackBar(
                     behavior: SnackBarBehavior.floating,
                     content: Text(
@@ -473,10 +459,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         GestureDetector(
           onTap: member.website != null
               ? () async {
-                  await launch(
-                    member.website!.toString(),
-                    forceSafariVC: false,
-                    forceWebView: false,
+                  await launchUrl(
+                    member.website!,
+                    mode: LaunchMode.externalApplication,
                   );
                 }
               : null,

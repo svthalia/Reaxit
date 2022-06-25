@@ -14,7 +14,7 @@ class EventAdminScreen extends StatefulWidget {
   EventAdminScreen({required this.pk}) : super(key: ValueKey(pk));
 
   @override
-  _EventAdminScreenState createState() => _EventAdminScreenState();
+  State<EventAdminScreen> createState() => _EventAdminScreenState();
 }
 
 class _EventAdminScreenState extends State<EventAdminScreen> {

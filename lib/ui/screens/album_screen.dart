@@ -23,7 +23,7 @@ class AlbumScreen extends StatefulWidget {
   AlbumScreen({required this.slug, this.album}) : super(key: ValueKey(slug));
 
   @override
-  _AlbumScreenState createState() => _AlbumScreenState();
+  State<AlbumScreen> createState() => _AlbumScreenState();
 }
 
 class _AlbumScreenState extends State<AlbumScreen> {

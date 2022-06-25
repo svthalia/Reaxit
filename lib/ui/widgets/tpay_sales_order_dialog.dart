@@ -10,7 +10,7 @@ class TPaySalesOrderDialog extends StatefulWidget {
   TPaySalesOrderDialog({required this.pk}) : super(key: ValueKey(pk));
 
   @override
-  _TPaySalesOrderDialogState createState() => _TPaySalesOrderDialogState();
+  State<TPaySalesOrderDialog> createState() => _TPaySalesOrderDialogState();
 }
 
 class _TPaySalesOrderDialogState extends State<TPaySalesOrderDialog> {
