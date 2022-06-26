@@ -1,6 +1,7 @@
 ---
 name: Integration Testing
 on:
+  - push
   - workflow_dispatch
 
 jobs:
