@@ -44,6 +44,23 @@ Future<void> main() async {
   );
 }
 
+/// A copy of [main] that allows inserting an [AuthCubit] for integration tests.
+Future<void> testingMain(AuthCubit? authCubit) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await Firebase.initializeApp();
+  runApp(BlocProvider(
+    create: (_) => ThemeCubit()..load(),
+    lazy: false,
+    child: authCubit == null
+        ? BlocProvider(
+            create: (context) => AuthCubit()..load(),
+            child: ThaliApp(),
+          )
+        : BlocProvider.value(value: authCubit..load(), child: ThaliApp()),
+  ));
+}
+
 class ThaliApp extends StatefulWidget {
   @override
   State<ThaliApp> createState() => _ThaliAppState();
