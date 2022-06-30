@@ -44,6 +44,23 @@ Future<void> main() async {
   );
 }
 
+/// A copy of [main] that allows inserting an [AuthCubit] for integration tests.
+Future<void> testingMain(AuthCubit? authCubit) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await Firebase.initializeApp();
+  runApp(BlocProvider(
+    create: (_) => ThemeCubit()..load(),
+    lazy: false,
+    child: authCubit == null
+        ? BlocProvider(
+            create: (context) => AuthCubit()..load(),
+            child: ThaliApp(),
+          )
+        : BlocProvider.value(value: authCubit..load(), child: ThaliApp()),
+  ));
+}
+
 class ThaliApp extends StatefulWidget {
   @override
   State<ThaliApp> createState() => _ThaliAppState();
@@ -68,8 +85,9 @@ class _ThaliAppState extends State<ThaliApp> {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       final navigatorKey = _router.routerDelegate.navigatorKey;
       if (message.data.containsKey('url') && message.data['url'] is String) {
-        final uri = Uri.tryParse(message.data['url'] as String);
+        Uri? uri = Uri.tryParse(message.data['url'] as String);
         if (uri != null) {
+          if (uri.scheme.isEmpty) uri = uri.replace(scheme: 'https');
           if (isDeepLink(uri)) {
             _router.go(Uri(
               path: uri.path,
@@ -95,8 +113,9 @@ class _ThaliAppState extends State<ThaliApp> {
       final navigatorKey = _router.routerDelegate.navigatorKey;
       final message = initialMessage;
       if (message.data.containsKey('url') && message.data['url'] is String) {
-        final uri = Uri.tryParse(message.data['url'] as String);
+        Uri? uri = Uri.tryParse(message.data['url'] as String);
         if (uri != null) {
+          if (uri.scheme.isEmpty) uri = uri.replace(scheme: 'https');
           if (isDeepLink(uri)) {
             _router.go(Uri(
               path: uri.path,

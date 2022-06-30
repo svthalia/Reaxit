@@ -59,7 +59,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           HtmlWidget(
             article.content,
             onTapUrl: (String url) async {
-              final uri = Uri(path: url);
+              Uri uri = Uri(path: url);
+              if (uri.scheme.isEmpty) uri = uri.replace(scheme: 'https');
               if (isDeepLink(uri)) {
                 context.go(Uri(
                   path: uri.path,
@@ -68,10 +69,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 return true;
               } else {
                 try {
-                  await launchUrl(
-                    Uri.parse(url),
-                    mode: LaunchMode.externalApplication,
-                  );
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
                 } catch (_) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     behavior: SnackBarBehavior.floating,

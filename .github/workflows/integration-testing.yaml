@@ -1,0 +1,31 @@
+---
+name: Integration Testing
+on:
+  - push
+  - workflow_dispatch
+
+jobs:
+  integration-testing:
+    name: Testing
+    runs-on: macos-latest
+    steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.0.2
+          channel: stable
+          cache: true
+          
+      - name: Flutter version
+        run: flutter --version
+
+      - name: Run integration tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 31
+          arch: x86_64
+          profile: Nexus 6
+          script: flutter test -r expanded integration_test

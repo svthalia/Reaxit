@@ -18,7 +18,7 @@ class FullMemberCubit extends Cubit<FullMemberState> {
       final member = await api.getMe();
       // Set username for sentry.
       Sentry.configureScope(
-        (scope) => scope.user = SentryUser(username: member.displayName),
+        (scope) => scope.setUser(SentryUser(username: member.displayName)),
       );
       emit(FullMemberState.result(result: member));
     } on ApiException catch (exception) {

@@ -29,7 +29,6 @@ bool isDeepLink(Uri uri) {
 final List<RegExp> _deepLinkRegExps = <RegExp>[
   RegExp('^/\$'),
   RegExp('^/pizzas/?\$'),
-  RegExp('^/pizzas/?\$'),
   RegExp('^/events/?\$'),
   RegExp('^/events/([0-9]+)/?\$'),
   RegExp('^/members/photos/([a-z0-9-_]+)/?\$'),
