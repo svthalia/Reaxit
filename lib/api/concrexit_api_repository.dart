@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
@@ -191,13 +192,17 @@ class ConcrexitApiRepository implements ApiRepository {
       );
 
       final response = await _handleExceptions(() => _client.get(uri));
-      return ListResponse<Event>.fromJson(
-        _jsonDecode(response),
-        (json) => Event.fromJson(json as Map<String, dynamic>),
-      );
+      return await compute(_parseEvents, response);
     } catch (e) {
       _catch(e);
     }
+  }
+
+  static ListResponse<Event> _parseEvents(Response response) {
+    return ListResponse<Event>.fromJson(
+      _jsonDecode(response),
+      (json) => Event.fromJson(json as Map<String, dynamic>),
+    );
   }
 
   @override
@@ -227,13 +232,17 @@ class ConcrexitApiRepository implements ApiRepository {
       );
 
       final response = await _handleExceptions(() => _client.get(uri));
-      return ListResponse<PartnerEvent>.fromJson(
-        _jsonDecode(response),
-        (json) => PartnerEvent.fromJson(json as Map<String, dynamic>),
-      );
+      return await compute(_parsePartnerEvents, response);
     } catch (e) {
       _catch(e);
     }
+  }
+
+  static ListResponse<PartnerEvent> _parsePartnerEvents(Response response) {
+    return ListResponse<PartnerEvent>.fromJson(
+      _jsonDecode(response),
+      (json) => PartnerEvent.fromJson(json as Map<String, dynamic>),
+    );
   }
 
   @override
@@ -252,13 +261,19 @@ class ConcrexitApiRepository implements ApiRepository {
       );
 
       final response = await _handleExceptions(() => _client.get(uri));
-      return ListResponse<EventRegistration>.fromJson(
-        _jsonDecode(response),
-        (json) => EventRegistration.fromJson(json as Map<String, dynamic>),
-      );
+      return await compute(_parseEventRegistrations, response);
     } catch (e) {
       _catch(e);
     }
+  }
+
+  static ListResponse<EventRegistration> _parseEventRegistrations(
+    Response response,
+  ) {
+    return ListResponse<EventRegistration>.fromJson(
+      _jsonDecode(response),
+      (json) => EventRegistration.fromJson(json as Map<String, dynamic>),
+    );
   }
 
   @override
@@ -361,13 +376,19 @@ class ConcrexitApiRepository implements ApiRepository {
         },
       );
       final response = await _handleExceptions(() => _client.get(uri));
-      return ListResponse<AdminEventRegistration>.fromJson(
-        _jsonDecode(response),
-        (json) => AdminEventRegistration.fromJson(json as Map<String, dynamic>),
-      );
+      return await compute(_parseAdminEventRegistrations, response);
     } catch (e) {
       _catch(e);
     }
+  }
+
+  static ListResponse<AdminEventRegistration> _parseAdminEventRegistrations(
+    Response response,
+  ) {
+    return ListResponse<AdminEventRegistration>.fromJson(
+      _jsonDecode(response),
+      (json) => AdminEventRegistration.fromJson(json as Map<String, dynamic>),
+    );
   }
 
   @override
@@ -459,13 +480,17 @@ class ConcrexitApiRepository implements ApiRepository {
         },
       );
       final response = await _handleExceptions(() => _client.get(uri));
-      return ListResponse<AdminFoodOrder>.fromJson(
-        _jsonDecode(response),
-        (json) => AdminFoodOrder.fromJson(json as Map<String, dynamic>),
-      );
+      return await compute(_parseAdminFoodOrders, response);
     } catch (e) {
       _catch(e);
     }
+  }
+
+  static ListResponse<AdminFoodOrder> _parseAdminFoodOrders(Response response) {
+    return ListResponse<AdminFoodOrder>.fromJson(
+      _jsonDecode(response),
+      (json) => AdminFoodOrder.fromJson(json as Map<String, dynamic>),
+    );
   }
 
   @override
@@ -563,13 +588,17 @@ class ConcrexitApiRepository implements ApiRepository {
       );
 
       final response = await _handleExceptions(() => _client.get(uri));
-      return ListResponse<FoodEvent>.fromJson(
-        _jsonDecode(response),
-        (json) => FoodEvent.fromJson(json as Map<String, dynamic>),
-      );
+      return await compute(_parseFoodEvents, response);
     } catch (e) {
       _catch(e);
     }
+  }
+
+  static ListResponse<FoodEvent> _parseFoodEvents(Response response) {
+    return ListResponse<FoodEvent>.fromJson(
+      _jsonDecode(response),
+      (json) => FoodEvent.fromJson(json as Map<String, dynamic>),
+    );
   }
 
   @override
@@ -716,13 +745,17 @@ class ConcrexitApiRepository implements ApiRepository {
       );
 
       final response = await _handleExceptions(() => _client.get(uri));
-      return ListResponse<Product>.fromJson(
-        _jsonDecode(response),
-        (json) => Product.fromJson(json as Map<String, dynamic>),
-      );
+      return await compute(_parseFoodEventProducts, response);
     } catch (e) {
       _catch(e);
     }
+  }
+
+  static ListResponse<Product> _parseFoodEventProducts(Response response) {
+    return ListResponse<Product>.fromJson(
+      _jsonDecode(response),
+      (json) => Product.fromJson(json as Map<String, dynamic>),
+    );
   }
 
   Future<Payable> _getPayable({
@@ -861,13 +894,17 @@ class ConcrexitApiRepository implements ApiRepository {
       );
 
       final response = await _handleExceptions(() => _client.get(uri));
-      return ListResponse<ListMember>.fromJson(
-        _jsonDecode(response),
-        (json) => ListMember.fromJson(json as Map<String, dynamic>),
-      );
+      return await compute(_parseMembers, response);
     } catch (e) {
       _catch(e);
     }
+  }
+
+  static ListResponse<ListMember> _parseMembers(Response response) {
+    return ListResponse<ListMember>.fromJson(
+      _jsonDecode(response),
+      (json) => ListMember.fromJson(json as Map<String, dynamic>),
+    );
   }
 
   @override
@@ -945,13 +982,17 @@ class ConcrexitApiRepository implements ApiRepository {
       );
 
       final response = await _handleExceptions(() => _client.get(uri));
-      return ListResponse<ListAlbum>.fromJson(
-        _jsonDecode(response),
-        (json) => ListAlbum.fromJson(json as Map<String, dynamic>),
-      );
+      return await compute(_parseAlbums, response);
     } catch (e) {
       _catch(e);
     }
+  }
+
+  static ListResponse<ListAlbum> _parseAlbums(Response response) {
+    return ListResponse<ListAlbum>.fromJson(
+      _jsonDecode(response),
+      (json) => ListAlbum.fromJson(json as Map<String, dynamic>),
+    );
   }
 
   @override
@@ -969,13 +1010,17 @@ class ConcrexitApiRepository implements ApiRepository {
       );
 
       final response = await _handleExceptions(() => _client.get(uri));
-      return ListResponse<Slide>.fromJson(
-        _jsonDecode(response),
-        (json) => Slide.fromJson(json as Map<String, dynamic>),
-      );
+      return await compute(_parseSlides, response);
     } catch (e) {
       _catch(e);
     }
+  }
+
+  static ListResponse<Slide> _parseSlides(Response response) {
+    return ListResponse<Slide>.fromJson(
+      _jsonDecode(response),
+      (json) => Slide.fromJson(json as Map<String, dynamic>),
+    );
   }
 
   @override
@@ -993,13 +1038,19 @@ class ConcrexitApiRepository implements ApiRepository {
       );
 
       final response = await _handleExceptions(() => _client.get(uri));
-      return ListResponse<FrontpageArticle>.fromJson(
-        _jsonDecode(response),
-        (json) => FrontpageArticle.fromJson(json as Map<String, dynamic>),
-      );
+      return await compute(_parseFrontpageArticles, response);
     } catch (e) {
       _catch(e);
     }
+  }
+
+  static ListResponse<FrontpageArticle> _parseFrontpageArticles(
+    Response response,
+  ) {
+    return ListResponse<FrontpageArticle>.fromJson(
+      _jsonDecode(response),
+      (json) => FrontpageArticle.fromJson(json as Map<String, dynamic>),
+    );
   }
 
   @override
@@ -1088,19 +1139,20 @@ class ConcrexitApiRepository implements ApiRepository {
     try {
       final uri = _uri(path: '/pushnotifications/categories/');
       final response = await _handleExceptions(() => _client.get(uri));
-      return ListResponse<PushNotificationCategory>.fromJson(
-        _jsonDecode(response),
-        (json) => PushNotificationCategory.fromJson(
-          json as Map<String, dynamic>,
-        ),
-      );
+      return await compute(_parseCategories, response);
     } catch (e) {
       _catch(e);
     }
   }
-// TODO: Someday: move json parsing of lists into isolates?
-// TODO: Someday: change ApiException to a class that can contain a string?
-//  We can then display more specific error messages to the user based on
-//  the message returned from the server, instead of only the status code.
-//  This may especially be useful for the sales order payments.
+
+  static ListResponse<PushNotificationCategory> _parseCategories(
+    Response response,
+  ) {
+    return ListResponse<PushNotificationCategory>.fromJson(
+      _jsonDecode(response),
+      (json) => PushNotificationCategory.fromJson(
+        json as Map<String, dynamic>,
+      ),
+    );
+  }
 }
