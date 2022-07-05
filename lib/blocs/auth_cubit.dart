@@ -11,6 +11,7 @@ import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/concrexit_api_repository.dart';
+import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';

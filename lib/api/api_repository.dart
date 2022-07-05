@@ -14,14 +14,7 @@ import 'package:reaxit/models/product.dart';
 import 'package:reaxit/models/registration_field.dart';
 import 'package:reaxit/models/slide.dart';
 import 'package:reaxit/models/device.dart';
-
-enum ApiException {
-  notFound,
-  notAllowed,
-  noInternet,
-  notLoggedIn,
-  unknownError,
-}
+import 'package:reaxit/api/exceptions.dart';
 
 /// Provides an interface to the api.
 ///

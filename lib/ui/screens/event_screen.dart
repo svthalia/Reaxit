@@ -6,6 +6,7 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs/calendar_cubit.dart';
 import 'package:reaxit/blocs/event_cubit.dart';
 import 'package:reaxit/blocs/payment_user_cubit.dart';

@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/models/album.dart';
 import 'package:reaxit/models/push_notification_category.dart';
@@ -76,21 +77,31 @@ class ConcrexitApiRepository implements ApiRepository {
   /// A wrapper for requests that throws only [ApiException]s.
   ///
   /// Translates exceptions that can be thrown by [oauth2.Client.send()],
-  /// and throws exceptions based on status codes.
+  /// and throws exceptions based on status codes. By default, all status codes
+  /// other than 200, 201 and 204 result in an [ApiException], but this can be
+  /// overridden with `allowedStatusCodes`.
   ///
-  /// Can be called for example as
+  /// Can be called for example as:
   /// ```dart
   /// final response = await _handleExceptions(() => client.get(uri));
   /// ```
+  ///
+  /// If you want to manually handle for example 403s, you can use:
+  /// ```dart
+  /// final response = await _handleExceptions(
+  ///   () => client.get(uri),
+  ///   allowedStatusCodes: [200, 403],
+  /// );
+  /// // Use `response.statusCode` here to handle 403.
+  /// ```
   Future<Response> _handleExceptions(
-      Future<Response> Function() request) async {
+    Future<Response> Function() request, {
+    List<int> allowedStatusCodes = const [200, 201, 204],
+  }) async {
     try {
       final response = await request();
+      if (allowedStatusCodes.contains(response.statusCode)) return response;
       switch (response.statusCode) {
-        case 200:
-        case 201:
-        case 204:
-          return response;
         case 401:
           _onLogOut();
           throw ApiException.notLoggedIn;
