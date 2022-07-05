@@ -22,6 +22,7 @@ import 'package:reaxit/models/payment.dart';
 import 'package:reaxit/models/payment_user.dart';
 import 'package:reaxit/models/product.dart';
 import 'package:reaxit/models/registration_field.dart';
+import 'package:reaxit/models/sales_order.dart';
 import 'package:reaxit/models/slide.dart';
 import 'package:reaxit/models/device.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -1165,5 +1166,31 @@ class ConcrexitApiRepository implements ApiRepository {
         json as Map<String, dynamic>,
       ),
     );
+  }
+
+  @override
+  Future<SalesOrder> claimSalesOrder({required String pk}) async {
+    try {
+      final uri = _uri(path: '/sales/orders/$pk/claim/');
+      final response = await _handleExceptions(
+        () => _client.patch(uri),
+        allowedStatusCodes: [200, 201, 204, 403],
+      );
+      if (response.statusCode == 403) {
+        final String reason = _jsonDecode(response)['detail'] as String;
+        throw ApiException.message(reason);
+      } else {
+        final order = SalesOrder.fromJson(_jsonDecode(response));
+        try {
+          await getSalesOrderPayable(salesOrderPk: pk);
+          order.tpayAllowed = true;
+        } on ApiException catch (exception) {
+          if (exception != ApiException.notAllowed) rethrow;
+        }
+        return order;
+      }
+    } catch (e) {
+      _catch(e);
+    }
   }
 }
