@@ -22,7 +22,10 @@ class RegistrationFieldsCubit extends Cubit<RegistrationFieldsState> {
       emit(RegistrationFieldsState.result(result: fields));
     } on ApiException catch (exception) {
       emit(RegistrationFieldsState.failure(
-        message: _failureMessage(exception),
+        message: exception.getMessage(
+          notFound: 'The registration does not '
+              'exist or does not have any fields.',
+        ),
       ));
     }
   }
@@ -37,16 +40,5 @@ class RegistrationFieldsCubit extends Cubit<RegistrationFieldsState> {
       registrationPk: registrationPk,
       fields: fields,
     );
-  }
-
-  String _failureMessage(ApiException exception) {
-    switch (exception) {
-      case ApiException.noInternet:
-        return 'Not connected to the internet.';
-      case ApiException.notFound:
-        return 'The registration does not exist or does not have any fields.';
-      default:
-        return 'An unknown error occurred.';
-    }
   }
 }

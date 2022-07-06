@@ -17,16 +17,7 @@ class PaymentUserCubit extends Cubit<PaymentUserState> {
       final paymentUser = await api.getPaymentUser();
       emit(PaymentUserState.result(result: paymentUser));
     } on ApiException catch (exception) {
-      emit(PaymentUserState.failure(message: _failureMessage(exception)));
-    }
-  }
-
-  String _failureMessage(ApiException exception) {
-    switch (exception) {
-      case ApiException.noInternet:
-        return 'Not connected to the internet.';
-      default:
-        return 'An unknown error occurred.';
+      emit(PaymentUserState.failure(message: exception.message));
     }
   }
 }

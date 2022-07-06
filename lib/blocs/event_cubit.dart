@@ -22,7 +22,9 @@ class EventCubit extends Cubit<EventState> {
       final event = await api.getEvent(pk: eventPk);
       emit(EventState.result(result: event));
     } on ApiException catch (exception) {
-      emit(EventState.failure(message: _failureMessage(exception)));
+      emit(EventState.failure(
+        message: exception.getMessage(notFound: 'The event does not exist.'),
+      ));
     }
   }
 
@@ -57,16 +59,5 @@ class EventCubit extends Cubit<EventState> {
   }) async {
     await api.thaliaPayRegistration(registrationPk: registrationPk);
     await load();
-  }
-
-  String _failureMessage(ApiException exception) {
-    switch (exception) {
-      case ApiException.noInternet:
-        return 'Not connected to the internet.';
-      case ApiException.notFound:
-        return 'The event does not exist.';
-      default:
-        return 'An unknown error occurred.';
-    }
   }
 }

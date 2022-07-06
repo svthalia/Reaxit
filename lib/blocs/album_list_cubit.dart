@@ -62,7 +62,7 @@ class AlbumListCubit extends Cubit<AlbumListState> {
         ));
       }
     } on ApiException catch (exception) {
-      emit(AlbumListState.failure(message: _failureMessage(exception)));
+      emit(AlbumListState.failure(message: exception.message));
     }
   }
 
@@ -97,7 +97,7 @@ class AlbumListCubit extends Cubit<AlbumListState> {
         isDone: isDone,
       ));
     } on ApiException catch (exception) {
-      emit(AlbumListState.failure(message: _failureMessage(exception)));
+      emit(AlbumListState.failure(message: exception.message));
     }
   }
 
@@ -114,15 +114,6 @@ class AlbumListCubit extends Cubit<AlbumListState> {
       } else {
         _searchDebounceTimer = Timer(config.searchDebounceTime, load);
       }
-    }
-  }
-
-  String _failureMessage(ApiException exception) {
-    switch (exception) {
-      case ApiException.noInternet:
-        return 'Not connected to the internet.';
-      default:
-        return 'An unknown error occurred.';
     }
   }
 }

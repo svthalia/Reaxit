@@ -134,20 +134,11 @@ class SettingsCubit extends Cubit<SettingsState> {
         ));
       }
     } on ApiException catch (exception) {
-      emit(SettingsState.failure(message: _failureMessage(exception)));
+      emit(SettingsState.failure(message: exception.message));
     } catch (_) {
       emit(const SettingsState.failure(
         message: 'An unknown exception occurred',
       ));
-    }
-  }
-
-  String _failureMessage(ApiException exception) {
-    switch (exception) {
-      case ApiException.noInternet:
-        return 'Not connected to the internet.';
-      default:
-        return 'An unknown error occurred.';
     }
   }
 }

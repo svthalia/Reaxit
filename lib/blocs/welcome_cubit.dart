@@ -100,16 +100,7 @@ class WelcomeCubit extends Cubit<WelcomeState> {
         upcomingEvents: eventsResponse.results,
       ));
     } on ApiException catch (exception) {
-      emit(WelcomeState.failure(message: _failureMessage(exception)));
-    }
-  }
-
-  String _failureMessage(ApiException exception) {
-    switch (exception) {
-      case ApiException.noInternet:
-        return 'Not connected to the internet.';
-      default:
-        return 'An unknown error occurred.';
+      emit(WelcomeState.failure(message: exception.message));
     }
   }
 }

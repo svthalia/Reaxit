@@ -215,7 +215,7 @@ class CalendarCubit extends Cubit<CalendarState> {
         emit(CalendarState.success(results: events, isDone: isDone));
       }
     } on ApiException catch (exception) {
-      emit(CalendarState.failure(message: _failureMessage(exception)));
+      emit(CalendarState.failure(message: exception.message));
     }
   }
 
@@ -277,7 +277,7 @@ class CalendarCubit extends Cubit<CalendarState> {
 
       emit(CalendarState.success(results: events, isDone: isDone));
     } on ApiException catch (exception) {
-      emit(CalendarState.failure(message: _failureMessage(exception)));
+      emit(CalendarState.failure(message: exception.message));
     }
   }
 
@@ -294,15 +294,6 @@ class CalendarCubit extends Cubit<CalendarState> {
       } else {
         _searchDebounceTimer = Timer(config.searchDebounceTime, load);
       }
-    }
-  }
-
-  String _failureMessage(ApiException exception) {
-    switch (exception) {
-      case ApiException.noInternet:
-        return 'Not connected to the internet.';
-      default:
-        return 'An unknown error occurred.';
     }
   }
 }

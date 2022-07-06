@@ -118,7 +118,9 @@ class EventAdminCubit extends Cubit<EventAdminState> {
         ));
       }
     } on ApiException catch (exception) {
-      emit(EventAdminState.failure(message: _failureMessage(exception)));
+      emit(EventAdminState.failure(
+        message: exception.getMessage(notFound: 'The event does not exist.'),
+      ));
     }
   }
 
@@ -158,7 +160,9 @@ class EventAdminCubit extends Cubit<EventAdminState> {
           ));
         }
       } on ApiException catch (exception) {
-        emit(EventAdminState.failure(message: _failureMessage(exception)));
+        emit(EventAdminState.failure(
+          message: exception.getMessage(notFound: 'The event does not exist.'),
+        ));
       }
     } else {
       load();
@@ -260,17 +264,6 @@ class EventAdminCubit extends Cubit<EventAdminState> {
       } else {
         await load();
       }
-    }
-  }
-
-  String _failureMessage(ApiException exception) {
-    switch (exception) {
-      case ApiException.noInternet:
-        return 'Not connected to the internet.';
-      case ApiException.notFound:
-        return 'The event does not exist.';
-      default:
-        return 'An unknown error occurred.';
     }
   }
 }
