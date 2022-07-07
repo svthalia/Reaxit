@@ -44,8 +44,8 @@ const List<String> oauthScopes = [
   'payments:write',
   'payments:admin',
   'partners:read',
-  // 'sales:read',
-  // 'sales:write',
+  'sales:read',
+  'sales:order',
 ];
 
 const Duration searchDebounceTime = Duration(milliseconds: 200);
@@ -61,7 +61,11 @@ final Uri changelogUri = Uri.parse(
 );
 
 final Uri termsAndConditionsUrl = Uri.parse(
-  'https://staging.thalia.nu/event-registration-terms/',
+  'https://$apiHost/event-registration-terms/',
+);
+
+final Uri tpaySignDirectDebitMandateUrl = Uri.parse(
+  'https://$apiHost/user/finance/accounts/add/',
 );
 
 /// The period after which objects are removed from the cache when not used.
