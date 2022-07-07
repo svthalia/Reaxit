@@ -17,6 +17,7 @@ import 'package:reaxit/ui/screens/profile_screen.dart';
 import 'package:reaxit/ui/screens/registration_screen.dart';
 import 'package:reaxit/ui/screens/settings_screen.dart';
 import 'package:reaxit/ui/screens/welcome_screen.dart';
+import 'package:reaxit/ui/widgets/sales_order_dialog.dart';
 
 /// Returns true if [uri] is a deep link that can be handled by the app.
 bool isDeepLink(Uri uri) {
@@ -32,25 +33,53 @@ final List<RegExp> _deepLinkRegExps = <RegExp>[
   RegExp('^/events/?\$'),
   RegExp('^/events/([0-9]+)/?\$'),
   RegExp('^/members/photos/([a-z0-9-_]+)/?\$'),
+  RegExp('^/sales/order/([a-z0-9]{8}-([a-z0-9]{4}-){3}-[a-z0-9]{12})/pay/?\$'),
 ];
 
 final List<GoRoute> routes = [
-  GoRoute(path: '/', redirect: (_) => '/welcome'),
   GoRoute(
-    path: '/welcome',
-    name: 'welcome',
-    pageBuilder: (context, state) => CustomTransitionPage(
-      key: state.pageKey,
-      child: WelcomeScreen(),
-      transitionDuration: const Duration(milliseconds: 200),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(
-          opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
-          child: child,
-        );
-      },
-    ),
-  ),
+      path: '/',
+      name: 'welcome',
+      pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: WelcomeScreen(),
+            transitionDuration: const Duration(milliseconds: 200),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
+                child: child,
+              );
+            },
+          ),
+      routes: [
+        GoRoute(
+          path: 'sales/order/:pk/pay',
+          name: 'sales-order-pay',
+          pageBuilder: (context, state) {
+            return CustomTransitionPage(
+              barrierColor: Colors.black54,
+              opaque: false,
+              transitionDuration: const Duration(milliseconds: 150),
+              transitionsBuilder: (
+                context,
+                animation,
+                secondaryAnimation,
+                child,
+              ) {
+                return FadeTransition(
+                  opacity: CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeOut,
+                  ),
+                  child: child,
+                );
+              },
+              child: SalesOrderDialog(pk: state.params['pk']!),
+            );
+          },
+        ),
+      ]),
   GoRoute(
     path: '/events',
     name: 'calendar',
@@ -180,29 +209,30 @@ final List<GoRoute> routes = [
     ),
   ),
   GoRoute(
-      path: '/pizzas',
-      name: 'food',
-      pageBuilder: (context, state) {
-        return MaterialPage(
+    path: '/pizzas',
+    name: 'food',
+    pageBuilder: (context, state) {
+      return MaterialPage(
+        key: state.pageKey,
+        child: FoodScreen(
+          pk: (state.extra as Event?)?.foodEvent,
+          event: state.extra as Event?,
+        ),
+      );
+    },
+    routes: [
+      GoRoute(
+        path: 'admin',
+        name: 'food-admin',
+        pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
-          child: FoodScreen(
-            pk: (state.extra as Event?)?.foodEvent,
-            event: state.extra as Event?,
-          ),
-        );
-      },
-      routes: [
-        GoRoute(
-          path: 'admin',
-          name: 'food-admin',
-          pageBuilder: (context, state) => MaterialPage(
-            key: state.pageKey,
-            child: FoodAdminScreen(
-              pk: state.extra as int,
-            ),
+          child: FoodAdminScreen(
+            pk: state.extra as int,
           ),
         ),
-      ]),
+      ),
+    ],
+  ),
   GoRoute(
     path: '/login',
     name: 'login',

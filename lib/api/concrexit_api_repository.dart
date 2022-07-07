@@ -1089,7 +1089,7 @@ class ConcrexitApiRepository implements ApiRepository {
   @override
   Future<SalesOrder> claimSalesOrder({required String pk}) async {
     return sandbox(() async {
-      final uri = _uri(path: '/sales/orders/$pk/claim/');
+      final uri = _uri(path: '/sales/order/$pk/claim/');
       final response = await _handleExceptions(
         () => _client.patch(uri),
         allowedStatusCodes: [200, 201, 204, 403],
