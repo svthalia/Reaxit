@@ -5,6 +5,8 @@ import 'package:http/http.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/config.dart' as config;
+import 'package:reaxit/models/list_response.dart';
+import 'package:reaxit/tosti/models.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class TostiApiRepository {
@@ -132,4 +134,127 @@ class TostiApiRepository {
     }
   }
 
+  /// Get the logged in [TostiUser].
+  Future<TostiUser> getMe() {
+    return sandbox(() async {
+      final uri = _uri(path: '/users/me/');
+      final response = await _handleExceptions(() => _client.get(uri));
+      return TostiUser.fromJson(_jsonDecode(response));
+    });
+  }
+
+  /// Get a list of [TostiShift]s.
+  ///
+  /// Use `limit` and `offset` for pagination. The other
+  /// parameters can be used to filter the results.
+  Future<ListResponse<TostiShift>> getShifts({
+    int? limit,
+    int? offset,
+    DateTime? startLTE,
+    DateTime? startGTE,
+    DateTime? endLTE,
+    DateTime? endGTE,
+    int? venue,
+    bool? canOrder,
+    bool? finalized,
+    int? assignee,
+  }) {
+    return sandbox(() async {
+      final uri = _uri(
+        path: '/shifts/',
+        query: {
+          if (limit != null) 'limit': limit.toString(),
+          if (offset != null) 'offset': offset.toString(),
+          if (startLTE != null) 'start__lte': startLTE.toIso8601String(),
+          if (startGTE != null) 'start__gte': startGTE.toIso8601String(),
+          if (endLTE != null) 'end__lte': endLTE.toIso8601String(),
+          if (endGTE != null) 'end__gte': endGTE.toIso8601String(),
+          if (venue != null) 'venue': venue.toString(),
+          if (canOrder != null) 'can_order': canOrder.toString(),
+          if (finalized != null) 'finalized': finalized.toString(),
+          if (assignee != null) 'assignees': assignee.toString(),
+        },
+      );
+      final response = await _handleExceptions(() => _client.get(uri));
+      return ListResponse<TostiShift>.fromJson(
+        _jsonDecode(response),
+        (json) => TostiShift.fromJson(json as Map<String, dynamic>),
+      );
+    });
+  }
+
+  /// Get the [TostiShift] with the `pk`.
+  Future<TostiShift> getShift(int pk) {
+    return sandbox(() async {
+      final uri = _uri(path: '/shifts/$pk/');
+      final response = await _handleExceptions(() => _client.get(uri));
+      return TostiShift.fromJson(_jsonDecode(response));
+    });
+  }
+
+  /// Get a list of [TostiVenue]s.
+  ///
+  /// Use `limit` and `offset` for pagination. You can also filter on
+  /// `canBeReserved` and search with `search`.
+  Future<ListResponse<TostiVenue>> getVenues({
+    int? limit,
+    int? offset,
+    bool? canBeReserved,
+    String? search,
+  }) {
+    return sandbox(() async {
+      final uri = _uri(
+        path: '/venues/',
+        query: {
+          if (limit != null) 'limit': limit.toString(),
+          if (offset != null) 'offset': offset.toString(),
+          if (canBeReserved != null)
+            'can_be_reserved': canBeReserved.toString(),
+          if (search != null) 'search': search,
+        },
+      );
+      final response = await _handleExceptions(() => _client.get(uri));
+      return ListResponse<TostiVenue>.fromJson(
+        _jsonDecode(response),
+        (json) => TostiVenue.fromJson(json as Map<String, dynamic>),
+      );
+    });
+  }
+
+  /// Get the [TostiVenue] with the `pk`.
+  Future<TostiVenue> getVenue(int pk) {
+    return sandbox(() async {
+      final uri = _uri(path: '/venues/$pk/');
+      final response = await _handleExceptions(() => _client.get(uri));
+      return TostiVenue.fromJson(_jsonDecode(response));
+    });
+  }
+
+  /// Get a list of [ThaliedjePlayer]s.
+  ///
+  /// Use `limit` and `offset` for pagination. You can
+  /// also filter on `venue` or `search` by name.
+  Future<ListResponse<ThaliedjePlayer>> getPlayers({
+    int? limit,
+    int? offset,
+    int? venue,
+    String? search,
+  }) {
+    return sandbox(() async {
+      final uri = _uri(
+        path: '/thaliedje/players/',
+        query: {
+          if (limit != null) 'limit': limit.toString(),
+          if (offset != null) 'offset': offset.toString(),
+          if (venue != null) 'venue': venue.toString(),
+          if (search != null) 'search': search,
+        },
+      );
+      final response = await _handleExceptions(() => _client.get(uri));
+      return ListResponse<ThaliedjePlayer>.fromJson(
+        _jsonDecode(response),
+        (json) => ThaliedjePlayer.fromJson(json as Map<String, dynamic>),
+      );
+    });
+  }
 }
