@@ -192,6 +192,96 @@ class TostiApiRepository {
     });
   }
 
+  /// Get a list of [TostiProduct]s at a [TostiShift].
+  ///
+  /// Use `limit` and `offset` for pagination. You can also filter on
+  /// `available`, `orderable`, `ignoreShiftRestrictions`, or search by name
+  /// with `search`.
+  Future<ListResponse<TostiProduct>> getShiftProducts(
+    int shiftPk, {
+    int? limit,
+    int? offset,
+    bool? available,
+    bool? orderable,
+    bool? ignoreShiftRestrictions,
+    String? search,
+  }) {
+    return sandbox(() async {
+      final uri = _uri(
+        path: '/shifts/$shiftPk/products/',
+        query: {
+          if (limit != null) 'limit': limit.toString(),
+          if (offset != null) 'offset': offset.toString(),
+          if (available != null) 'available': available.toString(),
+          if (orderable != null) 'orderable': orderable.toString(),
+          if (ignoreShiftRestrictions != null)
+            'ignore_shift_restrictions': ignoreShiftRestrictions.toString(),
+          if (search != null) 'search': search,
+        },
+      );
+      final response = await _handleExceptions(() => _client.get(uri));
+      return ListResponse<TostiProduct>.fromJson(
+        _jsonDecode(response),
+        (json) => TostiProduct.fromJson(json as Map<String, dynamic>),
+      );
+    });
+  }
+
+  /// Get a list of [TostiOrder]s at a [TostiShift].
+  ///
+  /// Use `limit` and `offset` for pagination. You can also filter in many ways.
+  Future<ListResponse<TostiOrder>> getShiftOrders(
+    int shiftPk, {
+    int? limit,
+    int? offset,
+    int? user,
+    bool? userIsNull,
+    bool? ready,
+    bool? paid,
+    int? product,
+  }) {
+    return sandbox(() async {
+      final uri = _uri(
+        path: '/shifts/$shiftPk/orders/',
+        query: {
+          if (limit != null) 'limit': limit.toString(),
+          if (offset != null) 'offset': offset.toString(),
+          if (user != null) 'user': user.toString(),
+          if (userIsNull != null) 'user__isnull': userIsNull.toString(),
+          if (ready != null) 'ready': ready.toString(),
+          if (paid != null) 'paid': paid.toString(),
+          if (product != null) 'product': product.toString(),
+        },
+      );
+      final response = await _handleExceptions(() => _client.get(uri));
+      return ListResponse<TostiOrder>.fromJson(
+        _jsonDecode(response),
+        (json) => TostiOrder.fromJson(json as Map<String, dynamic>),
+      );
+    });
+  }
+
+  /// Get the [TostiOrder] with `orderPk` for the [TostiShift] with `shiftPk`.
+  Future<TostiOrder> getOrder(int shiftPk, int orderPk) {
+    return sandbox(() async {
+      final uri = _uri(path: '/shifts/$shiftPk/orders/$orderPk/');
+      final response = await _handleExceptions(() => _client.get(uri));
+      return TostiOrder.fromJson(_jsonDecode(response));
+    });
+  }
+
+  /// Place a [TostiOrder] for the [TostiShift] with `shiftPk`.
+  Future<TostiOrder> placeOrder(int shiftPk, TostiProduct product) {
+    return sandbox(() async {
+      final uri = _uri(path: '/shifts/$shiftPk/orders/');
+      final body = {'product': product.id, 'type': 0};
+      final response = await _handleExceptions(
+        () => _client.post(uri, body: body, headers: _jsonHeader),
+      );
+      return TostiOrder.fromJson(_jsonDecode(response));
+    });
+  }
+
   /// Get a list of [TostiVenue]s.
   ///
   /// Use `limit` and `offset` for pagination. You can also filter on
