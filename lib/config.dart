@@ -3,6 +3,10 @@
 ///
 /// The default values can be used on the staging server. If some variables are
 /// specified, be sure to specify all.
+///
+/// If the `tostiXXX` variables are not all defined, the T.O.S.T.I. API
+/// will not be used, and the corresponding UI will not be shown.
+/// This is because there is no staging T.O.S.T.I. server.
 
 const String apiHost = String.fromEnvironment(
   'THALIA_API_HOST',
@@ -22,6 +26,32 @@ const String apiIdentifier = String.fromEnvironment(
 );
 
 const String sentryDSN = String.fromEnvironment('SENTRY_DSN');
+
+const String tostiApiHost = String.fromEnvironment('TOSTI_API_HOST');
+
+const String tostiApiIdentifier = String.fromEnvironment('TOSTI_OAUTH_APP_ID');
+const String tostiApiSecret = String.fromEnvironment('TOSTI_OAUTH_APP_SECRET');
+const bool tostiEnabled =
+    tostiApiHost != '' && tostiApiIdentifier != '' && tostiApiSecret != '';
+
+const List<String> tostiOauthScopes = [
+  'read',
+  'write',
+  'orders:order',
+  'orders:manage',
+  'thaliedje:request',
+  'thaliedje:manage',
+];
+
+// These variables can be used to connect to a local T.O.S.T.I. server.
+const String tostiApiScheme = String.fromEnvironment(
+  'TOSTI_API_SCHEME',
+  defaultValue: 'https',
+);
+const int tostiApiPort = int.fromEnvironment(
+  'TOSTI_API_PORT',
+  defaultValue: 443,
+);
 
 const List<String> oauthScopes = [
   'read',

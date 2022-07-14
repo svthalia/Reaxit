@@ -4,6 +4,7 @@ import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/models/album.dart';
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/member.dart';
+import 'package:reaxit/tosti/tosti_screen.dart';
 import 'package:reaxit/ui/screens/album_screen.dart';
 import 'package:reaxit/ui/screens/albums_screen.dart';
 import 'package:reaxit/ui/screens/calendar_screen.dart';
@@ -241,4 +242,13 @@ final List<GoRoute> routes = [
       child: const LoginScreen(),
     ),
   ),
+  if (config.tostiEnabled) // Otherwise, all T.O.S.T.I. stuff is removed.
+    GoRoute(
+      path: '/tosti',
+      name: 'tosti',
+      pageBuilder: (context, state) => MaterialPage(
+        key: state.pageKey,
+        child: const TostiScreen(),
+      ),
+    ),
 ];
