@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/tosti/models.dart';
+import 'package:reaxit/tosti/tosti_api_repository.dart';
 
 class VenueCard extends StatefulWidget {
   final TostiVenue venue;
@@ -44,10 +47,21 @@ class _VenueCardState extends State<VenueCard> {
       orderSegment = Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Order until $endTime, or until the capacity is reached (${shift.amountOfOrders}/${shift.maxOrdersTotal}).',
-            )
+              'Order until $endTime, or capacity is reached (${shift.amountOfOrders}/${shift.maxOrdersTotal}).',
+            ),
+            ElevatedButton(
+              onPressed: () {
+                context.pushNamed(
+                  'tosti-shift',
+                  params: {'shiftId': shift.id.toString()},
+                  extra: RepositoryProvider.of<TostiApiRepository>(context),
+                );
+              },
+              child: Text('ORDER AT ${widget.venue.name.toUpperCase()}'),
+            ),
           ],
         ),
       );
