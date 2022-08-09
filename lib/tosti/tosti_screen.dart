@@ -12,7 +12,6 @@ class TostiScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: ThaliaAppBar(
         title: const Text('T.O.S.T.I.'),
@@ -62,15 +61,23 @@ class TostiScreen extends StatelessWidget {
               ),
             );
           } else {
-            return Center(
+            return Padding(
+              padding: const EdgeInsets.all(32),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text('You need to be logged in to use T.O.S.T.I.'),
-                  ElevatedButton(
-                    onPressed: () => BlocProvider.of<TostiAuthCubit>(
-                      context,
-                    ).logIn(),
-                    child: const Text('LOGIN'),
+                  const Text(
+                    'You need to be logged in to use the Tartarus Order System for Take-away Items.',
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () => BlocProvider.of<TostiAuthCubit>(
+                        context,
+                      ).logIn(),
+                      child: const Text('LOGIN'),
+                    ),
                   ),
                 ],
               ),
@@ -93,21 +100,24 @@ class _SignedInTostiHomeView extends StatelessWidget {
         buildWhen: (previous, current) => !current.isLoading,
         builder: (context, state) {
           if (state.isLoading) {
-            return const SingleChildScrollView(
-              physics: AlwaysScrollableScrollPhysics(),
-              child: Center(
-                child: Padding(
-                  padding: EdgeInsets.all(32),
-                  child: CircularProgressIndicator(),
-                ),
-              ),
+            return ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: const [
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(32),
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              ],
             );
           } else if (state.hasException) {
             return ErrorScrollView(state.message!);
           } else if (state.result!.isEmpty) {
             return const ErrorScrollView('There are no venues.');
           } else {
-            return Column(
+            return ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
               children: [
                 for (final venue in state.result!)
                   Padding(
