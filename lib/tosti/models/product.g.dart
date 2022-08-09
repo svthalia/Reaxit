@@ -11,7 +11,7 @@ TostiProduct _$TostiProductFromJson(Map<String, dynamic> json) => TostiProduct(
       json['name'] as String,
       json['icon'] as String?,
       json['available'] as bool,
-      (json['current_price'] as num).toDouble(),
+      json['current_price'] as String,
       json['orderable'] as bool,
       json['ignore_shift_restrictions'] as bool,
       json['max_allowed_per_shift'] as int?,

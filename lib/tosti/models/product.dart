@@ -8,7 +8,7 @@ class TostiProduct {
   final String name;
   final String? icon;
   final bool available;
-  final double currentPrice;
+  final String currentPrice;
   final bool orderable;
   final bool ignoreShiftRestrictions;
   final int? maxAllowedPerShift;

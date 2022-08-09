@@ -9,7 +9,7 @@ class TostiUser {
   final String lastName;
   final String fullName;
   final String displayName;
-  final int association;
+  final int? association;
 
   TostiUser(
     this.id,

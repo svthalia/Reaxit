@@ -183,10 +183,10 @@ class TostiApiRepository {
     });
   }
 
-  /// Get the [TostiShift] with the `pk`.
-  Future<TostiShift> getShift(int pk) {
+  /// Get the [TostiShift] with the `id`.
+  Future<TostiShift> getShift(int id) {
     return sandbox(() async {
-      final uri = _uri(path: '/shifts/$pk/');
+      final uri = _uri(path: '/shifts/$id/');
       final response = await _handleExceptions(() => _client.get(uri));
       return TostiShift.fromJson(_jsonDecode(response));
     });
@@ -198,7 +198,7 @@ class TostiApiRepository {
   /// `available`, `orderable`, `ignoreShiftRestrictions`, or search by name
   /// with `search`.
   Future<ListResponse<TostiProduct>> getShiftProducts(
-    int shiftPk, {
+    int shiftId, {
     int? limit,
     int? offset,
     bool? available,
@@ -208,7 +208,7 @@ class TostiApiRepository {
   }) {
     return sandbox(() async {
       final uri = _uri(
-        path: '/shifts/$shiftPk/products/',
+        path: '/shifts/$shiftId/products/',
         query: {
           if (limit != null) 'limit': limit.toString(),
           if (offset != null) 'offset': offset.toString(),
@@ -231,7 +231,7 @@ class TostiApiRepository {
   ///
   /// Use `limit` and `offset` for pagination. You can also filter in many ways.
   Future<ListResponse<TostiOrder>> getShiftOrders(
-    int shiftPk, {
+    int shiftId, {
     int? limit,
     int? offset,
     int? user,
@@ -242,7 +242,7 @@ class TostiApiRepository {
   }) {
     return sandbox(() async {
       final uri = _uri(
-        path: '/shifts/$shiftPk/orders/',
+        path: '/shifts/$shiftId/orders/',
         query: {
           if (limit != null) 'limit': limit.toString(),
           if (offset != null) 'offset': offset.toString(),
@@ -261,20 +261,20 @@ class TostiApiRepository {
     });
   }
 
-  /// Get the [TostiOrder] with `orderPk` for the [TostiShift] with `shiftPk`.
-  Future<TostiOrder> getOrder(int shiftPk, int orderPk) {
+  /// Get the [TostiOrder] with `orderId` for the [TostiShift] with `shiftId`.
+  Future<TostiOrder> getOrder(int shiftId, int orderId) {
     return sandbox(() async {
-      final uri = _uri(path: '/shifts/$shiftPk/orders/$orderPk/');
+      final uri = _uri(path: '/shifts/$shiftId/orders/$orderId/');
       final response = await _handleExceptions(() => _client.get(uri));
       return TostiOrder.fromJson(_jsonDecode(response));
     });
   }
 
-  /// Place a [TostiOrder] for the [TostiShift] with `shiftPk`.
-  Future<TostiOrder> placeOrder(int shiftPk, TostiProduct product) {
+  /// Place a [TostiOrder] for the [TostiShift] with `shifId`.
+  Future<TostiOrder> placeOrder(int shiftId, TostiProduct product) {
     return sandbox(() async {
-      final uri = _uri(path: '/shifts/$shiftPk/orders/');
-      final body = {'product': product.id, 'type': 0};
+      final uri = _uri(path: '/shifts/$shiftId/orders/');
+      final body = jsonEncode({'product': product.id, 'type': 0});
       final response = await _handleExceptions(
         () => _client.post(uri, body: body, headers: _jsonHeader),
       );
@@ -311,10 +311,10 @@ class TostiApiRepository {
     });
   }
 
-  /// Get the [TostiVenue] with the `pk`.
-  Future<TostiVenue> getVenue(int pk) {
+  /// Get the [TostiVenue] with the id`.
+  Future<TostiVenue> getVenue(int id) {
     return sandbox(() async {
-      final uri = _uri(path: '/venues/$pk/');
+      final uri = _uri(path: '/venues/$id/');
       final response = await _handleExceptions(() => _client.get(uri));
       return TostiVenue.fromJson(_jsonDecode(response));
     });
@@ -330,6 +330,10 @@ class TostiApiRepository {
     int? venue,
     String? search,
   }) {
+    return Future.delayed(
+      const Duration(milliseconds: 30),
+      () => const ListResponse<ThaliedjePlayer>(0, []),
+    );
     return sandbox(() async {
       final uri = _uri(
         path: '/thaliedje/players/',

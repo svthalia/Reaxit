@@ -7,7 +7,7 @@ part 'order.g.dart';
 class TostiOrder {
   final int id;
   final DateTime created;
-  final TostiUser user;
+  final TostiUser? user;
   final TostiProduct product;
   final String orderPrice;
   final bool ready;

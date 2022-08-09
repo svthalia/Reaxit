@@ -7,6 +7,7 @@ part 'shift.g.dart';
 class TostiShift {
   final int id;
   final int venue;
+  final String venueName;
   final DateTime start;
   final DateTime end;
   final bool canOrder;
@@ -20,6 +21,7 @@ class TostiShift {
   TostiShift(
     this.id,
     this.venue,
+    this.venueName,
     this.start,
     this.end,
     this.canOrder,

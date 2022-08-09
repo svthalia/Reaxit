@@ -9,7 +9,9 @@ part of 'order.dart';
 TostiOrder _$TostiOrderFromJson(Map<String, dynamic> json) => TostiOrder(
       json['id'] as int,
       DateTime.parse(json['created'] as String),
-      TostiUser.fromJson(json['user'] as Map<String, dynamic>),
+      json['user'] == null
+          ? null
+          : TostiUser.fromJson(json['user'] as Map<String, dynamic>),
       TostiProduct.fromJson(json['product'] as Map<String, dynamic>),
       json['order_price'] as String,
       json['ready'] as bool,

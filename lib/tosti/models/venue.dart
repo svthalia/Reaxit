@@ -6,7 +6,7 @@ part 'venue.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class TostiVenue {
-  final int pk;
+  final int id;
   final String name;
   final String slug;
   final String? colorInCalendar;
@@ -19,7 +19,7 @@ class TostiVenue {
   final ThaliedjePlayer? player;
 
   TostiVenue(
-    this.pk,
+    this.id,
     this.name,
     this.slug,
     this.colorInCalendar,
@@ -32,8 +32,8 @@ class TostiVenue {
       _$TostiVenueFromJson(json);
 
   TostiVenue copyWithShift(TostiShift? shift) =>
-      TostiVenue(pk, name, slug, colorInCalendar, canBeReserved, shift, player);
+      TostiVenue(id, name, slug, colorInCalendar, canBeReserved, shift, player);
 
   TostiVenue copyWithPlayer(ThaliedjePlayer? player) =>
-      TostiVenue(pk, name, slug, colorInCalendar, canBeReserved, shift, player);
+      TostiVenue(id, name, slug, colorInCalendar, canBeReserved, shift, player);
 }

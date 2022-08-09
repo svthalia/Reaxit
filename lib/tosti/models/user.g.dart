@@ -12,7 +12,7 @@ TostiUser _$TostiUserFromJson(Map<String, dynamic> json) => TostiUser(
       json['last_name'] as String,
       json['full_name'] as String,
       json['display_name'] as String,
-      json['association'] as int,
+      json['association'] as int?,
     );
 
 Map<String, dynamic> _$TostiUserToJson(TostiUser instance) => <String, dynamic>{
