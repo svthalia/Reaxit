@@ -186,14 +186,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               _formKey.currentState!.save();
+
+                              final messenger = ScaffoldMessenger.of(context);
+
                               try {
                                 await _registrationFieldsCubit.update(
                                   eventPk: widget.eventPk,
                                   registrationPk: widget.registrationPk,
                                   fields: state.result!,
                                 );
+
                                 Navigator.of(context).pop();
-                                ScaffoldMessenger.of(context).showSnackBar(
+
+                                messenger.showSnackBar(
                                   const SnackBar(
                                     behavior: SnackBarBehavior.floating,
                                     content: Text(
@@ -202,7 +207,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   ),
                                 );
                               } on ApiException {
-                                ScaffoldMessenger.of(context).showSnackBar(
+                                messenger.showSnackBar(
                                   const SnackBar(
                                     behavior: SnackBarBehavior.floating,
                                     content: Text(

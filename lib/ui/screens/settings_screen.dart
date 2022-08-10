@@ -170,6 +170,7 @@ class __NotificationSettingTileState extends State<_NotificationSettingTile> {
       value: enabled,
       onChanged: (value) async {
         final oldValue = enabled;
+        final messenger = ScaffoldMessenger.of(context);
         try {
           setState(() => enabled = value);
           await BlocProvider.of<SettingsCubit>(context).setSetting(
@@ -178,7 +179,7 @@ class __NotificationSettingTileState extends State<_NotificationSettingTile> {
           );
         } on ApiException {
           setState(() => enabled = oldValue);
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          messenger.showSnackBar(const SnackBar(
             behavior: SnackBarBehavior.floating,
             content: Text('Could not change your notification settings.'),
           ));

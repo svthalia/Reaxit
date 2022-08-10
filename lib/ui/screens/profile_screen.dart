@@ -99,6 +99,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: Theme.of(context).primaryIconTheme.color,
                       icon: const Icon(Icons.photo_camera_outlined),
                       onPressed: () async {
+                        final messenger = ScaffoldMessenger.of(context);
+
                         final picker = ImagePicker();
                         final pickedFile = await picker.pickImage(
                           source: ImageSource.camera,
@@ -112,9 +114,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           compressFormat: ImageCompressFormat.jpg,
                         );
                         if (croppedFile == null) return;
-                        final scaffoldMessenger = ScaffoldMessenger.of(context);
+
                         Navigator.of(context).pop();
-                        scaffoldMessenger.showSnackBar(const SnackBar(
+
+                        messenger.showSnackBar(const SnackBar(
                           behavior: SnackBarBehavior.floating,
                           content: Text(
                             'Uploading your new profile picture...',
@@ -132,10 +135,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           // fields. As long as that isn't the case, we
                           // also need to reload the MemberCubit below.
                           await _memberCubit.load(member.pk);
-                          scaffoldMessenger.hideCurrentSnackBar();
+                          messenger.hideCurrentSnackBar();
                         } on ApiException {
-                          scaffoldMessenger.hideCurrentSnackBar();
-                          scaffoldMessenger.showSnackBar(const SnackBar(
+                          messenger.hideCurrentSnackBar();
+                          messenger.showSnackBar(const SnackBar(
                             behavior: SnackBarBehavior.floating,
                             content: Text(
                               'Uploading your avatar failed.',
@@ -154,6 +157,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: Theme.of(context).primaryIconTheme.color,
                       icon: const Icon(Icons.photo_outlined),
                       onPressed: () async {
+                        final messenger = ScaffoldMessenger.of(context);
+
                         final picker = ImagePicker();
                         final pickedFile = await picker.pickImage(
                           source: ImageSource.gallery,
@@ -165,9 +170,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           uiSettings: [IOSUiSettings(title: 'Crop')],
                         );
                         if (croppedFile == null) return;
-                        final scaffoldMessenger = ScaffoldMessenger.of(context);
+
                         Navigator.of(context).pop();
-                        scaffoldMessenger.showSnackBar(const SnackBar(
+
+                        messenger.showSnackBar(const SnackBar(
                           behavior: SnackBarBehavior.floating,
                           content: Text(
                             'Uploading your new profile picture...',
@@ -184,10 +190,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           // fields. As long as that isn't the case, we
                           // also need to reload the MemberCubit below.
                           await _memberCubit.load(member.pk);
-                          scaffoldMessenger.hideCurrentSnackBar();
+                          messenger.hideCurrentSnackBar();
                         } on ApiException {
-                          scaffoldMessenger.hideCurrentSnackBar();
-                          scaffoldMessenger.showSnackBar(const SnackBar(
+                          messenger.hideCurrentSnackBar();
+                          messenger.showSnackBar(const SnackBar(
                             behavior: SnackBarBehavior.floating,
                             content: Text(
                               'Uploading your avatar failed.',
@@ -293,6 +299,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: Theme.of(context).primaryIconTheme.color,
                 icon: const Icon(Icons.photo_camera_outlined),
                 onPressed: () async {
+                  final messenger = ScaffoldMessenger.of(context);
+
                   final picker = ImagePicker();
                   final pickedFile = await picker.pickImage(
                     source: ImageSource.camera,
@@ -305,8 +313,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       uiSettings: [IOSUiSettings(title: 'Crop')],
                       compressFormat: ImageCompressFormat.jpg);
                   if (croppedFile == null) return;
-                  final scaffoldMessenger = ScaffoldMessenger.of(context);
-                  scaffoldMessenger.showSnackBar(const SnackBar(
+
+                  messenger.showSnackBar(const SnackBar(
                     behavior: SnackBarBehavior.floating,
                     content: Text(
                       'Uploading your new profile picture...',
@@ -324,10 +332,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     // fields. As long as that isn't the case, we
                     // also need to reload the MemberCubit below.
                     await _memberCubit.load(member!.pk);
-                    scaffoldMessenger.hideCurrentSnackBar();
+                    messenger.hideCurrentSnackBar();
                   } on ApiException {
-                    scaffoldMessenger.hideCurrentSnackBar();
-                    scaffoldMessenger.showSnackBar(const SnackBar(
+                    messenger.hideCurrentSnackBar();
+                    messenger.showSnackBar(const SnackBar(
                       behavior: SnackBarBehavior.floating,
                       content: Text(
                         'Uploading your avatar failed.',
@@ -346,6 +354,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: Theme.of(context).primaryIconTheme.color,
                 icon: const Icon(Icons.photo_outlined),
                 onPressed: () async {
+                  final messenger = ScaffoldMessenger.of(context);
+
                   final picker = ImagePicker();
                   final pickedFile = await picker.pickImage(
                     source: ImageSource.gallery,
@@ -357,8 +367,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     uiSettings: [IOSUiSettings(title: 'Crop')],
                   );
                   if (croppedFile == null) return;
-                  final scaffoldMessenger = ScaffoldMessenger.of(context);
-                  scaffoldMessenger.showSnackBar(const SnackBar(
+                  messenger.showSnackBar(const SnackBar(
                     behavior: SnackBarBehavior.floating,
                     content: Text(
                       'Uploading your new profile picture...',
@@ -376,10 +385,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     // fields. As long as that isn't the case, we
                     // also need to reload the MemberCubit below.
                     await _memberCubit.load(member!.pk);
-                    scaffoldMessenger.hideCurrentSnackBar();
+                    messenger.hideCurrentSnackBar();
                   } on ApiException {
-                    scaffoldMessenger.hideCurrentSnackBar();
-                    scaffoldMessenger.showSnackBar(const SnackBar(
+                    messenger.hideCurrentSnackBar();
+                    messenger.showSnackBar(const SnackBar(
                       behavior: SnackBarBehavior.floating,
                       content: Text(
                         'Uploading your avatar failed.',
@@ -731,13 +740,14 @@ class __DescriptionFactState extends State<_DescriptionFact> {
                         icon: const Icon(Icons.check),
                         tooltip: 'Edit your avatar',
                         onPressed: () async {
+                          final messenger = ScaffoldMessenger.of(context);
                           try {
                             await _fullMemberCubit.updateDescription(
                               _controller.text,
                             );
                             await widget.cubit.load(widget.member.pk);
                           } on ApiException {
-                            ScaffoldMessenger.of(context).showSnackBar(
+                            messenger.showSnackBar(
                               const SnackBar(
                                 behavior: SnackBarBehavior.floating,
                                 content: Text(

@@ -91,6 +91,7 @@ class _FoodScreenState extends State<FoodScreen> {
           width: double.infinity,
           child: ElevatedButton.icon(
             onPressed: () async {
+              final messenger = ScaffoldMessenger.of(context);
               final confirmed = await showDialog<bool>(
                 context: context,
                 builder: (context) {
@@ -126,8 +127,7 @@ class _FoodScreenState extends State<FoodScreen> {
                 try {
                   await _foodCubit.cancelOrder();
                 } on ApiException {
-                  if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  messenger.showSnackBar(const SnackBar(
                     behavior: SnackBarBehavior.floating,
                     content: Text('Could not cancel your order.'),
                   ));
@@ -436,12 +436,13 @@ class __ProductTileState extends State<_ProductTile> {
   }
 
   Future<void> _placeOrder(FoodEvent foodEvent) async {
+    final messenger = ScaffoldMessenger.of(context);
     try {
       await BlocProvider.of<FoodCubit>(context).placeOrder(
         productPk: widget.product.pk,
       );
     } on ApiException {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      messenger.showSnackBar(const SnackBar(
         behavior: SnackBarBehavior.floating,
         content: Text('Could not place your order.'),
       ));
@@ -449,6 +450,8 @@ class __ProductTileState extends State<_ProductTile> {
   }
 
   Future<void> _changeOrder(FoodEvent foodEvent) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final foodCubit = BlocProvider.of<FoodCubit>(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) {
@@ -482,11 +485,11 @@ class __ProductTileState extends State<_ProductTile> {
 
     if (confirmed ?? false) {
       try {
-        await BlocProvider.of<FoodCubit>(context).changeOrder(
+        await foodCubit.changeOrder(
           productPk: widget.product.pk,
         );
       } on ApiException {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        messenger.showSnackBar(const SnackBar(
           behavior: SnackBarBehavior.floating,
           content: Text('Could not change your order.'),
         ));

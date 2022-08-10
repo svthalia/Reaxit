@@ -68,10 +68,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ).toString());
                 return true;
               } else {
+                final messenger = ScaffoldMessenger.of(context);
                 try {
                   await launchUrl(uri, mode: LaunchMode.externalApplication);
                 } catch (_) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  messenger.showSnackBar(SnackBar(
                     behavior: SnackBarBehavior.floating,
                     content: Text('Could not open "$url".'),
                   ));

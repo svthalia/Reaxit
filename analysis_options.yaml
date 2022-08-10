@@ -17,6 +17,3 @@ linter:
 
     avoid_catching_errors: true
     avoid_escaping_inner_quotes: true
-
-    # TODO: Refactor so that we can enable this rule. See #228.
-    use_build_context_synchronously: false
