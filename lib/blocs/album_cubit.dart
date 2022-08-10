@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/album.dart';
 
@@ -16,18 +17,9 @@ class AlbumCubit extends Cubit<AlbumState> {
       final album = await api.getAlbum(slug: slug);
       emit(AlbumState.result(result: album));
     } on ApiException catch (exception) {
-      emit(AlbumState.failure(message: _failureMessage(exception)));
-    }
-  }
-
-  String _failureMessage(ApiException exception) {
-    switch (exception) {
-      case ApiException.noInternet:
-        return 'Not connected to the internet.';
-      case ApiException.notFound:
-        return 'The album does not exist.';
-      default:
-        return 'An unknown error occurred.';
+      emit(AlbumState.failure(
+        message: exception.getMessage(notFound: 'The album does not exist.'),
+      ));
     }
   }
 }

@@ -56,7 +56,7 @@
                 <data android:path="/events/" />
                 <data android:pathPattern="/events/.*/" />
                 <data android:pathPattern="/members/photos/.*/" />
-                <!-- <data android:pathPattern="/sales/order/.*/pay/" /> -->
+                <data android:pathPattern="/sales/order/.*/pay/" />
             </intent-filter>
             
             <intent-filter>

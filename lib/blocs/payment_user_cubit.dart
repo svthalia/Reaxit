@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/payment_user.dart';
 
@@ -16,16 +17,7 @@ class PaymentUserCubit extends Cubit<PaymentUserState> {
       final paymentUser = await api.getPaymentUser();
       emit(PaymentUserState.result(result: paymentUser));
     } on ApiException catch (exception) {
-      emit(PaymentUserState.failure(message: _failureMessage(exception)));
-    }
-  }
-
-  String _failureMessage(ApiException exception) {
-    switch (exception) {
-      case ApiException.noInternet:
-        return 'Not connected to the internet.';
-      default:
-        return 'An unknown error occurred.';
+      emit(PaymentUserState.failure(message: exception.message));
     }
   }
 }

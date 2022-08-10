@@ -12,16 +12,10 @@ import 'package:reaxit/models/payment.dart';
 import 'package:reaxit/models/payment_user.dart';
 import 'package:reaxit/models/product.dart';
 import 'package:reaxit/models/registration_field.dart';
+import 'package:reaxit/models/sales_order.dart';
 import 'package:reaxit/models/slide.dart';
 import 'package:reaxit/models/device.dart';
-
-enum ApiException {
-  notFound,
-  notAllowed,
-  noInternet,
-  notLoggedIn,
-  unknownError,
-}
+import 'package:reaxit/api/exceptions.dart';
 
 /// Provides an interface to the api.
 ///
@@ -330,4 +324,7 @@ abstract class ApiRepository {
 
   /// Get the list of all [PushNoficationCategory]s.
   Future<ListResponse<PushNotificationCategory>> getCategories();
+
+  /// Claim and get the [SalesOrder] with the `pk`.
+  Future<SalesOrder> claimSalesOrder({required String pk});
 }

@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
+import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/models/food_event.dart';
 import 'package:reaxit/models/food_order.dart';
 import 'package:reaxit/models/product.dart';
@@ -91,7 +92,11 @@ class FoodCubit extends Cubit<FoodState> {
       final products = await api.getFoodEventProducts(_foodEventPk!);
       emit(FoodState.result(foodEvent: event, products: products.results));
     } on ApiException catch (exception) {
-      emit(FoodState.failure(message: _failureMessage(exception)));
+      emit(FoodState.failure(
+        message: exception.getMessage(
+          notFound: 'The food event does not exist.',
+        ),
+      ));
     }
   }
 
@@ -143,16 +148,5 @@ class FoodCubit extends Cubit<FoodState> {
   }) async {
     await api.thaliaPayFoodOrder(foodOrderPk: orderPk);
     await load();
-  }
-
-  String _failureMessage(ApiException exception) {
-    switch (exception) {
-      case ApiException.noInternet:
-        return 'Not connected to the internet.';
-      case ApiException.notFound:
-        return 'The food event does not exist.';
-      default:
-        return 'An unknown error occurred.';
-    }
   }
 }

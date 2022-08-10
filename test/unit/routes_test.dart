@@ -13,6 +13,7 @@ void main() {
         'https://$apiHost/',
         'https://$apiHost/pizzas/',
         'https://$apiHost/members/photos/some-album-1/',
+        'https://$apiHost/sales/order/11111111-aaaa-bbbb-cccc-222222222222/pay/',
       ];
 
       for (final uri in validUris) {
@@ -26,6 +27,8 @@ void main() {
         'https://$apiHost/contact',
         'https://example.org/events/1/',
         'https://subdomain.$apiHost/events/1/',
+        'http://$apiHost/events/xxx/',
+        'https://$apiHost/sales/order/11111111-bbbb-cccc-222222222222/pay/',
       ];
 
       for (final uri in invalidUris) {

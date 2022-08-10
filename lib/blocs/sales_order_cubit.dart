@@ -1,9 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs/detail_state.dart';
-import 'package:reaxit/models/payable.dart';
+import 'package:reaxit/models/sales_order.dart';
 
-typedef SalesOrderState = DetailState<Payable>;
+typedef SalesOrderState = DetailState<SalesOrder>;
 
 class SalesOrderCubit extends Cubit<SalesOrderState> {
   final ApiRepository api;
@@ -13,25 +14,16 @@ class SalesOrderCubit extends Cubit<SalesOrderState> {
   Future<void> load(String pk) async {
     emit(state.copyWith(isLoading: true));
     try {
-      final payable = await api.getSalesOrderPayable(salesOrderPk: pk);
-      emit(SalesOrderState.result(result: payable));
+      final order = await api.claimSalesOrder(pk: pk);
+      emit(SalesOrderState.result(result: order));
     } on ApiException catch (exception) {
-      emit(SalesOrderState.failure(message: _failureMessage(exception)));
+      emit(SalesOrderState.failure(
+        message: exception.getMessage(notFound: 'The order does not exist.'),
+      ));
     }
   }
 
   Future<void> paySalesOrder(String pk) async {
     await api.thaliaPaySalesOrder(salesOrderPk: pk);
-  }
-
-  String _failureMessage(ApiException exception) {
-    switch (exception) {
-      case ApiException.noInternet:
-        return 'Not connected to the internet.';
-      case ApiException.notFound:
-        return 'The order does not exist.';
-      default:
-        return 'An unknown error occurred.';
-    }
   }
 }

@@ -6,9 +6,9 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs/calendar_cubit.dart';
 import 'package:reaxit/blocs/event_cubit.dart';
-import 'package:reaxit/blocs/payment_user_cubit.dart';
 import 'package:reaxit/blocs/registrations_cubit.dart';
 import 'package:reaxit/blocs/welcome_cubit.dart';
 import 'package:reaxit/models/event.dart';
@@ -18,6 +18,7 @@ import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/cached_image.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 import 'package:reaxit/ui/widgets/member_tile.dart';
+import 'package:reaxit/ui/widgets/tpay_button.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:reaxit/config.dart' as config;
@@ -324,109 +325,113 @@ class _EventScreenState extends State<EventScreen> {
       }
     }
 
-    return BlocBuilder<PaymentUserCubit, PaymentUserState>(
-      builder: (context, paymentUserState) {
-        late Widget paymentButton;
-        if (event.isInvited &&
-            event.paymentIsRequired &&
-            !event.registration!.isPaid) {
-          paymentButton = _makePaymentButton(event, paymentUserState);
-        } else {
-          paymentButton = const SizedBox.shrink();
-        }
+    late Widget paymentButton;
+    if (event.isInvited &&
+        event.paymentIsRequired &&
+        !event.registration!.isPaid) {
+      paymentButton = TPayButton(
+        onPay: () => _eventCubit.thaliaPayRegistration(
+          registrationPk: event.registration!.pk,
+        ),
+        confirmationMessage: 'Are you sure you want to pay €${event.price} for '
+            'your registration to "${event.title}"?',
+        failureMessage: 'Could not pay your registration.',
+        successMessage: 'Paid our registration with Thalia Pay.',
+        amount: event.price,
+      );
+    } else {
+      paymentButton = const SizedBox.shrink();
+    }
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (event.registrationStart!.isAfter(DateTime.now())) ...[
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Flexible(
-                    fit: FlexFit.tight,
-                    child: Text('Registration start:', style: labelStyle),
-                  ),
-                  const SizedBox(width: 8),
-                  Flexible(
-                    fit: FlexFit.tight,
-                    child: Text(
-                      dateTimeFormatter
-                          .format(event.registrationStart!.toLocal()),
-                      style: dataStyle,
-                    ),
-                  ),
-                ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (event.registrationStart!.isAfter(DateTime.now())) ...[
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Flexible(
+                fit: FlexFit.tight,
+                child: Text('Registration start:', style: labelStyle),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(width: 8),
+              Flexible(
+                fit: FlexFit.tight,
+                child: Text(
+                  dateTimeFormatter.format(event.registrationStart!.toLocal()),
+                  style: dataStyle,
+                ),
+              ),
             ],
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Flexible(
-                  fit: FlexFit.tight,
-                  child: Text('Registration deadline:', style: labelStyle),
-                ),
-                const SizedBox(width: 8),
-                Flexible(
-                  fit: FlexFit.tight,
-                  child: Text(
-                    dateTimeFormatter.format(event.registrationEnd!.toLocal()),
-                    style: dataStyle,
-                  ),
-                ),
-              ],
+          ),
+          const SizedBox(height: 8),
+        ],
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Flexible(
+              fit: FlexFit.tight,
+              child: Text('Registration deadline:', style: labelStyle),
             ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Flexible(
-                  fit: FlexFit.tight,
-                  child: Text('Cancellation deadline:', style: labelStyle),
-                ),
-                const SizedBox(width: 8),
-                Flexible(
-                  fit: FlexFit.tight,
-                  child: Text(
-                    dateTimeFormatter.format(event.cancelDeadline!.toLocal()),
-                    style: dataStyle,
-                  ),
-                ),
-              ],
+            const SizedBox(width: 8),
+            Flexible(
+              fit: FlexFit.tight,
+              child: Text(
+                dateTimeFormatter.format(event.registrationEnd!.toLocal()),
+                style: dataStyle,
+              ),
             ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Flexible(
-                  fit: FlexFit.tight,
-                  child: Text('Number of registrations:', style: labelStyle),
-                ),
-                const SizedBox(width: 8),
-                Flexible(
-                  fit: FlexFit.tight,
-                  child: Text(
-                    event.maxParticipants == null
-                        ? '${event.numParticipants} registrations'
-                        : '${event.numParticipants} registrations '
-                            '(${event.maxParticipants} max)',
-                    style: dataStyle,
-                  ),
-                ),
-              ],
-            ),
-            const Divider(height: 24),
-            Text.rich(
-              TextSpan(children: textSpans),
-              style: dataStyle,
-            ),
-            const SizedBox(height: 4),
-            registrationButton,
-            updateButton,
-            paymentButton,
           ],
-        );
-      },
+        ),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Flexible(
+              fit: FlexFit.tight,
+              child: Text('Cancellation deadline:', style: labelStyle),
+            ),
+            const SizedBox(width: 8),
+            Flexible(
+              fit: FlexFit.tight,
+              child: Text(
+                dateTimeFormatter.format(event.cancelDeadline!.toLocal()),
+                style: dataStyle,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Flexible(
+              fit: FlexFit.tight,
+              child: Text('Number of registrations:', style: labelStyle),
+            ),
+            const SizedBox(width: 8),
+            Flexible(
+              fit: FlexFit.tight,
+              child: Text(
+                event.maxParticipants == null
+                    ? '${event.numParticipants} registrations'
+                    : '${event.numParticipants} registrations '
+                        '(${event.maxParticipants} max)',
+                style: dataStyle,
+              ),
+            ),
+          ],
+        ),
+        const Divider(height: 24),
+        Text.rich(
+          TextSpan(children: textSpans),
+          style: dataStyle,
+        ),
+        const SizedBox(height: 4),
+        registrationButton,
+        updateButton,
+        paymentButton,
+      ],
     );
   }
 
@@ -714,94 +719,6 @@ class _EventScreenState extends State<EventScreen> {
         label: const Text('ORDER FOOD'),
       ),
     );
-  }
-
-  Widget _makePaymentButton(Event event, PaymentUserState paymentUserState) {
-    if (paymentUserState.result == null) {
-      // PaymentUser loading or exception.
-      return const SizedBox.shrink();
-    } else if (!paymentUserState.result!.tpayAllowed) {
-      // TPay is not allowed.
-      return const SizedBox.shrink();
-    } else if (!event.registration!.tpayAllowed) {
-      // TPay is not allowed.
-      return const SizedBox.shrink();
-    } else if (!paymentUserState.result!.tpayEnabled) {
-      // TPay is not enabled.
-      return SizedBox(
-        key: const ValueKey('enable'),
-        width: double.infinity,
-        child: Tooltip(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
-          padding: const EdgeInsets.all(8),
-          message: 'To start using Thalia Pay, sign '
-              'a direct debit mandate on the website.',
-          child: ElevatedButton.icon(
-            onPressed: null,
-            icon: const Icon(Icons.euro),
-            label: Text('THALIA PAY: €${event.price}'),
-          ),
-        ),
-      );
-    } else {
-      // TPay can be used.
-      return SizedBox(
-        key: const ValueKey('pay'),
-        width: double.infinity,
-        child: ElevatedButton.icon(
-          onPressed: () async {
-            final confirmed = await showDialog<bool>(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: const Text('Confirm payment'),
-                  content: Text(
-                    'Are you sure you want to pay €${event.price} for '
-                    'your registration to "${event.title}"?',
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
-                  actions: [
-                    TextButton.icon(
-                      onPressed: () => Navigator.of(
-                        context,
-                        rootNavigator: true,
-                      ).pop(false),
-                      icon: const Icon(Icons.clear),
-                      label: const Text('CANCEL'),
-                    ),
-                    ElevatedButton.icon(
-                      onPressed: () => Navigator.of(
-                        context,
-                        rootNavigator: true,
-                      ).pop(true),
-                      icon: const Icon(Icons.check),
-                      label: const Text('YES'),
-                    ),
-                  ],
-                );
-              },
-            );
-
-            if (confirmed ?? false) {
-              try {
-                await _eventCubit.thaliaPayRegistration(
-                  registrationPk: event.registration!.pk,
-                );
-              } on ApiException {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    behavior: SnackBarBehavior.floating,
-                    content: Text('Could not pay your order.'),
-                  ),
-                );
-              }
-            }
-          },
-          icon: const Icon(Icons.euro),
-          label: Text('THALIA PAY: €${event.price}'),
-        ),
-      );
-    }
   }
 
   TextSpan _makeTermsAndConditions(Event event) {

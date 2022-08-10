@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/food_order.dart';
@@ -53,7 +54,11 @@ class FoodAdminCubit extends Cubit<FoodAdminState> {
         emit(FoodAdminState.result(result: orders.results));
       }
     } on ApiException catch (exception) {
-      emit(FoodAdminState.failure(message: _failureMessage(exception)));
+      emit(FoodAdminState.failure(
+        message: exception.getMessage(
+          notFound: 'The food event does not exist.',
+        ),
+      ));
     }
   }
 
@@ -120,17 +125,6 @@ class FoodAdminCubit extends Cubit<FoodAdminState> {
       } else {
         await load();
       }
-    }
-  }
-
-  String _failureMessage(ApiException exception) {
-    switch (exception) {
-      case ApiException.noInternet:
-        return 'Not connected to the internet.';
-      case ApiException.notFound:
-        return 'The food event does not exist.';
-      default:
-        return 'An unknown error occurred.';
     }
   }
 }

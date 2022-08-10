@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs/setting_cubit.dart';
 import 'package:reaxit/blocs/theme_cubit.dart';
 import 'package:reaxit/models/push_notification_category.dart';

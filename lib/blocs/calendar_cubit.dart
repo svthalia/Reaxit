@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs/list_state.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/models/event.dart';
@@ -214,7 +215,7 @@ class CalendarCubit extends Cubit<CalendarState> {
         emit(CalendarState.success(results: events, isDone: isDone));
       }
     } on ApiException catch (exception) {
-      emit(CalendarState.failure(message: _failureMessage(exception)));
+      emit(CalendarState.failure(message: exception.message));
     }
   }
 
@@ -276,7 +277,7 @@ class CalendarCubit extends Cubit<CalendarState> {
 
       emit(CalendarState.success(results: events, isDone: isDone));
     } on ApiException catch (exception) {
-      emit(CalendarState.failure(message: _failureMessage(exception)));
+      emit(CalendarState.failure(message: exception.message));
     }
   }
 
@@ -293,15 +294,6 @@ class CalendarCubit extends Cubit<CalendarState> {
       } else {
         _searchDebounceTimer = Timer(config.searchDebounceTime, load);
       }
-    }
-  }
-
-  String _failureMessage(ApiException exception) {
-    switch (exception) {
-      case ApiException.noInternet:
-        return 'Not connected to the internet.';
-      default:
-        return 'An unknown error occurred.';
     }
   }
 }

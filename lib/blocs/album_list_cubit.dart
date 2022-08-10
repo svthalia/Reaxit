@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/blocs/list_state.dart';
 import 'package:reaxit/models/album.dart';
@@ -61,7 +62,7 @@ class AlbumListCubit extends Cubit<AlbumListState> {
         ));
       }
     } on ApiException catch (exception) {
-      emit(AlbumListState.failure(message: _failureMessage(exception)));
+      emit(AlbumListState.failure(message: exception.message));
     }
   }
 
@@ -96,7 +97,7 @@ class AlbumListCubit extends Cubit<AlbumListState> {
         isDone: isDone,
       ));
     } on ApiException catch (exception) {
-      emit(AlbumListState.failure(message: _failureMessage(exception)));
+      emit(AlbumListState.failure(message: exception.message));
     }
   }
 
@@ -113,15 +114,6 @@ class AlbumListCubit extends Cubit<AlbumListState> {
       } else {
         _searchDebounceTimer = Timer(config.searchDebounceTime, load);
       }
-    }
-  }
-
-  String _failureMessage(ApiException exception) {
-    switch (exception) {
-      case ApiException.noInternet:
-        return 'Not connected to the internet.';
-      default:
-        return 'An unknown error occurred.';
     }
   }
 }

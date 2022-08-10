@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/models/member.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -22,7 +23,7 @@ class FullMemberCubit extends Cubit<FullMemberState> {
       );
       emit(FullMemberState.result(result: member));
     } on ApiException catch (exception) {
-      emit(FullMemberState.failure(message: _failureMessage(exception)));
+      emit(FullMemberState.failure(message: exception.message));
     }
   }
 
@@ -34,14 +35,5 @@ class FullMemberCubit extends Cubit<FullMemberState> {
   Future<void> updateDescription(String description) async {
     await api.updateDescription(description);
     await load();
-  }
-
-  String _failureMessage(ApiException exception) {
-    switch (exception) {
-      case ApiException.noInternet:
-        return 'Not connected to the internet.';
-      default:
-        return 'An unknown error occurred.';
-    }
   }
 }

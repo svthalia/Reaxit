@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/models/push_notification_category.dart';
 import 'package:reaxit/models/device.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -133,20 +134,11 @@ class SettingsCubit extends Cubit<SettingsState> {
         ));
       }
     } on ApiException catch (exception) {
-      emit(SettingsState.failure(message: _failureMessage(exception)));
+      emit(SettingsState.failure(message: exception.message));
     } catch (_) {
       emit(const SettingsState.failure(
         message: 'An unknown exception occurred',
       ));
-    }
-  }
-
-  String _failureMessage(ApiException exception) {
-    switch (exception) {
-      case ApiException.noInternet:
-        return 'Not connected to the internet.';
-      default:
-        return 'An unknown error occurred.';
     }
   }
 }

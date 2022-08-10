@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/models/event.dart';
 import 'package:reaxit/models/event_registration.dart';
@@ -117,7 +118,9 @@ class EventAdminCubit extends Cubit<EventAdminState> {
         ));
       }
     } on ApiException catch (exception) {
-      emit(EventAdminState.failure(message: _failureMessage(exception)));
+      emit(EventAdminState.failure(
+        message: exception.getMessage(notFound: 'The event does not exist.'),
+      ));
     }
   }
 
@@ -157,7 +160,9 @@ class EventAdminCubit extends Cubit<EventAdminState> {
           ));
         }
       } on ApiException catch (exception) {
-        emit(EventAdminState.failure(message: _failureMessage(exception)));
+        emit(EventAdminState.failure(
+          message: exception.getMessage(notFound: 'The event does not exist.'),
+        ));
       }
     } else {
       load();
@@ -259,17 +264,6 @@ class EventAdminCubit extends Cubit<EventAdminState> {
       } else {
         await load();
       }
-    }
-  }
-
-  String _failureMessage(ApiException exception) {
-    switch (exception) {
-      case ApiException.noInternet:
-        return 'Not connected to the internet.';
-      case ApiException.notFound:
-        return 'The event does not exist.';
-      default:
-        return 'An unknown error occurred.';
     }
   }
 }

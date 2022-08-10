@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/models/album.dart';
 import 'package:reaxit/models/push_notification_category.dart';
@@ -21,6 +22,7 @@ import 'package:reaxit/models/payment.dart';
 import 'package:reaxit/models/payment_user.dart';
 import 'package:reaxit/models/product.dart';
 import 'package:reaxit/models/registration_field.dart';
+import 'package:reaxit/models/sales_order.dart';
 import 'package:reaxit/models/slide.dart';
 import 'package:reaxit/models/device.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -76,21 +78,31 @@ class ConcrexitApiRepository implements ApiRepository {
   /// A wrapper for requests that throws only [ApiException]s.
   ///
   /// Translates exceptions that can be thrown by [oauth2.Client.send()],
-  /// and throws exceptions based on status codes.
+  /// and throws exceptions based on status codes. By default, all status codes
+  /// other than 200, 201 and 204 result in an [ApiException], but this can be
+  /// overridden with `allowedStatusCodes`.
   ///
-  /// Can be called for example as
+  /// Can be called for example as:
   /// ```dart
   /// final response = await _handleExceptions(() => client.get(uri));
   /// ```
+  ///
+  /// If you want to manually handle for example 403s, you can use:
+  /// ```dart
+  /// final response = await _handleExceptions(
+  ///   () => client.get(uri),
+  ///   allowedStatusCodes: [200, 403],
+  /// );
+  /// // Use `response.statusCode` here to handle 403.
+  /// ```
   Future<Response> _handleExceptions(
-      Future<Response> Function() request) async {
+    Future<Response> Function() request, {
+    List<int> allowedStatusCodes = const [200, 201, 204],
+  }) async {
     try {
       final response = await request();
+      if (allowedStatusCodes.contains(response.statusCode)) return response;
       switch (response.statusCode) {
-        case 200:
-        case 201:
-        case 204:
-          return response;
         case 401:
           _onLogOut();
           throw ApiException.notLoggedIn;
@@ -101,23 +113,23 @@ class ConcrexitApiRepository implements ApiRepository {
         default:
           throw ApiException.unknownError;
       }
-    } on oauth2.ExpirationException catch (_) {
+    } on oauth2.ExpirationException {
       _onLogOut();
       throw ApiException.notLoggedIn;
-    } on oauth2.AuthorizationException catch (_) {
+    } on oauth2.AuthorizationException {
       _onLogOut();
       throw ApiException.notLoggedIn;
-    } on SocketException catch (_) {
+    } on SocketException {
       throw ApiException.noInternet;
-    } on FormatException catch (_) {
+    } on FormatException {
       throw ApiException.unknownError;
-    } on ClientException catch (_) {
+    } on ClientException {
       throw ApiException.unknownError;
-    } on HandshakeException catch (_) {
+    } on HandshakeException {
       throw ApiException.unknownError;
-    } on OSError catch (_) {
+    } on OSError {
       throw ApiException.unknownError;
-    } on ApiException catch (_) {
+    } on ApiException {
       rethrow;
     }
   }
@@ -125,27 +137,27 @@ class ConcrexitApiRepository implements ApiRepository {
   /// Handler to surround all public methods as follows:
   ///
   /// ```dart
-  /// try {
-  ///   // Method content ...
-  /// } catch (e) {
-  ///   _catch(e);
-  /// }
+  /// return sandbox(() async {
+  ///  // Method content ...
+  /// });
   /// ```
   ///
   /// This prevents the ApiRepository from throwing any exceptions other than
   /// ApiExceptions.
-  static Never _catch(Object exception) {
-    if (exception is ApiException) {
-      throw exception;
-    } else {
-      Sentry.captureException(exception);
+  static Future<T> sandbox<T>(Future<T> Function() f) async {
+    try {
+      return await f();
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      Sentry.captureException(e);
       throw ApiException.unknownError;
     }
   }
 
   @override
-  Future<Event> getEvent({required int pk}) async {
-    try {
+  Future<Event> getEvent({required int pk}) {
+    return sandbox(() async {
       final uri = _uri(path: '/events/$pk/');
       final response = await _handleExceptions(() => _client.get(uri));
       final event = Event.fromJson(_jsonDecode(response));
@@ -160,9 +172,7 @@ class ConcrexitApiRepository implements ApiRepository {
         }
       }
       return event;
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
@@ -173,12 +183,12 @@ class ConcrexitApiRepository implements ApiRepository {
     String? ordering,
     DateTime? start,
     DateTime? end,
-  }) async {
+  }) {
     assert(
       ordering == null || ['start', 'end', '-start', '-end'].contains(ordering),
       'Invalid ordering parameter: $ordering',
     );
-    try {
+    return sandbox(() async {
       final uri = _uri(
         path: '/events/',
         query: {
@@ -193,9 +203,7 @@ class ConcrexitApiRepository implements ApiRepository {
 
       final response = await _handleExceptions(() => _client.get(uri));
       return await compute(_parseEvents, response);
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   static ListResponse<Event> _parseEvents(Response response) {
@@ -213,12 +221,12 @@ class ConcrexitApiRepository implements ApiRepository {
     String? ordering,
     DateTime? start,
     DateTime? end,
-  }) async {
+  }) {
     assert(
       ordering == null || ['start', 'end', '-start', '-end'].contains(ordering),
       'Invalid ordering parameter: $ordering',
     );
-    try {
+    return sandbox(() async {
       final uri = _uri(
         path: '/partners/events/',
         query: {
@@ -233,9 +241,7 @@ class ConcrexitApiRepository implements ApiRepository {
 
       final response = await _handleExceptions(() => _client.get(uri));
       return await compute(_parsePartnerEvents, response);
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   static ListResponse<PartnerEvent> _parsePartnerEvents(Response response) {
@@ -251,7 +257,7 @@ class ConcrexitApiRepository implements ApiRepository {
     int? limit,
     int? offset,
   }) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(
         path: '/events/$pk/registrations/',
         query: {
@@ -262,9 +268,7 @@ class ConcrexitApiRepository implements ApiRepository {
 
       final response = await _handleExceptions(() => _client.get(uri));
       return await compute(_parseEventRegistrations, response);
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   static ListResponse<EventRegistration> _parseEventRegistrations(
@@ -278,13 +282,11 @@ class ConcrexitApiRepository implements ApiRepository {
 
   @override
   Future<EventRegistration> registerForEvent(int pk) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(path: '/events/$pk/registrations/');
       final response = await _handleExceptions(() => _client.post(uri));
       return EventRegistration.fromJson(_jsonDecode(response));
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
@@ -292,12 +294,10 @@ class ConcrexitApiRepository implements ApiRepository {
     required int eventPk,
     required int registrationPk,
   }) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(path: '/events/$eventPk/registrations/$registrationPk/');
       await _handleExceptions(() => _client.delete(uri));
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
@@ -305,7 +305,7 @@ class ConcrexitApiRepository implements ApiRepository {
     required int eventPk,
     required int registrationPk,
   }) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(
         path: '/events/$eventPk/registrations/$registrationPk/fields/',
       );
@@ -317,9 +317,7 @@ class ConcrexitApiRepository implements ApiRepository {
           RegistrationField.fromJson(jsonField as Map<String, dynamic>),
         ),
       );
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
@@ -328,7 +326,7 @@ class ConcrexitApiRepository implements ApiRepository {
     required int registrationPk,
     required Map<String, RegistrationField> fields,
   }) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(
         path: '/events/$eventPk/registrations/$registrationPk/fields/',
       );
@@ -338,9 +336,7 @@ class ConcrexitApiRepository implements ApiRepository {
       await _handleExceptions(
         () => _client.put(uri, body: body, headers: _jsonHeader),
       );
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
@@ -364,7 +360,7 @@ class ConcrexitApiRepository implements ApiRepository {
           ].contains(ordering),
       'Invalid ordering parameter: $ordering',
     );
-    try {
+    return sandbox(() async {
       final uri = _uri(
         path: '/admin/events/$pk/registrations/',
         query: {
@@ -377,9 +373,7 @@ class ConcrexitApiRepository implements ApiRepository {
       );
       final response = await _handleExceptions(() => _client.get(uri));
       return await compute(_parseAdminEventRegistrations, response);
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   static ListResponse<AdminEventRegistration> _parseAdminEventRegistrations(
@@ -397,7 +391,7 @@ class ConcrexitApiRepository implements ApiRepository {
     required int registrationPk,
     required bool present,
   }) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(
         path: '/admin/events/$eventPk/registrations/$registrationPk/',
       );
@@ -406,9 +400,7 @@ class ConcrexitApiRepository implements ApiRepository {
         () => _client.patch(uri, body: body, headers: _jsonHeader),
       );
       return AdminEventRegistration.fromJson(_jsonDecode(response));
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
@@ -417,11 +409,11 @@ class ConcrexitApiRepository implements ApiRepository {
     required PaymentType paymentType,
   }) async {
     assert(paymentType != PaymentType.tpayPayment);
-    final uri = _uri(
-      path:
-          '/admin/payments/payables/events/eventregistration/$registrationPk/',
-    );
-    try {
+    return sandbox(() async {
+      final uri = _uri(
+        path:
+            '/admin/payments/payables/events/eventregistration/$registrationPk/',
+      );
       late String typeString;
       switch (paymentType) {
         case PaymentType.cardPayment:
@@ -443,24 +435,20 @@ class ConcrexitApiRepository implements ApiRepository {
         () => _client.patch(uri, body: body, headers: _jsonHeader),
       );
       return Payable.fromJson(_jsonDecode(response));
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
   Future<void> markNotPaidAdminEventRegistration({
     required int registrationPk,
   }) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(
         path:
             '/admin/payments/payables/events/eventregistration/$registrationPk/',
       );
       await _handleExceptions(() => _client.delete(uri));
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
@@ -470,7 +458,7 @@ class ConcrexitApiRepository implements ApiRepository {
     int? offset,
     String? search,
   }) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(
         path: '/admin/food/events/$pk/orders/',
         query: {
@@ -481,9 +469,7 @@ class ConcrexitApiRepository implements ApiRepository {
       );
       final response = await _handleExceptions(() => _client.get(uri));
       return await compute(_parseAdminFoodOrders, response);
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   static ListResponse<AdminFoodOrder> _parseAdminFoodOrders(Response response) {
@@ -499,7 +485,7 @@ class ConcrexitApiRepository implements ApiRepository {
     required PaymentType paymentType,
   }) async {
     assert(paymentType != PaymentType.tpayPayment);
-    try {
+    return sandbox(() async {
       final uri = _uri(
         path: '/admin/payments/payables/pizzas/foodorder/$orderPk/',
       );
@@ -524,28 +510,24 @@ class ConcrexitApiRepository implements ApiRepository {
         () => _client.patch(uri, body: body, headers: _jsonHeader),
       );
       return Payable.fromJson(_jsonDecode(response));
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
   Future<void> markNotPaidAdminFoodOrder({
     required int orderPk,
   }) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(
         path: '/admin/payments/payables/pizzas/foodorder/$orderPk/',
       );
       await _handleExceptions(() => _client.delete(uri));
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
   Future<FoodEvent> getFoodEvent(int pk) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(path: '/food/events/$pk/');
       final response = await _handleExceptions(() => _client.get(uri));
       final foodEvent = FoodEvent.fromJson(_jsonDecode(response));
@@ -558,9 +540,7 @@ class ConcrexitApiRepository implements ApiRepository {
         }
       }
       return foodEvent;
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
@@ -575,7 +555,7 @@ class ConcrexitApiRepository implements ApiRepository {
       ordering == null || ['start', 'end', '-start', '-end'].contains(ordering),
       'Invalid ordering parameter: $ordering',
     );
-    try {
+    return sandbox(() async {
       final uri = _uri(
         path: '/food/events/',
         query: {
@@ -589,9 +569,7 @@ class ConcrexitApiRepository implements ApiRepository {
 
       final response = await _handleExceptions(() => _client.get(uri));
       return await compute(_parseFoodEvents, response);
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   static ListResponse<FoodEvent> _parseFoodEvents(Response response) {
@@ -603,7 +581,7 @@ class ConcrexitApiRepository implements ApiRepository {
 
   @override
   Future<FoodEvent> getCurrentFoodEvent() async {
-    try {
+    return sandbox(() async {
       final now = DateTime.now().toLocal();
       final uri = _uri(
         path: '/food/events/',
@@ -647,14 +625,12 @@ class ConcrexitApiRepository implements ApiRepository {
         }
         return foodEvent;
       }
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
   Future<FoodOrder> getFoodOrder(int pk) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(path: '/food/events/$pk/order/');
       final response = await _handleExceptions(() => _client.get(uri));
       final foodOrder = FoodOrder.fromJson(_jsonDecode(response));
@@ -665,19 +641,15 @@ class ConcrexitApiRepository implements ApiRepository {
         if (exception != ApiException.notAllowed) rethrow;
       }
       return foodOrder;
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
   Future<void> cancelFoodOrder(int pk) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(path: '/food/events/$pk/order/');
       await _handleExceptions(() => _client.delete(uri));
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
@@ -685,7 +657,7 @@ class ConcrexitApiRepository implements ApiRepository {
     required int eventPk,
     required int productPk,
   }) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(path: '/food/events/$eventPk/order/');
       final body = jsonEncode({'product': productPk});
       final response = await _handleExceptions(
@@ -699,9 +671,7 @@ class ConcrexitApiRepository implements ApiRepository {
         if (exception != ApiException.notAllowed) rethrow;
       }
       return foodOrder;
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
@@ -709,7 +679,7 @@ class ConcrexitApiRepository implements ApiRepository {
     required int eventPk,
     required int productPk,
   }) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(path: '/food/events/$eventPk/order/');
       final body = jsonEncode({'product': productPk});
       final response = await _handleExceptions(
@@ -723,9 +693,7 @@ class ConcrexitApiRepository implements ApiRepository {
         if (exception != ApiException.notAllowed) rethrow;
       }
       return foodOrder;
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
@@ -735,7 +703,7 @@ class ConcrexitApiRepository implements ApiRepository {
     int? offset,
     String? search,
   }) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(
         path: '/food/events/$pk/products/',
         query: {
@@ -746,9 +714,7 @@ class ConcrexitApiRepository implements ApiRepository {
 
       final response = await _handleExceptions(() => _client.get(uri));
       return await compute(_parseFoodEventProducts, response);
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   static ListResponse<Product> _parseFoodEventProducts(Response response) {
@@ -763,16 +729,14 @@ class ConcrexitApiRepository implements ApiRepository {
     required String modelName,
     required String payablePk,
   }) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(
         path: '/payments/payables/$appLabel/$modelName/$payablePk/',
       );
 
       final response = await _handleExceptions(() => _client.get(uri));
       return Payable.fromJson(_jsonDecode(response));
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   Future<Payable> _makeThaliaPayPayment({
@@ -780,7 +744,7 @@ class ConcrexitApiRepository implements ApiRepository {
     required String modelName,
     required String payablePk,
   }) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(
         path: '/payments/payables/$appLabel/'
             '$modelName/${Uri.encodeComponent(payablePk)}/',
@@ -788,20 +752,16 @@ class ConcrexitApiRepository implements ApiRepository {
 
       final response = await _handleExceptions(() => _client.patch(uri));
       return Payable.fromJson(_jsonDecode(response));
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
   Future<PaymentUser> getPaymentUser() async {
-    try {
+    return sandbox(() async {
       final uri = _uri(path: '/payments/users/me/');
       final response = await _handleExceptions(() => _client.get(uri));
       return PaymentUser.fromJson(_jsonDecode(response));
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
@@ -854,13 +814,11 @@ class ConcrexitApiRepository implements ApiRepository {
 
   @override
   Future<Member> getMember({required int pk}) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(path: '/members/$pk/');
       final response = await _handleExceptions(() => _client.get(uri));
       return Member.fromJson(_jsonDecode(response));
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
@@ -882,7 +840,7 @@ class ConcrexitApiRepository implements ApiRepository {
           ].contains(ordering),
       'Invalid ordering parameter: $ordering',
     );
-    try {
+    return sandbox(() async {
       final uri = _uri(
         path: '/members/',
         query: {
@@ -895,9 +853,7 @@ class ConcrexitApiRepository implements ApiRepository {
 
       final response = await _handleExceptions(() => _client.get(uri));
       return await compute(_parseMembers, response);
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   static ListResponse<ListMember> _parseMembers(Response response) {
@@ -909,18 +865,16 @@ class ConcrexitApiRepository implements ApiRepository {
 
   @override
   Future<FullMember> getMe() async {
-    try {
+    return sandbox(() async {
       final uri = _uri(path: '/members/me/');
       final response = await _handleExceptions(() => _client.get(uri));
       return FullMember.fromJson(_jsonDecode(response));
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
   Future<void> updateAvatar(String filePath) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(path: '/members/me/');
       final request = MultipartRequest('PATCH', uri);
       request.files.add(
@@ -934,14 +888,12 @@ class ConcrexitApiRepository implements ApiRepository {
         final streamedResponse = await _client.send(request);
         return Response.fromStream(streamedResponse);
       });
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
   Future<void> updateDescription(String description) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(path: '/members/me/');
       final body = jsonEncode({
         'profile': {'profile_description': description}
@@ -949,20 +901,16 @@ class ConcrexitApiRepository implements ApiRepository {
       await _handleExceptions(
         () => _client.patch(uri, body: body, headers: _jsonHeader),
       );
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
   Future<Album> getAlbum({required String slug}) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(path: '/photos/albums/$slug/');
       final response = await _handleExceptions(() => _client.get(uri));
       return Album.fromJson(_jsonDecode(response));
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
@@ -971,7 +919,7 @@ class ConcrexitApiRepository implements ApiRepository {
     int? limit,
     int? offset,
   }) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(
         path: '/photos/albums/',
         query: {
@@ -983,9 +931,7 @@ class ConcrexitApiRepository implements ApiRepository {
 
       final response = await _handleExceptions(() => _client.get(uri));
       return await compute(_parseAlbums, response);
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   static ListResponse<ListAlbum> _parseAlbums(Response response) {
@@ -1000,7 +946,7 @@ class ConcrexitApiRepository implements ApiRepository {
     int? limit,
     int? offset,
   }) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(
         path: '/announcements/slides/',
         query: {
@@ -1011,9 +957,7 @@ class ConcrexitApiRepository implements ApiRepository {
 
       final response = await _handleExceptions(() => _client.get(uri));
       return await compute(_parseSlides, response);
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   static ListResponse<Slide> _parseSlides(Response response) {
@@ -1028,7 +972,7 @@ class ConcrexitApiRepository implements ApiRepository {
     int? limit,
     int? offset,
   }) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(
         path: '/announcements/frontpage-articles/',
         query: {
@@ -1039,9 +983,7 @@ class ConcrexitApiRepository implements ApiRepository {
 
       final response = await _handleExceptions(() => _client.get(uri));
       return await compute(_parseFrontpageArticles, response);
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   static ListResponse<FrontpageArticle> _parseFrontpageArticles(
@@ -1059,7 +1001,7 @@ class ConcrexitApiRepository implements ApiRepository {
     required String type,
     bool active = true,
   }) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(path: '/pushnotifications/devices/');
       final body = jsonEncode({
         'registration_id': token,
@@ -1070,34 +1012,28 @@ class ConcrexitApiRepository implements ApiRepository {
         () => _client.post(uri, body: body, headers: _jsonHeader),
       );
       return Device.fromJson(_jsonDecode(response));
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
   Future<Device> getDevice({required int pk}) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(path: '/pushnotifications/devices/$pk/');
       final response = await _handleExceptions(() => _client.get(uri));
       return Device.fromJson(_jsonDecode(response));
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
   Future<Device> disableDevice({required int pk}) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(path: '/pushnotifications/devices/$pk/');
       final body = jsonEncode({'active': false});
       final response = await _handleExceptions(
         () => _client.patch(uri, body: body, headers: _jsonHeader),
       );
       return Device.fromJson(_jsonDecode(response));
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
@@ -1105,16 +1041,14 @@ class ConcrexitApiRepository implements ApiRepository {
     required int pk,
     required String token,
   }) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(path: '/pushnotifications/devices/$pk/');
       final body = jsonEncode({'registration_id': token});
       final response = await _handleExceptions(
         () => _client.patch(uri, body: body, headers: _jsonHeader),
       );
       return Device.fromJson(_jsonDecode(response));
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
@@ -1122,27 +1056,23 @@ class ConcrexitApiRepository implements ApiRepository {
     required int pk,
     required List<String> receiveCategory,
   }) async {
-    try {
+    return sandbox(() async {
       final uri = _uri(path: '/pushnotifications/devices/$pk/');
       final body = jsonEncode({'receive_category': receiveCategory});
       final response = await _handleExceptions(
         () => _client.patch(uri, body: body, headers: _jsonHeader),
       );
       return Device.fromJson(_jsonDecode(response));
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   @override
   Future<ListResponse<PushNotificationCategory>> getCategories() async {
-    try {
+    return sandbox(() async {
       final uri = _uri(path: '/pushnotifications/categories/');
       final response = await _handleExceptions(() => _client.get(uri));
       return await compute(_parseCategories, response);
-    } catch (e) {
-      _catch(e);
-    }
+    });
   }
 
   static ListResponse<PushNotificationCategory> _parseCategories(
@@ -1154,5 +1084,29 @@ class ConcrexitApiRepository implements ApiRepository {
         json as Map<String, dynamic>,
       ),
     );
+  }
+
+  @override
+  Future<SalesOrder> claimSalesOrder({required String pk}) async {
+    return sandbox(() async {
+      final uri = _uri(path: '/sales/order/$pk/claim/');
+      final response = await _handleExceptions(
+        () => _client.patch(uri),
+        allowedStatusCodes: [200, 201, 204, 403],
+      );
+      if (response.statusCode == 403) {
+        final String reason = _jsonDecode(response)['detail'] as String;
+        throw ApiException.message(reason);
+      } else {
+        final order = SalesOrder.fromJson(_jsonDecode(response));
+        try {
+          await getSalesOrderPayable(salesOrderPk: pk);
+          order.tpayAllowed = true;
+        } on ApiException catch (exception) {
+          if (exception != ApiException.notAllowed) rethrow;
+        }
+        return order;
+      }
+    });
   }
 }
