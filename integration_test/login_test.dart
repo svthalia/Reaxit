@@ -27,6 +27,9 @@ void main() {
       when(authCubit.stream).thenAnswer((_) => streamController.stream);
 
       app.testingMain(authCubit);
+
+      await tester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 5));
       await tester.pumpAndSettle();
 
       expect(find.text('LOGIN'), findsOneWidget);
