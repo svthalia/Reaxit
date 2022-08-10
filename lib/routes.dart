@@ -33,7 +33,7 @@ final List<RegExp> _deepLinkRegExps = <RegExp>[
   RegExp('^/events/?\$'),
   RegExp('^/events/([0-9]+)/?\$'),
   RegExp('^/members/photos/([a-z0-9-_]+)/?\$'),
-  RegExp('^/sales/order/([a-z0-9]{8}-([a-z0-9]{4}-){3}-[a-z0-9]{12})/pay/?\$'),
+  RegExp('^/sales/order/([a-z0-9]{8}-([a-z0-9]{4}-){3}[a-z0-9]{12})/pay/?\$'),
 ];
 
 final List<GoRoute> routes = [

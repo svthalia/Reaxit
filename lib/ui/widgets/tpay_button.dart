@@ -100,7 +100,9 @@ class _TPayButtonState extends State<TPayButton> {
       builder: (context, state) {
         const icon = Icon(Icons.euro);
         final buttonLabel = Text(
-          widget.amount != null ? 'THALIA PAY: ${widget.amount}' : 'THALIA PAY',
+          widget.amount != null
+              ? 'THALIA PAY: €${widget.amount}'
+              : 'THALIA PAY',
         );
 
         if (widget.onPay == null) {
