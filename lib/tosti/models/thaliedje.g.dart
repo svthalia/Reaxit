@@ -9,9 +9,9 @@ part of 'thaliedje.dart';
 ThaliedjePlayer _$ThaliedjePlayerFromJson(Map<String, dynamic> json) =>
     ThaliedjePlayer(
       json['id'] as int,
-      json['slug'] as String? ?? 'noord',
+      json['slug'] as String,
       json['display_name'] as String,
-      json['venue'] as int,
+      json['venue'] as int?,
       json['track'] == null
           ? null
           : ThaliedjeCurrentTrack.fromJson(
@@ -34,7 +34,7 @@ Map<String, dynamic> _$ThaliedjePlayerToJson(ThaliedjePlayer instance) =>
 ThaliedjeCurrentTrack _$ThaliedjeCurrentTrackFromJson(
         Map<String, dynamic> json) =>
     ThaliedjeCurrentTrack(
-      Uri.parse(json['image'] as String),
+      json['image'] == null ? null : Uri.parse(json['image'] as String),
       json['name'] as String,
       (json['artists'] as List<dynamic>).map((e) => e as String).toList(),
     );
@@ -42,7 +42,7 @@ ThaliedjeCurrentTrack _$ThaliedjeCurrentTrackFromJson(
 Map<String, dynamic> _$ThaliedjeCurrentTrackToJson(
         ThaliedjeCurrentTrack instance) =>
     <String, dynamic>{
-      'image': instance.image.toString(),
+      'image': instance.image?.toString(),
       'name': instance.name,
       'artists': instance.artists,
     };

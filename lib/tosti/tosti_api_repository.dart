@@ -330,10 +330,6 @@ class TostiApiRepository {
     int? venue,
     String? search,
   }) {
-    return Future.delayed(
-      const Duration(milliseconds: 30),
-      () => const ListResponse<ThaliedjePlayer>(0, []),
-    );
     return sandbox(() async {
       final uri = _uri(
         path: '/thaliedje/players/',
@@ -349,6 +345,15 @@ class TostiApiRepository {
         _jsonDecode(response),
         (json) => ThaliedjePlayer.fromJson(json as Map<String, dynamic>),
       );
+    });
+  }
+
+  /// Get the [ThaliedjePlayer] with the `slug`.
+  Future<ThaliedjePlayer> getPlayer(String slug) {
+    return sandbox(() async {
+      final uri = _uri(path: '/thaliedje/players/$slug/');
+      final response = await _handleExceptions(() => _client.get(uri));
+      return ThaliedjePlayer.fromJson(_jsonDecode(response));
     });
   }
 }

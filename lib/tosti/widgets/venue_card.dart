@@ -38,14 +38,14 @@ class _VenueCardState extends State<VenueCard> {
     late final Widget orderSegment;
     if (widget.venue.shift == null) {
       orderSegment = const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: EdgeInsets.fromLTRB(12, 0, 12, 8),
         child: Text('Not available to order.'),
       );
     } else {
       final shift = widget.venue.shift!;
       final endTime = _formatEndTime(shift.end);
       orderSegment = Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -67,29 +67,43 @@ class _VenueCardState extends State<VenueCard> {
       );
     }
 
-    late final Widget playerSegment;
-    if (widget.venue.player == null) {
-      playerSegment = const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        child: Text('No player.'),
-      );
-    } else {
+    Widget? playerSegment;
+    if (widget.venue.player != null) {
       final player = widget.venue.player!;
-      if (player.track == null || !player.isPlaying) {
+      if (player.track == null) {
         playerSegment = const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: Text('No currently playing.'),
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          child: Text('Not currently playing.'),
         );
       } else {
         final track = player.track!;
         playerSegment = Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Currently playing:'),
-              Text(track.name),
+              Text(
+                'CURRENTLY PLAYING:',
+                style: textTheme.caption,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                track.name,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: textTheme.subtitle2,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'BY:',
+                style: textTheme.caption,
+              ),
+              const SizedBox(height: 4),
               Text(
                 track.artists.join(', '),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: textTheme.subtitle2,
               ),
             ],
           ),
@@ -101,16 +115,17 @@ class _VenueCardState extends State<VenueCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(height: 8),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Text(
               widget.venue.name.toUpperCase(),
               style: textTheme.headline6,
             ),
           ),
-          const Divider(height: 0),
-          playerSegment,
-          const Divider(height: 0),
+          if (playerSegment != null) const Divider(height: 16),
+          if (playerSegment != null) playerSegment,
+          const Divider(height: 16),
           orderSegment,
         ],
       ),
