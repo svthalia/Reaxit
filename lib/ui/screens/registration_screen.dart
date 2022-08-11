@@ -196,7 +196,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   fields: state.result!,
                                 );
 
-                                Navigator.of(context).pop();
+                                if (mounted) Navigator.of(context).pop();
 
                                 messenger.showSnackBar(
                                   const SnackBar(
