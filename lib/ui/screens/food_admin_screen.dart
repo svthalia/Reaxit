@@ -36,6 +36,7 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
                   padding: const EdgeInsets.all(16),
                   icon: const Icon(Icons.search),
                   onPressed: () async {
+                    final adminCubit = BlocProvider.of<FoodAdminCubit>(context);
                     final searchCubit = FoodAdminCubit(
                       RepositoryProvider.of<ApiRepository>(context),
                       foodEventPk: widget.pk,
@@ -52,7 +53,7 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
                     // since the search screen may have changed stuff through
                     // its own FoodAdminCubit, that do not show up in the cubit
                     // for the FoodAdminScreen until a refresh.
-                    BlocProvider.of<FoodAdminCubit>(context).load();
+                    adminCubit.load();
                   },
                 ),
               ],
@@ -155,13 +156,14 @@ class __OderTileState extends State<_OrderTile> {
         ],
         value: order.payment?.type,
         onChanged: (value) async {
+          final messenger = ScaffoldMessenger.of(context);
           try {
             await BlocProvider.of<FoodAdminCubit>(context).setPayment(
               orderPk: order.pk,
               paymentType: value,
             );
           } on ApiException {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            messenger.showSnackBar(SnackBar(
               behavior: SnackBarBehavior.floating,
               content: Text(
                 value != null

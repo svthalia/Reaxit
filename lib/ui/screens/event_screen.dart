@@ -511,13 +511,14 @@ class _EventScreenState extends State<EventScreen> {
   Widget _makeIllBeThereButton(Event event) {
     return ElevatedButton.icon(
       onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
         try {
           final calendarCubit = BlocProvider.of<CalendarCubit>(context);
           await _eventCubit.register();
           await _registrationsCubit.load();
           calendarCubit.load();
         } on ApiException {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          messenger.showSnackBar(const SnackBar(
             behavior: SnackBarBehavior.floating,
             content: Text('Could not register for the event.'),
           ));
@@ -531,6 +532,7 @@ class _EventScreenState extends State<EventScreen> {
   Widget _makeIWontBeThereButton(Event event) {
     return ElevatedButton.icon(
       onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
         try {
           final calendarCubit = BlocProvider.of<CalendarCubit>(context);
           await _eventCubit.cancelRegistration(
@@ -539,7 +541,7 @@ class _EventScreenState extends State<EventScreen> {
           await _registrationsCubit.load();
           calendarCubit.load();
         } on ApiException {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          messenger.showSnackBar(const SnackBar(
             behavior: SnackBarBehavior.floating,
             content: Text('Could not cancel your registration.'),
           ));
@@ -553,6 +555,9 @@ class _EventScreenState extends State<EventScreen> {
   Widget _makeCreateRegistrationButton(Event event) {
     return ElevatedButton.icon(
       onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        final calendarCubit = BlocProvider.of<CalendarCubit>(context);
+        final router = GoRouter.of(context);
         var confirmed = !event.cancelDeadlinePassed();
         if (!confirmed) {
           confirmed = await showDialog<bool>(
@@ -593,14 +598,14 @@ class _EventScreenState extends State<EventScreen> {
           try {
             final registration = await _eventCubit.register();
             if (event.hasFields) {
-              context.pushNamed('event-registration', params: {
+              router.pushNamed('event-registration', params: {
                 'eventPk': event.pk.toString(),
                 'registrationPk': registration.pk.toString(),
               });
             }
-            BlocProvider.of<CalendarCubit>(context).load();
+            calendarCubit.load();
           } on ApiException {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            messenger.showSnackBar(const SnackBar(
               behavior: SnackBarBehavior.floating,
               content: Text('Could not register for the event.'),
             ));
@@ -616,10 +621,13 @@ class _EventScreenState extends State<EventScreen> {
   Widget _makeJoinQueueButton(Event event) {
     return ElevatedButton.icon(
       onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        final calendarCubit = BlocProvider.of<CalendarCubit>(context);
+        final router = GoRouter.of(context);
         try {
           final registration = await _eventCubit.register();
           if (event.hasFields) {
-            context.pushNamed(
+            router.pushNamed(
               'event-registration',
               params: {
                 'eventPk': event.pk.toString(),
@@ -627,9 +635,9 @@ class _EventScreenState extends State<EventScreen> {
               },
             );
           }
-          BlocProvider.of<CalendarCubit>(context).load();
+          calendarCubit.load();
         } on ApiException {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          messenger.showSnackBar(const SnackBar(
             behavior: SnackBarBehavior.floating,
             content: Text('Could not join the waiting list for the event.'),
           ));
@@ -644,6 +652,9 @@ class _EventScreenState extends State<EventScreen> {
   Widget _makeCancelRegistrationButton(Event event, String warningText) {
     return ElevatedButton.icon(
       onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        final calendarCubit = BlocProvider.of<CalendarCubit>(context);
+        final welcomeCubit = BlocProvider.of<WelcomeCubit>(context);
         final confirmed = await showDialog<bool>(
           context: context,
           builder: (context) {
@@ -681,15 +692,15 @@ class _EventScreenState extends State<EventScreen> {
               registrationPk: event.registration!.pk,
             );
           } on ApiException {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            messenger.showSnackBar(const SnackBar(
               behavior: SnackBarBehavior.floating,
               content: Text('Could not cancel your registration.'),
             ));
           }
         }
         await _registrationsCubit.load();
-        BlocProvider.of<CalendarCubit>(context).load();
-        await BlocProvider.of<WelcomeCubit>(context).load();
+        calendarCubit.load();
+        await welcomeCubit.load();
       },
       icon: const Icon(Icons.delete_forever_outlined),
       label: const Text('CANCEL REGISTRATION'),
@@ -732,10 +743,11 @@ class _EventScreenState extends State<EventScreen> {
           text: 'terms and conditions',
           recognizer: TapGestureRecognizer()
             ..onTap = () async {
+              final messenger = ScaffoldMessenger.of(context);
               try {
                 await launchUrl(url, mode: LaunchMode.externalApplication);
               } catch (_) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                messenger.showSnackBar(SnackBar(
                   behavior: SnackBarBehavior.floating,
                   content: Text('Could not open "${url.toString()}".'),
                 ));
@@ -769,10 +781,11 @@ class _EventScreenState extends State<EventScreen> {
             ).toString());
             return true;
           } else {
+            final messenger = ScaffoldMessenger.of(context);
             try {
               await launchUrl(uri, mode: LaunchMode.externalApplication);
             } catch (_) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              messenger.showSnackBar(SnackBar(
                 behavior: SnackBarBehavior.floating,
                 content: Text('Could not open "$url".'),
               ));
@@ -849,10 +862,11 @@ class _EventScreenState extends State<EventScreen> {
             : Icons.share,
       ),
       onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
         try {
           await Share.share('https://${config.apiHost}/events/$pk/');
         } catch (_) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          messenger.showSnackBar(const SnackBar(
             behavior: SnackBarBehavior.floating,
             content: Text('Could not share the event.'),
           ));

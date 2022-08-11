@@ -36,6 +36,8 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                   padding: const EdgeInsets.all(16),
                   icon: const Icon(Icons.search),
                   onPressed: () async {
+                    final adminCubit =
+                        BlocProvider.of<EventAdminCubit>(context);
                     final searchCubit = EventAdminCubit(
                       RepositoryProvider.of<ApiRepository>(context),
                       eventPk: widget.pk,
@@ -52,9 +54,7 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                     // since the search screen may have changed stuff through
                     // its own EventAdminCubit, that do not show up in the cubit
                     // for the EventAdminScreen until a refresh.
-                    BlocProvider.of<EventAdminCubit>(
-                      context,
-                    ).loadRegistrations();
+                    adminCubit.loadRegistrations();
                   },
                 ),
               ],
@@ -131,6 +131,7 @@ class __RegistrationTileState extends State<_RegistrationTile> {
       value: present,
       onChanged: (value) async {
         final oldValue = present;
+        final messenger = ScaffoldMessenger.of(context);
         try {
           setState(() => present = value!);
           await BlocProvider.of<EventAdminCubit>(context).setPresent(
@@ -139,7 +140,7 @@ class __RegistrationTileState extends State<_RegistrationTile> {
           );
         } on ApiException {
           setState(() => present = oldValue);
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          messenger.showSnackBar(SnackBar(
             behavior: SnackBarBehavior.floating,
             content: Text(value!
                 ? 'Could not mark $name as present.'
@@ -203,13 +204,14 @@ class __RegistrationTileState extends State<_RegistrationTile> {
           ],
           value: registration.payment?.type,
           onChanged: (value) async {
+            final messenger = ScaffoldMessenger.of(context);
             try {
               await BlocProvider.of<EventAdminCubit>(context).setPayment(
                 registrationPk: registration.pk,
                 paymentType: value,
               );
             } on ApiException {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              messenger.showSnackBar(SnackBar(
                 behavior: SnackBarBehavior.floating,
                 content: Text(value != null
                     ? 'Could not mark $name as paid.'

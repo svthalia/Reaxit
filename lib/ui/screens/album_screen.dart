@@ -76,6 +76,8 @@ class _AlbumScreenState extends State<AlbumScreen> {
                 color: Theme.of(context).primaryIconTheme.color,
                 icon: const Icon(Icons.download),
                 onPressed: () async {
+                  final messenger = ScaffoldMessenger.of(context);
+
                   var i = pageController.page!.round();
                   if (i < 0 || i >= album.photos.length) i = index;
                   final url = Uri.parse(album.photos[i].full);
@@ -89,14 +91,15 @@ class _AlbumScreenState extends State<AlbumScreen> {
                     );
                     await tempFile.writeAsBytes(response.bodyBytes);
                     await GallerySaver.saveImage(tempFile.path);
-                    ScaffoldMessenger.of(context).showSnackBar(
+
+                    messenger.showSnackBar(
                       const SnackBar(
                         behavior: SnackBarBehavior.floating,
                         content: Text('Succesfully saved the image.'),
                       ),
                     );
                   } catch (_) {
-                    ScaffoldMessenger.of(context).showSnackBar(
+                    messenger.showSnackBar(
                       const SnackBar(
                         behavior: SnackBarBehavior.floating,
                         content: Text('Could not download the image.'),
@@ -114,6 +117,8 @@ class _AlbumScreenState extends State<AlbumScreen> {
                       : Icons.share,
                 ),
                 onPressed: () async {
+                  final messenger = ScaffoldMessenger.of(context);
+
                   var i = pageController.page!.round();
                   if (i < 0 || i >= album.photos.length) i = index;
                   final url = Uri.parse(album.photos[i].full);
@@ -128,7 +133,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
                     await tempFile.writeAsBytes(response.bodyBytes);
                     await Share.shareFiles([tempFile.path]);
                   } catch (_) {
-                    ScaffoldMessenger.of(context).showSnackBar(
+                    messenger.showSnackBar(
                       const SnackBar(
                         behavior: SnackBarBehavior.floating,
                         content: Text('Could not share the image.'),
@@ -169,10 +174,11 @@ class _AlbumScreenState extends State<AlbumScreen> {
             : Icons.share,
       ),
       onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
         try {
           await Share.share('https://${config.apiHost}/members/photos/$slug/');
         } catch (_) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          messenger.showSnackBar(const SnackBar(
             behavior: SnackBarBehavior.floating,
             content: Text('Could not share the album.'),
           ));

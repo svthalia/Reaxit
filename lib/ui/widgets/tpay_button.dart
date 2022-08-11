@@ -152,14 +152,14 @@ class _TPayButtonState extends State<TPayButton> {
                   text: 'the website',
                   recognizer: TapGestureRecognizer()
                     ..onTap = () async {
+                      final messenger = ScaffoldMessenger.of(context);
                       try {
                         await launchUrl(
                           url,
                           mode: LaunchMode.externalApplication,
                         );
                       } catch (_) {
-                        if (!mounted) return;
-                        ScaffoldMessenger.of(this.context).showSnackBar(
+                        messenger.showSnackBar(
                           SnackBar(
                             behavior: SnackBarBehavior.floating,
                             content: Text(
@@ -193,17 +193,16 @@ class _TPayButtonState extends State<TPayButton> {
             final confirmationMessage = widget.confirmationMessage!;
             return ElevatedButton.icon(
               onPressed: () async {
+                final messenger = ScaffoldMessenger.of(context);
                 if (await _showConfirmDialog(confirmationMessage)) {
                   try {
                     await onPay();
-                    if (!mounted) return;
-                    ScaffoldMessenger.of(this.context).showSnackBar(SnackBar(
+                    messenger.showSnackBar(SnackBar(
                       behavior: SnackBarBehavior.floating,
                       content: Text(successMessage),
                     ));
                   } on ApiException {
-                    if (!mounted) return;
-                    ScaffoldMessenger.of(this.context).showSnackBar(SnackBar(
+                    messenger.showSnackBar(SnackBar(
                       behavior: SnackBarBehavior.floating,
                       content: Text(failureMessage),
                     ));
