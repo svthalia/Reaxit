@@ -27,6 +27,13 @@ platform :android do
       build_cmd += " --dart-define=THALIA_OAUTH_APP_ID=\"#{ENV["THALIA_OAUTH_APP_ID"]}\""
       build_cmd += " --dart-define=THALIA_OAUTH_APP_SECRET=\"#{ENV["THALIA_OAUTH_APP_SECRET"]}\""
     end
+
+
+    if ENV["TOSTI_OAUTH_APP_ID"] and ENV["TOSTI_OAUTH_APP_SECRET"] and ENV["TOSTI_API_HOST"]
+      build_cmd += " --dart-define=TOSTI_API_HOST=\"#{ENV["TOSTI_API_HOST"]}\""
+      build_cmd += " --dart-define=TOSTI_OAUTH_APP_ID=\"#{ENV["TOSTI_OAUTH_APP_ID"]}\""
+      build_cmd += " --dart-define=TOSTI_OAUTH_APP_SECRET=\"#{ENV["TOSTI_OAUTH_APP_SECRET"]}\""
+    end
     
     if ENV["SENTRY_DSN"]
       build_cmd += " --dart-define=SENTRY_DSN=\"#{ENV["SENTRY_DSN"]}\""

@@ -53,6 +53,9 @@ jobs:
           THALIA_API_HOST: thalia.nu
           THALIA_OAUTH_APP_ID: ${{ secrets.THALIA_OAUTH_APP_ID }}
           THALIA_OAUTH_APP_SECRET: ${{ secrets.THALIA_OAUTH_APP_SECRET }}
+          TOSTI_API_HOST: tosti.science.ru.nl
+          TOSTI_OAUTH_APP_ID: ${{ secrets.TOSTI_OAUTH_APP_ID }}
+          TOSTI_OAUTH_APP_SECRET: ${{ secrets.TOSTI_OAUTH_APP_SECRET }}
         run: bundle exec fastlane ios deploy_internal
 
   deploy-android:
@@ -119,4 +122,7 @@ jobs:
           THALIA_API_HOST: thalia.nu
           THALIA_OAUTH_APP_ID: ${{ secrets.THALIA_OAUTH_APP_ID }}
           THALIA_OAUTH_APP_SECRET: ${{ secrets.THALIA_OAUTH_APP_SECRET }}
+          TOSTI_API_HOST: tosti.science.ru.nl
+          TOSTI_OAUTH_APP_ID: ${{ secrets.TOSTI_OAUTH_APP_ID }}
+          TOSTI_OAUTH_APP_SECRET: ${{ secrets.TOSTI_OAUTH_APP_SECRET }}
         run: bundle exec fastlane android deploy_internal
