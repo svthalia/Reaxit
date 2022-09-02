@@ -35,6 +35,7 @@ final List<RegExp> _deepLinkRegExps = <RegExp>[
   RegExp('^/pizzas/?\$'),
   RegExp('^/events/?\$'),
   RegExp('^/events/([0-9]+)/?\$'),
+  RegExp('^/members/photos/?\$'),
   RegExp('^/members/photos/([a-z0-9-_]+)/?\$'),
   RegExp('^/sales/order/([a-z0-9]{8}-([a-z0-9]{4}-){3}[a-z0-9]{12})/pay/?\$'),
 ];
@@ -139,6 +140,12 @@ final List<GoRoute> routes = [
     // the members path is a prefix of this albums path.
     path: '/members/photos/:albumSlug',
     redirect: (state) => '/albums/${state.params['albumSlug']}',
+  ),
+  GoRoute(
+    // This redirect is above the members route because
+    // the members path is a prefix of this albums path.
+    path: '/members/photos',
+    redirect: (state) => '/albums',
   ),
   GoRoute(
     path: '/members',
