@@ -14,6 +14,7 @@ import 'package:reaxit/blocs/setting_cubit.dart';
 import 'package:reaxit/blocs/theme_cubit.dart';
 import 'package:reaxit/blocs/welcome_cubit.dart';
 import 'package:reaxit/config.dart' as config;
+import 'package:reaxit/firebase_options.dart';
 import 'package:reaxit/routes.dart';
 import 'package:reaxit/tosti/blocs/auth_cubit.dart';
 import 'package:reaxit/ui/screens/login_screen.dart';
@@ -27,7 +28,7 @@ import 'package:url_launcher/url_launcher.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await SentryFlutter.init(
     (options) {
       options.dsn = config.sentryDSN;

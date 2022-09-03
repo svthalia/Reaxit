@@ -93,8 +93,8 @@ dependencies:
   carousel_slider: ^4.0.0
 
   # Firebase for push notifications.
-  firebase_core: ^1.12.0
-  firebase_messaging: ^11.2.6
+  firebase_core: ^1.21.1
+  firebase_messaging: ^13.0.0
 
   # Push notifications in app. 
   overlay_support: ^2.0.0
