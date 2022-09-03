@@ -81,7 +81,8 @@ class TostiAuthCubit extends Cubit<TostiAuthState> {
     const storage = FlutterSecureStorage();
     final stored = await storage.read(
       key: _credentialsStorageKey,
-      iOptions: const IOSOptions(accessibility: IOSAccessibility.first_unlock),
+      iOptions:
+          const IOSOptions(accessibility: KeychainAccessibility.first_unlock),
     );
 
     if (stored != null) {
@@ -106,7 +107,7 @@ class TostiAuthCubit extends Cubit<TostiAuthState> {
                 key: _credentialsStorageKey,
                 value: credentials.toJson(),
                 iOptions: const IOSOptions(
-                  accessibility: IOSAccessibility.first_unlock,
+                  accessibility: KeychainAccessibility.first_unlock,
                 ),
               );
             },
@@ -148,7 +149,7 @@ class TostiAuthCubit extends Cubit<TostiAuthState> {
           key: _credentialsStorageKey,
           value: credentials.toJson(),
           iOptions: const IOSOptions(
-            accessibility: IOSAccessibility.first_unlock,
+            accessibility: KeychainAccessibility.first_unlock,
           ),
         );
       },
@@ -180,7 +181,7 @@ class TostiAuthCubit extends Cubit<TostiAuthState> {
         key: _credentialsStorageKey,
         value: client.credentials.toJson(),
         iOptions:
-            const IOSOptions(accessibility: IOSAccessibility.first_unlock),
+            const IOSOptions(accessibility: KeychainAccessibility.first_unlock),
       );
 
       final apiRepository = TostiApiRepository(
@@ -215,7 +216,8 @@ class TostiAuthCubit extends Cubit<TostiAuthState> {
     const storage = FlutterSecureStorage();
     await storage.delete(
       key: _credentialsStorageKey,
-      iOptions: const IOSOptions(accessibility: IOSAccessibility.first_unlock),
+      iOptions:
+          const IOSOptions(accessibility: KeychainAccessibility.first_unlock),
     );
 
     emit(LoggedOutTostiAuthState());
