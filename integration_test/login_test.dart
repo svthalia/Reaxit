@@ -14,48 +14,126 @@ void main() {
   // ignore: unused_local_variable
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets(
-    'LoginScreen works and logging in redirects to WelcomeScreen',
-    (tester) async {
-      final authCubit = MockAuthCubit();
-      final streamController = StreamController<AuthState>.broadcast()
-        ..add(LoadingAuthState())
-        ..add(LoggedOutAuthState());
+  group('LoginScreen', () {
+    testWidgets(
+      'lets you log in and logging in redirects to WelcomeScreen',
+      (tester) async {
+        // Setup mock.
+        final authCubit = MockAuthCubit();
+        final streamController = StreamController<AuthState>.broadcast()
+          ..stream.listen((state) {
+            when(authCubit.state).thenReturn(state);
+          })
+          ..add(LoadingAuthState())
+          ..add(LoggedOutAuthState());
 
-      when(authCubit.load()).thenAnswer((_) => Future.value(null));
-      when(authCubit.state).thenReturn(LoggedOutAuthState());
-      when(authCubit.stream).thenAnswer((_) => streamController.stream);
+        when(authCubit.load()).thenAnswer((_) => Future.value(null));
+        when(authCubit.stream).thenAnswer((_) => streamController.stream);
 
-      app.testingMain(authCubit);
+        // Start app.
+        app.testingMain(authCubit);
+        await tester.pumpAndSettle();
+        await Future.delayed(const Duration(seconds: 5));
+        await tester.pumpAndSettle();
 
-      await tester.pumpAndSettle();
-      await Future.delayed(const Duration(seconds: 5));
-      await tester.pumpAndSettle();
+        expect(find.text('LOGIN'), findsOneWidget);
+        await tester.tap(find.text('LOGIN'));
 
-      expect(find.text('LOGIN'), findsOneWidget);
-      await tester.tap(find.text('LOGIN'));
+        streamController.add(LoadingAuthState());
 
-      streamController.add(LoadingAuthState());
-      when(authCubit.state).thenReturn(LoadingAuthState());
+        await tester.pump();
+        expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
-      await tester.pump();
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+        final api = MockApiRepository();
+        throwOnMissingStub(
+          api,
+          exceptionBuilder: (_) {
+            throw ApiException.unknownError;
+          },
+        );
 
-      final apiRepository = MockApiRepository();
-      throwOnMissingStub(
-        apiRepository,
-        exceptionBuilder: (_) {
-          throw ApiException.unknownError;
-        },
-      );
+        final loggedInState = LoggedInAuthState(apiRepository: api);
+        streamController.add(loggedInState);
 
-      final loggedInState = LoggedInAuthState(apiRepository: apiRepository);
-      streamController.add(loggedInState);
-      when(authCubit.state).thenReturn(loggedInState);
+        await tester.pumpAndSettle();
 
-      await tester.pumpAndSettle();
+        expect(find.text('WELCOME'), findsOneWidget);
+      },
+    );
 
-      expect(find.text('WELCOME'), findsOneWidget);
-    },
-  );
+    testWidgets(
+      'is not shown when already logged in',
+      (tester) async {
+        // Setup signed-in AuthCubit.
+        final authCubit = MockAuthCubit();
+        final api = MockApiRepository();
+        throwOnMissingStub(
+          api,
+          exceptionBuilder: (_) {
+            throw ApiException.unknownError;
+          },
+        );
+
+        final streamController = StreamController<AuthState>.broadcast()
+          ..stream.listen((state) {
+            when(authCubit.state).thenReturn(state);
+          })
+          ..add(LoadingAuthState())
+          ..add(LoggedInAuthState(apiRepository: api));
+
+        when(authCubit.load()).thenAnswer((_) => Future.value(null));
+        when(authCubit.stream).thenAnswer((_) => streamController.stream);
+
+        // Start app.
+        app.testingMain(authCubit);
+        await tester.pumpAndSettle();
+        await Future.delayed(const Duration(seconds: 5));
+        await tester.pumpAndSettle();
+
+        expect(find.text('WELCOME'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'is shown again after logging out',
+      (tester) async {
+        // Setup signed-in AuthCubit.
+        final authCubit = MockAuthCubit();
+        final api = MockApiRepository();
+        throwOnMissingStub(
+          api,
+          exceptionBuilder: (_) {
+            throw ApiException.unknownError;
+          },
+        );
+
+        final streamController = StreamController<AuthState>.broadcast()
+          ..stream.listen((state) {
+            when(authCubit.state).thenReturn(state);
+          })
+          ..add(LoadingAuthState())
+          ..add(LoggedInAuthState(apiRepository: api));
+
+        when(authCubit.load()).thenAnswer((_) => Future.value(null));
+        when(authCubit.stream).thenAnswer((_) => streamController.stream);
+
+        when(authCubit.logOut()).thenAnswer((_) => Future.value(null));
+
+        // Start app.
+        app.testingMain(authCubit);
+        await tester.pumpAndSettle();
+        await Future.delayed(const Duration(seconds: 5));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byIcon(Icons.logout));
+        streamController.add(LoggedOutAuthState());
+        await tester.pumpAndSettle();
+
+        expect(find.text('LOGIN'), findsOneWidget);
+      },
+    );
+  });
 }

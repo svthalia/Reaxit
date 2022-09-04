@@ -24,7 +24,8 @@ void main() {
       expect(calendarEvents.first.title, event.title);
       expect(calendarEvents.first.label, '13:37 - 14:37 | Dolor');
     });
-    test('returns 1 CalendarEvent an event ending at 00:00', () {
+
+    test('returns 1 CalendarEvent for an event ending at 00:00', () {
       final event = FakeEvent(
         pk: 1,
         title: 'Lorem',
