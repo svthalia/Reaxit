@@ -154,9 +154,9 @@ class MenuDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Welcome'),
             leading: const Icon(Icons.home),
-            selected: router.location == '/welcome',
+            selected: router.location == '/',
             onTap: () {
-              if (router.location == '/welcome') {
+              if (router.location == '/') {
                 Navigator.of(context).pop();
               } else {
                 context.goNamed('welcome');
