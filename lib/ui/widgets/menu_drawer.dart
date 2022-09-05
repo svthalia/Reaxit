@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:reaxit/blocs/auth_cubit.dart';
 import 'package:reaxit/blocs/full_member_cubit.dart';
 import 'package:reaxit/ui/widgets/cached_image.dart';
+import 'package:reaxit/config.dart' as config;
 
 class MenuDrawer extends StatelessWidget {
   @override
@@ -198,6 +199,19 @@ class MenuDrawer extends StatelessWidget {
               }
             },
           ),
+          if (config.tostiEnabled)
+            ListTile(
+              title: const Text('T.O.S.T.I.'),
+              leading: const Icon(Icons.breakfast_dining),
+              selected: router.location.startsWith('/tosti'),
+              onTap: () {
+                if (router.location.startsWith('/tosti')) {
+                  Navigator.of(context).pop();
+                } else {
+                  context.goNamed('tosti');
+                }
+              },
+            ),
           ListTile(
             title: const Text('Settings'),
             leading: const Icon(Icons.settings),

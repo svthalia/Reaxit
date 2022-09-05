@@ -15,6 +15,7 @@ import 'package:reaxit/blocs/theme_cubit.dart';
 import 'package:reaxit/blocs/welcome_cubit.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/routes.dart';
+import 'package:reaxit/tosti/blocs/auth_cubit.dart';
 import 'package:reaxit/ui/screens/login_screen.dart';
 import 'package:reaxit/ui/theme.dart';
 import 'package:reaxit/ui/widgets/push_notification_dialog.dart';
@@ -248,6 +249,10 @@ class _ThaliAppState extends State<ThaliApp> {
                         authState.apiRepository,
                       )..load(),
                       lazy: false,
+                    ),
+                    BlocProvider(
+                      create: (_) => TostiAuthCubit()..load(),
+                      lazy: true,
                     ),
                   ],
                   child: navigator,

@@ -322,7 +322,7 @@ abstract class ApiRepository {
     required List<String> receiveCategory,
   });
 
-  /// Get the list of all [PushNoficationCategory]s.
+  /// Get the list of all [PushNotificationCategory]s.
   Future<ListResponse<PushNotificationCategory>> getCategories();
 
   /// Claim and get the [SalesOrder] with the `pk`.
