@@ -12,12 +12,17 @@ void main() {
         'http://$apiHost/events/1/',
         'https://$apiHost/',
         'https://$apiHost/pizzas/',
+        'https://$apiHost/members/photos/',
         'https://$apiHost/members/photos/some-album-1/',
         'https://$apiHost/sales/order/11111111-aaaa-bbbb-cccc-222222222222/pay/',
       ];
 
       for (final uri in validUris) {
-        expect(isDeepLink(Uri.parse(uri)), true, reason: '$uri is a deep link');
+        expect(
+          isDeepLink(Uri.parse(uri)),
+          true,
+          reason: '$uri is a valid deep link',
+        );
       }
     });
 
@@ -32,7 +37,11 @@ void main() {
       ];
 
       for (final uri in invalidUris) {
-        expect(isDeepLink(Uri.parse(uri)), false);
+        expect(
+          isDeepLink(Uri.parse(uri)),
+          false,
+          reason: '$uri is not a valid deep link',
+        );
       }
     });
   });
