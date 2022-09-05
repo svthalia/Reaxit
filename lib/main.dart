@@ -50,7 +50,7 @@ Future<void> main() async {
 Future<void> testingMain(AuthCubit? authCubit) async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(BlocProvider(
     create: (_) => ThemeCubit()..load(),
     lazy: false,
