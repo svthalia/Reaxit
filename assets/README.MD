@@ -10,3 +10,7 @@ The placeholder images have background color `#c5c5c5` and foreground `#ffffff`.
 - Save and export it to PNG, unchecking any stored info, such as Exif or color profile. If the image does not need to be transparant, do check 'save background color' to reduce file size (the alpha channel is left out).
 
 Some of them use SVGs of Material Design icons, that can be downloaded from <https://fonts.google.com/icons>.
+
+## Google Fonts
+
+See https://pub.dev/packages/google_fonts#font-bundling-in-assets.

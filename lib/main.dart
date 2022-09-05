@@ -1,8 +1,10 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:reaxit/blocs/album_list_cubit.dart';
 import 'package:reaxit/blocs/auth_cubit.dart';
@@ -27,6 +29,22 @@ import 'package:url_launcher/url_launcher.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Google Fonts doesn't need to download fonts as they are bundled.
+  GoogleFonts.config.allowRuntimeFetching = false;
+
+  // Add licenses for the used fonts.
+  LicenseRegistry.addLicense(() async* {
+    final openSansLicense = await rootBundle.loadString(
+      'assets/google_fonts/OpenSans-OFL.txt',
+    );
+    final oswaldLicense = await rootBundle.loadString(
+      'assets/google_fonts/Oswald-OFL.txt',
+    );
+    yield LicenseEntryWithLineBreaks(['google_fonts'], openSansLicense);
+    yield LicenseEntryWithLineBreaks(['google_fonts'], oswaldLicense);
+  });
+
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await SentryFlutter.init(
@@ -49,6 +67,22 @@ Future<void> main() async {
 /// A copy of [main] that allows inserting an [AuthCubit] for integration tests.
 Future<void> testingMain(AuthCubit? authCubit) async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Google Fonts doesn't need to download fonts as they are bundled.
+  GoogleFonts.config.allowRuntimeFetching = false;
+
+  // Add licenses for the used fonts.
+  LicenseRegistry.addLicense(() async* {
+    final openSansLicense = await rootBundle.loadString(
+      'assets/google_fonts/OpenSans-OFL.txt',
+    );
+    final oswaldLicense = await rootBundle.loadString(
+      'assets/google_fonts/Oswald-OFL.txt',
+    );
+    yield LicenseEntryWithLineBreaks(['google_fonts'], openSansLicense);
+    yield LicenseEntryWithLineBreaks(['google_fonts'], oswaldLicense);
+  });
+
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(BlocProvider(
