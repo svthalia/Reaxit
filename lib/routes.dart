@@ -266,7 +266,7 @@ final List<GoRoute> routes = [
             redirect: (state) {
               // Redirect to TostiScreen if not authenticated.
               // TODO: Is there a nicer way to pass tosti api to other pages?
-              if (state.extra is TostiApiRepository) return '/tosti';
+              if (state.extra is! TostiApiRepository) return '/tosti';
               return null;
             },
             pageBuilder: (context, state) => MaterialPage(
