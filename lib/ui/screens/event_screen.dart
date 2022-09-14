@@ -459,7 +459,8 @@ class _EventScreenState extends State<EventScreen> {
     }
 
     if (event.noRegistrationMessage?.isNotEmpty ?? false) {
-      textSpans.add(TextSpan(text: event.noRegistrationMessage));
+      final htmlStripped = Bidi.stripHtmlIfNeeded(event.noRegistrationMessage!);
+      textSpans.add(TextSpan(text: htmlStripped));
     } else {
       textSpans.add(const TextSpan(text: 'No registration required.'));
     }
@@ -491,7 +492,8 @@ class _EventScreenState extends State<EventScreen> {
 
     final textSpans = <TextSpan>[];
     if (event.noRegistrationMessage?.isNotEmpty ?? false) {
-      textSpans.add(TextSpan(text: event.noRegistrationMessage));
+      final htmlStripped = Bidi.stripHtmlIfNeeded(event.noRegistrationMessage!);
+      textSpans.add(TextSpan(text: htmlStripped));
     } else {
       textSpans.add(const TextSpan(text: 'No registration required.'));
     }
