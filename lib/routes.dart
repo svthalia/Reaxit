@@ -239,29 +239,30 @@ final List<GoRoute> routes = [
   ),
   if (config.tostiEnabled) // Otherwise, all T.O.S.T.I. stuff is removed.
     GoRoute(
-        path: '/tosti',
-        name: 'tosti',
-        pageBuilder: (context, state) => MaterialPage(
-              key: state.pageKey,
-              child: const TostiScreen(),
+      path: '/tosti',
+      name: 'tosti',
+      pageBuilder: (context, state) => MaterialPage(
+        key: state.pageKey,
+        child: const TostiScreen(),
+      ),
+      routes: [
+        GoRoute(
+          path: 'shift/:shiftId',
+          name: 'tosti-shift',
+          redirect: (context, state) {
+            // Redirect to TostiScreen if not authenticated.
+            // TODO: Is there a nicer way to pass tosti api to other pages?
+            if (state.extra is! TostiApiRepository) return '/tosti';
+            return null;
+          },
+          pageBuilder: (context, state) => MaterialPage(
+            key: state.pageKey,
+            child: TostiShiftScreen(
+              id: int.parse(state.params['shiftId']!),
+              api: state.extra as TostiApiRepository,
             ),
-        routes: [
-          GoRoute(
-            path: 'shift/:shiftId',
-            name: 'tosti-shift',
-            redirect: (context, state) {
-              // Redirect to TostiScreen if not authenticated.
-              // TODO: Is there a nicer way to pass tosti api to other pages?
-              if (state.extra is! TostiApiRepository) return '/tosti';
-              return null;
-            },
-            pageBuilder: (context, state) => MaterialPage(
-              key: state.pageKey,
-              child: TostiShiftScreen(
-                id: int.parse(state.params['shiftId']!),
-                api: state.extra as TostiApiRepository,
-              ),
-            ),
-          )
-        ]),
+          ),
+        )
+      ],
+    ),
 ];
