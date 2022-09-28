@@ -139,13 +139,13 @@ final List<GoRoute> routes = [
     // This redirect is above the members route because
     // the members path is a prefix of this albums path.
     path: '/members/photos/:albumSlug',
-    redirect: (state) => '/albums/${state.params['albumSlug']}',
+    redirect: (context, state) => '/albums/${state.params['albumSlug']}',
   ),
   GoRoute(
     // This redirect is above the members route because
     // the members path is a prefix of this albums path.
     path: '/members/photos',
-    redirect: (state) => '/albums',
+    redirect: (context, state) => '/albums',
   ),
   GoRoute(
     path: '/members',
@@ -263,7 +263,7 @@ final List<GoRoute> routes = [
           GoRoute(
             path: 'shift/:shiftId',
             name: 'tosti-shift',
-            redirect: (state) {
+            redirect: (context, state) {
               // Redirect to TostiScreen if not authenticated.
               // TODO: Is there a nicer way to pass tosti api to other pages?
               if (state.extra is! TostiApiRepository) return '/tosti';

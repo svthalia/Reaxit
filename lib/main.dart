@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -97,6 +99,23 @@ Future<void> testingMain(AuthCubit? authCubit) async {
   ));
 }
 
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    notifyListeners();
+    _subscription = stream.asBroadcastStream().listen(
+          (dynamic _) => notifyListeners(),
+        );
+  }
+
+  late final StreamSubscription<dynamic> _subscription;
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+}
+
 class ThaliApp extends StatefulWidget {
   @override
   State<ThaliApp> createState() => _ThaliAppState();
@@ -185,7 +204,7 @@ class _ThaliAppState extends State<ThaliApp> {
       // Redirect to `/login?from=<original-path>` if the user is not
       // logged in. If the user is logged in, and there is an original
       // path in the query parameters, redirect to that original path.
-      redirect: (GoRouterState state) {
+      redirect: (context, state) {
         final loggedIn = _authCubit.state is LoggedInAuthState;
         final goingToLogin = state.location.startsWith('/login');
 
@@ -202,112 +221,6 @@ class _ThaliAppState extends State<ThaliApp> {
 
       // Refresh to look for redirects whenever auth state changes.
       refreshListenable: GoRouterRefreshStream(_authCubit.stream),
-
-      // This adds listeners for authentication status snackbars and setting up
-      // push notifications. This surrounds the navigator with providers when
-      // logged in, and replaces it with a [LoginScreen] when not logged in.
-      navigatorBuilder: (context, state, navigator) {
-        return BlocConsumer<AuthCubit, AuthState>(
-          listenWhen: (previous, current) {
-            if (previous is LoggedInAuthState &&
-                current is LoggedOutAuthState) {
-              return true;
-            } else if (current is FailureAuthState) {
-              return true;
-            }
-            return false;
-          },
-
-          // Listen to display login status snackbars and set up notifications.
-          listener: (context, state) async {
-            // Show a snackbar when the user logs out or logging in fails.
-            if (state is LoggedOutAuthState) {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                behavior: SnackBarBehavior.floating,
-                content: Text('Logged out.'),
-              ));
-            } else if (state is FailureAuthState) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                behavior: SnackBarBehavior.floating,
-                content: Text(state.message ?? 'Logging in failed.'),
-              ));
-            }
-          },
-
-          builder: (context, authState) {
-            // Build with cubits provided when logged in.
-            if (authState is LoggedInAuthState) {
-              return RepositoryProvider.value(
-                value: authState.apiRepository,
-                child: MultiBlocProvider(
-                  providers: [
-                    BlocProvider(
-                      create: (_) => PaymentUserCubit(
-                        authState.apiRepository,
-                      )..load(),
-                      lazy: false,
-                    ),
-                    BlocProvider(
-                      create: (_) => FullMemberCubit(
-                        authState.apiRepository,
-                      )..load(),
-                      lazy: false,
-                    ),
-                    BlocProvider(
-                      create: (_) => WelcomeCubit(
-                        authState.apiRepository,
-                      )..load(),
-                      lazy: false,
-                    ),
-                    BlocProvider(
-                      create: (_) => CalendarCubit(
-                        authState.apiRepository,
-                      )..load(),
-                      lazy: false,
-                    ),
-                    BlocProvider(
-                      create: (_) => MemberListCubit(
-                        authState.apiRepository,
-                      )..load(),
-                      lazy: false,
-                    ),
-                    BlocProvider(
-                      create: (_) => AlbumListCubit(
-                        authState.apiRepository,
-                      )..load(),
-                      lazy: false,
-                    ),
-                    BlocProvider(
-                      // The SettingsCubit must not be lazy, since
-                      // it handles setting up push notifications.
-                      create: (_) => SettingsCubit(
-                        authState.apiRepository,
-                      )..load(),
-                      lazy: false,
-                    ),
-                    BlocProvider(
-                      create: (_) => TostiAuthCubit()..load(),
-                      lazy: true,
-                    ),
-                  ],
-                  child: navigator,
-                ),
-              );
-            } else if (authState is LoggedOutAuthState) {
-              // Don't show the navigator (which is animating from a logged-in
-              // stack towards only the login screen). This prevents getting
-              // `ProviderNotFoundException`s during the animation, caused by
-              // the cubits no longer being provided after logging out.
-              // There is no transition shown when logging out, because
-              // there is temporarily no navigator rendering an animation.
-              return const LoginScreen();
-              // TODO: This is hacky. There should be a neat way to handle this.
-            } else {
-              return navigator;
-            }
-          },
-        );
-      },
     );
 
     _setupPushNotificationHandlers();
@@ -332,6 +245,112 @@ class _ThaliAppState extends State<ThaliApp> {
             routerDelegate: _router.routerDelegate,
             routeInformationParser: _router.routeInformationParser,
             routeInformationProvider: _router.routeInformationProvider,
+
+            // This adds listeners for authentication status snackbars and setting up
+            // push notifications. This surrounds the navigator with providers when
+            // logged in, and replaces it with a [LoginScreen] when not logged in.
+            builder: (context, navigator) {
+              return BlocConsumer<AuthCubit, AuthState>(
+                listenWhen: (previous, current) {
+                  if (previous is LoggedInAuthState &&
+                      current is LoggedOutAuthState) {
+                    return true;
+                  } else if (current is FailureAuthState) {
+                    return true;
+                  }
+                  return false;
+                },
+
+                // Listen to display login status snackbars and set up notifications.
+                listener: (context, state) async {
+                  // Show a snackbar when the user logs out or logging in fails.
+                  if (state is LoggedOutAuthState) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      behavior: SnackBarBehavior.floating,
+                      content: Text('Logged out.'),
+                    ));
+                  } else if (state is FailureAuthState) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      behavior: SnackBarBehavior.floating,
+                      content: Text(state.message ?? 'Logging in failed.'),
+                    ));
+                  }
+                },
+
+                builder: (context, authState) {
+                  // Build with cubits provided when logged in.
+                  if (authState is LoggedInAuthState) {
+                    return RepositoryProvider.value(
+                      value: authState.apiRepository,
+                      child: MultiBlocProvider(
+                        providers: [
+                          BlocProvider(
+                            create: (_) => PaymentUserCubit(
+                              authState.apiRepository,
+                            )..load(),
+                            lazy: false,
+                          ),
+                          BlocProvider(
+                            create: (_) => FullMemberCubit(
+                              authState.apiRepository,
+                            )..load(),
+                            lazy: false,
+                          ),
+                          BlocProvider(
+                            create: (_) => WelcomeCubit(
+                              authState.apiRepository,
+                            )..load(),
+                            lazy: false,
+                          ),
+                          BlocProvider(
+                            create: (_) => CalendarCubit(
+                              authState.apiRepository,
+                            )..load(),
+                            lazy: false,
+                          ),
+                          BlocProvider(
+                            create: (_) => MemberListCubit(
+                              authState.apiRepository,
+                            )..load(),
+                            lazy: false,
+                          ),
+                          BlocProvider(
+                            create: (_) => AlbumListCubit(
+                              authState.apiRepository,
+                            )..load(),
+                            lazy: false,
+                          ),
+                          BlocProvider(
+                            // The SettingsCubit must not be lazy, since
+                            // it handles setting up push notifications.
+                            create: (_) => SettingsCubit(
+                              authState.apiRepository,
+                            )..load(),
+                            lazy: false,
+                          ),
+                          BlocProvider(
+                            create: (_) => TostiAuthCubit()..load(),
+                            lazy: true,
+                          ),
+                        ],
+                        child: navigator!,
+                      ),
+                    );
+                  } else if (authState is LoggedOutAuthState) {
+                    // Don't show the navigator (which is animating from a logged-in
+                    // stack towards only the login screen). This prevents getting
+                    // `ProviderNotFoundException`s during the animation, caused by
+                    // the cubits no longer being provided after logging out.
+                    // There is no transition shown when logging out, because
+                    // there is temporarily no navigator rendering an animation.
+                    return const LoginScreen();
+                    // TODO: This is hacky. There should be a neat way to handle this.
+                  } else {
+                    return navigator!;
+                  }
+                },
+              );
+            },
           ),
         );
       },

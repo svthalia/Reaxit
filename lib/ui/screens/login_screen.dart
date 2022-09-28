@@ -68,8 +68,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 50,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.black87,
-                      onPrimary: Colors.white,
+                      backgroundColor: Colors.black87,
+                      foregroundColor: Colors.white,
                     ),
                     onPressed: () {
                       BlocProvider.of<AuthCubit>(
