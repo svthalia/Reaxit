@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:reaxit/blocs/calendar_cubit.dart';
-import 'package:reaxit/ui/screens/calendar_screen.dart';
+import 'package:reaxit/blocs.dart';
+import 'package:reaxit/ui/screens.dart';
 
 import '../fakes.dart';
 

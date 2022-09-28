@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:reaxit/blocs/auth_cubit.dart';
-import 'package:reaxit/blocs/full_member_cubit.dart';
-import 'package:reaxit/ui/widgets/cached_image.dart';
+import 'package:reaxit/blocs.dart';
+import 'package:reaxit/ui/widgets.dart';
 import 'package:reaxit/config.dart' as config;
 
 class MenuDrawer extends StatelessWidget {

@@ -4,9 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/config.dart' as config;
-import 'package:reaxit/blocs/detail_state.dart';
-import 'package:reaxit/models/food_order.dart';
-import 'package:reaxit/models/payment.dart';
+import 'package:reaxit/blocs.dart';
+import 'package:reaxit/models.dart';
 
 typedef FoodAdminState = DetailState<List<AdminFoodOrder>>;
 

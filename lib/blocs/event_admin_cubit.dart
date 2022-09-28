@@ -6,9 +6,7 @@ import 'package:meta/meta.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/config.dart' as config;
-import 'package:reaxit/models/event.dart';
-import 'package:reaxit/models/event_registration.dart';
-import 'package:reaxit/models/payment.dart';
+import 'package:reaxit/models.dart';
 
 class EventAdminState extends Equatable {
   /// This can only be null when [isLoading] or [hasException] is true.

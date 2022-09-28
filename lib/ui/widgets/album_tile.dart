@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:reaxit/models/album.dart';
-import 'package:reaxit/ui/widgets/cached_image.dart';
+import 'package:reaxit/models.dart';
+import 'package:reaxit/ui/widgets.dart';
 
 class AlbumTile extends StatelessWidget {
   final ListAlbum album;

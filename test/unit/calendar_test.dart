@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:reaxit/blocs/calendar_cubit.dart';
+import 'package:reaxit/blocs.dart';
 
 import '../fakes.dart';
 

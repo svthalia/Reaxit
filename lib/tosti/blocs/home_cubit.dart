@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/exceptions.dart';
-import 'package:reaxit/blocs/detail_state.dart';
+import 'package:reaxit/blocs.dart';
 import 'package:reaxit/tosti/models.dart';
 import 'package:reaxit/tosti/tosti_api_repository.dart';
 

@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:reaxit/models/event_registration.dart';
+import 'package:reaxit/models.dart';
 
 part 'event.g.dart';
 

@@ -1,4 +1,4 @@
-import 'package:reaxit/models/event.dart';
+import 'package:reaxit/models.dart';
 
 class FakeEvent implements BaseEvent {
   @override

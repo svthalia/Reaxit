@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/exceptions.dart';
-import 'package:reaxit/blocs/setting_cubit.dart';
-import 'package:reaxit/blocs/theme_cubit.dart';
-import 'package:reaxit/models/push_notification_category.dart';
-import 'package:reaxit/ui/widgets/app_bar.dart';
-import 'package:reaxit/ui/widgets/menu_drawer.dart';
+import 'package:reaxit/blocs.dart';
+import 'package:reaxit/models.dart';
+import 'package:reaxit/ui/widgets.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:url_launcher/url_launcher.dart';
 

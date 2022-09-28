@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
-import 'package:reaxit/blocs/detail_state.dart';
-import 'package:reaxit/models/payment_user.dart';
+import 'package:reaxit/blocs.dart';
+import 'package:reaxit/models.dart';
 
 typedef PaymentUserState = DetailState<PaymentUser>;
 

@@ -48,7 +48,7 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'start': instance.start.toIso8601String(),
       'end': instance.end.toIso8601String(),
       'location': instance.location,
-      'category': _$EventCategoryEnumMap[instance.category],
+      'category': _$EventCategoryEnumMap[instance.category]!,
       'has_fields': instance.hasFields,
       'optional_registrations': instance.optionalRegistrations,
       'registration_start': instance.registrationStart?.toIso8601String(),

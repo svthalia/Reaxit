@@ -5,8 +5,7 @@ import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/tosti/blocs/shift_cubit.dart';
 import 'package:reaxit/tosti/models.dart';
 import 'package:reaxit/tosti/tosti_api_repository.dart';
-import 'package:reaxit/ui/widgets/app_bar.dart';
-import 'package:reaxit/ui/widgets/error_scroll_view.dart';
+import 'package:reaxit/ui/widgets.dart';
 
 class TostiShiftScreen extends StatelessWidget {
   const TostiShiftScreen({required this.id, required this.api});
