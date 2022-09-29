@@ -1119,4 +1119,45 @@ class ConcrexitApiRepository implements ApiRepository {
       }
     });
   }
+
+  @override
+  Future<ListResponse<ListGroup>> getGroups({
+    int? limit,
+    int? offset,
+    MemberGroupType? type,
+    DateTime? start,
+    DateTime? end,
+    String? search,
+  }) async {
+    const memberGroupTypeMap = {
+      MemberGroupType.committee: 'committee',
+      MemberGroupType.society: 'society',
+      MemberGroupType.board: 'board',
+    };
+
+    final uri = _baseUri.replace(
+      path: '$_basePath/activemembers/groups/',
+      queryParameters: {
+        if (limit != null) 'limit': limit.toString(),
+        if (offset != null) 'offset': offset.toString(),
+        if (type != null) 'type': memberGroupTypeMap[type],
+        if (start != null) 'start': start.toIso8601String(),
+        if (end != null) 'end': end.toIso8601String(),
+        if (search != null) 'search': search
+      },
+    );
+
+    final response = await _handleExceptions(() => _client.get(uri));
+    return ListResponse<ListGroup>.fromJson(
+      _jsonDecode(response),
+      (json) => ListGroup.fromJson(json as Map<String, dynamic>),
+    );
+  }
+
+  @override
+  Future<Group> getGroup({required int pk}) async {
+    final uri = _baseUri.replace(path: '$_basePath/activemembers/groups/$pk/');
+    final response = await _handleExceptions(() => _client.get(uri));
+    return Group.fromJson(_jsonDecode(response));
+  }
 }

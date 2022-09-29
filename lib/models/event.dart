@@ -61,8 +61,6 @@ class Event implements BaseEvent {
   final EventPermissions userPermissions;
   @JsonKey(name: 'user_registration')
   final UserEventRegistration? registration;
-  // final Commitee organiser;
-  // final Slide? slide;
 
   bool get hasFoodEvent => foodEvent != null;
 

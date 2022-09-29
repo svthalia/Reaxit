@@ -8,6 +8,7 @@ export 'blocs/event_cubit.dart';
 export 'blocs/food_admin_cubit.dart';
 export 'blocs/food_cubit.dart';
 export 'blocs/full_member_cubit.dart';
+export 'blocs/group_cubit.dart';
 export 'blocs/list_state.dart';
 export 'blocs/mark_present_cubit.dart';
 export 'blocs/member_cubit.dart';
