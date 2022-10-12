@@ -144,20 +144,22 @@ class _AlbumScreenState extends State<AlbumScreen> {
               ),
             ],
           ),
-          body: PhotoViewGallery.builder(
-            loadingBuilder: (_, __) => const Center(
-              child: CircularProgressIndicator(),
+          body: SafeArea(
+            child: PhotoViewGallery.builder(
+              loadingBuilder: (_, __) => const Center(
+                child: CircularProgressIndicator(),
+              ),
+              backgroundDecoration: const BoxDecoration(
+                color: Colors.transparent,
+              ),
+              itemCount: album.photos.length,
+              builder: (context, i) => PhotoViewGalleryPageOptions(
+                imageProvider: NetworkImage(album.photos[i].full),
+                minScale: PhotoViewComputedScale.contained * 0.8,
+                maxScale: PhotoViewComputedScale.covered * 2,
+              ),
+              pageController: pageController,
             ),
-            backgroundDecoration: const BoxDecoration(
-              color: Colors.transparent,
-            ),
-            itemCount: album.photos.length,
-            builder: (context, i) => PhotoViewGalleryPageOptions(
-              imageProvider: NetworkImage(album.photos[i].full),
-              minScale: PhotoViewComputedScale.contained * 0.8,
-              maxScale: PhotoViewComputedScale.covered * 2,
-            ),
-            pageController: pageController,
           ),
         );
       },

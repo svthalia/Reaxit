@@ -353,27 +353,29 @@ class _FoodScreenState extends State<FoodScreen> {
               ),
               body: RefreshIndicator(
                 onRefresh: () => _foodCubit.load(),
-                child: ListView(
-                  key: const PageStorageKey('food'),
-                  controller: _controller,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(16),
-                  children: [
-                    _makeEventInfo(foodEvent),
-                    _makeOrderInfo(foodEvent),
-                    const Divider(),
-                    Card(
-                      child: Column(
-                        children: ListTile.divideTiles(
-                          context: context,
-                          tiles: [
-                            for (final product in products!)
-                              _ProductTile(product)
-                          ],
-                        ).toList(),
+                child: SafeArea(
+                  child: ListView(
+                    key: const PageStorageKey('food'),
+                    controller: _controller,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(16),
+                    children: [
+                      _makeEventInfo(foodEvent),
+                      _makeOrderInfo(foodEvent),
+                      const Divider(),
+                      Card(
+                        child: Column(
+                          children: ListTile.divideTiles(
+                            context: context,
+                            tiles: [
+                              for (final product in products!)
+                                _ProductTile(product)
+                            ],
+                          ).toList(),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );

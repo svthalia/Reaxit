@@ -16,101 +16,103 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
       appBar: ThaliaAppBar(title: const Text('SETTINGS')),
       drawer: MenuDrawer(),
-      body: BlocBuilder<SettingsCubit, SettingsState>(
-        builder: (context, state) {
-          if (state.hasException) {
-            return RefreshIndicator(
-              onRefresh: () => BlocProvider.of<SettingsCubit>(context).load(),
-              child: ListView(
+      body: SafeArea(
+        child: BlocBuilder<SettingsCubit, SettingsState>(
+          builder: (context, state) {
+            if (state.hasException) {
+              return RefreshIndicator(
+                onRefresh: () => BlocProvider.of<SettingsCubit>(context).load(),
+                child: ListView(
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    Text('THEME', style: textTheme.caption),
+                    const _ThemeModeCard(),
+                    const SizedBox(height: 8),
+                    Text('NOTIFICATIONS', style: textTheme.caption),
+                    Center(child: Text(state.message!)),
+                    const SizedBox(height: 8),
+                    Text('ABOUT', style: textTheme.caption),
+                    const _AboutCard(),
+                  ],
+                ),
+              );
+            } else if (state.isLoading && state.categories == null) {
+              return ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
                   Text('THEME', style: textTheme.caption),
                   const _ThemeModeCard(),
                   const SizedBox(height: 8),
                   Text('NOTIFICATIONS', style: textTheme.caption),
-                  Center(child: Text(state.message!)),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
                   const SizedBox(height: 8),
                   Text('ABOUT', style: textTheme.caption),
                   const _AboutCard(),
                 ],
-              ),
-            );
-          } else if (state.isLoading && state.categories == null) {
-            return ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                Text('THEME', style: textTheme.caption),
-                const _ThemeModeCard(),
-                const SizedBox(height: 8),
-                Text('NOTIFICATIONS', style: textTheme.caption),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-                const SizedBox(height: 8),
-                Text('ABOUT', style: textTheme.caption),
-                const _AboutCard(),
-              ],
-            );
-          } else {
-            return ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                Text('THEME', style: textTheme.caption),
-                const _ThemeModeCard(),
-                const SizedBox(height: 8),
-                Text('NOTIFICATIONS', style: textTheme.caption),
-                if (!state.hasPermissions!) ...[
-                  Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    child: Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: Row(
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.all(12),
-                            child: Icon(Icons.notifications_off_outlined),
-                          ),
-                          Expanded(
-                            child: Text(
-                              'Notifications are disabled. Enable '
-                              'them in your device settings.',
-                              style: textTheme.bodyText2!.copyWith(
-                                color: textTheme.caption!.color,
+              );
+            } else {
+              return ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  Text('THEME', style: textTheme.caption),
+                  const _ThemeModeCard(),
+                  const SizedBox(height: 8),
+                  Text('NOTIFICATIONS', style: textTheme.caption),
+                  if (!state.hasPermissions!) ...[
+                    Card(
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Row(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(12),
+                              child: Icon(Icons.notifications_off_outlined),
+                            ),
+                            Expanded(
+                              child: Text(
+                                'Notifications are disabled. Enable '
+                                'them in your device settings.',
+                                style: textTheme.bodyText2!.copyWith(
+                                  color: textTheme.caption!.color,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-                Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: ListTile.divideTiles(
-                      context: context,
-                      tiles: [
-                        for (final category in state.categories!)
-                          _NotificationSettingTile(
-                            category: category,
-                            enabled: state.device!.receiveCategory.contains(
-                              category.key,
+                  ],
+                  Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: ListTile.divideTiles(
+                        context: context,
+                        tiles: [
+                          for (final category in state.categories!)
+                            _NotificationSettingTile(
+                              category: category,
+                              enabled: state.device!.receiveCategory.contains(
+                                category.key,
+                              ),
                             ),
-                          ),
-                      ],
-                    ).toList(),
+                        ],
+                      ).toList(),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text('ABOUT', style: textTheme.caption),
-                const _AboutCard(),
-              ],
-            );
-          }
-        },
+                  const SizedBox(height: 8),
+                  Text('ABOUT', style: textTheme.caption),
+                  const _AboutCard(),
+                ],
+              );
+            }
+          },
+        ),
       ),
     );
   }

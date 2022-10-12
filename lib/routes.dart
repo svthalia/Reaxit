@@ -58,31 +58,28 @@ final List<GoRoute> routes = [
           ),
       routes: [
         GoRoute(
-          path: 'sales/order/:pk/pay',
-          name: 'sales-order-pay',
-          pageBuilder: (context, state) {
-            return CustomTransitionPage(
-              barrierColor: Colors.black54,
-              opaque: false,
-              transitionDuration: const Duration(milliseconds: 150),
-              transitionsBuilder: (
-                context,
-                animation,
-                secondaryAnimation,
-                child,
-              ) {
-                return FadeTransition(
-                  opacity: CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.easeOut,
-                  ),
-                  child: child,
-                );
-              },
-              child: SalesOrderDialog(pk: state.params['pk']!),
-            );
-          },
-        ),
+            path: 'sales/order/:pk/pay',
+            name: 'sales-order-pay',
+            pageBuilder: (context, state) => CustomTransitionPage(
+                  barrierColor: Colors.black54,
+                  opaque: false,
+                  transitionDuration: const Duration(milliseconds: 150),
+                  transitionsBuilder: (
+                    context,
+                    animation,
+                    secondaryAnimation,
+                    child,
+                  ) {
+                    return FadeTransition(
+                      opacity: CurvedAnimation(
+                        parent: animation,
+                        curve: Curves.easeOut,
+                      ),
+                      child: child,
+                    );
+                  },
+                  child: SalesOrderDialog(pk: state.params['pk']!),
+                )),
       ]),
   GoRoute(
     path: '/events',
@@ -221,15 +218,13 @@ final List<GoRoute> routes = [
   GoRoute(
     path: '/pizzas',
     name: 'food',
-    pageBuilder: (context, state) {
-      return MaterialPage(
-        key: state.pageKey,
-        child: FoodScreen(
-          pk: (state.extra as Event?)?.foodEvent,
-          event: state.extra as Event?,
-        ),
-      );
-    },
+    pageBuilder: (context, state) => MaterialPage(
+      key: state.pageKey,
+      child: FoodScreen(
+        pk: (state.extra as Event?)?.foodEvent,
+        event: state.extra as Event?,
+      ),
+    ),
     routes: [
       GoRoute(
         path: 'admin',

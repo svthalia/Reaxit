@@ -62,24 +62,26 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
               onRefresh: () async {
                 await BlocProvider.of<FoodAdminCubit>(context).load();
               },
-              child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
-                builder: (context, state) {
-                  if (state.hasException) {
-                    return ErrorScrollView(state.message!);
-                  } else if (state.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else {
-                    return Scrollbar(
-                        child: ListView.separated(
-                      key: const PageStorageKey('food-admin'),
-                      itemBuilder: (context, index) => _OrderTile(
-                        order: state.result![index],
-                      ),
-                      separatorBuilder: (_, __) => const Divider(),
-                      itemCount: state.result!.length,
-                    ));
-                  }
-                },
+              child: SafeArea(
+                child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
+                  builder: (context, state) {
+                    if (state.hasException) {
+                      return ErrorScrollView(state.message!);
+                    } else if (state.isLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else {
+                      return Scrollbar(
+                          child: ListView.separated(
+                        key: const PageStorageKey('food-admin'),
+                        itemBuilder: (context, index) => _OrderTile(
+                          order: state.result![index],
+                        ),
+                        separatorBuilder: (_, __) => const Divider(),
+                        itemCount: state.result!.length,
+                      ));
+                    }
+                  },
+                ),
               ),
             ),
           );
