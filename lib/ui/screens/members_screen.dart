@@ -66,18 +66,20 @@ class _MembersScreenState extends State<MembersScreen> {
         onRefresh: () async {
           await _cubit.load();
         },
-        child: BlocBuilder<MemberListCubit, MemberListState>(
-          builder: (context, listState) {
-            if (listState.hasException) {
-              return ErrorScrollView(listState.message!);
-            } else {
-              return MemberListScrollView(
-                key: const PageStorageKey('members'),
-                controller: _controller,
-                listState: listState,
-              );
-            }
-          },
+        child: SafeArea(
+          child: BlocBuilder<MemberListCubit, MemberListState>(
+            builder: (context, listState) {
+              if (listState.hasException) {
+                return ErrorScrollView(listState.message!);
+              } else {
+                return MemberListScrollView(
+                  key: const PageStorageKey('members'),
+                  controller: _controller,
+                  listState: listState,
+                );
+              }
+            },
+          ),
         ),
       ),
     );

@@ -898,24 +898,23 @@ class _EventScreenState extends State<EventScreen> {
               actions: [_makeShareEventButton(widget.pk)],
             ),
             body: RefreshIndicator(
-              onRefresh: () async {
-                // Await only the event info.
-                _registrationsCubit.load();
-                await _eventCubit.load();
-              },
-              child: ErrorScrollView(state.message!),
-            ),
+                onRefresh: () async {
+                  // Await only the event info.
+                  _registrationsCubit.load();
+                  await _eventCubit.load();
+                },
+                child: SafeArea(child: ErrorScrollView(state.message!))),
           );
         } else if (state.isLoading &&
             widget.event == null &&
             state.result == null) {
           return Scaffold(
-            appBar: ThaliaAppBar(
-              title: const Text('EVENT'),
-              actions: [_makeShareEventButton(widget.pk)],
-            ),
-            body: const Center(child: CircularProgressIndicator()),
-          );
+              appBar: ThaliaAppBar(
+                title: const Text('EVENT'),
+                actions: [_makeShareEventButton(widget.pk)],
+              ),
+              body: const SafeArea(
+                  child: Center(child: CircularProgressIndicator())));
         } else {
           final event = (state.result ?? widget.event)!;
           return Scaffold(
@@ -941,46 +940,48 @@ class _EventScreenState extends State<EventScreen> {
                 _registrationsCubit.load();
                 await _eventCubit.load();
               },
-              child: BlocBuilder<RegistrationsCubit, RegistrationsState>(
-                bloc: _registrationsCubit,
-                builder: (context, listState) {
-                  return Scrollbar(
-                    controller: _controller,
-                    child: CustomScrollView(
+              child: SafeArea(
+                child: BlocBuilder<RegistrationsCubit, RegistrationsState>(
+                  bloc: _registrationsCubit,
+                  builder: (context, listState) {
+                    return Scrollbar(
                       controller: _controller,
-                      key: const PageStorageKey('event'),
-                      slivers: [
-                        SliverToBoxAdapter(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              _makeMap(event),
-                              const Divider(height: 0),
-                              _makeEventInfo(event),
-                              const Divider(),
-                              _makeDescription(event),
-                            ],
-                          ),
-                        ),
-                        if (event.registrationIsOptional ||
-                            event.registrationIsRequired) ...[
-                          const SliverToBoxAdapter(child: Divider()),
-                          _makeRegistrationsHeader(listState),
-                          _makeRegistrations(listState),
-                          if (listState.isLoadingMore)
-                            const SliverPadding(
-                              padding: EdgeInsets.all(8),
-                              sliver: SliverList(
-                                delegate: SliverChildListDelegate.fixed([
-                                  Center(child: CircularProgressIndicator()),
-                                ]),
-                              ),
+                      child: CustomScrollView(
+                        controller: _controller,
+                        key: const PageStorageKey('event'),
+                        slivers: [
+                          SliverToBoxAdapter(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                _makeMap(event),
+                                const Divider(height: 0),
+                                _makeEventInfo(event),
+                                const Divider(),
+                                _makeDescription(event),
+                              ],
                             ),
+                          ),
+                          if (event.registrationIsOptional ||
+                              event.registrationIsRequired) ...[
+                            const SliverToBoxAdapter(child: Divider()),
+                            _makeRegistrationsHeader(listState),
+                            _makeRegistrations(listState),
+                            if (listState.isLoadingMore)
+                              const SliverPadding(
+                                padding: EdgeInsets.all(8),
+                                sliver: SliverList(
+                                  delegate: SliverChildListDelegate.fixed([
+                                    Center(child: CircularProgressIndicator()),
+                                  ]),
+                                ),
+                              ),
+                          ],
                         ],
-                      ],
-                    ),
-                  );
-                },
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           );

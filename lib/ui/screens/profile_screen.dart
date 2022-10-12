@@ -458,54 +458,56 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<MemberCubit, MemberState>(
-        bloc: _memberCubit,
-        builder: (context, state) {
-          if (state.hasException) {
-            return CustomScrollView(
-              controller: _scrollController,
-              slivers: [
-                _makeAppBar(),
-                SliverFillRemaining(
-                  child: ErrorCenter(state.message!),
-                ),
-              ],
-            );
-          } else if (state.isLoading && widget.member == null) {
-            return CustomScrollView(
-              controller: _scrollController,
-              slivers: [
-                _makeAppBar(),
-                const SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ],
-            );
-          } else {
-            return CustomScrollView(
-              key: const PageStorageKey('profile'),
-              controller: _scrollController,
-              slivers: [
-                _makeAppBar((state.result ?? widget.member)!),
-                _makeFactsSliver((state.result ?? widget.member)!),
-                if (!state.isLoading) ...[
-                  if (state.result!.achievements.isNotEmpty)
-                    _makeAchievementsSliver(state.result!),
-                  if (state.result!.societies.isNotEmpty)
-                    _makeSocietiesSliver(state.result!),
-                ] else ...[
-                  const SliverPadding(
-                    padding: EdgeInsets.all(16),
-                    sliver: SliverToBoxAdapter(
-                      child: Center(child: CircularProgressIndicator()),
-                    ),
+      body: SafeArea(
+        child: BlocBuilder<MemberCubit, MemberState>(
+          bloc: _memberCubit,
+          builder: (context, state) {
+            if (state.hasException) {
+              return CustomScrollView(
+                controller: _scrollController,
+                slivers: [
+                  _makeAppBar(),
+                  SliverFillRemaining(
+                    child: ErrorCenter(state.message!),
                   ),
                 ],
-                const SliverToBoxAdapter(child: SizedBox(height: 32))
-              ],
-            );
-          }
-        },
+              );
+            } else if (state.isLoading && widget.member == null) {
+              return CustomScrollView(
+                controller: _scrollController,
+                slivers: [
+                  _makeAppBar(),
+                  const SliverFillRemaining(
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                ],
+              );
+            } else {
+              return CustomScrollView(
+                key: const PageStorageKey('profile'),
+                controller: _scrollController,
+                slivers: [
+                  _makeAppBar((state.result ?? widget.member)!),
+                  _makeFactsSliver((state.result ?? widget.member)!),
+                  if (!state.isLoading) ...[
+                    if (state.result!.achievements.isNotEmpty)
+                      _makeAchievementsSliver(state.result!),
+                    if (state.result!.societies.isNotEmpty)
+                      _makeSocietiesSliver(state.result!),
+                  ] else ...[
+                    const SliverPadding(
+                      padding: EdgeInsets.all(16),
+                      sliver: SliverToBoxAdapter(
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
+                    ),
+                  ],
+                  const SliverToBoxAdapter(child: SizedBox(height: 32))
+                ],
+              );
+            }
+          },
+        ),
       ),
     );
   }

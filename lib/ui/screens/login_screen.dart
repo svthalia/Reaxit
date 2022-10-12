@@ -29,59 +29,63 @@ class _LoginScreenState extends State<LoginScreen> {
       builder: (context, authState) {
         if (authState is LoadingAuthState) {
           return Scaffold(
-            backgroundColor: const Color(0xFFE62272),
-            body: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Center(
-                  child: Image(
-                    image: logo,
-                    width: 260,
-                  ),
-                ),
-                const SizedBox(height: 50),
-                const SizedBox(
-                  height: 50,
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              backgroundColor: const Color(0xFFE62272),
+              body: SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Center(
+                      child: Image(
+                        image: logo,
+                        width: 260,
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 50),
+                    const SizedBox(
+                      height: 50,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
+              ));
         } else {
           return Scaffold(
             backgroundColor: magenta,
-            body: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(
-                  child: Image(
-                    image: logo,
-                    width: 260,
-                  ),
-                ),
-                const SizedBox(height: 50),
-                SizedBox(
-                  height: 50,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black87,
-                      foregroundColor: Colors.white,
+            body: SafeArea(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: Image(
+                      image: logo,
+                      width: 260,
                     ),
-                    onPressed: () {
-                      BlocProvider.of<AuthCubit>(
-                        context,
-                        listen: false,
-                      ).logIn();
-                    },
-                    child: const Text('LOGIN'),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 50),
+                  SizedBox(
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.black87,
+                        onPrimary: Colors.white,
+                      ),
+                      onPressed: () {
+                        BlocProvider.of<AuthCubit>(
+                          context,
+                          listen: false,
+                        ).logIn();
+                      },
+                      child: const Text('LOGIN'),
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         }

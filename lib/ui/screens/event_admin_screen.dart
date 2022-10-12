@@ -41,26 +41,28 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                   context,
                 ).loadRegistrations();
               },
-              child: BlocBuilder<EventAdminCubit, EventAdminState>(
-                builder: (context, state) {
-                  if (state.hasException) {
-                    return ErrorScrollView(state.message!);
-                  } else if (state.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else {
-                    return Scrollbar(
-                      child: ListView.separated(
-                        key: const PageStorageKey('event-admin'),
-                        itemBuilder: (context, index) => _RegistrationTile(
-                          registration: state.registrations[index],
-                          requiresPayment: state.event!.paymentIsRequired,
+              child: SafeArea(
+                child: BlocBuilder<EventAdminCubit, EventAdminState>(
+                  builder: (context, state) {
+                    if (state.hasException) {
+                      return ErrorScrollView(state.message!);
+                    } else if (state.isLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else {
+                      return Scrollbar(
+                        child: ListView.separated(
+                          key: const PageStorageKey('event-admin'),
+                          itemBuilder: (context, index) => _RegistrationTile(
+                            registration: state.registrations[index],
+                            requiresPayment: state.event!.paymentIsRequired,
+                          ),
+                          separatorBuilder: (_, __) => const Divider(),
+                          itemCount: state.registrations.length,
                         ),
-                        separatorBuilder: (_, __) => const Divider(),
-                        itemCount: state.registrations.length,
-                      ),
-                    );
-                  }
-                },
+                      );
+                    }
+                  },
+                ),
               ),
             ),
           );

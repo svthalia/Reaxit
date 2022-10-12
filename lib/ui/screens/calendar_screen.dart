@@ -73,18 +73,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
         onRefresh: () async {
           await _cubit.load();
         },
-        child: BlocBuilder<CalendarCubit, CalendarState>(
-          builder: (context, calendarState) {
-            if (calendarState.hasException) {
-              return ErrorScrollView(calendarState.message!);
-            } else {
-              return CalendarScrollView(
-                key: const PageStorageKey('calendar'),
-                controller: _controller,
-                calendarState: calendarState,
-              );
-            }
-          },
+        child: SafeArea(
+          child: BlocBuilder<CalendarCubit, CalendarState>(
+            builder: (context, calendarState) {
+              if (calendarState.hasException) {
+                return ErrorScrollView(calendarState.message!);
+              } else {
+                return CalendarScrollView(
+                  key: const PageStorageKey('calendar'),
+                  controller: _controller,
+                  calendarState: calendarState,
+                );
+              }
+            },
+          ),
         ),
       ),
     );
