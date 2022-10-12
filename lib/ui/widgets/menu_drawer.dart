@@ -249,6 +249,38 @@ class MenuDrawer extends StatelessWidget {
                 }
               },
             ),
+          ListTile(
+            title: const Text('Pay'),
+            leading: const Icon(Icons.abc),
+            selected: router.location == '/pay',
+            onTap: () {
+              if (router.location.startsWith('/pay')) {
+                Navigator.of(context).pop();
+              } else {
+                context.goNamed('pay');
+              }
+            },
+          ),
+          ListTile(
+            title: const Text('Settings'),
+            leading: const Icon(Icons.settings),
+            selected: router.location == '/settings',
+            onTap: () {
+              if (router.location == '/settings') {
+                Navigator.of(context).pop();
+              } else {
+                context.goNamed('settings');
+              }
+            },
+          ),
+          const Divider(height: 0, thickness: 1),
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: const Text('Log out'),
+            onTap: () async {
+              BlocProvider.of<AuthCubit>(context).logOut();
+            },
+          ),
         ],
       ),
     );
