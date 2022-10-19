@@ -5,7 +5,7 @@ import 'package:http/http.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/config.dart' as config;
-import 'package:reaxit/models/list_response.dart';
+import 'package:reaxit/models.dart';
 import 'package:reaxit/tosti/models.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 

@@ -165,7 +165,7 @@ Map<String, dynamic> _$FullProfileToJson(FullProfile instance) =>
       'initials': instance.initials,
       'nickname': instance.nickname,
       'display_name_preference':
-          _$DisplayNamePreferenceEnumMap[instance.displayNamePreference],
+          _$DisplayNamePreferenceEnumMap[instance.displayNamePreference]!,
       'receive_optin': instance.receiveOptin,
       'receive_newsletter': instance.receiveNewsletter,
       'receive_magazine': instance.receiveMagazine,

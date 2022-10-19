@@ -8,23 +8,7 @@ import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/config.dart' as config;
-import 'package:reaxit/models/album.dart';
-import 'package:reaxit/models/push_notification_category.dart';
-import 'package:reaxit/models/event.dart';
-import 'package:reaxit/models/event_registration.dart';
-import 'package:reaxit/models/food_event.dart';
-import 'package:reaxit/models/food_order.dart';
-import 'package:reaxit/models/frontpage_article.dart';
-import 'package:reaxit/models/list_response.dart';
-import 'package:reaxit/models/member.dart';
-import 'package:reaxit/models/payable.dart';
-import 'package:reaxit/models/payment.dart';
-import 'package:reaxit/models/payment_user.dart';
-import 'package:reaxit/models/product.dart';
-import 'package:reaxit/models/registration_field.dart';
-import 'package:reaxit/models/sales_order.dart';
-import 'package:reaxit/models/slide.dart';
-import 'package:reaxit/models/device.dart';
+import 'package:reaxit/models.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 /// Provides an interface to the api.

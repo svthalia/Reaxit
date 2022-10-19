@@ -17,7 +17,7 @@ publish_to: 'none'
 version: 3.2.0+1
 
 environment:
-  sdk: '>=2.16.0 <3.0.0'
+  sdk: '>=2.17.0 <3.0.0'
 
 dependencies:
   flutter:
@@ -113,7 +113,7 @@ dependencies:
   flutter_cache_manager: ^3.3.0
 
   # Navigation.
-  go_router: ^4.3.0
+  go_router: ^5.0.2
 
 dev_dependencies:
   flutter_test:

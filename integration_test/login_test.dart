@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:reaxit/api/exceptions.dart';
-import 'package:reaxit/blocs/auth_cubit.dart';
+import 'package:reaxit/blocs.dart';
 import 'package:reaxit/main.dart' as app;
 
 import '../test/mocks.mocks.dart';

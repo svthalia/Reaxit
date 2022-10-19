@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reaxit/blocs/auth_cubit.dart';
+import 'package:reaxit/blocs.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -68,8 +68,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 50,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.black87,
-                      onPrimary: Colors.white,
+                      backgroundColor: Colors.black87,
+                      foregroundColor: Colors.white,
                     ),
                     onPressed: () {
                       BlocProvider.of<AuthCubit>(
