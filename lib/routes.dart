@@ -222,6 +222,33 @@ final List<GoRoute> routes = [
     ],
   ),
   GoRoute(
+    path: '/association/committees/:groupSlug',
+    redirect: (context, state) => '/committees/${state.params['groupSlug']}',
+  ),
+  GoRoute(
+    path: '/association/societies/:groupSlug',
+    redirect: (context, state) => '/societies/${state.params['groupSlug']}',
+  ),
+  GoRoute(
+    path: '/association/boards/:groupSlug',
+    redirect: (context, state) => '/boards/${state.params['groupSlug']}',
+  ),
+  GoRoute(
+    path: '/association/committees',
+    redirect: (context, state) => '/committees',
+  ),
+  GoRoute(
+    path: '/association/societies',
+    redirect: (context, state) => '/societies',
+  ),
+  GoRoute(
+    path: '/association/boards',
+    redirect: (context, state) => '/boards',
+  ),
+  // GoRoute(
+// TODO: the tabbar route
+  // ),
+  GoRoute(
     path: '/settings',
     name: 'settings',
     pageBuilder: (context, state) => CustomTransitionPage(
