@@ -1,72 +1,52 @@
-import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
-import 'package:reaxit/models.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/api/exceptions.dart';
+import 'package:reaxit/blocs/detail_state.dart';
+import 'package:reaxit/models/group.dart';
 
-class GroupsState extends Equatable {
-  /// These may be outdated when [isLoading] is true.
-  final List<ListGroup> committees;
+typedef GroupsState = DetailState<List<ListGroup>>;
 
-  /// These may be outdated when [isLoading] is true.
-  final List<ListGroup> societies;
+class GroupsCubit extends  Cubit<GroupsState> {
+  final ApiRepository api;
+  final MemberGroupType? groupType;
 
-  /// These may be outdated when [isLoading] is true.
-  final List<ListGroup> boards;
+  GroupsCubit(this.api, this.groupType) : super(const GroupsState.loading());
 
-  final String? message;
-  final bool isLoading;
-
-  bool get hasException => message != null;
-
-  @protected
-  const GroupsState({
-    required this.committees,
-    required this.societies,
-    required this.boards,
-    required this.isLoading,
-    required this.message,
-  });
-
-  @override
-  List<Object?> get props => [
-        committees,
-        societies,
-        boards,
-        message,
-        isLoading,
-      ];
-
-  GroupsState copyWith({
-    List<ListGroup>? committees,
-    List<ListGroup>? societies,
-    List<ListGroup>? boards,
-    bool? isLoading,
-    String? message,
-  }) =>
-      GroupsState(
-        committees: committees ?? this.committees,
-        societies: societies ?? this.societies,
-        boards: boards ?? this.boards,
-        isLoading: isLoading ?? this.isLoading,
-        message: message ?? this.message,
+  Future<void> load() async {
+    emit(state.copyWith(isLoading: true));
+    try {
+      final listResponse = await api.getGroups(
+        limit: 1000,
+        type: groupType
       );
+      if (listResponse.results.isNotEmpty) {
+        emit(GroupsState.result(result: listResponse.results));
+      } else {
+        emit(const GroupsState.failure(message: 'There are no boards.'));
+      }
+    } on ApiException catch (exception) {
+      emit(GroupsState.failure(message: _failureMessage(exception)));
+    }
+  }
 
-  const GroupsState.result({
-    required this.committees,
-    required this.societies,
-    required this.boards,
-  })  : message = null,
-        isLoading = false;
+  String _failureMessage(ApiException exception) {
+    switch (exception) {
+      case ApiException.noInternet:
+        return 'Not connected to the internet.';
+      default:
+        return 'An unknown error occurred.';
+    }
+  }
+}
 
-  const GroupsState.loading({
-    required this.committees,
-    required this.societies,
-    required this.boards,
-  })  : message = null,
-        isLoading = false;
+class BoardsCubit extends GroupsCubit {
+  BoardsCubit(ApiRepository api) : super(api, MemberGroupType.board);
+}
 
-  const GroupsState.failure({required String this.message})
-      : committees = const [],
-        societies = const [],
-        boards = const [],
-        isLoading = false;
+class CommitteesCubit extends GroupsCubit {
+  CommitteesCubit(ApiRepository api) : super(api, MemberGroupType.committee);
+}
+
+class SocietiesCubit extends GroupsCubit {
+  SocietiesCubit(ApiRepository api) : super(api, MemberGroupType.society);
 }
