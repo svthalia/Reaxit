@@ -57,9 +57,8 @@ class EventAdminState extends Equatable {
       : message = null,
         isLoading = true;
 
-  const EventAdminState.failure({required String this.message})
-      : event = null,
-        registrations = const [],
+  const EventAdminState.failure({required String this.message, this.event})
+      : registrations = const [],
         isLoading = false;
 }
 
@@ -101,11 +100,13 @@ class EventAdminCubit extends Cubit<EventAdminState> {
       registrations.results.removeWhere((r) => r.queuePosition != null);
       if (registrations.results.isEmpty) {
         if (query?.isEmpty ?? true) {
-          emit(const EventAdminState.failure(
+          emit(EventAdminState.failure(
+            event: event,
             message: 'There are no registrations.',
           ));
         } else {
           emit(EventAdminState.failure(
+            event: event,
             message: 'There are no registrations matching "$query".',
           ));
         }

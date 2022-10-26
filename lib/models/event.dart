@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:reaxit/models.dart';
+import 'package:reaxit/config.dart' as config;
 
 part 'event.g.dart';
 
@@ -176,6 +177,7 @@ class PartnerEvent implements BaseEvent {
 @JsonSerializable(fieldRename: FieldRename.snake)
 class AdminEvent implements BaseEvent {
   @override
+  @JsonKey(name: 'id')
   final int pk;
   @override
   final String title;
@@ -189,11 +191,7 @@ class AdminEvent implements BaseEvent {
   final String location;
 
   final EventCategory category;
-
-  final bool hasFields;
-
   final bool optionalRegistrations;
-
   final DateTime? registrationStart;
   final DateTime? registrationEnd;
   final DateTime? cancelDeadline;
@@ -201,17 +199,13 @@ class AdminEvent implements BaseEvent {
   final String price;
   final String fine;
 
-  final int numParticipants;
-  final int? maxParticipants;
-
-  final String cancelTooLateMessage;
-  final String? noRegistrationMessage;
-  final int? foodEvent;
-  final String mapsUrl;
-
-  final Uri markPresentUrl;
-
-  bool get hasFoodEvent => foodEvent != null;
+  // final Uri markPresentUrl;
+  final String markPresentUrlToken;
+  Uri get markPresentUrl => Uri(
+        scheme: 'https',
+        host: config.apiHost,
+        path: '/events/$pk/mark-present/$markPresentUrlToken',
+      );
 
   bool get registrationIsRequired =>
       registrationStart != null || registrationEnd != null;
@@ -220,9 +214,6 @@ class AdminEvent implements BaseEvent {
       optionalRegistrations && !registrationIsRequired;
 
   bool get paymentIsRequired => double.tryParse(price) != 0;
-
-  bool get reachedMaxParticipants =>
-      maxParticipants != null && numParticipants >= maxParticipants!;
 
   bool cancelDeadlinePassed() =>
       cancelDeadline?.isBefore(DateTime.now()) ?? false;
@@ -246,19 +237,12 @@ class AdminEvent implements BaseEvent {
     this.end,
     this.location,
     this.category,
-    this.hasFields,
     this.optionalRegistrations,
     this.registrationStart,
     this.registrationEnd,
     this.cancelDeadline,
     this.price,
     this.fine,
-    this.numParticipants,
-    this.maxParticipants,
-    this.cancelTooLateMessage,
-    this.noRegistrationMessage,
-    this.foodEvent,
-    this.mapsUrl,
-    this.markPresentUrl,
+    this.markPresentUrlToken,
   );
 }
