@@ -110,6 +110,12 @@ abstract class ApiRepository {
     bool? cancelled,
   });
 
+  /// Mark the user's registration for [Event] `pk` as present, using `token`.
+  Future<String> markPresentEventRegistration({
+    required int eventPk,
+    required String token,
+  });
+
   /// Mark registration `registrationPk` for [Event] `eventPk` as `present`.
   Future<AdminEventRegistration> markPresentAdminEventRegistration({
     required int eventPk,

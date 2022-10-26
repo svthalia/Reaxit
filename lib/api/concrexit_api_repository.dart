@@ -397,6 +397,23 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
+  Future<String> markPresentEventRegistration({
+    required int eventPk,
+    required String token,
+  }) async {
+    return sandbox(() async {
+      final uri = _uri(path: '/events/$eventPk/mark-present/$token/');
+      final response = await _handleExceptions(
+        () => _client.patch(uri),
+        allowedStatusCodes: [200, 403],
+      );
+      final detail = _jsonDecode(response)['detail'] as String;
+      if (response.statusCode == 403) throw ApiException.message(detail);
+      return detail;
+    });
+  }
+
+  @override
   Future<Payable> markPaidAdminEventRegistration({
     required int registrationPk,
     required PaymentType paymentType,

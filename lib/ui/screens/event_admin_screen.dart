@@ -141,7 +141,6 @@ class _MarkPresentQrButton extends StatelessWidget {
                         ),
                         QrImage(
                           data: state.event!.markPresentUrl.toString(),
-                          errorCorrectionLevel: QrErrorCorrectLevel.H,
                           padding: const EdgeInsets.all(24),
                           backgroundColor: Colors.grey[50]!,
                         ),
