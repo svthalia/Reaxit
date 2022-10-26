@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +10,7 @@ import 'package:photo_view/photo_view_gallery.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/models.dart';
+import 'package:reaxit/ui/theme.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:share_plus/share_plus.dart';
@@ -27,6 +29,9 @@ class AlbumScreen extends StatefulWidget {
 
 class _AlbumScreenState extends State<AlbumScreen> {
   late final AlbumCubit _albumCubit;
+  bool clicked = false;
+  int clickedI = 0;
+  int current = 0;
 
   @override
   void initState() {
@@ -44,7 +49,10 @@ class _AlbumScreenState extends State<AlbumScreen> {
 
   Widget _makePhotoCard(Album album, int index) {
     return GestureDetector(
-      onTap: () => _showPhotoGallery(album, index),
+      onTap: () => setState(() {
+        clicked = true;
+        clickedI = index;
+      }),
       child: FadeInImage.assetNetwork(
         placeholder: 'assets/img/photo_placeholder.png',
         image: album.photos[index].small,
@@ -53,112 +61,33 @@ class _AlbumScreenState extends State<AlbumScreen> {
     );
   }
 
-  void _showPhotoGallery(Album album, int index) {
-    showDialog(
-      context: context,
-      useSafeArea: false,
-      barrierColor: Colors.black.withOpacity(0.92),
-      builder: (context) {
-        final pageController = PageController(initialPage: index);
-        return Scaffold(
-          extendBodyBehindAppBar: true,
-          backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            leading: CloseButton(
-              color: Theme.of(context).primaryIconTheme.color,
-            ),
-            actions: [
-              IconButton(
-                padding: const EdgeInsets.all(16),
-                color: Theme.of(context).primaryIconTheme.color,
-                icon: const Icon(Icons.download),
-                onPressed: () async {
-                  final messenger = ScaffoldMessenger.of(context);
+  void downloadImage(BuildContext context, Uri url) async {
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      final response = await http.get(url);
+      if (response.statusCode != 200) throw Exception();
+      final baseTempDir = await getTemporaryDirectory();
+      final tempDir = await baseTempDir.createTemp();
+      final tempFile = File(
+        '${tempDir.path}/${url.pathSegments.last}',
+      );
+      await tempFile.writeAsBytes(response.bodyBytes);
+      await GallerySaver.saveImage(tempFile.path);
 
-                  var i = pageController.page!.round();
-                  if (i < 0 || i >= album.photos.length) i = index;
-                  final url = Uri.parse(album.photos[i].full);
-                  try {
-                    final response = await http.get(url);
-                    if (response.statusCode != 200) throw Exception();
-                    final baseTempDir = await getTemporaryDirectory();
-                    final tempDir = await baseTempDir.createTemp();
-                    final tempFile = File(
-                      '${tempDir.path}/${url.pathSegments.last}',
-                    );
-                    await tempFile.writeAsBytes(response.bodyBytes);
-                    await GallerySaver.saveImage(tempFile.path);
-
-                    messenger.showSnackBar(
-                      const SnackBar(
-                        behavior: SnackBarBehavior.floating,
-                        content: Text('Succesfully saved the image.'),
-                      ),
-                    );
-                  } catch (_) {
-                    messenger.showSnackBar(
-                      const SnackBar(
-                        behavior: SnackBarBehavior.floating,
-                        content: Text('Could not download the image.'),
-                      ),
-                    );
-                  }
-                },
-              ),
-              IconButton(
-                padding: const EdgeInsets.all(16),
-                color: Theme.of(context).primaryIconTheme.color,
-                icon: Icon(
-                  Theme.of(context).platform == TargetPlatform.iOS
-                      ? Icons.ios_share
-                      : Icons.share,
-                ),
-                onPressed: () async {
-                  final messenger = ScaffoldMessenger.of(context);
-
-                  var i = pageController.page!.round();
-                  if (i < 0 || i >= album.photos.length) i = index;
-                  final url = Uri.parse(album.photos[i].full);
-                  try {
-                    final response = await http.get(url);
-                    if (response.statusCode != 200) throw Exception();
-                    final file = XFile.fromData(
-                      response.bodyBytes,
-                      name: url.pathSegments.last,
-                    );
-                    await Share.shareXFiles([file]);
-                  } catch (_) {
-                    messenger.showSnackBar(
-                      const SnackBar(
-                        behavior: SnackBarBehavior.floating,
-                        content: Text('Could not share the image.'),
-                      ),
-                    );
-                  }
-                },
-              ),
-            ],
-          ),
-          body: PhotoViewGallery.builder(
-            loadingBuilder: (_, __) => const Center(
-              child: CircularProgressIndicator(),
-            ),
-            backgroundDecoration: const BoxDecoration(
-              color: Colors.transparent,
-            ),
-            itemCount: album.photos.length,
-            builder: (context, i) => PhotoViewGalleryPageOptions(
-              imageProvider: NetworkImage(album.photos[i].full),
-              minScale: PhotoViewComputedScale.contained * 0.8,
-              maxScale: PhotoViewComputedScale.covered * 2,
-            ),
-            pageController: pageController,
-          ),
-        );
-      },
-    );
+      messenger.showSnackBar(
+        const SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('Succesfully saved the image.'),
+        ),
+      );
+    } catch (_) {
+      messenger.showSnackBar(
+        const SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('Could not download the image.'),
+        ),
+      );
+    }
   }
 
   Widget _makeShareAlbumButton(String slug) {
@@ -206,31 +135,230 @@ class _AlbumScreenState extends State<AlbumScreen> {
             body: const Center(child: CircularProgressIndicator()),
           );
         } else {
-          return Scaffold(
-            appBar: ThaliaAppBar(
-              title: Text(state.result!.title.toUpperCase()),
-              actions: [_makeShareAlbumButton(widget.slug)],
-            ),
-            body: Scrollbar(
-              child: GridView.builder(
-                key: const PageStorageKey('album'),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                  crossAxisCount: 3,
-                ),
-                itemCount: state.result!.photos.length,
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(8),
-                itemBuilder: (context, index) => _makePhotoCard(
-                  state.result!,
-                  index,
+          List<Widget> widgets = [
+            Scaffold(
+              appBar: ThaliaAppBar(
+                title: Text(state.result!.title.toUpperCase()),
+                actions: [_makeShareAlbumButton(widget.slug)],
+              ),
+              body: Scrollbar(
+                child: GridView.builder(
+                  key: const PageStorageKey('album'),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    crossAxisCount: 3,
+                  ),
+                  itemCount: state.result!.photos.length,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(8),
+                  itemBuilder: (context, index) => _makePhotoCard(
+                    state.result!,
+                    index,
+                  ),
                 ),
               ),
-            ),
+            )
+          ];
+          if (clicked) {
+            Album album = state.result!;
+            int index = clickedI;
+            final pageController = PageController(initialPage: index);
+            pageController.addListener(() {
+              setState(() {
+                current = pageController.page!.round();
+              });
+            });
+            widgets.add(Scaffold(
+                extendBodyBehindAppBar: true,
+                backgroundColor: Colors.black.withOpacity(0.92),
+                appBar: AppBar(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  leading: CloseButton(
+                    color: Theme.of(context).primaryIconTheme.color,
+                    onPressed: () => setState(() {
+                      clicked = false;
+                    }),
+                  ),
+                  actions: [
+                    IconButton(
+                      padding: const EdgeInsets.all(16),
+                      color: Theme.of(context).primaryIconTheme.color,
+                      icon: const Icon(Icons.download),
+                      onPressed: () async => downloadImage(
+                          context,
+                          Uri.parse(album
+                              .photos[max(
+                                  0,
+                                  min(pageController.page!.round(),
+                                      album.photos.length))]
+                              .full)),
+                    ),
+                    IconButton(
+                      padding: const EdgeInsets.all(16),
+                      color: Theme.of(context).primaryIconTheme.color,
+                      icon: Icon(
+                        Theme.of(context).platform == TargetPlatform.iOS
+                            ? Icons.ios_share
+                            : Icons.share,
+                      ),
+                      onPressed: () async {
+                        final messenger = ScaffoldMessenger.of(context);
+
+                        var i = pageController.page!.round();
+                        if (i < 0 || i >= album.photos.length) i = index;
+                        final url = Uri.parse(album.photos[i].full);
+                        try {
+                          final response = await http.get(url);
+                          if (response.statusCode != 200) throw Exception();
+                          final file = XFile.fromData(
+                            response.bodyBytes,
+                            name: url.pathSegments.last,
+                          );
+                          await Share.shareXFiles([file]);
+                        } catch (_) {
+                          messenger.showSnackBar(
+                            const SnackBar(
+                              behavior: SnackBarBehavior.floating,
+                              content: Text('Could not share the image.'),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                body: PhotoViewGallery.builder(
+                  loadingBuilder: (_, __) => const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  backgroundDecoration: const BoxDecoration(
+                    color: Colors.transparent,
+                  ),
+                  itemCount: album.photos.length,
+                  builder: (context, i) {
+                    return PhotoViewGalleryPageOptions.customChild(
+                      onTapDown: (context, details, controllerValue) {
+                        _albumCubit.updateLike(
+                            liked: !album.photos[i].liked, index: i);
+                      },
+                      child: Image.network(album.photos[i].full),
+                      minScale: PhotoViewComputedScale.contained * 0.8,
+                      maxScale: PhotoViewComputedScale.covered * 2,
+                    );
+                  },
+                  pageController: pageController,
+                )));
+            widgets.add(AnimatedSwitcher(
+              duration: const Duration(milliseconds: 100),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return ScaleTransition(scale: animation, child: child);
+              },
+              child: Text(
+                '${album.photos[current].liked}',
+                // This key causes the AnimatedSwitcher to interpret this as a "new"
+                // child each time the count changes, so that it will begin its animation
+                // when the count changes.
+                key: ValueKey<bool>(album.photos[current].liked),
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+            ));
+          }
+          return Stack(
+            alignment: AlignmentDirectional.center,
+            children: widgets,
           );
         }
       },
     );
+  }
+}
+
+class HeartPainter extends CustomPainter {
+  @override
+  const HeartPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint1 = Paint();
+    paint1
+      ..color = magenta
+      ..style = PaintingStyle.fill;
+
+    double width = size.width;
+    double height = size.height;
+
+    Path path = Path();
+    path.moveTo(0.5 * width, height * 0.35);
+    path.cubicTo(0.2 * width, height * 0.1, -0.25 * width, height * 0.6,
+        0.5 * width, height);
+    path.moveTo(0.5 * width, height * 0.35);
+    path.cubicTo(0.8 * width, height * 0.1, 1.25 * width, height * 0.6,
+        0.5 * width, height);
+
+    canvas.drawPath(path, paint1);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
+  }
+}
+
+class GaleryImage extends StatefulWidget {
+  final String url;
+  const GaleryImage(this.url, {super.key});
+
+  @override
+  State<GaleryImage> createState() => _GaleryImageState();
+}
+
+class _GaleryImageState extends State<GaleryImage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController controller;
+  late Animation<double> animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller =
+        AnimationController(duration: const Duration(seconds: 2), vsync: this);
+
+    animation = Tween<double>(begin: 0, end: 300).animate(controller)
+      ..addListener(() {
+        setState(() {
+          // The state that has changed here is the animation object’s value.
+        });
+      });
+
+    controller.forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: AlignmentDirectional.center,
+      children: [
+        Image.network(widget.url),
+        Opacity(
+          opacity: animation.value / 300,
+          child: const Center(
+            child: CustomPaint(
+              size: Size(70, 80),
+              painter: HeartPainter(),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+
+    super.dispose();
   }
 }
