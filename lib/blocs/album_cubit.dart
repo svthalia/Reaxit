@@ -11,6 +11,17 @@ class AlbumCubit extends Cubit<AlbumState> {
 
   AlbumCubit(this.api) : super(const AlbumState.loading());
 
+  void updateLike({required bool liked, required int index}) {
+    if (state.result == null) {
+      return;
+    }
+    AlbumPhoto newphoto = state.result!.photos[index].copyWith(liked: liked);
+    List<AlbumPhoto> newphotos = List.from(state.result!.photos);
+    newphotos[index] = newphoto;
+
+    emit(AlbumState.result(result: state.result!.copyWith(photos: newphotos)));
+  }
+
   Future<void> load(String slug) async {
     emit(state.copyWith(isLoading: true));
     try {
