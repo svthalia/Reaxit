@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:reaxit/models.dart';
+import 'package:reaxit/config.dart' as config;
 
 part 'event.g.dart';
 
@@ -41,7 +42,6 @@ class Event implements BaseEvent {
 
   final bool hasFields;
 
-  @JsonKey(name: 'optional_registrations')
   final bool optionalRegistrations;
 
   final DateTime? registrationStart;
@@ -171,5 +171,78 @@ class PartnerEvent implements BaseEvent {
     this.end,
     this.location,
     this.url,
+  );
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class AdminEvent implements BaseEvent {
+  @override
+  @JsonKey(name: 'id')
+  final int pk;
+  @override
+  final String title;
+  @override
+  final String description;
+  @override
+  final DateTime start;
+  @override
+  final DateTime end;
+  @override
+  final String location;
+
+  final EventCategory category;
+  final bool optionalRegistrations;
+  final DateTime? registrationStart;
+  final DateTime? registrationEnd;
+  final DateTime? cancelDeadline;
+
+  final String price;
+  final String fine;
+
+  // final Uri markPresentUrl;
+  final String markPresentUrlToken;
+  Uri get markPresentUrl => Uri(
+        scheme: 'https',
+        host: config.apiHost,
+        path: '/events/$pk/mark-present/$markPresentUrlToken',
+      );
+
+  bool get registrationIsRequired =>
+      registrationStart != null || registrationEnd != null;
+
+  bool get registrationIsOptional =>
+      optionalRegistrations && !registrationIsRequired;
+
+  bool get paymentIsRequired => double.tryParse(price) != 0;
+
+  bool cancelDeadlinePassed() =>
+      cancelDeadline?.isBefore(DateTime.now()) ?? false;
+  bool registrationStarted() =>
+      registrationStart?.isBefore(DateTime.now()) ?? false;
+  bool registrationClosed() =>
+      registrationEnd?.isBefore(DateTime.now()) ?? false;
+  bool registrationIsOpen() => registrationStarted() && !registrationClosed();
+
+  bool hasStarted() => start.isBefore(DateTime.now());
+  bool hasEnded() => end.isBefore(DateTime.now());
+
+  factory AdminEvent.fromJson(Map<String, dynamic> json) =>
+      _$AdminEventFromJson(json);
+
+  AdminEvent(
+    this.pk,
+    this.title,
+    this.description,
+    this.start,
+    this.end,
+    this.location,
+    this.category,
+    this.optionalRegistrations,
+    this.registrationStart,
+    this.registrationEnd,
+    this.cancelDeadline,
+    this.price,
+    this.fine,
+    this.markPresentUrlToken,
   );
 }

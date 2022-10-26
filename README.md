@@ -49,6 +49,8 @@ To use Fastlane follow these steps:
 | deploy_production | Create a release and deploy to Play Store or App Store | Android, iOS |
 | match             | Get the certificates to sign iOS apps | iOS |
 
+Sometimes, Apple certificates and provisioning profiles expire. So far, we've been able to solve that with `fastlane match nuke development` and `fastlane match nuke distribution` to remove existing certificates, and `fastlane match appstore` and `fastlane match development`.
+
 ### Configuration
 
 To be able to deploy the application you need a few configuration files and passwords. These are all located in the vault in the ThaliApp-Passwords repository that you get access to when you're a part of our organisation.

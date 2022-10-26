@@ -324,6 +324,15 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
+  Future<AdminEvent> getAdminEvent({required int pk}) {
+    return sandbox(() async {
+      final uri = _uri(path: '/admin/events/$pk/');
+      final response = await _handleExceptions(() => _client.get(uri));
+      return AdminEvent.fromJson(_jsonDecode(response));
+    });
+  }
+
+  @override
   Future<ListResponse<AdminEventRegistration>> getAdminEventRegistrations({
     required int pk,
     int? limit,
@@ -384,6 +393,23 @@ class ConcrexitApiRepository implements ApiRepository {
         () => _client.patch(uri, body: body, headers: _jsonHeader),
       );
       return AdminEventRegistration.fromJson(_jsonDecode(response));
+    });
+  }
+
+  @override
+  Future<String> markPresentEventRegistration({
+    required int eventPk,
+    required String token,
+  }) async {
+    return sandbox(() async {
+      final uri = _uri(path: '/events/$eventPk/mark-present/$token/');
+      final response = await _handleExceptions(
+        () => _client.patch(uri),
+        allowedStatusCodes: [200, 403],
+      );
+      final detail = _jsonDecode(response)['detail'] as String;
+      if (response.statusCode == 403) throw ApiException.message(detail);
+      return detail;
     });
   }
 

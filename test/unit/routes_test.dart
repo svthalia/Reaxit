@@ -15,6 +15,7 @@ void main() {
         'https://$apiHost/members/photos/',
         'https://$apiHost/members/photos/some-album-1/',
         'https://$apiHost/sales/order/11111111-aaaa-bbbb-cccc-222222222222/pay/',
+        'https://$apiHost/events/1/mark-present/11111111-aaaa-bbbb-cccc-222222222222/',
       ];
 
       for (final uri in validUris) {
@@ -34,6 +35,8 @@ void main() {
         'https://subdomain.$apiHost/events/1/',
         'http://$apiHost/events/xxx/',
         'https://$apiHost/sales/order/11111111-bbbb-cccc-222222222222/pay/',
+        'https://$apiHost/events/1/mark-present/11111111-bbbb-cccc-222222222222/',
+        'https://$apiHost/events/1/mark_present/11111111-aaaa-bbbb-cccc-222222222222/',
       ];
 
       for (final uri in invalidUris) {

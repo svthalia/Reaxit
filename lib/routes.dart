@@ -14,6 +14,8 @@ bool isDeepLink(Uri uri) {
   return _deepLinkRegExps.any((re) => re.hasMatch(uri.path));
 }
 
+const _uuid = '([a-z0-9]{8}-([a-z0-9]{4}-){3}[a-z0-9]{12})';
+
 /// The [RegExp]s that can used as deep links. This list should
 /// contain all deep links that should be handled by the app.
 final List<RegExp> _deepLinkRegExps = <RegExp>[
@@ -23,7 +25,8 @@ final List<RegExp> _deepLinkRegExps = <RegExp>[
   RegExp('^/events/([0-9]+)/?\$'),
   RegExp('^/members/photos/?\$'),
   RegExp('^/members/photos/([a-z0-9-_]+)/?\$'),
-  RegExp('^/sales/order/([a-z0-9]{8}-([a-z0-9]{4}-){3}[a-z0-9]{12})/pay/?\$'),
+  RegExp('^/sales/order/$_uuid/pay/?\$'),
+  RegExp('^/events/([0-9]+)/mark-present/$_uuid/?\$'),
 ];
 
 final List<GoRoute> routes = [
@@ -96,6 +99,35 @@ final List<GoRoute> routes = [
           ),
         ),
         routes: [
+          GoRoute(
+            path: 'mark-present/:token',
+            name: 'mark-present',
+            pageBuilder: (context, state) {
+              return CustomTransitionPage(
+                barrierColor: Colors.black54,
+                opaque: false,
+                transitionDuration: const Duration(milliseconds: 150),
+                transitionsBuilder: (
+                  context,
+                  animation,
+                  secondaryAnimation,
+                  child,
+                ) {
+                  return FadeTransition(
+                    opacity: CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOut,
+                    ),
+                    child: child,
+                  );
+                },
+                child: MarkPresentDialog(
+                  pk: int.parse(state.params['eventPk']!),
+                  token: state.params['token']!,
+                ),
+              );
+            },
+          ),
           GoRoute(
             path: 'admin',
             name: 'event-admin',

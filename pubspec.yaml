@@ -115,6 +115,9 @@ dependencies:
   # Navigation.
   go_router: ^5.0.2
 
+  # Displaying QR codes.
+  qr_flutter: ^4.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -91,6 +91,9 @@ abstract class ApiRepository {
     required Map<String, RegistrationField> fields,
   });
 
+  /// Get the [AdminEvent] with the `pk`.
+  Future<AdminEvent> getAdminEvent({required int pk});
+
   /// Get the [AdminEventRegistration]s of the [Event] with the `pk`.
   ///
   /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
@@ -105,6 +108,12 @@ abstract class ApiRepository {
     String? search,
     String? ordering,
     bool? cancelled,
+  });
+
+  /// Mark the user's registration for [Event] `pk` as present, using `token`.
+  Future<String> markPresentEventRegistration({
+    required int eventPk,
+    required String token,
   });
 
   /// Mark registration `registrationPk` for [Event] `eventPk` as `present`.

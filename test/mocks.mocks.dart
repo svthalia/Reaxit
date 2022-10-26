@@ -64,9 +64,19 @@ class _FakeEventRegistration_3 extends _i1.SmartFake
         );
 }
 
-class _FakeAdminEventRegistration_4 extends _i1.SmartFake
+class _FakeAdminEvent_4 extends _i1.SmartFake implements _i3.AdminEvent {
+  _FakeAdminEvent_4(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeAdminEventRegistration_5 extends _i1.SmartFake
     implements _i3.AdminEventRegistration {
-  _FakeAdminEventRegistration_4(
+  _FakeAdminEventRegistration_5(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -75,8 +85,8 @@ class _FakeAdminEventRegistration_4 extends _i1.SmartFake
         );
 }
 
-class _FakePayable_5 extends _i1.SmartFake implements _i3.Payable {
-  _FakePayable_5(
+class _FakePayable_6 extends _i1.SmartFake implements _i3.Payable {
+  _FakePayable_6(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -85,8 +95,8 @@ class _FakePayable_5 extends _i1.SmartFake implements _i3.Payable {
         );
 }
 
-class _FakeFoodEvent_6 extends _i1.SmartFake implements _i3.FoodEvent {
-  _FakeFoodEvent_6(
+class _FakeFoodEvent_7 extends _i1.SmartFake implements _i3.FoodEvent {
+  _FakeFoodEvent_7(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -95,8 +105,8 @@ class _FakeFoodEvent_6 extends _i1.SmartFake implements _i3.FoodEvent {
         );
 }
 
-class _FakeFoodOrder_7 extends _i1.SmartFake implements _i3.FoodOrder {
-  _FakeFoodOrder_7(
+class _FakeFoodOrder_8 extends _i1.SmartFake implements _i3.FoodOrder {
+  _FakeFoodOrder_8(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -105,8 +115,8 @@ class _FakeFoodOrder_7 extends _i1.SmartFake implements _i3.FoodOrder {
         );
 }
 
-class _FakePaymentUser_8 extends _i1.SmartFake implements _i3.PaymentUser {
-  _FakePaymentUser_8(
+class _FakePaymentUser_9 extends _i1.SmartFake implements _i3.PaymentUser {
+  _FakePaymentUser_9(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -115,8 +125,8 @@ class _FakePaymentUser_8 extends _i1.SmartFake implements _i3.PaymentUser {
         );
 }
 
-class _FakeMember_9 extends _i1.SmartFake implements _i3.Member {
-  _FakeMember_9(
+class _FakeMember_10 extends _i1.SmartFake implements _i3.Member {
+  _FakeMember_10(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -125,8 +135,8 @@ class _FakeMember_9 extends _i1.SmartFake implements _i3.Member {
         );
 }
 
-class _FakeFullMember_10 extends _i1.SmartFake implements _i3.FullMember {
-  _FakeFullMember_10(
+class _FakeFullMember_11 extends _i1.SmartFake implements _i3.FullMember {
+  _FakeFullMember_11(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -135,8 +145,8 @@ class _FakeFullMember_10 extends _i1.SmartFake implements _i3.FullMember {
         );
 }
 
-class _FakeAlbum_11 extends _i1.SmartFake implements _i3.Album {
-  _FakeAlbum_11(
+class _FakeAlbum_12 extends _i1.SmartFake implements _i3.Album {
+  _FakeAlbum_12(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -145,8 +155,8 @@ class _FakeAlbum_11 extends _i1.SmartFake implements _i3.Album {
         );
 }
 
-class _FakeDevice_12 extends _i1.SmartFake implements _i3.Device {
-  _FakeDevice_12(
+class _FakeDevice_13 extends _i1.SmartFake implements _i3.Device {
+  _FakeDevice_13(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -155,8 +165,8 @@ class _FakeDevice_12 extends _i1.SmartFake implements _i3.Device {
         );
 }
 
-class _FakeSalesOrder_13 extends _i1.SmartFake implements _i3.SalesOrder {
-  _FakeSalesOrder_13(
+class _FakeSalesOrder_14 extends _i1.SmartFake implements _i3.SalesOrder {
+  _FakeSalesOrder_14(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -165,8 +175,8 @@ class _FakeSalesOrder_13 extends _i1.SmartFake implements _i3.SalesOrder {
         );
 }
 
-class _FakeApiRepository_14 extends _i1.SmartFake implements _i4.ApiRepository {
-  _FakeApiRepository_14(
+class _FakeApiRepository_15 extends _i1.SmartFake implements _i4.ApiRepository {
+  _FakeApiRepository_15(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -175,9 +185,9 @@ class _FakeApiRepository_14 extends _i1.SmartFake implements _i4.ApiRepository {
         );
 }
 
-class _FakeDetailState_15<E> extends _i1.SmartFake
+class _FakeDetailState_16<E> extends _i1.SmartFake
     implements _i2.DetailState<E> {
-  _FakeDetailState_15(
+  _FakeDetailState_16(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -506,6 +516,23 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
   @override
+  _i5.Future<_i3.AdminEvent> getAdminEvent({required int? pk}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getAdminEvent,
+          [],
+          {#pk: pk},
+        ),
+        returnValue: _i5.Future<_i3.AdminEvent>.value(_FakeAdminEvent_4(
+          this,
+          Invocation.method(
+            #getAdminEvent,
+            [],
+            {#pk: pk},
+          ),
+        )),
+      ) as _i5.Future<_i3.AdminEvent>);
+  @override
   _i5.Future<_i3.ListResponse<_i3.AdminEventRegistration>>
       getAdminEventRegistrations({
     required int? pk,
@@ -563,7 +590,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
           },
         ),
         returnValue: _i5.Future<_i3.AdminEventRegistration>.value(
-            _FakeAdminEventRegistration_4(
+            _FakeAdminEventRegistration_5(
           this,
           Invocation.method(
             #markPresentAdminEventRegistration,
@@ -590,7 +617,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
             #paymentType: paymentType,
           },
         ),
-        returnValue: _i5.Future<_i3.Payable>.value(_FakePayable_5(
+        returnValue: _i5.Future<_i3.Payable>.value(_FakePayable_6(
           this,
           Invocation.method(
             #markPaidAdminEventRegistration,
@@ -661,7 +688,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
             #paymentType: paymentType,
           },
         ),
-        returnValue: _i5.Future<_i3.Payable>.value(_FakePayable_5(
+        returnValue: _i5.Future<_i3.Payable>.value(_FakePayable_6(
           this,
           Invocation.method(
             #markPaidAdminFoodOrder,
@@ -690,7 +717,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
           #getFoodEvent,
           [pk],
         ),
-        returnValue: _i5.Future<_i3.FoodEvent>.value(_FakeFoodEvent_6(
+        returnValue: _i5.Future<_i3.FoodEvent>.value(_FakeFoodEvent_7(
           this,
           Invocation.method(
             #getFoodEvent,
@@ -740,7 +767,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
           #getCurrentFoodEvent,
           [],
         ),
-        returnValue: _i5.Future<_i3.FoodEvent>.value(_FakeFoodEvent_6(
+        returnValue: _i5.Future<_i3.FoodEvent>.value(_FakeFoodEvent_7(
           this,
           Invocation.method(
             #getCurrentFoodEvent,
@@ -754,7 +781,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
           #getFoodOrder,
           [pk],
         ),
-        returnValue: _i5.Future<_i3.FoodOrder>.value(_FakeFoodOrder_7(
+        returnValue: _i5.Future<_i3.FoodOrder>.value(_FakeFoodOrder_8(
           this,
           Invocation.method(
             #getFoodOrder,
@@ -785,7 +812,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
             #productPk: productPk,
           },
         ),
-        returnValue: _i5.Future<_i3.FoodOrder>.value(_FakeFoodOrder_7(
+        returnValue: _i5.Future<_i3.FoodOrder>.value(_FakeFoodOrder_8(
           this,
           Invocation.method(
             #placeFoodOrder,
@@ -811,7 +838,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
             #productPk: productPk,
           },
         ),
-        returnValue: _i5.Future<_i3.FoodOrder>.value(_FakeFoodOrder_7(
+        returnValue: _i5.Future<_i3.FoodOrder>.value(_FakeFoodOrder_8(
           this,
           Invocation.method(
             #changeFoodOrder,
@@ -860,7 +887,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
           #getPaymentUser,
           [],
         ),
-        returnValue: _i5.Future<_i3.PaymentUser>.value(_FakePaymentUser_8(
+        returnValue: _i5.Future<_i3.PaymentUser>.value(_FakePaymentUser_9(
           this,
           Invocation.method(
             #getPaymentUser,
@@ -876,7 +903,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
           [],
           {#foodOrderPk: foodOrderPk},
         ),
-        returnValue: _i5.Future<_i3.Payable>.value(_FakePayable_5(
+        returnValue: _i5.Future<_i3.Payable>.value(_FakePayable_6(
           this,
           Invocation.method(
             #getFoodOrderPayable,
@@ -893,7 +920,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
           [],
           {#foodOrderPk: foodOrderPk},
         ),
-        returnValue: _i5.Future<_i3.Payable>.value(_FakePayable_5(
+        returnValue: _i5.Future<_i3.Payable>.value(_FakePayable_6(
           this,
           Invocation.method(
             #thaliaPayFoodOrder,
@@ -911,7 +938,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
           [],
           {#registrationPk: registrationPk},
         ),
-        returnValue: _i5.Future<_i3.Payable>.value(_FakePayable_5(
+        returnValue: _i5.Future<_i3.Payable>.value(_FakePayable_6(
           this,
           Invocation.method(
             #getEventRegistrationPayable,
@@ -929,7 +956,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
           [],
           {#registrationPk: registrationPk},
         ),
-        returnValue: _i5.Future<_i3.Payable>.value(_FakePayable_5(
+        returnValue: _i5.Future<_i3.Payable>.value(_FakePayable_6(
           this,
           Invocation.method(
             #thaliaPayRegistration,
@@ -947,7 +974,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
           [],
           {#salesOrderPk: salesOrderPk},
         ),
-        returnValue: _i5.Future<_i3.Payable>.value(_FakePayable_5(
+        returnValue: _i5.Future<_i3.Payable>.value(_FakePayable_6(
           this,
           Invocation.method(
             #getSalesOrderPayable,
@@ -965,7 +992,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
           [],
           {#salesOrderPk: salesOrderPk},
         ),
-        returnValue: _i5.Future<_i3.Payable>.value(_FakePayable_5(
+        returnValue: _i5.Future<_i3.Payable>.value(_FakePayable_6(
           this,
           Invocation.method(
             #thaliaPaySalesOrder,
@@ -981,7 +1008,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
           [],
           {#pk: pk},
         ),
-        returnValue: _i5.Future<_i3.Member>.value(_FakeMember_9(
+        returnValue: _i5.Future<_i3.Member>.value(_FakeMember_10(
           this,
           Invocation.method(
             #getMember,
@@ -1029,7 +1056,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
           #getMe,
           [],
         ),
-        returnValue: _i5.Future<_i3.FullMember>.value(_FakeFullMember_10(
+        returnValue: _i5.Future<_i3.FullMember>.value(_FakeFullMember_11(
           this,
           Invocation.method(
             #getMe,
@@ -1064,7 +1091,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
           [],
           {#slug: slug},
         ),
-        returnValue: _i5.Future<_i3.Album>.value(_FakeAlbum_11(
+        returnValue: _i5.Future<_i3.Album>.value(_FakeAlbum_12(
           this,
           Invocation.method(
             #getAlbum,
@@ -1173,7 +1200,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
             #active: active,
           },
         ),
-        returnValue: _i5.Future<_i3.Device>.value(_FakeDevice_12(
+        returnValue: _i5.Future<_i3.Device>.value(_FakeDevice_13(
           this,
           Invocation.method(
             #registerDevice,
@@ -1193,7 +1220,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
           [],
           {#pk: pk},
         ),
-        returnValue: _i5.Future<_i3.Device>.value(_FakeDevice_12(
+        returnValue: _i5.Future<_i3.Device>.value(_FakeDevice_13(
           this,
           Invocation.method(
             #getDevice,
@@ -1210,7 +1237,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
           [],
           {#pk: pk},
         ),
-        returnValue: _i5.Future<_i3.Device>.value(_FakeDevice_12(
+        returnValue: _i5.Future<_i3.Device>.value(_FakeDevice_13(
           this,
           Invocation.method(
             #disableDevice,
@@ -1233,7 +1260,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
             #token: token,
           },
         ),
-        returnValue: _i5.Future<_i3.Device>.value(_FakeDevice_12(
+        returnValue: _i5.Future<_i3.Device>.value(_FakeDevice_13(
           this,
           Invocation.method(
             #updateDeviceToken,
@@ -1259,7 +1286,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
             #receiveCategory: receiveCategory,
           },
         ),
-        returnValue: _i5.Future<_i3.Device>.value(_FakeDevice_12(
+        returnValue: _i5.Future<_i3.Device>.value(_FakeDevice_13(
           this,
           Invocation.method(
             #updateDeviceReceiveCategory,
@@ -1296,7 +1323,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
           [],
           {#pk: pk},
         ),
-        returnValue: _i5.Future<_i3.SalesOrder>.value(_FakeSalesOrder_13(
+        returnValue: _i5.Future<_i3.SalesOrder>.value(_FakeSalesOrder_14(
           this,
           Invocation.method(
             #claimSalesOrder,
@@ -1318,7 +1345,7 @@ class MockPaymentUserCubit extends _i1.Mock implements _i2.PaymentUserCubit {
   @override
   _i4.ApiRepository get api => (super.noSuchMethod(
         Invocation.getter(#api),
-        returnValue: _FakeApiRepository_14(
+        returnValue: _FakeApiRepository_15(
           this,
           Invocation.getter(#api),
         ),
@@ -1326,7 +1353,7 @@ class MockPaymentUserCubit extends _i1.Mock implements _i2.PaymentUserCubit {
   @override
   _i2.DetailState<_i3.PaymentUser> get state => (super.noSuchMethod(
         Invocation.getter(#state),
-        returnValue: _FakeDetailState_15<_i3.PaymentUser>(
+        returnValue: _FakeDetailState_16<_i3.PaymentUser>(
           this,
           Invocation.getter(#state),
         ),
