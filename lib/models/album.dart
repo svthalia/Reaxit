@@ -22,6 +22,27 @@ class ListAlbum {
 class Album extends ListAlbum {
   final List<AlbumPhoto> photos;
 
+  Album copyWith({
+    String? slug,
+    String? title,
+    bool? accessible,
+    bool? shareable,
+    AlbumPhoto? cover,
+    List<AlbumPhoto>? photos,
+  }) =>
+      Album(
+        slug ?? this.slug,
+        title ?? this.title,
+        accessible ?? this.accessible,
+        shareable ?? this.shareable,
+        cover ?? this.cover,
+        photos ?? this.photos,
+      );
+
+  const Album.fromlist(String slug, String title, bool accessible,
+      bool shareable, AlbumPhoto cover, this.photos)
+      : super(slug, title, accessible, shareable, cover);
+
   const Album(String slug, String title, bool accessible, bool shareable,
       AlbumPhoto cover, this.photos)
       : super(slug, title, accessible, shareable, cover);
