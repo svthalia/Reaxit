@@ -10,7 +10,7 @@ import 'package:reaxit/models.dart';
 
 class EventAdminState extends Equatable {
   /// This can only be null when [isLoading] or [hasException] is true.
-  final Event? event;
+  final AdminEvent? event;
 
   /// These may be outdated when [isLoading] is true.
   final List<AdminEventRegistration> registrations;
@@ -35,7 +35,7 @@ class EventAdminState extends Equatable {
   List<Object?> get props => [event, registrations, message, isLoading];
 
   EventAdminState copyWith({
-    Event? event,
+    AdminEvent? event,
     List<AdminEventRegistration>? registrations,
     bool? isLoading,
     String? message,
@@ -48,7 +48,7 @@ class EventAdminState extends Equatable {
       );
 
   const EventAdminState.result({
-    required Event this.event,
+    required AdminEvent this.event,
     required this.registrations,
   })  : message = null,
         isLoading = false;
@@ -85,7 +85,7 @@ class EventAdminCubit extends Cubit<EventAdminState> {
     emit(state.copyWith(isLoading: true));
     try {
       final query = _searchQuery;
-      final event = await api.getEvent(pk: eventPk);
+      final event = await api.getAdminEvent(pk: eventPk);
       final registrations = await api.getAdminEventRegistrations(
         pk: eventPk,
         search: query,

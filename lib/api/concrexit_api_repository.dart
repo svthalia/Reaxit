@@ -324,6 +324,15 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
+  Future<AdminEvent> getAdminEvent({required int pk}) {
+    return sandbox(() async {
+      final uri = _uri(path: '/admin/events/$pk/');
+      final response = await _handleExceptions(() => _client.get(uri));
+      return AdminEvent.fromJson(_jsonDecode(response));
+    });
+  }
+
+  @override
   Future<ListResponse<AdminEventRegistration>> getAdminEventRegistrations({
     required int pk,
     int? limit,
