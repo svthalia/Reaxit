@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/models.dart';
+import 'package:reaxit/ui/theme.dart';
 
 class EventDetailCard extends StatelessWidget {
   static final timeFormatter = DateFormat('HH:mm');
@@ -20,7 +21,7 @@ class EventDetailCard extends StatelessWidget {
 
     var indicatorColor = Colors.transparent;
     if (event.isInvited) {
-      indicatorColor = const Color(0xFFE62272);
+      indicatorColor = magenta;
     } else if (event.isInQueue) {
       indicatorColor = Colors.yellow;
     } else if (event.canCreateRegistration) {
