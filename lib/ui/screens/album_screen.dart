@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,17 +28,38 @@ class AlbumScreen extends StatefulWidget {
   State<AlbumScreen> createState() => _AlbumScreenState();
 }
 
-class _AlbumScreenState extends State<AlbumScreen> {
+class _AlbumScreenState extends State<AlbumScreen>
+    with SingleTickerProviderStateMixin {
   late final AlbumCubit _albumCubit;
   bool clicked = false;
   int clickedI = 0;
   int current = 0;
+  late AnimationController controller;
+  late Animation<double> animation;
+  PageController pageController = PageController(initialPage: 0);
+  PageController pageController2 = PageController(initialPage: 0);
+
+  void _onMainScroll() {
+    print("onscroll${pageController.offset}");
+    pageController2.animateTo(pageController.offset,
+        duration: Duration(milliseconds: 0), curve: Curves.decelerate);
+  }
 
   @override
   void initState() {
     _albumCubit = AlbumCubit(
       RepositoryProvider.of<ApiRepository>(context),
     )..load(widget.slug);
+    pageController.addListener(_onMainScroll);
+    controller = AnimationController(
+        duration: const Duration(milliseconds: 500), vsync: this);
+
+    animation = CurvedAnimation(parent: controller, curve: Curves.elasticOut)
+      ..addListener(() {
+        if (controller.value >= 0.8) {
+          controller.reset();
+        }
+      });
     super.initState();
   }
 
@@ -163,13 +185,9 @@ class _AlbumScreenState extends State<AlbumScreen> {
           if (clicked) {
             Album album = state.result!;
             int index = clickedI;
-            final pageController = PageController(initialPage: index);
-            pageController.addListener(() {
-              setState(() {
-                current = pageController.page!.round();
-              });
-            });
-            widgets.add(Scaffold(
+            pageController = PageController(initialPage: index);
+            widgets.add(
+              Scaffold(
                 extendBodyBehindAppBar: true,
                 backgroundColor: Colors.black.withOpacity(0.92),
                 appBar: AppBar(
@@ -229,41 +247,52 @@ class _AlbumScreenState extends State<AlbumScreen> {
                     ),
                   ],
                 ),
-                body: PhotoViewGallery.builder(
-                  loadingBuilder: (_, __) => const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                  backgroundDecoration: const BoxDecoration(
-                    color: Colors.transparent,
-                  ),
-                  itemCount: album.photos.length,
-                  builder: (context, i) {
-                    return PhotoViewGalleryPageOptions.customChild(
-                      onTapDown: (context, details, controllerValue) {
-                        _albumCubit.updateLike(
-                            liked: !album.photos[i].liked, index: i);
-                      },
-                      child: Image.network(album.photos[i].full),
-                      minScale: PhotoViewComputedScale.contained * 0.8,
-                      maxScale: PhotoViewComputedScale.covered * 2,
-                    );
-                  },
-                  pageController: pageController,
-                )));
-            widgets.add(AnimatedSwitcher(
-              duration: const Duration(milliseconds: 100),
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return ScaleTransition(scale: animation, child: child);
-              },
-              child: Text(
-                '${album.photos[current].liked}',
-                // This key causes the AnimatedSwitcher to interpret this as a "new"
-                // child each time the count changes, so that it will begin its animation
-                // when the count changes.
-                key: ValueKey<bool>(album.photos[current].liked),
-                style: Theme.of(context).textTheme.headlineMedium,
+                body: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: PhotoViewGallery.builder(
+                        onPageChanged: (index) {
+                          pageController2.jumpToPage(index);
+                        },
+                        loadingBuilder: (_, __) => const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                        backgroundDecoration: const BoxDecoration(
+                          color: Colors.transparent,
+                        ),
+                        itemCount: album.photos.length,
+                        builder: (context, i) {
+                          return PhotoViewGalleryPageOptions.customChild(
+                            onTapDown: (context, details, controllerValue) {
+                              _albumCubit.updateLike(
+                                  liked: !album.photos[i].liked, index: i);
+                              controller.forward();
+                            },
+                            child: Image.network(album.photos[i].full),
+                            minScale: PhotoViewComputedScale.contained * 0.8,
+                            maxScale: PhotoViewComputedScale.covered * 2,
+                          );
+                        },
+                        pageController: pageController,
+                      ),
+                    ),
+                    PageCounter(pageController2),
+                  ],
+                ),
               ),
-            ));
+            );
+            widgets.add(
+              ScaleTransition(
+                scale: animation,
+                child: const Center(
+                  child: CustomPaint(
+                    size: Size(70, 80),
+                    painter: HeartPainter(),
+                  ),
+                ),
+              ),
+            );
           }
           return Stack(
             alignment: AlignmentDirectional.center,
@@ -306,59 +335,106 @@ class HeartPainter extends CustomPainter {
   }
 }
 
-class GaleryImage extends StatefulWidget {
-  final String url;
-  const GaleryImage(this.url, {super.key});
+// class GaleryImage extends StatefulWidget {
+//   final String url;
+//   const GaleryImage(this.url, {super.key});
+
+//   @override
+//   State<GaleryImage> createState() => _GaleryImageState();
+// }
+
+// class _GaleryImageState extends State<GaleryImage>
+//     with SingleTickerProviderStateMixin {
+//   @override
+//   void initState() {
+//     super.initState();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Stack(
+//       alignment: AlignmentDirectional.center,
+//       children: [
+//         Image.network(widget.url),
+//         Opacity(
+//           opacity: animation.value / 300,
+//           child: const Center(
+//             child: CustomPaint(
+//               size: Size(70, 80),
+//               painter: HeartPainter(),
+//             ),
+//           ),
+//         )
+//       ],
+//     );
+//   }
+
+//   @override
+//   void dispose() {
+//     controller.dispose();
+
+//     super.dispose();
+//   }
+// }
+
+class PageCounter extends StatefulWidget {
+  final PageController controler;
+  const PageCounter(this.controler, {super.key});
 
   @override
-  State<GaleryImage> createState() => _GaleryImageState();
+  State<PageCounter> createState() => _PageCounterState();
 }
 
-class _GaleryImageState extends State<GaleryImage>
-    with SingleTickerProviderStateMixin {
-  late AnimationController controller;
-  late Animation<double> animation;
-
+class _PageCounterState extends State<PageCounter>
+    with SingleTickerProviderStateMixin
+    implements ScrollContext {
+  int count = 0;
+  ScrollPosition? _position;
   @override
   void initState() {
+    _position =
+        widget.controler.createScrollPosition(ScrollPhysics(), this, null);
+    _position?.applyViewportDimension(1.0);
+    _position?.applyContentDimensions(0, 10);
+    widget.controler.attach(_position!);
     super.initState();
-
-    controller =
-        AnimationController(duration: const Duration(seconds: 2), vsync: this);
-
-    animation = Tween<double>(begin: 0, end: 300).animate(controller)
-      ..addListener(() {
-        setState(() {
-          // The state that has changed here is the animation object’s value.
-        });
-      });
-
-    controller.forward();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: AlignmentDirectional.center,
-      children: [
-        Image.network(widget.url),
-        Opacity(
-          opacity: animation.value / 300,
-          child: const Center(
-            child: CustomPaint(
-              size: Size(70, 80),
-              painter: HeartPainter(),
-            ),
-          ),
-        )
-      ],
-    );
+    return Text('hello $count!!');
   }
 
   @override
   void dispose() {
-    controller.dispose();
-
     super.dispose();
   }
+
+  @override
+  AxisDirection get axisDirection => AxisDirection.right;
+
+  @override
+  BuildContext? get notificationContext => context;
+
+  @override
+  void saveOffset(double offset) {
+    setState(() {
+      count = offset.toInt();
+    });
+  }
+
+  @override
+  void setCanDrag(bool value) {}
+
+  @override
+  void setIgnorePointer(bool value) {}
+
+  @override
+  void setSemanticsActions(Set<SemanticsAction> actions) {}
+
+  @override
+  BuildContext get storageContext => context;
+
+  @override
+  TickerProvider get vsync => this;
 }
