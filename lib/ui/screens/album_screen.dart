@@ -11,7 +11,6 @@ import 'package:photo_view/photo_view_gallery.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/models.dart';
-import 'package:reaxit/ui/theme.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:share_plus/share_plus.dart';
@@ -29,20 +28,24 @@ class AlbumScreen extends StatefulWidget {
 }
 
 class _AlbumScreenState extends State<AlbumScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AlbumCubit _albumCubit;
   bool clicked = false;
   int clickedI = 0;
   int current = 0;
+
+  late AnimationController filledController;
+  late Animation<double> filledAnimation;
+
   late AnimationController controller;
   late Animation<double> animation;
+
   PageController pageController = PageController(initialPage: 0);
   PageController pageController2 = PageController(initialPage: 0);
 
   void _onMainScroll() {
-    print("onscroll${pageController.offset}");
     pageController2.animateTo(pageController.offset,
-        duration: Duration(milliseconds: 0), curve: Curves.decelerate);
+        duration: const Duration(milliseconds: 0), curve: Curves.decelerate);
   }
 
   @override
@@ -53,6 +56,8 @@ class _AlbumScreenState extends State<AlbumScreen>
     pageController.addListener(_onMainScroll);
     controller = AnimationController(
         duration: const Duration(milliseconds: 500), vsync: this);
+    filledController = AnimationController(
+        duration: const Duration(milliseconds: 500), vsync: this);
 
     animation = CurvedAnimation(parent: controller, curve: Curves.elasticOut)
       ..addListener(() {
@@ -60,6 +65,13 @@ class _AlbumScreenState extends State<AlbumScreen>
           controller.reset();
         }
       });
+    filledAnimation =
+        CurvedAnimation(parent: filledController, curve: Curves.elasticOut)
+          ..addListener(() {
+            if (filledController.value >= 0.8) {
+              filledController.reset();
+            }
+          });
     super.initState();
   }
 
@@ -67,6 +79,17 @@ class _AlbumScreenState extends State<AlbumScreen>
   void dispose() {
     _albumCubit.close();
     super.dispose();
+  }
+
+  void likePhoto(int likedIndex, Album album) {
+    // print(likedIndex);
+    _albumCubit.updateLike(
+        liked: !album.photos[likedIndex].liked, index: likedIndex);
+    if (album.photos[likedIndex].liked) {
+      controller.forward();
+    } else {
+      filledController.forward();
+    }
   }
 
   Widget _makePhotoCard(Album album, int index) {
@@ -184,6 +207,7 @@ class _AlbumScreenState extends State<AlbumScreen>
           ];
           if (clicked) {
             Album album = state.result!;
+            List<bool> likedlist = album.photos.map((e) => e.liked).toList();
             int index = clickedI;
             pageController = PageController(initialPage: index);
             widgets.add(
@@ -264,11 +288,8 @@ class _AlbumScreenState extends State<AlbumScreen>
                         itemCount: album.photos.length,
                         builder: (context, i) {
                           return PhotoViewGalleryPageOptions.customChild(
-                            onTapDown: (context, details, controllerValue) {
-                              _albumCubit.updateLike(
-                                  liked: !album.photos[i].liked, index: i);
-                              controller.forward();
-                            },
+                            //TODO: ontapdown is not the right way to do this
+                            onTapDown: (_, __, ___) => likePhoto(i, album),
                             child: Image.network(album.photos[i].full),
                             minScale: PhotoViewComputedScale.contained * 0.8,
                             maxScale: PhotoViewComputedScale.covered * 2,
@@ -277,7 +298,12 @@ class _AlbumScreenState extends State<AlbumScreen>
                         pageController: pageController,
                       ),
                     ),
-                    PageCounter(pageController2),
+                    PageCounter(
+                      pageController2,
+                      album.photos.length,
+                      likedlist,
+                      (likedIndex) => likePhoto(likedIndex, album),
+                    ),
                   ],
                 ),
               ),
@@ -289,6 +315,17 @@ class _AlbumScreenState extends State<AlbumScreen>
                   child: CustomPaint(
                     size: Size(70, 80),
                     painter: HeartPainter(),
+                  ),
+                ),
+              ),
+            );
+            widgets.add(
+              ScaleTransition(
+                scale: filledAnimation,
+                child: const Center(
+                  child: CustomPaint(
+                    size: Size(70, 80),
+                    painter: HeartPainter(filled: true),
                   ),
                 ),
               ),
@@ -305,15 +342,21 @@ class _AlbumScreenState extends State<AlbumScreen>
 }
 
 class HeartPainter extends CustomPainter {
+  final bool filled;
+  final double strokeWidth;
+
   @override
-  const HeartPainter();
+  const HeartPainter({this.filled = false, this.strokeWidth = 6});
 
   @override
   void paint(Canvas canvas, Size size) {
-    Paint paint1 = Paint();
-    paint1
-      ..color = magenta
-      ..style = PaintingStyle.fill;
+    // TODO: implement paint
+    Paint paint = Paint();
+    paint
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = strokeWidth;
 
     double width = size.width;
     double height = size.height;
@@ -326,7 +369,15 @@ class HeartPainter extends CustomPainter {
     path.cubicTo(0.8 * width, height * 0.1, 1.25 * width, height * 0.6,
         0.5 * width, height);
 
-    canvas.drawPath(path, paint1);
+    if (filled) {
+      Paint paint1 = Paint();
+      paint1
+        ..color = Colors.white
+        ..style = PaintingStyle.fill
+        ..strokeWidth = 0;
+      canvas.drawPath(path, paint1);
+    }
+    canvas.drawPath(path, paint);
   }
 
   @override
@@ -335,51 +386,15 @@ class HeartPainter extends CustomPainter {
   }
 }
 
-// class GaleryImage extends StatefulWidget {
-//   final String url;
-//   const GaleryImage(this.url, {super.key});
-
-//   @override
-//   State<GaleryImage> createState() => _GaleryImageState();
-// }
-
-// class _GaleryImageState extends State<GaleryImage>
-//     with SingleTickerProviderStateMixin {
-//   @override
-//   void initState() {
-//     super.initState();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Stack(
-//       alignment: AlignmentDirectional.center,
-//       children: [
-//         Image.network(widget.url),
-//         Opacity(
-//           opacity: animation.value / 300,
-//           child: const Center(
-//             child: CustomPaint(
-//               size: Size(70, 80),
-//               painter: HeartPainter(),
-//             ),
-//           ),
-//         )
-//       ],
-//     );
-//   }
-
-//   @override
-//   void dispose() {
-//     controller.dispose();
-
-//     super.dispose();
-//   }
-// }
-
 class PageCounter extends StatefulWidget {
   final PageController controler;
-  const PageCounter(this.controler, {super.key});
+  final int pagecount;
+  final List<bool> isliked;
+  final void Function(int) likeToggle;
+
+  const PageCounter(
+      this.controler, this.pagecount, this.isliked, this.likeToggle,
+      {super.key});
 
   @override
   State<PageCounter> createState() => _PageCounterState();
@@ -390,23 +405,226 @@ class _PageCounterState extends State<PageCounter>
     implements ScrollContext {
   int count = 0;
   ScrollPosition? _position;
+
   @override
   void initState() {
-    _position =
-        widget.controler.createScrollPosition(ScrollPhysics(), this, null);
+    _position = widget.controler
+        .createScrollPosition(const ScrollPhysics(), this, null);
     _position?.applyViewportDimension(1.0);
-    _position?.applyContentDimensions(0, 10);
+    _position?.applyContentDimensions(0, widget.pagecount.toDouble());
     widget.controler.attach(_position!);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Text('hello $count!!');
+    final textTheme = Theme.of(context).textTheme;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          '$count / ${widget.pagecount}',
+          style: textTheme.displaySmall,
+        ),
+        IconButton(
+          icon: CustomPaint(
+              size: Size.square(IconTheme.of(context).size ?? 24.0),
+              painter: widget.isliked[count]
+                  ? const HeartPainter(filled: true)
+                  : const HeartPainter(strokeWidth: 2)),
+          onPressed: () => widget.likeToggle(count),
+        ),
+      ],
+    );
+    // return Column(children: [
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //     children: [
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.bodyLarge,
+    //       ),
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.bodyMedium,
+    //       ),
+    //     ],
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //     children: [
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.bodySmall,
+    //       ),
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.bodyText1,
+    //       ),
+    //     ],
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //     children: [
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.bodyText2,
+    //       ),
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.button,
+    //       ),
+    //     ],
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //     children: [
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.caption,
+    //       ),
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.displayLarge,
+    //       ),
+    //     ],
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //     children: [
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.displayMedium,
+    //       ),
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.displaySmall,
+    //       ),
+    //     ],
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //     children: [
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.headline1,
+    //       ),
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.headline2,
+    //       ),
+    //     ],
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //     children: [
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.headline3,
+    //       ),
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.headline4,
+    //       ),
+    //     ],
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //     children: [
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.headline5,
+    //       ),
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.headline6,
+    //       ),
+    //     ],
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //     children: [
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.headlineLarge,
+    //       ),
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.headlineMedium,
+    //       ),
+    //     ],
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //     children: [
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.headlineSmall,
+    //       ),
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.labelLarge,
+    //       ),
+    //     ],
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //     children: [
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.labelMedium,
+    //       ),
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.labelSmall,
+    //       ),
+    //     ],
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //     children: [
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.overline,
+    //       ),
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.subtitle1,
+    //       ),
+    //     ],
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //     children: [
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.subtitle2,
+    //       ),
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.titleLarge,
+    //       ),
+    //     ],
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //     children: [
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.titleMedium,
+    //       ),
+    //       Text(
+    //         '$count / ${widget.pagecount}',
+    //         style: textTheme.titleSmall,
+    //       ),
+    //     ],
+    //   ),
+    // ]);
   }
 
   @override
   void dispose() {
+    widget.controler.detach(_position!);
     super.dispose();
   }
 
