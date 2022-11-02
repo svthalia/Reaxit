@@ -124,13 +124,11 @@ class _AlbumScreenState extends State<AlbumScreen> {
                   try {
                     final response = await http.get(url);
                     if (response.statusCode != 200) throw Exception();
-                    final baseTempDir = await getTemporaryDirectory();
-                    final tempDir = await baseTempDir.createTemp();
-                    final tempFile = File(
-                      '${tempDir.path}/${url.pathSegments.last}',
+                    final file = XFile.fromData(
+                      response.bodyBytes,
+                      name: url.pathSegments.last,
                     );
-                    await tempFile.writeAsBytes(response.bodyBytes);
-                    await Share.shareFiles([tempFile.path]);
+                    await Share.shareXFiles([file]);
                   } catch (_) {
                     messenger.showSnackBar(
                       const SnackBar(
