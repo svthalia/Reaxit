@@ -11,7 +11,7 @@ ListAlbum _$ListAlbumFromJson(Map<String, dynamic> json) => ListAlbum(
       json['title'] as String,
       json['accessible'] as bool,
       json['shareable'] as bool,
-      AlbumPhoto.fromJson(json['cover'] as Map<String, dynamic>),
+      CoverPhoto.fromJson(json['cover'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$ListAlbumToJson(ListAlbum instance) => <String, dynamic>{
@@ -27,7 +27,7 @@ Album _$AlbumFromJson(Map<String, dynamic> json) => Album(
       json['title'] as String,
       json['accessible'] as bool,
       json['shareable'] as bool,
-      AlbumPhoto.fromJson(json['cover'] as Map<String, dynamic>),
+      CoverPhoto.fromJson(json['cover'] as Map<String, dynamic>),
       (json['photos'] as List<dynamic>)
           .map((e) => AlbumPhoto.fromJson(e as Map<String, dynamic>))
           .toList(),
