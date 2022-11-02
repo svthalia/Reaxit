@@ -144,7 +144,7 @@ jobs:
     needs: [linting, testing]
     # Don't try multiple builds concurrently, 
     # because build numbers would conflict.
-    concurrency: deploy-ios
+    concurrency: deploy-android
     if: | # Don't deploy on draft PRs
       github.event_name == 'workflow_dispatch' 
       || (github.event_name == 'push' && github.ref == 'refs/heads/master')
