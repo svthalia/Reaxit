@@ -6,11 +6,28 @@ part of 'photo.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+CoverPhoto _$CoverPhotoFromJson(Map<String, dynamic> json) => CoverPhoto(
+      json['pk'] as int,
+      json['rotation'] as int,
+      json['hidden'] as bool,
+      Photo.fromJson(json['file'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$CoverPhotoToJson(CoverPhoto instance) =>
+    <String, dynamic>{
+      'pk': instance.pk,
+      'rotation': instance.rotation,
+      'hidden': instance.hidden,
+      'file': instance.file,
+    };
+
 AlbumPhoto _$AlbumPhotoFromJson(Map<String, dynamic> json) => AlbumPhoto(
       json['pk'] as int,
       json['rotation'] as int,
       json['hidden'] as bool,
       Photo.fromJson(json['file'] as Map<String, dynamic>),
+      json['liked'] as bool,
+      json['num_likes'] as int,
     );
 
 Map<String, dynamic> _$AlbumPhotoToJson(AlbumPhoto instance) =>
@@ -19,6 +36,8 @@ Map<String, dynamic> _$AlbumPhotoToJson(AlbumPhoto instance) =>
       'rotation': instance.rotation,
       'hidden': instance.hidden,
       'file': instance.file,
+      'liked': instance.liked,
+      'num_likes': instance.numLikes,
     };
 
 Photo _$PhotoFromJson(Map<String, dynamic> json) => Photo(
