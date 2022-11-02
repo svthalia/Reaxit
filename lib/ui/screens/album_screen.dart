@@ -141,136 +141,123 @@ class _AlbumScreenState extends State<AlbumScreen>
     }
   }
 
-  Widget _makeShareAlbumButton(String slug) {
-    return IconButton(
-      padding: const EdgeInsets.all(16),
-      color: Theme.of(context).primaryIconTheme.color,
-      icon: Icon(
-        Theme.of(context).platform == TargetPlatform.iOS
-            ? Icons.ios_share
-            : Icons.share,
-      ),
-      onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        try {
-          await Share.share('https://${config.apiHost}/members/photos/$slug/');
-        } catch (_) {
-          messenger.showSnackBar(const SnackBar(
-            behavior: SnackBarBehavior.floating,
-            content: Text('Could not share the album.'),
-          ));
-        }
-      },
-    );
-  }
-
-  Widget _makePhotoCard(List<AlbumPhoto> photos, int index) {
-    return GestureDetector(
-      onTap: () => setState(() {
-        clicked = true;
-        clickedI = index;
-      }),
-      child: FadeInImage.assetNetwork(
-        placeholder: 'assets/img/photo_placeholder.png',
-        image: photos[index].small,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
-
-  Widget _gallery(List<AlbumPhoto> photos) {
-    return PhotoViewGallery.builder(
-      onPageChanged: (index) {
-        pageController2.jumpToPage(index);
-      },
-      loadingBuilder: (_, __) => const Center(
-        child: CircularProgressIndicator(),
-      ),
-      backgroundDecoration: const BoxDecoration(
-        color: Colors.transparent,
-      ),
-      itemCount: photos.length,
-      builder: (context, i) {
-        return PhotoViewGalleryPageOptions.customChild(
-          child: GestureDetector(
-              onDoubleTap: () => likePhoto(i, photos),
-              child: Image.network(photos[i].full)),
-          minScale: PhotoViewComputedScale.contained * 0.8,
-          maxScale: PhotoViewComputedScale.covered * 2,
-        );
-      },
-      pageController: pageController,
-    );
-  }
-
-  Widget _downloadButton(List<AlbumPhoto> photos) {
-    return IconButton(
-      padding: const EdgeInsets.all(16),
-      color: Theme.of(context).primaryIconTheme.color,
-      icon: const Icon(Icons.download),
-      onPressed: () async => downloadImage(
-          context, Uri.parse(photos[pageController2.page!.round()].full)),
-    );
-  }
-
-  Widget _shareButton(List<AlbumPhoto> photos) {
-    return IconButton(
-      padding: const EdgeInsets.all(16),
-      color: Theme.of(context).primaryIconTheme.color,
-      icon: Icon(
-        Theme.of(context).platform == TargetPlatform.iOS
-            ? Icons.ios_share
-            : Icons.share,
-      ),
-      onPressed: () async => _share(
-          context, Uri.parse(photos[pageController2.page!.floor()].full)),
-    );
-  }
-
-  List<Widget> _heartPopup() {
-    return [
-      ScaleTransition(
-        scale: animation,
-        child: const Center(
-          child: CustomPaint(
-            size: Size(70, 80),
-            painter: HeartPainter(),
-          ),
+  Widget _makeShareAlbumButton(String slug) => IconButton(
+        padding: const EdgeInsets.all(16),
+        color: Theme.of(context).primaryIconTheme.color,
+        icon: Icon(
+          Theme.of(context).platform == TargetPlatform.iOS
+              ? Icons.ios_share
+              : Icons.share,
         ),
-      ),
-      ScaleTransition(
-        scale: filledAnimation,
-        child: const Center(
-          child: CustomPaint(
-            size: Size(70, 80),
-            painter: HeartPainter(
-              filled: true,
-              color: magenta,
+        onPressed: () async {
+          final messenger = ScaffoldMessenger.of(context);
+          try {
+            await Share.share(
+                'https://${config.apiHost}/members/photos/$slug/');
+          } catch (_) {
+            messenger.showSnackBar(const SnackBar(
+              behavior: SnackBarBehavior.floating,
+              content: Text('Could not share the album.'),
+            ));
+          }
+        },
+      );
+
+  Widget _makePhotoCard(List<AlbumPhoto> photos, int index) => GestureDetector(
+        onTap: () => setState(() {
+          clicked = true;
+          clickedI = index;
+        }),
+        child: FadeInImage.assetNetwork(
+          placeholder: 'assets/img/photo_placeholder.png',
+          image: photos[index].small,
+          fit: BoxFit.cover,
+        ),
+      );
+
+  Widget _gallery(List<AlbumPhoto> photos) => PhotoViewGallery.builder(
+        onPageChanged: (index) {
+          pageController2.jumpToPage(index);
+        },
+        loadingBuilder: (_, __) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+        backgroundDecoration: const BoxDecoration(
+          color: Colors.transparent,
+        ),
+        itemCount: photos.length,
+        builder: (context, i) {
+          return PhotoViewGalleryPageOptions.customChild(
+            child: GestureDetector(
+                onDoubleTap: () => likePhoto(i, photos),
+                child: Image.network(photos[i].full)),
+            minScale: PhotoViewComputedScale.contained * 0.8,
+            maxScale: PhotoViewComputedScale.covered * 2,
+          );
+        },
+        pageController: pageController,
+      );
+
+  Widget _downloadButton(List<AlbumPhoto> photos) => IconButton(
+        padding: const EdgeInsets.all(16),
+        color: Theme.of(context).primaryIconTheme.color,
+        icon: const Icon(Icons.download),
+        onPressed: () async => downloadImage(
+            context, Uri.parse(photos[pageController2.page!.round()].full)),
+      );
+
+  Widget _shareButton(List<AlbumPhoto> photos) => IconButton(
+        padding: const EdgeInsets.all(16),
+        color: Theme.of(context).primaryIconTheme.color,
+        icon: Icon(
+          Theme.of(context).platform == TargetPlatform.iOS
+              ? Icons.ios_share
+              : Icons.share,
+        ),
+        onPressed: () async => _share(
+            context, Uri.parse(photos[pageController2.page!.floor()].full)),
+      );
+
+  List<Widget> _heartPopup() => [
+        ScaleTransition(
+          scale: animation,
+          child: const Center(
+            child: CustomPaint(
+              size: Size(70, 80),
+              painter: HeartPainter(),
             ),
           ),
         ),
-      ),
-    ];
-  }
+        ScaleTransition(
+          scale: filledAnimation,
+          child: const Center(
+            child: CustomPaint(
+              size: Size(70, 80),
+              painter: HeartPainter(
+                filled: true,
+                color: magenta,
+              ),
+            ),
+          ),
+        ),
+      ];
 
-  Widget _smallGallery(List<AlbumPhoto> photos) {
-    return Scrollbar(
-        child: GridView.builder(
-      key: const PageStorageKey('album'),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-        crossAxisCount: 3,
-      ),
-      itemCount: photos.length,
-      physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(8),
-      itemBuilder: (context, index) => _makePhotoCard(
-        photos,
-        index,
-      ),
-    ));
-  }
+  Widget _smallGallery(List<AlbumPhoto> photos) => Scrollbar(
+          child: GridView.builder(
+        key: const PageStorageKey('album'),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+          crossAxisCount: 3,
+        ),
+        itemCount: photos.length,
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(8),
+        itemBuilder: (context, index) => _makePhotoCard(
+          photos,
+          index,
+        ),
+      ));
 
   @override
   Widget build(BuildContext context) {
@@ -290,10 +277,17 @@ class _AlbumScreenState extends State<AlbumScreen>
 
         if (clicked && !state.hasException && !state.isLoading) {
           Album album = state.result!;
+
+          //TODO: This is double work, probably not an issue but might be slow if we have a lot f photos and we need to rebuild
+          // Slow meaning a couple MS which is too long for a build. Maybe we should cache this in the album?
           List<bool> likedlist = album.photos.map((e) => e.liked).toList();
           List<int> likeslist = album.photos.map((e) => e.numLikes).toList();
-          int index = clickedI;
-          pageController = PageController(initialPage: index);
+
+          // We change the pagecontroler with a new initialPage because
+          // it is impossible to change the initial page after it has been created.
+          // We cannot jump to the page because it is not attached jet. When it opens
+          // the gallery it will use the initialPage instead of last jumped-to page.
+          pageController = PageController(initialPage: clickedI);
 
           Widget overlayScaffold = Scaffold(
             extendBodyBehindAppBar: true,
