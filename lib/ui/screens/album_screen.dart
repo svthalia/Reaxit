@@ -209,10 +209,7 @@ class _AlbumScreenState extends State<AlbumScreen>
       color: Theme.of(context).primaryIconTheme.color,
       icon: const Icon(Icons.download),
       onPressed: () async => downloadImage(
-          context,
-          Uri.parse(
-              photos[max(0, min(pageController.page!.round(), photos.length))]
-                  .full)),
+          context, Uri.parse(photos[pageController2.page!.round()].full)),
     );
   }
 
@@ -226,14 +223,7 @@ class _AlbumScreenState extends State<AlbumScreen>
             : Icons.share,
       ),
       onPressed: () async => _share(
-          context,
-          Uri.parse(photos[max(
-                  0,
-                  min(
-                      pageController.page!.round(),
-                      photos
-                          .length))] // TODO: Is this really neccesary? This seems like it should never happen
-              .full)),
+          context, Uri.parse(photos[pageController2.page!.floor()].full)),
     );
   }
 
@@ -263,104 +253,95 @@ class _AlbumScreenState extends State<AlbumScreen>
     ];
   }
 
+  Widget _smallGallery(List<AlbumPhoto> photos) {
+    return Scrollbar(
+        child: GridView.builder(
+      key: const PageStorageKey('album'),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        crossAxisCount: 3,
+      ),
+      itemCount: photos.length,
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.all(8),
+      itemBuilder: (context, index) => _makePhotoCard(
+        photos,
+        index,
+      ),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AlbumCubit, AlbumState>(
       bloc: _albumCubit,
       builder: (context, state) {
-        if (state.hasException) {
-          return Scaffold(
+        Widget mainScaffold = Scaffold(
             appBar: ThaliaAppBar(
               title: Text(widget.album?.title.toUpperCase() ?? 'ALBUM'),
               actions: [_makeShareAlbumButton(widget.slug)],
             ),
-            body: ErrorScrollView(state.message!),
-          );
-        } else if (state.isLoading) {
-          return Scaffold(
-            appBar: ThaliaAppBar(
-              title: Text(widget.album?.title.toUpperCase() ?? 'ALBUM'),
-              actions: [_makeShareAlbumButton(widget.slug)],
-            ),
-            body: const Center(child: CircularProgressIndicator()),
-          );
-        } else {
+            body: state.hasException
+                ? ErrorScrollView(state.message!)
+                : state.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : _smallGallery(state.result!.photos));
+
+        if (clicked && !state.hasException && !state.isLoading) {
           Album album = state.result!;
+          List<bool> likedlist = album.photos.map((e) => e.liked).toList();
+          List<int> likeslist = album.photos.map((e) => e.numLikes).toList();
+          int index = clickedI;
+          pageController = PageController(initialPage: index);
 
-          List<Widget> widgets = [
-            Scaffold(
-              appBar: ThaliaAppBar(
-                title: Text(state.result!.title.toUpperCase()),
-                actions: [_makeShareAlbumButton(widget.slug)],
+          Widget overlayScaffold = Scaffold(
+            extendBodyBehindAppBar: true,
+            backgroundColor: Colors.black.withOpacity(0.92),
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              shadowColor: Colors.transparent,
+              leading: CloseButton(
+                color: Theme.of(context).primaryIconTheme.color,
+                onPressed: () => setState(() {
+                  clicked = false;
+                }),
               ),
-              body: Scrollbar(
-                child: GridView.builder(
-                  key: const PageStorageKey('album'),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
-                    crossAxisCount: 3,
-                  ),
-                  itemCount: state.result!.photos.length,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(8),
-                  itemBuilder: (context, index) => _makePhotoCard(
-                    album.photos,
-                    index,
-                  ),
+              actions: [
+                _downloadButton(album.photos),
+                _shareButton(album.photos),
+              ],
+            ),
+            body: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: _gallery(album.photos),
                 ),
-              ),
-            )
-          ];
-          if (clicked) {
-            List<bool> likedlist = album.photos.map((e) => e.liked).toList();
-            List<int> likeslist = album.photos.map((e) => e.numLikes).toList();
-            int index = clickedI;
-            pageController = PageController(initialPage: index);
+                PageCounter(
+                  pageController2,
+                  album.photos.length,
+                  likedlist,
+                  (likedIndex) => likePhoto(likedIndex, album.photos),
+                  likeslist,
+                ),
+              ],
+            ),
+          );
 
-            widgets.add(
-              Scaffold(
-                extendBodyBehindAppBar: true,
-                backgroundColor: Colors.black.withOpacity(0.92),
-                appBar: AppBar(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  leading: CloseButton(
-                    color: Theme.of(context).primaryIconTheme.color,
-                    onPressed: () => setState(() {
-                      clicked = false;
-                    }),
-                  ),
-                  actions: [
-                    _downloadButton(album.photos),
-                    _shareButton(album.photos),
-                  ],
-                ),
-                body: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Expanded(
-                      child: _gallery(album.photos),
-                    ),
-                    PageCounter(
-                      pageController2,
-                      album.photos.length,
-                      likedlist,
-                      (likedIndex) => likePhoto(likedIndex, album.photos),
-                      likeslist,
-                    ),
-                  ],
-                ),
-              ),
-            );
-
-            widgets.addAll(_heartPopup());
-          }
           return Stack(
             alignment: AlignmentDirectional.center,
-            children: widgets,
+            children: [
+              mainScaffold,
+              overlayScaffold,
+              ..._heartPopup(),
+            ],
           );
+        } else if (clicked) {
+          // TODO: Maybe a loading screen here? but I dont really see how this situation could ever happen
+          clicked = false;
         }
+        return mainScaffold;
       },
     );
   }
