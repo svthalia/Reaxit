@@ -259,6 +259,9 @@ abstract class ApiRepository {
   /// Get the [Album] with the `slug`.
   Future<Album> getAlbum({required String slug});
 
+  /// Update the description of the logged in member.
+  Future<void> updateLiked(int id, bool liked);
+
   /// Get a list of [ListAlbum]s.
   ///
   /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
