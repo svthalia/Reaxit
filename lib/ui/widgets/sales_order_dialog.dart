@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
-import 'package:reaxit/blocs/sales_order_cubit.dart';
-import 'package:reaxit/ui/widgets/tpay_button.dart';
+import 'package:reaxit/blocs.dart';
+import 'package:reaxit/ui/widgets.dart';
 
 class SalesOrderDialog extends StatefulWidget {
   final String pk;

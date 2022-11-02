@@ -1,8 +1,8 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:reaxit/models/member.dart';
-import 'package:reaxit/ui/screens/profile_screen.dart';
-import 'package:reaxit/ui/widgets/cached_image.dart';
+import 'package:reaxit/models.dart';
+import 'package:reaxit/ui/screens.dart';
+import 'package:reaxit/ui/widgets.dart';
 
 class MemberTile extends StatelessWidget {
   final ListMember member;

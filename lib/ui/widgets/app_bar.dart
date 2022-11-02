@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:reaxit/ui/theme.dart';
 
 class ThaliaAppBar extends AppBar {
   ThaliaAppBar({
@@ -19,7 +20,7 @@ class ThaliaAppBar extends AppBar {
             child: Container(
               decoration: const BoxDecoration(
                 border: Border(
-                  bottom: BorderSide(color: Color(0xFFE62272)),
+                  bottom: BorderSide(color: magenta),
                 ),
               ),
             ),

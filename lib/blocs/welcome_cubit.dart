@@ -3,9 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
-import 'package:reaxit/models/event.dart';
-import 'package:reaxit/models/frontpage_article.dart';
-import 'package:reaxit/models/slide.dart';
+import 'package:reaxit/models.dart';
 
 class WelcomeState extends Equatable {
   /// This can only be null when [isLoading] or [hasException] is true.

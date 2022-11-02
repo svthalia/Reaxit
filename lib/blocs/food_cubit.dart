@@ -3,9 +3,7 @@ import 'package:reaxit/api/api_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:reaxit/api/exceptions.dart';
-import 'package:reaxit/models/food_event.dart';
-import 'package:reaxit/models/food_order.dart';
-import 'package:reaxit/models/product.dart';
+import 'package:reaxit/models.dart';
 
 class FoodState extends Equatable {
   /// This can only be null when [isLoading] or [hasException] is true.

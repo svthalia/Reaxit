@@ -6,11 +6,10 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
-import 'package:reaxit/blocs/album_cubit.dart';
+import 'package:reaxit/blocs.dart';
 import 'package:reaxit/api/api_repository.dart';
-import 'package:reaxit/models/album.dart';
-import 'package:reaxit/ui/widgets/app_bar.dart';
-import 'package:reaxit/ui/widgets/error_scroll_view.dart';
+import 'package:reaxit/models.dart';
+import 'package:reaxit/ui/widgets.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:share_plus/share_plus.dart';
 import 'package:gallery_saver/gallery_saver.dart';
@@ -125,13 +124,11 @@ class _AlbumScreenState extends State<AlbumScreen> {
                   try {
                     final response = await http.get(url);
                     if (response.statusCode != 200) throw Exception();
-                    final baseTempDir = await getTemporaryDirectory();
-                    final tempDir = await baseTempDir.createTemp();
-                    final tempFile = File(
-                      '${tempDir.path}/${url.pathSegments.last}',
+                    final file = XFile.fromData(
+                      response.bodyBytes,
+                      name: url.pathSegments.last,
                     );
-                    await tempFile.writeAsBytes(response.bodyBytes);
-                    await Share.shareFiles([tempFile.path]);
+                    await Share.shareXFiles([file]);
                   } catch (_) {
                     messenger.showSnackBar(
                       const SnackBar(

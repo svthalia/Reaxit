@@ -9,10 +9,9 @@ import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
-import 'package:reaxit/blocs/full_member_cubit.dart';
-import 'package:reaxit/blocs/member_cubit.dart';
-import 'package:reaxit/models/member.dart';
-import 'package:reaxit/ui/widgets/error_center.dart';
+import 'package:reaxit/blocs.dart';
+import 'package:reaxit/models.dart';
+import 'package:reaxit/ui/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Screen that loads and shows a the profile of the member with `pk`.

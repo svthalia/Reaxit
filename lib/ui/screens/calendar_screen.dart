@@ -5,11 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/api/api_repository.dart';
-import 'package:reaxit/blocs/calendar_cubit.dart';
-import 'package:reaxit/models/event.dart';
-import 'package:reaxit/ui/widgets/app_bar.dart';
-import 'package:reaxit/ui/widgets/error_scroll_view.dart';
-import 'package:reaxit/ui/widgets/menu_drawer.dart';
+import 'package:reaxit/blocs.dart';
+import 'package:reaxit/models.dart';
+import 'package:reaxit/ui/theme.dart';
+import 'package:reaxit/ui/widgets.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -367,7 +366,7 @@ class _EventCard extends StatelessWidget {
     Color color;
     if (event.parentEvent is Event &&
         (event.parentEvent as Event).isRegistered) {
-      color = const Color(0xFFE62272);
+      color = magenta;
     } else if (event.parentEvent is PartnerEvent) {
       color = Colors.black;
     } else {

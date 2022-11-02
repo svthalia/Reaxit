@@ -5,9 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:reaxit/api/exceptions.dart';
-import 'package:reaxit/blocs/payment_user_cubit.dart';
-import 'package:reaxit/models/payment_user.dart';
-import 'package:reaxit/ui/widgets/tpay_button.dart';
+import 'package:reaxit/blocs.dart';
+import 'package:reaxit/models.dart';
+import 'package:reaxit/ui/widgets.dart';
 
 import '../mocks.mocks.dart';
 

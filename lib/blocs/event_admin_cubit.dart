@@ -6,13 +6,11 @@ import 'package:meta/meta.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/config.dart' as config;
-import 'package:reaxit/models/event.dart';
-import 'package:reaxit/models/event_registration.dart';
-import 'package:reaxit/models/payment.dart';
+import 'package:reaxit/models.dart';
 
 class EventAdminState extends Equatable {
   /// This can only be null when [isLoading] or [hasException] is true.
-  final Event? event;
+  final AdminEvent? event;
 
   /// These may be outdated when [isLoading] is true.
   final List<AdminEventRegistration> registrations;
@@ -37,7 +35,7 @@ class EventAdminState extends Equatable {
   List<Object?> get props => [event, registrations, message, isLoading];
 
   EventAdminState copyWith({
-    Event? event,
+    AdminEvent? event,
     List<AdminEventRegistration>? registrations,
     bool? isLoading,
     String? message,
@@ -50,7 +48,7 @@ class EventAdminState extends Equatable {
       );
 
   const EventAdminState.result({
-    required Event this.event,
+    required AdminEvent this.event,
     required this.registrations,
   })  : message = null,
         isLoading = false;
@@ -59,9 +57,8 @@ class EventAdminState extends Equatable {
       : message = null,
         isLoading = true;
 
-  const EventAdminState.failure({required String this.message})
-      : event = null,
-        registrations = const [],
+  const EventAdminState.failure({required String this.message, this.event})
+      : registrations = const [],
         isLoading = false;
 }
 
@@ -87,7 +84,7 @@ class EventAdminCubit extends Cubit<EventAdminState> {
     emit(state.copyWith(isLoading: true));
     try {
       final query = _searchQuery;
-      final event = await api.getEvent(pk: eventPk);
+      final event = await api.getAdminEvent(pk: eventPk);
       final registrations = await api.getAdminEventRegistrations(
         pk: eventPk,
         search: query,
@@ -103,11 +100,13 @@ class EventAdminCubit extends Cubit<EventAdminState> {
       registrations.results.removeWhere((r) => r.queuePosition != null);
       if (registrations.results.isEmpty) {
         if (query?.isEmpty ?? true) {
-          emit(const EventAdminState.failure(
+          emit(EventAdminState.failure(
+            event: event,
             message: 'There are no registrations.',
           ));
         } else {
           emit(EventAdminState.failure(
+            event: event,
             message: 'There are no registrations matching "$query".',
           ));
         }

@@ -1,7 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:reaxit/models/event.dart';
-import 'package:reaxit/models/food_order.dart';
-import 'package:reaxit/models/payment.dart';
+import 'package:reaxit/models.dart';
 
 part 'food_event.g.dart';
 

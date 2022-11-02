@@ -1,20 +1,4 @@
-import 'package:reaxit/models/album.dart';
-import 'package:reaxit/models/push_notification_category.dart';
-import 'package:reaxit/models/event.dart';
-import 'package:reaxit/models/event_registration.dart';
-import 'package:reaxit/models/food_event.dart';
-import 'package:reaxit/models/food_order.dart';
-import 'package:reaxit/models/frontpage_article.dart';
-import 'package:reaxit/models/list_response.dart';
-import 'package:reaxit/models/member.dart';
-import 'package:reaxit/models/payable.dart';
-import 'package:reaxit/models/payment.dart';
-import 'package:reaxit/models/payment_user.dart';
-import 'package:reaxit/models/product.dart';
-import 'package:reaxit/models/registration_field.dart';
-import 'package:reaxit/models/sales_order.dart';
-import 'package:reaxit/models/slide.dart';
-import 'package:reaxit/models/device.dart';
+import 'package:reaxit/models.dart';
 import 'package:reaxit/api/exceptions.dart';
 
 /// Provides an interface to the api.
@@ -107,6 +91,9 @@ abstract class ApiRepository {
     required Map<String, RegistrationField> fields,
   });
 
+  /// Get the [AdminEvent] with the `pk`.
+  Future<AdminEvent> getAdminEvent({required int pk});
+
   /// Get the [AdminEventRegistration]s of the [Event] with the `pk`.
   ///
   /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
@@ -121,6 +108,12 @@ abstract class ApiRepository {
     String? search,
     String? ordering,
     bool? cancelled,
+  });
+
+  /// Mark the user's registration for [Event] `pk` as present, using `token`.
+  Future<String> markPresentEventRegistration({
+    required int eventPk,
+    required String token,
   });
 
   /// Mark registration `registrationPk` for [Event] `eventPk` as `present`.

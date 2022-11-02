@@ -1,14 +1,95 @@
 ---
-name: Deploy
+name: CI
 on:
+  workflow_dispatch:
+  pull_request:
   push:
     branches:
       - master
-  workflow_dispatch:
+
+env:
+  FLUTTER_VERSION: 3.3.6
 
 jobs:
+  linting:
+    name: Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          
+      - name: Flutter version
+        run: flutter --version
+
+      - name: Flutter format
+        run: flutter format --set-exit-if-changed .
+
+      - name: Flutter analyze
+        run: flutter analyze
+
+  testing:
+    name: Testing
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          
+      - name: Flutter version
+        run: flutter --version
+
+      - name: Flutter test
+        run: flutter test -r expanded
+
+  integration-ios:
+    name: Integration Testing - iOS
+    runs-on: macos-latest
+    steps:
+      - name: "List all simulators"
+        run: "xcrun xctrace list devices"
+
+      - name: "Start Simulator"
+        env:
+          DEVICE: "iPhone 12 Pro Simulator (15.2)"
+        run: |
+          UDID=$(xcrun xctrace list devices | grep "^$DEVICE (" | awk '{gsub(/[()]/,""); print $NF}')
+          echo $UDID
+          xcrun simctl boot "${UDID:?No Simulator with this name found}"
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - name: Install Flutter dependencies
+        run: flutter pub get
+      - name: Run integration tests
+        run: flutter test integration_test -r expanded
+
   deploy-ios:
-    name: iOS
+    name: Deploy - iOS
+    needs: [linting, testing]
+    # Don't try multiple builds concurrently, 
+    # because build numbers would conflict.
+    concurrency: deploy-ios
+    if: | # Don't deploy on draft PRs
+      github.event_name == 'workflow_dispatch' 
+      || (github.event_name == 'push' && github.ref == 'refs/heads/master')
+      || (github.event_name == 'pull_request' && !github.event.pull_request.draft)
     runs-on: macos-latest
     steps:
       - name: Checkout repository
@@ -17,15 +98,14 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 3.0.5
-          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
           
       - name: Flutter version
         run: flutter --version
 
       - name: Pods cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ios/Pods
           key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
@@ -56,10 +136,19 @@ jobs:
           TOSTI_API_HOST: tosti.science.ru.nl
           TOSTI_OAUTH_APP_ID: ${{ secrets.TOSTI_OAUTH_APP_ID }}
           TOSTI_OAUTH_APP_SECRET: ${{ secrets.TOSTI_OAUTH_APP_SECRET }}
-        run: bundle exec fastlane ios deploy_internal
+          CHANGELOG: ${{ github.event.pull_request.title }}
+        run: bundle exec fastlane ios deploy_internal changelog:"$CHANGELOG"
 
   deploy-android:
-    name: Android
+    name: Deploy - Android
+    needs: [linting, testing]
+    # Don't try multiple builds concurrently, 
+    # because build numbers would conflict.
+    concurrency: deploy-ios
+    if: | # Don't deploy on draft PRs
+      github.event_name == 'workflow_dispatch' 
+      || (github.event_name == 'push' && github.ref == 'refs/heads/master')
+      || (github.event_name == 'pull_request' && !github.event.pull_request.draft)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -95,8 +184,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 3.0.5
-          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
           
       - name: Flutter version
@@ -109,7 +197,7 @@ jobs:
           ruby-version: 2.7.0
 
       - name: Gradle cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}

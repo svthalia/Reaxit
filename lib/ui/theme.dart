@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-Color magenta = const Color(0xFFE62272);
+const Color magenta = Color(0xFFE62272);
 
 ColorScheme lightColorScheme = ColorScheme(
   primary: magenta,
@@ -17,14 +17,14 @@ ColorScheme lightColorScheme = ColorScheme(
   brightness: Brightness.light,
 );
 
-ColorScheme darkColorScheme = ColorScheme(
+ColorScheme darkColorScheme = const ColorScheme(
   primary: magenta,
   onPrimary: Colors.white,
   secondary: magenta,
   onSecondary: Colors.black,
-  surface: const Color(0xFF212121),
+  surface: Color(0xFF212121),
   onSurface: Colors.white,
-  background: const Color(0xFF111111),
+  background: Color(0xFF111111),
   onBackground: Colors.white,
   error: Colors.red,
   onError: Colors.white,

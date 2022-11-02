@@ -19,7 +19,7 @@ Map<String, dynamic> _$PaymentToJson(Payment instance) => <String, dynamic>{
       'pk': instance.pk,
       'topic': instance.topic,
       'notes': instance.notes,
-      'type': _$PaymentTypeEnumMap[instance.type],
+      'type': _$PaymentTypeEnumMap[instance.type]!,
       'amount': instance.amount,
       'created_at': instance.createdAt.toIso8601String(),
     };

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
-import 'package:reaxit/blocs/event_admin_cubit.dart';
-import 'package:reaxit/models/event_registration.dart';
-import 'package:reaxit/models/payment.dart';
-import 'package:reaxit/ui/widgets/app_bar.dart';
-import 'package:reaxit/ui/widgets/error_scroll_view.dart';
+import 'package:reaxit/blocs.dart';
+import 'package:reaxit/models.dart';
+import 'package:reaxit/ui/widgets.dart';
 
 class EventAdminScreen extends StatefulWidget {
   final int pk;
@@ -32,31 +31,8 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
             appBar: ThaliaAppBar(
               title: const Text('REGISTRATIONS'),
               actions: [
-                IconButton(
-                  padding: const EdgeInsets.all(16),
-                  icon: const Icon(Icons.search),
-                  onPressed: () async {
-                    final adminCubit =
-                        BlocProvider.of<EventAdminCubit>(context);
-                    final searchCubit = EventAdminCubit(
-                      RepositoryProvider.of<ApiRepository>(context),
-                      eventPk: widget.pk,
-                    );
-
-                    await showSearch(
-                      context: context,
-                      delegate: EventAdminSearchDelegate(searchCubit),
-                    );
-
-                    searchCubit.close();
-
-                    // After the search dialog closes, refresh the results,
-                    // since the search screen may have changed stuff through
-                    // its own EventAdminCubit, that do not show up in the cubit
-                    // for the EventAdminScreen until a refresh.
-                    adminCubit.loadRegistrations();
-                  },
-                ),
+                const _MarkPresentQrButton(),
+                _SearchButton(eventPk: widget.pk),
               ],
             ),
             body: RefreshIndicator(
@@ -92,6 +68,113 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
           );
         },
       ),
+    );
+  }
+}
+
+class _SearchButton extends StatelessWidget {
+  const _SearchButton({
+    Key? key,
+    required this.eventPk,
+  }) : super(key: key);
+
+  final int eventPk;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      padding: const EdgeInsets.all(16),
+      icon: const Icon(Icons.search),
+      onPressed: () async {
+        final adminCubit = BlocProvider.of<EventAdminCubit>(context);
+        final searchCubit = EventAdminCubit(
+          RepositoryProvider.of<ApiRepository>(context),
+          eventPk: eventPk,
+        );
+
+        await showSearch(
+          context: context,
+          delegate: EventAdminSearchDelegate(searchCubit),
+        );
+
+        searchCubit.close();
+
+        // After the search dialog closes, refresh the results,
+        // since the search screen may have changed stuff through
+        // its own EventAdminCubit, that do not show up in the cubit
+        // for the EventAdminScreen until a refresh.
+        adminCubit.loadRegistrations();
+      },
+    );
+  }
+}
+
+class _MarkPresentQrButton extends StatelessWidget {
+  const _MarkPresentQrButton({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = BlocProvider.of<EventAdminCubit>(context);
+    return IconButton(
+      icon: const Icon(Icons.qr_code),
+      tooltip: 'Show presence QR code',
+      onPressed: () async {
+        showModalBottomSheet(
+          isScrollControlled: true,
+          context: context,
+          builder: (context) {
+            return SafeArea(
+              child: BlocBuilder<EventAdminCubit, EventAdminState>(
+                bloc: cubit,
+                builder: (context, state) {
+                  final theme = Theme.of(context);
+                  if (state.event != null) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Text(
+                            'Scan to mark yourself present.',
+                            style: theme.textTheme.subtitle2,
+                          ),
+                        ),
+                        QrImage(
+                          data: state.event!.markPresentUrl.toString(),
+                          padding: const EdgeInsets.all(24),
+                          backgroundColor: Colors.grey[50]!,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: RotatedBox(
+                            quarterTurns: 2,
+                            child: Text(
+                              'Scan to mark yourself present.',
+                              style: theme.textTheme.subtitle2,
+                            ),
+                          ),
+                        )
+                      ],
+                    );
+                  } else if (state.isLoading) {
+                    return const AspectRatio(
+                      aspectRatio: 1,
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  } else {
+                    return AspectRatio(
+                      aspectRatio: 1,
+                      child: Center(child: Text(state.message!)),
+                    );
+                  }
+                },
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

@@ -3,9 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/tosti/blocs/auth_cubit.dart';
 import 'package:reaxit/tosti/blocs/home_cubit.dart';
 import 'package:reaxit/tosti/widgets/venue_card.dart';
-import 'package:reaxit/ui/widgets/app_bar.dart';
-import 'package:reaxit/ui/widgets/error_scroll_view.dart';
-import 'package:reaxit/ui/widgets/menu_drawer.dart';
+import 'package:reaxit/ui/widgets.dart';
 
 class TostiScreen extends StatelessWidget {
   const TostiScreen({Key? key}) : super(key: key);

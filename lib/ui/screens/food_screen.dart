@@ -6,13 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
-import 'package:reaxit/blocs/food_cubit.dart';
-import 'package:reaxit/models/event.dart';
-import 'package:reaxit/models/food_event.dart';
-import 'package:reaxit/models/product.dart';
-import 'package:reaxit/ui/widgets/app_bar.dart';
-import 'package:reaxit/ui/widgets/error_scroll_view.dart';
-import 'package:reaxit/ui/widgets/tpay_button.dart';
+import 'package:reaxit/blocs.dart';
+import 'package:reaxit/models.dart';
+import 'package:reaxit/ui/widgets.dart';
 
 class FoodScreen extends StatefulWidget {
   /// The pk that of the [FoodEvent] to show.

@@ -15,17 +15,11 @@ chore: updating poetry etc; no production code change
 
 -->
 
-### Describe the change
+### What
 A clear and concise description of what the change should be.
 
-### Motivation
+### Why
 A clear and concise motivation why we should invest in this change.
 
-### Current implementation
-If relevant, describe how it's done currently.
-
-### Suggested implementation
+### How
 Provide (a) suggestion(s) for how we could approach this.
-
-### Additional context
-Add any other context or screenshots about the change here.
