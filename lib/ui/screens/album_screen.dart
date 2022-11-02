@@ -82,28 +82,13 @@ class _AlbumScreenState extends State<AlbumScreen>
     super.dispose();
   }
 
-  void likePhoto(int likedIndex, Album album) {
-    _albumCubit.updateLike(
-        liked: !album.photos[likedIndex].liked, index: likedIndex);
-    if (album.photos[likedIndex].liked) {
+  void likePhoto(int likedIndex, List<AlbumPhoto> photos) {
+    _albumCubit.updateLike(liked: !photos[likedIndex].liked, index: likedIndex);
+    if (photos[likedIndex].liked) {
       controller.forward();
     } else {
       filledController.forward();
     }
-  }
-
-  Widget _makePhotoCard(Album album, int index) {
-    return GestureDetector(
-      onTap: () => setState(() {
-        clicked = true;
-        clickedI = index;
-      }),
-      child: FadeInImage.assetNetwork(
-        placeholder: 'assets/img/photo_placeholder.png',
-        image: album.photos[index].small,
-        fit: BoxFit.cover,
-      ),
-    );
   }
 
   void downloadImage(BuildContext context, Uri url) async {
@@ -135,6 +120,27 @@ class _AlbumScreenState extends State<AlbumScreen>
     }
   }
 
+  void _share(BuildContext context, Uri url) async {
+    final messenger = ScaffoldMessenger.of(context);
+
+    try {
+      final response = await http.get(url);
+      if (response.statusCode != 200) throw Exception();
+      final file = XFile.fromData(
+        response.bodyBytes,
+        name: url.pathSegments.last,
+      );
+      await Share.shareXFiles([file]);
+    } catch (_) {
+      messenger.showSnackBar(
+        const SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('Could not share the image.'),
+        ),
+      );
+    }
+  }
+
   Widget _makeShareAlbumButton(String slug) {
     return IconButton(
       padding: const EdgeInsets.all(16),
@@ -156,6 +162,105 @@ class _AlbumScreenState extends State<AlbumScreen>
         }
       },
     );
+  }
+
+  Widget _makePhotoCard(List<AlbumPhoto> photos, int index) {
+    return GestureDetector(
+      onTap: () => setState(() {
+        clicked = true;
+        clickedI = index;
+      }),
+      child: FadeInImage.assetNetwork(
+        placeholder: 'assets/img/photo_placeholder.png',
+        image: photos[index].small,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+
+  Widget _gallery(List<AlbumPhoto> photos) {
+    return PhotoViewGallery.builder(
+      onPageChanged: (index) {
+        pageController2.jumpToPage(index);
+      },
+      loadingBuilder: (_, __) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+      backgroundDecoration: const BoxDecoration(
+        color: Colors.transparent,
+      ),
+      itemCount: photos.length,
+      builder: (context, i) {
+        return PhotoViewGalleryPageOptions.customChild(
+          child: GestureDetector(
+              onDoubleTap: () => likePhoto(i, photos),
+              child: Image.network(photos[i].full)),
+          minScale: PhotoViewComputedScale.contained * 0.8,
+          maxScale: PhotoViewComputedScale.covered * 2,
+        );
+      },
+      pageController: pageController,
+    );
+  }
+
+  Widget _downloadButton(List<AlbumPhoto> photos) {
+    return IconButton(
+      padding: const EdgeInsets.all(16),
+      color: Theme.of(context).primaryIconTheme.color,
+      icon: const Icon(Icons.download),
+      onPressed: () async => downloadImage(
+          context,
+          Uri.parse(
+              photos[max(0, min(pageController.page!.round(), photos.length))]
+                  .full)),
+    );
+  }
+
+  Widget _shareButton(List<AlbumPhoto> photos) {
+    return IconButton(
+      padding: const EdgeInsets.all(16),
+      color: Theme.of(context).primaryIconTheme.color,
+      icon: Icon(
+        Theme.of(context).platform == TargetPlatform.iOS
+            ? Icons.ios_share
+            : Icons.share,
+      ),
+      onPressed: () async => _share(
+          context,
+          Uri.parse(photos[max(
+                  0,
+                  min(
+                      pageController.page!.round(),
+                      photos
+                          .length))] // TODO: Is this really neccesary? This seems like it should never happen
+              .full)),
+    );
+  }
+
+  List<Widget> _heartPopup() {
+    return [
+      ScaleTransition(
+        scale: animation,
+        child: const Center(
+          child: CustomPaint(
+            size: Size(70, 80),
+            painter: HeartPainter(),
+          ),
+        ),
+      ),
+      ScaleTransition(
+        scale: filledAnimation,
+        child: const Center(
+          child: CustomPaint(
+            size: Size(70, 80),
+            painter: HeartPainter(
+              filled: true,
+              color: magenta,
+            ),
+          ),
+        ),
+      ),
+    ];
   }
 
   @override
@@ -180,6 +285,8 @@ class _AlbumScreenState extends State<AlbumScreen>
             body: const Center(child: CircularProgressIndicator()),
           );
         } else {
+          Album album = state.result!;
+
           List<Widget> widgets = [
             Scaffold(
               appBar: ThaliaAppBar(
@@ -198,7 +305,7 @@ class _AlbumScreenState extends State<AlbumScreen>
                   physics: const AlwaysScrollableScrollPhysics(),
                   padding: const EdgeInsets.all(8),
                   itemBuilder: (context, index) => _makePhotoCard(
-                    state.result!,
+                    album.photos,
                     index,
                   ),
                 ),
@@ -206,11 +313,11 @@ class _AlbumScreenState extends State<AlbumScreen>
             )
           ];
           if (clicked) {
-            Album album = state.result!;
             List<bool> likedlist = album.photos.map((e) => e.liked).toList();
             List<int> likeslist = album.photos.map((e) => e.numLikes).toList();
             int index = clickedI;
             pageController = PageController(initialPage: index);
+
             widgets.add(
               Scaffold(
                 extendBodyBehindAppBar: true,
@@ -225,116 +332,29 @@ class _AlbumScreenState extends State<AlbumScreen>
                     }),
                   ),
                   actions: [
-                    IconButton(
-                      padding: const EdgeInsets.all(16),
-                      color: Theme.of(context).primaryIconTheme.color,
-                      icon: const Icon(Icons.download),
-                      onPressed: () async => downloadImage(
-                          context,
-                          Uri.parse(album
-                              .photos[max(
-                                  0,
-                                  min(pageController.page!.round(),
-                                      album.photos.length))]
-                              .full)),
-                    ),
-                    IconButton(
-                      padding: const EdgeInsets.all(16),
-                      color: Theme.of(context).primaryIconTheme.color,
-                      icon: Icon(
-                        Theme.of(context).platform == TargetPlatform.iOS
-                            ? Icons.ios_share
-                            : Icons.share,
-                      ),
-                      onPressed: () async {
-                        final messenger = ScaffoldMessenger.of(context);
-
-                        var i = pageController.page!.round();
-                        if (i < 0 || i >= album.photos.length) i = index;
-                        final url = Uri.parse(album.photos[i].full);
-                        try {
-                          final response = await http.get(url);
-                          if (response.statusCode != 200) throw Exception();
-                          final file = XFile.fromData(
-                            response.bodyBytes,
-                            name: url.pathSegments.last,
-                          );
-                          await Share.shareXFiles([file]);
-                        } catch (_) {
-                          messenger.showSnackBar(
-                            const SnackBar(
-                              behavior: SnackBarBehavior.floating,
-                              content: Text('Could not share the image.'),
-                            ),
-                          );
-                        }
-                      },
-                    ),
+                    _downloadButton(album.photos),
+                    _shareButton(album.photos),
                   ],
                 ),
                 body: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Expanded(
-                      child: PhotoViewGallery.builder(
-                        onPageChanged: (index) {
-                          pageController2.jumpToPage(index);
-                        },
-                        loadingBuilder: (_, __) => const Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                        backgroundDecoration: const BoxDecoration(
-                          color: Colors.transparent,
-                        ),
-                        itemCount: album.photos.length,
-                        builder: (context, i) {
-                          return PhotoViewGalleryPageOptions.customChild(
-                            child: GestureDetector(
-                                onDoubleTap: () => likePhoto(i, album),
-                                child: Image.network(album.photos[i].full)),
-                            minScale: PhotoViewComputedScale.contained * 0.8,
-                            maxScale: PhotoViewComputedScale.covered * 2,
-                          );
-                        },
-                        pageController: pageController,
-                      ),
+                      child: _gallery(album.photos),
                     ),
                     PageCounter(
                       pageController2,
                       album.photos.length,
                       likedlist,
-                      (likedIndex) => likePhoto(likedIndex, album),
+                      (likedIndex) => likePhoto(likedIndex, album.photos),
                       likeslist,
                     ),
                   ],
                 ),
               ),
             );
-            widgets.add(
-              ScaleTransition(
-                scale: animation,
-                child: const Center(
-                  child: CustomPaint(
-                    size: Size(70, 80),
-                    painter: HeartPainter(),
-                  ),
-                ),
-              ),
-            );
-            widgets.add(
-              ScaleTransition(
-                scale: filledAnimation,
-                child: const Center(
-                  child: CustomPaint(
-                    size: Size(70, 80),
-                    painter: HeartPainter(
-                      filled: true,
-                      color: magenta,
-                    ),
-                  ),
-                ),
-              ),
-            );
+
+            widgets.addAll(_heartPopup());
           }
           return Stack(
             alignment: AlignmentDirectional.center,
