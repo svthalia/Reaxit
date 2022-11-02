@@ -56,11 +56,6 @@ platform :android do
     )
   end
 
-  desc "Continuous Integration build"
-  lane :deploy_adhoc do
-    build(apk: true)
-  end
-
   desc "Deploy a new alpha version to the Google Play"
   lane :deploy_internal do
     release_and_upload(track: "internal")

@@ -1,8 +1,11 @@
 ---
 name: CI
 on:
-  - push
-  - workflow_dispatch
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - master
 
 env:
   FLUTTER_VERSION: 3.3.6
@@ -77,8 +80,13 @@ jobs:
       - name: Run integration tests
         run: flutter test integration_test -r expanded
 
-  build-ios:
-    name: Build - iOS
+  deploy-ios:
+    name: Deploy - iOS
+    needs: [linting, testing]
+    if: | # Don't deploy on draft PRs
+      github.event_name == 'workflow_dispatch' 
+      || (github.event_name == 'push' && github.ref == 'refs/heads/master')
+      || (github.event_name == 'pull_request' && !github.event.pull_request.draft)
     runs-on: macos-latest
     steps:
       - name: Checkout repository
@@ -125,7 +133,8 @@ jobs:
           TOSTI_API_HOST: tosti.science.ru.nl
           TOSTI_OAUTH_APP_ID: ${{ secrets.TOSTI_OAUTH_APP_ID }}
           TOSTI_OAUTH_APP_SECRET: ${{ secrets.TOSTI_OAUTH_APP_SECRET }}
-        run: bundle exec fastlane ios deploy_adhoc
+          CHANGELOG: ${{ github.event.pull_request.title }}
+        run: bundle exec fastlane ios deploy_adhoc changelog:"$CHANGELOG"
 
       - name: Upload IPA
         uses: actions/upload-artifact@v3
@@ -133,8 +142,13 @@ jobs:
           name: ThaliApp.ipa
           path: ios/build
 
-  build-android:
-    name: Build - Android
+  deploy-android:
+    name: Deploy - Android
+    needs: [linting, testing]
+    if: | # Don't deploy on draft PRs
+      github.event_name == 'workflow_dispatch' 
+      || (github.event_name == 'push' && github.ref == 'refs/heads/master')
+      || (github.event_name == 'pull_request' && !github.event.pull_request.draft)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

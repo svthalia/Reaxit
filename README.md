@@ -43,13 +43,12 @@ To use Fastlane follow these steps:
 
 | Command           | Description                     | Platforms    |
 | :---------------- | :------------------------------ | :----------- |
-| deploy_adhoc      | Create a release or AdHoc build | Android, iOS |
 | deploy_internal   | Create a release and deploy to the internal Play Store track or Testflight | Android, iOS |
 | deploy_beta       | Create a release and deploy to Play Store beta or Testflight with external testers | Android, iOS |
 | deploy_production | Create a release and deploy to Play Store or App Store | Android, iOS |
 | match             | Get the certificates to sign iOS apps | iOS |
 
-Sometimes, Apple certificates and provisioning profiles expire. So far, we've been able to solve that with `fastlane match nuke development` and `fastlane match nuke distribution` to remove existing certificates, and `fastlane match appstore` and `fastlane match development`.
+Sometimes, Apple certificates and provisioning profiles expire. So far, we've been able to solve that with `fastlane match nuke development` and `fastlane match nuke distribution` to remove existing certificates, and `fastlane match appstore` and `fastlane match development` to get new ones.
 
 ### Configuration
 
