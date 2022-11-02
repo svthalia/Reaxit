@@ -6,6 +6,7 @@ The latest ThaliApp built on Flutter.
 - [Getting Started](#getting-started)
 - [Reading Material](#reading-material)
 - [Fastlane](#fastlane)
+- [Release Procedure](#release-procedure)
 
 
 ## Getting Started
@@ -73,3 +74,17 @@ For a full iOS build that allows deployment you need:
 
 If you want to build a version of the application that does not point to the staging servers you should not forget to set the `THALIA_API_HOST`, `THALIA_OAUTH_APP_ID` and `THALIA_OAUTH_APP_SECRET` environment variables. To include a [TOSTI](https://github.com/KiOui/TOSTI) client, specify `TOSTI_API_HOST`, `TOSTI_OAUTH_APP_ID` and `TOSTI_OAUTH_APP_SECRET`.
 To enable the Sentry integration you should set the `SENTRY_DSN` variable, such a DSN can be obtained by going to sentry.io.
+
+## Release Procedure
+
+Follow these steps carefully to release a new version of the app.
+
+1. Test stuff, check that the new version works with the _production_ version of the API.
+2. If necessary, update the version number in [`pubspec.yaml`](pubspec.yaml) and [`lib/config.dart`](lib/config.dart) and commit. The build number does not need to be changed as it will be set by fastlane.
+3. Create a draft release (with a new tag).
+4. Activate the testing account on concrexit: In the production admin, go to user 'appletest', check the 'active' box, and add a membership.
+5. Create a new version in [App Store Connect](https://appstoreconnect.apple.com/) with the build from the last TestFlight deployment. Perhaps also create and upload new screenshots. Submit the release for review.
+6. Promote the new build in the [Play Store Console](https://play.google.com/console/about/). Perhaps also create and upload new screenshots.
+7. When the iOS update has been approved, publish the iOS release, deactivate the testing account ('appletest') again, and delete its membership.
+8. Publish the release on GitHub.
+9. Increment the version number in [`pubspec.yaml`](pubspec.yaml) and [`lib/config.dart`](lib/config.dart) and commit.
