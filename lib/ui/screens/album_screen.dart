@@ -11,6 +11,7 @@ import 'package:photo_view/photo_view_gallery.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/models.dart';
+import 'package:reaxit/ui/theme.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:share_plus/share_plus.dart';
@@ -82,7 +83,6 @@ class _AlbumScreenState extends State<AlbumScreen>
   }
 
   void likePhoto(int likedIndex, Album album) {
-    // print(likedIndex);
     _albumCubit.updateLike(
         liked: !album.photos[likedIndex].liked, index: likedIndex);
     if (album.photos[likedIndex].liked) {
@@ -208,6 +208,7 @@ class _AlbumScreenState extends State<AlbumScreen>
           if (clicked) {
             Album album = state.result!;
             List<bool> likedlist = album.photos.map((e) => e.liked).toList();
+            List<int> likeslist = album.photos.map((e) => e.numLikes).toList();
             int index = clickedI;
             pageController = PageController(initialPage: index);
             widgets.add(
@@ -288,9 +289,9 @@ class _AlbumScreenState extends State<AlbumScreen>
                         itemCount: album.photos.length,
                         builder: (context, i) {
                           return PhotoViewGalleryPageOptions.customChild(
-                            //TODO: ontapdown is not the right way to do this
-                            onTapDown: (_, __, ___) => likePhoto(i, album),
-                            child: Image.network(album.photos[i].full),
+                            child: GestureDetector(
+                                onDoubleTap: () => likePhoto(i, album),
+                                child: Image.network(album.photos[i].full)),
                             minScale: PhotoViewComputedScale.contained * 0.8,
                             maxScale: PhotoViewComputedScale.covered * 2,
                           );
@@ -303,6 +304,7 @@ class _AlbumScreenState extends State<AlbumScreen>
                       album.photos.length,
                       likedlist,
                       (likedIndex) => likePhoto(likedIndex, album),
+                      likeslist,
                     ),
                   ],
                 ),
@@ -325,7 +327,10 @@ class _AlbumScreenState extends State<AlbumScreen>
                 child: const Center(
                   child: CustomPaint(
                     size: Size(70, 80),
-                    painter: HeartPainter(filled: true),
+                    painter: HeartPainter(
+                      filled: true,
+                      color: magenta,
+                    ),
                   ),
                 ),
               ),
@@ -344,35 +349,35 @@ class _AlbumScreenState extends State<AlbumScreen>
 class HeartPainter extends CustomPainter {
   final bool filled;
   final double strokeWidth;
+  final Color color;
 
   @override
-  const HeartPainter({this.filled = false, this.strokeWidth = 6});
+  const HeartPainter(
+      {this.filled = false, this.strokeWidth = 6, this.color = Colors.white});
 
   @override
   void paint(Canvas canvas, Size size) {
-    // TODO: implement paint
     Paint paint = Paint();
     paint
-      ..color = Colors.white
+      ..color = color
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..strokeWidth = strokeWidth;
 
     double width = size.width;
     double height = size.height;
-
     Path path = Path();
-    path.moveTo(0.5 * width, height * 0.35);
-    path.cubicTo(0.2 * width, height * 0.1, -0.25 * width, height * 0.6,
-        0.5 * width, height);
-    path.moveTo(0.5 * width, height * 0.35);
-    path.cubicTo(0.8 * width, height * 0.1, 1.25 * width, height * 0.6,
-        0.5 * width, height);
+    path.moveTo(0.5 * width, height * 0.25);
+    path.cubicTo(0.2 * width, height * 0, -0.25 * width, height * 0.5,
+        0.5 * width, height * 0.9);
+    path.moveTo(0.5 * width, height * 0.25);
+    path.cubicTo(0.8 * width, height * 0, 1.25 * width, height * 0.5,
+        0.5 * width, height * 0.9);
 
     if (filled) {
       Paint paint1 = Paint();
       paint1
-        ..color = Colors.white
+        ..color = color
         ..style = PaintingStyle.fill
         ..strokeWidth = 0;
       canvas.drawPath(path, paint1);
@@ -390,10 +395,11 @@ class PageCounter extends StatefulWidget {
   final PageController controler;
   final int pagecount;
   final List<bool> isliked;
+  final List<int> likecount;
   final void Function(int) likeToggle;
 
-  const PageCounter(
-      this.controler, this.pagecount, this.isliked, this.likeToggle,
+  const PageCounter(this.controler, this.pagecount, this.isliked,
+      this.likeToggle, this.likecount,
       {super.key});
 
   @override
@@ -424,202 +430,24 @@ class _PageCounterState extends State<PageCounter>
       children: [
         Text(
           '$count / ${widget.pagecount}',
-          style: textTheme.displaySmall,
+          style: textTheme.bodyText1?.copyWith(fontSize: 24),
         ),
         IconButton(
+          iconSize: 24,
           icon: CustomPaint(
-              size: Size.square(IconTheme.of(context).size ?? 24.0),
+              size: const Size.square(24.0),
               painter: widget.isliked[count]
-                  ? const HeartPainter(filled: true)
+                  ? const HeartPainter(
+                      filled: true, strokeWidth: 2, color: magenta)
                   : const HeartPainter(strokeWidth: 2)),
           onPressed: () => widget.likeToggle(count),
         ),
+        Text(
+          '${widget.likecount[count]}',
+          style: textTheme.bodyText1?.copyWith(fontSize: 24),
+        ),
       ],
     );
-    // return Column(children: [
-    //   Row(
-    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //     children: [
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.bodyLarge,
-    //       ),
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.bodyMedium,
-    //       ),
-    //     ],
-    //   ),
-    //   Row(
-    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //     children: [
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.bodySmall,
-    //       ),
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.bodyText1,
-    //       ),
-    //     ],
-    //   ),
-    //   Row(
-    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //     children: [
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.bodyText2,
-    //       ),
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.button,
-    //       ),
-    //     ],
-    //   ),
-    //   Row(
-    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //     children: [
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.caption,
-    //       ),
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.displayLarge,
-    //       ),
-    //     ],
-    //   ),
-    //   Row(
-    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //     children: [
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.displayMedium,
-    //       ),
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.displaySmall,
-    //       ),
-    //     ],
-    //   ),
-    //   Row(
-    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //     children: [
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.headline1,
-    //       ),
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.headline2,
-    //       ),
-    //     ],
-    //   ),
-    //   Row(
-    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //     children: [
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.headline3,
-    //       ),
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.headline4,
-    //       ),
-    //     ],
-    //   ),
-    //   Row(
-    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //     children: [
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.headline5,
-    //       ),
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.headline6,
-    //       ),
-    //     ],
-    //   ),
-    //   Row(
-    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //     children: [
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.headlineLarge,
-    //       ),
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.headlineMedium,
-    //       ),
-    //     ],
-    //   ),
-    //   Row(
-    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //     children: [
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.headlineSmall,
-    //       ),
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.labelLarge,
-    //       ),
-    //     ],
-    //   ),
-    //   Row(
-    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //     children: [
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.labelMedium,
-    //       ),
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.labelSmall,
-    //       ),
-    //     ],
-    //   ),
-    //   Row(
-    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //     children: [
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.overline,
-    //       ),
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.subtitle1,
-    //       ),
-    //     ],
-    //   ),
-    //   Row(
-    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //     children: [
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.subtitle2,
-    //       ),
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.titleLarge,
-    //       ),
-    //     ],
-    //   ),
-    //   Row(
-    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //     children: [
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.titleMedium,
-    //       ),
-    //       Text(
-    //         '$count / ${widget.pagecount}',
-    //         style: textTheme.titleSmall,
-    //       ),
-    //     ],
-    //   ),
-    // ]);
   }
 
   @override
