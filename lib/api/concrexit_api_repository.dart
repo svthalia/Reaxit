@@ -81,7 +81,7 @@ class ConcrexitApiRepository implements ApiRepository {
   /// ```
   Future<Response> _handleExceptions(
     Future<Response> Function() request, {
-    List<int> allowedStatusCodes = const [200, 201, 204],
+    List<int> allowedStatusCodes = const [200, 201, 202, 204],
   }) async {
     try {
       final response = await request();
@@ -920,6 +920,18 @@ class ConcrexitApiRepository implements ApiRepository {
       final uri = _uri(path: '/photos/albums/$slug/');
       final response = await _handleExceptions(() => _client.get(uri));
       return Album.fromJson(_jsonDecode(response));
+    });
+  }
+
+  @override
+  Future<void> updateLiked(int pk, bool liked) async {
+    return sandbox(() async {
+      final uri = _uri(path: '/photos/photos/$pk/like/');
+      await _handleExceptions(
+        () => liked
+            ? _client.post(uri, headers: _jsonHeader)
+            : _client.delete(uri, headers: _jsonHeader),
+      );
     });
   }
 
