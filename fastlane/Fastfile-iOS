@@ -56,25 +56,9 @@ platform :ios do
     sh(build_cmd)
   end
 
-  desc "Execute Adhoc build"
-  lane :deploy_adhoc do
-    setup_key
-    setup_project(type: "adhoc")
-    update_project_provisioning(
-      xcodeproj: "./ios/Runner.xcodeproj",
-      profile: ENV["sigh_com.thaliapp_adhoc_profile-path"],
-      build_configuration: "Release"
-    )
-    build_app(
-      workspace: "./ios/Runner.xcworkspace",
-      scheme: "Runner",
-      export_method: "ad-hoc"
-    )
-    sh("mkdir -p ../build/ios && mv ../Runner.ipa ../build/ios/ThaliApp.ipa")
-  end
-
   desc "Push a new internal build to TestFlight"
-  lane :deploy_internal do
+  lane :deploy_internal do |options|
+    
     setup_key
     setup_project(
       type: "appstore",
@@ -83,8 +67,14 @@ platform :ios do
     build_app(
       workspace: "./ios/Runner.xcworkspace",
       scheme: "Runner"
-      )
-    upload_to_testflight
+    )
+    upload_to_testflight(
+      localized_build_info: {
+        "default": {
+          whats_new: options[:changelog],
+        }
+      }
+    )
   end
 
   desc "Push a new beta build to TestFlight"
