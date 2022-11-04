@@ -94,7 +94,7 @@ dependencies:
 
   # Firebase for push notifications.
   firebase_core: ^2.1.1
-  firebase_messaging: ^14.0.3
+  firebase_messaging: ^14.0.4
 
   # Push notifications in app. 
   overlay_support: ^2.0.0
