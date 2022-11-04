@@ -3,13 +3,16 @@
 The latest ThaliApp built on Flutter.
 
 ## Table of Contents
-- [Getting Started](#getting-started)
-- [Reading Material](#reading-material)
+- [Getting started](#getting-started)
+    - [Other commands](#other-commands)
+- [Reading material](#reading-material)
 - [Fastlane](#fastlane)
-- [Release Procedure](#release-procedure)
+    - [Configuration](#configuration)
+    - [Github secrets](#github-secrets)
+- [Release procedure](#release-procedure)
 
 
-## Getting Started
+## Getting started
 
 1. Install Flutter using the instructions for [your platform](https://flutter.dev/docs/get-started/install).
 2. Make sure to complete the setup of [Android Studio](https://flutter.dev/docs/get-started/install/windows#android-setup) for Android or [Xcode](https://flutter.dev/docs/get-started/install/macos#ios-setup) for iOS.
@@ -75,7 +78,26 @@ For a full iOS build that allows deployment you need:
 If you want to build a version of the application that does not point to the staging servers you should not forget to set the `THALIA_API_HOST`, `THALIA_OAUTH_APP_ID` and `THALIA_OAUTH_APP_SECRET` environment variables. To include a [TOSTI](https://github.com/KiOui/TOSTI) client, specify `TOSTI_API_HOST`, `TOSTI_OAUTH_APP_ID` and `TOSTI_OAUTH_APP_SECRET`.
 To enable the Sentry integration you should set the `SENTRY_DSN` variable, such a DSN can be obtained by going to sentry.io.
 
-## Release Procedure
+### Github secrets
+
+To build and deploy the app with Github Actions, we need to set up a number of secrets, defined below. To make the CI/CD also work for pull requests created by dependabot, we need to specify the same exact secrets as dependabot secrets (for security reasons, workflows triggered by dependabot don't get access to actions secrets).
+
+| Secret | Description | How to get it |
+| :----- | :---------- | :------------ |
+| `ANDROID_RELEASE_CONFIG_STORE_FILE` | Path to the keystore to use for android signing | `/home/runner/work/Reaxit/Reaxit/thaliapp-passwords/upload.keystore` | 
+| `ANDROID_RELEASE_CONFIG_STORE_PASS` | Password of the keystore to use for android signing | Get from `ThaliaApp-Passwords/Upload Signing Keystore` |
+| `ANDROID_RELEASE_CONFIG_KEY_ALIAS` | Alias of the key to use for android signing | `appsigning` |
+| `ANDROID_RELEASE_CONFIG_KEY_PASS` | Password of the key to use for android signing | Get from `ThaliaApp-Passwords/Upload Signing Key` |
+| `APPLE_API_KEY` | Base64 encoded App Store Connect API key | Get with `cat ThaliaApp-Passwords/app-store.p8 | base64` |
+| `GOOGLE_PLAY_CONFIG_JSON` | Configuration file for Google Play | Get from `ThaliaApp-Passwords/google-play.json` |
+| `MATCH_PASSWORD` | Password for Fastlane Match | Get from `ThaliaApp-Passwords/Fastlane Match` |
+| `PASSWORDS_REPO_DEPLOY_KEY` | A deploy key for the ThaliaApp-Passwords repository | Create one (with `ssh-keygen`), add to passwords repo, and use the full content of the private key file |
+| `SENTRY_DSN` | DSN for Sentry | Get from [`sentry.io`](https://sentry.io/) |
+| `THALIA_OAUTH_APP_ID` | OAuth client ID for the Thalia API | Get from `ThaliaApp-Passwords/concrexit-oauth-secrets` |
+| `THALIA_OAUTH_APP_SECRET` | OAuth client secret for the Thalia API | Get from `ThaliaApp-Passwords/concrexit-oauth-secrets` |
+
+
+## Release procedure
 
 Follow these steps carefully to release a new version of the app.
 
