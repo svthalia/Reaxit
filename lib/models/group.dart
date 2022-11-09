@@ -37,7 +37,7 @@ class ListGroup {
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Group extends ListGroup {
-  final List<ListMember> members;
+  final List<GroupMembership> members;
 
   const Group(
     int pk,
@@ -52,4 +52,15 @@ class Group extends ListGroup {
   ) : super(pk, name, type, description, since, until, contactAddress, photo);
 
   factory Group.fromJson(Map<String, dynamic> json) => _$GroupFromJson(json);
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class GroupMembership {
+  final ListMember member;
+  final bool chair;
+  final DateTime since;
+  final DateTime? until;
+  final String? role;
+  const GroupMembership(this.member, this.chair, this.since, this.until, this.role);
+  factory GroupMembership.fromJson(Map<String, dynamic> json) => _$GroupMembershipFromJson(json);
 }

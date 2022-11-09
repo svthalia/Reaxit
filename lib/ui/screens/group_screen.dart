@@ -11,7 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class GroupScreen extends StatefulWidget {
   final int pk;
-  final Group? group;
+  final ListGroup? group;
 
   const GroupScreen({super.key, required this.pk, this.group});
 
@@ -92,8 +92,15 @@ class _GroupScreenState extends State<GroupScreen> {
     );
   }
 
-  SliverPadding _makeMembers(List<ListMember> members) {
-    if (members.isEmpty) {
+  SliverPadding _makeMembers(List<GroupMembership>? members) {
+    if (members == null) {
+      return const SliverPadding(
+        padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
+        sliver: SliverToBoxAdapter(
+          child: Center(child: CircularProgressIndicator()),
+        ),
+      );
+    } else if (members.isEmpty) {
       return const SliverPadding(
         padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
         sliver: SliverToBoxAdapter(
@@ -112,7 +119,7 @@ class _GroupScreenState extends State<GroupScreen> {
           delegate: SliverChildBuilderDelegate(
             (context, index) {
               return MemberTile(
-                member: members[index],
+                member: members[index].member,
               );
             },
             childCount: members.length,
@@ -122,7 +129,7 @@ class _GroupScreenState extends State<GroupScreen> {
     }
   }
 
-  Widget _makeGroupInfo(Group group) {
+  Widget _makeGroupInfo(ListGroup group) {
     final textTheme = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -164,8 +171,35 @@ class _GroupScreenState extends State<GroupScreen> {
             appBar: ThaliaAppBar(title: const Text('GROUP')),
             body: const Center(child: CircularProgressIndicator()),
           );
+        } else if (state.isLoading && widget.group != null && state.result == null){
+          final group = widget.group!;
+          return Scaffold(
+            appBar: ThaliaAppBar(title: Text(group.name.toUpperCase())),
+            body: RefreshIndicator(
+              onRefresh: () => _groupCubit.load(),
+              child: Scrollbar(
+                child: CustomScrollView(
+                  key: const PageStorageKey('group'),
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _makeImage(group),
+                          const Divider(height: 0),
+                          _makeGroupInfo(group)
+                        ],
+                      ),
+                    ),
+                    _makeMembersHeader(group),
+                    _makeMembers(null),
+                  ],
+                ),
+              ),
+            ),
+          );
         } else {
-          final group = (state.result ?? widget.group)!;
+          final group = (state.result)!;
           return Scaffold(
             appBar: ThaliaAppBar(title: Text(group.name.toUpperCase())),
             body: RefreshIndicator(

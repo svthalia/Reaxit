@@ -51,9 +51,16 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="https" />
+                <data android:scheme="thaliapp" />
                 <data android:host="thalia.nu" />
                 <data android:path="/pizzas/" />
                 <data android:path="/events/" />
+                <data android:path="/association/boards/" />
+                <data android:path="/association/committees/" />
+                <data android:path="/association/societies/" />
+                <data android:path="/association/boards/.*/" />
+                <data android:path="/association/committees/.*/" />
+                <data android:path="/association/societies/.*/" />
                 <data android:pathPattern="/events/.*/" />
                 <data android:pathPattern="/members/photos/.*/" />
                 <data android:pathPattern="/sales/order/.*/pay/" />

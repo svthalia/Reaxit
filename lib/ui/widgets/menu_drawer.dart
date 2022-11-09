@@ -188,13 +188,13 @@ class MenuDrawer extends StatelessWidget {
           ),
           ListTile(
             title: const Text('Groups'),
-            leading: const Icon(Icons.group),
-            selected: router.location == '/committees',
+            leading: const Icon(Icons.groups),
+            selected: router.location == '/groups',
             onTap: () {
-              if (router.location == '/committees') {
+              if (router.location == '/groups') {
                 Navigator.of(context).pop();
               } else {
-                context.goNamed('committees');
+                context.goNamed('groups');
               }
             },
           ),

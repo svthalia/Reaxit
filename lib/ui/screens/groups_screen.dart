@@ -10,9 +10,9 @@ import 'package:reaxit/ui/widgets/menu_drawer.dart';
 import 'package:collection/collection.dart';
 
 class GroupsScreen extends StatefulWidget {
-  final MemberGroupType? startScreen;
+  final MemberGroupType? currentScreen;
 
-  const GroupsScreen({this.startScreen});
+  const GroupsScreen({Key? key, this.currentScreen}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GroupsScreenState();
@@ -24,24 +24,39 @@ class _GroupsScreenState extends State<GroupsScreen>
 
   @override
   void initState() {
-    late final int initialIndex;
-    if (widget.startScreen == MemberGroupType.board) {
-      initialIndex = 0;
-    } else if (widget.startScreen == MemberGroupType.committee) {
-      initialIndex = 1;
-    } else if (widget.startScreen == MemberGroupType.society) {
-      initialIndex = 2;
-    } else {
-      initialIndex = 0;
-    }
-
     _tabController = TabController(
       length: 3,
-      initialIndex: initialIndex,
+      initialIndex: _groupTypeToIndex(widget.currentScreen),
       vsync: this,
     );
 
     super.initState();
+  }
+
+  int _groupTypeToIndex(MemberGroupType? group) {
+    if (group == MemberGroupType.committee) {
+      return 0;
+    } else if (group== MemberGroupType.society) {
+      return 1;
+    } else if (group == MemberGroupType.board) {
+      return 2;
+    } else {
+      return  0;
+    }
+  }
+
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+
+  @override
+  void didUpdateWidget(GroupsScreen oldWidget) {
+      super.didUpdateWidget(oldWidget);
+      _tabController.index = _groupTypeToIndex(widget.currentScreen);
   }
 
   @override

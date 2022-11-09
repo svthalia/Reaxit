@@ -45,7 +45,7 @@ class GroupTile extends StatelessWidget {
           ],
         );
       },
-      openBuilder: (_, __) => GroupScreen(pk: group.pk),
+      openBuilder: (_, __) => GroupScreen(pk: group.pk, group: group),
     );
   }
 }
