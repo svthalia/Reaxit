@@ -276,7 +276,6 @@ class _AlbumScreenState extends State<AlbumScreen>
 
         if (clicked && !state.hasException && !state.isLoading) {
           Album album = state.result!;
-
           //TODO: This is double work, probably not an issue but might be slow if we have a lot f photos and we need to rebuild
           // Slow meaning a couple MS which is too long for a build. Maybe we should cache this in the album?
           List<bool> likedlist = album.photos.map((e) => e.liked).toList();
@@ -312,11 +311,11 @@ class _AlbumScreenState extends State<AlbumScreen>
                   child: _gallery(album.photos),
                 ),
                 PageCounter(
-                  pageController2,
-                  album.photos.length,
-                  likedlist,
-                  (likedIndex) => likePhoto(likedIndex, album.photos),
-                  likeslist,
+                  controler: pageController2,
+                  pagecount: album.photos.length,
+                  isliked: likedlist,
+                  likeToggle: (likedIndex) => likePhoto(likedIndex, album.photos),
+                  likecount: likeslist,
                 ),
               ],
             ),
@@ -392,9 +391,9 @@ class PageCounter extends StatefulWidget {
   final List<int> likecount;
   final void Function(int) likeToggle;
 
-  const PageCounter(this.controler, this.pagecount, this.isliked,
-      this.likeToggle, this.likecount,
-      {super.key});
+  const PageCounter({required this.controler, required this.pagecount, required this.isliked,
+      required this.likeToggle, required this.likecount,
+      super.key});
 
   @override
   State<PageCounter> createState() => _PageCounterState();
@@ -426,15 +425,18 @@ class _PageCounterState extends State<PageCounter>
           '$count / ${widget.pagecount}',
           style: textTheme.bodyText1?.copyWith(fontSize: 24),
         ),
-        IconButton(
-          iconSize: 24,
-          icon: CustomPaint(
-              size: const Size.square(24.0),
-              painter: widget.isliked[count]
-                  ? const HeartPainter(
-                      filled: true, strokeWidth: 2, color: magenta)
-                  : const HeartPainter(strokeWidth: 2)),
-          onPressed: () => widget.likeToggle(count),
+        Tooltip(
+          message: 'like photo',
+          child:IconButton(
+            iconSize: 24,
+            icon: CustomPaint(
+                size: const Size.square(24.0),
+                painter: widget.isliked[count]
+                    ? const HeartPainter(
+                        filled: true, strokeWidth: 2, color: magenta)
+                    : const HeartPainter(strokeWidth: 2)),
+            onPressed: () => widget.likeToggle(count),
+          ),
         ),
         Text(
           '${widget.likecount[count]}',
