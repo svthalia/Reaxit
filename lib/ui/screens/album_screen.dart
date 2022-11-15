@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/models.dart';
@@ -30,9 +31,8 @@ class AlbumScreen extends StatefulWidget {
 class _AlbumScreenState extends State<AlbumScreen>
     with TickerProviderStateMixin {
   late final AlbumCubit _albumCubit;
-  bool clicked = false;
-  int clickedI = 0;
-  int current = 0;
+  bool galleryShown = false;
+  int initialGalleryIndex = 0;
 
   late AnimationController filledController;
   late Animation<double> filledAnimation;
@@ -81,12 +81,28 @@ class _AlbumScreenState extends State<AlbumScreen>
     super.dispose();
   }
 
-  void likePhoto(int likedIndex, List<AlbumPhoto> photos) {
-    _albumCubit.updateLike(liked: !photos[likedIndex].liked, index: likedIndex);
+  Future<void> likePhoto(
+    BuildContext context,
+    int likedIndex,
+    List<AlbumPhoto> photos,
+  ) async {
+    final messenger = ScaffoldMessenger.of(context);
     if (photos[likedIndex].liked) {
       controller.forward();
     } else {
       filledController.forward();
+    }
+    try {
+      await _albumCubit.updateLike(
+        liked: !photos[likedIndex].liked,
+        index: likedIndex,
+      );
+    } on ApiException {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('Something went wrong while liking the photo.'),
+        ),
+      );
     }
   }
 
@@ -164,8 +180,8 @@ class _AlbumScreenState extends State<AlbumScreen>
 
   Widget _makePhotoCard(List<AlbumPhoto> photos, int index) => GestureDetector(
         onTap: () => setState(() {
-          clicked = true;
-          clickedI = index;
+          galleryShown = true;
+          initialGalleryIndex = index;
         }),
         child: FadeInImage.assetNetwork(
           placeholder: 'assets/img/photo_placeholder.png',
@@ -188,7 +204,7 @@ class _AlbumScreenState extends State<AlbumScreen>
         builder: (context, i) {
           return PhotoViewGalleryPageOptions.customChild(
             child: GestureDetector(
-                onDoubleTap: () => likePhoto(i, photos),
+                onDoubleTap: () => likePhoto(context, i, photos),
                 child: Image.network(photos[i].full)),
             minScale: PhotoViewComputedScale.contained * 0.8,
             maxScale: PhotoViewComputedScale.covered * 2,
@@ -274,7 +290,7 @@ class _AlbumScreenState extends State<AlbumScreen>
                     ? const Center(child: CircularProgressIndicator())
                     : _smallGallery(state.result!.photos));
 
-        if (clicked && !state.hasException && !state.isLoading) {
+        if (galleryShown && !state.hasException && !state.isLoading) {
           Album album = state.result!;
           //TODO: This is double work, probably not an issue but might be slow if we have a lot f photos and we need to rebuild
           // Slow meaning a couple MS which is too long for a build. Maybe we should cache this in the album?
@@ -285,7 +301,7 @@ class _AlbumScreenState extends State<AlbumScreen>
           // it is impossible to change the initial page after it has been created.
           // We cannot jump to the page because it is not attached jet. When it opens
           // the gallery it will use the initialPage instead of last jumped-to page.
-          pageController = PageController(initialPage: clickedI);
+          pageController = PageController(initialPage: initialGalleryIndex);
 
           Widget overlayScaffold = Scaffold(
             extendBodyBehindAppBar: true,
@@ -296,7 +312,7 @@ class _AlbumScreenState extends State<AlbumScreen>
               leading: CloseButton(
                 color: Theme.of(context).primaryIconTheme.color,
                 onPressed: () => setState(() {
-                  clicked = false;
+                  galleryShown = false;
                 }),
               ),
               actions: [
@@ -315,7 +331,7 @@ class _AlbumScreenState extends State<AlbumScreen>
                   pagecount: album.photos.length,
                   isliked: likedlist,
                   likeToggle: (likedIndex) =>
-                      likePhoto(likedIndex, album.photos),
+                      likePhoto(context, likedIndex, album.photos),
                   likecount: likeslist,
                 ),
               ],
@@ -330,9 +346,9 @@ class _AlbumScreenState extends State<AlbumScreen>
               ..._heartPopup(),
             ],
           );
-        } else if (clicked) {
+        } else if (galleryShown) {
           // TODO: Maybe a loading screen here? but I dont really see how this situation could ever happen
-          clicked = false;
+          galleryShown = false;
         }
         return mainScaffold;
       },

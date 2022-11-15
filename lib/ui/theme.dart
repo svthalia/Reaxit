@@ -10,7 +10,7 @@ ColorScheme lightColorScheme = ColorScheme(
   onSecondary: Colors.black,
   surface: Colors.white,
   onSurface: Colors.black,
-  background: Colors.grey[50]!, //
+  background: Colors.grey[50]!,
   onBackground: Colors.black,
   error: Colors.red,
   onError: Colors.white,
