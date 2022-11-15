@@ -77,16 +77,16 @@ void testAlbum() {
         // Start app.
         app.testingMain(authCubit, '/albums/1');
         await tester.pumpAndSettle();
-        //TODO: Why is this neccesary?
         await Future.delayed(const Duration(seconds: 5));
         await tester.pumpAndSettle();
 
         expect(
-            find.image(
-              const NetworkImage(
-                  'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/1280px-Image_created_with_a_mobile_phone.png'),
-            ),
-            findsWidgets);
+          find.image(
+            const NetworkImage(
+                'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/1280px-Image_created_with_a_mobile_phone.png'),
+          ),
+          findsWidgets,
+        );
       },
     );
   });

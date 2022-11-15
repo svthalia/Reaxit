@@ -314,7 +314,8 @@ class _AlbumScreenState extends State<AlbumScreen>
                   controler: pageController2,
                   pagecount: album.photos.length,
                   isliked: likedlist,
-                  likeToggle: (likedIndex) => likePhoto(likedIndex, album.photos),
+                  likeToggle: (likedIndex) =>
+                      likePhoto(likedIndex, album.photos),
                   likecount: likeslist,
                 ),
               ],
@@ -391,8 +392,12 @@ class PageCounter extends StatefulWidget {
   final List<int> likecount;
   final void Function(int) likeToggle;
 
-  const PageCounter({required this.controler, required this.pagecount, required this.isliked,
-      required this.likeToggle, required this.likecount,
+  const PageCounter(
+      {required this.controler,
+      required this.pagecount,
+      required this.isliked,
+      required this.likeToggle,
+      required this.likecount,
       super.key});
 
   @override
@@ -427,7 +432,7 @@ class _PageCounterState extends State<PageCounter>
         ),
         Tooltip(
           message: 'like photo',
-          child:IconButton(
+          child: IconButton(
             iconSize: 24,
             icon: CustomPaint(
                 size: const Size.square(24.0),

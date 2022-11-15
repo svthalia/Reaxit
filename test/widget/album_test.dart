@@ -14,7 +14,6 @@ void main() {
         likedValue = index;
       }
 
-      ;
       final likecount = [1, 0, -1, 0, 0];
 
       await tester.pumpWidget(
