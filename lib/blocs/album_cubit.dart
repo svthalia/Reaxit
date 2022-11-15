@@ -11,19 +11,24 @@ class AlbumCubit extends Cubit<AlbumState> {
 
   AlbumCubit(this.api) : super(const AlbumState.loading());
 
-  void updateLike({required bool liked, required int index}) {
+  Future<void> updateLike({required bool liked, required int index}) async {
     if (state.result == null) {
       return;
     }
-    final oldphoto = state.result!.photos[index];
-    AlbumPhoto newphoto = oldphoto.copyWith(
-        liked: liked, numLikes: oldphoto.numLikes + (liked ? 1 : -1));
-    List<AlbumPhoto> newphotos = List.from(state.result!.photos);
-    newphotos[index] = newphoto;
-
-    api.updateLiked(newphoto.pk, liked);
-
-    emit(AlbumState.result(result: state.result!.copyWith(photos: newphotos)));
+    try {
+      final oldphoto = state.result!.photos[index];
+      AlbumPhoto newphoto = oldphoto.copyWith(
+          liked: liked, numLikes: oldphoto.numLikes + (liked ? 1 : -1));
+      List<AlbumPhoto> newphotos = List.from(state.result!.photos);
+      newphotos[index] = newphoto;
+      emit(
+        AlbumState.result(result: state.result!.copyWith(photos: newphotos)),
+      );
+      await api.updateLiked(newphoto.pk, liked);
+    } on ApiException {
+      emit(state);
+      rethrow;
+    }
   }
 
   Future<void> load(String slug) async {
