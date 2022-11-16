@@ -42,7 +42,7 @@ class _AlbumScreenState extends State<AlbumScreen>
 
   /// The controller used in the image gallery.
   PageController mainPageController = PageController(initialPage: 0);
-  // pageCountController is made to follow the mainPageController, and is used
+  /// Made to follow the `mainPageController`, and used
   // to update the pagecount at the bottom of the page
   PageController pageCountController = PageController(initialPage: 0);
 
