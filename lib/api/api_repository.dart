@@ -259,7 +259,7 @@ abstract class ApiRepository {
   /// Get the [Album] with the `slug`.
   Future<Album> getAlbum({required String slug});
 
-  /// Update the description of the logged in member.
+  /// Create or delete a like on the photo with the `id`.
   Future<void> updateLiked(int id, bool liked);
 
   /// Get a list of [ListAlbum]s.
