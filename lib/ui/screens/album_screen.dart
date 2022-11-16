@@ -287,7 +287,9 @@ class _AlbumScreenState extends State<AlbumScreen>
       builder: (context, state) {
         Widget mainScaffold = Scaffold(
             appBar: ThaliaAppBar(
-              title: Text(widget.album?.title.toUpperCase() ?? 'ALBUM'),
+              title: Text(state.result?.title.toUpperCase() ??
+                  widget.album?.title.toUpperCase() ??
+                  'ALBUM'),
               actions: [_makeShareAlbumButton(widget.slug)],
             ),
             body: state.hasException

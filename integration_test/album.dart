@@ -12,7 +12,10 @@ import 'package:reaxit/models.dart';
 import '../test/mocks.mocks.dart';
 
 const imagelink1 =
-    'https://upload.wikimedia.org/wikipedia/commons/7/7b/Image_in_Glossographia.png';
+    'https://raw.githubusercontent.com/svthalia/Reaxit/3e3a74364f10cd8de14ac1f74de8a05aa6d00b28/assets/img/album_placeholder.png';
+
+const imagelink2 =
+    'https://raw.githubusercontent.com/svthalia/Reaxit/3e3a74364f10cd8de14ac1f74de8a05aa6d00b28/assets/img/default-avatar.jpg';
 
 const coverphoto1 = CoverPhoto(
   0,
@@ -35,6 +38,20 @@ const albumphoto1 = AlbumPhoto(
     imagelink1,
     imagelink1,
     imagelink1,
+  ),
+  false,
+  0,
+);
+
+const albumphoto2 = AlbumPhoto(
+  0,
+  0,
+  false,
+  Photo(
+    imagelink2,
+    imagelink2,
+    imagelink2,
+    imagelink2,
   ),
   false,
   0,
@@ -73,18 +90,19 @@ WidgetTesterCallback getTestMethod(Album album) {
     await tester.pumpAndSettle();
 
     for (AlbumPhoto photo in album.photos) {
+      //TODO: wait for https://github.com/flutter/flutter/issues/115479 to be fixed
       expect(
         find.image(
           NetworkImage(photo.small),
         ),
-        findsOneWidget,
+        findsWidgets,
       );
     }
     expect(find.text(album.title.toUpperCase()), findsOneWidget);
   };
 }
 
-void testAlbum() {
+void testAlbum() async {
   final _ = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group(
@@ -100,6 +118,19 @@ void testAlbum() {
             false,
             coverphoto1,
             [albumphoto1],
+          ),
+        ),
+      );
+      testWidgets(
+        'able to load an album2',
+        getTestMethod(
+          const Album.fromlist(
+            '1',
+            'MOcK2',
+            false,
+            false,
+            coverphoto1,
+            [albumphoto1, albumphoto2],
           ),
         ),
       );
