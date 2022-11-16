@@ -86,6 +86,19 @@ class _AlbumScreenState extends State<AlbumScreen>
     super.dispose();
   }
 
+  void openGallery(int index) {
+    setState(() {
+      galleryShown = true;
+      initialGalleryIndex = index;
+    });
+  }
+
+  void closeGallery() {
+    setState(() {
+      galleryShown = false;
+    });
+  }
+
   Future<void> likePhoto(
     BuildContext context,
     int likedIndex,
@@ -140,7 +153,7 @@ class _AlbumScreenState extends State<AlbumScreen>
     }
   }
 
-  Future<void> _share(BuildContext context, Uri url) async {
+  Future<void> _shareImage(BuildContext context, Uri url) async {
     final messenger = ScaffoldMessenger.of(context);
 
     try {
@@ -161,7 +174,21 @@ class _AlbumScreenState extends State<AlbumScreen>
     }
   }
 
-  Widget _makeShareAlbumButton(String slug) => IconButton(
+  Future<void> _shareAlbum(BuildContext context, String slug) async {
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await Share.share('https://${config.apiHost}/members/photos/$slug/');
+    } catch (_) {
+      messenger.showSnackBar(
+        const SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('Could not share the album.'),
+        ),
+      );
+    }
+  }
+
+  Widget _makeShareAlbumButton(BuildContext context, String slug) => IconButton(
         padding: const EdgeInsets.all(16),
         color: Theme.of(context).primaryIconTheme.color,
         icon: Icon(
@@ -169,29 +196,11 @@ class _AlbumScreenState extends State<AlbumScreen>
               ? Icons.ios_share
               : Icons.share,
         ),
-        //TODO: outline thie function
-        onPressed: () async {
-          final messenger = ScaffoldMessenger.of(context);
-          try {
-            await Share.share(
-                'https://${config.apiHost}/members/photos/$slug/');
-          } catch (_) {
-            messenger.showSnackBar(
-              const SnackBar(
-                behavior: SnackBarBehavior.floating,
-                content: Text('Could not share the album.'),
-              ),
-            );
-          }
-        },
+        onPressed: () => _shareAlbum(context, slug),
       );
 
   Widget _makePhotoCard(List<AlbumPhoto> photos, int index) => GestureDetector(
-        //TODO: outline this function
-        onTap: () => setState(() {
-          galleryShown = true;
-          initialGalleryIndex = index;
-        }),
+        onTap: () => openGallery(index),
         child: FadeInImage.assetNetwork(
           placeholder: 'assets/img/photo_placeholder.png',
           image: photos[index].small,
@@ -239,7 +248,7 @@ class _AlbumScreenState extends State<AlbumScreen>
               ? Icons.ios_share
               : Icons.share,
         ),
-        onPressed: () async => _share(
+        onPressed: () async => _shareImage(
             context, Uri.parse(photos[pageCountController.page!.floor()].full)),
       );
 
@@ -295,7 +304,7 @@ class _AlbumScreenState extends State<AlbumScreen>
               title: Text(state.result?.title.toUpperCase() ??
                   widget.album?.title.toUpperCase() ??
                   'ALBUM'),
-              actions: [_makeShareAlbumButton(widget.slug)],
+              actions: [_makeShareAlbumButton(context, widget.slug)],
             ),
             body: state.hasException
                 ? ErrorScrollView(state.message!)
@@ -322,9 +331,7 @@ class _AlbumScreenState extends State<AlbumScreen>
               shadowColor: Colors.transparent,
               leading: CloseButton(
                 color: Theme.of(context).primaryIconTheme.color,
-                onPressed: () => setState(() {
-                  galleryShown = false;
-                }),
+                onPressed: closeGallery,
               ),
               actions: [
                 _downloadButton(album.photos),
