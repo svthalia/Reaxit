@@ -76,7 +76,7 @@ class _GroupsScreenState extends State<GroupsScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          BlocBuilder<CommitteesCubit, DetailState<List<ListGroup>>>(
+          BlocBuilder<CommitteesCubit, GroupsState>(
             builder: (context, state) {
               if (state.hasException) {
                 return ErrorScrollView(state.message!);
@@ -90,7 +90,7 @@ class _GroupsScreenState extends State<GroupsScreen>
               }
             },
           ),
-          BlocBuilder<SocietiesCubit, DetailState<List<ListGroup>>>(
+          BlocBuilder<SocietiesCubit, GroupsState>(
             builder: (context, state) {
               if (state.hasException) {
                 return ErrorScrollView(state.message!);
@@ -104,7 +104,7 @@ class _GroupsScreenState extends State<GroupsScreen>
               }
             },
           ),
-          BlocBuilder<BoardsCubit, DetailState<List<ListGroup>>>(
+          BlocBuilder<BoardsCubit, GroupsState>(
             builder: (context, state) {
               if (state.hasException) {
                 return ErrorScrollView(state.message!);
