@@ -15,15 +15,15 @@ class AlbumCubit extends Cubit<AlbumState> {
     if (state.result == null) {
       return;
     }
+    final oldphoto = state.result!.photos[index];
+    AlbumPhoto newphoto = oldphoto.copyWith(
+      liked: liked,
+      numLikes: oldphoto.numLikes + (liked ? 1 : -1),
+    );
+    List<AlbumPhoto> newphotos = [...state.result!.photos];
+    newphotos[index] = newphoto;
+    emit(AlbumState.result(result: state.result!.copyWith(photos: newphotos)));
     try {
-      final oldphoto = state.result!.photos[index];
-      AlbumPhoto newphoto = oldphoto.copyWith(
-          liked: liked, numLikes: oldphoto.numLikes + (liked ? 1 : -1));
-      List<AlbumPhoto> newphotos = List.from(state.result!.photos);
-      newphotos[index] = newphoto;
-      emit(
-        AlbumState.result(result: state.result!.copyWith(photos: newphotos)),
-      );
       await api.updateLiked(newphoto.pk, liked);
     } on ApiException {
       emit(state);

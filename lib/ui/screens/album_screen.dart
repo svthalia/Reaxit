@@ -164,21 +164,25 @@ class _AlbumScreenState extends State<AlbumScreen>
               ? Icons.ios_share
               : Icons.share,
         ),
+        //TODO: outline thie function
         onPressed: () async {
           final messenger = ScaffoldMessenger.of(context);
           try {
             await Share.share(
                 'https://${config.apiHost}/members/photos/$slug/');
           } catch (_) {
-            messenger.showSnackBar(const SnackBar(
-              behavior: SnackBarBehavior.floating,
-              content: Text('Could not share the album.'),
-            ));
+            messenger.showSnackBar(
+              const SnackBar(
+                behavior: SnackBarBehavior.floating,
+                content: Text('Could not share the album.'),
+              ),
+            );
           }
         },
       );
 
   Widget _makePhotoCard(List<AlbumPhoto> photos, int index) => GestureDetector(
+        //TODO: outline this function
         onTap: () => setState(() {
           galleryShown = true;
           initialGalleryIndex = index;
@@ -204,8 +208,9 @@ class _AlbumScreenState extends State<AlbumScreen>
         builder: (context, i) {
           return PhotoViewGalleryPageOptions.customChild(
             child: GestureDetector(
-                onDoubleTap: () => likePhoto(context, i, photos),
-                child: Image.network(photos[i].full)),
+              onDoubleTap: () => likePhoto(context, i, photos),
+              child: Image.network(photos[i].full),
+            ),
             minScale: PhotoViewComputedScale.contained * 0.8,
             maxScale: PhotoViewComputedScale.covered * 2,
           );
@@ -278,6 +283,7 @@ class _AlbumScreenState extends State<AlbumScreen>
   Widget build(BuildContext context) {
     return BlocBuilder<AlbumCubit, AlbumState>(
       bloc: _albumCubit,
+      //TODO: maybe make this a different function?
       builder: (context, state) {
         Widget mainScaffold = Scaffold(
             appBar: ThaliaAppBar(
@@ -292,8 +298,6 @@ class _AlbumScreenState extends State<AlbumScreen>
 
         if (galleryShown && !state.hasException && !state.isLoading) {
           Album album = state.result!;
-          //TODO: This is double work, probably not an issue but might be slow if we have a lot f photos and we need to rebuild
-          // Slow meaning a couple MS which is too long for a build. Maybe we should cache this in the album?
           List<bool> likedlist = album.photos.map((e) => e.liked).toList();
           List<int> likeslist = album.photos.map((e) => e.numLikes).toList();
 
@@ -347,7 +351,6 @@ class _AlbumScreenState extends State<AlbumScreen>
             ],
           );
         } else if (galleryShown) {
-          // TODO: Maybe a loading screen here? but I dont really see how this situation could ever happen
           galleryShown = false;
         }
         return mainScaffold;
@@ -423,7 +426,7 @@ class PageCounter extends StatefulWidget {
 class _PageCounterState extends State<PageCounter>
     with SingleTickerProviderStateMixin
     implements ScrollContext {
-  int count = 0;
+  int currentIndex = 0;
   ScrollPosition? _position;
 
   @override
@@ -443,7 +446,7 @@ class _PageCounterState extends State<PageCounter>
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          '$count / ${widget.pagecount}',
+          '$currentIndex / ${widget.pagecount}',
           style: textTheme.bodyText1?.copyWith(fontSize: 24),
         ),
         Tooltip(
@@ -452,15 +455,15 @@ class _PageCounterState extends State<PageCounter>
             iconSize: 24,
             icon: CustomPaint(
                 size: const Size.square(24.0),
-                painter: widget.isliked[count]
+                painter: widget.isliked[currentIndex]
                     ? const HeartPainter(
                         filled: true, strokeWidth: 2, color: magenta)
                     : const HeartPainter(strokeWidth: 2)),
-            onPressed: () => widget.likeToggle(count),
+            onPressed: () => widget.likeToggle(currentIndex),
           ),
         ),
         Text(
-          '${widget.likecount[count]}',
+          '${widget.likecount[currentIndex]}',
           style: textTheme.bodyText1?.copyWith(fontSize: 24),
         ),
       ],
@@ -482,7 +485,7 @@ class _PageCounterState extends State<PageCounter>
   @override
   void saveOffset(double offset) {
     setState(() {
-      count = offset.toInt();
+      currentIndex = offset.toInt();
     });
   }
 
