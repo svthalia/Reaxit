@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/blocs/groups_cubit.dart';
 import 'package:reaxit/models/group.dart';
-import 'package:reaxit/ui/widgets/app_bar.dart';
-import 'package:reaxit/ui/widgets/error_scroll_view.dart';
-import 'package:reaxit/ui/widgets/group_tile.dart';
-import 'package:reaxit/ui/widgets/menu_drawer.dart';
+import 'package:reaxit/ui/widgets.dart';
 import 'package:collection/collection.dart';
 
 class GroupsScreen extends StatefulWidget {

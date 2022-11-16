@@ -30,7 +30,7 @@ final List<RegExp> _deepLinkRegExps = <RegExp>[
   RegExp('^/sales/order/$_uuid/pay/?\$'),
   RegExp('^/events/([0-9]+)/mark-present/$_uuid/?\$'),
   RegExp('^/association/committees(/[0-9]+)?/?\$'),
-  RegExp('^/association/boards(/[0-9]+)?/?\$'),
+  RegExp('^/association/boards/([0-9]{4}-[0-9]{4})/?\$'),
   RegExp('^/association/societies(/[0-9]+)?/?\$'),
 ];
 
@@ -342,12 +342,13 @@ final List<RouteBase> routes = [
         ),
         routes: [
           GoRoute(
-            path: ':groupPk',
+            path: ':boardSlug',
             name: 'board',
             pageBuilder: (context, state) => MaterialPage(
               key: state.pageKey,
-              child: GroupScreen(
-                pk: int.parse(state.params['groupPk']!),
+              child: BoardScreen(
+                since: int.parse(state.params['boardSlug']!.split('-')[0]),
+                until: int.parse(state.params['boardSlug']!.split('-')[1]),
                 group: state.extra as ListGroup?,
               ),
             ),

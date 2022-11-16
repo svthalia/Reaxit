@@ -47,3 +47,7 @@ class CommitteesCubit extends GroupsCubit {
 class SocietiesCubit extends GroupsCubit {
   SocietiesCubit(ApiRepository api) : super(api, MemberGroupType.society);
 }
+
+class AllGroupsCubit extends GroupsCubit {
+  AllGroupsCubit(ApiRepository api) : super(api, null);
+}

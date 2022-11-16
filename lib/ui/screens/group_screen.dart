@@ -9,35 +9,174 @@ import 'package:reaxit/routes.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class GroupScreen extends StatefulWidget {
+class GroupScreen extends StatelessWidget {
   final int pk;
   final ListGroup? group;
 
   const GroupScreen({super.key, required this.pk, this.group});
 
   @override
-  State<GroupScreen> createState() => _GroupScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider<GroupCubit>(
+      create: (context) => GroupCubit(
+        RepositoryProvider.of<ApiRepository>(context),
+        pk: pk,
+      )..load(),
+      child: BlocBuilder<GroupCubit, GroupState>(
+        builder: (context, state) => _Page(
+            state: state,
+            cubit: BlocProvider.of<GroupCubit>(context),
+            listGroup: group),
+      ),
+    );
+  }
 }
 
-class _GroupScreenState extends State<GroupScreen> {
-  late final GroupCubit _groupCubit;
+class BoardScreen extends StatelessWidget {
+  final int since;
+  final int until;
+  final ListGroup? group;
+
+  const BoardScreen(
+      {super.key, required this.since, required this.until, this.group});
 
   @override
-  void initState() {
-    _groupCubit = GroupCubit(
-      RepositoryProvider.of<ApiRepository>(context),
-      pk: widget.pk,
-    )..load();
-    super.initState();
+  Widget build(BuildContext context) {
+    return BlocProvider<BoardCubit>(
+      create: (context) => BoardCubit(
+          RepositoryProvider.of<ApiRepository>(context),
+          since: since,
+          until: until)
+        ..load(),
+      child: BlocBuilder<BoardCubit, GroupState>(
+        builder: (context, state) => _Page(
+            state: state,
+            cubit: BlocProvider.of<BoardCubit>(context),
+            listGroup: group),
+      ),
+    );
   }
+}
+
+class _Page extends StatelessWidget {
+  const _Page({
+    Key? key,
+    required this.state,
+    required this.cubit,
+    this.listGroup,
+  }) : super(key: key);
+
+  final DetailState<Group> state;
+  final BaseGroupCubit cubit;
+  final ListGroup? listGroup;
 
   @override
-  void dispose() {
-    _groupCubit.close();
-    super.dispose();
+  Widget build(BuildContext context) {
+    if (state.hasException) {
+      return Scaffold(
+        appBar: ThaliaAppBar(
+          title: Text(listGroup?.name.toUpperCase() ?? 'GROUP'),
+        ),
+        body: RefreshIndicator(
+          onRefresh: () => cubit.load(),
+          child: ErrorScrollView(state.message!),
+        ),
+      );
+    } else if (state.isLoading && listGroup == null && state.result == null) {
+      return Scaffold(
+        appBar: ThaliaAppBar(title: const Text('GROUP')),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    } else if (state.isLoading && listGroup != null && state.result == null) {
+      final group = listGroup!;
+      return Scaffold(
+        appBar: ThaliaAppBar(title: Text(group.name.toUpperCase())),
+        body: RefreshIndicator(
+          onRefresh: () => cubit.load(),
+          child: Scrollbar(
+            child: CustomScrollView(
+              key: const PageStorageKey('group'),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _GroupImage(group: group),
+                      const Divider(height: 0),
+                      _GroupInfo(group: group)
+                    ],
+                  ),
+                ),
+                _MembersHeader(group: group),
+                _MembersGrid(members: null),
+              ],
+            ),
+          ),
+        ),
+      );
+    } else {
+      final group = (state.result)!;
+      return Scaffold(
+        appBar: ThaliaAppBar(title: Text(group.name.toUpperCase())),
+        body: RefreshIndicator(
+          onRefresh: () => cubit.load(),
+          child: Scrollbar(
+            child: CustomScrollView(
+              key: const PageStorageKey('group'),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _GroupImage(group: group),
+                      const Divider(height: 0),
+                      _GroupInfo(group: group)
+                    ],
+                  ),
+                ),
+                _MembersHeader(group: group),
+                _MembersGrid(members: group.members),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
   }
+}
 
-  Widget _makeImage(ListGroup group) {
+class _MembersHeader extends StatelessWidget {
+  const _MembersHeader({
+    Key? key,
+    required this.group,
+  }) : super(key: key);
+
+  final ListGroup group;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.only(left: 16),
+      sliver: SliverToBoxAdapter(
+        child: Text(
+          'MEMBERS',
+          style: Theme.of(context).textTheme.caption,
+        ),
+      ),
+    );
+  }
+}
+
+class _GroupImage extends StatelessWidget {
+  const _GroupImage({
+    Key? key,
+    required this.group,
+  }) : super(key: key);
+
+  final ListGroup group;
+
+  @override
+  Widget build(BuildContext context) {
     return Stack(
       fit: StackFit.loose,
       children: [
@@ -48,8 +187,94 @@ class _GroupScreenState extends State<GroupScreen> {
       ],
     );
   }
+}
 
-  Widget _makeDescription(ListGroup group) {
+class _MembersGrid extends StatelessWidget {
+  const _MembersGrid({
+    Key? key,
+    this.members,
+  }) : super(key: key);
+
+  final List<GroupMembership>? members;
+
+  @override
+  Widget build(BuildContext context) {
+    if (members == null) {
+      return const SliverPadding(
+        padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
+        sliver: SliverToBoxAdapter(
+          child: Center(child: CircularProgressIndicator()),
+        ),
+      );
+    } else if (members!.isEmpty) {
+      return const SliverPadding(
+        padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
+        sliver: SliverToBoxAdapter(
+          child: Center(child: Text('This group has no members.')),
+        ),
+      );
+    } else {
+      return SliverPadding(
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
+        sliver: SliverGrid(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+          ),
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              return MemberTile(
+                member: members![index].member,
+              );
+            },
+            childCount: members!.length,
+          ),
+        ),
+      );
+    }
+  }
+}
+
+class _GroupInfo extends StatelessWidget {
+  const _GroupInfo({
+    Key? key,
+    required this.group,
+  }) : super(key: key);
+
+  final ListGroup group;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SizedBox(height: 8),
+          Text(
+            group.name.toUpperCase(),
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          const Divider(height: 24),
+          _Description(group: group),
+          const Divider(height: 24),
+        ],
+      ),
+    );
+  }
+}
+
+class _Description extends StatelessWidget {
+  const _Description({
+    Key? key,
+    required this.group,
+  }) : super(key: key);
+
+  final ListGroup group;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
       child: HtmlWidget(
@@ -77,158 +302,6 @@ class _GroupScreenState extends State<GroupScreen> {
           return true;
         },
       ),
-    );
-  }
-
-  Widget _makeMembersHeader(ListGroup group) {
-    return SliverPadding(
-      padding: const EdgeInsets.only(left: 16),
-      sliver: SliverToBoxAdapter(
-        child: Text(
-          'MEMBERS',
-          style: Theme.of(context).textTheme.caption,
-        ),
-      ),
-    );
-  }
-
-  SliverPadding _makeMembers(List<GroupMembership>? members) {
-    if (members == null) {
-      return const SliverPadding(
-        padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
-        sliver: SliverToBoxAdapter(
-          child: Center(child: CircularProgressIndicator()),
-        ),
-      );
-    } else if (members.isEmpty) {
-      return const SliverPadding(
-        padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
-        sliver: SliverToBoxAdapter(
-          child: Center(child: Text('This group has no members.')),
-        ),
-      );
-    } else {
-      return SliverPadding(
-        padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
-        sliver: SliverGrid(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            mainAxisSpacing: 8,
-            crossAxisSpacing: 8,
-          ),
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              return MemberTile(
-                member: members[index].member,
-              );
-            },
-            childCount: members.length,
-          ),
-        ),
-      );
-    }
-  }
-
-  Widget _makeGroupInfo(ListGroup group) {
-    final textTheme = Theme.of(context).textTheme;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SizedBox(height: 8),
-          Text(
-            group.name.toUpperCase(),
-            style: textTheme.headline6,
-          ),
-          const Divider(height: 24),
-          _makeDescription(group),
-          const Divider(height: 24),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<GroupCubit, GroupState>(
-      bloc: _groupCubit,
-      builder: (context, state) {
-        if (state.hasException) {
-          return Scaffold(
-            appBar: ThaliaAppBar(
-              title: Text(widget.group?.name.toUpperCase() ?? 'GROUP'),
-            ),
-            body: RefreshIndicator(
-              onRefresh: () => _groupCubit.load(),
-              child: ErrorScrollView(state.message!),
-            ),
-          );
-        } else if (state.isLoading &&
-            widget.group == null &&
-            state.result == null) {
-          return Scaffold(
-            appBar: ThaliaAppBar(title: const Text('GROUP')),
-            body: const Center(child: CircularProgressIndicator()),
-          );
-        } else if (state.isLoading &&
-            widget.group != null &&
-            state.result == null) {
-          final group = widget.group!;
-          return Scaffold(
-            appBar: ThaliaAppBar(title: Text(group.name.toUpperCase())),
-            body: RefreshIndicator(
-              onRefresh: () => _groupCubit.load(),
-              child: Scrollbar(
-                child: CustomScrollView(
-                  key: const PageStorageKey('group'),
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          _makeImage(group),
-                          const Divider(height: 0),
-                          _makeGroupInfo(group)
-                        ],
-                      ),
-                    ),
-                    _makeMembersHeader(group),
-                    _makeMembers(null),
-                  ],
-                ),
-              ),
-            ),
-          );
-        } else {
-          final group = (state.result)!;
-          return Scaffold(
-            appBar: ThaliaAppBar(title: Text(group.name.toUpperCase())),
-            body: RefreshIndicator(
-              onRefresh: () => _groupCubit.load(),
-              child: Scrollbar(
-                child: CustomScrollView(
-                  key: const PageStorageKey('group'),
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          _makeImage(group),
-                          const Divider(height: 0),
-                          _makeGroupInfo(group)
-                        ],
-                      ),
-                    ),
-                    _makeMembersHeader(group),
-                    _makeMembers(group.members),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }
-      },
     );
   }
 }
