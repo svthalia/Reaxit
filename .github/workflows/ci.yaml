@@ -164,13 +164,12 @@ jobs:
       - name: Decode secrets
         env:
           GOOGLE_PLAY_CONFIG: ${{ secrets.GOOGLE_PLAY_CONFIG_JSON }}
-          RELEASE_CONFIG_STORE_FILE: ${{ secrets.ANDROID_RELEASE_CONFIG_STORE_FILE }}
           RELEASE_CONFIG_STORE_PASS: ${{ secrets.ANDROID_RELEASE_CONFIG_STORE_PASS }}
           RELEASE_CONFIG_KEY_PASS: ${{ secrets.ANDROID_RELEASE_CONFIG_KEY_PASS }}
           RELEASE_CONFIG_KEY_ALIAS: ${{ secrets.ANDROID_RELEASE_CONFIG_KEY_ALIAS }}
         run: |
           echo $GOOGLE_PLAY_CONFIG > $GITHUB_WORKSPACE/google-play.json
-          echo "storeFile=$RELEASE_CONFIG_STORE_FILE" > $GITHUB_WORKSPACE/android/key.properties
+          echo "storeFile=$GITHUB_WORKSPACE/thaliapp-passwords/upload.keystore" > $GITHUB_WORKSPACE/android/key.properties
           echo "storePassword=$RELEASE_CONFIG_STORE_PASS" >> $GITHUB_WORKSPACE/android/key.properties
           echo "keyPassword=$RELEASE_CONFIG_KEY_PASS" >> $GITHUB_WORKSPACE/android/key.properties
           echo "keyAlias=$RELEASE_CONFIG_KEY_ALIAS" >> $GITHUB_WORKSPACE/android/key.properties

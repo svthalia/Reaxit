@@ -84,7 +84,6 @@ To build and deploy the app with Github Actions, we need to set up a number of s
 
 | Secret | Description | How to get it |
 | :----- | :---------- | :------------ |
-| `ANDROID_RELEASE_CONFIG_STORE_FILE` | Path to the keystore to use for android signing | `/home/runner/work/Reaxit/Reaxit/thaliapp-passwords/upload.keystore` | 
 | `ANDROID_RELEASE_CONFIG_STORE_PASS` | Password of the keystore to use for android signing | Get from `ThaliaApp-Passwords/Upload Signing Keystore` |
 | `ANDROID_RELEASE_CONFIG_KEY_ALIAS` | Alias of the key to use for android signing | `appsigning` |
 | `ANDROID_RELEASE_CONFIG_KEY_PASS` | Password of the key to use for android signing | Get from `ThaliaApp-Passwords/Upload Signing Key` |
@@ -95,6 +94,8 @@ To build and deploy the app with Github Actions, we need to set up a number of s
 | `SENTRY_DSN` | DSN for Sentry | Get from [`sentry.io`](https://sentry.io/) |
 | `THALIA_OAUTH_APP_ID` | OAuth client ID for the Thalia API | Get from `ThaliaApp-Passwords/concrexit-oauth-secrets` |
 | `THALIA_OAUTH_APP_SECRET` | OAuth client secret for the Thalia API | Get from `ThaliaApp-Passwords/concrexit-oauth-secrets` |
+| `TOSTI_OAUTH_APP_ID` | OAuth client ID for the TOSTI API (leave empty to disable TOSTI) | Get from `ThaliaApp-Passwords/tosti-oauth-secrets` |
+| `TOSTI_OAUTH_APP_SECRET` | OAuth client secret for the TOSTI API (leave empty to disable TOSTI) | Get from `ThaliaApp-Passwords/tosti-oauth-secrets` |
 
 
 ## Release procedure
