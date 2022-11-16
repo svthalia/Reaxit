@@ -46,7 +46,7 @@ class _AlbumScreenState extends State<AlbumScreen>
   /// to update the page count at the bottom of the page.
   PageController pageCountController = PageController(initialPage: 0);
 
-  // This should be called when scrolling on the mainPageController to update
+  /// This should be called when scrolling on `mainPageController` to update
   /// the `pageCountController`.
   void _onGalleryScroll() {
     pageCountController.animateTo(mainPageController.offset,
