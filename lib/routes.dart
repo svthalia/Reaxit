@@ -29,9 +29,9 @@ final List<RegExp> _deepLinkRegExps = <RegExp>[
   RegExp('^/members/photos/([a-z0-9-_]+)/?\$'),
   RegExp('^/sales/order/$_uuid/pay/?\$'),
   RegExp('^/events/([0-9]+)/mark-present/$_uuid/?\$'),
-  RegExp('^/association/committees/([0-9]+)/?\$'),
-  RegExp('^/association/boards/([0-9]+)/?\$'),
-  RegExp('^/association/societies/([0-9]+)/?\$'),
+  RegExp('^/association/committees(/[0-9]+)?/?\$'),
+  RegExp('^/association/boards(/[0-9]+)?/?\$'),
+  RegExp('^/association/societies(/[0-9]+)?/?\$'),
 ];
 
 final List<RouteBase> routes = [
