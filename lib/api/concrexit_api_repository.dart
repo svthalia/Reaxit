@@ -63,7 +63,7 @@ class ConcrexitApiRepository implements ApiRepository {
   ///
   /// Translates exceptions that can be thrown by [oauth2.Client.send()],
   /// and throws exceptions based on status codes. By default, all status codes
-  /// other than 200, 201 and 204 result in an [ApiException], but this can be
+  /// other than 200, 201, 203, and 204 result in an [ApiException], but this can be
   /// overridden with `allowedStatusCodes`.
   ///
   /// Can be called for example as:

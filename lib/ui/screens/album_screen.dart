@@ -40,11 +40,16 @@ class _AlbumScreenState extends State<AlbumScreen>
   late AnimationController controller;
   late Animation<double> animation;
 
-  PageController pageController = PageController(initialPage: 0);
-  PageController pageController2 = PageController(initialPage: 0);
+  // mainPageController is the controller used in the image gallery
+  PageController mainPageController = PageController(initialPage: 0);
+  // pageCountController is made to follow the mainPageController, and is used
+  // to update the pagecount at the bottom of the page
+  PageController pageCountController = PageController(initialPage: 0);
 
-  void _onMainScroll() {
-    pageController2.animateTo(pageController.offset,
+  // This should be called when scrolling on the mainPageController to update
+  // the pageCountController
+  void _onGalleryScroll() {
+    pageCountController.animateTo(mainPageController.offset,
         duration: const Duration(milliseconds: 0), curve: Curves.decelerate);
   }
 
@@ -53,7 +58,7 @@ class _AlbumScreenState extends State<AlbumScreen>
     _albumCubit = AlbumCubit(
       RepositoryProvider.of<ApiRepository>(context),
     )..load(widget.slug);
-    pageController.addListener(_onMainScroll);
+    mainPageController.addListener(_onGalleryScroll);
     controller = AnimationController(
         duration: const Duration(milliseconds: 500), vsync: this);
     filledController = AnimationController(
@@ -106,7 +111,7 @@ class _AlbumScreenState extends State<AlbumScreen>
     }
   }
 
-  void downloadImage(BuildContext context, Uri url) async {
+  Future<void> downloadImage(BuildContext context, Uri url) async {
     final messenger = ScaffoldMessenger.of(context);
     try {
       final response = await http.get(url);
@@ -135,7 +140,7 @@ class _AlbumScreenState extends State<AlbumScreen>
     }
   }
 
-  void _share(BuildContext context, Uri url) async {
+  Future<void> _share(BuildContext context, Uri url) async {
     final messenger = ScaffoldMessenger.of(context);
 
     try {
@@ -196,7 +201,7 @@ class _AlbumScreenState extends State<AlbumScreen>
 
   Widget _gallery(List<AlbumPhoto> photos) => PhotoViewGallery.builder(
         onPageChanged: (index) {
-          pageController2.jumpToPage(index);
+          pageCountController.jumpToPage(index);
         },
         loadingBuilder: (_, __) => const Center(
           child: CircularProgressIndicator(),
@@ -215,7 +220,7 @@ class _AlbumScreenState extends State<AlbumScreen>
             maxScale: PhotoViewComputedScale.covered * 2,
           );
         },
-        pageController: pageController,
+        pageController: mainPageController,
       );
 
   Widget _downloadButton(List<AlbumPhoto> photos) => IconButton(
@@ -223,7 +228,7 @@ class _AlbumScreenState extends State<AlbumScreen>
         color: Theme.of(context).primaryIconTheme.color,
         icon: const Icon(Icons.download),
         onPressed: () async => downloadImage(
-            context, Uri.parse(photos[pageController2.page!.round()].full)),
+            context, Uri.parse(photos[pageCountController.page!.round()].full)),
       );
 
   Widget _shareButton(List<AlbumPhoto> photos) => IconButton(
@@ -235,7 +240,7 @@ class _AlbumScreenState extends State<AlbumScreen>
               : Icons.share,
         ),
         onPressed: () async => _share(
-            context, Uri.parse(photos[pageController2.page!.floor()].full)),
+            context, Uri.parse(photos[pageCountController.page!.floor()].full)),
       );
 
   List<Widget> _heartPopup() => [
@@ -307,7 +312,7 @@ class _AlbumScreenState extends State<AlbumScreen>
           // it is impossible to change the initial page after it has been created.
           // We cannot jump to the page because it is not attached jet. When it opens
           // the gallery it will use the initialPage instead of last jumped-to page.
-          pageController = PageController(initialPage: initialGalleryIndex);
+          mainPageController = PageController(initialPage: initialGalleryIndex);
 
           Widget overlayScaffold = Scaffold(
             extendBodyBehindAppBar: true,
@@ -333,7 +338,7 @@ class _AlbumScreenState extends State<AlbumScreen>
                   child: _gallery(album.photos),
                 ),
                 PageCounter(
-                  controler: pageController2,
+                  controler: pageCountController,
                   pagecount: album.photos.length,
                   isliked: likedlist,
                   likeToggle: (likedIndex) =>
