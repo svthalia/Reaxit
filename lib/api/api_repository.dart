@@ -324,7 +324,7 @@ abstract class ApiRepository {
   /// Get a list of [ListGroup]s.
   ///
   /// Use `limit` and `offset` for pagination, and `type`, `start`, `end` and
-  /// `search for filtering. [ListResponse.count] is the total number of
+  /// `search` for filtering. [ListResponse.count] is the total number of
   /// [ListGroup]s that can be returned.
   Future<ListResponse<ListGroup>> getGroups({
     int? limit,
