@@ -64,6 +64,14 @@ class TostiScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Image.asset(
+                      'assets/img/tosti-logo.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
                   const Text(
                     'You need to be logged in to use the Tartarus Order System for Take-away Items.',
                     textAlign: TextAlign.center,

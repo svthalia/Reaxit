@@ -37,9 +37,18 @@ class _VenueCardState extends State<VenueCard> {
 
     late final Widget orderSegment;
     if (widget.venue.shift == null) {
-      orderSegment = const Padding(
-        padding: EdgeInsets.fromLTRB(12, 0, 12, 8),
-        child: Text('Not available to order.'),
+      orderSegment = Padding(
+        padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Not available to order.'),
+            ElevatedButton(
+              onPressed: null,
+              child: Text('ORDER AT ${widget.venue.name.toUpperCase()}'),
+            ),
+          ],
+        ),
       );
     } else {
       final shift = widget.venue.shift!;
@@ -67,50 +76,6 @@ class _VenueCardState extends State<VenueCard> {
       );
     }
 
-    Widget? playerSegment;
-    if (widget.venue.player != null) {
-      final player = widget.venue.player!;
-      if (player.track == null) {
-        playerSegment = const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12),
-          child: Text('Not currently playing.'),
-        );
-      } else {
-        final track = player.track!;
-        playerSegment = Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'CURRENTLY PLAYING:',
-                style: textTheme.caption,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                track.name,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: textTheme.subtitle2,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'BY:',
-                style: textTheme.caption,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                track.artists.join(', '),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: textTheme.subtitle2,
-              ),
-            ],
-          ),
-        );
-      }
-    }
-
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,12 +88,63 @@ class _VenueCardState extends State<VenueCard> {
               style: textTheme.headline6,
             ),
           ),
-          if (playerSegment != null) const Divider(height: 16),
-          if (playerSegment != null) playerSegment,
+          if (widget.venue.player != null) const Divider(height: 16),
+          if (widget.venue.player != null)
+            _PlayerSegment(player: widget.venue.player!),
           const Divider(height: 16),
           orderSegment,
         ],
       ),
     );
+  }
+}
+
+class _PlayerSegment extends StatelessWidget {
+  final ThaliedjePlayer player;
+
+  const _PlayerSegment({required this.player});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    if (player.track == null) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 12),
+        child: Text('Not currently playing.'),
+      );
+    } else {
+      final track = player.track!;
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'CURRENTLY PLAYING:',
+              style: textTheme.caption,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              track.name,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: textTheme.subtitle2,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'BY:',
+              style: textTheme.caption,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              track.artists.join(', '),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: textTheme.subtitle2,
+            ),
+          ],
+        ),
+      );
+    }
   }
 }
