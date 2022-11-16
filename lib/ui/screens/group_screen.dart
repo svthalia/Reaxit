@@ -171,7 +171,9 @@ class _GroupScreenState extends State<GroupScreen> {
             appBar: ThaliaAppBar(title: const Text('GROUP')),
             body: const Center(child: CircularProgressIndicator()),
           );
-        } else if (state.isLoading && widget.group != null && state.result == null){
+        } else if (state.isLoading &&
+            widget.group != null &&
+            state.result == null) {
           final group = widget.group!;
           return Scaffold(
             appBar: ThaliaAppBar(title: Text(group.name.toUpperCase())),

@@ -6,7 +6,7 @@ import 'package:reaxit/models/group.dart';
 
 typedef GroupsState = DetailState<List<ListGroup>>;
 
-class GroupsCubit extends  Cubit<GroupsState> {
+class GroupsCubit extends Cubit<GroupsState> {
   final ApiRepository api;
   final MemberGroupType? groupType;
 
@@ -15,10 +15,7 @@ class GroupsCubit extends  Cubit<GroupsState> {
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
     try {
-      final listResponse = await api.getGroups(
-        limit: 1000,
-        type: groupType
-      );
+      final listResponse = await api.getGroups(limit: 1000, type: groupType);
       if (listResponse.results.isNotEmpty) {
         emit(GroupsState.result(result: listResponse.results));
       } else {

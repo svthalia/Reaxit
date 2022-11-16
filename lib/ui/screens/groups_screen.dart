@@ -36,15 +36,14 @@ class _GroupsScreenState extends State<GroupsScreen>
   int _groupTypeToIndex(MemberGroupType? group) {
     if (group == MemberGroupType.committee) {
       return 0;
-    } else if (group== MemberGroupType.society) {
+    } else if (group == MemberGroupType.society) {
       return 1;
     } else if (group == MemberGroupType.board) {
       return 2;
     } else {
-      return  0;
+      return 0;
     }
   }
-
 
   @override
   void dispose() {
@@ -52,11 +51,10 @@ class _GroupsScreenState extends State<GroupsScreen>
     super.dispose();
   }
 
-
   @override
   void didUpdateWidget(GroupsScreen oldWidget) {
-      super.didUpdateWidget(oldWidget);
-      _tabController.index = _groupTypeToIndex(widget.currentScreen);
+    super.didUpdateWidget(oldWidget);
+    _tabController.index = _groupTypeToIndex(widget.currentScreen);
   }
 
   @override
@@ -132,8 +130,8 @@ class GroupListScrollView extends StatelessWidget {
 
   GroupListScrollView({Key? key, required List<ListGroup> groups})
       : activeBoard = groups.firstWhereOrNull(
-        (element) => element.isActiveBoard(),
-  ),
+          (element) => element.isActiveBoard(),
+        ),
         groups = groups
             .where((element) => !element.isActiveBoard())
             .toList()
@@ -168,7 +166,7 @@ class GroupListScrollView extends StatelessWidget {
                 crossAxisSpacing: 8,
               ),
               delegate: SliverChildBuilderDelegate(
-                    (context, index) => GroupTile(group: groups[index]),
+                (context, index) => GroupTile(group: groups[index]),
                 childCount: groups.length,
               ),
             ),
