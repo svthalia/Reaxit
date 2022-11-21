@@ -135,7 +135,7 @@ dev_dependencies:
   flutter_lints: ^2.0.1
 
   # Generating splash screens.
-  flutter_native_splash: ^1.2.3
+  flutter_native_splash: ^2.2.15
 
   mockito: ^5.2.0
 
