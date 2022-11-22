@@ -221,6 +221,7 @@ class _AlbumScreenState extends State<AlbumScreen>
 
   List<Widget> _heartPopup() => [
         //TODO: add background/shadow around this to contrast white background
+        // https://stackoverflow.com/a/62227751 or a plugin that adds shoadows to icons
         ScaleTransition(
           scale: animation,
           child: const Center(
@@ -450,7 +451,6 @@ class _PageCounterState extends State<PageCounter>
           child: IconButton(
             iconSize: 24,
             icon: Icon(
-              size: 24.0,
               color: widget.isliked[currentIndex] ? magenta : Colors.white,
               widget.isliked[currentIndex]
                   ? Icons.favorite
