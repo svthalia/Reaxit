@@ -253,25 +253,17 @@ class _AlbumScreenState extends State<AlbumScreen>
       );
 
   List<Widget> _heartPopup() => [
+        //TODO: add background/shadow around this to contrast white background
         ScaleTransition(
           scale: animation,
           child: const Center(
-            child: CustomPaint(
-              size: Size(70, 80),
-              painter: HeartPainter(),
-            ),
+            child: Icon(Icons.favorite, size: 70),
           ),
         ),
         ScaleTransition(
           scale: filledAnimation,
           child: const Center(
-            child: CustomPaint(
-              size: Size(70, 80),
-              painter: HeartPainter(
-                filled: true,
-                color: magenta,
-              ),
-            ),
+            child: Icon(Icons.favorite, size: 70, color: magenta),
           ),
         ),
       ];
@@ -373,51 +365,6 @@ class _AlbumScreenState extends State<AlbumScreen>
   }
 }
 
-class HeartPainter extends CustomPainter {
-  final bool filled;
-  final double strokeWidth;
-  final Color color;
-
-  @override
-  const HeartPainter(
-      {this.filled = false, this.strokeWidth = 6, this.color = Colors.white});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint paint = Paint();
-    paint
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = strokeWidth;
-
-    double width = size.width;
-    double height = size.height;
-    Path path = Path();
-    path.moveTo(0.5 * width, height * 0.25);
-    path.cubicTo(0.2 * width, height * 0, -0.25 * width, height * 0.5,
-        0.5 * width, height * 0.9);
-    path.moveTo(0.5 * width, height * 0.25);
-    path.cubicTo(0.8 * width, height * 0, 1.25 * width, height * 0.5,
-        0.5 * width, height * 0.9);
-
-    if (filled) {
-      Paint paint1 = Paint();
-      paint1
-        ..color = color
-        ..style = PaintingStyle.fill
-        ..strokeWidth = 0;
-      canvas.drawPath(path, paint1);
-    }
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return false;
-  }
-}
-
 class PageCounter extends StatefulWidget {
   final PageController controler;
   final int pagecount;
@@ -467,12 +414,13 @@ class _PageCounterState extends State<PageCounter>
           message: 'like photo',
           child: IconButton(
             iconSize: 24,
-            icon: CustomPaint(
-                size: const Size.square(24.0),
-                painter: widget.isliked[currentIndex]
-                    ? const HeartPainter(
-                        filled: true, strokeWidth: 2, color: magenta)
-                    : const HeartPainter(strokeWidth: 2)),
+            icon: Icon(
+              size: 24.0,
+              color: widget.isliked[currentIndex] ? magenta : Colors.white,
+              widget.isliked[currentIndex]
+                  ? Icons.favorite
+                  : Icons.favorite_outline,
+            ),
             onPressed: () => widget.likeToggle(currentIndex),
           ),
         ),
