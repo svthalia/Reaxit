@@ -30,6 +30,8 @@ class SettingsScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text('ABOUT', style: textTheme.caption),
                   const _AboutCard(),
+                  const SizedBox(height: 8),
+                  const _LogOutButton(),
                 ],
               ),
             );
@@ -48,6 +50,8 @@ class SettingsScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text('ABOUT', style: textTheme.caption),
                 const _AboutCard(),
+                const SizedBox(height: 8),
+                const _LogOutButton(),
               ],
             );
           } else {
@@ -105,6 +109,8 @@ class SettingsScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text('ABOUT', style: textTheme.caption),
                 const _AboutCard(),
+                const SizedBox(height: 8),
+                const _LogOutButton(),
               ],
             );
           }
@@ -334,6 +340,24 @@ class _AboutCard extends StatelessWidget {
             )
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _LogOutButton extends StatelessWidget {
+  const _LogOutButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: OutlinedButton.icon(
+        icon: const Icon(Icons.logout),
+        label: const Text('Log out'),
+        onPressed: () async {
+          BlocProvider.of<AuthCubit>(context).logOut();
+        },
       ),
     );
   }

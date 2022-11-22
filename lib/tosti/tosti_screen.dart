@@ -76,7 +76,7 @@ class TostiScreen extends StatelessWidget {
                     'You need to be logged in to use the Tartarus Order System for Take-away Items.',
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 16),
                   Center(
                     child: ElevatedButton(
                       onPressed: () => BlocProvider.of<TostiAuthCubit>(

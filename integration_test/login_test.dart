@@ -127,8 +127,21 @@ void main() {
 
         await tester.tap(find.byIcon(Icons.menu));
         await tester.pumpAndSettle();
-
+        await tester.tap(find.byIcon(Icons.settings));
+        await tester.pumpAndSettle();
+        await Future.delayed(const Duration(seconds: 5));
+        await tester.pumpAndSettle();
+        await tester.flingFrom(
+          const Offset(100, 250),
+          const Offset(0, -100),
+          200,
+        );
+        await tester.pumpAndSettle();
         await tester.tap(find.byIcon(Icons.logout));
+        await tester.pumpAndSettle();
+
+        verify(authCubit.logOut()).called(1);
+
         streamController.add(LoggedOutAuthState());
         await tester.pumpAndSettle();
 

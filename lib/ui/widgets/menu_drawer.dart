@@ -11,6 +11,7 @@ class MenuDrawer extends StatelessWidget {
     final router = GoRouter.of(context);
     return Drawer(
       child: ListView(
+        primary: false,
         padding: EdgeInsets.zero,
         children: [
           BlocBuilder<FullMemberCubit, FullMemberState>(
@@ -198,6 +199,19 @@ class MenuDrawer extends StatelessWidget {
               }
             },
           ),
+          const Divider(thickness: 1),
+          ListTile(
+            title: const Text('Settings'),
+            leading: const Icon(Icons.settings),
+            selected: router.location == '/settings',
+            onTap: () {
+              if (router.location == '/settings') {
+                Navigator.of(context).pop();
+              } else {
+                context.goNamed('settings');
+              }
+            },
+          ),
           if (config.tostiEnabled)
             ListTile(
               title: const Text('T.O.S.T.I.'),
@@ -211,26 +225,6 @@ class MenuDrawer extends StatelessWidget {
                 }
               },
             ),
-          ListTile(
-            title: const Text('Settings'),
-            leading: const Icon(Icons.settings),
-            selected: router.location == '/settings',
-            onTap: () {
-              if (router.location == '/settings') {
-                Navigator.of(context).pop();
-              } else {
-                context.goNamed('settings');
-              }
-            },
-          ),
-          const Divider(height: 0, thickness: 1),
-          ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text('Log out'),
-            onTap: () async {
-              BlocProvider.of<AuthCubit>(context).logOut();
-            },
-          ),
         ],
       ),
     );
