@@ -59,13 +59,7 @@ dependencies:
   url_launcher: ^6.1.5
 
   # Authenticating in browser.
-  flutter_web_auth:
-    # flutter_web_auth is not compatible with flutter 3.0.x yet. The fix has not 
-    # been released yet, so we temporarily reference the fix by a git reference.
-    # TODO: Remove this when the fix is released. See: https://github.com/LinusU/flutter_web_auth/pull/118
-    git:
-      url: https://github.com/noga-dev/flutter_web_auth.git
-      ref: a49488592f9eeeec3c75ae9335ed51ae84f2a2b0
+  flutter_web_auth_2: ^2.0.2
 
   # Modal photo views.
   photo_view: ^0.14.0

@@ -5,7 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_web_auth/flutter_web_auth.dart';
+import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/tosti/tosti_api_repository.dart';
@@ -164,7 +164,7 @@ class TostiAuthCubit extends Cubit<TostiAuthState> {
       // Present the authentication flow, and wait
       // for the redirect url with the credentials.
       final responseUrl = Uri.parse(
-        await FlutterWebAuth.authenticate(
+        await FlutterWebAuth2.authenticate(
           url: authorizeUrl.toString(),
           callbackUrlScheme: _redirectUrl.scheme,
         ),
