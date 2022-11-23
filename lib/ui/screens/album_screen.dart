@@ -203,19 +203,15 @@ class _AlbumScreenState extends State<AlbumScreen>
         padding: const EdgeInsets.all(16),
         color: Theme.of(context).primaryIconTheme.color,
         icon: const Icon(Icons.download),
-        onPressed: () async => downloadImage(
+        onPressed: () => downloadImage(
             context, Uri.parse(photos[pageCountController.page!.round()].full)),
       );
 
   Widget _shareButton(List<AlbumPhoto> photos) => IconButton(
         padding: const EdgeInsets.all(16),
         color: Theme.of(context).primaryIconTheme.color,
-        icon: Icon(
-          Theme.of(context).platform == TargetPlatform.iOS
-              ? Icons.ios_share
-              : Icons.share,
-        ),
-        onPressed: () async => _shareImage(
+        icon: Icon(Icons.adaptive.share),
+        onPressed: () => _shareImage(
             context, Uri.parse(photos[pageCountController.page!.floor()].full)),
       );
 
@@ -332,29 +328,27 @@ class _ShareAlbumButton extends StatelessWidget {
 
   const _ShareAlbumButton({required this.slug});
 
+  Future<void> _shareAlbum(BuildContext context) async {
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await Share.share('https://${config.apiHost}/members/photos/$slug/');
+    } catch (_) {
+      messenger.showSnackBar(
+        const SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('Could not share the album.'),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return IconButton(
       padding: const EdgeInsets.all(16),
       color: Theme.of(context).primaryIconTheme.color,
-      icon: Icon(
-        Theme.of(context).platform == TargetPlatform.iOS
-            ? Icons.ios_share
-            : Icons.share,
-      ),
-      onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        try {
-          await Share.share('https://${config.apiHost}/members/photos/$slug/');
-        } catch (_) {
-          messenger.showSnackBar(
-            const SnackBar(
-              behavior: SnackBarBehavior.floating,
-              content: Text('Could not share the album.'),
-            ),
-          );
-        }
-      },
+      icon: Icon(Icons.adaptive.share),
+      onPressed: () => _shareAlbum(context),
     );
   }
 }
