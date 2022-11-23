@@ -17,7 +17,7 @@ import 'package:reaxit/config.dart' as config;
 import 'package:share_plus/share_plus.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 
-/// Screen that loads and shows a the Album of the member with `slug`.
+/// Screen that loads and shows the Album with `slug`.
 class AlbumScreen extends StatefulWidget {
   final String slug;
   final ListAlbum? album;
@@ -42,6 +42,7 @@ class _AlbumScreenState extends State<AlbumScreen>
 
   /// The controller used in the image gallery.
   PageController mainPageController = PageController(initialPage: 0);
+
   /// Made to follow the `mainPageController`, and used
   /// to update the page count at the bottom of the page.
   PageController pageCountController = PageController(initialPage: 0);
@@ -174,40 +175,6 @@ class _AlbumScreenState extends State<AlbumScreen>
     }
   }
 
-  Future<void> _shareAlbum(BuildContext context, String slug) async {
-    final messenger = ScaffoldMessenger.of(context);
-    try {
-      await Share.share('https://${config.apiHost}/members/photos/$slug/');
-    } catch (_) {
-      messenger.showSnackBar(
-        const SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Text('Could not share the album.'),
-        ),
-      );
-    }
-  }
-
-  Widget _makeShareAlbumButton(BuildContext context, String slug) => IconButton(
-        padding: const EdgeInsets.all(16),
-        color: Theme.of(context).primaryIconTheme.color,
-        icon: Icon(
-          Theme.of(context).platform == TargetPlatform.iOS
-              ? Icons.ios_share
-              : Icons.share,
-        ),
-        onPressed: () => _shareAlbum(context, slug),
-      );
-
-  Widget _makePhotoCard(List<AlbumPhoto> photos, int index) => GestureDetector(
-        onTap: () => openGallery(index),
-        child: FadeInImage.assetNetwork(
-          placeholder: 'assets/img/photo_placeholder.png',
-          image: photos[index].small,
-          fit: BoxFit.cover,
-        ),
-      );
-
   Widget _gallery(List<AlbumPhoto> photos) => PhotoViewGallery.builder(
         onPageChanged: (index) {
           pageCountController.jumpToPage(index);
@@ -268,23 +235,6 @@ class _AlbumScreenState extends State<AlbumScreen>
         ),
       ];
 
-  Widget _smallGallery(List<AlbumPhoto> photos) => Scrollbar(
-          child: GridView.builder(
-        key: const PageStorageKey('album'),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
-          crossAxisCount: 3,
-        ),
-        itemCount: photos.length,
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(8),
-        itemBuilder: (context, index) => _makePhotoCard(
-          photos,
-          index,
-        ),
-      ));
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AlbumCubit, AlbumState>(
@@ -296,13 +246,16 @@ class _AlbumScreenState extends State<AlbumScreen>
               title: Text(state.result?.title.toUpperCase() ??
                   widget.album?.title.toUpperCase() ??
                   'ALBUM'),
-              actions: [_makeShareAlbumButton(context, widget.slug)],
+              actions: [_ShareAlbumButton(slug: widget.slug)],
             ),
             body: state.hasException
                 ? ErrorScrollView(state.message!)
                 : state.isLoading
                     ? const Center(child: CircularProgressIndicator())
-                    : _smallGallery(state.result!.photos));
+                    : _PhotoGrid(
+                        photos: state.result!.photos,
+                        openGallery: openGallery,
+                      ));
 
         if (galleryShown && !state.hasException && !state.isLoading) {
           Album album = state.result!;
@@ -361,6 +314,88 @@ class _AlbumScreenState extends State<AlbumScreen>
         }
         return mainScaffold;
       },
+    );
+  }
+}
+
+class _ShareAlbumButton extends StatelessWidget {
+  final String slug;
+
+  const _ShareAlbumButton({required this.slug});
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      padding: const EdgeInsets.all(16),
+      color: Theme.of(context).primaryIconTheme.color,
+      icon: Icon(
+        Theme.of(context).platform == TargetPlatform.iOS
+            ? Icons.ios_share
+            : Icons.share,
+      ),
+      onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        try {
+          await Share.share('https://${config.apiHost}/members/photos/$slug/');
+        } catch (_) {
+          messenger.showSnackBar(
+            const SnackBar(
+              behavior: SnackBarBehavior.floating,
+              content: Text('Could not share the album.'),
+            ),
+          );
+        }
+      },
+    );
+  }
+}
+
+class _PhotoGrid extends StatelessWidget {
+  final List<AlbumPhoto> photos;
+  final void Function(int index) openGallery;
+
+  const _PhotoGrid({required this.photos, required this.openGallery});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scrollbar(
+      child: GridView.builder(
+        key: const PageStorageKey('album'),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+          crossAxisCount: 3,
+        ),
+        itemCount: photos.length,
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(8),
+        itemBuilder: (context, index) => _PhotoTile(
+          photo: photos[index],
+          openGallery: () => openGallery(index),
+        ),
+      ),
+    );
+  }
+}
+
+class _PhotoTile extends StatelessWidget {
+  final AlbumPhoto photo;
+  final void Function() openGallery;
+
+  _PhotoTile({
+    required this.photo,
+    required this.openGallery,
+  }) : super(key: ValueKey(photo.pk));
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: openGallery,
+      child: FadeInImage.assetNetwork(
+        placeholder: 'assets/img/photo_placeholder.png',
+        image: photo.small,
+        fit: BoxFit.cover,
+      ),
     );
   }
 }
