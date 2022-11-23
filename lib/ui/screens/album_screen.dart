@@ -220,12 +220,20 @@ class _AlbumScreenState extends State<AlbumScreen>
       );
 
   List<Widget> _heartPopup() => [
-        //TODO: add background/shadow around this to contrast white background
-        // https://stackoverflow.com/a/62227751 or a plugin that adds shoadows to icons
         ScaleTransition(
           scale: animation,
           child: const Center(
-            child: Icon(Icons.favorite, size: 70),
+            child: Icon(
+              Icons.favorite,
+              size: 70,
+              shadows: [
+                BoxShadow(
+                  color: Colors.black,
+                  spreadRadius: 10,
+                  blurRadius: 10,
+                ),
+              ],
+            ),
           ),
         ),
         ScaleTransition(
