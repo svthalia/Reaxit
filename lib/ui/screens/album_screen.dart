@@ -167,9 +167,7 @@ class _AlbumScreenState extends State<AlbumScreen>
   }
 
   Widget _gallery(List<AlbumPhoto> photos) => PhotoViewGallery.builder(
-        onPageChanged: (index) {
-          pageCountController.jumpToPage(index);
-        },
+        onPageChanged: pageCountController.jumpToPage,
         loadingBuilder: (_, __) => const Center(
           child: CircularProgressIndicator(),
         ),
@@ -261,6 +259,8 @@ class _AlbumScreenState extends State<AlbumScreen>
           // We cannot jump to the page because it is not attached jet. When it opens
           // the gallery it will use the initialPage instead of last jumped-to page.
           mainPageController = PageController(initialPage: initialGalleryIndex);
+          pageCountController =
+              PageController(initialPage: initialGalleryIndex);
 
           Widget overlayScaffold = Scaffold(
             extendBodyBehindAppBar: true,
@@ -422,6 +422,7 @@ class _PageCounterState extends State<PageCounter>
     _position?.applyViewportDimension(1.0);
     _position?.applyContentDimensions(0, widget.pagecount.toDouble());
     widget.controler.attach(_position!);
+    currentIndex = widget.controler.page?.toInt() ?? 0;
     super.initState();
   }
 
