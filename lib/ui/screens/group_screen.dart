@@ -108,7 +108,7 @@ class _Page extends StatelessWidget {
                   ),
                 ),
                 _MembersHeader(group: group),
-                _MembersGrid(members: null),
+                const _MembersGrid(members: null),
               ],
             ),
           ),
