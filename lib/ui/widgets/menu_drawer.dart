@@ -189,7 +189,7 @@ class MenuDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Groups'),
             leading: const Icon(Icons.groups),
-            selected: router.location == '/groups',
+            selected: router.location.startsWith('/groups'),
             onTap: () {
               if (router.location == '/groups') {
                 Navigator.of(context).pop();

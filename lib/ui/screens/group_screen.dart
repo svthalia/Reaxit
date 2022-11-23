@@ -246,21 +246,25 @@ class _GroupInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SizedBox(height: 8),
-          Text(
-            group.name.toUpperCase(),
-            style: Theme.of(context).textTheme.headline6,
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 8),
+              Text(
+                group.name.toUpperCase(),
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              const Divider(height: 24),
+              _Description(group: group),
+            ],
           ),
-          const Divider(height: 24),
-          _Description(group: group),
-          const Divider(height: 24),
-        ],
-      ),
+        ),
+        const Divider(),
+      ],
     );
   }
 }
