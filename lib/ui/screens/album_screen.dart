@@ -253,7 +253,6 @@ class _AlbumScreenState extends State<AlbumScreen>
                       openGallery: openGallery,
                     ),
         );
-
         if (state.isOpen) {
           Album album = state.album!;
 
