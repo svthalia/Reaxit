@@ -181,7 +181,7 @@ class _GroupImage extends StatelessWidget {
       fit: StackFit.loose,
       children: [
         CachedImage(
-          imageUrl: group.photo.full,
+          imageUrl: group.photo.large,
           placeholder: 'assets/img/default-avatar.jpg',
         )
       ],

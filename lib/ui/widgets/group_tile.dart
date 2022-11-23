@@ -22,7 +22,7 @@ class GroupTile extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             CachedImage(
-              imageUrl: group.photo.small,
+              imageUrl: group.photo.large,
               placeholder: 'assets/img/default-avatar.jpg',
             ),
             const _BlackGradient(),
