@@ -6,8 +6,6 @@ import 'package:reaxit/tosti/tosti_api_repository.dart';
 import 'package:reaxit/tosti/tosti_screen.dart';
 import 'package:reaxit/tosti/tosti_shift_screen.dart';
 import 'package:reaxit/ui/screens.dart';
-import 'package:reaxit/ui/screens/group_screen.dart';
-import 'package:reaxit/ui/screens/groups_screen.dart';
 import 'package:reaxit/ui/widgets.dart';
 
 /// Returns true if [uri] is a deep link that can be handled by the app.
