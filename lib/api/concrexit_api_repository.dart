@@ -1164,7 +1164,7 @@ class ConcrexitApiRepository implements ApiRepository {
   @override
   Future<Group> getBoardGroup({required int since, required int until}) async {
     final uri = _baseUri.replace(
-        path: '$_basePath/activemembers/groups/boards/$since-$until/');
+        path: '$_basePath/activemembers/boards/$since-$until/');
     final response = await _handleExceptions(() => _client.get(uri));
     return Group.fromJson(_jsonDecode(response));
   }
