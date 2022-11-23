@@ -31,7 +31,6 @@ class AlbumScreen extends StatefulWidget {
 class _AlbumScreenState extends State<AlbumScreen>
     with TickerProviderStateMixin {
   late final AlbumCubit _albumCubit;
-  bool galleryShown = false;
   int initialGalleryIndex = 0;
 
   late AnimationController filledController;
@@ -88,16 +87,8 @@ class _AlbumScreenState extends State<AlbumScreen>
   }
 
   void openGallery(int index) {
-    setState(() {
-      galleryShown = true;
-      initialGalleryIndex = index;
-    });
-  }
-
-  void closeGallery() {
-    setState(() {
-      galleryShown = false;
-    });
+    _albumCubit.openScrollingGallery();
+    initialGalleryIndex = index;
   }
 
   Future<void> likePhoto(
@@ -242,30 +233,29 @@ class _AlbumScreenState extends State<AlbumScreen>
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AlbumCubit, AlbumState>(
+    return BlocBuilder<AlbumCubit, AlbumScreenState>(
       bloc: _albumCubit,
       //TODO: maybe make this a different function?
       builder: (context, state) {
         Widget mainScaffold = Scaffold(
-            appBar: ThaliaAppBar(
-              title: Text(state.result?.title.toUpperCase() ??
-                  widget.album?.title.toUpperCase() ??
-                  'ALBUM'),
-              actions: [_ShareAlbumButton(slug: widget.slug)],
-            ),
-            body: state.hasException
-                ? ErrorScrollView(state.message!)
-                : state.isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : _PhotoGrid(
-                        photos: state.result!.photos,
-                        openGallery: openGallery,
-                      ));
+          appBar: ThaliaAppBar(
+            title: Text(state.album?.title.toUpperCase() ??
+                widget.album?.title.toUpperCase() ??
+                'ALBUM'),
+            actions: [_ShareAlbumButton(slug: widget.slug)],
+          ),
+          body: state.hasException
+              ? ErrorScrollView(state.message!)
+              : state.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _PhotoGrid(
+                      photos: state.album!.photos,
+                      openGallery: openGallery,
+                    ),
+        );
 
-        if (galleryShown && !state.hasException && !state.isLoading) {
-          Album album = state.result!;
-          List<bool> likedlist = album.photos.map((e) => e.liked).toList();
-          List<int> likeslist = album.photos.map((e) => e.numLikes).toList();
+        if (state.isOpen) {
+          Album album = state.album!;
 
           // We change the pagecontroler with a new initialPage because
           // it is impossible to change the initial page after it has been created.
@@ -281,7 +271,7 @@ class _AlbumScreenState extends State<AlbumScreen>
               shadowColor: Colors.transparent,
               leading: CloseButton(
                 color: Theme.of(context).primaryIconTheme.color,
-                onPressed: closeGallery,
+                onPressed: _albumCubit.closeScrollingGallery,
               ),
               actions: [
                 _downloadButton(album.photos),
@@ -297,10 +287,10 @@ class _AlbumScreenState extends State<AlbumScreen>
                 PageCounter(
                   controler: pageCountController,
                   pagecount: album.photos.length,
-                  isliked: likedlist,
+                  isliked: state.likedList!,
                   likeToggle: (likedIndex) =>
                       likePhoto(context, likedIndex, album.photos),
-                  likecount: likeslist,
+                  likecount: state.likesList!,
                 ),
               ],
             ),
@@ -314,8 +304,6 @@ class _AlbumScreenState extends State<AlbumScreen>
               ..._heartPopup(),
             ],
           );
-        } else if (galleryShown) {
-          galleryShown = false;
         }
         return mainScaffold;
       },
