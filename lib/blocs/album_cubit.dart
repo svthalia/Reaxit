@@ -33,7 +33,7 @@ class AlbumScreenState extends Equatable {
         likesList = album?.photos.map((e) => e.numLikes).toList();
 
   @override
-  List<Object?> get props => [album, message, isLoading];
+  List<Object?> get props => [album, message, isLoading, isOpen];
 
   AlbumScreenState copyWith({
     Album? album,
@@ -49,11 +49,11 @@ class AlbumScreenState extends Equatable {
         isOpen: isOpen ?? this.isOpen,
       );
 
-  const AlbumScreenState.result({required this.album, required this.isOpen})
+  AlbumScreenState.result({required this.album, required this.isOpen})
       : message = null,
         isLoading = false,
-        likedList = null,
-        likesList = null;
+        likedList = album?.photos.map((e) => e.liked).toList(),
+        likesList = album?.photos.map((e) => e.numLikes).toList();
 
   const AlbumScreenState.loading({this.album})
       : message = null,
