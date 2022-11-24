@@ -83,10 +83,10 @@ class _Gallery extends StatefulWidget {
 class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
   late final PageController controller;
 
-  late AnimationController likeController;
-  late AnimationController unlikeController;
-  late Animation<double> likeAnimation;
-  late Animation<double> unlikeAnimation;
+  late final AnimationController likeController;
+  late final AnimationController unlikeController;
+  late final Animation<double> likeAnimation;
+  late final Animation<double> unlikeAnimation;
 
   @override
   void initState() {
@@ -115,7 +115,7 @@ class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
     super.initState();
   }
 
-  Future<void> _downloadImage(BuildContext context, Uri url) async {
+  Future<void> _downloadImage(Uri url) async {
     final messenger = ScaffoldMessenger.of(context);
     try {
       final response = await http.get(url);
@@ -144,9 +144,8 @@ class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
     }
   }
 
-  Future<void> _shareImage(BuildContext context, Uri url) async {
+  Future<void> _shareImage(Uri url) async {
     final messenger = ScaffoldMessenger.of(context);
-
     try {
       final response = await http.get(url);
       if (response.statusCode != 200) throw Exception();
@@ -165,11 +164,7 @@ class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
     }
   }
 
-  Future<void> likePhoto(
-    BuildContext context,
-    int index,
-    List<AlbumPhoto> photos,
-  ) async {
+  Future<void> likePhoto(List<AlbumPhoto> photos, int index) async {
     final messenger = ScaffoldMessenger.of(context);
     if (photos[index].liked) {
       unlikeController.forward();
@@ -192,15 +187,15 @@ class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
 
   Widget _gallery(List<AlbumPhoto> photos) => PhotoViewGallery.builder(
         backgroundDecoration: const BoxDecoration(color: Colors.transparent),
+        pageController: controller,
+        itemCount: photos.length,
         loadingBuilder: (_, __) => const Center(
           child: CircularProgressIndicator(),
         ),
-        pageController: controller,
-        itemCount: photos.length,
         builder: (context, i) {
           return PhotoViewGalleryPageOptions.customChild(
             child: GestureDetector(
-              onDoubleTap: () => likePhoto(context, i, photos),
+              onDoubleTap: () => likePhoto(photos, i),
               child: Image.network(photos[i].full),
             ),
             minScale: PhotoViewComputedScale.contained * 0.8,
@@ -209,58 +204,27 @@ class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
         },
       );
 
-  Widget _downloadButton(List<AlbumPhoto> photos) => IconButton(
-        padding: const EdgeInsets.all(16),
-        color: Theme.of(context).primaryIconTheme.color,
-        icon: const Icon(Icons.download),
-        onPressed: () => _downloadImage(
-            context, Uri.parse(photos[controller.page!.round()].full)),
-      );
+  Widget _downloadButton(List<AlbumPhoto> photos) {
+    return IconButton(
+      padding: const EdgeInsets.all(16),
+      color: Theme.of(context).primaryIconTheme.color,
+      icon: const Icon(Icons.download),
+      onPressed: () => _downloadImage(
+        Uri.parse(photos[controller.page!.round()].full),
+      ),
+    );
+  }
 
-  Widget _shareButton(List<AlbumPhoto> photos) => IconButton(
-        padding: const EdgeInsets.all(16),
-        color: Theme.of(context).primaryIconTheme.color,
-        icon: Icon(Icons.adaptive.share),
-        onPressed: () => _shareImage(
-            context, Uri.parse(photos[controller.page!.floor()].full)),
-      );
-
-  List<Widget> _heartPopup() => [
-        ScaleTransition(
-          scale: unlikeAnimation,
-          child: const Center(
-            child: Icon(
-              Icons.favorite,
-              size: 70,
-              color: Colors.white,
-              shadows: [
-                BoxShadow(
-                  color: Colors.black54,
-                  spreadRadius: 20,
-                  blurRadius: 20,
-                ),
-              ],
-            ),
-          ),
-        ),
-        ScaleTransition(
-          scale: likeAnimation,
-          child: const Center(
-            child: Icon(
-              Icons.favorite,
-              size: 70,
-              color: magenta,
-              shadows: [
-                BoxShadow(
-                  color: Colors.black54,
-                  spreadRadius: 20,
-                  blurRadius: 20,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ];
+  Widget _shareButton(List<AlbumPhoto> photos) {
+    return IconButton(
+      padding: const EdgeInsets.all(16),
+      color: Theme.of(context).primaryIconTheme.color,
+      icon: Icon(Icons.adaptive.share),
+      onPressed: () => _shareImage(
+        Uri.parse(photos[controller.page!.floor()].full),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -285,7 +249,7 @@ class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
           Align(
             alignment: Alignment.bottomCenter,
             child: SafeArea(
-              child: PageCounter(
+              child: _PageCounter(
                 controller,
                 widget.initialPage,
                 widget.album,
@@ -300,8 +264,41 @@ class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
       alignment: AlignmentDirectional.center,
       children: [
         overlayScaffold,
-        ..._heartPopup(),
+        _HeartPopup(animation: unlikeAnimation, color: Colors.white),
+        _HeartPopup(animation: likeAnimation, color: magenta)
       ],
+    );
+  }
+}
+
+class _HeartPopup extends StatelessWidget {
+  const _HeartPopup({
+    Key? key,
+    required this.animation,
+    required this.color,
+  }) : super(key: key);
+
+  final Animation<double> animation;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return ScaleTransition(
+      scale: animation,
+      child: Center(
+        child: Icon(
+          Icons.favorite,
+          size: 70,
+          color: color,
+          shadows: const [
+            BoxShadow(
+              color: Colors.black54,
+              spreadRadius: 20,
+              blurRadius: 20,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -386,18 +383,18 @@ class _PhotoTile extends StatelessWidget {
   }
 }
 
-class PageCounter extends StatefulWidget {
+class _PageCounter extends StatefulWidget {
   final PageController controller;
   final int initialPage;
   final Album album;
 
-  const PageCounter(this.controller, this.initialPage, this.album);
+  const _PageCounter(this.controller, this.initialPage, this.album);
 
   @override
-  State<PageCounter> createState() => _PageCounterState();
+  State<_PageCounter> createState() => __PageCounterState();
 }
 
-class _PageCounterState extends State<PageCounter> {
+class __PageCounterState extends State<_PageCounter> {
   late int currentIndex;
 
   @override
