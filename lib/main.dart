@@ -9,7 +9,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:reaxit/blocs.dart';
-import 'package:reaxit/blocs/groups_cubit.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/firebase_options.dart';
 import 'package:reaxit/routes.dart';

@@ -1,8 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:reaxit/models/group.dart';
-
-import '../screens/group_screen.dart';
+import 'package:reaxit/ui/screens.dart';
 import 'cached_image.dart';
 
 class GroupTile extends StatelessWidget {
