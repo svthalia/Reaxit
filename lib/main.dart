@@ -322,11 +322,6 @@ class _ThaliAppState extends State<ThaliApp> {
                             lazy: true,
                           ),
                           BlocProvider(
-                            create: (_) =>
-                                AllGroupsCubit(authState.apiRepository)..load(),
-                            lazy: true,
-                          ),
-                          BlocProvider(
                             create: (_) => BoardsCubit(
                               authState.apiRepository,
                             )..load(),
