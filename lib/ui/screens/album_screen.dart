@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,95 +27,95 @@ class AlbumScreen extends StatefulWidget {
   State<AlbumScreen> createState() => _AlbumScreenState();
 }
 
-class _AlbumScreenState extends State<AlbumScreen>
-    with TickerProviderStateMixin {
-  late final AlbumCubit _albumCubit;
-  int initialGalleryIndex = 0;
+class _AlbumScreenState extends State<AlbumScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => AlbumCubit(
+        RepositoryProvider.of<ApiRepository>(context),
+      )..load(widget.slug),
+      child: BlocBuilder<AlbumCubit, AlbumScreenState>(
+        builder: (context, state) {
+          late final Widget body;
+          if (state.isLoading) {
+            body = const Center(child: CircularProgressIndicator());
+          } else if (state.hasException) {
+            body = ErrorScrollView(state.message!);
+          } else {
+            body = _PhotoGrid(state.album!.photos);
+          }
 
-  late AnimationController filledController;
-  late Animation<double> filledAnimation;
+          Widget mainScaffold = Scaffold(
+            appBar: ThaliaAppBar(
+              title: Text(state.album?.title.toUpperCase() ??
+                  widget.album?.title.toUpperCase() ??
+                  'ALBUM'),
+              actions: [_ShareAlbumButton(slug: widget.slug)],
+            ),
+            body: body,
+          );
 
-  late AnimationController controller;
-  late Animation<double> animation;
-
-  /// The controller used in the image gallery.
-  PageController mainPageController = PageController(initialPage: 0);
-
-  /// Made to follow the `mainPageController`, and used
-  /// to update the page count at the bottom of the page.
-  PageController pageCountController = PageController(initialPage: 0);
-
-  /// This should be called when scrolling on `mainPageController` to update
-  /// the `pageCountController`.
-  void _onGalleryScroll() {
-    pageCountController.animateTo(mainPageController.offset,
-        duration: const Duration(milliseconds: 0), curve: Curves.decelerate);
+          return Stack(
+            children: [
+              mainScaffold,
+              if (state.isOpen)
+                _Gallery(
+                    album: state.album!,
+                    initialPage: state.initialGalleryIndex!),
+            ],
+          );
+        },
+      ),
+    );
   }
+}
+
+class _Gallery extends StatefulWidget {
+  final Album album;
+  final int initialPage;
+
+  const _Gallery({required this.album, required this.initialPage});
+
+  @override
+  State<_Gallery> createState() => __GalleryState();
+}
+
+class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
+  late final PageController controller;
+
+  late AnimationController likeController;
+  late AnimationController unlikeController;
+  late Animation<double> likeAnimation;
+  late Animation<double> unlikeAnimation;
 
   @override
   void initState() {
-    _albumCubit = AlbumCubit(
-      RepositoryProvider.of<ApiRepository>(context),
-    )..load(widget.slug);
-    mainPageController.addListener(_onGalleryScroll);
-    controller = AnimationController(
-        duration: const Duration(milliseconds: 500), vsync: this);
-    filledController = AnimationController(
-        duration: const Duration(milliseconds: 500), vsync: this);
+    controller = PageController(initialPage: widget.initialPage);
 
-    animation = CurvedAnimation(parent: controller, curve: Curves.elasticOut)
-      ..addListener(() {
-        if (controller.value >= 0.8) {
-          controller.reset();
-        }
-      });
-    filledAnimation =
-        CurvedAnimation(parent: filledController, curve: Curves.elasticOut)
+    likeController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+    unlikeController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    likeAnimation =
+        CurvedAnimation(parent: likeController, curve: Curves.elasticOut)
           ..addListener(() {
-            if (filledController.value >= 0.8) {
-              filledController.reset();
-            }
+            if (likeController.value >= 0.8) likeController.reset();
           });
+    unlikeAnimation =
+        CurvedAnimation(parent: unlikeController, curve: Curves.elasticOut)
+          ..addListener(() {
+            if (unlikeController.value >= 0.8) unlikeController.reset();
+          });
+
     super.initState();
   }
 
-  @override
-  void dispose() {
-    _albumCubit.close();
-    super.dispose();
-  }
-
-  void openGallery(int index) {
-    _albumCubit.openScrollingGallery();
-    initialGalleryIndex = index;
-  }
-
-  Future<void> likePhoto(
-    BuildContext context,
-    int likedIndex,
-    List<AlbumPhoto> photos,
-  ) async {
-    final messenger = ScaffoldMessenger.of(context);
-    if (photos[likedIndex].liked) {
-      controller.forward();
-    } else {
-      filledController.forward();
-    }
-    try {
-      await _albumCubit.updateLike(
-        liked: !photos[likedIndex].liked,
-        index: likedIndex,
-      );
-    } on ApiException {
-      messenger.showSnackBar(
-        const SnackBar(
-          content: Text('Something went wrong while liking the photo.'),
-        ),
-      );
-    }
-  }
-
-  Future<void> downloadImage(BuildContext context, Uri url) async {
+  Future<void> _downloadImage(BuildContext context, Uri url) async {
     final messenger = ScaffoldMessenger.of(context);
     try {
       final response = await http.get(url);
@@ -166,14 +165,37 @@ class _AlbumScreenState extends State<AlbumScreen>
     }
   }
 
+  Future<void> likePhoto(
+    BuildContext context,
+    int index,
+    List<AlbumPhoto> photos,
+  ) async {
+    final messenger = ScaffoldMessenger.of(context);
+    if (photos[index].liked) {
+      unlikeController.forward();
+    } else {
+      likeController.forward();
+    }
+    try {
+      await BlocProvider.of<AlbumCubit>(context).updateLike(
+        liked: !photos[index].liked,
+        index: index,
+      );
+    } on ApiException {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('Something went wrong while liking the photo.'),
+        ),
+      );
+    }
+  }
+
   Widget _gallery(List<AlbumPhoto> photos) => PhotoViewGallery.builder(
-        onPageChanged: pageCountController.jumpToPage,
+        backgroundDecoration: const BoxDecoration(color: Colors.transparent),
         loadingBuilder: (_, __) => const Center(
           child: CircularProgressIndicator(),
         ),
-        backgroundDecoration: const BoxDecoration(
-          color: Colors.transparent,
-        ),
+        pageController: controller,
         itemCount: photos.length,
         builder: (context, i) {
           return PhotoViewGalleryPageOptions.customChild(
@@ -185,15 +207,14 @@ class _AlbumScreenState extends State<AlbumScreen>
             maxScale: PhotoViewComputedScale.covered * 2,
           );
         },
-        pageController: mainPageController,
       );
 
   Widget _downloadButton(List<AlbumPhoto> photos) => IconButton(
         padding: const EdgeInsets.all(16),
         color: Theme.of(context).primaryIconTheme.color,
         icon: const Icon(Icons.download),
-        onPressed: () => downloadImage(
-            context, Uri.parse(photos[pageCountController.page!.round()].full)),
+        onPressed: () => _downloadImage(
+            context, Uri.parse(photos[controller.page!.round()].full)),
       );
 
   Widget _shareButton(List<AlbumPhoto> photos) => IconButton(
@@ -201,111 +222,86 @@ class _AlbumScreenState extends State<AlbumScreen>
         color: Theme.of(context).primaryIconTheme.color,
         icon: Icon(Icons.adaptive.share),
         onPressed: () => _shareImage(
-            context, Uri.parse(photos[pageCountController.page!.floor()].full)),
+            context, Uri.parse(photos[controller.page!.floor()].full)),
       );
 
   List<Widget> _heartPopup() => [
         ScaleTransition(
-          scale: animation,
+          scale: unlikeAnimation,
           child: const Center(
             child: Icon(
               Icons.favorite,
               size: 70,
+              color: Colors.white,
               shadows: [
                 BoxShadow(
-                  color: Colors.black,
-                  spreadRadius: 10,
-                  blurRadius: 10,
+                  color: Colors.black54,
+                  spreadRadius: 20,
+                  blurRadius: 20,
                 ),
               ],
             ),
           ),
         ),
         ScaleTransition(
-          scale: filledAnimation,
+          scale: likeAnimation,
           child: const Center(
-            child: Icon(Icons.favorite, size: 70, color: magenta),
+            child: Icon(
+              Icons.favorite,
+              size: 70,
+              color: magenta,
+              shadows: [
+                BoxShadow(
+                  color: Colors.black54,
+                  spreadRadius: 20,
+                  blurRadius: 20,
+                ),
+              ],
+            ),
           ),
         ),
       ];
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AlbumCubit, AlbumScreenState>(
-      bloc: _albumCubit,
-      //TODO: maybe make this a different function?
-      builder: (context, state) {
-        Widget mainScaffold = Scaffold(
-          appBar: ThaliaAppBar(
-            title: Text(state.album?.title.toUpperCase() ??
-                widget.album?.title.toUpperCase() ??
-                'ALBUM'),
-            actions: [_ShareAlbumButton(slug: widget.slug)],
-          ),
-          body: state.hasException
-              ? ErrorScrollView(state.message!)
-              : state.isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : _PhotoGrid(
-                      photos: state.album!.photos,
-                      openGallery: openGallery,
-                    ),
-        );
-        if (state.isOpen) {
-          Album album = state.album!;
-
-          // We change the pagecontroler with a new initialPage because
-          // it is impossible to change the initial page after it has been created.
-          // We cannot jump to the page because it is not attached jet. When it opens
-          // the gallery it will use the initialPage instead of last jumped-to page.
-          mainPageController = PageController(initialPage: initialGalleryIndex);
-          pageCountController =
-              PageController(initialPage: initialGalleryIndex);
-
-          Widget overlayScaffold = Scaffold(
-            extendBodyBehindAppBar: true,
-            backgroundColor: Colors.black.withOpacity(0.92),
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-              leading: CloseButton(
-                color: Theme.of(context).primaryIconTheme.color,
-                onPressed: _albumCubit.closeScrollingGallery,
+    Widget overlayScaffold = Scaffold(
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.black.withOpacity(0.92),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        leading: CloseButton(
+          color: Theme.of(context).primaryIconTheme.color,
+          onPressed: BlocProvider.of<AlbumCubit>(context).closeGallery,
+        ),
+        actions: [
+          _downloadButton(widget.album.photos),
+          _shareButton(widget.album.photos),
+        ],
+      ),
+      body: Stack(
+        children: [
+          _gallery(widget.album.photos),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: SafeArea(
+              child: PageCounter(
+                controller,
+                widget.initialPage,
+                widget.album,
               ),
-              actions: [
-                _downloadButton(album.photos),
-                _shareButton(album.photos),
-              ],
             ),
-            body: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: _gallery(album.photos),
-                ),
-                PageCounter(
-                  controler: pageCountController,
-                  pagecount: album.photos.length,
-                  isliked: state.likedList!,
-                  likeToggle: (likedIndex) =>
-                      likePhoto(context, likedIndex, album.photos),
-                  likecount: state.likesList!,
-                ),
-              ],
-            ),
-          );
+          ),
+        ],
+      ),
+    );
 
-          return Stack(
-            alignment: AlignmentDirectional.center,
-            children: [
-              mainScaffold,
-              overlayScaffold,
-              ..._heartPopup(),
-            ],
-          );
-        }
-        return mainScaffold;
-      },
+    return Stack(
+      alignment: AlignmentDirectional.center,
+      children: [
+        overlayScaffold,
+        ..._heartPopup(),
+      ],
     );
   }
 }
@@ -342,9 +338,8 @@ class _ShareAlbumButton extends StatelessWidget {
 
 class _PhotoGrid extends StatelessWidget {
   final List<AlbumPhoto> photos;
-  final void Function(int index) openGallery;
 
-  const _PhotoGrid({required this.photos, required this.openGallery});
+  const _PhotoGrid(this.photos);
 
   @override
   Widget build(BuildContext context) {
@@ -361,7 +356,8 @@ class _PhotoGrid extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         itemBuilder: (context, index) => _PhotoTile(
           photo: photos[index],
-          openGallery: () => openGallery(index),
+          openGallery: () =>
+              BlocProvider.of<AlbumCubit>(context).openGallery(index),
         ),
       ),
     );
@@ -391,103 +387,66 @@ class _PhotoTile extends StatelessWidget {
 }
 
 class PageCounter extends StatefulWidget {
-  final PageController controler;
-  final int pagecount;
-  final List<bool> isliked;
-  final List<int> likecount;
-  final void Function(int) likeToggle;
+  final PageController controller;
+  final int initialPage;
+  final Album album;
 
-  const PageCounter(
-      {required this.controler,
-      required this.pagecount,
-      required this.isliked,
-      required this.likeToggle,
-      required this.likecount,
-      super.key});
+  const PageCounter(this.controller, this.initialPage, this.album);
 
   @override
   State<PageCounter> createState() => _PageCounterState();
 }
 
-class _PageCounterState extends State<PageCounter>
-    with SingleTickerProviderStateMixin
-    implements ScrollContext {
-  int currentIndex = 0;
-  ScrollPosition? _position;
+class _PageCounterState extends State<PageCounter> {
+  late int currentIndex;
 
   @override
   void initState() {
-    _position = widget.controler
-        .createScrollPosition(const ScrollPhysics(), this, null);
-    _position?.applyViewportDimension(1.0);
-    _position?.applyContentDimensions(0, widget.pagecount.toDouble());
-    widget.controler.attach(_position!);
-    currentIndex = widget.controler.page?.toInt() ?? 0;
+    currentIndex = widget.initialPage;
+    widget.controller.addListener(() {
+      final newIndex = widget.controller.page!.round();
+      if (newIndex != currentIndex) {
+        setState(() => currentIndex = newIndex);
+      }
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final photo = widget.album.photos[currentIndex];
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          '$currentIndex / ${widget.pagecount}',
-          style: textTheme.bodyText1?.copyWith(fontSize: 24),
+          '${currentIndex + 1} / ${widget.album.photos.length}',
+          style:
+              textTheme.bodyText1?.copyWith(fontSize: 24, color: Colors.white),
         ),
         Tooltip(
           message: 'like photo',
           child: IconButton(
             iconSize: 24,
             icon: Icon(
-              color: widget.isliked[currentIndex] ? magenta : Colors.white,
-              widget.isliked[currentIndex]
-                  ? Icons.favorite
-                  : Icons.favorite_outline,
+              color: photo.liked ? magenta : Colors.white,
+              photo.liked ? Icons.favorite : Icons.favorite_outline,
             ),
-            onPressed: () => widget.likeToggle(currentIndex),
+            onPressed: () => BlocProvider.of<AlbumCubit>(context).updateLike(
+              liked: !photo.liked,
+              index: currentIndex,
+            ),
           ),
         ),
         Text(
-          '${widget.likecount[currentIndex]}',
-          style: textTheme.bodyText1?.copyWith(fontSize: 24),
+          '${photo.numLikes}',
+          style: textTheme.bodyText1?.copyWith(
+            fontSize: 24,
+            color: Colors.white,
+          ),
         ),
       ],
     );
   }
-
-  @override
-  void dispose() {
-    widget.controler.detach(_position!);
-    super.dispose();
-  }
-
-  @override
-  AxisDirection get axisDirection => AxisDirection.right;
-
-  @override
-  BuildContext? get notificationContext => context;
-
-  @override
-  void saveOffset(double offset) {
-    setState(() {
-      currentIndex = offset.toInt();
-    });
-  }
-
-  @override
-  void setCanDrag(bool value) {}
-
-  @override
-  void setIgnorePointer(bool value) {}
-
-  @override
-  void setSemanticsActions(Set<SemanticsAction> actions) {}
-
-  @override
-  BuildContext get storageContext => context;
-
-  @override
-  TickerProvider get vsync => this;
 }

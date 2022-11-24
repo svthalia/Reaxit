@@ -11,29 +11,45 @@ typedef AlbumState = DetailState<Album>;
 class AlbumScreenState extends Equatable {
   /// This can only be null when [isLoading] or [hasException] is true.
   final Album? album;
-  final List<bool>? likedList;
-  final List<int>? likesList;
   final bool isOpen;
+  final int? initialGalleryIndex;
 
   final String? message;
   final bool isLoading;
   bool get hasException => message != null;
 
   @protected
-  AlbumScreenState(
-      {required this.album,
-      required this.isLoading,
-      required this.message,
-      this.isOpen = false})
-      : assert(
+  const AlbumScreenState({
+    required this.album,
+    required this.isLoading,
+    required this.message,
+    this.isOpen = false,
+    this.initialGalleryIndex,
+  })  : assert(
           album != null || isLoading || message != null,
-          'event can only be null when isLoading or hasException is true.',
+          'album can only be null when isLoading or hasException is true.',
         ),
-        likedList = album?.photos.map((e) => e.liked).toList(),
-        likesList = album?.photos.map((e) => e.numLikes).toList();
+        assert(
+          isOpen || initialGalleryIndex == null,
+          'initialGalleryIndex can only be set when isOpen is true.',
+        ),
+        assert(
+          initialGalleryIndex != null || !isOpen,
+          'initialGalleryIndex must be set when isOpen is true.',
+        ),
+        assert(
+          !isOpen || album != null,
+          'album must be set when isOpen is true.',
+        );
 
   @override
-  List<Object?> get props => [album, message, isLoading, isOpen];
+  List<Object?> get props => [
+        album,
+        message,
+        isLoading,
+        isOpen,
+        initialGalleryIndex,
+      ];
 
   AlbumScreenState copyWith({
     Album? album,
@@ -41,32 +57,35 @@ class AlbumScreenState extends Equatable {
     bool? isLoading,
     String? message,
     bool? isOpen,
+    int? initialGalleryIndex,
   }) =>
       AlbumScreenState(
         album: album ?? this.album,
         isLoading: isLoading ?? this.isLoading,
         message: message ?? this.message,
         isOpen: isOpen ?? this.isOpen,
+        initialGalleryIndex: (isOpen ?? this.isOpen)
+            ? (initialGalleryIndex ?? this.initialGalleryIndex)
+            : null,
       );
 
-  AlbumScreenState.result({required this.album, required this.isOpen})
+  const AlbumScreenState.result(
+      {required this.album, required this.isOpen, this.initialGalleryIndex})
       : message = null,
-        isLoading = false,
-        likedList = album?.photos.map((e) => e.liked).toList(),
-        likesList = album?.photos.map((e) => e.numLikes).toList();
+        isLoading = false;
 
-  const AlbumScreenState.loading({this.album})
+  const AlbumScreenState.loading()
       : message = null,
+        album = null,
         isLoading = true,
-        likedList = null,
-        likesList = null,
-        isOpen = false;
+        isOpen = false,
+        initialGalleryIndex = null;
 
-  const AlbumScreenState.failure({required String this.message, this.album})
-      : isLoading = false,
-        likedList = null,
-        likesList = null,
-        isOpen = false;
+  const AlbumScreenState.failure({required String this.message})
+      : album = null,
+        isLoading = false,
+        isOpen = false,
+        initialGalleryIndex = null;
 }
 
 class AlbumCubit extends Cubit<AlbumScreenState> {
@@ -78,6 +97,8 @@ class AlbumCubit extends Cubit<AlbumScreenState> {
     if (state.album == null) {
       return;
     }
+
+    // Emit expected state after (un)liking.
     final oldphoto = state.album!.photos[index];
     AlbumPhoto newphoto = oldphoto.copyWith(
       liked: liked,
@@ -85,24 +106,27 @@ class AlbumCubit extends Cubit<AlbumScreenState> {
     );
     List<AlbumPhoto> newphotos = [...state.album!.photos];
     newphotos[index] = newphoto;
-    emit(
-      AlbumScreenState.result(
-          album: state.album!.copyWith(photos: newphotos),
-          isOpen: state.isOpen),
-    );
+    emit(AlbumScreenState.result(
+      album: state.album!.copyWith(photos: newphotos),
+      isOpen: state.isOpen,
+      initialGalleryIndex: state.initialGalleryIndex,
+    ));
+
     try {
       await api.updateLiked(newphoto.pk, liked);
     } on ApiException {
+      // Revert to state before (un)liking.
       emit(state);
       rethrow;
     }
   }
 
-  void openScrollingGallery() {
-    emit(state.copyWith(isOpen: true));
+  void openGallery(int index) {
+    if (state.album == null) return;
+    emit(state.copyWith(isOpen: true, initialGalleryIndex: index));
   }
 
-  void closeScrollingGallery() {
+  void closeGallery() {
     emit(state.copyWith(isOpen: false));
   }
 
