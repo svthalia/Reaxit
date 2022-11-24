@@ -320,4 +320,24 @@ abstract class ApiRepository {
 
   /// Claim and get the [SalesOrder] with the `pk`.
   Future<SalesOrder> claimSalesOrder({required String pk});
+
+  /// Get a list of [ListGroup]s.
+  ///
+  /// Use `limit` and `offset` for pagination, and `type`, `start`, `end` and
+  /// `search` for filtering. [ListResponse.count] is the total number of
+  /// [ListGroup]s that can be returned.
+  Future<ListResponse<ListGroup>> getGroups({
+    int? limit,
+    int? offset,
+    MemberGroupType? type,
+    DateTime? start,
+    DateTime? end,
+    String? search,
+  });
+
+  /// Get the [Group] with the `pk`.
+  Future<Group> getGroup({required int pk});
+
+  /// Get the [Group] of a board with the `since` and `until`.
+  Future<Group> getBoardGroup({required int since, required int until});
 }

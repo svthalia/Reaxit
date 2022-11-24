@@ -321,6 +321,24 @@ class _ThaliAppState extends State<ThaliApp> {
                             create: (_) => TostiAuthCubit()..load(),
                             lazy: true,
                           ),
+                          BlocProvider(
+                            create: (_) => BoardsCubit(
+                              authState.apiRepository,
+                            )..load(),
+                            lazy: true,
+                          ),
+                          BlocProvider(
+                            create: (_) => CommitteesCubit(
+                              authState.apiRepository,
+                            )..load(),
+                            lazy: true,
+                          ),
+                          BlocProvider(
+                            create: (_) => SocietiesCubit(
+                              authState.apiRepository,
+                            )..load(),
+                            lazy: true,
+                          ),
                         ],
                         child: navigator!,
                       ),

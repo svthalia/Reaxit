@@ -11,3 +11,5 @@ export 'screens/profile_screen.dart';
 export 'screens/registration_screen.dart';
 export 'screens/settings_screen.dart';
 export 'screens/welcome_screen.dart';
+export 'screens/group_screen.dart';
+export 'screens/groups_screen.dart';

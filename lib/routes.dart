@@ -27,9 +27,12 @@ final List<RegExp> _deepLinkRegExps = <RegExp>[
   RegExp('^/members/photos/([a-z0-9-_]+)/?\$'),
   RegExp('^/sales/order/$_uuid/pay/?\$'),
   RegExp('^/events/([0-9]+)/mark-present/$_uuid/?\$'),
+  RegExp('^/association/committees(/[0-9]+)?/?\$'),
+  RegExp('^/association/boards/([0-9]{4}-[0-9]{4})/?\$'),
+  RegExp('^/association/societies(/[0-9]+)?/?\$'),
 ];
 
-final List<GoRoute> routes = [
+final List<RouteBase> routes = [
   GoRoute(
       path: '/',
       name: 'welcome',
@@ -218,6 +221,137 @@ final List<GoRoute> routes = [
             album: state.extra as ListAlbum?,
           ),
         ),
+      ),
+    ],
+  ),
+  GoRoute(
+    path: '/association/committees/:groupSlug',
+    redirect: (context, state) =>
+        '/groups/committees/${state.params['groupSlug']}',
+  ),
+  GoRoute(
+    path: '/association/societies/:groupSlug',
+    redirect: (context, state) =>
+        '/groups/societies/${state.params['groupSlug']}',
+  ),
+  GoRoute(
+    path: '/association/boards/:groupSlug',
+    redirect: (context, state) => '/groups/boards/${state.params['groupSlug']}',
+  ),
+  GoRoute(
+    path: '/association/committees',
+    redirect: (context, state) => '/groups/committees',
+  ),
+  GoRoute(
+    path: '/association/societies',
+    redirect: (context, state) => '/groups/societies',
+  ),
+  GoRoute(
+    path: '/association/boards',
+    redirect: (context, state) => '/groups/boards',
+  ),
+  GoRoute(
+    path: '/groups',
+    name: 'groups',
+    pageBuilder: (context, state) => CustomTransitionPage(
+      key: state.pageKey,
+      child: const GroupsScreen(),
+      transitionDuration: const Duration(milliseconds: 200),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
+          child: child,
+        );
+      },
+    ),
+    routes: [
+      GoRoute(
+        path: 'committees',
+        name: 'committees',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const GroupsScreen(currentScreen: MemberGroupType.committee),
+          transitionDuration: const Duration(milliseconds: 200),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation.drive(
+                CurveTween(curve: Curves.easeIn),
+              ),
+              child: child,
+            );
+          },
+        ),
+        routes: [
+          GoRoute(
+            path: ':groupPk',
+            name: 'committee',
+            pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: GroupScreen(
+                pk: int.parse(state.params['groupPk']!),
+                group: state.extra as ListGroup?,
+              ),
+            ),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: 'societies',
+        name: 'societies',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: GroupsScreen(
+              key: state.pageKey, currentScreen: MemberGroupType.society),
+          transitionDuration: const Duration(milliseconds: 200),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
+              child: child,
+            );
+          },
+        ),
+        routes: [
+          GoRoute(
+            path: ':groupPk',
+            name: 'society',
+            pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: GroupScreen(
+                pk: int.parse(state.params['groupPk']!),
+                group: state.extra as ListGroup?,
+              ),
+            ),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: 'boards',
+        name: 'boards',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const GroupsScreen(currentScreen: MemberGroupType.board),
+          transitionDuration: const Duration(milliseconds: 200),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
+              child: child,
+            );
+          },
+        ),
+        routes: [
+          GoRoute(
+            path: ':boardSlug',
+            name: 'board',
+            pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: BoardScreen(
+                since: int.parse(state.params['boardSlug']!.split('-')[0]),
+                until: int.parse(state.params['boardSlug']!.split('-')[1]),
+                group: state.extra as ListGroup?,
+              ),
+            ),
+          ),
+        ],
       ),
     ],
   ),

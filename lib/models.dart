@@ -5,6 +5,7 @@ export 'models/event.dart';
 export 'models/food_event.dart';
 export 'models/food_order.dart';
 export 'models/frontpage_article.dart';
+export 'models/group.dart';
 export 'models/list_response.dart';
 export 'models/member.dart';
 export 'models/payable.dart';
