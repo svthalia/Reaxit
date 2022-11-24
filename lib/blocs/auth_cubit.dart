@@ -87,61 +87,75 @@ class AuthCubit extends Cubit<AuthState> {
   ///
   /// Also sets up push notifications.
   Future<void> load() async {
-    // Retrieve existing credentials.
     const storage = FlutterSecureStorage();
-    final stored = await storage.read(
-      key: _credentialsStorageKey,
-      iOptions:
-          const IOSOptions(accessibility: KeychainAccessibility.first_unlock),
-    );
+    try {
+      // Retrieve existing credentials.
+      final stored = await storage.read(
+        key: _credentialsStorageKey,
+        iOptions:
+            const IOSOptions(accessibility: KeychainAccessibility.first_unlock),
+      );
 
-    if (stored != null) {
-      // Restore credentials from the storage.
-      final credentials = Credentials.fromJson(stored);
+      if (stored != null) {
+        // Restore credentials from the storage.
+        final credentials = Credentials.fromJson(stored);
 
-      // Log out if not all required scopes are available. After an update that
-      // introduces a new scope, this will cause the app to log out and get new
-      // credentials with the required scopes, instead of just getting 403's
-      // until you manually log out.
-      final scopes = credentials.scopes?.toSet() ?? <String>{};
-      if (scopes.containsAll(config.oauthScopes)) {
-        // Create the API repository.
-        final apiRepository = ConcrexitApiRepository(
-          client: Client(
-            credentials,
-            identifier: config.apiIdentifier,
-            secret: config.apiSecret,
-            onCredentialsRefreshed: (credentials) async {
-              const storage = FlutterSecureStorage();
-              await storage.write(
-                key: _credentialsStorageKey,
-                value: credentials.toJson(),
-                iOptions: const IOSOptions(
-                  accessibility: KeychainAccessibility.first_unlock,
-                ),
-              );
-            },
-            httpClient: SentryHttpClient(failedRequestStatusCodes: [
-              SentryStatusCode(400),
-              SentryStatusCode.range(405, 499),
-            ]),
-          ),
-          onLogOut: logOut,
-        );
+        // Log out if not all required scopes are available. After an update that
+        // introduces a new scope, this will cause the app to log out and get new
+        // credentials with the required scopes, instead of just getting 403's
+        // until you manually log out.
+        final scopes = credentials.scopes?.toSet() ?? <String>{};
+        if (scopes.containsAll(config.oauthScopes)) {
+          // Create the API repository.
+          final apiRepository = ConcrexitApiRepository(
+            client: Client(
+              credentials,
+              identifier: config.apiIdentifier,
+              secret: config.apiSecret,
+              onCredentialsRefreshed: (credentials) async {
+                const storage = FlutterSecureStorage();
+                await storage.write(
+                  key: _credentialsStorageKey,
+                  value: credentials.toJson(),
+                  iOptions: const IOSOptions(
+                    accessibility: KeychainAccessibility.first_unlock,
+                  ),
+                );
+              },
+              httpClient: SentryHttpClient(failedRequestStatusCodes: [
+                SentryStatusCode(400),
+                SentryStatusCode.range(405, 499),
+              ]),
+            ),
+            onLogOut: logOut,
+          );
 
-        try {
-          _setupPushNotifications(apiRepository);
-        } on FirebaseException {
-          // Ignore.
+          try {
+            _setupPushNotifications(apiRepository);
+          } on FirebaseException {
+            // Ignore.
+          }
+
+          emit(LoggedInAuthState(apiRepository: apiRepository));
+        } else {
+          logOut();
         }
-
-        emit(LoggedInAuthState(apiRepository: apiRepository));
       } else {
-        logOut();
+        // Clear username for sentry.
+        Sentry.configureScope((scope) => scope.setUser(null));
+        emit(LoggedOutAuthState());
       }
-    } else {
-      // Clear username for sentry.
-      Sentry.configureScope((scope) => scope.setUser(null));
+    } on PlatformException {
+      try {
+        storage.delete(
+          key: _credentialsStorageKey,
+          iOptions: const IOSOptions(
+            accessibility: KeychainAccessibility.first_unlock,
+          ),
+        );
+      } on PlatformException {
+        // Ignore.
+      }
       emit(LoggedOutAuthState());
     }
   }
