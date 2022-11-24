@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+import 'package:mime/mime.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -151,6 +152,7 @@ class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
       if (response.statusCode != 200) throw Exception();
       final file = XFile.fromData(
         response.bodyBytes,
+        mimeType: lookupMimeType(url.path, headerBytes: response.bodyBytes),
         name: url.pathSegments.last,
       );
       await Share.shareXFiles([file]);
@@ -253,6 +255,7 @@ class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
                 controller,
                 widget.initialPage,
                 widget.album,
+                likePhoto,
               ),
             ),
           ),
@@ -387,8 +390,14 @@ class _PageCounter extends StatefulWidget {
   final PageController controller;
   final int initialPage;
   final Album album;
+  final void Function(List<AlbumPhoto> photos, int index) likePhoto;
 
-  const _PageCounter(this.controller, this.initialPage, this.album);
+  const _PageCounter(
+    this.controller,
+    this.initialPage,
+    this.album,
+    this.likePhoto,
+  );
 
   @override
   State<_PageCounter> createState() => __PageCounterState();
@@ -430,9 +439,9 @@ class __PageCounterState extends State<_PageCounter> {
               color: photo.liked ? magenta : Colors.white,
               photo.liked ? Icons.favorite : Icons.favorite_outline,
             ),
-            onPressed: () => BlocProvider.of<AlbumCubit>(context).updateLike(
-              liked: !photo.liked,
-              index: currentIndex,
+            onPressed: () => widget.likePhoto(
+              widget.album.photos,
+              currentIndex,
             ),
           ),
         ),
