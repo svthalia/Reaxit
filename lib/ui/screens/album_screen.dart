@@ -18,18 +18,15 @@ import 'package:share_plus/share_plus.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 
 /// Screen that loads and shows the Album with `slug`.
-class AlbumScreen extends StatefulWidget {
+class AlbumScreen extends StatelessWidget {
   final String slug;
   final ListAlbum? album;
 
   AlbumScreen({required this.slug, this.album}) : super(key: ValueKey(slug));
 
-  @override
-  State<AlbumScreen> createState() => _AlbumScreenState();
-}
+  String get title => album?.title ?? 'ALBUM';
 
-class _AlbumScreenState extends State<AlbumScreen> {
-  Future<void> _shareAlbum(BuildContext context, String slug) async {
+  Future<void> _shareAlbum(BuildContext context) async {
     final messenger = ScaffoldMessenger.of(context);
     try {
       await Share.share('https://${config.apiHost}/members/photos/$slug/');
@@ -43,12 +40,19 @@ class _AlbumScreenState extends State<AlbumScreen> {
     }
   }
 
+  Widget _shareAlbumButton(BuildContext context) => IconButton(
+        padding: const EdgeInsets.all(16),
+        color: Theme.of(context).primaryIconTheme.color,
+        icon: Icon(Icons.adaptive.share),
+        onPressed: () => _shareAlbum(context),
+      );
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => AlbumCubit(
         RepositoryProvider.of<ApiRepository>(context),
-      )..load(widget.slug),
+      )..load(slug),
       child: BlocBuilder<AlbumCubit, AlbumScreenState>(
         builder: (context, state) {
           late final Widget body;
@@ -62,17 +66,8 @@ class _AlbumScreenState extends State<AlbumScreen> {
 
           Widget mainScaffold = Scaffold(
             appBar: ThaliaAppBar(
-              title: Text(state.album?.title.toUpperCase() ??
-                  widget.album?.title.toUpperCase() ??
-                  'ALBUM'),
-              actions: [
-                IconButton(
-                  padding: const EdgeInsets.all(16),
-                  color: Theme.of(context).primaryIconTheme.color,
-                  icon: Icon(Icons.adaptive.share),
-                  onPressed: () => _shareAlbum(context, widget.slug),
-                )
-              ],
+              title: Text(state.album?.title.toUpperCase() ?? title),
+              actions: [_shareAlbumButton(context)],
             ),
             body: body,
           );
@@ -82,8 +77,9 @@ class _AlbumScreenState extends State<AlbumScreen> {
               mainScaffold,
               if (state.isOpen)
                 _Gallery(
-                    album: state.album!,
-                    initialPage: state.initialGalleryIndex!),
+                  album: state.album!,
+                  initialPage: state.initialGalleryIndex!,
+                ),
             ],
           );
         },
@@ -387,16 +383,24 @@ class _PageCounter extends StatefulWidget {
 class __PageCounterState extends State<_PageCounter> {
   late int currentIndex;
 
+  void onPageChange() {
+    final newIndex = widget.controller.page!.round();
+    if (newIndex != currentIndex) {
+      setState(() => currentIndex = newIndex);
+    }
+  }
+
   @override
   void initState() {
     currentIndex = widget.initialPage;
-    widget.controller.addListener(() {
-      final newIndex = widget.controller.page!.round();
-      if (newIndex != currentIndex) {
-        setState(() => currentIndex = newIndex);
-      }
-    });
+    widget.controller.addListener(onPageChange);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(onPageChange);
+    super.dispose();
   }
 
   @override
