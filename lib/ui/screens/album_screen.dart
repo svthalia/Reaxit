@@ -29,6 +29,20 @@ class AlbumScreen extends StatefulWidget {
 }
 
 class _AlbumScreenState extends State<AlbumScreen> {
+  Future<void> _shareAlbum(BuildContext context, String slug) async {
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await Share.share('https://${config.apiHost}/members/photos/$slug/');
+    } catch (_) {
+      messenger.showSnackBar(
+        const SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('Could not share the album.'),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -51,7 +65,14 @@ class _AlbumScreenState extends State<AlbumScreen> {
               title: Text(state.album?.title.toUpperCase() ??
                   widget.album?.title.toUpperCase() ??
                   'ALBUM'),
-              actions: [_ShareAlbumButton(slug: widget.slug)],
+              actions: [
+                IconButton(
+                  padding: const EdgeInsets.all(16),
+                  color: Theme.of(context).primaryIconTheme.color,
+                  icon: Icon(Icons.adaptive.share),
+                  onPressed: () => _shareAlbum(context, widget.slug),
+                )
+              ],
             ),
             body: body,
           );
@@ -82,39 +103,29 @@ class _Gallery extends StatefulWidget {
 }
 
 class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
-  late final PageController controller;
+  late final PageController controller =
+      PageController(initialPage: widget.initialPage);
 
-  late final AnimationController likeController;
-  late final AnimationController unlikeController;
-  late final Animation<double> likeAnimation;
-  late final Animation<double> unlikeAnimation;
+  late final AnimationController likeController = AnimationController(
+      duration: const Duration(milliseconds: 500), vsync: this, upperBound: 0.8)
+    ..addStatusListener((status) =>
+        status == AnimationStatus.completed ? likeController.reset() : 0);
+  late final Animation<double> likeAnimation =
+      CurvedAnimation(parent: likeController, curve: Curves.elasticOut);
 
-  @override
-  void initState() {
-    controller = PageController(initialPage: widget.initialPage);
+  late final AnimationController unlikeController = AnimationController(
+      duration: const Duration(milliseconds: 500), vsync: this, upperBound: 0.8)
+    ..addStatusListener((status) =>
+        status == AnimationStatus.completed ? unlikeController.reset() : 0);
+  late final Animation<double> unlikeAnimation =
+      CurvedAnimation(parent: unlikeController, curve: Curves.elasticOut);
 
-    likeController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-    unlikeController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
+  /// The controller used in the image gallery.
+  PageController mainPageController = PageController(initialPage: 0);
 
-    likeAnimation =
-        CurvedAnimation(parent: likeController, curve: Curves.elasticOut)
-          ..addListener(() {
-            if (likeController.value >= 0.8) likeController.reset();
-          });
-    unlikeAnimation =
-        CurvedAnimation(parent: unlikeController, curve: Curves.elasticOut)
-          ..addListener(() {
-            if (unlikeController.value >= 0.8) unlikeController.reset();
-          });
-
-    super.initState();
-  }
+  /// Made to follow the `mainPageController`, and used
+  /// to update the page count at the bottom of the page.
+  PageController pageCountController = PageController(initialPage: 0);
 
   Future<void> _downloadImage(Uri url) async {
     final messenger = ScaffoldMessenger.of(context);
@@ -166,7 +177,7 @@ class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
     }
   }
 
-  Future<void> likePhoto(List<AlbumPhoto> photos, int index) async {
+  Future<void> _likePhoto(List<AlbumPhoto> photos, int index) async {
     final messenger = ScaffoldMessenger.of(context);
     if (photos[index].liked) {
       unlikeController.forward();
@@ -197,7 +208,7 @@ class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
         builder: (context, i) {
           return PhotoViewGalleryPageOptions.customChild(
             child: GestureDetector(
-              onDoubleTap: () => likePhoto(photos, i),
+              onDoubleTap: () => _likePhoto(photos, i),
               child: Image.network(photos[i].full),
             ),
             minScale: PhotoViewComputedScale.contained * 0.8,
@@ -255,7 +266,7 @@ class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
                 controller,
                 widget.initialPage,
                 widget.album,
-                likePhoto,
+                _likePhoto,
               ),
             ),
           ),
@@ -302,36 +313,6 @@ class _HeartPopup extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _ShareAlbumButton extends StatelessWidget {
-  final String slug;
-
-  const _ShareAlbumButton({required this.slug});
-
-  Future<void> _shareAlbum(BuildContext context) async {
-    final messenger = ScaffoldMessenger.of(context);
-    try {
-      await Share.share('https://${config.apiHost}/members/photos/$slug/');
-    } catch (_) {
-      messenger.showSnackBar(
-        const SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Text('Could not share the album.'),
-        ),
-      );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      padding: const EdgeInsets.all(16),
-      color: Theme.of(context).primaryIconTheme.color,
-      icon: Icon(Icons.adaptive.share),
-      onPressed: () => _shareAlbum(context),
     );
   }
 }
