@@ -15,12 +15,12 @@ class TostiHomeCubit extends Cubit<TostiHomeState> {
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
     try {
-      final venuesFuture = api.getVenues(limit: 999);
-      final playersFuture = api.getPlayers(limit: 999);
+      final venuesFuture = api.getVenues(limit: 99, isOrderVenue: true);
+      final playersFuture = api.getPlayers(limit: 99);
       final shiftsFuture = api.getShifts(
         startLTE: DateTime.now(),
         endGTE: DateTime.now(),
-        limit: 999,
+        limit: 99,
       );
 
       final venuesResponse = await venuesFuture;

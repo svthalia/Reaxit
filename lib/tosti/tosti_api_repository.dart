@@ -284,12 +284,12 @@ class TostiApiRepository {
 
   /// Get a list of [TostiVenue]s.
   ///
-  /// Use `limit` and `offset` for pagination. You can also filter on
-  /// `canBeReserved` and search with `search`.
+  /// Use `limit` and `offset` for pagination.
   Future<ListResponse<TostiVenue>> getVenues({
     int? limit,
     int? offset,
     bool? canBeReserved,
+    bool? isOrderVenue,
     String? search,
   }) {
     return sandbox(() async {
@@ -300,6 +300,7 @@ class TostiApiRepository {
           if (offset != null) 'offset': offset.toString(),
           if (canBeReserved != null)
             'can_be_reserved': canBeReserved.toString(),
+          if (isOrderVenue != null) 'is_ordervenue': isOrderVenue.toString(),
           if (search != null) 'search': search,
         },
       );
