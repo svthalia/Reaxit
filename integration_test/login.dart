@@ -10,7 +10,7 @@ import 'package:reaxit/main.dart' as app;
 
 import '../test/mocks.mocks.dart';
 
-void main() {
+void testLogin() {
   // ignore: unused_local_variable
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -31,7 +31,7 @@ void main() {
         when(authCubit.stream).thenAnswer((_) => streamController.stream);
 
         // Start app.
-        app.testingMain(authCubit);
+        app.testingMain(authCubit, null);
         await tester.pumpAndSettle();
         await Future.delayed(const Duration(seconds: 5));
         await tester.pumpAndSettle();
@@ -85,7 +85,7 @@ void main() {
         when(authCubit.stream).thenAnswer((_) => streamController.stream);
 
         // Start app.
-        app.testingMain(authCubit);
+        app.testingMain(authCubit, null);
         await tester.pumpAndSettle();
         await Future.delayed(const Duration(seconds: 5));
         await tester.pumpAndSettle();
@@ -120,7 +120,7 @@ void main() {
         when(authCubit.logOut()).thenAnswer((_) => Future.value(null));
 
         // Start app.
-        app.testingMain(authCubit);
+        app.testingMain(authCubit, null);
         await tester.pumpAndSettle();
         await Future.delayed(const Duration(seconds: 5));
         await tester.pumpAndSettle();

@@ -9,7 +9,7 @@ class ListAlbum {
   final String title;
   final bool accessible;
   final bool shareable;
-  final AlbumPhoto cover;
+  final CoverPhoto cover;
 
   const ListAlbum(
       this.slug, this.title, this.accessible, this.shareable, this.cover);
@@ -22,8 +22,29 @@ class ListAlbum {
 class Album extends ListAlbum {
   final List<AlbumPhoto> photos;
 
+  Album copyWith({
+    String? slug,
+    String? title,
+    bool? accessible,
+    bool? shareable,
+    CoverPhoto? cover,
+    List<AlbumPhoto>? photos,
+  }) =>
+      Album(
+        slug ?? this.slug,
+        title ?? this.title,
+        accessible ?? this.accessible,
+        shareable ?? this.shareable,
+        cover ?? this.cover,
+        photos ?? this.photos,
+      );
+
+  const Album.fromlist(String slug, String title, bool accessible,
+      bool shareable, CoverPhoto cover, this.photos)
+      : super(slug, title, accessible, shareable, cover);
+
   const Album(String slug, String title, bool accessible, bool shareable,
-      AlbumPhoto cover, this.photos)
+      CoverPhoto cover, this.photos)
       : super(slug, title, accessible, shareable, cover);
 
   factory Album.fromJson(Map<String, dynamic> json) => _$AlbumFromJson(json);

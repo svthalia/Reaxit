@@ -1101,6 +1101,22 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
         )),
       ) as _i5.Future<_i3.Album>);
   @override
+  _i5.Future<void> updateLiked(
+    int? id,
+    bool? liked,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateLiked,
+          [
+            id,
+            liked,
+          ],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+  @override
   _i5.Future<_i3.ListResponse<_i3.ListAlbum>> getAlbums({
     String? search,
     int? limit,

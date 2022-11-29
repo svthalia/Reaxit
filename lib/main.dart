@@ -50,7 +50,7 @@ Future<void> main() async {
         lazy: false,
         child: BlocProvider(
           create: (context) => AuthCubit()..load(),
-          child: ThaliApp(),
+          child: const ThaliApp(),
         ),
       ));
     },
@@ -58,7 +58,7 @@ Future<void> main() async {
 }
 
 /// A copy of [main] that allows inserting an [AuthCubit] for integration tests.
-Future<void> testingMain(AuthCubit? authCubit) async {
+Future<void> testingMain(AuthCubit? authCubit, String? initialroute) async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Google Fonts doesn't need to download fonts as they are bundled.
@@ -84,9 +84,15 @@ Future<void> testingMain(AuthCubit? authCubit) async {
     child: authCubit == null
         ? BlocProvider(
             create: (context) => AuthCubit()..load(),
-            child: ThaliApp(),
+            child: ThaliApp(
+              initialRoute: initialroute,
+            ),
           )
-        : BlocProvider.value(value: authCubit..load(), child: ThaliApp()),
+        : BlocProvider.value(
+            value: authCubit..load(),
+            child: ThaliApp(
+              initialRoute: initialroute,
+            )),
   ));
 }
 
@@ -106,6 +112,9 @@ class GoRouterRefreshStream extends ChangeNotifier {
 }
 
 class ThaliApp extends StatefulWidget {
+  final String? initialRoute;
+  const ThaliApp({this.initialRoute});
+
   @override
   State<ThaliApp> createState() => _ThaliAppState();
 }
@@ -210,6 +219,8 @@ class _ThaliAppState extends State<ThaliApp> {
 
       // Refresh to look for redirects whenever auth state changes.
       refreshListenable: GoRouterRefreshStream(_authCubit.stream),
+
+      initialLocation: widget.initialRoute,
     );
 
     _setupPushNotificationHandlers();

@@ -259,6 +259,9 @@ abstract class ApiRepository {
   /// Get the [Album] with the `slug`.
   Future<Album> getAlbum({required String slug});
 
+  /// Create or delete a like on the photo with the `id`.
+  Future<void> updateLiked(int id, bool liked);
+
   /// Get a list of [ListAlbum]s.
   ///
   /// Use `limit` and `offset` for pagination. [ListResponse.count] is the

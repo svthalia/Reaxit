@@ -34,7 +34,7 @@ PODS:
     - GoogleUtilities/UserDefaults (~> 7.8)
     - nanopb (< 2.30910.0, >= 2.30908.0)
   - Flutter (1.0.0)
-  - flutter_secure_storage (3.3.1):
+  - flutter_secure_storage (6.0.0):
     - Flutter
   - flutter_web_auth_2 (1.1.1):
     - Flutter
@@ -177,7 +177,7 @@ SPEC CHECKSUMS:
   FirebaseInstallations: 004915af170935e3a583faefd5f8bc851afc220f
   FirebaseMessaging: cc9f40f5b7494680f3844d08e517e92aa4e8d9f7
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  flutter_secure_storage: 7953c38a04c3fdbb00571bcd87d8e3b5ceb9daec
+  flutter_secure_storage: 23fc622d89d073675f2eaa109381aefbcf5a49be
   flutter_web_auth_2: a1bc00762c408a8f80b72a538cd7ff5b601c3e71
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   gallery_saver: 9fc173c9f4fcc48af53b2a9ebea1b643255be542
