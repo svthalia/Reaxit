@@ -99,29 +99,42 @@ class _Gallery extends StatefulWidget {
 }
 
 class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
-  late final PageController controller =
-      PageController(initialPage: widget.initialPage);
+  late final PageController controller;
 
-  late final AnimationController likeController = AnimationController(
-      duration: const Duration(milliseconds: 500), vsync: this, upperBound: 0.8)
-    ..addStatusListener((status) =>
-        status == AnimationStatus.completed ? likeController.reset() : 0);
-  late final Animation<double> likeAnimation =
-      CurvedAnimation(parent: likeController, curve: Curves.elasticOut);
+  late final AnimationController likeController;
+  late final AnimationController unlikeController;
+  late final Animation<double> likeAnimation;
+  late final Animation<double> unlikeAnimation;
 
-  late final AnimationController unlikeController = AnimationController(
-      duration: const Duration(milliseconds: 500), vsync: this, upperBound: 0.8)
-    ..addStatusListener((status) =>
-        status == AnimationStatus.completed ? unlikeController.reset() : 0);
-  late final Animation<double> unlikeAnimation =
-      CurvedAnimation(parent: unlikeController, curve: Curves.elasticOut);
+  @override
+  void initState() {
+    super.initState();
+    controller = PageController(initialPage: widget.initialPage);
 
-  /// The controller used in the image gallery.
-  PageController mainPageController = PageController(initialPage: 0);
+    likeController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+      upperBound: 0.8,
+    )..addStatusListener((status) {
+        if (status == AnimationStatus.completed) likeController.reset();
+      });
+    unlikeController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+      upperBound: 0.8,
+    )..addStatusListener((status) {
+        if (status == AnimationStatus.completed) unlikeController.reset();
+      });
 
-  /// Made to follow the `mainPageController`, and used
-  /// to update the page count at the bottom of the page.
-  PageController pageCountController = PageController(initialPage: 0);
+    unlikeAnimation = CurvedAnimation(
+      parent: unlikeController,
+      curve: Curves.elasticOut,
+    );
+    likeAnimation = CurvedAnimation(
+      parent: likeController,
+      curve: Curves.elasticOut,
+    );
+  }
 
   Future<void> _downloadImage(Uri url) async {
     final messenger = ScaffoldMessenger.of(context);
