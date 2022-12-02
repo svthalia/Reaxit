@@ -162,45 +162,39 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var mq = MediaQuery.of(context);
-    mq = mq.copyWith(padding: mq.padding.copyWith(bottom: 0));
-    return MediaQuery(
-      data: mq,
-      child: Scaffold(
-        appBar: ThaliaAppBar(title: const Text('WELCOME')),
-        drawer: MenuDrawer(),
-        body: RefreshIndicator(
-          onRefresh: () => BlocProvider.of<WelcomeCubit>(context).load(),
-          child: BlocBuilder<WelcomeCubit, WelcomeState>(
-            builder: (context, state) {
-              if (state.hasException) {
-                return ErrorScrollView(state.message!);
-              } else if (!state.hasResults) {
-                return const Center(child: CircularProgressIndicator());
-              } else {
-                return Scrollbar(
-                  // child: SafeArea(
-                  child: ListView(
-                    key: const PageStorageKey('welcome'),
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    children: [
-                      _makeSlides(state.slides!),
-                      if (state.slides!.isNotEmpty) const Divider(height: 0),
-                      _makeArticles(state.articles!),
-                      if (state.articles!.isNotEmpty)
-                        const Divider(indent: 16, endIndent: 16, height: 8),
-                      _makeUpcomingEvents(state.upcomingEvents!),
-                      TextButton(
-                        onPressed: () => context.goNamed('calendar'),
-                        child: const Text('SHOW THE ENTIRE AGENDA'),
-                      ),
-                    ],
-                    // ),
-                  ),
-                );
-              }
-            },
-          ),
+    return Scaffold(
+      appBar: ThaliaAppBar(title: const Text('WELCOME')),
+      drawer: MenuDrawer(),
+      body: RefreshIndicator(
+        onRefresh: () => BlocProvider.of<WelcomeCubit>(context).load(),
+        child: BlocBuilder<WelcomeCubit, WelcomeState>(
+          builder: (context, state) {
+            if (state.hasException) {
+              return ErrorScrollView(state.message!);
+            } else if (!state.hasResults) {
+              return const Center(child: CircularProgressIndicator());
+            } else {
+              return Scrollbar(
+                // child: SafeArea(
+                child: ListView(
+                  key: const PageStorageKey('welcome'),
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: [
+                    _makeSlides(state.slides!),
+                    if (state.slides!.isNotEmpty) const Divider(height: 0),
+                    _makeArticles(state.articles!),
+                    if (state.articles!.isNotEmpty)
+                      const Divider(indent: 16, endIndent: 16, height: 8),
+                    _makeUpcomingEvents(state.upcomingEvents!),
+                    TextButton(
+                      onPressed: () => context.goNamed('calendar'),
+                      child: const Text('SHOW THE ENTIRE AGENDA'),
+                    ),
+                  ],
+                ),
+              );
+            }
+          },
         ),
       ),
     );
