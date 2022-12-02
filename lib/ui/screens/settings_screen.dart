@@ -30,27 +30,10 @@ class SettingsScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text('ABOUT', style: textTheme.caption),
                   const _AboutCard(),
+                  const SizedBox(height: 8),
+                  const _LogOutButton(),
                 ],
               ),
-            );
-          } else if (state.isLoading && state.categories == null) {
-            return ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                Text('THEME', style: textTheme.caption),
-                const _ThemeModeCard(),
-                const SizedBox(height: 8),
-                Text('NOTIFICATIONS', style: textTheme.caption),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-                const SizedBox(height: 8),
-                Text('ABOUT', style: textTheme.caption),
-                const _AboutCard(),
-                const SizedBox(height: 8),
-                const _LogOutButton(),
-              ],
             );
           } else if (state.isLoading && state.categories == null) {
             return ListView(
