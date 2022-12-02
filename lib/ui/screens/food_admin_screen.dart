@@ -60,26 +60,24 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
               onRefresh: () async {
                 await BlocProvider.of<FoodAdminCubit>(context).load();
               },
-              child: SafeArea(
-                child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
-                  builder: (context, state) {
-                    if (state.hasException) {
-                      return ErrorScrollView(state.message!);
-                    } else if (state.isLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else {
-                      return Scrollbar(
-                          child: ListView.separated(
-                        key: const PageStorageKey('food-admin'),
-                        itemBuilder: (context, index) => _OrderTile(
-                          order: state.result![index],
-                        ),
-                        separatorBuilder: (_, __) => const Divider(),
-                        itemCount: state.result!.length,
-                      ));
-                    }
-                  },
-                ),
+              child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
+                builder: (context, state) {
+                  if (state.hasException) {
+                    return ErrorScrollView(state.message!);
+                  } else if (state.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else {
+                    return Scrollbar(
+                        child: ListView.separated(
+                      key: const PageStorageKey('food-admin'),
+                      itemBuilder: (context, index) => _OrderTile(
+                        order: state.result![index],
+                      ),
+                      separatorBuilder: (_, __) => const Divider(),
+                      itemCount: state.result!.length,
+                    ));
+                  }
+                },
               ),
             ),
           );
@@ -89,6 +87,7 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
   }
 }
 
+//TODO: This does not carry any state?
 class _OrderTile extends StatefulWidget {
   final AdminFoodOrder order;
 

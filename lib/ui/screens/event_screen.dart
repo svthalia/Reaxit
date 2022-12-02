@@ -1,6 +1,7 @@
 import 'package:add_2_calendar/add_2_calendar.dart' as add2calendar;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:go_router/go_router.dart';
@@ -903,7 +904,7 @@ class _EventScreenState extends State<EventScreen> {
                   _registrationsCubit.load();
                   await _eventCubit.load();
                 },
-                child: SafeArea(child: ErrorScrollView(state.message!))),
+                child: ErrorScrollView(state.message!)),
           );
         } else if (state.isLoading &&
             widget.event == null &&
@@ -913,8 +914,7 @@ class _EventScreenState extends State<EventScreen> {
                 title: const Text('EVENT'),
                 actions: [_makeShareEventButton(widget.pk)],
               ),
-              body: const SafeArea(
-                  child: Center(child: CircularProgressIndicator())));
+              body: const Center(child: CircularProgressIndicator()));
         } else {
           final event = (state.result ?? widget.event)!;
           return Scaffold(
@@ -940,16 +940,20 @@ class _EventScreenState extends State<EventScreen> {
                 _registrationsCubit.load();
                 await _eventCubit.load();
               },
-              child: SafeArea(
-                child: BlocBuilder<RegistrationsCubit, RegistrationsState>(
-                  bloc: _registrationsCubit,
-                  builder: (context, listState) {
-                    return Scrollbar(
-                      controller: _controller,
+              child: BlocBuilder<RegistrationsCubit, RegistrationsState>(
+                bloc: _registrationsCubit,
+                builder: (context, listState) {
+                  return Scrollbar(
+                    controller: _controller,
+                    child: SafeArea(
+                      top: false,
+                      bottom: false,
                       child: CustomScrollView(
                         controller: _controller,
                         key: const PageStorageKey('event'),
                         slivers: [
+                          const SliverSafeArea(
+                              bottom: false, sliver: SliverToBoxAdapter()),
                           SliverToBoxAdapter(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -977,11 +981,13 @@ class _EventScreenState extends State<EventScreen> {
                                 ),
                               ),
                           ],
+                          const SliverSafeArea(
+                              top: false, sliver: SliverToBoxAdapter()),
                         ],
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
             ),
           );

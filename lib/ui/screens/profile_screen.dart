@@ -458,12 +458,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: BlocBuilder<MemberCubit, MemberState>(
-          bloc: _memberCubit,
-          builder: (context, state) {
-            if (state.hasException) {
-              return CustomScrollView(
+      body: BlocBuilder<MemberCubit, MemberState>(
+        bloc: _memberCubit,
+        builder: (context, state) {
+          if (state.hasException) {
+            return SafeArea(
+              top: false,
+              bottom: false,
+              child: CustomScrollView(
                 controller: _scrollController,
                 slivers: [
                   _makeAppBar(),
@@ -471,9 +473,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: ErrorCenter(state.message!),
                   ),
                 ],
-              );
-            } else if (state.isLoading && widget.member == null) {
-              return CustomScrollView(
+              ),
+            );
+          } else if (state.isLoading && widget.member == null) {
+            return SafeArea(
+              top: false,
+              bottom: false,
+              child: CustomScrollView(
                 controller: _scrollController,
                 slivers: [
                   _makeAppBar(),
@@ -481,12 +487,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Center(child: CircularProgressIndicator()),
                   ),
                 ],
-              );
-            } else {
-              return CustomScrollView(
+              ),
+            );
+          } else {
+            return SafeArea(
+              top: false,
+              bottom: false,
+              child: CustomScrollView(
                 key: const PageStorageKey('profile'),
                 controller: _scrollController,
                 slivers: [
+                  const SliverSafeArea(
+                      bottom: false, sliver: SliverToBoxAdapter()),
                   _makeAppBar((state.result ?? widget.member)!),
                   _makeFactsSliver((state.result ?? widget.member)!),
                   if (!state.isLoading) ...[
@@ -502,12 +514,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ],
-                  const SliverToBoxAdapter(child: SizedBox(height: 32))
+                  const SliverToBoxAdapter(
+                      child:
+                          SizedBox(height: 32)), // Im pretty sure this can go?
+                  const SliverSafeArea(
+                      top: false, sliver: SliverToBoxAdapter()),
                 ],
-              );
-            }
-          },
-        ),
+              ),
+            );
+          }
+        },
       ),
     );
   }

@@ -42,195 +42,198 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: BlocBuilder<RegistrationFieldsCubit, RegistrationFieldsState>(
-        bloc: _registrationFieldsCubit,
-        builder: (context, state) {
-          if (state.hasException) {
-            return Scaffold(
-              appBar: ThaliaAppBar(
-                title: const Text('REGISTRATION'),
-                leading: const CloseButton(),
-              ),
-              body: ErrorCenter(state.message!),
-            );
-          } else if (state.isLoading) {
-            return Scaffold(
-              appBar: ThaliaAppBar(
-                title: const Text('REGISTRATION'),
-                leading: const CloseButton(),
-              ),
-              body: const Center(child: CircularProgressIndicator()),
-            );
-          } else {}
+    return BlocBuilder<RegistrationFieldsCubit, RegistrationFieldsState>(
+      bloc: _registrationFieldsCubit,
+      builder: (context, state) {
+        if (state.hasException) {
+          return Scaffold(
+            appBar: ThaliaAppBar(
+              title: const Text('REGISTRATION'),
+              leading: const CloseButton(),
+            ),
+            body: ErrorCenter(state.message!),
+          );
+        } else if (state.isLoading) {
+          return Scaffold(
+            appBar: ThaliaAppBar(
+              title: const Text('REGISTRATION'),
+              leading: const CloseButton(),
+            ),
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        } else {
           return Scaffold(
             appBar: ThaliaAppBar(
               title: const Text('REGISTRATION'),
               leading: const CloseButton(),
             ),
             body: SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    ...state.result!.entries.map((entry) {
-                      final field = entry.value;
-                      if (field is TextRegistrationField) {
-                        return Column(
-                          children: [
-                            ListTile(
+              child: SafeArea(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      ...state.result!.entries.map((entry) {
+                        final field = entry.value;
+                        if (field is TextRegistrationField) {
+                          return Column(
+                            children: [
+                              ListTile(
+                                title: Text(field.label),
+                                subtitle: field.description.isNotEmpty
+                                    ? Text(field.description)
+                                    : null,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  bottom: 16,
+                                  right: 16,
+                                ),
+                                child: TextFormField(
+                                  initialValue: field.value,
+                                  minLines: 1,
+                                  maxLines: 5,
+                                  decoration: InputDecoration(
+                                    labelText: field.isRequired
+                                        ? '${field.label} *'
+                                        : field.label,
+                                    hintText: 'Lorem ipsum...',
+                                  ),
+                                  validator: (value) {
+                                    if (field.isRequired &&
+                                        (value == null || value.isEmpty)) {
+                                      return 'Please fill in this field.';
+                                    }
+                                    return null;
+                                  },
+                                  onSaved: (newValue) => field.value = newValue,
+                                ),
+                              ),
+                            ],
+                          );
+                        } else if (field is IntegerRegistrationField) {
+                          return Column(
+                            children: [
+                              ListTile(
+                                dense: field.description.isEmpty,
+                                title: Text(field.label),
+                                subtitle: field.description.isNotEmpty
+                                    ? Text(field.description)
+                                    : null,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 16,
+                                  bottom: 16,
+                                ),
+                                child: TextFormField(
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                  decoration: InputDecoration(
+                                    labelText: field.isRequired
+                                        ? '${field.label} *'
+                                        : field.label,
+                                    hintText: '123...',
+                                  ),
+                                  initialValue: field.value?.toString(),
+                                  validator: (value) {
+                                    if (field.isRequired &&
+                                        (value == null || value.isEmpty)) {
+                                      return 'Please fill in this field.';
+                                    }
+                                    return null;
+                                  },
+                                  onSaved: (newValue) =>
+                                      field.value = int.tryParse(newValue!),
+                                ),
+                              ),
+                            ],
+                          );
+                        } else if (field is CheckboxRegistrationField) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: _CheckboxFormField(
+                              initialValue: field.value ?? false,
+                              onSaved: (newValue) => field.value = newValue,
                               title: Text(field.label),
                               subtitle: field.description.isNotEmpty
                                   ? Text(field.description)
                                   : null,
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                left: 16,
-                                bottom: 16,
-                                right: 16,
-                              ),
-                              child: TextFormField(
-                                initialValue: field.value,
-                                minLines: 1,
-                                maxLines: 5,
-                                decoration: InputDecoration(
-                                  labelText: field.isRequired
-                                      ? '${field.label} *'
-                                      : field.label,
-                                  hintText: 'Lorem ipsum...',
-                                ),
-                                validator: (value) {
-                                  if (field.isRequired &&
-                                      (value == null || value.isEmpty)) {
-                                    return 'Please fill in this field.';
-                                  }
-                                  return null;
-                                },
-                                onSaved: (newValue) => field.value = newValue,
-                              ),
-                            ),
-                          ],
-                        );
-                      } else if (field is IntegerRegistrationField) {
-                        return Column(
+                          );
+                        } else {
+                          return const SizedBox(height: 0);
+                        }
+                      }),
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            ListTile(
-                              dense: field.description.isEmpty,
-                              title: Text(field.label),
-                              subtitle: field.description.isNotEmpty
-                                  ? Text(field.description)
-                                  : null,
+                            TextButton.icon(
+                              onPressed: () {
+                                _formKey.currentState!.reset();
+                              },
+                              icon: const Icon(Icons.restore_page_outlined),
+                              label: const Text('RESTORE'),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                left: 16,
-                                right: 16,
-                                bottom: 16,
-                              ),
-                              child: TextFormField(
-                                keyboardType: TextInputType.number,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly
-                                ],
-                                decoration: InputDecoration(
-                                  labelText: field.isRequired
-                                      ? '${field.label} *'
-                                      : field.label,
-                                  hintText: '123...',
-                                ),
-                                initialValue: field.value?.toString(),
-                                validator: (value) {
-                                  if (field.isRequired &&
-                                      (value == null || value.isEmpty)) {
-                                    return 'Please fill in this field.';
+                            const SizedBox(width: 16),
+                            ElevatedButton.icon(
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  _formKey.currentState!.save();
+
+                                  final messenger =
+                                      ScaffoldMessenger.of(context);
+
+                                  try {
+                                    await _registrationFieldsCubit.update(
+                                      eventPk: widget.eventPk,
+                                      registrationPk: widget.registrationPk,
+                                      fields: state.result!,
+                                    );
+
+                                    if (mounted) Navigator.of(context).pop();
+
+                                    messenger.showSnackBar(
+                                      const SnackBar(
+                                        behavior: SnackBarBehavior.floating,
+                                        content: Text(
+                                          'Your registration has been updated.',
+                                        ),
+                                      ),
+                                    );
+                                  } on ApiException {
+                                    messenger.showSnackBar(
+                                      const SnackBar(
+                                        behavior: SnackBarBehavior.floating,
+                                        content: Text(
+                                          'Could not update your registration.',
+                                        ),
+                                      ),
+                                    );
                                   }
-                                  return null;
-                                },
-                                onSaved: (newValue) =>
-                                    field.value = int.tryParse(newValue!),
-                              ),
-                            ),
-                          ],
-                        );
-                      } else if (field is CheckboxRegistrationField) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: _CheckboxFormField(
-                            initialValue: field.value ?? false,
-                            onSaved: (newValue) => field.value = newValue,
-                            title: Text(field.label),
-                            subtitle: field.description.isNotEmpty
-                                ? Text(field.description)
-                                : null,
-                          ),
-                        );
-                      } else {
-                        return const SizedBox(height: 0);
-                      }
-                    }),
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton.icon(
-                            onPressed: () {
-                              _formKey.currentState!.reset();
-                            },
-                            icon: const Icon(Icons.restore_page_outlined),
-                            label: const Text('RESTORE'),
-                          ),
-                          const SizedBox(width: 16),
-                          ElevatedButton.icon(
-                            onPressed: () async {
-                              if (_formKey.currentState!.validate()) {
-                                _formKey.currentState!.save();
-
-                                final messenger = ScaffoldMessenger.of(context);
-
-                                try {
-                                  await _registrationFieldsCubit.update(
-                                    eventPk: widget.eventPk,
-                                    registrationPk: widget.registrationPk,
-                                    fields: state.result!,
-                                  );
-
-                                  if (mounted) Navigator.of(context).pop();
-
-                                  messenger.showSnackBar(
-                                    const SnackBar(
-                                      behavior: SnackBarBehavior.floating,
-                                      content: Text(
-                                        'Your registration has been updated.',
-                                      ),
-                                    ),
-                                  );
-                                } on ApiException {
-                                  messenger.showSnackBar(
-                                    const SnackBar(
-                                      behavior: SnackBarBehavior.floating,
-                                      content: Text(
-                                        'Could not update your registration.',
-                                      ),
-                                    ),
-                                  );
                                 }
-                              }
-                            },
-                            icon: const Icon(Icons.check),
-                            label: const Text('SUBMIT'),
-                          ),
-                        ],
+                              },
+                              icon: const Icon(Icons.check),
+                              label: const Text('SUBMIT'),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
           );
-        },
-      ),
+        }
+        ;
+      },
     );
   }
 }

@@ -195,13 +195,17 @@ class MemberListScrollView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scrollbar(
-        controller: controller,
+      controller: controller,
+      child: SafeArea(
+        top: false,
+        bottom: false,
         child: CustomScrollView(
           controller: controller,
           physics: const RangeMaintainingScrollPhysics(
             parent: AlwaysScrollableScrollPhysics(),
           ),
           slivers: [
+            const SliverSafeArea(bottom: false, sliver: SliverToBoxAdapter()),
             SliverPadding(
               padding: const EdgeInsets.all(8),
               sliver: SliverGrid(
@@ -229,7 +233,10 @@ class MemberListScrollView extends StatelessWidget {
                   ]),
                 ),
               ),
+            const SliverSafeArea(top: false, sliver: SliverToBoxAdapter()),
           ],
-        ));
+        ),
+      ),
+    );
   }
 }

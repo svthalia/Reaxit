@@ -94,22 +94,30 @@ class _Page extends StatelessWidget {
         body: RefreshIndicator(
           onRefresh: () => cubit.load(),
           child: Scrollbar(
-            child: CustomScrollView(
-              key: const PageStorageKey('group'),
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _GroupImage(group: group),
-                      const Divider(height: 0),
-                      _GroupInfo(group: group)
-                    ],
+            child: SafeArea(
+              top: false,
+              bottom: false,
+              child: CustomScrollView(
+                key: const PageStorageKey('group'),
+                slivers: [
+                  const SliverSafeArea(
+                      bottom: false, sliver: SliverToBoxAdapter()),
+                  SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _GroupImage(group: group),
+                        const Divider(height: 0),
+                        _GroupInfo(group: group)
+                      ],
+                    ),
                   ),
-                ),
-                _MembersHeader(group: group),
-                const _MembersGrid(members: null),
-              ],
+                  _MembersHeader(group: group),
+                  const _MembersGrid(members: null),
+                  const SliverSafeArea(
+                      top: false, sliver: SliverToBoxAdapter()),
+                ],
+              ),
             ),
           ),
         ),
@@ -121,22 +129,30 @@ class _Page extends StatelessWidget {
         body: RefreshIndicator(
           onRefresh: () => cubit.load(),
           child: Scrollbar(
-            child: CustomScrollView(
-              key: const PageStorageKey('group'),
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _GroupImage(group: group),
-                      const Divider(height: 0),
-                      _GroupInfo(group: group)
-                    ],
+            child: SafeArea(
+              top: false,
+              bottom: false,
+              child: CustomScrollView(
+                key: const PageStorageKey('group'),
+                slivers: [
+                  const SliverSafeArea(
+                      bottom: false, sliver: SliverToBoxAdapter()),
+                  SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _GroupImage(group: group),
+                        const Divider(height: 0),
+                        _GroupInfo(group: group)
+                      ],
+                    ),
                   ),
-                ),
-                _MembersHeader(group: group),
-                _MembersGrid(members: group.members),
-              ],
+                  _MembersHeader(group: group),
+                  _MembersGrid(members: group.members),
+                  const SliverSafeArea(
+                      top: false, sliver: SliverToBoxAdapter()),
+                ],
+              ),
             ),
           ),
         ),
