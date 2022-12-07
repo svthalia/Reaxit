@@ -5,13 +5,19 @@ class SafeCustomScrollView extends StatelessWidget {
   final List<Widget> slivers;
   final ScrollController? controller;
   final ScrollPhysics? physics;
-  final Widget? sliverappbar;
+  final bool top;
+  final bool right;
+  final bool bottom;
+  final bool left;
 
   const SafeCustomScrollView({
     required this.slivers,
     this.controller,
     this.physics,
-    this.sliverappbar,
+    this.top = true,
+    this.right = true,
+    this.bottom = true,
+    this.left = true,
     super.key,
   });
 
@@ -23,22 +29,25 @@ class SafeCustomScrollView extends StatelessWidget {
     return SafeArea(
       top: false,
       bottom: false,
+      left: left,
+      right: right,
       child: MediaQuery.removePadding(
         context: context,
-        removeLeft: true,
-        removeTop: true,
-        removeRight: true,
-        removeBottom: true,
+        removeLeft: left,
+        removeTop: top,
+        removeRight: right,
+        removeBottom: bottom,
         child: Padding(
           padding: EdgeInsets.only(left: padding.left, right: padding.right),
           child: CustomScrollView(
             controller: controller,
             physics: physics,
             slivers: [
-              if (sliverappbar != null) sliverappbar!,
-              SliverPadding(padding: EdgeInsets.only(top: padding.top)),
+              if (top)
+                SliverPadding(padding: EdgeInsets.only(top: padding.top)),
               ...slivers,
-              SliverPadding(padding: EdgeInsets.only(bottom: padding.bottom)),
+              if (bottom)
+                SliverPadding(padding: EdgeInsets.only(bottom: padding.bottom)),
             ],
           ),
         ),

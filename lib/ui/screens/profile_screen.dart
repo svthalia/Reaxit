@@ -465,8 +465,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           if (state.hasException) {
             return SafeCustomScrollView(
               controller: _scrollController,
-              sliverappbar: _makeAppBar(),
+              top: false,
               slivers: [
+                _makeAppBar(),
                 SliverFillRemaining(
                   child: ErrorCenter(state.message!),
                 ),
@@ -475,9 +476,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           } else if (state.isLoading && widget.member == null) {
             return SafeCustomScrollView(
               controller: _scrollController,
-              sliverappbar: _makeAppBar(),
-              slivers: const [
-                SliverFillRemaining(
+              top: false,
+              slivers: [
+                _makeAppBar(),
+                const SliverFillRemaining(
                   child: Center(child: CircularProgressIndicator()),
                 ),
               ],
@@ -486,8 +488,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             return SafeCustomScrollView(
               key: const PageStorageKey('profile'),
               controller: _scrollController,
-              sliverappbar: _makeAppBar((state.result ?? widget.member)!),
+              top: false,
               slivers: [
+                _makeAppBar((state.result ?? widget.member)!),
                 _makeFactsSliver((state.result ?? widget.member)!),
                 if (!state.isLoading) ...[
                   if (state.result!.achievements.isNotEmpty)
