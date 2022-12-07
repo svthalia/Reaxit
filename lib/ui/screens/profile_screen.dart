@@ -12,6 +12,7 @@ import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/widgets.dart';
+import 'package:reaxit/ui/widgets/safe_custom_scrollview.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Screen that loads and shows a the profile of the member with `pk`.
@@ -462,65 +463,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
         bloc: _memberCubit,
         builder: (context, state) {
           if (state.hasException) {
-            return SafeArea(
-              top: false,
-              bottom: false,
-              child: CustomScrollView(
-                controller: _scrollController,
-                slivers: [
-                  _makeAppBar(),
-                  SliverFillRemaining(
-                    child: ErrorCenter(state.message!),
-                  ),
-                ],
-              ),
+            return SafeCustomScrollView(
+              controller: _scrollController,
+              slivers: [
+                _makeAppBar(),
+                SliverFillRemaining(
+                  child: ErrorCenter(state.message!),
+                ),
+              ],
             );
           } else if (state.isLoading && widget.member == null) {
-            return SafeArea(
-              top: false,
-              bottom: false,
-              child: CustomScrollView(
-                controller: _scrollController,
-                slivers: [
-                  _makeAppBar(),
-                  const SliverFillRemaining(
-                    child: Center(child: CircularProgressIndicator()),
-                  ),
-                ],
-              ),
+            return SafeCustomScrollView(
+              controller: _scrollController,
+              slivers: [
+                _makeAppBar(),
+                const SliverFillRemaining(
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              ],
             );
           } else {
-            return SafeArea(
-              top: false,
-              bottom: false,
-              child: CustomScrollView(
-                key: const PageStorageKey('profile'),
-                controller: _scrollController,
-                slivers: [
-                  const SliverSafeArea(
-                      bottom: false, sliver: SliverToBoxAdapter()),
-                  _makeAppBar((state.result ?? widget.member)!),
-                  _makeFactsSliver((state.result ?? widget.member)!),
-                  if (!state.isLoading) ...[
-                    if (state.result!.achievements.isNotEmpty)
-                      _makeAchievementsSliver(state.result!),
-                    if (state.result!.societies.isNotEmpty)
-                      _makeSocietiesSliver(state.result!),
-                  ] else ...[
-                    const SliverPadding(
-                      padding: EdgeInsets.all(16),
-                      sliver: SliverToBoxAdapter(
-                        child: Center(child: CircularProgressIndicator()),
-                      ),
+            // should this be a CustomScrollview? This would add padding _around_ the the appbar not in
+            return CustomScrollView(
+              key: const PageStorageKey('profile'),
+              controller: _scrollController,
+              slivers: [
+                _makeAppBar((state.result ?? widget.member)!),
+                _makeFactsSliver((state.result ?? widget.member)!),
+                if (!state.isLoading) ...[
+                  if (state.result!.achievements.isNotEmpty)
+                    _makeAchievementsSliver(state.result!),
+                  if (state.result!.societies.isNotEmpty)
+                    _makeSocietiesSliver(state.result!),
+                ] else ...[
+                  const SliverPadding(
+                    padding: EdgeInsets.all(16),
+                    sliver: SliverToBoxAdapter(
+                      child: Center(child: CircularProgressIndicator()),
                     ),
-                  ],
-                  const SliverToBoxAdapter(
-                      child:
-                          SizedBox(height: 32)), // Im pretty sure this can go?
-                  const SliverSafeArea(
-                      top: false, sliver: SliverToBoxAdapter()),
+                  ),
                 ],
-              ),
+                const SliverToBoxAdapter(
+                    child: SizedBox(height: 32)), // Im pretty sure this can go?
+              ],
             );
           }
         },

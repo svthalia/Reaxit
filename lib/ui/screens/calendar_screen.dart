@@ -9,6 +9,7 @@ import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/theme.dart';
 import 'package:reaxit/ui/widgets.dart';
+import 'package:reaxit/ui/widgets/safe_custom_scrollview.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -73,20 +74,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
         onRefresh: () async {
           await _cubit.load();
         },
-        child: SafeArea(
-          child: BlocBuilder<CalendarCubit, CalendarState>(
-            builder: (context, calendarState) {
-              if (calendarState.hasException) {
-                return ErrorScrollView(calendarState.message!);
-              } else {
-                return CalendarScrollView(
-                  key: const PageStorageKey('calendar'),
-                  controller: _controller,
-                  calendarState: calendarState,
-                );
-              }
-            },
-          ),
+        child: BlocBuilder<CalendarCubit, CalendarState>(
+          builder: (context, calendarState) {
+            if (calendarState.hasException) {
+              return ErrorScrollView(calendarState.message!);
+            } else {
+              return CalendarScrollView(
+                key: const PageStorageKey('calendar'),
+                controller: _controller,
+                calendarState: calendarState,
+              );
+            }
+          },
         ),
       ),
     );
@@ -236,13 +235,14 @@ class CalendarScrollView extends StatelessWidget {
 
     return Scrollbar(
       controller: controller,
-      child: CustomScrollView(
+      child: SafeCustomScrollView(
         controller: controller,
         physics: const RangeMaintainingScrollPhysics(
           parent: AlwaysScrollableScrollPhysics(),
         ),
         slivers: [
           SliverPadding(
+            // should this padding be here?
             padding: const EdgeInsets.all(12),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(

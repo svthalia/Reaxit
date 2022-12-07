@@ -175,7 +175,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               return const Center(child: CircularProgressIndicator());
             } else {
               return Scrollbar(
-                // child: SafeArea(
                 child: ListView(
                   key: const PageStorageKey('welcome'),
                   physics: const AlwaysScrollableScrollPhysics(),

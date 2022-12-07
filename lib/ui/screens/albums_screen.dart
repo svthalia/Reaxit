@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/ui/widgets.dart';
+import 'package:reaxit/ui/widgets/safe_custom_scrollview.dart';
 
 class AlbumsScreen extends StatefulWidget {
   @override
@@ -194,7 +195,7 @@ class AlbumListScrollView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scrollbar(
         controller: controller,
-        child: CustomScrollView(
+        child: SafeCustomScrollView(
           controller: controller,
           physics: const RangeMaintainingScrollPhysics(
             parent: AlwaysScrollableScrollPhysics(),

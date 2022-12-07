@@ -11,6 +11,7 @@ import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/routes.dart';
 import 'package:reaxit/ui/widgets.dart';
+import 'package:reaxit/ui/widgets/safe_custom_scrollview.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:reaxit/config.dart' as config;
@@ -944,46 +945,38 @@ class _EventScreenState extends State<EventScreen> {
                 builder: (context, listState) {
                   return Scrollbar(
                     controller: _controller,
-                    child: SafeArea(
-                      top: false,
-                      bottom: false,
-                      child: CustomScrollView(
-                        controller: _controller,
-                        key: const PageStorageKey('event'),
-                        slivers: [
-                          const SliverSafeArea(
-                              bottom: false, sliver: SliverToBoxAdapter()),
-                          SliverToBoxAdapter(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                _makeMap(event),
-                                const Divider(height: 0),
-                                _makeEventInfo(event),
-                                const Divider(),
-                                _makeDescription(event),
-                              ],
-                            ),
+                    child: SafeCustomScrollView(
+                      controller: _controller,
+                      key: const PageStorageKey('event'),
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _makeMap(event),
+                              const Divider(height: 0),
+                              _makeEventInfo(event),
+                              const Divider(),
+                              _makeDescription(event),
+                            ],
                           ),
-                          if (event.registrationIsOptional ||
-                              event.registrationIsRequired) ...[
-                            const SliverToBoxAdapter(child: Divider()),
-                            _makeRegistrationsHeader(listState),
-                            _makeRegistrations(listState),
-                            if (listState.isLoadingMore)
-                              const SliverPadding(
-                                padding: EdgeInsets.all(8),
-                                sliver: SliverList(
-                                  delegate: SliverChildListDelegate.fixed([
-                                    Center(child: CircularProgressIndicator()),
-                                  ]),
-                                ),
+                        ),
+                        if (event.registrationIsOptional ||
+                            event.registrationIsRequired) ...[
+                          const SliverToBoxAdapter(child: Divider()),
+                          _makeRegistrationsHeader(listState),
+                          _makeRegistrations(listState),
+                          if (listState.isLoadingMore)
+                            const SliverPadding(
+                              padding: EdgeInsets.all(8),
+                              sliver: SliverList(
+                                delegate: SliverChildListDelegate.fixed([
+                                  Center(child: CircularProgressIndicator()),
+                                ]),
                               ),
-                          ],
-                          const SliverSafeArea(
-                              top: false, sliver: SliverToBoxAdapter()),
+                            ),
                         ],
-                      ),
+                      ],
                     ),
                   );
                 },

@@ -7,6 +7,7 @@ import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/routes.dart';
 import 'package:reaxit/ui/widgets.dart';
+import 'package:reaxit/ui/widgets/safe_custom_scrollview.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GroupScreen extends StatelessWidget {
@@ -94,30 +95,22 @@ class _Page extends StatelessWidget {
         body: RefreshIndicator(
           onRefresh: () => cubit.load(),
           child: Scrollbar(
-            child: SafeArea(
-              top: false,
-              bottom: false,
-              child: CustomScrollView(
-                key: const PageStorageKey('group'),
-                slivers: [
-                  const SliverSafeArea(
-                      bottom: false, sliver: SliverToBoxAdapter()),
-                  SliverToBoxAdapter(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _GroupImage(group: group),
-                        const Divider(height: 0),
-                        _GroupInfo(group: group)
-                      ],
-                    ),
+            child: SafeCustomScrollView(
+              key: const PageStorageKey('group'),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _GroupImage(group: group),
+                      const Divider(height: 0),
+                      _GroupInfo(group: group)
+                    ],
                   ),
-                  _MembersHeader(group: group),
-                  const _MembersGrid(members: null),
-                  const SliverSafeArea(
-                      top: false, sliver: SliverToBoxAdapter()),
-                ],
-              ),
+                ),
+                _MembersHeader(group: group),
+                const _MembersGrid(members: null),
+              ],
             ),
           ),
         ),
@@ -129,30 +122,22 @@ class _Page extends StatelessWidget {
         body: RefreshIndicator(
           onRefresh: () => cubit.load(),
           child: Scrollbar(
-            child: SafeArea(
-              top: false,
-              bottom: false,
-              child: CustomScrollView(
-                key: const PageStorageKey('group'),
-                slivers: [
-                  const SliverSafeArea(
-                      bottom: false, sliver: SliverToBoxAdapter()),
-                  SliverToBoxAdapter(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _GroupImage(group: group),
-                        const Divider(height: 0),
-                        _GroupInfo(group: group)
-                      ],
-                    ),
+            child: SafeCustomScrollView(
+              key: const PageStorageKey('group'),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _GroupImage(group: group),
+                      const Divider(height: 0),
+                      _GroupInfo(group: group)
+                    ],
                   ),
-                  _MembersHeader(group: group),
-                  _MembersGrid(members: group.members),
-                  const SliverSafeArea(
-                      top: false, sliver: SliverToBoxAdapter()),
-                ],
-              ),
+                ),
+                _MembersHeader(group: group),
+                _MembersGrid(members: group.members),
+              ],
             ),
           ),
         ),

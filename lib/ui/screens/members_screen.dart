@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/ui/widgets.dart';
+import 'package:reaxit/ui/widgets/safe_custom_scrollview.dart';
 
 class MembersScreen extends StatefulWidget {
   @override
@@ -66,20 +67,18 @@ class _MembersScreenState extends State<MembersScreen> {
         onRefresh: () async {
           await _cubit.load();
         },
-        child: SafeArea(
-          child: BlocBuilder<MemberListCubit, MemberListState>(
-            builder: (context, listState) {
-              if (listState.hasException) {
-                return ErrorScrollView(listState.message!);
-              } else {
-                return MemberListScrollView(
-                  key: const PageStorageKey('members'),
-                  controller: _controller,
-                  listState: listState,
-                );
-              }
-            },
-          ),
+        child: BlocBuilder<MemberListCubit, MemberListState>(
+          builder: (context, listState) {
+            if (listState.hasException) {
+              return ErrorScrollView(listState.message!);
+            } else {
+              return MemberListScrollView(
+                key: const PageStorageKey('members'),
+                controller: _controller,
+                listState: listState,
+              );
+            }
+          },
         ),
       ),
     );
@@ -196,46 +195,40 @@ class MemberListScrollView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scrollbar(
       controller: controller,
-      child: SafeArea(
-        top: false,
-        bottom: false,
-        child: CustomScrollView(
-          controller: controller,
-          physics: const RangeMaintainingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics(),
-          ),
-          slivers: [
-            const SliverSafeArea(bottom: false, sliver: SliverToBoxAdapter()),
-            SliverPadding(
-              padding: const EdgeInsets.all(8),
-              sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
+      child: SafeCustomScrollView(
+        controller: controller,
+        physics: const RangeMaintainingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.all(8),
+            sliver: SliverGrid(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => MemberTile(
+                  member: listState.results[index],
                 ),
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) => MemberTile(
-                    member: listState.results[index],
-                  ),
-                  childCount: listState.results.length,
-                ),
+                childCount: listState.results.length,
               ),
             ),
-            if (listState.isLoadingMore)
-              const SliverPadding(
-                padding: EdgeInsets.all(8),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate.fixed([
-                    Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  ]),
-                ),
+          ),
+          if (listState.isLoadingMore)
+            const SliverPadding(
+              padding: EdgeInsets.all(8),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate.fixed([
+                  Center(
+                    child: CircularProgressIndicator(),
+                  )
+                ]),
               ),
-            const SliverSafeArea(top: false, sliver: SliverToBoxAdapter()),
-          ],
-        ),
+            ),
+        ],
       ),
     );
   }

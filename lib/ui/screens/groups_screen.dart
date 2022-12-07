@@ -4,6 +4,7 @@ import 'package:reaxit/blocs/groups_cubit.dart';
 import 'package:reaxit/models/group.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:collection/collection.dart';
+import 'package:reaxit/ui/widgets/safe_custom_scrollview.dart';
 
 class GroupsScreen extends StatefulWidget {
   final MemberGroupType? currentScreen;
@@ -138,42 +139,36 @@ class GroupListScrollView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scrollbar(
-      child: SafeArea(
-        top: false,
-        bottom: false,
-        child: CustomScrollView(
-          physics: const RangeMaintainingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics(),
-          ),
-          slivers: [
-            const SliverSafeArea(bottom: false, sliver: SliverToBoxAdapter()),
-            if (activeBoard != null)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: AspectRatio(
-                    aspectRatio: 3 / 2,
-                    child: GroupTile(group: activeBoard!),
-                  ),
-                ),
-              ),
-            SliverPadding(
-              padding: const EdgeInsets.all(8),
-              sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
-                ),
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) => GroupTile(group: groups[index]),
-                  childCount: groups.length,
+      child: SafeCustomScrollView(
+        physics: const RangeMaintainingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
+        slivers: [
+          if (activeBoard != null)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: AspectRatio(
+                  aspectRatio: 3 / 2,
+                  child: GroupTile(group: activeBoard!),
                 ),
               ),
             ),
-            const SliverSafeArea(top: false, sliver: SliverToBoxAdapter()),
-          ],
-        ),
+          SliverPadding(
+            padding: const EdgeInsets.all(8),
+            sliver: SliverGrid(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => GroupTile(group: groups[index]),
+                childCount: groups.length,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
