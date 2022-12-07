@@ -465,8 +465,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           if (state.hasException) {
             return SafeCustomScrollView(
               controller: _scrollController,
+              sliverappbar: _makeAppBar(),
               slivers: [
-                _makeAppBar(),
                 SliverFillRemaining(
                   child: ErrorCenter(state.message!),
                 ),
@@ -475,20 +475,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
           } else if (state.isLoading && widget.member == null) {
             return SafeCustomScrollView(
               controller: _scrollController,
-              slivers: [
-                _makeAppBar(),
-                const SliverFillRemaining(
+              sliverappbar: _makeAppBar(),
+              slivers: const [
+                SliverFillRemaining(
                   child: Center(child: CircularProgressIndicator()),
                 ),
               ],
             );
           } else {
-            // should this be a CustomScrollview? This would add padding _around_ the the appbar not in
-            return CustomScrollView(
+            return SafeCustomScrollView(
               key: const PageStorageKey('profile'),
               controller: _scrollController,
+              sliverappbar: _makeAppBar((state.result ?? widget.member)!),
               slivers: [
-                _makeAppBar((state.result ?? widget.member)!),
                 _makeFactsSliver((state.result ?? widget.member)!),
                 if (!state.isLoading) ...[
                   if (state.result!.achievements.isNotEmpty)

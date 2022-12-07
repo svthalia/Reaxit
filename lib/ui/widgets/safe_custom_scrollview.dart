@@ -5,9 +5,15 @@ class SafeCustomScrollView extends StatelessWidget {
   final List<Widget> slivers;
   final ScrollController? controller;
   final ScrollPhysics? physics;
+  final Widget? sliverappbar;
 
-  const SafeCustomScrollView(
-      {required this.slivers, this.controller, this.physics, super.key});
+  const SafeCustomScrollView({
+    required this.slivers,
+    this.controller,
+    this.physics,
+    this.sliverappbar,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +35,7 @@ class SafeCustomScrollView extends StatelessWidget {
             controller: controller,
             physics: physics,
             slivers: [
+              if (sliverappbar != null) sliverappbar!,
               SliverPadding(padding: EdgeInsets.only(top: padding.top)),
               ...slivers,
               SliverPadding(padding: EdgeInsets.only(bottom: padding.bottom)),
