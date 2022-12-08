@@ -140,16 +140,20 @@ class _FoodScreenState extends State<FoodScreen> {
 
       late Widget payButton;
       if (order.isPaid || !order.tpayAllowed) {
-        payButton = const SizedBox.shrink();
+        payButton = const SizedBox.shrink(key: ValueKey(false));
       } else {
-        payButton = TPayButton(
-          onPay: () => _foodCubit.thaliaPayOrder(orderPk: order.pk),
-          confirmationMessage: 'Are you sure you '
-              'want to pay €${order.product.price} '
-              'for your "${order.product.name}"?',
-          failureMessage: 'Could not pay your order.',
-          successMessage: 'Paid your order with Thalia Pay.',
-          amount: order.product.price,
+        payButton = SizedBox(
+          width: double.infinity,
+          key: const ValueKey(true),
+          child: TPayButton(
+            onPay: () => _foodCubit.thaliaPayOrder(orderPk: order.pk),
+            confirmationMessage: 'Are you sure you '
+                'want to pay €${order.product.price} '
+                'for your "${order.product.name}"?',
+            failureMessage: 'Could not pay your order.',
+            successMessage: 'Paid your order with Thalia Pay.',
+            amount: order.product.price,
+          ),
         );
       }
 
