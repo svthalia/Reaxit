@@ -31,7 +31,7 @@ class RegistrationsCubit extends Cubit<RegistrationsState> {
 
       if (listResponse.results.isNotEmpty) {
         emit(RegistrationsState.success(
-            results: listResponse.results, isDone: isDone));
+            results: listResponse.results, isDone: isDone, isDoneUp: false));
       } else {
         emit(const RegistrationsState.failure(
           message: 'There are no registrations yet.',
@@ -63,7 +63,8 @@ class RegistrationsCubit extends Cubit<RegistrationsState> {
 
       _nextOffset += pageSize;
 
-      emit(RegistrationsState.success(results: registrations, isDone: isDone));
+      emit(RegistrationsState.success(
+          results: registrations, isDone: isDone, isDoneUp: oldState.isDoneUp));
     } on ApiException catch (exception) {
       emit(RegistrationsState.failure(
         message: exception.getMessage(notFound: 'The event does not exist.'),

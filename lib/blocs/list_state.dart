@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+//TODO should this be split into two, one for up/down and one for just down
 /// Generic class to be used as state for paginated lists.
 class ListState<T> extends Equatable {
   /// The results to be shown. These are outdated if `isLoading` is true.
@@ -14,32 +15,42 @@ class ListState<T> extends Equatable {
   /// More of the same results are being loaded. The results are not outdated.
   final bool isLoadingMore;
 
+  /// More of the same results are being loaded. The results are not outdated.
+  final bool isLoadingMoreUp;
+
   /// The last results have been loaded. There are no more pages left.
   final bool isDone;
 
+  final bool isDoneUp;
+
   bool get hasException => message != null;
 
-  const ListState({
-    required this.results,
-    required this.message,
-    required this.isLoading,
-    required this.isLoadingMore,
-    required this.isDone,
-  });
+  const ListState(
+      {required this.results,
+      required this.message,
+      required this.isLoading,
+      required this.isLoadingMore,
+      required this.isLoadingMoreUp,
+      required this.isDone,
+      required this.isDoneUp});
 
   ListState<T> copyWith({
     List<T>? results,
     String? message,
     bool? isLoading,
     bool? isLoadingMore,
+    bool? isLoadingMoreUp,
     bool? isDone,
+    bool? isDoneUp,
   }) =>
       ListState<T>(
         results: results ?? this.results,
         message: message ?? this.message,
         isLoading: isLoading ?? this.isLoading,
         isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+        isLoadingMoreUp: isLoadingMoreUp ?? this.isLoadingMoreUp,
         isDone: isDone ?? this.isDone,
+        isDoneUp: isDoneUp ?? this.isDoneUp,
       );
 
   @override
@@ -61,22 +72,30 @@ class ListState<T> extends Equatable {
       : message = null,
         isLoading = true,
         isLoadingMore = false,
-        isDone = true;
+        isLoadingMoreUp = false,
+        isDone = true,
+        isDoneUp = true;
 
   const ListState.loadingMore({required this.results})
       : message = null,
         isLoading = false,
         isLoadingMore = true,
-        isDone = true;
+        isLoadingMoreUp = true,
+        isDone = true,
+        isDoneUp = true;
 
-  const ListState.success({required this.results, required this.isDone})
+  const ListState.success(
+      {required this.results, required this.isDone, required this.isDoneUp})
       : message = null,
         isLoading = false,
-        isLoadingMore = false;
+        isLoadingMore = false,
+        isLoadingMoreUp = false;
 
   const ListState.failure({required String this.message})
       : results = const [],
         isLoading = false,
         isLoadingMore = false,
-        isDone = true;
+        isLoadingMoreUp = false,
+        isDone = true,
+        isDoneUp = true;
 }
