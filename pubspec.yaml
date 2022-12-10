@@ -106,7 +106,7 @@ dependencies:
   add_2_calendar: ^2.2.1
 
   # Cached images.
-  cached_network_image: ^3.2.1
+  cached_network_image: ^3.2.3
   flutter_cache_manager: ^3.3.0
 
   # Navigation.
