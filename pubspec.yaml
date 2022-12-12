@@ -59,7 +59,7 @@ dependencies:
   url_launcher: ^6.1.5
 
   # Authenticating in browser.
-  flutter_web_auth_2: ^2.0.2
+  flutter_web_auth_2: ^2.0.3
 
   # Modal photo views.
   photo_view: ^0.14.0

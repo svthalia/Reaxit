@@ -421,7 +421,7 @@ packages:
       name: flutter_web_auth_2
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.2"
+    version: "2.0.3"
   flutter_web_auth_2_platform_interface:
     dependency: transitive
     description:
