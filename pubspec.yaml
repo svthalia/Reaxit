@@ -103,7 +103,7 @@ dependencies:
   animations: ^2.0.7
 
   # Export event to calendar.
-  add_2_calendar: ^2.2.1
+  add_2_calendar: ^2.2.3
 
   # Cached images.
   cached_network_image: ^3.2.3
