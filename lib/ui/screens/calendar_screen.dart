@@ -82,6 +82,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 key: const PageStorageKey('calendar'),
                 controller: _controller,
                 calendarState: calendarState,
+                loadMoreUp: _cubit.moreup,
               );
             }
           },
@@ -158,6 +159,7 @@ class CalendarSearchDelegate extends SearchDelegate {
             key: const PageStorageKey('calendar-search'),
             controller: _controller,
             calendarState: listState,
+            loadMoreUp: _cubit.moreup,
           );
         }
       },
@@ -176,6 +178,7 @@ class CalendarSearchDelegate extends SearchDelegate {
             key: const PageStorageKey('calendar-search'),
             controller: _controller,
             calendarState: listState,
+            loadMoreUp: _cubit.moreup,
           );
         }
       },
@@ -195,11 +198,13 @@ class CalendarScrollView extends StatelessWidget {
 
   final ScrollController controller;
   final CalendarState calendarState;
+  final Function() loadMoreUp;
 
   const CalendarScrollView({
     Key? key,
     required this.controller,
     required this.calendarState,
+    required this.loadMoreUp,
   }) : super(key: key);
 
   static Map<DateTime, List<CalendarEvent>> _groupByMonth(
@@ -240,6 +245,18 @@ class CalendarScrollView extends StatelessWidget {
           parent: AlwaysScrollableScrollPhysics(),
         ),
         slivers: [
+          if (!calendarState.isDoneUp)
+            SliverToBoxAdapter(
+              child:
+                  TextButton(onPressed: loadMoreUp, child: Text("LOAD MORE")),
+            ),
+          if (calendarState.isLoadingMoreUp)
+            const SliverPadding(
+              padding: EdgeInsets.all(12),
+              sliver: SliverToBoxAdapter(
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            ),
           SliverPadding(
             padding: const EdgeInsets.all(12),
             sliver: SliverList(
