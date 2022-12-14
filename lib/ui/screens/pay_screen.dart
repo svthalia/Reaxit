@@ -5,6 +5,8 @@ import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:reaxit/ui/widgets/pay_tile.dart';
 
+import '../../models/payment.dart';
+
 class PayScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

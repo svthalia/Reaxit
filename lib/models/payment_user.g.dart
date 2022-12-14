@@ -7,7 +7,7 @@ part of 'payment_user.dart';
 // **************************************************************************
 
 PaymentUser _$PaymentUserFromJson(Map<String, dynamic> json) => PaymentUser(
-      json['balance'] as String?,
+      json['tpay_balance'] as String?,
       json['tpay_allowed'] as bool,
       json['tpay_enabled'] as bool,
     );

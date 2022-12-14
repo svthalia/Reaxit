@@ -210,6 +210,16 @@ abstract class ApiRepository {
   /// Get the [PaymentUser] of the currently logged in member.
   Future<PaymentUser> getPaymentUser();
 
+  /// Get a list of [Payment]'s of the current user.
+  Future<ListResponse<Payment>> getPayments({
+    int? limit,
+    int? offset,
+    String? ordering,
+    DateTime? start,
+    DateTime? end,
+    List<PaymentType>? type,
+  });
+
   /// Get the [Payable] for the [FoodOrder] with the `foodOrderPk`.
   Future<Payable> getFoodOrderPayable({required int foodOrderPk});
 
