@@ -141,6 +141,13 @@ class CalendarCubit extends Cubit<CalendarState> {
 
   CalendarCubit(this.api) : super(const CalendarState.loading(results: []));
 
+  Future<void> cachedLoad() async {
+    if (_lastLoadTime == null ||
+        DateTime.now().difference(_lastLoadTime!).inMinutes >= 10) {
+      await load();
+    }
+  }
+
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
     try {
