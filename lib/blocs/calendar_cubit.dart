@@ -130,13 +130,13 @@ class CalendarCubit extends Cubit<CalendarState> {
 
   /// A list of events that have been removed from the previous results
   /// in order to prevent them filling up the calendar before today.
-  /// These should be added in later calls to [more()].
+  /// These should be added in later calls to [moreUp()].
   final List<CalendarEvent> _remainingPastEvents = [];
 
   /// A list of events that have been removed from the previous results
   /// in order to prevent them filling up the calendar further then where
   /// the first not-loaded event will go later. These should be added in
-  /// later calls to [moreup()].
+  /// later calls to [more()].
   final List<CalendarEvent> _remainingFutureEvents = [];
 
   CalendarCubit(this.api) : super(const CalendarState.loading(results: []));
@@ -196,7 +196,7 @@ class CalendarCubit extends Cubit<CalendarState> {
       events.addAll(partnerEvents);
       events.sort((a, b) => a.start.compareTo(b.start));
 
-      // If `load()`, `more()`, and `moreup()` cause jank, the expensive operations
+      // If `load()`, `more()`, and `moreUp()` cause jank, the expensive operations
       // on the events could be moved to an isolate in `compute()`.
 
       _remainingFutureEvents.clear();
@@ -298,10 +298,10 @@ class CalendarCubit extends Cubit<CalendarState> {
     }
   }
 
-  Future<void> moreup() async {
+  Future<void> moreUp() async {
     final oldState = state;
 
-    // Ignore calls to `moreup()` if there is no data, or already more coming.
+    // Ignore calls to `moreUp()` if there is no data, or already more coming.
     if (oldState.isDoneUp || oldState.isLoading || oldState.isLoadingMoreUp) {
       return;
     }

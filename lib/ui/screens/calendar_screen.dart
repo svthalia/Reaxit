@@ -78,7 +78,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               key: const PageStorageKey('calendar'),
               controller: _controller,
               calendarState: calendarState,
-              loadMoreUp: _cubit.moreup,
+              loadMoreUp: _cubit.moreUp,
             );
           }
         },
@@ -154,7 +154,7 @@ class CalendarSearchDelegate extends SearchDelegate {
             key: const PageStorageKey('calendar-search'),
             controller: _controller,
             calendarState: listState,
-            loadMoreUp: _cubit.moreup,
+            loadMoreUp: _cubit.moreUp,
           );
         }
       },
@@ -173,7 +173,7 @@ class CalendarSearchDelegate extends SearchDelegate {
             key: const PageStorageKey('calendar-search'),
             controller: _controller,
             calendarState: listState,
-            loadMoreUp: _cubit.moreup,
+            loadMoreUp: _cubit.moreUp,
           );
         }
       },
