@@ -32,6 +32,7 @@ void main() {
           ...CalendarEvent.splitEventIntoCalendarEvents(event2),
         ],
         isDone: true,
+        isDoneUp: true,
       );
 
       await tester.pumpWidget(
@@ -40,6 +41,7 @@ void main() {
             body: CalendarScrollView(
               controller: ScrollController(),
               calendarState: state,
+              loadMoreUp: (() {}),
             ),
           ),
         ),
