@@ -85,11 +85,19 @@ class ListState<T> extends Equatable {
         isDoneUp = true,
         count = 0;
 
+  const ListState.loadingMoreUp({this.count, required this.results})
+      : message = null,
+        isLoading = false,
+        isLoadingMore = false,
+        isLoadingMoreUp = true,
+        isDone = true,
+        isDoneUp = true;
+
   const ListState.loadingMore({this.count, required this.results})
       : message = null,
         isLoading = false,
         isLoadingMore = true,
-        isLoadingMoreUp = true,
+        isLoadingMoreUp = false,
         isDone = true,
         isDoneUp = true;
 
