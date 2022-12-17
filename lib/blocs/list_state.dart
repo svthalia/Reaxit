@@ -65,13 +65,15 @@ class ListState<T> extends Equatable {
         message,
         isLoading,
         isLoadingMore,
+        isLoadingMoreUp,
         isDone,
       ];
 
   @override
   String toString() {
     return 'ListState<$T>(isLoading: $isLoading, isLoadingMore: $isLoadingMore,'
-        ' isDone: $isDone, message: $message, ${results.length} ${T}s)';
+        ' isLoadingMoreUp: $isLoadingMore, isDone: $isDone, message: $message,'
+        ' ${results.length} ${T}s)';
   }
 
   const ListState.loading({required this.results})
