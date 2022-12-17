@@ -345,14 +345,14 @@ class CalendarCubit extends Cubit<CalendarState> {
         ...oldState.results,
       ];
 
-      // Remove the last partner events and day parts of events that could fill
+      // Remove the first partner events and day parts of events that could fill
       // up the calendar further then where the first not-loaded event will go
       // later.
       if (!isDoneUp) {
         while (events.isNotEmpty &&
-            (events.last.parentEvent is PartnerEvent ||
-                events.last.start != events.last.parentEvent.start)) {
-          _remainingFutureEvents.add(events.removeLast());
+            (events.first.parentEvent is PartnerEvent ||
+                events.first.end != events.first.parentEvent.end)) {
+          _remainingFutureEvents.add(events.removeAt(0));
         }
       }
 
