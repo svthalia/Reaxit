@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -31,10 +34,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void _scrollListener() {
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
-      // Only request loading more if that's not already happening.
-      if (!_cubit.state.isLoadingMore) {
-        _cubit.more();
-      }
+      _cubit.more();
     }
   }
 
@@ -69,24 +69,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
         ],
       ),
       drawer: MenuDrawer(),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await _cubit.load();
+      body: BlocBuilder<CalendarCubit, CalendarState>(
+        builder: (context, calendarState) {
+          if (calendarState.hasException) {
+            return ErrorScrollView(calendarState.message!);
+          } else {
+            return CalendarScrollView(
+              key: const PageStorageKey('calendar'),
+              controller: _controller,
+              calendarState: calendarState,
+              loadMoreUp: _cubit.moreup,
+            );
+          }
         },
-        child: BlocBuilder<CalendarCubit, CalendarState>(
-          builder: (context, calendarState) {
-            if (calendarState.hasException) {
-              return ErrorScrollView(calendarState.message!);
-            } else {
-              return CalendarScrollView(
-                key: const PageStorageKey('calendar'),
-                controller: _controller,
-                calendarState: calendarState,
-                loadMoreUp: _cubit.moreup,
-              );
-            }
-          },
-        ),
       ),
     );
   }
@@ -240,25 +235,36 @@ class CalendarScrollView extends StatelessWidget {
     return Scrollbar(
       controller: controller,
       child: CustomScrollView(
+        center: const Key('firstElement'),
         controller: controller,
-        physics: const RangeMaintainingScrollPhysics(
-          parent: AlwaysScrollableScrollPhysics(),
+        physics: RangeMaintainingScrollPhysics(
+          parent: PageScrollPhysics2(
+            parent: const AlwaysScrollableScrollPhysics(),
+            onhittop: loadMoreUp,
+          ),
         ),
         slivers: [
-          if (!calendarState.isDoneUp)
-            SliverToBoxAdapter(
-              child:
-                  TextButton(onPressed: loadMoreUp, child: Text("LOAD MORE")),
+          SliverToBoxAdapter(
+            child: AnimatedLoader(
+              visible: calendarState.isLoadingMoreUp,
             ),
-          if (calendarState.isLoadingMoreUp)
-            const SliverPadding(
-              padding: EdgeInsets.all(12),
-              sliver: SliverToBoxAdapter(
-                child: Center(child: CircularProgressIndicator()),
+          ),
+          if (!calendarState.isDoneUp)
+            SliverLoadUp(
+              onhittop: loadMoreUp,
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  TextButton(
+                    onPressed: loadMoreUp,
+                    child: const Text('LOAD MORE'),
+                  ),
+                ],
               ),
             ),
           SliverPadding(
-            padding: const EdgeInsets.all(12),
+            key: const Key('firstElement'),
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
@@ -442,4 +448,175 @@ class _EventCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class AnimatedLoader extends StatefulWidget {
+  final bool visible;
+  const AnimatedLoader({super.key, required this.visible});
+
+  @override
+  State<AnimatedLoader> createState() => _AnimatedLoaderState();
+}
+
+/// AnimationControllers can be created with `vsync: this` because of TickerProviderStateMixin.
+class _AnimatedLoaderState extends State<AnimatedLoader>
+    with TickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    duration: const Duration(milliseconds: 200),
+    vsync: this,
+  );
+  late final Animation<double> _animation = CurvedAnimation(
+    parent: _controller,
+    curve: Curves.fastOutSlowIn,
+  );
+
+  @override
+  void didUpdateWidget(AnimatedLoader oldWidget) {
+    if (widget.visible) {
+      _controller.value = 1;
+    } else {
+      _controller.reverse();
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizeTransition(
+      sizeFactor: _animation,
+      axis: Axis.vertical,
+      child: const Center(
+        child: Padding(
+            padding: EdgeInsets.all(12), child: CircularProgressIndicator()),
+      ),
+    );
+  }
+}
+
+class SliverLoadUp extends SingleChildRenderObjectWidget {
+  final Function() onhittop;
+
+  const SliverLoadUp({
+    Key? key,
+    Widget? child,
+    required this.onhittop,
+  }) : super(key: key, child: child);
+
+  @override
+  RenderObject createRenderObject(BuildContext context) {
+    return RenderSliverLoadUp();
+  }
+}
+
+class RenderSliverLoadUp extends RenderSliverSingleBoxAdapter {
+  final pullDistance = 0;
+
+  @override
+  void performLayout() {
+    // print('___');
+    // print(constraints);
+    child!.layout(constraints.asBoxConstraints(), parentUsesSize: true);
+    final double childExtent;
+    switch (constraints.axis) {
+      case Axis.horizontal:
+        childExtent = child!.size.width;
+        break;
+      case Axis.vertical:
+        childExtent = child!.size.height;
+        break;
+    }
+
+    final double paintedChildSize =
+        calculatePaintOffset(constraints, from: 0.0, to: childExtent) +
+            pullDistance;
+    final double cacheExtent =
+        calculateCacheOffset(constraints, from: 0.0, to: childExtent) +
+            pullDistance;
+
+    assert(paintedChildSize.isFinite);
+    assert(paintedChildSize >= 0.0);
+    geometry = SliverGeometry(
+      scrollExtent: childExtent,
+      paintExtent: paintedChildSize,
+      layoutExtent: paintedChildSize,
+      cacheExtent: cacheExtent,
+      maxPaintExtent: childExtent + pullDistance,
+      hitTestExtent: paintedChildSize,
+    );
+    setChildParentData(child!, constraints, geometry!);
+  }
+
+  /// Sets the [SliverPhysicalParentData.paintOffset] for the given child
+  /// according to the [SliverConstraints.axisDirection] and
+  /// [SliverConstraints.growthDirection] and the given geometry.
+  @protected
+  @override
+  void setChildParentData(RenderObject child, SliverConstraints constraints,
+      SliverGeometry geometry) {
+    final SliverPhysicalParentData childParentData =
+        child.parentData! as SliverPhysicalParentData;
+    switch (applyGrowthDirectionToAxisDirection(
+        constraints.axisDirection, constraints.growthDirection)) {
+      case AxisDirection.up:
+        childParentData.paintOffset = Offset(
+            0.0,
+            -(geometry.scrollExtent -
+                (geometry.paintExtent +
+                    max(constraints.scrollOffset - pullDistance, -100)
+                        .toDouble())));
+        break;
+      case AxisDirection.right:
+        childParentData.paintOffset = Offset(pullDistance.toDouble(), 0.0);
+        break;
+      case AxisDirection.down:
+        childParentData.paintOffset = Offset(0.0,
+            max(-constraints.scrollOffset + pullDistance, -100).toDouble());
+        break;
+      case AxisDirection.left:
+        childParentData.paintOffset = Offset(
+            -(geometry.scrollExtent -
+                (geometry.paintExtent +
+                    constraints.scrollOffset -
+                    pullDistance)),
+            0.0);
+        break;
+    }
+  }
+}
+
+class PageScrollPhysics2 extends ScrollPhysics {
+  final Function() onhittop;
+
+  /// Creates physics for a [PageView].
+  const PageScrollPhysics2({super.parent, required this.onhittop});
+
+  @override
+  PageScrollPhysics2 applyTo(ScrollPhysics? ancestor) {
+    return PageScrollPhysics2(
+        parent: buildParent(ancestor), onhittop: onhittop);
+  }
+
+  @override
+  Simulation? createBallisticSimulation(
+      ScrollMetrics position, double velocity) {
+    if (position.pixels <= position.minScrollExtent - 20) {
+      onhittop();
+      return super.createBallisticSimulation(position, 0);
+    } else {
+      return super.createBallisticSimulation(position, velocity);
+    }
+  }
+
+  @override
+  double applyBoundaryConditions(ScrollMetrics position, double value) =>
+      super.applyBoundaryConditions(
+          position.copyWith(minScrollExtent: position.minScrollExtent - 20),
+          value) *
+      0.9;
 }

@@ -120,6 +120,7 @@ class ConcrexitApiRepository implements ApiRepository {
     try {
       final response = await request();
       if (allowedStatusCodes.contains(response.statusCode)) return response;
+      // TODO: add 429 and 500
       switch (response.statusCode) {
         case 401:
           _onLogOut();
