@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 
@@ -9,6 +11,7 @@ class SafeCustomScrollView extends StatelessWidget {
   final bool right;
   final bool bottom;
   final bool left;
+  final EdgeInsets padding;
 
   const SafeCustomScrollView({
     required this.slivers,
@@ -18,14 +21,18 @@ class SafeCustomScrollView extends StatelessWidget {
     this.right = true,
     this.bottom = true,
     this.left = true,
+    this.padding = const EdgeInsets.all(8),
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     final MediaQueryData mediaquery = MediaQuery.of(context);
-    EdgeInsets padding = mediaquery.padding;
-
+    EdgeInsets padding = EdgeInsets.fromLTRB(
+        max(mediaquery.padding.left, this.padding.left),
+        max(mediaquery.padding.top, this.padding.top),
+        max(mediaquery.padding.right, this.padding.right),
+        max(mediaquery.padding.bottom, this.padding.bottom));
     return SafeArea(
       top: false,
       bottom: false,

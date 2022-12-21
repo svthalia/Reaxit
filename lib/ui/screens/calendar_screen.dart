@@ -240,50 +240,44 @@ class CalendarScrollView extends StatelessWidget {
         physics: const RangeMaintainingScrollPhysics(
           parent: AlwaysScrollableScrollPhysics(),
         ),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         slivers: [
-          SliverPadding(
-            // should this padding be here?
-            padding: const EdgeInsets.all(12),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final month = months[index];
-                  final events = monthGroupedEvents[month]!;
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                final month = months[index];
+                final events = monthGroupedEvents[month]!;
 
-                  final dayGroupedEvents = _groupByDay(events);
-                  final days = dayGroupedEvents.keys.toList();
+                final dayGroupedEvents = _groupByDay(events);
+                final days = dayGroupedEvents.keys.toList();
 
-                  return StickyHeader(
-                    header: SizedBox(
-                      width: double.infinity,
-                      child: Material(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Text(
-                            month.year == DateTime.now().year
-                                ? monthFormatter
-                                    .format(month.toLocal())
-                                    .toUpperCase()
-                                : monthYearFormatter
-                                    .format(month.toLocal())
-                                    .toUpperCase(),
-                            style: Theme.of(context).textTheme.subtitle1,
-                          ),
-                        ),
+                return StickyHeader(
+                  header: SizedBox(
+                    width: double.infinity,
+                    child: Material(
+                      child: Text(
+                        month.year == DateTime.now().year
+                            ? monthFormatter
+                                .format(month.toLocal())
+                                .toUpperCase()
+                            : monthYearFormatter
+                                .format(month.toLocal())
+                                .toUpperCase(),
+                        style: Theme.of(context).textTheme.subtitle1,
                       ),
                     ),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(height: 8),
-                        for (final day in days)
-                          _DayCard(day: day, events: dayGroupedEvents[day]!),
-                      ],
-                    ),
-                  );
-                },
-                childCount: monthGroupedEvents.length,
-              ),
+                  ),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(height: 8),
+                      for (final day in days)
+                        _DayCard(day: day, events: dayGroupedEvents[day]!),
+                    ],
+                  ),
+                );
+              },
+              childCount: monthGroupedEvents.length,
             ),
           ),
           if (calendarState.isLoadingMore)
