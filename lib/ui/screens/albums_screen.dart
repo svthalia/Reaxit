@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/ui/widgets.dart';
-import 'package:reaxit/ui/widgets/safe_custom_scrollview.dart';
 
 class AlbumsScreen extends StatefulWidget {
   @override
