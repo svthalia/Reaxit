@@ -4,7 +4,6 @@ import 'package:reaxit/blocs/groups_cubit.dart';
 import 'package:reaxit/models/group.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:collection/collection.dart';
-import 'package:reaxit/ui/widgets/safe_custom_scrollview.dart';
 
 class GroupsScreen extends StatefulWidget {
   final MemberGroupType? currentScreen;
