@@ -1,8 +1,5 @@
-import 'dart:math';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -235,13 +232,14 @@ class CalendarScrollView extends StatelessWidget {
     return Scrollbar(
       controller: controller,
       child: CustomScrollView(
-        center: const Key('firstElement'),
         controller: controller,
-        physics: RangeMaintainingScrollPhysics(
-          parent: PageScrollPhysics2(
-            parent: const AlwaysScrollableScrollPhysics(),
-            onhittop: loadMoreUp,
-          ),
+        physics: /*RangeMaintainingScrollPhysics(
+          parent: */
+            OverscrollableScrollPhysics(
+          parent: const AlwaysScrollableScrollPhysics(),
+          onhittop: loadMoreUp,
+          overscroll: 30,
+          // ),
         ),
         slivers: [
           SliverToBoxAdapter(
@@ -250,8 +248,7 @@ class CalendarScrollView extends StatelessWidget {
             ),
           ),
           if (!calendarState.isDoneUp)
-            SliverLoadUp(
-              onhittop: loadMoreUp,
+            SliverToBoxAdapter(
               child: ListView(
                 shrinkWrap: true,
                 children: [
@@ -263,7 +260,6 @@ class CalendarScrollView extends StatelessWidget {
               ),
             ),
           SliverPadding(
-            key: const Key('firstElement'),
             padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
@@ -273,7 +269,6 @@ class CalendarScrollView extends StatelessWidget {
 
                   final dayGroupedEvents = _groupByDay(events);
                   final days = dayGroupedEvents.keys.toList();
-
                   return StickyHeader(
                     header: SizedBox(
                       width: double.infinity,
@@ -499,113 +494,25 @@ class _AnimatedLoaderState extends State<AnimatedLoader>
   }
 }
 
-class SliverLoadUp extends SingleChildRenderObjectWidget {
+class OverscrollableScrollPhysics extends ScrollPhysics {
   final Function() onhittop;
+  final int overscroll;
 
-  const SliverLoadUp({
-    Key? key,
-    Widget? child,
-    required this.onhittop,
-  }) : super(key: key, child: child);
+  const OverscrollableScrollPhysics(
+      {super.parent, required this.onhittop, required this.overscroll});
 
   @override
-  RenderObject createRenderObject(BuildContext context) {
-    return RenderSliverLoadUp();
-  }
-}
-
-class RenderSliverLoadUp extends RenderSliverSingleBoxAdapter {
-  final pullDistance = 0;
-
-  @override
-  void performLayout() {
-    // print('___');
-    // print(constraints);
-    child!.layout(constraints.asBoxConstraints(), parentUsesSize: true);
-    final double childExtent;
-    switch (constraints.axis) {
-      case Axis.horizontal:
-        childExtent = child!.size.width;
-        break;
-      case Axis.vertical:
-        childExtent = child!.size.height;
-        break;
-    }
-
-    final double paintedChildSize =
-        calculatePaintOffset(constraints, from: 0.0, to: childExtent) +
-            pullDistance;
-    final double cacheExtent =
-        calculateCacheOffset(constraints, from: 0.0, to: childExtent) +
-            pullDistance;
-
-    assert(paintedChildSize.isFinite);
-    assert(paintedChildSize >= 0.0);
-    geometry = SliverGeometry(
-      scrollExtent: childExtent,
-      paintExtent: paintedChildSize,
-      layoutExtent: paintedChildSize,
-      cacheExtent: cacheExtent,
-      maxPaintExtent: childExtent + pullDistance,
-      hitTestExtent: paintedChildSize,
-    );
-    setChildParentData(child!, constraints, geometry!);
-  }
-
-  /// Sets the [SliverPhysicalParentData.paintOffset] for the given child
-  /// according to the [SliverConstraints.axisDirection] and
-  /// [SliverConstraints.growthDirection] and the given geometry.
-  @protected
-  @override
-  void setChildParentData(RenderObject child, SliverConstraints constraints,
-      SliverGeometry geometry) {
-    final SliverPhysicalParentData childParentData =
-        child.parentData! as SliverPhysicalParentData;
-    switch (applyGrowthDirectionToAxisDirection(
-        constraints.axisDirection, constraints.growthDirection)) {
-      case AxisDirection.up:
-        childParentData.paintOffset = Offset(
-            0.0,
-            -(geometry.scrollExtent -
-                (geometry.paintExtent +
-                    max(constraints.scrollOffset - pullDistance, -100)
-                        .toDouble())));
-        break;
-      case AxisDirection.right:
-        childParentData.paintOffset = Offset(pullDistance.toDouble(), 0.0);
-        break;
-      case AxisDirection.down:
-        childParentData.paintOffset = Offset(0.0,
-            max(-constraints.scrollOffset + pullDistance, -100).toDouble());
-        break;
-      case AxisDirection.left:
-        childParentData.paintOffset = Offset(
-            -(geometry.scrollExtent -
-                (geometry.paintExtent +
-                    constraints.scrollOffset -
-                    pullDistance)),
-            0.0);
-        break;
-    }
-  }
-}
-
-class PageScrollPhysics2 extends ScrollPhysics {
-  final Function() onhittop;
-
-  /// Creates physics for a [PageView].
-  const PageScrollPhysics2({super.parent, required this.onhittop});
-
-  @override
-  PageScrollPhysics2 applyTo(ScrollPhysics? ancestor) {
-    return PageScrollPhysics2(
-        parent: buildParent(ancestor), onhittop: onhittop);
+  OverscrollableScrollPhysics applyTo(ScrollPhysics? ancestor) {
+    return OverscrollableScrollPhysics(
+        parent: buildParent(ancestor),
+        onhittop: onhittop,
+        overscroll: overscroll);
   }
 
   @override
   Simulation? createBallisticSimulation(
       ScrollMetrics position, double velocity) {
-    if (position.pixels <= position.minScrollExtent - 20) {
+    if (position.pixels <= position.minScrollExtent - overscroll) {
       onhittop();
       return super.createBallisticSimulation(position, 0);
     } else {
@@ -616,7 +523,8 @@ class PageScrollPhysics2 extends ScrollPhysics {
   @override
   double applyBoundaryConditions(ScrollMetrics position, double value) =>
       super.applyBoundaryConditions(
-          position.copyWith(minScrollExtent: position.minScrollExtent - 20),
+          position.copyWith(
+              minScrollExtent: position.minScrollExtent - overscroll),
           value) *
       0.9;
 }
