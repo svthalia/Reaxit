@@ -18,18 +18,34 @@ import 'package:share_plus/share_plus.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 
 /// Screen that loads and shows the Album with `slug`.
-class AlbumScreen extends StatelessWidget {
+class AlbumScreen extends StatefulWidget {
   final String slug;
   final ListAlbum? album;
 
   AlbumScreen({required this.slug, this.album}) : super(key: ValueKey(slug));
 
-  String get title => album?.title ?? 'ALBUM';
+  @override
+  State<AlbumScreen> createState() => _AlbumScreenState();
+}
+
+class _AlbumScreenState extends State<AlbumScreen> {
+  late final AlbumCubit _cubit;
+
+  String get title => widget.album?.title ?? 'ALBUM';
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = AlbumCubit(RepositoryProvider.of<ApiRepository>(context))
+      ..load(widget.slug);
+  }
 
   Future<void> _shareAlbum(BuildContext context) async {
     final messenger = ScaffoldMessenger.of(context);
     try {
-      await Share.share('https://${config.apiHost}/members/photos/$slug/');
+      await Share.share(
+        'https://${config.apiHost}/members/photos/${widget.slug}/',
+      );
     } catch (_) {
       messenger.showSnackBar(
         const SnackBar(
@@ -49,11 +65,26 @@ class AlbumScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AlbumCubit(
-        RepositoryProvider.of<ApiRepository>(context),
-      )..load(slug),
-      child: BlocBuilder<AlbumCubit, AlbumScreenState>(
+    return BlocProvider.value(
+      value: _cubit,
+      child: BlocConsumer<AlbumCubit, AlbumScreenState>(
+        listenWhen: (previous, current) => current.isOpen && !previous.isOpen,
+        listener: (context, state) {
+          showDialog(
+            context: context,
+            useSafeArea: false,
+            barrierColor: Colors.black.withOpacity(0.92),
+            builder: (context) {
+              return BlocProvider.value(
+                value: _cubit,
+                child: _Gallery(
+                  album: state.album!,
+                  initialPage: state.initialGalleryIndex!,
+                ),
+              );
+            },
+          );
+        },
         builder: (context, state) {
           late final Widget body;
           if (state.isLoading) {
@@ -64,23 +95,12 @@ class AlbumScreen extends StatelessWidget {
             body = _PhotoGrid(state.album!.photos);
           }
 
-          Widget mainScaffold = Scaffold(
+          return Scaffold(
             appBar: ThaliaAppBar(
               title: Text(state.album?.title.toUpperCase() ?? title),
               actions: [_shareAlbumButton(context)],
             ),
             body: body,
-          );
-
-          return Stack(
-            children: [
-              mainScaffold,
-              if (state.isOpen)
-                _Gallery(
-                  album: state.album!,
-                  initialPage: state.initialGalleryIndex!,
-                ),
-            ],
           );
         },
       ),
