@@ -87,7 +87,7 @@ dependencies:
   image_cropper: ^3.0.1
 
   # Carousel.
-  carousel_slider: ^4.1.1
+  carousel_slider: ^4.2.1
 
   # Firebase for push notifications.
   firebase_core: ^2.4.0
