@@ -69,7 +69,7 @@ class DetailState<E> extends Equatable {
 ///   This is a subtype of both [ErrorState] and [LoadingState]
 ///
 /// Additional subtypes can be added as needed.
-abstract class XDetailState<T> {
+abstract class XDetailState<T> extends Equatable {
   const XDetailState();
 
   T? get result => this is ResultState ? (this as ResultState<T>).result : null;
@@ -85,6 +85,9 @@ class ResultState<T> extends XDetailState<T> {
   final T result;
 
   const ResultState(this.result);
+
+  @override
+  List<Object?> get props => [result];
 }
 
 /// A generic state that indicates that there is an error.
@@ -95,6 +98,9 @@ class ErrorState<T> extends XDetailState<T> {
   final String message;
 
   const ErrorState(this.message);
+
+  @override
+  List<Object?> get props => [message];
 }
 
 /// A generic state that indicates that we are loading.
@@ -116,12 +122,17 @@ class LoadingState<T> extends XDetailState<T> {
       return const LoadingState();
     }
   }
+
+  @override
+  List<Object?> get props => [];
 }
 
+/// A generic state that indicates that we are loading and there is a result.
 class LoadingResultState<T> extends ResultState<T> implements LoadingState<T> {
   const LoadingResultState(T result) : super(result);
 }
 
+/// A generic state that indicates that we are loading and there is an error.
 class LoadingErrorState<T> extends ErrorState<T> implements LoadingState<T> {
   const LoadingErrorState(String message) : super(message);
 }
