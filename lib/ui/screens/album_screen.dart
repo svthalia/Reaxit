@@ -67,9 +67,10 @@ class _AlbumScreenState extends State<AlbumScreen> {
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: _cubit,
-      child: BlocConsumer<AlbumCubit, AlbumScreenState>(
-        listenWhen: (previous, current) => current.isOpen && !previous.isOpen,
+      child: BlocConsumer<AlbumCubit, XDetailState<Album>>(
+        listenWhen: (previous, current) => current is OpenGalleryState,
         listener: (context, state) {
+          final initialPage = (state as OpenGalleryState).initialGalleryIndex;
           showDialog(
             context: context,
             useSafeArea: false,
@@ -77,9 +78,14 @@ class _AlbumScreenState extends State<AlbumScreen> {
             builder: (context) {
               return BlocProvider.value(
                 value: _cubit,
-                child: _Gallery(
-                  album: state.album!,
-                  initialPage: state.initialGalleryIndex!,
+                child: BlocBuilder<AlbumCubit, XDetailState<Album>>(
+                  buildWhen: (previous, current) => current is ResultState,
+                  builder: (context, state) {
+                    return _Gallery(
+                      album: state.result!,
+                      initialPage: initialPage,
+                    );
+                  },
                 ),
               );
             },
@@ -87,17 +93,17 @@ class _AlbumScreenState extends State<AlbumScreen> {
         },
         builder: (context, state) {
           late final Widget body;
-          if (state.isLoading) {
-            body = const Center(child: CircularProgressIndicator());
-          } else if (state.hasException) {
+          if (state is ResultState) {
+            body = _PhotoGrid(state.result!.photos);
+          } else if (state is ErrorState) {
             body = ErrorScrollView(state.message!);
           } else {
-            body = _PhotoGrid(state.album!.photos);
+            body = const Center(child: CircularProgressIndicator());
           }
 
           return Scaffold(
             appBar: ThaliaAppBar(
-              title: Text(state.album?.title.toUpperCase() ?? title),
+              title: Text(state.result?.title.toUpperCase() ?? title),
               actions: [_shareAlbumButton(context)],
             ),
             body: body,
@@ -272,13 +278,13 @@ class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     Widget overlayScaffold = Scaffold(
       extendBodyBehindAppBar: true,
-      backgroundColor: Colors.black.withOpacity(0.92),
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         shadowColor: Colors.transparent,
         leading: CloseButton(
           color: Theme.of(context).primaryIconTheme.color,
-          onPressed: BlocProvider.of<AlbumCubit>(context).closeGallery,
+          onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
           _downloadButton(widget.album.photos),
