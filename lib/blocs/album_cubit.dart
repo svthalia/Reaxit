@@ -4,12 +4,6 @@ import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 
-class OpenGalleryState extends ResultState<Album> {
-  final int initialGalleryIndex;
-
-  OpenGalleryState(Album result, this.initialGalleryIndex) : super(result);
-}
-
 class AlbumCubit extends Cubit<XDetailState<Album>> {
   final ApiRepository api;
 
@@ -39,13 +33,6 @@ class AlbumCubit extends Cubit<XDetailState<Album>> {
       emit(oldState);
       rethrow;
     }
-  }
-
-  void openGallery(int index) {
-    if (state is! ResultState) return;
-    final oldState = state as ResultState<Album>;
-    emit(OpenGalleryState(oldState.result, index));
-    emit(oldState);
   }
 
   Future<void> load(String slug) async {

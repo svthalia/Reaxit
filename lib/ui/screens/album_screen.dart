@@ -67,30 +67,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: _cubit,
-      child: BlocConsumer<AlbumCubit, XDetailState<Album>>(
-        listenWhen: (previous, current) => current is OpenGalleryState,
-        listener: (context, state) {
-          final initialPage = (state as OpenGalleryState).initialGalleryIndex;
-          showDialog(
-            context: context,
-            useSafeArea: false,
-            barrierColor: Colors.black.withOpacity(0.92),
-            builder: (context) {
-              return BlocProvider.value(
-                value: _cubit,
-                child: BlocBuilder<AlbumCubit, XDetailState<Album>>(
-                  buildWhen: (previous, current) => current is ResultState,
-                  builder: (context, state) {
-                    return _Gallery(
-                      album: state.result!,
-                      initialPage: initialPage,
-                    );
-                  },
-                ),
-              );
-            },
-          );
-        },
+      child: BlocBuilder<AlbumCubit, XDetailState<Album>>(
         builder: (context, state) {
           late final Widget body;
           if (state is ResultState) {
@@ -357,6 +334,29 @@ class _PhotoGrid extends StatelessWidget {
 
   const _PhotoGrid(this.photos);
 
+  void _openGallery(BuildContext context, int index) {
+    final cubit = BlocProvider.of<AlbumCubit>(context);
+    showDialog(
+      context: context,
+      useSafeArea: false,
+      barrierColor: Colors.black.withOpacity(0.92),
+      builder: (context) {
+        return BlocProvider.value(
+          value: cubit,
+          child: BlocBuilder<AlbumCubit, XDetailState<Album>>(
+            buildWhen: (previous, current) => current is ResultState,
+            builder: (context, state) {
+              return _Gallery(
+                album: state.result!,
+                initialPage: index,
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scrollbar(
@@ -372,8 +372,7 @@ class _PhotoGrid extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         itemBuilder: (context, index) => _PhotoTile(
           photo: photos[index],
-          openGallery: () =>
-              BlocProvider.of<AlbumCubit>(context).openGallery(index),
+          openGallery: () => _openGallery(context, index),
         ),
       ),
     );
