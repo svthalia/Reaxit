@@ -461,7 +461,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: BlocBuilder<MemberCubit, MemberState>(
         bloc: _memberCubit,
         builder: (context, state) {
-          if (state.hasException) {
+          if (state is ErrorState) {
             return CustomScrollView(
               controller: _scrollController,
               slivers: [
@@ -471,7 +471,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ],
             );
-          } else if (state.isLoading && widget.member == null) {
+          } else if (state is LoadingState && widget.member == null) {
             return CustomScrollView(
               controller: _scrollController,
               slivers: [
@@ -488,7 +488,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               slivers: [
                 _makeAppBar((state.result ?? widget.member)!),
                 _makeFactsSliver((state.result ?? widget.member)!),
-                if (!state.isLoading) ...[
+                if (state is! LoadingState) ...[
                   if (state.result!.achievements.isNotEmpty)
                     _makeAchievementsSliver(state.result!),
                   if (state.result!.societies.isNotEmpty)

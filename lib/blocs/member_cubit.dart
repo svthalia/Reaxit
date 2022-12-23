@@ -9,17 +9,17 @@ typedef MemberState = DetailState<Member>;
 class MemberCubit extends Cubit<MemberState> {
   final ApiRepository api;
 
-  MemberCubit(this.api) : super(const MemberState.loading());
+  MemberCubit(this.api) : super(const LoadingState());
 
   Future<void> load(int pk) async {
-    emit(state.copyWith(isLoading: true));
+    emit(LoadingState.from(state));
     try {
       final member = await api.getMember(pk: pk);
-      emit(MemberState.result(result: member));
+      emit(ResultState(member));
     } on ApiException catch (exception) {
-      emit(MemberState.failure(
-        message: exception.getMessage(notFound: 'The member does not exist.'),
-      ));
+      emit(ErrorState(exception.getMessage(
+        notFound: 'The member does not exist.',
+      )));
     }
   }
 }

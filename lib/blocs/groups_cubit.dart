@@ -10,19 +10,19 @@ class GroupsCubit extends Cubit<GroupsState> {
   final ApiRepository api;
   final MemberGroupType? groupType;
 
-  GroupsCubit(this.api, this.groupType) : super(const GroupsState.loading());
+  GroupsCubit(this.api, this.groupType) : super(const LoadingState());
 
   Future<void> load() async {
-    emit(state.copyWith(isLoading: true));
+    emit(LoadingState.from(state));
     try {
       final listResponse = await api.getGroups(limit: 1000, type: groupType);
       if (listResponse.results.isNotEmpty) {
-        emit(GroupsState.result(result: listResponse.results));
+        emit(ResultState(listResponse.results));
       } else {
-        emit(const GroupsState.failure(message: 'There are no boards.'));
+        emit(const ErrorState('There are no boards.'));
       }
     } on ApiException catch (exception) {
-      emit(GroupsState.failure(message: _failureMessage(exception)));
+      emit(ErrorState(_failureMessage(exception)));
     }
   }
 

@@ -9,16 +9,16 @@ typedef SalesOrderState = DetailState<SalesOrder>;
 class SalesOrderCubit extends Cubit<SalesOrderState> {
   final ApiRepository api;
 
-  SalesOrderCubit(this.api) : super(const SalesOrderState.loading());
+  SalesOrderCubit(this.api) : super(const LoadingState());
 
   Future<void> load(String pk) async {
-    emit(state.copyWith(isLoading: true));
+    emit(LoadingState.from(state));
     try {
       final order = await api.claimSalesOrder(pk: pk);
-      emit(SalesOrderState.result(result: order));
+      emit(ResultState(order));
     } on ApiException catch (exception) {
-      emit(SalesOrderState.failure(
-        message: exception.getMessage(notFound: 'The order does not exist.'),
+      emit(ErrorState(
+        exception.getMessage(notFound: 'The order does not exist.'),
       ));
     }
   }

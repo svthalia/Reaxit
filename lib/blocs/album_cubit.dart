@@ -4,7 +4,9 @@ import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 
-class AlbumCubit extends Cubit<XDetailState<Album>> {
+typedef AlbumState = DetailState<Album>;
+
+class AlbumCubit extends Cubit<AlbumState> {
   final ApiRepository api;
 
   AlbumCubit(this.api) : super(const LoadingState());

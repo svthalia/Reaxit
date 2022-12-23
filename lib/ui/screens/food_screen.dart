@@ -416,10 +416,9 @@ class __ProductTileState extends State<_ProductTile> {
           ? Text(widget.product.description)
           : null,
       trailing: BlocBuilder<FoodCubit, FoodState>(
-        buildWhen: (previous, current) => current.foodEvent != null,
         builder: (context, state) {
           return ElevatedButton(
-            onPressed: state.foodEvent!.canOrder()
+            onPressed: state.foodEvent?.canOrder() ?? false
                 ? () {
                     if (state.foodEvent!.hasOrder) {
                       _changeOrder(state.foodEvent!);

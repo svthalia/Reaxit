@@ -67,7 +67,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: _cubit,
-      child: BlocBuilder<AlbumCubit, XDetailState<Album>>(
+      child: BlocBuilder<AlbumCubit, AlbumState>(
         builder: (context, state) {
           late final Widget body;
           if (state is ResultState) {
@@ -343,10 +343,11 @@ class _PhotoGrid extends StatelessWidget {
       builder: (context) {
         return BlocProvider.value(
           value: cubit,
-          child: BlocBuilder<AlbumCubit, XDetailState<Album>>(
+          child: BlocBuilder<AlbumCubit, AlbumState>(
             buildWhen: (previous, current) => current is ResultState,
             builder: (context, state) {
               return _Gallery(
+                // TODO: buildWhen actually does not guarantee not building without result.
                 album: state.result!,
                 initialPage: index,
               );

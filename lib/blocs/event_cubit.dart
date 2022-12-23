@@ -12,18 +12,17 @@ class EventCubit extends Cubit<EventState> {
 
   // TODO: Someday: combine with RegistrationsCubit.
 
-  EventCubit(this.api, {required this.eventPk})
-      : super(const EventState.loading());
+  EventCubit(this.api, {required this.eventPk}) : super(const LoadingState());
 
   Future<void> load() async {
-    emit(state.copyWith(isLoading: true));
+    emit(LoadingState.from(state));
     try {
       final event = await api.getEvent(pk: eventPk);
-      emit(EventState.result(result: event));
+      emit(ResultState(event));
     } on ApiException catch (exception) {
-      emit(EventState.failure(
-        message: exception.getMessage(notFound: 'The event does not exist.'),
-      ));
+      emit(ErrorState(exception.getMessage(
+        notFound: 'The event does not exist.',
+      )));
     }
   }
 

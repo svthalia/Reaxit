@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/tosti/blocs/auth_cubit.dart';
 import 'package:reaxit/tosti/blocs/home_cubit.dart';
 import 'package:reaxit/tosti/widgets/venue_card.dart';
@@ -103,9 +104,8 @@ class _SignedInTostiHomeView extends StatelessWidget {
     return RefreshIndicator(
       onRefresh: () => BlocProvider.of<TostiHomeCubit>(context).load(),
       child: BlocBuilder<TostiHomeCubit, TostiHomeState>(
-        buildWhen: (previous, current) => !current.isLoading,
         builder: (context, state) {
-          if (state.isLoading) {
+          if (state is LoadingState) {
             return ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               children: const [
@@ -117,7 +117,7 @@ class _SignedInTostiHomeView extends StatelessWidget {
                 )
               ],
             );
-          } else if (state.hasException) {
+          } else if (state is ErrorState) {
             return ErrorScrollView(state.message!);
           } else if (state.result!.isEmpty) {
             return const ErrorScrollView('There are no venues.');

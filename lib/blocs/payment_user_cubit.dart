@@ -9,15 +9,15 @@ typedef PaymentUserState = DetailState<PaymentUser>;
 class PaymentUserCubit extends Cubit<PaymentUserState> {
   final ApiRepository api;
 
-  PaymentUserCubit(this.api) : super(const PaymentUserState.loading());
+  PaymentUserCubit(this.api) : super(const LoadingState());
 
   Future<void> load() async {
-    emit(state.copyWith(isLoading: true));
+    emit(LoadingState.from(state));
     try {
       final paymentUser = await api.getPaymentUser();
-      emit(PaymentUserState.result(result: paymentUser));
+      emit(ResultState(paymentUser));
     } on ApiException catch (exception) {
-      emit(PaymentUserState.failure(message: exception.message));
+      emit(ErrorState(exception.message));
     }
   }
 }

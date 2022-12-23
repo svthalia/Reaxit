@@ -891,7 +891,7 @@ class _EventScreenState extends State<EventScreen> {
     return BlocBuilder<EventCubit, EventState>(
       bloc: _eventCubit,
       builder: (context, state) {
-        if (state.hasException) {
+        if (state is ErrorState) {
           return Scaffold(
             appBar: ThaliaAppBar(
               title: Text(widget.event?.title.toUpperCase() ?? 'EVENT'),
@@ -906,9 +906,9 @@ class _EventScreenState extends State<EventScreen> {
               child: ErrorScrollView(state.message!),
             ),
           );
-        } else if (state.isLoading &&
-            widget.event == null &&
-            state.result == null) {
+        } else if (state is LoadingState &&
+            state is! ResultState &&
+            widget.event == null) {
           return Scaffold(
             appBar: ThaliaAppBar(
               title: const Text('EVENT'),
