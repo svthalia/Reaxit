@@ -204,6 +204,16 @@ class DoubleListState<T> extends Equatable {
         isDone = false,
         isDoneUp = false;
 
+  const DoubleListState.success({
+    this.resultsUp = const [],
+    required this.isDoneUp,
+    this.resultsDown = const [],
+    required this.isDone,
+  })  : message = null,
+        isLoading = true,
+        isLoadingMore = false,
+        isLoadingMoreUp = false;
+
   DoubleListState<T> copyLoadingMoreUp() =>
       copyWith(isLoading: false, isLoadingMore: false, isLoadingMoreUp: true);
 

@@ -27,7 +27,7 @@ void main() {
       );
 
       final state = CalendarState.success(
-        results: [
+        resultsDown: [
           ...CalendarEvent.splitEventIntoCalendarEvents(event1),
           ...CalendarEvent.splitEventIntoCalendarEvents(event2),
         ],
