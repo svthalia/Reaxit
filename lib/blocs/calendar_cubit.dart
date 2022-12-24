@@ -22,7 +22,7 @@ class CalendarEvent {
 
   String get title => totalParts == 1
       ? parentEvent.title
-      : '${parentEvent.title} day 1/$totalParts';
+      : '${parentEvent.title} day $part/$totalParts';
 
   int get pk => parentEvent.pk;
   String get location => parentEvent.location;
