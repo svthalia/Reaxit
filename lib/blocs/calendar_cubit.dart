@@ -16,18 +16,24 @@ class CalendarEvent {
   final BaseEvent parentEvent;
   final DateTime start;
   final DateTime end;
-  final String title;
   final String label;
+  final int part;
+  final int totalParts;
+
+  String get title => totalParts == 1
+      ? parentEvent.title
+      : '${parentEvent.title} day 1/$totalParts';
 
   int get pk => parentEvent.pk;
   String get location => parentEvent.location;
 
   const CalendarEvent._({
     required this.parentEvent,
-    required this.title,
     required this.start,
     required this.end,
     required this.label,
+    required this.part,
+    required this.totalParts,
   });
 
   static List<CalendarEvent> splitEventIntoCalendarEvents(BaseEvent event) {
@@ -62,35 +68,42 @@ class CalendarEvent {
       return [
         CalendarEvent._(
           parentEvent: event,
-          title: event.title,
           start: event.start,
           end: event.end,
           label: '$startTime - $endTime | ${event.location}',
+          part: 1,
+          totalParts: 1,
         )
       ];
     } else {
       return [
         CalendarEvent._(
           parentEvent: event,
-          title: '${event.title} day 1/$daySpan',
           start: event.start,
           end: _addDays(startDate, 1),
-          label: 'From $startTime | ${event.location}',
+          label:
+              'From $startTime | ${event.location}', //TODO: Maybe we should also use '$startTime - $endTime'?
+          part: 1,
+          totalParts: daySpan,
         ),
         for (var day in Iterable.generate(daySpan - 2, (i) => i + 2))
           CalendarEvent._(
             parentEvent: event,
-            title: '${event.title} day $day/$daySpan',
             start: _addDays(startDate, day - 1),
             end: _addDays(startDate, day),
-            label: event.location,
+            label: event
+                .location, //TODO: Maybe we should also use '$startTime - $endTime'?
+            part: day,
+            totalParts: daySpan,
           ),
         CalendarEvent._(
           parentEvent: event,
-          title: '${event.title} day $daySpan/$daySpan',
           start: endDate,
           end: event.end,
-          label: 'Until $endTime | ${event.location}',
+          label:
+              'Until $endTime | ${event.location}', //TODO: Maybe we should also use '$startTime - $endTime'?
+          part: daySpan,
+          totalParts: daySpan,
         ),
       ];
     }
