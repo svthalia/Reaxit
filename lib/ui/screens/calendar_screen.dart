@@ -178,6 +178,38 @@ class CalendarSearchDelegate extends SearchDelegate {
   }
 }
 
+/// _CalendarViewDay holds events attached to a day
+class _CalendarViewDay {
+  final DateTime day;
+  final List<CalendarEvent> events;
+
+  _CalendarViewDay({required this.day, required List<CalendarEvent> events})
+      : events = events.sortedBy((element) => element.start);
+}
+
+/// _CalendarViewMonth holds events attached to a month
+class _CalendarViewMonth {
+  final DateTime month;
+  final List<CalendarEvent> events;
+
+  _CalendarViewMonth({required this.month, required List<CalendarEvent> events})
+      : events = events.sortedBy((element) => element.start);
+
+  List<_CalendarViewDay> byDay() {
+    return groupBy<CalendarEvent, DateTime>(
+      events,
+      (event) => DateTime(
+        event.start.year,
+        event.start.month,
+        event.start.day,
+      ),
+    )
+        .entries
+        .map((entry) => _CalendarViewDay(day: entry.key, events: entry.value))
+        .sortedBy((element) => element.day);
+  }
+}
+
 /// A ScrollView that shows a calendar with [Event]s.
 ///
 /// The events are grouped by month, and date.
@@ -188,59 +220,49 @@ class CalendarScrollView extends StatelessWidget {
   static final monthFormatter = DateFormat('MMMM');
   static final monthYearFormatter = DateFormat('MMMM yyyy');
 
+  final Key centerkey = UniqueKey();
   final ScrollController controller;
   final CalendarState calendarState;
   final Function() loadMoreUp;
+  final List<_CalendarViewMonth> _monthGroupedEventsUp;
+  final List<_CalendarViewMonth> _monthGroupedEventsDown;
 
-  const CalendarScrollView({
+  CalendarScrollView({
     Key? key,
     required this.controller,
     required this.calendarState,
     required this.loadMoreUp,
-  }) : super(key: key);
+  })  : _monthGroupedEventsUp = _groupByMonth(calendarState.resultsUp),
+        _monthGroupedEventsDown = _groupByMonth(calendarState.resultsDown),
+        super(key: key);
 
-  static Map<DateTime, List<CalendarEvent>> _groupByMonth(
+  static List<_CalendarViewMonth> _groupByMonth(
     List<CalendarEvent> eventList,
-  ) {
-    return groupBy<CalendarEvent, DateTime>(
-      eventList,
-      (event) => DateTime(
-        event.start.year,
-        event.start.month,
-      ),
-    );
-  }
-
-  static Map<DateTime, List<CalendarEvent>> _groupByDay(
-    List<CalendarEvent> eventList,
-  ) {
-    return groupBy<CalendarEvent, DateTime>(
-      eventList,
-      (event) => DateTime(
-        event.start.year,
-        event.start.month,
-        event.start.day,
-      ),
-    );
-  }
+  ) =>
+      groupBy<CalendarEvent, DateTime>(
+        eventList,
+        (event) => DateTime(
+          event.start.year,
+          event.start.month,
+        ),
+      )
+          .entries
+          .map((entry) =>
+              _CalendarViewMonth(month: entry.key, events: entry.value))
+          .toList();
 
   @override
   Widget build(BuildContext context) {
-    final monthGroupedEvents = _groupByMonth(calendarState.results);
-    final months = monthGroupedEvents.keys.toList();
-
     return Scrollbar(
       controller: controller,
       child: CustomScrollView(
         controller: controller,
-        physics: /*RangeMaintainingScrollPhysics(
-          parent: */
-            OverscrollableScrollPhysics(
+        physics: OverscrollableScrollPhysics(
           parent: const AlwaysScrollableScrollPhysics(),
           onhittop: loadMoreUp,
           overscroll: 30,
-          // ),
         ),
+        center: centerkey,
         slivers: [
           SliverToBoxAdapter(
             child: AnimatedLoader(
@@ -260,15 +282,12 @@ class CalendarScrollView extends StatelessWidget {
               ),
             ),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
-                  final month = months[index];
-                  final events = monthGroupedEvents[month]!;
-
-                  final dayGroupedEvents = _groupByDay(events);
-                  final days = dayGroupedEvents.keys.toList();
+                  final monthEvents = _monthGroupedEventsUp[index];
+                  final eventsByDay = monthEvents.byDay();
                   return StickyHeader(
                     header: SizedBox(
                       width: double.infinity,
@@ -276,12 +295,12 @@ class CalendarScrollView extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           child: Text(
-                            month.year == DateTime.now().year
+                            monthEvents.month.year == DateTime.now().year
                                 ? monthFormatter
-                                    .format(month.toLocal())
+                                    .format(monthEvents.month.toLocal())
                                     .toUpperCase()
                                 : monthYearFormatter
-                                    .format(month.toLocal())
+                                    .format(monthEvents.month.toLocal())
                                     .toUpperCase(),
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
@@ -292,13 +311,54 @@ class CalendarScrollView extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const SizedBox(height: 8),
-                        for (final day in days)
-                          _DayCard(day: day, events: dayGroupedEvents[day]!),
+                        for (final day in eventsByDay)
+                          _DayCard(day: day.day, events: day.events),
                       ],
                     ),
                   );
                 },
-                childCount: monthGroupedEvents.length,
+                childCount: _monthGroupedEventsUp.length,
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+            key: centerkey,
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final monthEvents = _monthGroupedEventsDown[index];
+                  final eventsByDay = monthEvents.byDay();
+                  return StickyHeader(
+                    header: SizedBox(
+                      width: double.infinity,
+                      child: Material(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Text(
+                            monthEvents.month.year == DateTime.now().year
+                                ? monthFormatter
+                                    .format(monthEvents.month.toLocal())
+                                    .toUpperCase()
+                                : monthYearFormatter
+                                    .format(monthEvents.month.toLocal())
+                                    .toUpperCase(),
+                            style: Theme.of(context).textTheme.subtitle1,
+                          ),
+                        ),
+                      ),
+                    ),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(height: 8),
+                        for (final day in eventsByDay)
+                          _DayCard(day: day.day, events: day.events),
+                      ],
+                    ),
+                  );
+                },
+                childCount: _monthGroupedEventsDown.length,
               ),
             ),
           ),

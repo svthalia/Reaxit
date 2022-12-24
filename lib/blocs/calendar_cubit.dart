@@ -103,11 +103,11 @@ class CalendarEvent {
       );
 }
 
-typedef CalendarState = ListState<CalendarEvent>;
+typedef CalendarState = DoubleListState<CalendarEvent>;
 
 class CalendarCubit extends Cubit<CalendarState> {
   static const int firstPageSize = 20;
-  static const int pageSize = 10;
+  static const int pageSize = 5;
 
   final ApiRepository api;
 
@@ -124,9 +124,9 @@ class CalendarCubit extends Cubit<CalendarState> {
   int _nextOffset = 0;
   int _nextPastOffset = 0;
 
-  /// The time used as filter, stored so that later
-  /// paginated requests have the correct offset.
-  DateTime? _lastLoadTime;
+  /// The time rounded down to the month used to split the events in "past" and
+  /// "future". Also used in the query.
+  DateTime _splitTime = DateTime(DateTime.now().year, DateTime.now().month);
 
   /// A list of events that have been removed from the previous results
   /// in order to prevent them filling up the calendar before today.
@@ -139,25 +139,28 @@ class CalendarCubit extends Cubit<CalendarState> {
   /// later calls to [more()].
   final List<CalendarEvent> _remainingFutureEvents = [];
 
-  CalendarCubit(this.api) : super(const CalendarState.loading(results: []));
+  /// Debouncetimer to fix things like load
+  Timer? _debounce;
+
+  CalendarCubit(this.api) : super(const CalendarState.loading());
 
   Future<void> cachedLoad() async {
-    if (_lastLoadTime == null ||
-        DateTime.now().difference(_lastLoadTime!).inMinutes >= 10) {
+    if (_debounce == null || !_debounce!.isActive) {
       await load();
     }
   }
 
   Future<void> load() async {
-    emit(state.copyWith(isLoading: true));
+    emit(const DoubleListState.loading());
+
+    _debounce = Timer(const Duration(minutes: 10), () => {});
     try {
-      _lastLoadTime = DateTime.now();
+      _splitTime = DateTime(DateTime.now().year, DateTime.now().month);
       final query = _searchQuery;
-      final start = _lastLoadTime!;
 
       // Get first page of events.
       final eventsResponseFuture = api.getEvents(
-        start: start,
+        start: _splitTime,
         search: query,
         ordering: 'start',
         limit: firstPageSize,
@@ -166,13 +169,14 @@ class CalendarCubit extends Cubit<CalendarState> {
 
       // Get all partner events.
       final partnerEventsResponseFuture = api.getPartnerEvents(
-        start: start,
+        start: _splitTime,
         search: query,
         ordering: 'start',
       );
 
       final eventsResponse = await eventsResponseFuture;
       final partnerEventsResponse = await partnerEventsResponseFuture;
+
       // Discard result if _searchQuery has
       // changed since the request was made.
       if (query != _searchQuery) return;
@@ -213,8 +217,8 @@ class CalendarCubit extends Cubit<CalendarState> {
       }
 
       // Remove the past days of current long-running events.
-      while (events.isNotEmpty && events.first.end.isBefore(start)) {
-        _remainingPastEvents.add(events.removeAt(0));
+      while (events.isNotEmpty && events.first.start.isBefore(_splitTime)) {
+        events.removeAt(0);
       }
 
       if (eventsResponse.results.isEmpty) {
@@ -226,8 +230,7 @@ class CalendarCubit extends Cubit<CalendarState> {
           ));
         }
       } else {
-        emit(CalendarState.success(
-            results: events, isDone: isDone, isDoneUp: false));
+        emit(state.copySuccessDown(events, isDone));
       }
     } on ApiException catch (exception) {
       emit(CalendarState.failure(message: exception.message));
@@ -243,7 +246,7 @@ class CalendarCubit extends Cubit<CalendarState> {
     emit(oldState.copyWith(isLoadingMore: true));
     try {
       final query = _searchQuery;
-      final start = _lastLoadTime;
+      final start = _splitTime;
 
       // Get next page of events.
       final eventsResponse = await api.getEvents(
@@ -276,7 +279,7 @@ class CalendarCubit extends Cubit<CalendarState> {
       newEvents.sort((a, b) => a.start.compareTo(b.start));
 
       final events = [
-        ...oldState.results,
+        ...oldState.resultsDown,
         ...newEvents,
       ];
 
@@ -291,8 +294,12 @@ class CalendarCubit extends Cubit<CalendarState> {
         }
       }
 
-      emit(CalendarState.success(
-          results: events, isDone: isDone, isDoneUp: oldState.isDoneUp));
+      // Remove the past days of current long-running events.
+      while (events.isNotEmpty && events.first.start.isBefore(_splitTime)) {
+        events.removeAt(0);
+      }
+
+      emit(oldState.copySuccessDown(events, isDone));
     } on ApiException catch (exception) {
       emit(CalendarState.failure(message: exception.message));
     }
@@ -309,12 +316,11 @@ class CalendarCubit extends Cubit<CalendarState> {
     emit(oldState.copyWith(isLoadingMoreUp: true));
     try {
       final query = _searchQuery;
-      final start = query == null ? _lastLoadTime : null;
 
       // Get next page of events.
       final eventsResponse = await api.getEvents(
         // TODO: we dont load partner events here?
-        end: start,
+        end: _splitTime,
         search: query,
         ordering: '-end',
         limit: pageSize,
@@ -330,11 +336,11 @@ class CalendarCubit extends Cubit<CalendarState> {
       _nextPastOffset += pageSize;
 
       final newEvents = [
-        ..._remainingFutureEvents..clear(),
-        ...eventsResponse.results.reversed.expand(
+        ..._remainingPastEvents..clear(),
+        ...eventsResponse.results.expand(
           (event) => CalendarEvent.splitEventIntoCalendarEvents(event),
         ),
-      ];
+      ].toList();
 
       // Sort only the new events, because the old events in
       // `_state.result` are known to be complete and sorted.
@@ -342,7 +348,7 @@ class CalendarCubit extends Cubit<CalendarState> {
 
       final events = [
         ...newEvents,
-        ...oldState.results,
+        ...oldState.resultsUp,
       ];
 
       // Remove the first partner events and day parts of events that could fill
@@ -356,8 +362,12 @@ class CalendarCubit extends Cubit<CalendarState> {
         }
       }
 
-      emit(CalendarState.success(
-          results: events, isDone: state.isDone, isDoneUp: isDoneUp));
+      // Remove the future days of current long-running events.
+      while (events.isNotEmpty && !events.last.start.isBefore(_splitTime)) {
+        events.removeLast();
+      }
+
+      emit(oldState.copySuccessUp(events, isDoneUp));
     } on ApiException catch (exception) {
       emit(CalendarState.failure(message: exception.message));
     }
@@ -372,7 +382,7 @@ class CalendarCubit extends Cubit<CalendarState> {
       _searchDebounceTimer?.cancel();
       if (query?.isEmpty ?? false) {
         /// Don't get results when the query is empty.
-        emit(const CalendarState.loading(results: []));
+        emit(const CalendarState.loading());
       } else {
         _searchDebounceTimer = Timer(config.searchDebounceTime, load);
       }
