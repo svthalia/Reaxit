@@ -254,9 +254,13 @@ class CalendarCubit extends Cubit<CalendarState> {
     final oldState = state;
 
     // Ignore calls to `more()` if there is no data, or already more coming.
-    if (oldState.isDone || oldState.isLoading || oldState.isLoadingMore) return;
+    if (oldState.isDoneDown ||
+        oldState.isLoading ||
+        oldState.isLoadingMoreDown) {
+      return;
+    }
 
-    emit(oldState.copyWith(isLoadingMore: true));
+    emit(oldState.copyWith(isLoadingMoreDown: true));
     try {
       final query = _searchQuery;
       final start = _splitTime;

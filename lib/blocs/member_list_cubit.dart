@@ -57,7 +57,7 @@ class MemberListCubit extends Cubit<MemberListState> {
         }
       } else {
         emit(MemberListState.success(
-            results: membersResponse.results, isDone: isDone, isDoneUp: false));
+            results: membersResponse.results, isDone: isDone));
       }
     } on ApiException catch (exception) {
       emit(MemberListState.failure(message: exception.message));
@@ -90,8 +90,7 @@ class MemberListCubit extends Cubit<MemberListState> {
 
       _nextOffset += pageSize;
 
-      emit(MemberListState.success(
-          results: members, isDone: isDone, isDoneUp: oldState.isDoneUp));
+      emit(MemberListState.success(results: members, isDone: isDone));
     } on ApiException catch (exception) {
       emit(MemberListState.failure(message: exception.message));
     }

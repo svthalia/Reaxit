@@ -31,7 +31,7 @@ void main() {
           ...CalendarEvent.splitEventIntoCalendarEvents(event1),
           ...CalendarEvent.splitEventIntoCalendarEvents(event2),
         ],
-        isDone: true,
+        isDoneDown: true,
         isDoneUp: true,
       );
 

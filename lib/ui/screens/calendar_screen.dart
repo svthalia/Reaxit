@@ -108,7 +108,7 @@ class CalendarSearchDelegate extends SearchDelegate {
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
       // Only request loading more if that's not already happening.
-      if (!_cubit.state.isLoadingMore) {
+      if (!_cubit.state.isLoadingMoreDown) {
         _cubit.more();
       }
     }
@@ -362,7 +362,7 @@ class CalendarScrollView extends StatelessWidget {
               ),
             ),
           ),
-          if (calendarState.isLoadingMore)
+          if (calendarState.isLoadingMoreDown)
             const SliverPadding(
               padding: EdgeInsets.all(12),
               sliver: SliverToBoxAdapter(

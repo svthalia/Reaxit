@@ -59,7 +59,6 @@ class AlbumListCubit extends Cubit<AlbumListState> {
         emit(AlbumListState.success(
           results: albumsResponse.results,
           isDone: isDone,
-          isDoneUp: false,
         ));
       }
     } on ApiException catch (exception) {
@@ -96,7 +95,6 @@ class AlbumListCubit extends Cubit<AlbumListState> {
       emit(AlbumListState.success(
         results: albums,
         isDone: isDone,
-        isDoneUp: true,
       ));
     } on ApiException catch (exception) {
       emit(AlbumListState.failure(message: exception.message));

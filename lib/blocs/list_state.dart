@@ -11,16 +11,8 @@ class ListState<T> extends Equatable {
   /// Different results are being loaded. The results are outdated.
   final bool isLoading;
 
-  /// More of the same results are being loaded. The results are not outdated.
-  final bool isLoadingMore;
-
-  /// More of the same results are being loaded. The results are not outdated.
-  final bool isLoadingMoreUp;
-
   /// The last results have been loaded. There are no more pages left.
   final bool isDone;
-
-  final bool isDoneUp;
 
   final int? count;
 
@@ -31,9 +23,7 @@ class ListState<T> extends Equatable {
     required this.message,
     required this.isLoading,
     required this.isLoadingMore,
-    required this.isLoadingMoreUp,
     required this.isDone,
-    required this.isDoneUp,
     required this.count,
   });
 
@@ -42,9 +32,7 @@ class ListState<T> extends Equatable {
     String? message,
     bool? isLoading,
     bool? isLoadingMore,
-    bool? isLoadingMoreUp,
     bool? isDone,
-    bool? isDoneUp,
     int? count,
   }) =>
       ListState<T>(
@@ -52,9 +40,7 @@ class ListState<T> extends Equatable {
         message: message ?? this.message,
         isLoading: isLoading ?? this.isLoading,
         isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-        isLoadingMoreUp: isLoadingMoreUp ?? this.isLoadingMoreUp,
         isDone: isDone ?? this.isDone,
-        isDoneUp: isDoneUp ?? this.isDoneUp,
         count: count ?? this.count,
       );
 
@@ -64,65 +50,48 @@ class ListState<T> extends Equatable {
         message,
         isLoading,
         isLoadingMore,
-        isLoadingMoreUp,
         isDone,
       ];
 
   @override
   String toString() {
     return 'ListState<$T>(isLoading: $isLoading, isLoadingMore: $isLoadingMore,'
-        ' isLoadingMoreUp: $isLoadingMore, isDone: $isDone, message: $message,'
-        ' ${results.length} ${T}s)';
+        ' isDone: $isDone, message: $message, ${results.length} ${T}s)';
   }
 
-  const ListState.loading({required this.results})
+  const ListState.loading({this.count, required this.results})
       : message = null,
         isLoading = true,
         isLoadingMore = false,
-        isLoadingMoreUp = false,
-        isDone = true,
-        isDoneUp = true,
-        count = 0;
-
-  const ListState.loadingMoreUp({this.count, required this.results})
-      : message = null,
-        isLoading = false,
-        isLoadingMore = false,
-        isLoadingMoreUp = true,
-        isDone = true,
-        isDoneUp = true;
+        isDone = true;
 
   const ListState.loadingMore({this.count, required this.results})
       : message = null,
         isLoading = false,
         isLoadingMore = true,
-        isLoadingMoreUp = false,
-        isDone = true,
-        isDoneUp = true;
+        isDone = true;
 
   const ListState.success(
-      {required this.results,
-      required this.isDone,
-      required this.isDoneUp,
-      this.count})
+      {required this.results, required this.isDone, this.count})
       : message = null,
         isLoading = false,
-        isLoadingMore = false,
-        isLoadingMoreUp = false;
+        isLoadingMore = false;
 
   const ListState.failure({required String this.message})
       : results = const [],
         isLoading = false,
         isLoadingMore = false,
-        isLoadingMoreUp = false,
         isDone = true,
-        isDoneUp = true,
         count = 0;
 }
 
 class DoubleListState<T> extends Equatable {
-  /// The results to be shown. These are outdated if `isLoading` is true.
+  /// The results to be shown in the up directoin. These are outdated if
+  /// `isLoading` is true.
   final List<T> resultsUp;
+
+  /// The results to be shown in the up directoin. These are outdated if
+  /// `isLoading` is true.
   final List<T> resultsDown;
 
   /// A message describing why there are no results.
@@ -131,16 +100,21 @@ class DoubleListState<T> extends Equatable {
   /// Different results are being loaded. The results are outdated.
   final bool isLoading;
 
-  /// More of the same results are being loaded. The results are not outdated.
-  final bool isLoadingMore;
-
-  /// More of the same results are being loaded. The results are not outdated.
+  /// More of the same results are being loaded in the up direction. The results
+  /// are not outdated.
   final bool isLoadingMoreUp;
 
-  /// The last results have been loaded. There are no more pages left.
-  final bool isDone;
+  /// More of the same results are being loaded in the down direction. The results
+  /// are not outdated.
+  final bool isLoadingMoreDown;
 
+  /// The last results have been loaded in the up direction. There are no more
+  /// pages left.
   final bool isDoneUp;
+
+  /// The last results have been loaded in the down direction. There are no more
+  /// pages left.
+  final bool isDoneDown;
 
   bool get hasException => message != null;
 
@@ -149,10 +123,10 @@ class DoubleListState<T> extends Equatable {
     required this.resultsDown,
     required this.message,
     required this.isLoading,
-    required this.isLoadingMore,
     required this.isLoadingMoreUp,
-    required this.isDone,
+    required this.isLoadingMoreDown,
     required this.isDoneUp,
+    required this.isDoneDown,
   });
 
   DoubleListState<T> copyWith({
@@ -160,20 +134,20 @@ class DoubleListState<T> extends Equatable {
     List<T>? resultsDown,
     String? message,
     bool? isLoading,
-    bool? isLoadingMore,
     bool? isLoadingMoreUp,
-    bool? isDone,
+    bool? isLoadingMoreDown,
     bool? isDoneUp,
+    bool? isDoneDown,
   }) =>
       DoubleListState<T>(
         resultsUp: resultsUp ?? this.resultsUp,
         resultsDown: resultsDown ?? this.resultsDown,
         message: message ?? this.message,
         isLoading: isLoading ?? this.isLoading,
-        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
         isLoadingMoreUp: isLoadingMoreUp ?? this.isLoadingMoreUp,
-        isDone: isDone ?? this.isDone,
+        isLoadingMoreDown: isLoadingMoreDown ?? this.isLoadingMoreDown,
         isDoneUp: isDoneUp ?? this.isDoneUp,
+        isDoneDown: isDoneDown ?? this.isDoneDown,
       );
 
   @override
@@ -182,16 +156,17 @@ class DoubleListState<T> extends Equatable {
         resultsDown,
         message,
         isLoading,
-        isLoadingMore,
         isLoadingMoreUp,
-        isDone,
+        isLoadingMoreDown,
+        isDoneUp,
+        isDoneDown,
       ];
 
   @override
   String toString() {
-    return 'DoubleListState<$T>(isLoading: $isLoading, isLoadingMore: $isLoadingMore,'
-        ' isLoadingMoreUp: $isLoadingMore, isDone: $isDone, message: $message,'
-        ' ${resultsUp.length}+${resultsDown.length} ${T}s)';
+    return 'DoubleListState<$T>(isLoading: $isLoading, isLoadingMoreDown: $isLoadingMoreDown,'
+        ' isLoadingMoreUp: $isLoadingMoreUp, isDoneUp: $isDoneUp, isDoneDown: $isDoneDown,'
+        ' message: $message, ${resultsUp.length}+${resultsDown.length} ${T}s)';
   }
 
   const DoubleListState.loading()
@@ -199,39 +174,39 @@ class DoubleListState<T> extends Equatable {
         resultsDown = const [],
         message = null,
         isLoading = true,
-        isLoadingMore = false,
         isLoadingMoreUp = false,
-        isDone = false,
-        isDoneUp = false;
+        isLoadingMoreDown = false,
+        isDoneUp = false,
+        isDoneDown = false;
 
   const DoubleListState.success({
     this.resultsUp = const [],
-    required this.isDoneUp,
     this.resultsDown = const [],
-    required this.isDone,
+    required this.isDoneUp,
+    required this.isDoneDown,
   })  : message = null,
         isLoading = true,
-        isLoadingMore = false,
-        isLoadingMoreUp = false;
-
-  DoubleListState<T> copyLoadingMoreUp() =>
-      copyWith(isLoading: false, isLoadingMore: false, isLoadingMoreUp: true);
-
-  DoubleListState<T> copyLoadingMoreDown() =>
-      copyWith(isLoading: false, isLoadingMore: true, isLoadingMoreUp: false);
-
-  DoubleListState<T> copySuccessUp(List<T> results, bool isDone) =>
-      copyWith(isLoading: false, resultsUp: results, isDoneUp: isDone);
-
-  DoubleListState<T> copySuccessDown(List<T> results, bool isDone) =>
-      copyWith(isLoading: false, resultsDown: results, isDone: isDone);
+        isLoadingMoreUp = false,
+        isLoadingMoreDown = false;
 
   const DoubleListState.failure({required String this.message})
       : resultsUp = const [],
         resultsDown = const [],
         isLoading = false,
-        isLoadingMore = false,
         isLoadingMoreUp = false,
-        isDone = true,
-        isDoneUp = true;
+        isLoadingMoreDown = false,
+        isDoneUp = true,
+        isDoneDown = true;
+
+  DoubleListState<T> copyLoadingMoreUp() => copyWith(
+      isLoading: false, isLoadingMoreDown: false, isLoadingMoreUp: true);
+
+  DoubleListState<T> copyLoadingMoreDown() => copyWith(
+      isLoading: false, isLoadingMoreDown: true, isLoadingMoreUp: false);
+
+  DoubleListState<T> copySuccessUp(List<T> results, bool isDone) =>
+      copyWith(isLoading: false, resultsUp: results, isDoneUp: isDone);
+
+  DoubleListState<T> copySuccessDown(List<T> results, bool isDone) =>
+      copyWith(isLoading: false, resultsDown: results, isDoneDown: isDone);
 }
