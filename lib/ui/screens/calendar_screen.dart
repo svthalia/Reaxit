@@ -105,9 +105,9 @@ class CalendarSearchDelegate extends SearchDelegate {
   }
 
   void _scrollListener() {
+    // Only request loading more if that's not already happening.
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
-      // Only request loading more if that's not already happening.
       if (!_cubit.state.isLoadingMoreDown) {
         _cubit.more();
       }
