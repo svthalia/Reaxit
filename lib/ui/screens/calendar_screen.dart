@@ -232,8 +232,12 @@ class CalendarScrollView extends StatelessWidget {
     required this.controller,
     required this.calendarState,
     required this.loadMoreUp,
-  })  : _monthGroupedEventsUp = _groupByMonth(calendarState.resultsUp),
-        _monthGroupedEventsDown = _groupByMonth(calendarState.resultsDown),
+  })  : _monthGroupedEventsUp = _groupByMonth(calendarState.resultsUp)
+            .sortedBy((element) => element.month)
+            .reversed
+            .toList(),
+        _monthGroupedEventsDown = _groupByMonth(calendarState.resultsDown)
+            .sortedBy((element) => element.month),
         super(key: key);
 
   static List<_CalendarViewMonth> _groupByMonth(
