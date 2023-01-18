@@ -62,9 +62,9 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
               },
               child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
                 builder: (context, state) {
-                  if (state.hasException) {
+                  if (state is ErrorState) {
                     return ErrorScrollView(state.message!);
-                  } else if (state.isLoading) {
+                  } else if (state is LoadingState) {
                     return const Center(child: CircularProgressIndicator());
                   } else {
                     return Scrollbar(
@@ -249,9 +249,9 @@ class FoodAdminSearchDelegate extends SearchDelegate {
       value: _adminCubit..search(query),
       child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
         builder: (context, state) {
-          if (state.hasException) {
+          if (state is ErrorState) {
             return ErrorScrollView(state.message!);
-          } else if (state.isLoading) {
+          } else if (state is LoadingState) {
             return const SizedBox.shrink();
           } else {
             return ListView.separated(
@@ -274,9 +274,9 @@ class FoodAdminSearchDelegate extends SearchDelegate {
       value: _adminCubit..search(query),
       child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
         builder: (context, state) {
-          if (state.hasException) {
+          if (state is ErrorState) {
             return ErrorScrollView(state.message!);
-          } else if (state.isLoading) {
+          } else if (state is LoadingState) {
             return const SizedBox.shrink();
           } else {
             return ListView.separated(

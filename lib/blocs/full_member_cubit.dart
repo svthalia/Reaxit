@@ -11,19 +11,19 @@ typedef FullMemberState = DetailState<FullMember>;
 class FullMemberCubit extends Cubit<FullMemberState> {
   final ApiRepository api;
 
-  FullMemberCubit(this.api) : super(const FullMemberState.loading());
+  FullMemberCubit(this.api) : super(const LoadingState());
 
   Future<void> load() async {
-    emit(state.copyWith(isLoading: true));
+    emit(LoadingState.from(state));
     try {
       final member = await api.getMe();
       // Set username for sentry.
       Sentry.configureScope(
         (scope) => scope.setUser(SentryUser(username: member.displayName)),
       );
-      emit(FullMemberState.result(result: member));
+      emit(ResultState(member));
     } on ApiException catch (exception) {
-      emit(FullMemberState.failure(message: exception.message));
+      emit(ErrorState(exception.message));
     }
   }
 

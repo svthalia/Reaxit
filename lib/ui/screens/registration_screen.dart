@@ -45,7 +45,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return BlocBuilder<RegistrationFieldsCubit, RegistrationFieldsState>(
       bloc: _registrationFieldsCubit,
       builder: (context, state) {
-        if (state.hasException) {
+        if (state is ErrorState) {
           return Scaffold(
             appBar: ThaliaAppBar(
               title: const Text('REGISTRATION'),
@@ -53,7 +53,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             ),
             body: ErrorCenter(state.message!),
           );
-        } else if (state.isLoading) {
+        } else if (state is LoadingState) {
           return Scaffold(
             appBar: ThaliaAppBar(
               title: const Text('REGISTRATION'),
@@ -61,7 +61,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             ),
             body: const Center(child: CircularProgressIndicator()),
           );
-        } else {}
+        }
         return Scaffold(
           appBar: ThaliaAppBar(
             title: const Text('REGISTRATION'),

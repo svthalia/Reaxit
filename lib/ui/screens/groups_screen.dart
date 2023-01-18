@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/blocs/groups_cubit.dart';
 import 'package:reaxit/models/group.dart';
 import 'package:reaxit/ui/widgets.dart';
@@ -74,9 +75,9 @@ class _GroupsScreenState extends State<GroupsScreen>
         children: [
           BlocBuilder<CommitteesCubit, GroupsState>(
             builder: (context, state) {
-              if (state.hasException) {
+              if (state is ErrorState) {
                 return ErrorScrollView(state.message!);
-              } else if (state.isLoading) {
+              } else if (state is LoadingState) {
                 return const Padding(
                   padding: EdgeInsets.all(16),
                   child: Center(child: CircularProgressIndicator()),
@@ -88,9 +89,9 @@ class _GroupsScreenState extends State<GroupsScreen>
           ),
           BlocBuilder<SocietiesCubit, GroupsState>(
             builder: (context, state) {
-              if (state.hasException) {
+              if (state is ErrorState) {
                 return ErrorScrollView(state.message!);
-              } else if (state.isLoading) {
+              } else if (state is LoadingState) {
                 return const Padding(
                   padding: EdgeInsets.all(16),
                   child: Center(child: CircularProgressIndicator()),
@@ -102,9 +103,9 @@ class _GroupsScreenState extends State<GroupsScreen>
           ),
           BlocBuilder<BoardsCubit, GroupsState>(
             builder: (context, state) {
-              if (state.hasException) {
+              if (state is ErrorState) {
                 return ErrorScrollView(state.message!);
-              } else if (state.isLoading) {
+              } else if (state is LoadingState) {
                 return const Padding(
                   padding: EdgeInsets.all(16),
                   child: Center(child: CircularProgressIndicator()),

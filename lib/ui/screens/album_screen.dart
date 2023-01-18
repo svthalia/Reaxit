@@ -18,18 +18,34 @@ import 'package:share_plus/share_plus.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 
 /// Screen that loads and shows the Album with `slug`.
-class AlbumScreen extends StatelessWidget {
+class AlbumScreen extends StatefulWidget {
   final String slug;
   final ListAlbum? album;
 
   AlbumScreen({required this.slug, this.album}) : super(key: ValueKey(slug));
 
-  String get title => album?.title ?? 'ALBUM';
+  @override
+  State<AlbumScreen> createState() => _AlbumScreenState();
+}
+
+class _AlbumScreenState extends State<AlbumScreen> {
+  late final AlbumCubit _cubit;
+
+  String get title => widget.album?.title ?? 'ALBUM';
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = AlbumCubit(RepositoryProvider.of<ApiRepository>(context))
+      ..load(widget.slug);
+  }
 
   Future<void> _shareAlbum(BuildContext context) async {
     final messenger = ScaffoldMessenger.of(context);
     try {
-      await Share.share('https://${config.apiHost}/members/photos/$slug/');
+      await Share.share(
+        'https://${config.apiHost}/members/photos/${widget.slug}/',
+      );
     } catch (_) {
       messenger.showSnackBar(
         const SnackBar(
@@ -49,38 +65,25 @@ class AlbumScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AlbumCubit(
-        RepositoryProvider.of<ApiRepository>(context),
-      )..load(slug),
-      child: BlocBuilder<AlbumCubit, AlbumScreenState>(
+    return BlocProvider.value(
+      value: _cubit,
+      child: BlocBuilder<AlbumCubit, AlbumState>(
         builder: (context, state) {
           late final Widget body;
-          if (state.isLoading) {
-            body = const Center(child: CircularProgressIndicator());
-          } else if (state.hasException) {
+          if (state is ResultState) {
+            body = _PhotoGrid(state.result!.photos);
+          } else if (state is ErrorState) {
             body = ErrorScrollView(state.message!);
           } else {
-            body = _PhotoGrid(state.album!.photos);
+            body = const Center(child: CircularProgressIndicator());
           }
 
-          Widget mainScaffold = Scaffold(
+          return Scaffold(
             appBar: ThaliaAppBar(
-              title: Text(state.album?.title.toUpperCase() ?? title),
+              title: Text(state.result?.title.toUpperCase() ?? title),
               actions: [_shareAlbumButton(context)],
             ),
             body: body,
-          );
-
-          return Stack(
-            children: [
-              mainScaffold,
-              if (state.isOpen)
-                _Gallery(
-                  album: state.album!,
-                  initialPage: state.initialGalleryIndex!,
-                ),
-            ],
           );
         },
       ),
@@ -252,13 +255,13 @@ class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     Widget overlayScaffold = Scaffold(
       extendBodyBehindAppBar: true,
-      backgroundColor: Colors.black.withOpacity(0.92),
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         shadowColor: Colors.transparent,
         leading: CloseButton(
           color: Theme.of(context).primaryIconTheme.color,
-          onPressed: BlocProvider.of<AlbumCubit>(context).closeGallery,
+          onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
           _downloadButton(widget.album.photos),
@@ -331,6 +334,30 @@ class _PhotoGrid extends StatelessWidget {
 
   const _PhotoGrid(this.photos);
 
+  void _openGallery(BuildContext context, int index) {
+    final cubit = BlocProvider.of<AlbumCubit>(context);
+    showDialog(
+      context: context,
+      useSafeArea: false,
+      barrierColor: Colors.black.withOpacity(0.92),
+      builder: (context) {
+        return BlocProvider.value(
+          value: cubit,
+          child: BlocBuilder<AlbumCubit, AlbumState>(
+            buildWhen: (previous, current) => current is ResultState,
+            builder: (context, state) {
+              return _Gallery(
+                // TODO: buildWhen actually does not guarantee not building without result.
+                album: state.result!,
+                initialPage: index,
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scrollbar(
@@ -346,8 +373,7 @@ class _PhotoGrid extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         itemBuilder: (context, index) => _PhotoTile(
           photo: photos[index],
-          openGallery: () =>
-              BlocProvider.of<AlbumCubit>(context).openGallery(index),
+          openGallery: () => _openGallery(context, index),
         ),
       ),
     );

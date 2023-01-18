@@ -10,10 +10,10 @@ typedef TostiHomeState = DetailState<List<TostiVenue>>;
 class TostiHomeCubit extends Cubit<TostiHomeState> {
   final TostiApiRepository api;
 
-  TostiHomeCubit(this.api) : super(const TostiHomeState.loading());
+  TostiHomeCubit(this.api) : super(const LoadingState());
 
   Future<void> load() async {
-    emit(state.copyWith(isLoading: true));
+    emit(LoadingState.from(state));
     try {
       final venuesFuture = api.getVenues(limit: 99, isOrderVenue: true);
       final playersFuture = api.getPlayers(limit: 99);
@@ -41,9 +41,9 @@ class TostiHomeCubit extends Cubit<TostiHomeState> {
         return player != null ? venue.copyWithPlayer(player) : venue;
       }).toList();
 
-      emit(TostiHomeState.result(result: venues));
+      emit(ResultState(venues));
     } on ApiException catch (exception) {
-      emit(TostiHomeState.failure(message: exception.message));
+      emit(ErrorState(exception.message));
     }
   }
 }

@@ -23,10 +23,10 @@ class FoodAdminCubit extends Cubit<FoodAdminState> {
   Timer? _searchDebounceTimer;
 
   FoodAdminCubit(this.api, {required this.foodEventPk})
-      : super(const FoodAdminState.loading());
+      : super(const LoadingState());
 
   Future<void> load() async {
-    emit(state.copyWith(isLoading: true));
+    emit(LoadingState.from(state));
     try {
       final query = _searchQuery;
       final orders = await api.getAdminFoodOrders(
@@ -41,23 +41,17 @@ class FoodAdminCubit extends Cubit<FoodAdminState> {
 
       if (orders.results.isEmpty) {
         if (query?.isEmpty ?? true) {
-          emit(const FoodAdminState.failure(
-            message: 'There are no orders.',
-          ));
+          emit(const ErrorState('There are no orders.'));
         } else {
-          emit(FoodAdminState.failure(
-            message: 'There are no orders matching "$query".',
-          ));
+          emit(ErrorState('There are no orders matching "$query".'));
         }
       } else {
-        emit(FoodAdminState.result(result: orders.results));
+        emit(ResultState(orders.results));
       }
     } on ApiException catch (exception) {
-      emit(FoodAdminState.failure(
-        message: exception.getMessage(
-          notFound: 'The food event does not exist.',
-        ),
-      ));
+      emit(ErrorState(exception.getMessage(
+        notFound: 'The food event does not exist.',
+      )));
     }
   }
 
@@ -70,7 +64,7 @@ class FoodAdminCubit extends Cubit<FoodAdminState> {
       _searchDebounceTimer?.cancel();
       if (query?.isEmpty ?? false) {
         /// Don't get results when the query is empty.
-        emit(const FoodAdminState.loading());
+        emit(const LoadingState());
       } else {
         _searchDebounceTimer = Timer(config.searchDebounceTime, load);
       }
@@ -81,49 +75,42 @@ class FoodAdminCubit extends Cubit<FoodAdminState> {
     required int orderPk,
     required PaymentType? paymentType,
   }) async {
+    if (state is! ResultState) return;
     if (paymentType != null) {
       final payable = await api.markPaidAdminFoodOrder(
         orderPk: orderPk,
         paymentType: paymentType,
       );
-      if (state.result != null) {
-        emit(
-          state.copyWith(
-            result: state.result!.map(
-              (order) {
-                if (order.pk == orderPk) {
-                  return order.copyWithPayment(payable.payment);
-                } else {
-                  return order;
-                }
-              },
-            ).toList(),
-          ),
-        );
-      } else {
-        await load();
-      }
+      emit(
+        ResultState(
+          state.result!.map(
+            (order) {
+              if (order.pk == orderPk) {
+                return order.copyWithPayment(payable.payment);
+              } else {
+                return order;
+              }
+            },
+          ).toList(),
+        ),
+      );
     } else {
       await api.markNotPaidAdminFoodOrder(
         orderPk: orderPk,
       );
-      if (state.result != null) {
-        emit(
-          state.copyWith(
-            result: state.result!.map(
-              (order) {
-                if (order.pk == orderPk) {
-                  return order.copyWithPayment(null);
-                } else {
-                  return order;
-                }
-              },
-            ).toList(),
-          ),
-        );
-      } else {
-        await load();
-      }
+      emit(
+        ResultState(
+          state.result!.map(
+            (order) {
+              if (order.pk == orderPk) {
+                return order.copyWithPayment(null);
+              } else {
+                return order;
+              }
+            },
+          ).toList(),
+        ),
+      );
     }
   }
 }

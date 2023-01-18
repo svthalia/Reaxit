@@ -39,16 +39,7 @@ class _SalesOrderDialogState extends State<SalesOrderDialog> {
         late final Widget content;
         late final Widget payButton;
 
-        if (orderState.hasException) {
-          content = Text(
-            orderState.message!,
-            style: textTheme.bodyText2,
-          );
-          payButton = const SizedBox.shrink();
-        } else if (orderState.isLoading) {
-          content = const Center(child: CircularProgressIndicator());
-          payButton = const SizedBox.shrink();
-        } else {
+        if (orderState is ResultState) {
           final order = orderState.result!;
 
           if (order.numItems == 0) {
@@ -78,6 +69,15 @@ class _SalesOrderDialogState extends State<SalesOrderDialog> {
               amount: order.totalAmount,
             );
           }
+        } else if (orderState is ErrorState) {
+          content = Text(
+            orderState.message!,
+            style: textTheme.bodyText2,
+          );
+          payButton = const SizedBox.shrink();
+        } else {
+          content = const Center(child: CircularProgressIndicator());
+          payButton = const SizedBox.shrink();
         }
 
         return AlertDialog(
@@ -100,9 +100,10 @@ class _SalesOrderDialogState extends State<SalesOrderDialog> {
               label: const Text('CLOSE'),
             ),
             AnimatedSize(
-                curve: Curves.ease,
-                duration: const Duration(milliseconds: 200),
-                child: payButton),
+              curve: Curves.ease,
+              duration: const Duration(milliseconds: 200),
+              child: payButton,
+            ),
           ],
         );
       },

@@ -9,24 +9,21 @@ typedef RegistrationFieldsState = DetailState<Map<String, RegistrationField>>;
 class RegistrationFieldsCubit extends Cubit<RegistrationFieldsState> {
   final ApiRepository api;
 
-  RegistrationFieldsCubit(this.api)
-      : super(const RegistrationFieldsState.loading());
+  RegistrationFieldsCubit(this.api) : super(const LoadingState());
 
   Future<void> load({required int eventPk, required int registrationPk}) async {
-    emit(state.copyWith(isLoading: true));
+    emit(LoadingState.from(state));
     try {
       final fields = await api.getRegistrationFields(
         eventPk: eventPk,
         registrationPk: registrationPk,
       );
-      emit(RegistrationFieldsState.result(result: fields));
+      emit(ResultState(fields));
     } on ApiException catch (exception) {
-      emit(RegistrationFieldsState.failure(
-        message: exception.getMessage(
-          notFound: 'The registration does not '
-              'exist or does not have any fields.',
-        ),
-      ));
+      emit(ErrorState(exception.getMessage(
+        notFound: 'The registration does not '
+            'exist or does not have any fields.',
+      )));
     }
   }
 
