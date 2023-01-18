@@ -564,7 +564,7 @@ class OverscrollableScrollPhysics extends ScrollPhysics {
   @override
   Simulation? createBallisticSimulation(
       ScrollMetrics position, double velocity) {
-    if (position.pixels <= position.minScrollExtent - overscroll) {
+    if (position.pixels < position.minScrollExtent - overscroll) {
       onhittop();
       return super.createBallisticSimulation(position, velocity);
     } else {
