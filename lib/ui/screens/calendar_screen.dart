@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
-import 'package:reaxit/ui/theme.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -41,6 +40,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
     super.dispose();
   }
 
+  void openSearch() async {
+    final searchCubit = CalendarCubit(
+      RepositoryProvider.of<ApiRepository>(context),
+    );
+
+    await showSearch(
+      context: context,
+      delegate: CalendarSearchDelegate(searchCubit),
+    );
+
+    searchCubit.close();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,18 +62,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           IconButton(
             padding: const EdgeInsets.all(16),
             icon: const Icon(Icons.search),
-            onPressed: () async {
-              final searchCubit = CalendarCubit(
-                RepositoryProvider.of<ApiRepository>(context),
-              );
-
-              await showSearch(
-                context: context,
-                delegate: CalendarSearchDelegate(searchCubit),
-              );
-
-              searchCubit.close();
-            },
+            onPressed: openSearch,
           ),
         ],
       ),
@@ -255,6 +256,14 @@ class CalendarScrollView extends StatelessWidget {
               _CalendarViewMonth(month: entry.key, events: entry.value))
           .toList();
 
+  void startLoadMoreUp() {
+    // print(controller.position.pixels);
+    // print(controller.position.minScrollExtent);
+    controller.animateTo(controller.position.minScrollExtent,
+        duration: const Duration(milliseconds: 100), curve: Curves.ease);
+    loadMoreUp();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scrollbar(
@@ -263,8 +272,8 @@ class CalendarScrollView extends StatelessWidget {
         controller: controller,
         physics: OverscrollableScrollPhysics(
           parent: const AlwaysScrollableScrollPhysics(),
-          onhittop: loadMoreUp,
-          overscroll: 30,
+          onhittop: startLoadMoreUp,
+          overscroll: 0,
         ),
         center: centerkey,
         slivers: [
@@ -289,38 +298,8 @@ class CalendarScrollView extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final monthEvents = _monthGroupedEventsUp[index];
-                  final eventsByDay = monthEvents.byDay();
-                  return StickyHeader(
-                    header: SizedBox(
-                      width: double.infinity,
-                      child: Material(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Text(
-                            monthEvents.month.year == DateTime.now().year
-                                ? monthFormatter
-                                    .format(monthEvents.month.toLocal())
-                                    .toUpperCase()
-                                : monthYearFormatter
-                                    .format(monthEvents.month.toLocal())
-                                    .toUpperCase(),
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                        ),
-                      ),
-                    ),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(height: 8),
-                        for (final day in eventsByDay)
-                          _DayCard(day: day.day, events: day.events),
-                      ],
-                    ),
-                  );
-                },
+                (_, index) =>
+                    _CalendarMonth(events: _monthGroupedEventsUp[index]),
                 childCount: _monthGroupedEventsUp.length,
               ),
             ),
@@ -330,38 +309,8 @@ class CalendarScrollView extends StatelessWidget {
             key: centerkey,
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final monthEvents = _monthGroupedEventsDown[index];
-                  final eventsByDay = monthEvents.byDay();
-                  return StickyHeader(
-                    header: SizedBox(
-                      width: double.infinity,
-                      child: Material(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Text(
-                            monthEvents.month.year == DateTime.now().year
-                                ? monthFormatter
-                                    .format(monthEvents.month.toLocal())
-                                    .toUpperCase()
-                                : monthYearFormatter
-                                    .format(monthEvents.month.toLocal())
-                                    .toUpperCase(),
-                            style: Theme.of(context).textTheme.subtitle1,
-                          ),
-                        ),
-                      ),
-                    ),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(height: 8),
-                        for (final day in eventsByDay)
-                          _DayCard(day: day.day, events: day.events),
-                      ],
-                    ),
-                  );
-                },
+                (_, index) =>
+                    _CalendarMonth(events: _monthGroupedEventsDown[index]),
                 childCount: _monthGroupedEventsDown.length,
               ),
             ),
@@ -379,17 +328,58 @@ class CalendarScrollView extends StatelessWidget {
   }
 }
 
-class _DayCard extends StatelessWidget {
-  final DateTime day;
-  final List<CalendarEvent> events;
+class _CalendarMonth extends StatelessWidget {
+  final _CalendarViewMonth events;
 
-  static final dayFormatter = DateFormat(DateFormat.ABBR_WEEKDAY);
+  static final monthFormatter = DateFormat('MMMM');
+  static final monthYearFormatter = DateFormat('MMMM yyyy');
 
-  _DayCard({required this.day, required this.events})
-      : super(key: ValueKey(day));
+  const _CalendarMonth({required this.events});
 
   @override
   Widget build(BuildContext context) {
+    return StickyHeader(
+      header: SizedBox(
+        width: double.infinity,
+        child: Material(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Text(
+              events.month.year == DateTime.now().year
+                  ? monthFormatter.format(events.month.toLocal()).toUpperCase()
+                  : monthYearFormatter
+                      .format(events.month.toLocal())
+                      .toUpperCase(),
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+          ),
+        ),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 8),
+          for (final day in events.byDay())
+            _DayCard(day: day.day, events: day.events),
+        ],
+      ),
+    );
+  }
+}
+
+class _DayCard extends StatelessWidget {
+  final DateTime day;
+  final List<Widget> eventWidgets;
+
+  static final dayFormatter = DateFormat(DateFormat.ABBR_WEEKDAY);
+
+  _DayCard({required this.day, required List<CalendarEvent> events})
+      : eventWidgets = events.map((event) => _EventCard(event)).toList(),
+        super(key: ValueKey(day));
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -404,16 +394,12 @@ class _DayCard extends StatelessWidget {
               children: [
                 Text(
                   dayFormatter.format(day.toLocal()).toUpperCase(),
-                  style: Theme.of(context).textTheme.bodySmall!.apply(
-                      color: Theme.of(context)
-                          .textTheme
-                          .bodySmall!
-                          .color!
-                          .withOpacity(0.5)),
+                  style: textTheme.bodySmall!.apply(
+                      color: textTheme.bodySmall!.color!.withOpacity(0.5)),
                 ),
                 Text(
                   day.day.toString(),
-                  style: Theme.of(context).textTheme.displaySmall,
+                  style: textTheme.displaySmall,
                   strutStyle: const StrutStyle(
                     forceStrutHeight: true,
                     leading: 2.2,
@@ -428,7 +414,7 @@ class _DayCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [for (final event in events) _EventCard(event)],
+            children: eventWidgets,
           ),
         ),
       ],
@@ -441,12 +427,27 @@ class _EventCard extends StatelessWidget {
 
   _EventCard(this.event) : super(key: ObjectKey(event));
 
+  void openEvent(BuildContext context) {
+    if (event.parentEvent is PartnerEvent) {
+      launchUrl(
+        (event.parentEvent as PartnerEvent).url,
+        mode: LaunchMode.externalApplication,
+      );
+    } else {
+      context.pushNamed(
+        'event',
+        params: {'eventPk': event.pk.toString()},
+        extra: event.parentEvent,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Color color;
     if (event.parentEvent is Event &&
         (event.parentEvent as Event).isRegistered) {
-      color = magenta;
+      color = Theme.of(context).highlightColor;
     } else if (event.parentEvent is PartnerEvent) {
       color = Colors.black;
     } else {
@@ -460,20 +461,7 @@ class _EventCard extends StatelessWidget {
         type: MaterialType.card,
         color: color,
         child: InkWell(
-          onTap: () {
-            if (event.parentEvent is PartnerEvent) {
-              launchUrl(
-                (event.parentEvent as PartnerEvent).url,
-                mode: LaunchMode.externalApplication,
-              );
-            } else {
-              context.pushNamed(
-                'event',
-                params: {'eventPk': event.pk.toString()},
-                extra: event.parentEvent,
-              );
-            }
-          },
+          onTap: () => openEvent(context),
           // Prevent painting ink outside of the card.
           borderRadius: const BorderRadius.all(Radius.circular(2)),
           child: Padding(
@@ -578,7 +566,7 @@ class OverscrollableScrollPhysics extends ScrollPhysics {
       ScrollMetrics position, double velocity) {
     if (position.pixels <= position.minScrollExtent - overscroll) {
       onhittop();
-      return super.createBallisticSimulation(position, 0);
+      return super.createBallisticSimulation(position, velocity);
     } else {
       return super.createBallisticSimulation(position, velocity);
     }
