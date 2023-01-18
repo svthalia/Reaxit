@@ -61,7 +61,7 @@ jobs:
 
       - name: "Start Simulator"
         env:
-          DEVICE: "iPhone 12 Pro Simulator (15.2)"
+          DEVICE: "iPhone 12 Pro Simulator (16.0)"
         run: |
           UDID=$(xcrun xctrace list devices | grep "^$DEVICE (" | awk '{gsub(/[()]/,""); print $NF}')
           echo $UDID
