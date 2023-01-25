@@ -107,7 +107,7 @@ class _PlayerSegment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    if (player.track == null) {
+    if (player.track?.name == null) {
       return const Padding(
         padding: EdgeInsets.symmetric(horizontal: 12),
         child: Text('Not currently playing.'),
@@ -125,7 +125,7 @@ class _PlayerSegment extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              track.name,
+              track.name!,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: textTheme.subtitle2,
