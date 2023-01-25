@@ -81,8 +81,7 @@ class CalendarEvent {
           parentEvent: event,
           start: event.start,
           end: _addDays(startDate, 1),
-          label:
-              'From $startTime | ${event.location}', //TODO: Maybe we should also use '$startTime - $endTime'?
+          label: 'From $startTime | ${event.location}',
           part: 1,
           totalParts: daySpan,
         ),
@@ -91,8 +90,7 @@ class CalendarEvent {
             parentEvent: event,
             start: _addDays(startDate, day - 1),
             end: _addDays(startDate, day),
-            label: event
-                .location, //TODO: Maybe we should also use '$startTime - $endTime'?
+            label: 'All day | ${event.location}',
             part: day,
             totalParts: daySpan,
           ),
@@ -100,8 +98,7 @@ class CalendarEvent {
           parentEvent: event,
           start: endDate,
           end: event.end,
-          label:
-              'Until $endTime | ${event.location}', //TODO: Maybe we should also use '$startTime - $endTime'?
+          label: 'Until $endTime | ${event.location}',
           part: daySpan,
           totalParts: daySpan,
         ),
@@ -182,7 +179,6 @@ class CalendarCubit extends Cubit<CalendarState> {
       );
       // get -1st page
       final pastEventsResponseFuture = api.getEvents(
-        // TODO: we dont load partner events here?
         end: _splitTime,
         search: query,
         ordering: '-end',
@@ -191,14 +187,22 @@ class CalendarCubit extends Cubit<CalendarState> {
       );
 
       // Get all partner events.
-      final partnerEventsResponseFuture = api.getPartnerEvents(
+      final futurePartnerEventsResponseFuture = api.getPartnerEvents(
+        start: _splitTime,
+        search: query,
+        ordering: 'start',
+      );
+      // Get all partner events.
+      final pastPartnerEventsResponseFuture = api.getPartnerEvents(
         start: _splitTime,
         search: query,
         ordering: 'start',
       );
       final futureEventsResponse = await futureEventsResponseFuture;
+      final futurePartnerEventsResponse =
+          await futurePartnerEventsResponseFuture;
       final pastEventsResponse = await pastEventsResponseFuture;
-      final partnerEventsResponse = await partnerEventsResponseFuture;
+      final pastPartnerEventsResponse = await pastPartnerEventsResponseFuture;
 
       // Discard result if _searchQuery has
       // changed since the request was made.
@@ -214,23 +218,23 @@ class CalendarCubit extends Cubit<CalendarState> {
           pastEventsResponse.count;
 
       // Split multi-day events.
-      final futureEvents = futureEventsResponse.results
-          .expand((event) => CalendarEvent.splitEventIntoCalendarEvents(event))
-          .toList();
-
-      // Split multi-day partner events.
-      final partnerEvents = partnerEventsResponse.results
-          .expand((event) => CalendarEvent.splitEventIntoCalendarEvents(event))
-          .toList();
+      final futureEvents = [
+        ...futurePartnerEventsResponse.results
+            .expand(CalendarEvent.splitEventIntoCalendarEvents)
+            .toList(),
+        ...futureEventsResponse.results
+            .expand(CalendarEvent.splitEventIntoCalendarEvents)
+            .toList(),
+      ].toList();
 
       // Merge the two lists.
-      futureEvents.addAll(partnerEvents);
       futureEvents.sort((a, b) => a.start.compareTo(b.start));
 
       // If `load()`, `more()`, and `moreUp()` cause jank, the expensive operations
       // on the events could be moved to an isolate in `compute()`.
 
       _remainingFutureEvents.clear();
+      _remainingPastEvents.clear();
 
       // Remove the last partner events and day parts of events that could fill
       // up the calendar further then where the first not-loaded event will
@@ -250,14 +254,26 @@ class CalendarCubit extends Cubit<CalendarState> {
         futureEvents.removeAt(0);
       }
 
+      // Split multi-day events.
       final pastEvents = [
-        ..._remainingPastEvents..clear(),
-        ...pastEventsResponse.results.expand(
-          //TODO: inline this?
-          (event) => CalendarEvent.splitEventIntoCalendarEvents(event),
-        ),
+        ...pastPartnerEventsResponse.results
+            .expand(CalendarEvent.splitEventIntoCalendarEvents)
+            .toList(),
+        ...pastEventsResponse.results
+            .expand(CalendarEvent.splitEventIntoCalendarEvents)
+            .toList(),
       ].toList();
 
+      // Remove the first partner events and day parts of events that could fill
+      // up the calendar further then where the first not-loaded event will go
+      // later.
+      if (!isDoneUp) {
+        while (pastEvents.isNotEmpty &&
+            (pastEvents.first.parentEvent is PartnerEvent ||
+                pastEvents.first.end != pastEvents.first.parentEvent.end)) {
+          _remainingPastEvents.add(pastEvents.removeAt(0));
+        }
+      }
       // Sort only the new events, because the old events in
       // `_state.result` are known to be complete and sorted.
       pastEvents.sort((a, b) => a.start.compareTo(b.start));
@@ -299,7 +315,6 @@ class CalendarCubit extends Cubit<CalendarState> {
 
       // Get next page of events.
       final eventsResponse = await api.getEvents(
-        // TODO: we dont load partner events here?
         start: start,
         search: query,
         ordering: 'start',
@@ -368,7 +383,6 @@ class CalendarCubit extends Cubit<CalendarState> {
 
       // Get next page of events.
       final eventsResponse = await api.getEvents(
-        // TODO: we dont load partner events here?
         end: _splitTime,
         search: query,
         ordering: '-end',
@@ -399,17 +413,6 @@ class CalendarCubit extends Cubit<CalendarState> {
         ...newEvents,
         ...oldState.resultsUp,
       ];
-
-      // Remove the first partner events and day parts of events that could fill
-      // up the calendar further then where the first not-loaded event will go
-      // later.
-      if (!isDoneUp) {
-        while (events.isNotEmpty &&
-            (events.first.parentEvent is PartnerEvent ||
-                events.first.end != events.first.parentEvent.end)) {
-          _remainingPastEvents.add(events.removeAt(0));
-        }
-      }
 
       // Remove the future days of current long-running events.
       while (events.isNotEmpty && !events.last.start.isBefore(_splitTime)) {

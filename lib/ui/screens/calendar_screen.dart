@@ -161,21 +161,7 @@ class CalendarSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return BlocBuilder<CalendarCubit, CalendarState>(
-      bloc: _cubit..search(query),
-      builder: (context, listState) {
-        if (listState.hasException) {
-          return ErrorScrollView(listState.message!);
-        } else {
-          return CalendarScrollView(
-            key: const PageStorageKey('calendar-search'),
-            controller: _controller,
-            calendarState: listState,
-            loadMoreUp: _cubit.moreUp,
-          );
-        }
-      },
-    );
+    return buildResults(context);
   }
 }
 
@@ -227,6 +213,7 @@ class CalendarScrollView extends StatelessWidget {
   final Function() loadMoreUp;
   final List<_CalendarViewMonth> _monthGroupedEventsUp;
   final List<_CalendarViewMonth> _monthGroupedEventsDown;
+  final bool _enableLoadMore;
 
   CalendarScrollView({
     Key? key,
@@ -239,6 +226,9 @@ class CalendarScrollView extends StatelessWidget {
             .toList(),
         _monthGroupedEventsDown = _groupByMonth(calendarState.resultsDown)
             .sortedBy((element) => element.month),
+        _enableLoadMore = !calendarState.isDoneUp &&
+            calendarState.resultsUp.isNotEmpty &&
+            calendarState.resultsDown.isNotEmpty,
         super(key: key);
 
   static List<_CalendarViewMonth> _groupByMonth(
@@ -257,8 +247,6 @@ class CalendarScrollView extends StatelessWidget {
           .toList();
 
   void startLoadMoreUp() {
-    // print(controller.position.pixels);
-    // print(controller.position.minScrollExtent);
     controller.animateTo(controller.position.minScrollExtent,
         duration: const Duration(milliseconds: 100), curve: Curves.ease);
     loadMoreUp();
@@ -266,15 +254,18 @@ class CalendarScrollView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ScrollPhysics scrollPhysics = const AlwaysScrollableScrollPhysics();
+
     return Scrollbar(
       controller: controller,
       child: CustomScrollView(
         controller: controller,
-        physics: OverscrollableScrollPhysics(
-          parent: const AlwaysScrollableScrollPhysics(),
-          onhittop: startLoadMoreUp,
-          overscroll: 0,
-        ),
+        physics: _enableLoadMore
+            ? OverscrollableScrollPhysics(
+                parent: scrollPhysics,
+                onhittop: startLoadMoreUp,
+              )
+            : scrollPhysics,
         center: centerkey,
         slivers: [
           SliverToBoxAdapter(
@@ -282,7 +273,7 @@ class CalendarScrollView extends StatelessWidget {
               visible: calendarState.isLoadingMoreUp,
             ),
           ),
-          if (!calendarState.isDoneUp)
+          if (_enableLoadMore)
             SliverToBoxAdapter(
               child: ListView(
                 shrinkWrap: true,
@@ -548,23 +539,19 @@ class _AnimatedLoaderState extends State<AnimatedLoader>
 
 class OverscrollableScrollPhysics extends ScrollPhysics {
   final Function() onhittop;
-  final int overscroll;
 
-  const OverscrollableScrollPhysics(
-      {super.parent, required this.onhittop, required this.overscroll});
+  const OverscrollableScrollPhysics({super.parent, required this.onhittop});
 
   @override
   OverscrollableScrollPhysics applyTo(ScrollPhysics? ancestor) {
     return OverscrollableScrollPhysics(
-        parent: buildParent(ancestor),
-        onhittop: onhittop,
-        overscroll: overscroll);
+        parent: buildParent(ancestor), onhittop: onhittop);
   }
 
   @override
   Simulation? createBallisticSimulation(
       ScrollMetrics position, double velocity) {
-    if (position.pixels < position.minScrollExtent - overscroll) {
+    if (position.pixels < position.minScrollExtent) {
       onhittop();
     }
     return super.createBallisticSimulation(position, velocity);
@@ -573,8 +560,6 @@ class OverscrollableScrollPhysics extends ScrollPhysics {
   @override
   double applyBoundaryConditions(ScrollMetrics position, double value) =>
       super.applyBoundaryConditions(
-          position.copyWith(
-              minScrollExtent: position.minScrollExtent - overscroll),
-          value) *
+          position.copyWith(minScrollExtent: position.minScrollExtent), value) *
       0.9;
 }
