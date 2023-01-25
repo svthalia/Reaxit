@@ -195,9 +195,9 @@ class _FakeApiRepository_16 extends _i1.SmartFake implements _i4.ApiRepository {
         );
 }
 
-class _FakeXDetailState_17<T> extends _i1.SmartFake
+class _FakeDetailState_17<T> extends _i1.SmartFake
     implements _i2.DetailState<T> {
-  _FakeXDetailState_17(
+  _FakeDetailState_17(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -1476,7 +1476,7 @@ class MockPaymentUserCubit extends _i1.Mock implements _i2.PaymentUserCubit {
   @override
   _i2.DetailState<_i3.PaymentUser> get state => (super.noSuchMethod(
         Invocation.getter(#state),
-        returnValue: _FakeXDetailState_17<_i3.PaymentUser>(
+        returnValue: _FakeDetailState_17<_i3.PaymentUser>(
           this,
           Invocation.getter(#state),
         ),
