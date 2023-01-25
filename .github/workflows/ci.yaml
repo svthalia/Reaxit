@@ -61,7 +61,7 @@ jobs:
 
       - name: "Start Simulator"
         env:
-          DEVICE: "iPhone 12 Pro Simulator (16.0)"
+          DEVICE: ${{ vars.IOS_SIMULATOR }}
         run: |
           UDID=$(xcrun xctrace list devices | grep "^$DEVICE (" | awk '{gsub(/[()]/,""); print $NF}')
           echo $UDID
@@ -122,13 +122,13 @@ jobs:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           KEYCHAIN_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_PRIVATE_KEY: ${{ secrets.PASSWORDS_REPO_DEPLOY_KEY }}
-          THALIA_API_HOST: thalia.nu
+          THALIA_API_HOST: ${{ vars.THALIA_API_HOST }}
           THALIA_OAUTH_APP_ID: ${{ secrets.THALIA_OAUTH_APP_ID }}
           THALIA_OAUTH_APP_SECRET: ${{ secrets.THALIA_OAUTH_APP_SECRET }}
-          TOSTI_API_HOST: tosti.science.ru.nl
+          TOSTI_API_HOST: ${{ vars.TOSTI_API_HOST }}
           TOSTI_OAUTH_APP_ID: ${{ secrets.TOSTI_OAUTH_APP_ID }}
           TOSTI_OAUTH_APP_SECRET: ${{ secrets.TOSTI_OAUTH_APP_SECRET }}
-          CHANGELOG: ${{ github.event.pull_request.title }}
+          CHANGELOG: ${{ github.ref }}
         run: bundle exec fastlane ios deploy_internal changelog:"$CHANGELOG"
 
   deploy-android:
@@ -158,7 +158,7 @@ jobs:
           GOOGLE_PLAY_CONFIG: ${{ secrets.GOOGLE_PLAY_CONFIG_JSON }}
           RELEASE_CONFIG_STORE_PASS: ${{ secrets.ANDROID_RELEASE_CONFIG_STORE_PASS }}
           RELEASE_CONFIG_KEY_PASS: ${{ secrets.ANDROID_RELEASE_CONFIG_KEY_PASS }}
-          RELEASE_CONFIG_KEY_ALIAS: ${{ secrets.ANDROID_RELEASE_CONFIG_KEY_ALIAS }}
+          RELEASE_CONFIG_KEY_ALIAS: ${{ vars.ANDROID_RELEASE_CONFIG_KEY_ALIAS }}
         run: |
           echo $GOOGLE_PLAY_CONFIG > $GITHUB_WORKSPACE/google-play.json
           echo "storeFile=$GITHUB_WORKSPACE/thaliapp-passwords/upload.keystore" > $GITHUB_WORKSPACE/android/key.properties
@@ -198,10 +198,10 @@ jobs:
       - name: Build app
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-          THALIA_API_HOST: thalia.nu
+          THALIA_API_HOST: ${{ vars.THALIA_API_HOST }}
           THALIA_OAUTH_APP_ID: ${{ secrets.THALIA_OAUTH_APP_ID }}
           THALIA_OAUTH_APP_SECRET: ${{ secrets.THALIA_OAUTH_APP_SECRET }}
-          TOSTI_API_HOST: tosti.science.ru.nl
+          TOSTI_API_HOST: ${{ vars.TOSTI_API_HOST }}
           TOSTI_OAUTH_APP_ID: ${{ secrets.TOSTI_OAUTH_APP_ID }}
           TOSTI_OAUTH_APP_SECRET: ${{ secrets.TOSTI_OAUTH_APP_SECRET }}
         run: bundle exec fastlane android deploy_internal

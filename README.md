@@ -85,9 +85,8 @@ To build and deploy the app with Github Actions, we need to set up a number of s
 | Secret | Description | How to get it |
 | :----- | :---------- | :------------ |
 | `ANDROID_RELEASE_CONFIG_STORE_PASS` | Password of the keystore to use for android signing | Get from `ThaliaApp-Passwords/Upload Signing Keystore` |
-| `ANDROID_RELEASE_CONFIG_KEY_ALIAS` | Alias of the key to use for android signing | `appsigning` |
 | `ANDROID_RELEASE_CONFIG_KEY_PASS` | Password of the key to use for android signing | Get from `ThaliaApp-Passwords/Upload Signing Key` |
-| `APPLE_API_KEY` | Base64 encoded App Store Connect API key | Get with `cat ThaliaApp-Passwords/app-store.p8 | base64` |
+| `APPLE_API_KEY` | Base64 encoded App Store Connect API key | Get with `cat ThaliaApp-Passwords/app-store.p8 \| base64` |
 | `GOOGLE_PLAY_CONFIG_JSON` | Configuration file for Google Play | Get from `ThaliaApp-Passwords/google-play.json` |
 | `MATCH_PASSWORD` | Password for Fastlane Match | Get from `ThaliaApp-Passwords/Fastlane Match` |
 | `PASSWORDS_REPO_DEPLOY_KEY` | A deploy key for the ThaliaApp-Passwords repository | Create one (with `ssh-keygen`), add to passwords repo, and use the full content of the private key file |
