@@ -138,8 +138,9 @@ class CalendarCubit extends Cubit<CalendarState> {
   int _nextPastOffset = 0;
 
   /// The time rounded down to the month used to split the events in "past" and
-  /// "future". Also used in the query.
-  DateTime _splitTime = DateTime(DateTime.now().year, DateTime.now().month);
+  /// "future". Also used in the query. This is a final to avoid race conditions
+  final DateTime _splitTime =
+      DateTime(DateTime.now().year, DateTime.now().month);
 
   /// A list of events that have been removed from the previous results
   /// in order to prevent them filling up the calendar before today.
@@ -167,17 +168,26 @@ class CalendarCubit extends Cubit<CalendarState> {
     emit(const DoubleListState.loading());
 
     _debounce = Timer(const Duration(minutes: 10), () => {});
+
     try {
-      _splitTime = DateTime(DateTime.now().year, DateTime.now().month);
       final query = _searchQuery;
 
       // Get first page of events.
-      final eventsResponseFuture = api.getEvents(
+      final futureEventsResponseFuture = api.getEvents(
         start: _splitTime,
         search: query,
         ordering: 'start',
         limit: firstPageSize,
         offset: 0,
+      );
+      // get -1st page
+      final pastEventsResponseFuture = api.getEvents(
+        // TODO: we dont load partner events here?
+        end: _splitTime,
+        search: query,
+        ordering: '-end',
+        limit: pageSize,
+        offset: _nextPastOffset,
       );
 
       // Get all partner events.
@@ -186,21 +196,25 @@ class CalendarCubit extends Cubit<CalendarState> {
         search: query,
         ordering: 'start',
       );
-
-      final eventsResponse = await eventsResponseFuture;
+      final futureEventsResponse = await futureEventsResponseFuture;
+      final pastEventsResponse = await pastEventsResponseFuture;
       final partnerEventsResponse = await partnerEventsResponseFuture;
 
       // Discard result if _searchQuery has
       // changed since the request was made.
       if (query != _searchQuery) return;
 
-      final isDone = eventsResponse.results.length == eventsResponse.count;
+      final isDoneDown =
+          futureEventsResponse.results.length == futureEventsResponse.count;
 
       _nextOffset = firstPageSize;
       _nextPastOffset = 0;
 
+      final isDoneUp = _nextPastOffset + pastEventsResponse.results.length ==
+          pastEventsResponse.count;
+
       // Split multi-day events.
-      final events = eventsResponse.results
+      final futureEvents = futureEventsResponse.results
           .expand((event) => CalendarEvent.splitEventIntoCalendarEvents(event))
           .toList();
 
@@ -210,8 +224,8 @@ class CalendarCubit extends Cubit<CalendarState> {
           .toList();
 
       // Merge the two lists.
-      events.addAll(partnerEvents);
-      events.sort((a, b) => a.start.compareTo(b.start));
+      futureEvents.addAll(partnerEvents);
+      futureEvents.sort((a, b) => a.start.compareTo(b.start));
 
       // If `load()`, `more()`, and `moreUp()` cause jank, the expensive operations
       // on the events could be moved to an isolate in `compute()`.
@@ -221,20 +235,34 @@ class CalendarCubit extends Cubit<CalendarState> {
       // Remove the last partner events and day parts of events that could fill
       // up the calendar further then where the first not-loaded event will
       // go later.
-      if (!isDone) {
-        while (events.isNotEmpty &&
-            (events.last.parentEvent is PartnerEvent ||
-                events.last.start != events.last.parentEvent.start)) {
-          _remainingFutureEvents.add(events.removeLast());
+      if (!isDoneDown) {
+        while (futureEvents.isNotEmpty &&
+            (futureEvents.last.parentEvent is PartnerEvent ||
+                futureEvents.last.start !=
+                    futureEvents.last.parentEvent.start)) {
+          _remainingFutureEvents.add(futureEvents.removeLast());
         }
       }
 
       // Remove the past days of current long-running events.
-      while (events.isNotEmpty && events.first.start.isBefore(_splitTime)) {
-        events.removeAt(0);
+      while (futureEvents.isNotEmpty &&
+          futureEvents.first.start.isBefore(_splitTime)) {
+        futureEvents.removeAt(0);
       }
 
-      if (eventsResponse.results.isEmpty) {
+      final pastEvents = [
+        ..._remainingPastEvents..clear(),
+        ...pastEventsResponse.results.expand(
+          //TODO: inline this?
+          (event) => CalendarEvent.splitEventIntoCalendarEvents(event),
+        ),
+      ].toList();
+
+      // Sort only the new events, because the old events in
+      // `_state.result` are known to be complete and sorted.
+      pastEvents.sort((a, b) => a.start.compareTo(b.start));
+
+      if (futureEventsResponse.results.isEmpty) {
         if (query?.isEmpty ?? true) {
           emit(const CalendarState.failure(message: 'There are no events.'));
         } else {
@@ -243,7 +271,11 @@ class CalendarCubit extends Cubit<CalendarState> {
           ));
         }
       } else {
-        emit(state.copySuccessDown(events, isDone));
+        emit(CalendarState.success(
+            resultsUp: pastEvents,
+            resultsDown: futureEvents,
+            isDoneUp: isDoneUp,
+            isDoneDown: isDoneDown));
       }
     } on ApiException catch (exception) {
       emit(CalendarState.failure(message: exception.message));
@@ -375,7 +407,7 @@ class CalendarCubit extends Cubit<CalendarState> {
         while (events.isNotEmpty &&
             (events.first.parentEvent is PartnerEvent ||
                 events.first.end != events.first.parentEvent.end)) {
-          _remainingFutureEvents.add(events.removeAt(0));
+          _remainingPastEvents.add(events.removeAt(0));
         }
       }
 
