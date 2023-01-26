@@ -451,6 +451,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.3"
+  flutter_sticky_header:
+    dependency: "direct main"
+    description:
+      name: flutter_sticky_header
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.5"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -1132,6 +1139,11 @@ packages:
       resolved-ref: a3f6cba75471ba16462e5def50794c1c0ce53dfc
       url: "https://github.com/JAicewizard/flutter_sticky_headers"
     source: git
+      path: "."
+      ref: master
+      resolved-ref: "11a34626f863ff9a071e327578e12a94fedab12c"
+      url: "https://github.com/JAicewizard/flutter_sticky_headers"
+    source: git
     version: "0.3.0+2"
   stream_channel:
     dependency: transitive
@@ -1285,6 +1297,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.7"
+  value_layout_builder:
+    dependency: transitive
+    description:
+      name: value_layout_builder
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.1"
   vector_math:
     dependency: transitive
     description:
