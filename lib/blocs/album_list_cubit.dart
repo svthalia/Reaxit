@@ -1,18 +1,13 @@
 import 'dart:async';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
+import 'package:reaxit/blocs/list_state.dart';
 import 'package:reaxit/config.dart' as config;
-import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
+import 'package:reaxit/ui/widgets.dart';
 
-typedef AlbumListState = ListState<ListAlbum>;
-
-class AlbumListCubit extends Cubit<AlbumListState> {
-  static const int firstPageSize = 60;
-  static const int pageSize = 30;
-
+class AlbumListCubit extends PaginatedCubit<ListAlbum> {
   final ApiRepository api;
 
   /// The last used search query. Can be set through `this.search(query)`.
@@ -27,10 +22,10 @@ class AlbumListCubit extends Cubit<AlbumListState> {
   /// The offset to be used for the next paginated request.
   int _nextOffset = 0;
 
-  AlbumListCubit(this.api) : super(const AlbumListState.loading(results: []));
+  AlbumListCubit(this.api) : super(firstPageSize: 60, pageSize: 30);
 
+  @override
   Future<void> load() async {
-    emit(state.copyWith(isLoading: true));
     try {
       final query = _searchQuery;
       final albumsResponse = await api.getAlbums(
@@ -49,30 +44,28 @@ class AlbumListCubit extends Cubit<AlbumListState> {
 
       if (albumsResponse.results.isEmpty) {
         if (query?.isEmpty ?? true) {
-          emit(const AlbumListState.failure(message: 'There are no albums.'));
+          emit(const ErrorListState('There are no albums.'));
         } else {
-          emit(AlbumListState.failure(
-            message: 'There are no albums found for "$query".',
-          ));
+          emit(ErrorListState('There are no albums found for "$query".'));
         }
       } else {
-        emit(AlbumListState.success(
-          results: albumsResponse.results,
-          isDone: isDone,
-        ));
+        emit(ResultsListState.withDone(albumsResponse.results, isDone));
       }
     } on ApiException catch (exception) {
-      emit(AlbumListState.failure(message: exception.message));
+      emit(ErrorListState(exception.message));
     }
   }
 
+  @override
   Future<void> more() async {
-    final oldState = state;
-
     // Ignore calls to `more()` if there is no data, or already more coming.
-    if (oldState.isDone || oldState.isLoading || oldState.isLoadingMore) return;
+    if (state is! ResultsListState ||
+        state is LoadingMoreListState ||
+        state is DoneListState) return;
 
-    emit(oldState.copyWith(isLoadingMore: true));
+    final oldState = state as ResultsListState<ListAlbum>;
+
+    emit(LoadingMoreListState.from(oldState));
     try {
       final query = _searchQuery;
 
@@ -92,12 +85,9 @@ class AlbumListCubit extends Cubit<AlbumListState> {
 
       _nextOffset += pageSize;
 
-      emit(AlbumListState.success(
-        results: albums,
-        isDone: isDone,
-      ));
+      emit(ResultsListState.withDone(albums, isDone));
     } on ApiException catch (exception) {
-      emit(AlbumListState.failure(message: exception.message));
+      emit(ErrorListState(exception.getMessage()));
     }
   }
 
@@ -110,7 +100,7 @@ class AlbumListCubit extends Cubit<AlbumListState> {
       _searchDebounceTimer?.cancel();
       if (query?.isEmpty ?? false) {
         /// Don't get results when the query is empty.
-        emit(const AlbumListState.loading(results: []));
+        emit(const LoadingListState());
       } else {
         _searchDebounceTimer = Timer(config.searchDebounceTime, load);
       }

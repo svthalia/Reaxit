@@ -42,32 +42,6 @@ class MembersScreen extends StatelessWidget {
   }
 }
 
-class _MembersGrid extends StatelessWidget {
-  const _MembersGrid(this.results);
-
-  final List<ListMember> results;
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-      sliver: SliverGrid(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
-        ),
-        delegate: SliverChildBuilderDelegate(
-          (context, index) => MemberTile(
-            member: results[index],
-          ),
-          childCount: results.length,
-        ),
-      ),
-    );
-  }
-}
-
 class MembersSearchDelegate extends SearchDelegate {
   final MemberListCubit _cubit;
 
@@ -126,6 +100,32 @@ class MembersSearchDelegate extends SearchDelegate {
       value: _cubit..search(query),
       child: PaginatedScrollView<ListMember, MemberListCubit>(
         resultsBuilder: (_, results) => [_MembersGrid(results)],
+      ),
+    );
+  }
+}
+
+class _MembersGrid extends StatelessWidget {
+  const _MembersGrid(this.results);
+
+  final List<ListMember> results;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+      sliver: SliverGrid(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
+        ),
+        delegate: SliverChildBuilderDelegate(
+          (context, index) => MemberTile(
+            member: results[index],
+          ),
+          childCount: results.length,
+        ),
       ),
     );
   }

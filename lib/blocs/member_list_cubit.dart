@@ -46,9 +46,7 @@ class MemberListCubit extends PaginatedCubit<ListMember> {
         if (query?.isEmpty ?? true) {
           emit(const ErrorListState('There are no members.'));
         } else {
-          emit(ErrorListState(
-            'There are no members found for "$query".',
-          ));
+          emit(ErrorListState('There are no members found for "$query".'));
         }
       } else {
         emit(ResultsListState.withDone(membersResponse.results, isDone));
@@ -64,6 +62,7 @@ class MemberListCubit extends PaginatedCubit<ListMember> {
     if (state is! ResultsListState ||
         state is LoadingMoreListState ||
         state is DoneListState) return;
+
     final oldState = state as ResultsListState<ListMember>;
 
     emit(LoadingMoreListState.from(oldState));
