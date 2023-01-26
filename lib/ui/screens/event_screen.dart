@@ -59,40 +59,6 @@ class _EventScreenState extends State<EventScreen> {
     super.dispose();
   }
 
-  Widget _makeMap(Event event) {
-    return Stack(
-      fit: StackFit.loose,
-      children: [
-        CachedImage(
-          imageUrl: event.mapsUrl,
-          placeholder: 'assets/img/map_placeholder.png',
-          fit: BoxFit.cover,
-        ),
-        Positioned.fill(
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () {
-                Uri url = Theme.of(context).platform == TargetPlatform.iOS
-                    ? Uri(
-                        scheme: 'maps',
-                        queryParameters: {'daddr': event.location},
-                      )
-                    : Uri(
-                        scheme: 'https',
-                        host: 'maps.google.com',
-                        path: 'maps',
-                        queryParameters: {'daddr': event.location},
-                      );
-                launchUrl(url, mode: LaunchMode.externalNonBrowserApplication);
-              },
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   /// Create all info of an event until the description, including buttons.
   Widget _makeEventInfo(Event event) {
     return Padding(
@@ -107,7 +73,7 @@ class _EventScreenState extends State<EventScreen> {
             _makeOptionalRegistrationInfo(event)
           else
             _makeNoRegistrationInfo(event),
-          if (event.hasFoodEvent) _makeFoodButton(event),
+          if (event.hasFoodEvent) _FoodButton(event),
         ],
       ),
     );
@@ -715,17 +681,6 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  Widget _makeFoodButton(Event event) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton.icon(
-        onPressed: () => context.pushNamed('food', extra: event),
-        icon: const Icon(Icons.local_pizza),
-        label: const Text('ORDER FOOD'),
-      ),
-    );
-  }
-
   TextSpan _makeTermsAndConditions(Event event) {
     final url = config.termsAndConditionsUrl;
     return TextSpan(
@@ -754,40 +709,6 @@ class _EventScreenState extends State<EventScreen> {
               'that you agree to be bound by them.',
         ),
       ],
-    );
-  }
-
-  Widget _makeDescription(Event event) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 4,
-      ),
-      child: HtmlWidget(
-        event.description,
-        onTapUrl: (String url) async {
-          Uri uri = Uri.parse(url);
-          if (uri.scheme.isEmpty) uri = uri.replace(scheme: 'https');
-          if (isDeepLink(uri)) {
-            context.go(Uri(
-              path: uri.path,
-              query: uri.query,
-            ).toString());
-            return true;
-          } else {
-            final messenger = ScaffoldMessenger.of(context);
-            try {
-              await launchUrl(uri, mode: LaunchMode.externalApplication);
-            } catch (_) {
-              messenger.showSnackBar(SnackBar(
-                behavior: SnackBarBehavior.floating,
-                content: Text('Could not open "$url".'),
-              ));
-            }
-          }
-          return true;
-        },
-      ),
     );
   }
 
@@ -846,30 +767,219 @@ class _EventScreenState extends State<EventScreen> {
     }
   }
 
-  Widget _makeShareEventButton(int pk) {
-    return IconButton(
-      padding: const EdgeInsets.all(16),
-      color: Theme.of(context).primaryIconTheme.color,
-      icon: Icon(
-        Theme.of(context).platform == TargetPlatform.iOS
-            ? Icons.ios_share
-            : Icons.share,
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider.value(
+      value: _eventCubit,
+      child: BlocBuilder<EventCubit, EventState>(
+        builder: (context, state) {
+          if (state is ErrorState) {
+            return Scaffold(
+              appBar: ThaliaAppBar(
+                title: Text(widget.event?.title.toUpperCase() ?? 'EVENT'),
+                actions: [_ShareEventButton(widget.pk)],
+              ),
+              body: RefreshIndicator(
+                onRefresh: () async {
+                  // Await only the event info.
+                  _registrationsCubit.load();
+                  await _eventCubit.load();
+                },
+                child: ErrorScrollView(state.message!),
+              ),
+            );
+          } else if (state is LoadingState &&
+              state is! ResultState &&
+              widget.event == null) {
+            return Scaffold(
+              appBar: ThaliaAppBar(
+                title: const Text('EVENT'),
+                actions: [_ShareEventButton(widget.pk)],
+              ),
+              body: const Center(child: CircularProgressIndicator()),
+            );
+          } else {
+            final event = (state.result ?? widget.event)!;
+            return Scaffold(
+              appBar: ThaliaAppBar(
+                title: Text(event.title.toUpperCase()),
+                actions: [
+                  _CalendarExportButton(event),
+                  _ShareEventButton(widget.pk),
+                  if (event.userPermissions.manageEvent)
+                    IconButton(
+                      padding: const EdgeInsets.all(16),
+                      icon: const Icon(Icons.settings),
+                      onPressed: () => context.pushNamed(
+                        'event-admin',
+                        params: {'eventPk': event.pk.toString()},
+                      ),
+                    ),
+                ],
+              ),
+              body: RefreshIndicator(
+                onRefresh: () async {
+                  // Await only the event info.
+                  _registrationsCubit.load();
+                  await _eventCubit.load();
+                },
+                child: BlocBuilder<RegistrationsCubit, RegistrationsState>(
+                  bloc: _registrationsCubit,
+                  builder: (context, listState) {
+                    return Scrollbar(
+                      controller: _controller,
+                      child: CustomScrollView(
+                        controller: _controller,
+                        key: const PageStorageKey('event'),
+                        slivers: [
+                          SliverToBoxAdapter(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                _EventMap(event),
+                                const Divider(height: 0),
+                                _makeEventInfo(event),
+                                const Divider(),
+                                _EventDescription(event),
+                              ],
+                            ),
+                          ),
+                          if (event.registrationIsOptional ||
+                              event.registrationIsRequired) ...[
+                            const SliverToBoxAdapter(child: Divider()),
+                            _makeRegistrationsHeader(listState),
+                            _makeRegistrations(listState),
+                            if (listState.isLoadingMore)
+                              const SliverPadding(
+                                padding: EdgeInsets.all(8),
+                                sliver: SliverList(
+                                  delegate: SliverChildListDelegate.fixed([
+                                    Center(child: CircularProgressIndicator()),
+                                  ]),
+                                ),
+                              ),
+                          ],
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            );
+          }
+        },
       ),
-      onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        try {
-          await Share.share('https://${config.apiHost}/events/$pk/');
-        } catch (_) {
-          messenger.showSnackBar(const SnackBar(
-            behavior: SnackBarBehavior.floating,
-            content: Text('Could not share the event.'),
-          ));
-        }
-      },
     );
   }
+}
 
-  Widget _makeCalendarExportButton(Event event) {
+class _EventMap extends StatelessWidget {
+  const _EventMap(this.event);
+
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.loose,
+      children: [
+        CachedImage(
+          imageUrl: event.mapsUrl,
+          placeholder: 'assets/img/map_placeholder.png',
+          fit: BoxFit.cover,
+        ),
+        Positioned.fill(
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                Uri url = Theme.of(context).platform == TargetPlatform.iOS
+                    ? Uri(
+                        scheme: 'maps',
+                        queryParameters: {'daddr': event.location},
+                      )
+                    : Uri(
+                        scheme: 'https',
+                        host: 'maps.google.com',
+                        path: 'maps',
+                        queryParameters: {'daddr': event.location},
+                      );
+                launchUrl(url, mode: LaunchMode.externalNonBrowserApplication);
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _FoodButton extends StatelessWidget {
+  const _FoodButton(this.event);
+
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: () => context.pushNamed('food', extra: event),
+        icon: const Icon(Icons.local_pizza),
+        label: const Text('ORDER FOOD'),
+      ),
+    );
+  }
+}
+
+class _EventDescription extends StatelessWidget {
+  const _EventDescription(this.event);
+
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 4,
+      ),
+      child: HtmlWidget(
+        event.description,
+        onTapUrl: (String url) async {
+          Uri uri = Uri.parse(url);
+          if (uri.scheme.isEmpty) uri = uri.replace(scheme: 'https');
+          if (isDeepLink(uri)) {
+            context.go(Uri(
+              path: uri.path,
+              query: uri.query,
+            ).toString());
+            return true;
+          } else {
+            final messenger = ScaffoldMessenger.of(context);
+            try {
+              await launchUrl(uri, mode: LaunchMode.externalApplication);
+            } catch (_) {
+              messenger.showSnackBar(SnackBar(
+                behavior: SnackBarBehavior.floating,
+                content: Text('Could not open "$url".'),
+              ));
+            }
+          }
+          return true;
+        },
+      ),
+    );
+  }
+}
+
+class _CalendarExportButton extends StatelessWidget {
+  const _CalendarExportButton(this.event);
+
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) {
     return IconButton(
       padding: const EdgeInsets.all(16),
       color: Theme.of(context).primaryIconTheme.color,
@@ -885,105 +995,28 @@ class _EventScreenState extends State<EventScreen> {
       },
     );
   }
+}
+
+class _ShareEventButton extends StatelessWidget {
+  const _ShareEventButton(this.pk);
+
+  final int pk;
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EventCubit, EventState>(
-      bloc: _eventCubit,
-      builder: (context, state) {
-        if (state is ErrorState) {
-          return Scaffold(
-            appBar: ThaliaAppBar(
-              title: Text(widget.event?.title.toUpperCase() ?? 'EVENT'),
-              actions: [_makeShareEventButton(widget.pk)],
-            ),
-            body: RefreshIndicator(
-              onRefresh: () async {
-                // Await only the event info.
-                _registrationsCubit.load();
-                await _eventCubit.load();
-              },
-              child: ErrorScrollView(state.message!),
-            ),
-          );
-        } else if (state is LoadingState &&
-            state is! ResultState &&
-            widget.event == null) {
-          return Scaffold(
-            appBar: ThaliaAppBar(
-              title: const Text('EVENT'),
-              actions: [_makeShareEventButton(widget.pk)],
-            ),
-            body: const Center(child: CircularProgressIndicator()),
-          );
-        } else {
-          final event = (state.result ?? widget.event)!;
-          return Scaffold(
-            appBar: ThaliaAppBar(
-              title: Text(event.title.toUpperCase()),
-              actions: [
-                _makeCalendarExportButton(event),
-                _makeShareEventButton(widget.pk),
-                if (event.userPermissions.manageEvent)
-                  IconButton(
-                    padding: const EdgeInsets.all(16),
-                    icon: const Icon(Icons.settings),
-                    onPressed: () => context.pushNamed(
-                      'event-admin',
-                      params: {'eventPk': event.pk.toString()},
-                    ),
-                  ),
-              ],
-            ),
-            body: RefreshIndicator(
-              onRefresh: () async {
-                // Await only the event info.
-                _registrationsCubit.load();
-                await _eventCubit.load();
-              },
-              child: BlocBuilder<RegistrationsCubit, RegistrationsState>(
-                bloc: _registrationsCubit,
-                builder: (context, listState) {
-                  return Scrollbar(
-                    controller: _controller,
-                    child: CustomScrollView(
-                      controller: _controller,
-                      key: const PageStorageKey('event'),
-                      slivers: [
-                        SliverToBoxAdapter(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              _makeMap(event),
-                              const Divider(height: 0),
-                              _makeEventInfo(event),
-                              const Divider(),
-                              _makeDescription(event),
-                            ],
-                          ),
-                        ),
-                        if (event.registrationIsOptional ||
-                            event.registrationIsRequired) ...[
-                          const SliverToBoxAdapter(child: Divider()),
-                          _makeRegistrationsHeader(listState),
-                          _makeRegistrations(listState),
-                          if (listState.isLoadingMore)
-                            const SliverPadding(
-                              padding: EdgeInsets.all(8),
-                              sliver: SliverList(
-                                delegate: SliverChildListDelegate.fixed([
-                                  Center(child: CircularProgressIndicator()),
-                                ]),
-                              ),
-                            ),
-                        ],
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-          );
+    return IconButton(
+      padding: const EdgeInsets.all(16),
+      color: Theme.of(context).primaryIconTheme.color,
+      icon: Icon(Icons.adaptive.share),
+      onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        try {
+          await Share.share('https://${config.apiHost}/events/$pk/');
+        } catch (_) {
+          messenger.showSnackBar(const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Could not share the event.'),
+          ));
         }
       },
     );
