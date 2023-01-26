@@ -7,6 +7,7 @@ export 'widgets/event_detail_card.dart';
 export 'widgets/mark_present_dialog.dart';
 export 'widgets/member_tile.dart';
 export 'widgets/menu_drawer.dart';
+export 'widgets/paginated_scroll_view.dart';
 export 'widgets/push_notification_dialog.dart';
 export 'widgets/push_notification_overlay.dart';
 export 'widgets/sales_order_dialog.dart';
