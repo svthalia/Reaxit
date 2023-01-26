@@ -1,18 +1,13 @@
 import 'dart:async';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
+import 'package:reaxit/ui/widgets.dart';
 
-typedef MemberListState = XListState<ListMember>;
-
-class MemberListCubit extends Cubit<MemberListState> {
-  static const int firstPageSize = 60;
-  static const int pageSize = 30;
-
+class MemberListCubit extends PaginatedCubit<ListMember> {
   final ApiRepository api;
 
   /// The last used search query. Can be set through `this.search(query)`.
@@ -27,8 +22,9 @@ class MemberListCubit extends Cubit<MemberListState> {
   /// The offset to be used for the next paginated request.
   int _nextOffset = 0;
 
-  MemberListCubit(this.api) : super(const LoadingListState());
+  MemberListCubit(this.api) : super(firstPageSize: 60, pageSize: 30);
 
+  @override
   Future<void> load() async {
     try {
       final query = _searchQuery;
@@ -62,6 +58,7 @@ class MemberListCubit extends Cubit<MemberListState> {
     }
   }
 
+  @override
   Future<void> more() async {
     // Ignore calls to `more()` if there is no data, or already more coming.
     if (state is! ResultsListState ||

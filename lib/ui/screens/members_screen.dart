@@ -34,16 +34,8 @@ class MembersScreen extends StatelessWidget {
       drawer: MenuDrawer(),
       body: RefreshIndicator(
         onRefresh: () => BlocProvider.of<MemberListCubit>(context).load(),
-        child: BlocBuilder<MemberListCubit, MemberListState>(
-          builder: (context, listState) {
-            return PaginatedScrollView<ListMember>(
-              state: listState,
-              onLoadMore: (context) {
-                BlocProvider.of<MemberListCubit>(context).more();
-              },
-              resultsBuilder: (_, results) => [_MembersGrid(results)],
-            );
-          },
+        child: PaginatedScrollView<ListMember, MemberListCubit>(
+          resultsBuilder: (_, results) => [_MembersGrid(results)],
         ),
       ),
     );
@@ -120,33 +112,21 @@ class MembersSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    return BlocBuilder<MemberListCubit, MemberListState>(
-      bloc: _cubit..search(query),
-      builder: (context, listState) {
-        return PaginatedScrollView<ListMember>(
-          state: listState,
-          onLoadMore: (context) {
-            _cubit.more();
-          },
-          resultsBuilder: (_, results) => [_MembersGrid(results)],
-        );
-      },
+    return BlocProvider.value(
+      value: _cubit..search(query),
+      child: PaginatedScrollView<ListMember, MemberListCubit>(
+        resultsBuilder: (_, results) => [_MembersGrid(results)],
+      ),
     );
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return BlocBuilder<MemberListCubit, MemberListState>(
-      bloc: _cubit..search(query),
-      builder: (context, listState) {
-        return PaginatedScrollView<ListMember>(
-          state: listState,
-          onLoadMore: (context) {
-            _cubit.more();
-          },
-          resultsBuilder: (_, results) => [_MembersGrid(results)],
-        );
-      },
+    return BlocProvider.value(
+      value: _cubit..search(query),
+      child: PaginatedScrollView<ListMember, MemberListCubit>(
+        resultsBuilder: (_, results) => [_MembersGrid(results)],
+      ),
     );
   }
 }
