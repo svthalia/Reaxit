@@ -7,7 +7,7 @@ import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 
-typedef MemberListState = ListState<ListMember>;
+typedef MemberListState = XListState<ListMember>;
 
 class MemberListCubit extends Cubit<MemberListState> {
   static const int firstPageSize = 60;
@@ -27,10 +27,9 @@ class MemberListCubit extends Cubit<MemberListState> {
   /// The offset to be used for the next paginated request.
   int _nextOffset = 0;
 
-  MemberListCubit(this.api) : super(const MemberListState.loading(results: []));
+  MemberListCubit(this.api) : super(const LoadingListState());
 
   Future<void> load() async {
-    emit(state.copyWith(isLoading: true));
     try {
       final query = _searchQuery;
       final membersResponse = await api.getMembers(
@@ -49,30 +48,28 @@ class MemberListCubit extends Cubit<MemberListState> {
 
       if (membersResponse.results.isEmpty) {
         if (query?.isEmpty ?? true) {
-          emit(const MemberListState.failure(message: 'There are no members.'));
+          emit(const ErrorListState('There are no members.'));
         } else {
-          emit(MemberListState.failure(
-            message: 'There are no members found for "$query".',
+          emit(ErrorListState(
+            'There are no members found for "$query".',
           ));
         }
       } else {
-        emit(MemberListState.success(
-          results: membersResponse.results,
-          isDone: isDone,
-        ));
+        emit(ResultsListState.withDone(membersResponse.results, isDone));
       }
     } on ApiException catch (exception) {
-      emit(MemberListState.failure(message: exception.message));
+      emit(ErrorListState(exception.message));
     }
   }
 
   Future<void> more() async {
-    final oldState = state;
-
     // Ignore calls to `more()` if there is no data, or already more coming.
-    if (oldState.isDone || oldState.isLoading || oldState.isLoadingMore) return;
+    if (state is! ResultsListState ||
+        state is LoadingMoreListState ||
+        state is DoneListState) return;
+    final oldState = state as ResultsListState<ListMember>;
 
-    emit(oldState.copyWith(isLoadingMore: true));
+    emit(LoadingMoreListState.from(oldState));
     try {
       final query = _searchQuery;
 
@@ -87,17 +84,14 @@ class MemberListCubit extends Cubit<MemberListState> {
       // changed since the request was made.
       if (query != _searchQuery) return;
 
-      final members = state.results + membersResponse.results;
+      final members = oldState.results + membersResponse.results;
       final isDone = members.length == membersResponse.count;
 
       _nextOffset += pageSize;
 
-      emit(MemberListState.success(
-        results: members,
-        isDone: isDone,
-      ));
+      emit(ResultsListState.withDone(members, isDone));
     } on ApiException catch (exception) {
-      emit(MemberListState.failure(message: exception.getMessage()));
+      emit(ErrorListState(exception.getMessage()));
     }
   }
 
@@ -110,7 +104,7 @@ class MemberListCubit extends Cubit<MemberListState> {
       _searchDebounceTimer?.cancel();
       if (query?.isEmpty ?? false) {
         /// Don't get results when the query is empty.
-        emit(const MemberListState.loading(results: []));
+        emit(const LoadingListState());
       } else {
         _searchDebounceTimer = Timer(config.searchDebounceTime, load);
       }
