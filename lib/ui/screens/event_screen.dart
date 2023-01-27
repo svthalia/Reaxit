@@ -66,7 +66,7 @@ class _EventScreenState extends State<EventScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _makeBasicEventInfo(event),
+          _BasicEventInfo(event),
           if (event.registrationIsRequired)
             _makeRequiredRegistrationInfo(event)
           else if (event.registrationIsOptional)
@@ -76,93 +76,6 @@ class _EventScreenState extends State<EventScreen> {
           if (event.hasFoodEvent) _FoodButton(event),
         ],
       ),
-    );
-  }
-
-  /// Create the title, start, end, location and price of an event.
-  Widget _makeBasicEventInfo(Event event) {
-    final textTheme = Theme.of(context).textTheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const SizedBox(height: 8),
-        Text(
-          event.title.toUpperCase(),
-          style: textTheme.headline6,
-        ),
-        const Divider(height: 24),
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Flexible(
-              fit: FlexFit.tight,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('FROM', style: textTheme.caption),
-                  const SizedBox(height: 4),
-                  Text(
-                    dateTimeFormatter.format(event.start.toLocal()),
-                    style: textTheme.subtitle2,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            Flexible(
-              fit: FlexFit.tight,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('UNTIL', style: textTheme.caption),
-                  const SizedBox(height: 4),
-                  Text(
-                    dateTimeFormatter.format(event.end.toLocal()),
-                    style: textTheme.subtitle2,
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Flexible(
-              fit: FlexFit.tight,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('LOCATION', style: textTheme.caption),
-                  const SizedBox(height: 4),
-                  Text(
-                    event.location,
-                    style: textTheme.subtitle2,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            Flexible(
-              fit: FlexFit.tight,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('PRICE', style: textTheme.caption),
-                  const SizedBox(height: 4),
-                  Text(
-                    '€${event.price}',
-                    style: textTheme.subtitle2,
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-        const Divider(height: 24),
-      ],
     );
   }
 
@@ -192,19 +105,23 @@ class _EventScreenState extends State<EventScreen> {
         textSpans.add(TextSpan(
           text: event.cancelTooLateMessage,
         ));
-        final text = 'The deadline has passed, are you sure you want '
-            'to cancel your registration and pay the estimated full costs of '
-            '€${event.fine}? You will not be able to undo this!';
-        registrationButton = _makeCancelRegistrationButton(event, text);
+        registrationButton = _CancelRegistrationButton(
+          event: event,
+          warningText: 'The deadline has passed, are you sure you want '
+              'to cancel your registration and pay the estimated full costs of '
+              '€${event.fine}? You will not be able to undo this!',
+        );
       } else {
         // Cancel button.
-        const text = 'Are you sure you want to cancel your registration?';
-        registrationButton = _makeCancelRegistrationButton(event, text);
+        registrationButton = _CancelRegistrationButton(
+          event: event,
+          warningText: 'Are you sure you want to cancel your registration?',
+        );
       }
     }
 
     if (event.canUpdateRegistration) {
-      updateButton = _makeUpdateButton(event);
+      updateButton = _UpdateRegistrationButton(event);
     }
 
     if (event.canCreateRegistration || !event.isRegistered) {
@@ -402,7 +319,7 @@ class _EventScreenState extends State<EventScreen> {
     final textSpans = <TextSpan>[];
     Widget registrationButton = const SizedBox.shrink();
     if (event.canCancelRegistration) {
-      registrationButton = _makeIWontBeThereButton(event);
+      registrationButton = _IWontBeThereButton(event);
     }
 
     if (event.isInvited) {
@@ -413,7 +330,7 @@ class _EventScreenState extends State<EventScreen> {
             'can still register to give an indication of who will be there, as '
             'well as mark the event as "registered" in your calendar. ',
       ));
-      registrationButton = _makeIllBeThereButton(event);
+      registrationButton = _IllBeThereButton(event);
     }
 
     if (event.noRegistrationMessage?.isNotEmpty ?? false) {
@@ -425,7 +342,7 @@ class _EventScreenState extends State<EventScreen> {
 
     Widget updateButton = const SizedBox.shrink();
     if (event.canUpdateRegistration) {
-      updateButton = _makeUpdateButton(event);
+      updateButton = _UpdateRegistrationButton(event);
     }
 
     return Column(
@@ -465,50 +382,6 @@ class _EventScreenState extends State<EventScreen> {
         ),
         const SizedBox(height: 4),
       ],
-    );
-  }
-
-  Widget _makeIllBeThereButton(Event event) {
-    return ElevatedButton.icon(
-      onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        try {
-          final calendarCubit = BlocProvider.of<CalendarCubit>(context);
-          await _eventCubit.register();
-          await _registrationsCubit.load();
-          calendarCubit.load();
-        } on ApiException {
-          messenger.showSnackBar(const SnackBar(
-            behavior: SnackBarBehavior.floating,
-            content: Text('Could not register for the event.'),
-          ));
-        }
-      },
-      icon: const Icon(Icons.check),
-      label: const Text("I'LL BE THERE"),
-    );
-  }
-
-  Widget _makeIWontBeThereButton(Event event) {
-    return ElevatedButton.icon(
-      onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        try {
-          final calendarCubit = BlocProvider.of<CalendarCubit>(context);
-          await _eventCubit.cancelRegistration(
-            registrationPk: event.registration!.pk,
-          );
-          await _registrationsCubit.load();
-          calendarCubit.load();
-        } on ApiException {
-          messenger.showSnackBar(const SnackBar(
-            behavior: SnackBarBehavior.floating,
-            content: Text('Could not cancel your registration.'),
-          ));
-        }
-      },
-      icon: const Icon(Icons.clear),
-      label: const Text("I WON'T BE THERE"),
     );
   }
 
@@ -606,78 +479,6 @@ class _EventScreenState extends State<EventScreen> {
       },
       icon: const Icon(Icons.create_outlined),
       label: const Text('JOIN QUEUE'),
-    );
-  }
-
-  Widget _makeCancelRegistrationButton(Event event, String warningText) {
-    return ElevatedButton.icon(
-      onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        final calendarCubit = BlocProvider.of<CalendarCubit>(context);
-        final welcomeCubit = BlocProvider.of<WelcomeCubit>(context);
-        final confirmed = await showDialog<bool>(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('Cancel registration'),
-              content: Text(
-                warningText,
-                style: Theme.of(context).textTheme.bodyText2,
-              ),
-              actions: [
-                TextButton.icon(
-                  onPressed: () => Navigator.of(
-                    context,
-                    rootNavigator: true,
-                  ).pop(false),
-                  icon: const Icon(Icons.clear),
-                  label: const Text('NO'),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () => Navigator.of(
-                    context,
-                    rootNavigator: true,
-                  ).pop(true),
-                  icon: const Icon(Icons.check),
-                  label: const Text('YES'),
-                ),
-              ],
-            );
-          },
-        );
-
-        if (confirmed ?? false) {
-          try {
-            await _eventCubit.cancelRegistration(
-              registrationPk: event.registration!.pk,
-            );
-          } on ApiException {
-            messenger.showSnackBar(const SnackBar(
-              behavior: SnackBarBehavior.floating,
-              content: Text('Could not cancel your registration.'),
-            ));
-          }
-        }
-        await _registrationsCubit.load();
-        calendarCubit.load();
-        await welcomeCubit.load();
-      },
-      icon: const Icon(Icons.delete_forever_outlined),
-      label: const Text('CANCEL REGISTRATION'),
-    );
-  }
-
-  Widget _makeUpdateButton(Event event) {
-    return ElevatedButton.icon(
-      onPressed: () => context.pushNamed(
-        'event-registration',
-        params: {
-          'eventPk': event.pk.toString(),
-          'registrationPk': event.registration!.pk.toString(),
-        },
-      ),
-      icon: const Icon(Icons.build),
-      label: const Text('UPDATE REGISTRATION'),
     );
   }
 
@@ -873,6 +674,263 @@ class _EventScreenState extends State<EventScreen> {
   }
 }
 
+class _IWontBeThereButton extends StatelessWidget {
+  const _IWontBeThereButton(this.event);
+
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        final calendarCubit = BlocProvider.of<CalendarCubit>(context);
+        final eventCubit = BlocProvider.of<EventCubit>(context);
+        final registrationsCubit = BlocProvider.of<RegistrationsCubit>(context);
+
+        try {
+          await eventCubit.cancelRegistration(
+            registrationPk: event.registration!.pk,
+          );
+          registrationsCubit.load();
+          calendarCubit.load();
+        } on ApiException {
+          messenger.showSnackBar(const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Could not cancel your registration.'),
+          ));
+        }
+      },
+      icon: const Icon(Icons.clear),
+      label: const Text("I WON'T BE THERE"),
+    );
+  }
+}
+
+class _IllBeThereButton extends StatelessWidget {
+  const _IllBeThereButton(this.event);
+
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        final calendarCubit = BlocProvider.of<CalendarCubit>(context);
+        final eventCubit = BlocProvider.of<EventCubit>(context);
+        final registrationsCubit = BlocProvider.of<RegistrationsCubit>(context);
+
+        try {
+          await eventCubit.register();
+          registrationsCubit.load();
+          calendarCubit.load();
+        } on ApiException {
+          messenger.showSnackBar(const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Could not register for the event.'),
+          ));
+        }
+      },
+      icon: const Icon(Icons.check),
+      label: const Text("I'LL BE THERE"),
+    );
+  }
+}
+
+/// A button that allows the user to cancel their registration for an event.
+class _CancelRegistrationButton extends StatelessWidget {
+  const _CancelRegistrationButton({
+    Key? key,
+    required this.event,
+    required this.warningText,
+  }) : super(key: key);
+
+  final Event event;
+  final String warningText;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        final calendarCubit = BlocProvider.of<CalendarCubit>(context);
+        final welcomeCubit = BlocProvider.of<WelcomeCubit>(context);
+        final eventCubit = BlocProvider.of<EventCubit>(context);
+        final registrationsCubit = BlocProvider.of<RegistrationsCubit>(context);
+
+        final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Cancel registration'),
+              content: Text(
+                warningText,
+                style: Theme.of(context).textTheme.bodyText2,
+              ),
+              actions: [
+                TextButton.icon(
+                  onPressed: () => Navigator.of(
+                    context,
+                    rootNavigator: true,
+                  ).pop(false),
+                  icon: const Icon(Icons.clear),
+                  label: const Text('NO'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () => Navigator.of(
+                    context,
+                    rootNavigator: true,
+                  ).pop(true),
+                  icon: const Icon(Icons.check),
+                  label: const Text('YES'),
+                ),
+              ],
+            );
+          },
+        );
+
+        if (confirmed ?? false) {
+          try {
+            await eventCubit.cancelRegistration(
+              registrationPk: event.registration!.pk,
+            );
+          } on ApiException {
+            messenger.showSnackBar(const SnackBar(
+              behavior: SnackBarBehavior.floating,
+              content: Text('Could not cancel your registration.'),
+            ));
+          }
+        }
+        registrationsCubit.load();
+        calendarCubit.load();
+        welcomeCubit.load();
+      },
+      icon: const Icon(Icons.delete_forever_outlined),
+      label: const Text('CANCEL REGISTRATION'),
+    );
+  }
+}
+
+/// A button that opens the registration fields page.
+class _UpdateRegistrationButton extends StatelessWidget {
+  const _UpdateRegistrationButton(this.event);
+
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      onPressed: () => context.pushNamed(
+        'event-registration',
+        params: {
+          'eventPk': event.pk.toString(),
+          'registrationPk': event.registration!.pk.toString(),
+        },
+      ),
+      icon: const Icon(Icons.build),
+      label: const Text('UPDATE REGISTRATION'),
+    );
+  }
+}
+
+/// The basic event info: title, time, location, price.
+class _BasicEventInfo extends StatelessWidget {
+  static final dateTimeFormatter = DateFormat('E d MMM y, HH:mm');
+
+  const _BasicEventInfo(this.event);
+
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SizedBox(height: 8),
+        Text(
+          event.title.toUpperCase(),
+          style: textTheme.headline6,
+        ),
+        const Divider(height: 24),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Flexible(
+              fit: FlexFit.tight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('FROM', style: textTheme.caption),
+                  const SizedBox(height: 4),
+                  Text(
+                    dateTimeFormatter.format(event.start.toLocal()),
+                    style: textTheme.subtitle2,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Flexible(
+              fit: FlexFit.tight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('UNTIL', style: textTheme.caption),
+                  const SizedBox(height: 4),
+                  Text(
+                    dateTimeFormatter.format(event.end.toLocal()),
+                    style: textTheme.subtitle2,
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Flexible(
+              fit: FlexFit.tight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('LOCATION', style: textTheme.caption),
+                  const SizedBox(height: 4),
+                  Text(
+                    event.location,
+                    style: textTheme.subtitle2,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Flexible(
+              fit: FlexFit.tight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('PRICE', style: textTheme.caption),
+                  const SizedBox(height: 4),
+                  Text(
+                    '€${event.price}',
+                    style: textTheme.subtitle2,
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+        const Divider(height: 24),
+      ],
+    );
+  }
+}
+
+/// A map of the event location, that opens a maps app when tapped.
 class _EventMap extends StatelessWidget {
   const _EventMap(this.event);
 
@@ -914,6 +972,7 @@ class _EventMap extends StatelessWidget {
   }
 }
 
+/// A button that opens the food ordering page.
 class _FoodButton extends StatelessWidget {
   const _FoodButton(this.event);
 
@@ -932,6 +991,7 @@ class _FoodButton extends StatelessWidget {
   }
 }
 
+/// A widget that displays the event's description HTML.
 class _EventDescription extends StatelessWidget {
   const _EventDescription(this.event);
 
@@ -973,6 +1033,7 @@ class _EventDescription extends StatelessWidget {
   }
 }
 
+/// A button that creates a calendar entry for the event.
 class _CalendarExportButton extends StatelessWidget {
   const _CalendarExportButton(this.event);
 
@@ -997,6 +1058,7 @@ class _CalendarExportButton extends StatelessWidget {
   }
 }
 
+/// A button that shares the event's URL.
 class _ShareEventButton extends StatelessWidget {
   const _ShareEventButton(this.pk);
 
