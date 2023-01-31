@@ -46,7 +46,8 @@ class _EventScreenState extends State<EventScreen> {
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
       // Only request loading more if that's not already happening.
-      if (!_registrationsCubit.state.isLoadingMore) {
+      if (_registrationsCubit.state is ResultsListState &&
+          _registrationsCubit.state is! LoadingMoreListState) {
         _registrationsCubit.more();
       }
     }
@@ -416,7 +417,7 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  SliverPadding _makeRegistrationsHeader(RegistrationsState state) {
+  SliverPadding _makeRegistrationsHeader() {
     return SliverPadding(
       padding: const EdgeInsets.only(left: 16),
       sliver: SliverToBoxAdapter(
@@ -428,22 +429,21 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  SliverPadding _makeRegistrations(RegistrationsState state) {
-    if (state.isLoading && state.results.isEmpty) {
-      return const SliverPadding(
-        padding: EdgeInsets.all(16),
-        sliver: SliverToBoxAdapter(
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
-        ),
-      );
-    } else if (state.hasException) {
+  SliverPadding _makeRegistrations(XListState<EventRegistration> state) {
+    if (state is ErrorListState) {
       return SliverPadding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 16),
         sliver: SliverToBoxAdapter(child: Text(state.message!)),
       );
+    } else if (state is LoadingListState) {
+      return const SliverPadding(
+        padding: EdgeInsets.all(16),
+        sliver: SliverToBoxAdapter(
+          child: Center(child: CircularProgressIndicator()),
+        ),
+      );
     } else {
+      final results = state.results;
       return SliverPadding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
         sliver: SliverGrid(
@@ -453,18 +453,10 @@ class _EventScreenState extends State<EventScreen> {
             crossAxisSpacing: 8,
           ),
           delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              if (state.results[index].member != null) {
-                return MemberTile(
-                  member: state.results[index].member!,
-                );
-              } else {
-                return DefaultMemberTile(
-                  name: state.results[index].name!,
-                );
-              }
-            },
-            childCount: state.results.length,
+            childCount: results.length,
+            (context, index) => results[index].member != null
+                ? MemberTile(member: results[index].member!)
+                : DefaultMemberTile(name: results[index].name!),
           ),
         ),
       );
@@ -527,7 +519,8 @@ class _EventScreenState extends State<EventScreen> {
                   _registrationsCubit.load();
                   await _eventCubit.load();
                 },
-                child: BlocBuilder<RegistrationsCubit, RegistrationsState>(
+                child: BlocBuilder<RegistrationsCubit,
+                    XListState<EventRegistration>>(
                   bloc: _registrationsCubit,
                   builder: (context, listState) {
                     return Scrollbar(
@@ -551,9 +544,9 @@ class _EventScreenState extends State<EventScreen> {
                           if (event.registrationIsOptional ||
                               event.registrationIsRequired) ...[
                             const SliverToBoxAdapter(child: Divider()),
-                            _makeRegistrationsHeader(listState),
+                            _makeRegistrationsHeader(),
                             _makeRegistrations(listState),
-                            if (listState.isLoadingMore)
+                            if (listState is LoadingMoreListState)
                               const SliverPadding(
                                 padding: EdgeInsets.all(8),
                                 sliver: SliverList(
@@ -563,6 +556,10 @@ class _EventScreenState extends State<EventScreen> {
                                 ),
                               ),
                           ],
+                          const SliverSafeArea(
+                            minimum: EdgeInsets.only(bottom: 8),
+                            sliver: SliverPadding(padding: EdgeInsets.zero),
+                          ),
                         ],
                       ),
                     );
