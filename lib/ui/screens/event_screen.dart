@@ -548,11 +548,10 @@ class _EventScreenState extends State<EventScreen> {
                             _makeRegistrations(listState),
                             if (listState is LoadingMoreListState)
                               const SliverPadding(
-                                padding: EdgeInsets.all(8),
-                                sliver: SliverList(
-                                  delegate: SliverChildListDelegate.fixed([
-                                    Center(child: CircularProgressIndicator()),
-                                  ]),
+                                padding: EdgeInsets.only(top: 16),
+                                sliver: SliverToBoxAdapter(
+                                  child: Center(
+                                      child: CircularProgressIndicator()),
                                 ),
                               ),
                           ],
