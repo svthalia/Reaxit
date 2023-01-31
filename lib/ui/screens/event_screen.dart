@@ -429,7 +429,7 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  SliverPadding _makeRegistrations(XListState<EventRegistration> state) {
+  SliverPadding _makeRegistrations(ListState<EventRegistration> state) {
     if (state is ErrorListState) {
       return SliverPadding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 16),
@@ -520,7 +520,7 @@ class _EventScreenState extends State<EventScreen> {
                   await _eventCubit.load();
                 },
                 child: BlocBuilder<RegistrationsCubit,
-                    XListState<EventRegistration>>(
+                    ListState<EventRegistration>>(
                   bloc: _registrationsCubit,
                   builder: (context, listState) {
                     return Scrollbar(

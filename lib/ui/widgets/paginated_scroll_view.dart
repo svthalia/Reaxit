@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs/list_state.dart';
 
-abstract class PaginatedCubit<E> extends Cubit<XListState<E>> {
+abstract class PaginatedCubit<E> extends Cubit<ListState<E>> {
   final int firstPageSize;
   final int pageSize;
 
@@ -76,7 +76,7 @@ class _PaginatedScrollViewState<E, B extends PaginatedCubit<E>>
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<B, XListState<E>>(
+    return BlocBuilder<B, ListState<E>>(
       builder: (context, state) {
         late final List<Widget> slivers;
         if (state is ErrorListState) {
