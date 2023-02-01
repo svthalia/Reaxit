@@ -191,7 +191,7 @@ void testAlbum() {
         await (widgetsAppState as WidgetsBindingObserver).didPopRoute();
         await tester.pumpAndSettle();
 
-        await tester.pageBack();
+        await tester.tap(find.byType(BackButton));
         await tester.pumpAndSettle();
         expect(find.text('2 / 2'), findsNothing);
       },
