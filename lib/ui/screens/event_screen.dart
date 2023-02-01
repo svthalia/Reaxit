@@ -46,7 +46,8 @@ class _EventScreenState extends State<EventScreen> {
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
       // Only request loading more if that's not already happening.
-      if (!_registrationsCubit.state.isLoadingMore) {
+      if (_registrationsCubit.state is ResultsListState &&
+          _registrationsCubit.state is! LoadingMoreListState) {
         _registrationsCubit.more();
       }
     }
@@ -59,40 +60,6 @@ class _EventScreenState extends State<EventScreen> {
     super.dispose();
   }
 
-  Widget _makeMap(Event event) {
-    return Stack(
-      fit: StackFit.loose,
-      children: [
-        CachedImage(
-          imageUrl: event.mapsUrl,
-          placeholder: 'assets/img/map_placeholder.png',
-          fit: BoxFit.cover,
-        ),
-        Positioned.fill(
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () {
-                Uri url = Theme.of(context).platform == TargetPlatform.iOS
-                    ? Uri(
-                        scheme: 'maps',
-                        queryParameters: {'daddr': event.location},
-                      )
-                    : Uri(
-                        scheme: 'https',
-                        host: 'maps.google.com',
-                        path: 'maps',
-                        queryParameters: {'daddr': event.location},
-                      );
-                launchUrl(url, mode: LaunchMode.externalNonBrowserApplication);
-              },
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   /// Create all info of an event until the description, including buttons.
   Widget _makeEventInfo(Event event) {
     return Padding(
@@ -100,103 +67,16 @@ class _EventScreenState extends State<EventScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _makeBasicEventInfo(event),
+          _BasicEventInfo(event),
           if (event.registrationIsRequired)
             _makeRequiredRegistrationInfo(event)
           else if (event.registrationIsOptional)
             _makeOptionalRegistrationInfo(event)
           else
             _makeNoRegistrationInfo(event),
-          if (event.hasFoodEvent) _makeFoodButton(event),
+          if (event.hasFoodEvent) _FoodButton(event),
         ],
       ),
-    );
-  }
-
-  /// Create the title, start, end, location and price of an event.
-  Widget _makeBasicEventInfo(Event event) {
-    final textTheme = Theme.of(context).textTheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const SizedBox(height: 8),
-        Text(
-          event.title.toUpperCase(),
-          style: textTheme.headline6,
-        ),
-        const Divider(height: 24),
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Flexible(
-              fit: FlexFit.tight,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('FROM', style: textTheme.caption),
-                  const SizedBox(height: 4),
-                  Text(
-                    dateTimeFormatter.format(event.start.toLocal()),
-                    style: textTheme.subtitle2,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            Flexible(
-              fit: FlexFit.tight,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('UNTIL', style: textTheme.caption),
-                  const SizedBox(height: 4),
-                  Text(
-                    dateTimeFormatter.format(event.end.toLocal()),
-                    style: textTheme.subtitle2,
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Flexible(
-              fit: FlexFit.tight,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('LOCATION', style: textTheme.caption),
-                  const SizedBox(height: 4),
-                  Text(
-                    event.location,
-                    style: textTheme.subtitle2,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            Flexible(
-              fit: FlexFit.tight,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('PRICE', style: textTheme.caption),
-                  const SizedBox(height: 4),
-                  Text(
-                    '€${event.price}',
-                    style: textTheme.subtitle2,
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-        const Divider(height: 24),
-      ],
     );
   }
 
@@ -216,9 +96,9 @@ class _EventScreenState extends State<EventScreen> {
 
     if (event.canCreateRegistration) {
       if (event.reachedMaxParticipants) {
-        registrationButton = _makeJoinQueueButton(event);
+        registrationButton = _JoinQueueButton(event);
       } else {
-        registrationButton = _makeCreateRegistrationButton(event);
+        registrationButton = _CreateRegistrationButton(event);
       }
     } else if (event.canCancelRegistration) {
       if (event.cancelDeadlinePassed()) {
@@ -226,19 +106,23 @@ class _EventScreenState extends State<EventScreen> {
         textSpans.add(TextSpan(
           text: event.cancelTooLateMessage,
         ));
-        final text = 'The deadline has passed, are you sure you want '
-            'to cancel your registration and pay the estimated full costs of '
-            '€${event.fine}? You will not be able to undo this!';
-        registrationButton = _makeCancelRegistrationButton(event, text);
+        registrationButton = _CancelRegistrationButton(
+          event: event,
+          warningText: 'The deadline has passed, are you sure you want '
+              'to cancel your registration and pay the estimated full costs of '
+              '€${event.fine}? You will not be able to undo this!',
+        );
       } else {
         // Cancel button.
-        const text = 'Are you sure you want to cancel your registration?';
-        registrationButton = _makeCancelRegistrationButton(event, text);
+        registrationButton = _CancelRegistrationButton(
+          event: event,
+          warningText: 'Are you sure you want to cancel your registration?',
+        );
       }
     }
 
     if (event.canUpdateRegistration) {
-      updateButton = _makeUpdateButton(event);
+      updateButton = _UpdateRegistrationButton(event);
     }
 
     if (event.canCreateRegistration || !event.isRegistered) {
@@ -436,7 +320,7 @@ class _EventScreenState extends State<EventScreen> {
     final textSpans = <TextSpan>[];
     Widget registrationButton = const SizedBox.shrink();
     if (event.canCancelRegistration) {
-      registrationButton = _makeIWontBeThereButton(event);
+      registrationButton = _IWontBeThereButton(event);
     }
 
     if (event.isInvited) {
@@ -447,7 +331,7 @@ class _EventScreenState extends State<EventScreen> {
             'can still register to give an indication of who will be there, as '
             'well as mark the event as "registered" in your calendar. ',
       ));
-      registrationButton = _makeIllBeThereButton(event);
+      registrationButton = _IllBeThereButton(event);
     }
 
     if (event.noRegistrationMessage?.isNotEmpty ?? false) {
@@ -459,7 +343,7 @@ class _EventScreenState extends State<EventScreen> {
 
     Widget updateButton = const SizedBox.shrink();
     if (event.canUpdateRegistration) {
-      updateButton = _makeUpdateButton(event);
+      updateButton = _UpdateRegistrationButton(event);
     }
 
     return Column(
@@ -502,230 +386,6 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  Widget _makeIllBeThereButton(Event event) {
-    return ElevatedButton.icon(
-      onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        try {
-          final calendarCubit = BlocProvider.of<CalendarCubit>(context);
-          await _eventCubit.register();
-          await _registrationsCubit.load();
-          calendarCubit.load();
-        } on ApiException {
-          messenger.showSnackBar(const SnackBar(
-            behavior: SnackBarBehavior.floating,
-            content: Text('Could not register for the event.'),
-          ));
-        }
-      },
-      icon: const Icon(Icons.check),
-      label: const Text("I'LL BE THERE"),
-    );
-  }
-
-  Widget _makeIWontBeThereButton(Event event) {
-    return ElevatedButton.icon(
-      onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        try {
-          final calendarCubit = BlocProvider.of<CalendarCubit>(context);
-          await _eventCubit.cancelRegistration(
-            registrationPk: event.registration!.pk,
-          );
-          await _registrationsCubit.load();
-          calendarCubit.load();
-        } on ApiException {
-          messenger.showSnackBar(const SnackBar(
-            behavior: SnackBarBehavior.floating,
-            content: Text('Could not cancel your registration.'),
-          ));
-        }
-      },
-      icon: const Icon(Icons.clear),
-      label: const Text("I WON'T BE THERE"),
-    );
-  }
-
-  Widget _makeCreateRegistrationButton(Event event) {
-    return ElevatedButton.icon(
-      onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        final calendarCubit = BlocProvider.of<CalendarCubit>(context);
-        final router = GoRouter.of(context);
-        var confirmed = !event.cancelDeadlinePassed();
-        if (!confirmed) {
-          confirmed = await showDialog<bool>(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text('Register'),
-                    content: Text(
-                      'Are you sure you want to register? The '
-                      'cancellation deadline has already passed.',
-                      style: Theme.of(context).textTheme.bodyText2,
-                    ),
-                    actions: [
-                      TextButton.icon(
-                        onPressed: () => Navigator.of(
-                          context,
-                          rootNavigator: true,
-                        ).pop(false),
-                        icon: const Icon(Icons.clear),
-                        label: const Text('NO'),
-                      ),
-                      ElevatedButton.icon(
-                        onPressed: () => Navigator.of(
-                          context,
-                          rootNavigator: true,
-                        ).pop(true),
-                        icon: const Icon(Icons.check),
-                        label: const Text('YES'),
-                      ),
-                    ],
-                  );
-                },
-              ) ??
-              false;
-        }
-
-        if (confirmed) {
-          try {
-            final registration = await _eventCubit.register();
-            if (event.hasFields) {
-              router.pushNamed('event-registration', params: {
-                'eventPk': event.pk.toString(),
-                'registrationPk': registration.pk.toString(),
-              });
-            }
-            calendarCubit.load();
-          } on ApiException {
-            messenger.showSnackBar(const SnackBar(
-              behavior: SnackBarBehavior.floating,
-              content: Text('Could not register for the event.'),
-            ));
-          }
-          await _registrationsCubit.load();
-        }
-      },
-      icon: const Icon(Icons.create_outlined),
-      label: const Text('REGISTER'),
-    );
-  }
-
-  Widget _makeJoinQueueButton(Event event) {
-    return ElevatedButton.icon(
-      onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        final calendarCubit = BlocProvider.of<CalendarCubit>(context);
-        final router = GoRouter.of(context);
-        try {
-          final registration = await _eventCubit.register();
-          if (event.hasFields) {
-            router.pushNamed(
-              'event-registration',
-              params: {
-                'eventPk': event.pk.toString(),
-                'registrationPk': registration.pk.toString(),
-              },
-            );
-          }
-          calendarCubit.load();
-        } on ApiException {
-          messenger.showSnackBar(const SnackBar(
-            behavior: SnackBarBehavior.floating,
-            content: Text('Could not join the waiting list for the event.'),
-          ));
-        }
-        await _registrationsCubit.load();
-      },
-      icon: const Icon(Icons.create_outlined),
-      label: const Text('JOIN QUEUE'),
-    );
-  }
-
-  Widget _makeCancelRegistrationButton(Event event, String warningText) {
-    return ElevatedButton.icon(
-      onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        final calendarCubit = BlocProvider.of<CalendarCubit>(context);
-        final welcomeCubit = BlocProvider.of<WelcomeCubit>(context);
-        final confirmed = await showDialog<bool>(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('Cancel registration'),
-              content: Text(
-                warningText,
-                style: Theme.of(context).textTheme.bodyText2,
-              ),
-              actions: [
-                TextButton.icon(
-                  onPressed: () => Navigator.of(
-                    context,
-                    rootNavigator: true,
-                  ).pop(false),
-                  icon: const Icon(Icons.clear),
-                  label: const Text('NO'),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () => Navigator.of(
-                    context,
-                    rootNavigator: true,
-                  ).pop(true),
-                  icon: const Icon(Icons.check),
-                  label: const Text('YES'),
-                ),
-              ],
-            );
-          },
-        );
-
-        if (confirmed ?? false) {
-          try {
-            await _eventCubit.cancelRegistration(
-              registrationPk: event.registration!.pk,
-            );
-          } on ApiException {
-            messenger.showSnackBar(const SnackBar(
-              behavior: SnackBarBehavior.floating,
-              content: Text('Could not cancel your registration.'),
-            ));
-          }
-        }
-        await _registrationsCubit.load();
-        calendarCubit.load();
-        await welcomeCubit.load();
-      },
-      icon: const Icon(Icons.delete_forever_outlined),
-      label: const Text('CANCEL REGISTRATION'),
-    );
-  }
-
-  Widget _makeUpdateButton(Event event) {
-    return ElevatedButton.icon(
-      onPressed: () => context.pushNamed(
-        'event-registration',
-        params: {
-          'eventPk': event.pk.toString(),
-          'registrationPk': event.registration!.pk.toString(),
-        },
-      ),
-      icon: const Icon(Icons.build),
-      label: const Text('UPDATE REGISTRATION'),
-    );
-  }
-
-  Widget _makeFoodButton(Event event) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton.icon(
-        onPressed: () => context.pushNamed('food', extra: event),
-        icon: const Icon(Icons.local_pizza),
-        label: const Text('ORDER FOOD'),
-      ),
-    );
-  }
-
   TextSpan _makeTermsAndConditions(Event event) {
     final url = config.termsAndConditionsUrl;
     return TextSpan(
@@ -757,7 +417,601 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  Widget _makeDescription(Event event) {
+  SliverPadding _makeRegistrationsHeader() {
+    return SliverPadding(
+      padding: const EdgeInsets.only(left: 16),
+      sliver: SliverToBoxAdapter(
+        child: Text(
+          'REGISTRATIONS',
+          style: Theme.of(context).textTheme.caption,
+        ),
+      ),
+    );
+  }
+
+  SliverPadding _makeRegistrations(ListState<EventRegistration> state) {
+    if (state is ErrorListState) {
+      return SliverPadding(
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 16),
+        sliver: SliverToBoxAdapter(child: Text(state.message!)),
+      );
+    } else if (state is LoadingListState) {
+      return const SliverPadding(
+        padding: EdgeInsets.all(16),
+        sliver: SliverToBoxAdapter(
+          child: Center(child: CircularProgressIndicator()),
+        ),
+      );
+    } else {
+      final results = state.results;
+      return SliverPadding(
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
+        sliver: SliverGrid(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+          ),
+          delegate: SliverChildBuilderDelegate(
+            childCount: results.length,
+            (context, index) => results[index].member != null
+                ? MemberTile(member: results[index].member!)
+                : DefaultMemberTile(name: results[index].name!),
+          ),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider.value(
+      value: _eventCubit,
+      child: BlocBuilder<EventCubit, EventState>(
+        builder: (context, state) {
+          if (state is ErrorState) {
+            return Scaffold(
+              appBar: ThaliaAppBar(
+                title: Text(widget.event?.title.toUpperCase() ?? 'EVENT'),
+                actions: [_ShareEventButton(widget.pk)],
+              ),
+              body: RefreshIndicator(
+                onRefresh: () async {
+                  // Await only the event info.
+                  _registrationsCubit.load();
+                  await _eventCubit.load();
+                },
+                child: ErrorScrollView(state.message!),
+              ),
+            );
+          } else if (state is LoadingState &&
+              state is! ResultState &&
+              widget.event == null) {
+            return Scaffold(
+              appBar: ThaliaAppBar(
+                title: const Text('EVENT'),
+                actions: [_ShareEventButton(widget.pk)],
+              ),
+              body: const Center(child: CircularProgressIndicator()),
+            );
+          } else {
+            final event = (state.result ?? widget.event)!;
+            return Scaffold(
+              appBar: ThaliaAppBar(
+                title: Text(event.title.toUpperCase()),
+                actions: [
+                  _CalendarExportButton(event),
+                  _ShareEventButton(widget.pk),
+                  if (event.userPermissions.manageEvent)
+                    IconButton(
+                      padding: const EdgeInsets.all(16),
+                      icon: const Icon(Icons.settings),
+                      onPressed: () => context.pushNamed(
+                        'event-admin',
+                        params: {'eventPk': event.pk.toString()},
+                      ),
+                    ),
+                ],
+              ),
+              body: RefreshIndicator(
+                onRefresh: () async {
+                  // Await only the event info.
+                  _registrationsCubit.load();
+                  await _eventCubit.load();
+                },
+                child: BlocBuilder<RegistrationsCubit,
+                    ListState<EventRegistration>>(
+                  bloc: _registrationsCubit,
+                  builder: (context, listState) {
+                    return Scrollbar(
+                      controller: _controller,
+                      child: CustomScrollView(
+                        controller: _controller,
+                        key: const PageStorageKey('event'),
+                        slivers: [
+                          SliverToBoxAdapter(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                _EventMap(event),
+                                const Divider(height: 0),
+                                _makeEventInfo(event),
+                                const Divider(),
+                                _EventDescription(event),
+                              ],
+                            ),
+                          ),
+                          if (event.registrationIsOptional ||
+                              event.registrationIsRequired) ...[
+                            const SliverToBoxAdapter(child: Divider()),
+                            _makeRegistrationsHeader(),
+                            _makeRegistrations(listState),
+                            if (listState is LoadingMoreListState)
+                              const SliverPadding(
+                                padding: EdgeInsets.only(top: 16),
+                                sliver: SliverToBoxAdapter(
+                                  child: Center(
+                                      child: CircularProgressIndicator()),
+                                ),
+                              ),
+                          ],
+                          const SliverSafeArea(
+                            minimum: EdgeInsets.only(bottom: 8),
+                            sliver: SliverPadding(padding: EdgeInsets.zero),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+class _JoinQueueButton extends StatelessWidget {
+  const _JoinQueueButton(this.event);
+
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      onPressed: () async {
+        final router = GoRouter.of(context);
+        final messenger = ScaffoldMessenger.of(context);
+        final calendarCubit = BlocProvider.of<CalendarCubit>(context);
+        final eventCubit = BlocProvider.of<EventCubit>(context);
+        final registrationsCubit = BlocProvider.of<RegistrationsCubit>(context);
+
+        try {
+          final registration = await eventCubit.register();
+          if (event.hasFields) {
+            router.pushNamed(
+              'event-registration',
+              params: {
+                'eventPk': event.pk.toString(),
+                'registrationPk': registration.pk.toString(),
+              },
+            );
+          }
+          calendarCubit.load();
+        } on ApiException {
+          messenger.showSnackBar(const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Could not join the waiting list for the event.'),
+          ));
+        }
+        registrationsCubit.load();
+      },
+      icon: const Icon(Icons.create_outlined),
+      label: const Text('JOIN QUEUE'),
+    );
+  }
+}
+
+class _CreateRegistrationButton extends StatelessWidget {
+  const _CreateRegistrationButton(this.event);
+
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      onPressed: () async {
+        final router = GoRouter.of(context);
+        final messenger = ScaffoldMessenger.of(context);
+        final calendarCubit = BlocProvider.of<CalendarCubit>(context);
+        final eventCubit = BlocProvider.of<EventCubit>(context);
+        final registrationsCubit = BlocProvider.of<RegistrationsCubit>(context);
+
+        var confirmed = !event.cancelDeadlinePassed();
+        if (!confirmed) {
+          confirmed = await showDialog<bool>(
+                context: context,
+                builder: (context) => const _ConfirmationDialog(
+                  titleText: 'Register',
+                  warningText: 'Are you sure you want to register? '
+                      'The cancellation deadline has already passed.',
+                ),
+              ) ??
+              false;
+        }
+
+        if (confirmed) {
+          try {
+            final registration = await eventCubit.register();
+            if (event.hasFields) {
+              router.pushNamed('event-registration', params: {
+                'eventPk': event.pk.toString(),
+                'registrationPk': registration.pk.toString(),
+              });
+            }
+            calendarCubit.load();
+          } on ApiException {
+            messenger.showSnackBar(const SnackBar(
+              behavior: SnackBarBehavior.floating,
+              content: Text('Could not register for the event.'),
+            ));
+          }
+          registrationsCubit.load();
+        }
+      },
+      icon: const Icon(Icons.create_outlined),
+      label: const Text('REGISTER'),
+    );
+  }
+}
+
+class _IWontBeThereButton extends StatelessWidget {
+  const _IWontBeThereButton(this.event);
+
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        final calendarCubit = BlocProvider.of<CalendarCubit>(context);
+        final eventCubit = BlocProvider.of<EventCubit>(context);
+        final registrationsCubit = BlocProvider.of<RegistrationsCubit>(context);
+
+        try {
+          await eventCubit.cancelRegistration(
+            registrationPk: event.registration!.pk,
+          );
+          registrationsCubit.load();
+          calendarCubit.load();
+        } on ApiException {
+          messenger.showSnackBar(const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Could not cancel your registration.'),
+          ));
+        }
+      },
+      icon: const Icon(Icons.clear),
+      label: const Text("I WON'T BE THERE"),
+    );
+  }
+}
+
+class _IllBeThereButton extends StatelessWidget {
+  const _IllBeThereButton(this.event);
+
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        final calendarCubit = BlocProvider.of<CalendarCubit>(context);
+        final eventCubit = BlocProvider.of<EventCubit>(context);
+        final registrationsCubit = BlocProvider.of<RegistrationsCubit>(context);
+
+        try {
+          await eventCubit.register();
+          registrationsCubit.load();
+          calendarCubit.load();
+        } on ApiException {
+          messenger.showSnackBar(const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Could not register for the event.'),
+          ));
+        }
+      },
+      icon: const Icon(Icons.check),
+      label: const Text("I'LL BE THERE"),
+    );
+  }
+}
+
+/// A button that allows the user to cancel their registration for an event.
+class _CancelRegistrationButton extends StatelessWidget {
+  const _CancelRegistrationButton({
+    Key? key,
+    required this.event,
+    required this.warningText,
+  }) : super(key: key);
+
+  final Event event;
+  final String warningText;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        final calendarCubit = BlocProvider.of<CalendarCubit>(context);
+        final welcomeCubit = BlocProvider.of<WelcomeCubit>(context);
+        final eventCubit = BlocProvider.of<EventCubit>(context);
+        final registrationsCubit = BlocProvider.of<RegistrationsCubit>(context);
+
+        final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (context) {
+            return _ConfirmationDialog(
+              titleText: 'Cancel registration',
+              warningText: warningText,
+            );
+          },
+        );
+
+        if (confirmed ?? false) {
+          try {
+            await eventCubit.cancelRegistration(
+              registrationPk: event.registration!.pk,
+            );
+          } on ApiException {
+            messenger.showSnackBar(const SnackBar(
+              behavior: SnackBarBehavior.floating,
+              content: Text('Could not cancel your registration.'),
+            ));
+          }
+        }
+        registrationsCubit.load();
+        calendarCubit.load();
+        welcomeCubit.load();
+      },
+      icon: const Icon(Icons.delete_forever_outlined),
+      label: const Text('CANCEL REGISTRATION'),
+    );
+  }
+}
+
+/// A dialog that shows a message with buttons 'YES' and 'NO', popping with a bool.
+class _ConfirmationDialog extends StatelessWidget {
+  const _ConfirmationDialog({
+    Key? key,
+    required this.titleText,
+    required this.warningText,
+  }) : super(key: key);
+
+  final String titleText;
+  final String warningText;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(titleText),
+      content: Text(
+        warningText,
+        style: Theme.of(context).textTheme.bodyText2,
+      ),
+      actions: [
+        TextButton.icon(
+          onPressed: () => Navigator.of(
+            context,
+            rootNavigator: true,
+          ).pop(false),
+          icon: const Icon(Icons.clear),
+          label: const Text('NO'),
+        ),
+        ElevatedButton.icon(
+          onPressed: () => Navigator.of(
+            context,
+            rootNavigator: true,
+          ).pop(true),
+          icon: const Icon(Icons.check),
+          label: const Text('YES'),
+        ),
+      ],
+    );
+  }
+}
+
+/// A button that opens the registration fields page.
+class _UpdateRegistrationButton extends StatelessWidget {
+  const _UpdateRegistrationButton(this.event);
+
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      onPressed: () => context.pushNamed(
+        'event-registration',
+        params: {
+          'eventPk': event.pk.toString(),
+          'registrationPk': event.registration!.pk.toString(),
+        },
+      ),
+      icon: const Icon(Icons.build),
+      label: const Text('UPDATE REGISTRATION'),
+    );
+  }
+}
+
+/// The basic event info: title, time, location, price.
+class _BasicEventInfo extends StatelessWidget {
+  static final dateTimeFormatter = DateFormat('E d MMM y, HH:mm');
+
+  const _BasicEventInfo(this.event);
+
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SizedBox(height: 8),
+        Text(
+          event.title.toUpperCase(),
+          style: textTheme.headline6,
+        ),
+        const Divider(height: 24),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Flexible(
+              fit: FlexFit.tight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('FROM', style: textTheme.caption),
+                  const SizedBox(height: 4),
+                  Text(
+                    dateTimeFormatter.format(event.start.toLocal()),
+                    style: textTheme.subtitle2,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Flexible(
+              fit: FlexFit.tight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('UNTIL', style: textTheme.caption),
+                  const SizedBox(height: 4),
+                  Text(
+                    dateTimeFormatter.format(event.end.toLocal()),
+                    style: textTheme.subtitle2,
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Flexible(
+              fit: FlexFit.tight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('LOCATION', style: textTheme.caption),
+                  const SizedBox(height: 4),
+                  Text(
+                    event.location,
+                    style: textTheme.subtitle2,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Flexible(
+              fit: FlexFit.tight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('PRICE', style: textTheme.caption),
+                  const SizedBox(height: 4),
+                  Text(
+                    '€${event.price}',
+                    style: textTheme.subtitle2,
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+        const Divider(height: 24),
+      ],
+    );
+  }
+}
+
+/// A map of the event location, that opens a maps app when tapped.
+class _EventMap extends StatelessWidget {
+  const _EventMap(this.event);
+
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.loose,
+      children: [
+        CachedImage(
+          imageUrl: event.mapsUrl,
+          placeholder: 'assets/img/map_placeholder.png',
+          fit: BoxFit.cover,
+        ),
+        Positioned.fill(
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                Uri url = Theme.of(context).platform == TargetPlatform.iOS
+                    ? Uri(
+                        scheme: 'maps',
+                        queryParameters: {'daddr': event.location},
+                      )
+                    : Uri(
+                        scheme: 'https',
+                        host: 'maps.google.com',
+                        path: 'maps',
+                        queryParameters: {'daddr': event.location},
+                      );
+                launchUrl(url, mode: LaunchMode.externalNonBrowserApplication);
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// A button that opens the food ordering page.
+class _FoodButton extends StatelessWidget {
+  const _FoodButton(this.event);
+
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: () => context.pushNamed('food', extra: event),
+        icon: const Icon(Icons.local_pizza),
+        label: const Text('ORDER FOOD'),
+      ),
+    );
+  }
+}
+
+/// A widget that displays the event's description HTML.
+class _EventDescription extends StatelessWidget {
+  const _EventDescription(this.event);
+
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 16,
@@ -790,86 +1044,16 @@ class _EventScreenState extends State<EventScreen> {
       ),
     );
   }
+}
 
-  SliverPadding _makeRegistrationsHeader(RegistrationsState state) {
-    return SliverPadding(
-      padding: const EdgeInsets.only(left: 16),
-      sliver: SliverToBoxAdapter(
-        child: Text(
-          'REGISTRATIONS',
-          style: Theme.of(context).textTheme.caption,
-        ),
-      ),
-    );
-  }
+/// A button that creates a calendar entry for the event.
+class _CalendarExportButton extends StatelessWidget {
+  const _CalendarExportButton(this.event);
 
-  SliverPadding _makeRegistrations(RegistrationsState state) {
-    if (state.isLoading && state.results.isEmpty) {
-      return const SliverPadding(
-        padding: EdgeInsets.all(16),
-        sliver: SliverToBoxAdapter(
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
-        ),
-      );
-    } else if (state.hasException) {
-      return SliverPadding(
-        padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 16),
-        sliver: SliverToBoxAdapter(child: Text(state.message!)),
-      );
-    } else {
-      return SliverPadding(
-        padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
-        sliver: SliverGrid(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            mainAxisSpacing: 8,
-            crossAxisSpacing: 8,
-          ),
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              if (state.results[index].member != null) {
-                return MemberTile(
-                  member: state.results[index].member!,
-                );
-              } else {
-                return DefaultMemberTile(
-                  name: state.results[index].name!,
-                );
-              }
-            },
-            childCount: state.results.length,
-          ),
-        ),
-      );
-    }
-  }
+  final Event event;
 
-  Widget _makeShareEventButton(int pk) {
-    return IconButton(
-      padding: const EdgeInsets.all(16),
-      color: Theme.of(context).primaryIconTheme.color,
-      icon: Icon(
-        Theme.of(context).platform == TargetPlatform.iOS
-            ? Icons.ios_share
-            : Icons.share,
-      ),
-      onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        try {
-          await Share.share('https://${config.apiHost}/events/$pk/');
-        } catch (_) {
-          messenger.showSnackBar(const SnackBar(
-            behavior: SnackBarBehavior.floating,
-            content: Text('Could not share the event.'),
-          ));
-        }
-      },
-    );
-  }
-
-  Widget _makeCalendarExportButton(Event event) {
+  @override
+  Widget build(BuildContext context) {
     return IconButton(
       padding: const EdgeInsets.all(16),
       color: Theme.of(context).primaryIconTheme.color,
@@ -885,105 +1069,29 @@ class _EventScreenState extends State<EventScreen> {
       },
     );
   }
+}
+
+/// A button that shares the event's URL.
+class _ShareEventButton extends StatelessWidget {
+  const _ShareEventButton(this.pk);
+
+  final int pk;
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EventCubit, EventState>(
-      bloc: _eventCubit,
-      builder: (context, state) {
-        if (state is ErrorState) {
-          return Scaffold(
-            appBar: ThaliaAppBar(
-              title: Text(widget.event?.title.toUpperCase() ?? 'EVENT'),
-              actions: [_makeShareEventButton(widget.pk)],
-            ),
-            body: RefreshIndicator(
-              onRefresh: () async {
-                // Await only the event info.
-                _registrationsCubit.load();
-                await _eventCubit.load();
-              },
-              child: ErrorScrollView(state.message!),
-            ),
-          );
-        } else if (state is LoadingState &&
-            state is! ResultState &&
-            widget.event == null) {
-          return Scaffold(
-            appBar: ThaliaAppBar(
-              title: const Text('EVENT'),
-              actions: [_makeShareEventButton(widget.pk)],
-            ),
-            body: const Center(child: CircularProgressIndicator()),
-          );
-        } else {
-          final event = (state.result ?? widget.event)!;
-          return Scaffold(
-            appBar: ThaliaAppBar(
-              title: Text(event.title.toUpperCase()),
-              actions: [
-                _makeCalendarExportButton(event),
-                _makeShareEventButton(widget.pk),
-                if (event.userPermissions.manageEvent)
-                  IconButton(
-                    padding: const EdgeInsets.all(16),
-                    icon: const Icon(Icons.settings),
-                    onPressed: () => context.pushNamed(
-                      'event-admin',
-                      params: {'eventPk': event.pk.toString()},
-                    ),
-                  ),
-              ],
-            ),
-            body: RefreshIndicator(
-              onRefresh: () async {
-                // Await only the event info.
-                _registrationsCubit.load();
-                await _eventCubit.load();
-              },
-              child: BlocBuilder<RegistrationsCubit, RegistrationsState>(
-                bloc: _registrationsCubit,
-                builder: (context, listState) {
-                  return Scrollbar(
-                    controller: _controller,
-                    child: CustomScrollView(
-                      controller: _controller,
-                      key: const PageStorageKey('event'),
-                      slivers: [
-                        SliverToBoxAdapter(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              _makeMap(event),
-                              const Divider(height: 0),
-                              _makeEventInfo(event),
-                              const Divider(),
-                              _makeDescription(event),
-                            ],
-                          ),
-                        ),
-                        if (event.registrationIsOptional ||
-                            event.registrationIsRequired) ...[
-                          const SliverToBoxAdapter(child: Divider()),
-                          _makeRegistrationsHeader(listState),
-                          _makeRegistrations(listState),
-                          if (listState.isLoadingMore)
-                            const SliverPadding(
-                              padding: EdgeInsets.all(8),
-                              sliver: SliverList(
-                                delegate: SliverChildListDelegate.fixed([
-                                  Center(child: CircularProgressIndicator()),
-                                ]),
-                              ),
-                            ),
-                        ],
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-          );
+    return IconButton(
+      padding: const EdgeInsets.all(16),
+      color: Theme.of(context).primaryIconTheme.color,
+      icon: Icon(Icons.adaptive.share),
+      onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        try {
+          await Share.share('https://${config.apiHost}/events/$pk/');
+        } catch (_) {
+          messenger.showSnackBar(const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Could not share the event.'),
+          ));
         }
       },
     );
