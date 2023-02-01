@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
+import 'package:reaxit/ui/theme.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -80,6 +81,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
             );
           }
         },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          _controller.animateTo(0,
+              duration: const Duration(milliseconds: 500), curve: Curves.ease);
+        },
+        label: const Text('Today'),
+        backgroundColor: magenta,
       ),
     );
   }
@@ -364,8 +373,9 @@ class _DayCard extends StatelessWidget {
 
   static final dayFormatter = DateFormat(DateFormat.ABBR_WEEKDAY);
 
-  _DayCard({required this.day, required List<CalendarEvent> events})
+  _DayCard({required DateTime day, required List<CalendarEvent> events})
       : eventWidgets = events.map((event) => _EventCard(event)).toList(),
+        day = day.toLocal(),
         super(key: ValueKey(day));
 
   @override
@@ -384,12 +394,12 @@ class _DayCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  dayFormatter.format(day.toLocal()).toUpperCase(),
+                  dayFormatter.format(day).toUpperCase(),
                   style: textTheme.bodySmall!.apply(
                       color: textTheme.bodySmall!.color!.withOpacity(0.5)),
                 ),
                 Text(
-                  day.day.toString(),
+                  day.toLocal().day.toString(),
                   style: textTheme.displaySmall,
                   strutStyle: const StrutStyle(
                     forceStrutHeight: true,

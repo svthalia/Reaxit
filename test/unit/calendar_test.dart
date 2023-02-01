@@ -96,7 +96,7 @@ void main() {
       expect(calendarEvents[3].start, DateTime.parse('2022-03-07 00:00'));
       expect(calendarEvents[3].end, DateTime.parse('2022-03-08 00:00'));
       expect(calendarEvents[3].title, 'Lorem day 4/7');
-      expect(calendarEvents[3].label, 'Dolor');
+      expect(calendarEvents[3].label, 'All day | Dolor');
 
       expect(calendarEvents.last.parentEvent, event);
       expect(calendarEvents.last.start, DateTime.parse('2022-03-10 00:00'));
