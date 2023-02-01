@@ -136,8 +136,7 @@ class CalendarCubit extends Cubit<CalendarState> {
 
   /// The time rounded down to the month used to split the events in "past" and
   /// "future". Also used in the query. This is a final to avoid race conditions
-  final DateTime _splitTime =
-      DateTime(DateTime.now().year, DateTime.now().month);
+  DateTime _splitTime = DateTime(DateTime.now().year, DateTime.now().month);
 
   /// A list of events that have been removed from the previous results
   /// in order to prevent them filling up the calendar before today.
@@ -165,6 +164,7 @@ class CalendarCubit extends Cubit<CalendarState> {
     emit(const DoubleListState.loading());
 
     _debounce = Timer(const Duration(minutes: 10), () => {});
+    _splitTime = DateTime(DateTime.now().year, DateTime.now().month);
 
     try {
       final query = _searchQuery;
@@ -217,7 +217,7 @@ class CalendarCubit extends Cubit<CalendarState> {
       final isDoneUp = _nextPastOffset + pastEventsResponse.results.length ==
           pastEventsResponse.count;
 
-      // Split multi-day events.
+      // Split multi-day events and merge the lists
       final futureEvents = [
         ...futurePartnerEventsResponse.results
             .expand(CalendarEvent.splitEventIntoCalendarEvents)
@@ -227,7 +227,6 @@ class CalendarCubit extends Cubit<CalendarState> {
             .toList(),
       ].toList();
 
-      // Merge the two lists.
       futureEvents.sort((a, b) => a.start.compareTo(b.start));
 
       // If `load()`, `more()`, and `moreUp()` cause jank, the expensive operations
@@ -254,7 +253,7 @@ class CalendarCubit extends Cubit<CalendarState> {
         futureEvents.removeAt(0);
       }
 
-      // Split multi-day events.
+      // Split multi-day events and merge the lists
       final pastEvents = [
         ...pastPartnerEventsResponse.results
             .expand(CalendarEvent.splitEventIntoCalendarEvents)
@@ -264,8 +263,6 @@ class CalendarCubit extends Cubit<CalendarState> {
             .toList(),
       ].toList();
 
-      // Sort only the new events, because the old events in
-      // `_state.result` are known to be complete and sorted.
       pastEvents.sort((a, b) => a.start.compareTo(b.start));
 
       // Remove the first partner events and day parts of events that could fill
