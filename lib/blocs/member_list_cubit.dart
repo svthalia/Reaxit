@@ -59,13 +59,14 @@ class MemberListCubit extends PaginatedCubit<ListMember> {
   @override
   Future<void> more() async {
     // Ignore calls to `more()` if there is no data, or already more coming.
-    if (state is! ResultsListState ||
-        state is LoadingMoreListState ||
-        state is DoneListState) return;
+    final oldState = state;
+    if (oldState is! ResultsListState ||
+        oldState is LoadingMoreListState ||
+        oldState is DoneListState) return;
 
-    final oldState = state as ResultsListState<ListMember>;
+    final resultsState = oldState as ResultsListState<ListMember>;
 
-    emit(LoadingMoreListState.from(oldState));
+    emit(LoadingMoreListState.from(resultsState));
     try {
       final query = _searchQuery;
 
@@ -80,7 +81,7 @@ class MemberListCubit extends PaginatedCubit<ListMember> {
       // changed since the request was made.
       if (query != _searchQuery) return;
 
-      final members = oldState.results + membersResponse.results;
+      final members = resultsState.results + membersResponse.results;
       final isDone = members.length == membersResponse.count;
 
       _nextOffset += pageSize;

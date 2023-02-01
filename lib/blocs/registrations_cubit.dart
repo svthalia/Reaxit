@@ -39,13 +39,14 @@ class RegistrationsCubit extends PaginatedCubit<EventRegistration> {
   @override
   Future<void> more() async {
     // Ignore calls to `more()` if there is no data, or already more coming.
-    if (state is! ResultsListState ||
-        state is LoadingMoreListState ||
-        state is DoneListState) return;
+    final oldState = state;
+    if (oldState is! ResultsListState ||
+        oldState is LoadingMoreListState ||
+        oldState is DoneListState) return;
 
-    final oldState = state as ResultsListState<EventRegistration>;
+    final resultsState = oldState as ResultsListState<EventRegistration>;
 
-    emit(LoadingMoreListState.from(oldState));
+    emit(LoadingMoreListState.from(resultsState));
     try {
       var listResponse = await api.getEventRegistrations(
         pk: eventPk,
@@ -53,7 +54,7 @@ class RegistrationsCubit extends PaginatedCubit<EventRegistration> {
         offset: _nextOffset,
       );
 
-      final registrations = state.results + listResponse.results;
+      final registrations = resultsState.results + listResponse.results;
       final isDone = registrations.length == listResponse.count;
 
       _nextOffset += pageSize;

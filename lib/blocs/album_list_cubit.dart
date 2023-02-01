@@ -59,13 +59,14 @@ class AlbumListCubit extends PaginatedCubit<ListAlbum> {
   @override
   Future<void> more() async {
     // Ignore calls to `more()` if there is no data, or already more coming.
-    if (state is! ResultsListState ||
-        state is LoadingMoreListState ||
-        state is DoneListState) return;
+    final oldState = state;
+    if (oldState is! ResultsListState ||
+        oldState is LoadingMoreListState ||
+        oldState is DoneListState) return;
 
-    final oldState = state as ResultsListState<ListAlbum>;
+    final resultsState = oldState as ResultsListState<ListAlbum>;
 
-    emit(LoadingMoreListState.from(oldState));
+    emit(LoadingMoreListState.from(resultsState));
     try {
       final query = _searchQuery;
 
@@ -80,7 +81,7 @@ class AlbumListCubit extends PaginatedCubit<ListAlbum> {
       // changed since the request was made.
       if (query != _searchQuery) return;
 
-      final albums = state.results + albumsResponse.results;
+      final albums = resultsState.results + albumsResponse.results;
       final isDone = albums.length == albumsResponse.count;
 
       _nextOffset += pageSize;
