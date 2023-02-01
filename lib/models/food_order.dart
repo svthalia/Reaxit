@@ -11,7 +11,7 @@ class FoodOrder {
   final Product product;
   final Payment? payment;
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false)
   bool? _tpayAllowed;
 
   /// Whether this order can be paid with Thalia Pay.
@@ -19,7 +19,7 @@ class FoodOrder {
   ///
   /// Warning: this is not properly set on orders retrieved
   /// through [ApiRepository.getFoodEvents].
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false)
   bool get tpayAllowed => _tpayAllowed ?? false;
   set tpayAllowed(bool value) => _tpayAllowed = value;
 
@@ -58,7 +58,7 @@ class AdminFoodOrder implements FoodOrder {
   final Payment? payment;
 
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false)
   bool? _tpayAllowed;
 
   /// Whether this order can be paid with Thalia Pay.
@@ -67,7 +67,7 @@ class AdminFoodOrder implements FoodOrder {
   /// Warning: this is not properly set on orders retrieved
   /// through [ApiRepository.getFoodEvents].
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false)
   bool get tpayAllowed => _tpayAllowed ?? false;
   @override
   set tpayAllowed(bool value) => _tpayAllowed = value;

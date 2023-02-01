@@ -38,7 +38,7 @@ class UserEventRegistration {
 
   bool get isPaid => payment != null;
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false)
   bool? _tpayAllowed;
 
   /// Whether this registration can be paid with Thalia Pay.
@@ -46,7 +46,7 @@ class UserEventRegistration {
   ///
   /// Warning: this is only properly set on registrations
   /// retrieved through [ApiRepository.getEvent].
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false)
   bool get tpayAllowed => _tpayAllowed ?? false;
   set tpayAllowed(bool value) => _tpayAllowed = value;
 

@@ -453,7 +453,7 @@ class __PageCounterState extends State<_PageCounter> {
         Text(
           '${currentIndex + 1} / ${widget.album.photos.length}',
           style:
-              textTheme.bodyText1?.copyWith(fontSize: 24, color: Colors.white),
+              textTheme.bodyLarge?.copyWith(fontSize: 24, color: Colors.white),
         ),
         Tooltip(
           message: 'like photo',
@@ -471,7 +471,7 @@ class __PageCounterState extends State<_PageCounter> {
         ),
         Text(
           '${photo.numLikes}',
-          style: textTheme.bodyText1?.copyWith(
+          style: textTheme.bodyLarge?.copyWith(
             fontSize: 24,
             color: Colors.white,
           ),

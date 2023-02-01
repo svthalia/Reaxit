@@ -67,7 +67,7 @@ class _TPayButtonState extends State<TPayButton> {
           title: const Text('Confirm payment'),
           content: Text(
             confirmationMessage,
-            style: Theme.of(context).textTheme.bodyText2,
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
           actions: [
             TextButton.icon(

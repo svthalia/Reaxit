@@ -85,7 +85,7 @@ class _VenueCardState extends State<VenueCard> {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Text(
               widget.venue.name.toUpperCase(),
-              style: textTheme.headline6,
+              style: textTheme.titleLarge,
             ),
           ),
           if (widget.venue.player != null) const Divider(height: 16),
@@ -121,26 +121,26 @@ class _PlayerSegment extends StatelessWidget {
           children: [
             Text(
               'CURRENTLY PLAYING:',
-              style: textTheme.caption,
+              style: textTheme.bodySmall,
             ),
             const SizedBox(height: 4),
             Text(
               track.name!,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: textTheme.subtitle2,
+              style: textTheme.titleSmall,
             ),
             const SizedBox(height: 12),
             Text(
               'BY:',
-              style: textTheme.caption,
+              style: textTheme.bodySmall,
             ),
             const SizedBox(height: 4),
             Text(
               track.artists.join(', '),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: textTheme.subtitle2,
+              style: textTheme.titleSmall,
             ),
           ],
         ),

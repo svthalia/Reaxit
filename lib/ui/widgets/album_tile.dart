@@ -24,7 +24,7 @@ class AlbumTile extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               album.title,
-              style: Theme.of(context).primaryTextTheme.bodyText2,
+              style: Theme.of(context).primaryTextTheme.bodyMedium,
             ),
           ),
         ),

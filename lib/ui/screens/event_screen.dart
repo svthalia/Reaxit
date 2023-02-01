@@ -122,7 +122,7 @@ class _EventScreenState extends State<EventScreen> {
         const SizedBox(height: 8),
         Text(
           event.title.toUpperCase(),
-          style: textTheme.headline6,
+          style: textTheme.titleLarge,
         ),
         const Divider(height: 24),
         Row(
@@ -134,11 +134,11 @@ class _EventScreenState extends State<EventScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('FROM', style: textTheme.caption),
+                  Text('FROM', style: textTheme.bodySmall),
                   const SizedBox(height: 4),
                   Text(
                     dateTimeFormatter.format(event.start.toLocal()),
-                    style: textTheme.subtitle2,
+                    style: textTheme.titleSmall,
                   ),
                 ],
               ),
@@ -149,11 +149,11 @@ class _EventScreenState extends State<EventScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('UNTIL', style: textTheme.caption),
+                  Text('UNTIL', style: textTheme.bodySmall),
                   const SizedBox(height: 4),
                   Text(
                     dateTimeFormatter.format(event.end.toLocal()),
-                    style: textTheme.subtitle2,
+                    style: textTheme.titleSmall,
                   ),
                 ],
               ),
@@ -169,11 +169,11 @@ class _EventScreenState extends State<EventScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('LOCATION', style: textTheme.caption),
+                  Text('LOCATION', style: textTheme.bodySmall),
                   const SizedBox(height: 4),
                   Text(
                     event.location,
-                    style: textTheme.subtitle2,
+                    style: textTheme.titleSmall,
                   ),
                 ],
               ),
@@ -184,11 +184,11 @@ class _EventScreenState extends State<EventScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('PRICE', style: textTheme.caption),
+                  Text('PRICE', style: textTheme.bodySmall),
                   const SizedBox(height: 4),
                   Text(
                     '€${event.price}',
-                    style: textTheme.subtitle2,
+                    style: textTheme.titleSmall,
                   ),
                 ],
               ),
@@ -204,8 +204,8 @@ class _EventScreenState extends State<EventScreen> {
   Widget _makeRequiredRegistrationInfo(Event event) {
     assert(event.registrationIsRequired);
     final textTheme = Theme.of(context).textTheme;
-    final dataStyle = textTheme.bodyText2!.apply(fontSizeDelta: -1);
-    final labelStyle = textTheme.bodyText2!.apply(
+    final dataStyle = textTheme.bodyMedium!.apply(fontSizeDelta: -1);
+    final labelStyle = textTheme.bodyMedium!.apply(
       fontWeightDelta: 2,
       fontSizeDelta: -1,
     );
@@ -431,7 +431,7 @@ class _EventScreenState extends State<EventScreen> {
   Widget _makeOptionalRegistrationInfo(Event event) {
     assert(event.registrationIsOptional);
     final textTheme = Theme.of(context).textTheme;
-    final dataStyle = textTheme.bodyText2!.apply(fontSizeDelta: -1);
+    final dataStyle = textTheme.bodyMedium!.apply(fontSizeDelta: -1);
 
     final textSpans = <TextSpan>[];
     Widget registrationButton = const SizedBox.shrink();
@@ -480,7 +480,7 @@ class _EventScreenState extends State<EventScreen> {
   Widget _makeNoRegistrationInfo(Event event) {
     assert(!event.registrationIsOptional && !event.registrationIsRequired);
     final textTheme = Theme.of(context).textTheme;
-    final dataStyle = textTheme.bodyText2!.apply(fontSizeDelta: -1);
+    final dataStyle = textTheme.bodyMedium!.apply(fontSizeDelta: -1);
 
     final textSpans = <TextSpan>[];
     if (event.noRegistrationMessage?.isNotEmpty ?? false) {
@@ -562,7 +562,7 @@ class _EventScreenState extends State<EventScreen> {
                     content: Text(
                       'Are you sure you want to register? The '
                       'cancellation deadline has already passed.',
-                      style: Theme.of(context).textTheme.bodyText2,
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     actions: [
                       TextButton.icon(
@@ -656,7 +656,7 @@ class _EventScreenState extends State<EventScreen> {
               title: const Text('Cancel registration'),
               content: Text(
                 warningText,
-                style: Theme.of(context).textTheme.bodyText2,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
               actions: [
                 TextButton.icon(
@@ -797,7 +797,7 @@ class _EventScreenState extends State<EventScreen> {
       sliver: SliverToBoxAdapter(
         child: Text(
           'REGISTRATIONS',
-          style: Theme.of(context).textTheme.caption,
+          style: Theme.of(context).textTheme.bodySmall,
         ),
       ),
     );

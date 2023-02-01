@@ -8,7 +8,7 @@ on:
       - master
 
 env:
-  FLUTTER_VERSION: 3.3.6
+  FLUTTER_VERSION: 3.7.0
 
 jobs:
   linting:

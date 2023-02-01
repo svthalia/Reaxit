@@ -107,8 +107,8 @@ class AlbumsSearchDelegate extends SearchDelegate {
     final theme = super.appBarTheme(context);
     return theme.copyWith(
       textTheme: theme.textTheme.copyWith(
-        headline6: GoogleFonts.openSans(
-          textStyle: Theme.of(context).textTheme.headline6,
+        titleLarge: GoogleFonts.openSans(
+          textStyle: Theme.of(context).textTheme.titleLarge,
         ),
       ),
     );

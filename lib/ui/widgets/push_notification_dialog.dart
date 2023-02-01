@@ -22,7 +22,7 @@ class PushNotificationDialog extends StatelessWidget {
               message.notification!.body!.isNotEmpty)
           ? Text(
               message.notification!.body!,
-              style: Theme.of(context).textTheme.bodyText2,
+              style: Theme.of(context).textTheme.bodyMedium,
             )
           : null,
       actions: [

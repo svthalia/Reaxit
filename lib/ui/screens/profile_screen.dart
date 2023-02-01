@@ -264,7 +264,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _fieldLabel(String title) {
-    return Text(title, style: Theme.of(context).textTheme.caption);
+    return Text(title, style: Theme.of(context).textTheme.bodySmall);
   }
 
   Widget _makeHonoraryFact() {
@@ -272,7 +272,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       alignment: Alignment.topCenter,
       child: Text(
         'HONORARY MEMBER',
-        style: Theme.of(context).textTheme.subtitle1,
+        style: Theme.of(context).textTheme.titleMedium,
       ),
     );
   }
@@ -287,7 +287,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           member.programme == Programme.computingscience
               ? 'Computing Science'
               : 'Information Science',
-          style: Theme.of(context).textTheme.subtitle2,
+          style: Theme.of(context).textTheme.titleSmall,
         ),
       ],
     );
@@ -301,7 +301,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const SizedBox(height: 4),
         Text(
           member.startingYear!.toString(),
-          style: Theme.of(context).textTheme.subtitle2,
+          style: Theme.of(context).textTheme.titleSmall,
         ),
       ],
     );
@@ -315,7 +315,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const SizedBox(height: 4),
         Text(
           dateFormatter.format(member.birthday!),
-          style: Theme.of(context).textTheme.subtitle2,
+          style: Theme.of(context).textTheme.titleSmall,
         ),
       ],
     );
@@ -338,7 +338,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               : null,
           child: Text(
             member.website!.toString(),
-            style: Theme.of(context).textTheme.subtitle2,
+            style: Theme.of(context).textTheme.titleSmall,
           ),
         ),
       ],
@@ -402,7 +402,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return ListTile(
       title: Text(
         achievement.name,
-        style: Theme.of(context).textTheme.subtitle1,
+        style: Theme.of(context).textTheme.titleMedium,
       ),
       subtitle: periodColumn,
       dense: true,
@@ -734,7 +734,7 @@ class __DescriptionFactState extends State<_DescriptionFact> {
   }
 
   Widget _fieldLabel(String title) {
-    return Text(title, style: Theme.of(context).textTheme.caption);
+    return Text(title, style: Theme.of(context).textTheme.bodySmall);
   }
 
   @override
@@ -760,7 +760,7 @@ class __DescriptionFactState extends State<_DescriptionFact> {
                         child: TextField(
                           controller: _controller,
                           maxLines: null,
-                          style: Theme.of(context).textTheme.bodyText2,
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
                       IconButton(
@@ -800,10 +800,16 @@ class __DescriptionFactState extends State<_DescriptionFact> {
                               : widget.member.profileDescription!,
                           style: (widget.member.profileDescription?.isEmpty ??
                                   true)
-                              ? Theme.of(context).textTheme.bodyText2!.copyWith(
+                              ? Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
                                     fontStyle: FontStyle.italic,
                                   )
-                              : Theme.of(context).textTheme.bodyText2!.copyWith(
+                              : Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
                                     fontStyle: FontStyle.normal,
                                   ),
                         ),
