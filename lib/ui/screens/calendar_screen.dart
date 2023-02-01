@@ -20,6 +20,8 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   late ScrollController _controller;
   late CalendarCubit _cubit;
+  final todayKey = GlobalKey();
+  final thisMonthKey = GlobalKey();
 
   @override
   void initState() {
@@ -78,14 +80,27 @@ class _CalendarScreenState extends State<CalendarScreen> {
               controller: _controller,
               calendarState: calendarState,
               loadMoreUp: _cubit.moreUp,
+              todayKey: todayKey,
+              thisMonthKey: thisMonthKey,
             );
           }
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          _controller.animateTo(0,
-              duration: const Duration(milliseconds: 500), curve: Curves.ease);
+          if (todayKey.currentContext != null) {
+            // Calculate the position the widget should be in to avoid being
+            // drawn under the header
+            final offset = thisMonthKey.currentContext!.size!.height + 8;
+            final totalHeight =
+                Scrollable.of(todayKey.currentContext!)!.context.size!.height;
+            Scrollable.ensureVisible(
+              todayKey.currentContext!,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.ease,
+              alignment: offset / totalHeight,
+            );
+          }
         },
         label: const Text('Today'),
         backgroundColor: magenta,
@@ -186,24 +201,50 @@ class _CalendarViewDay {
 /// _CalendarViewMonth holds events attached to a month
 class _CalendarViewMonth {
   final DateTime month;
-  final List<CalendarEvent> events;
+  final List<_CalendarViewDay> days;
 
   _CalendarViewMonth({required this.month, required List<CalendarEvent> events})
-      : events = events.sortedBy((element) => element.start);
+      : days = groupBy<CalendarEvent, DateTime>(
+          events.sortedBy((element) => element.start),
+          (event) => DateTime(
+            event.start.year,
+            event.start.month,
+            event.start.day,
+          ),
+        )
+            .entries
+            .map((entry) =>
+                _CalendarViewDay(day: entry.key, events: entry.value))
+            .sortedBy((element) => element.day);
 
-  List<_CalendarViewDay> byDay() {
-    return groupBy<CalendarEvent, DateTime>(
-      events,
-      (event) => DateTime(
-        event.start.year,
-        event.start.month,
-        event.start.day,
-      ),
-    )
-        .entries
-        .map((entry) => _CalendarViewDay(day: entry.key, events: entry.value))
-        .sortedBy((element) => element.day);
+  List<_CalendarViewDay> byDay() => days;
+}
+
+List<_CalendarViewMonth> _ensureContainsToday(List<_CalendarViewMonth> events) {
+  DateTime now = DateTime.now();
+  DateTime today = DateTime(
+    now.year,
+    now.month,
+    now.day,
+  );
+  DateTime thisMonth = DateTime(
+    now.year,
+    now.month,
+    now.day,
+  );
+  // TODO: do this in qubit before sorting, thats ideal. Also make sure to have
+  // one "now", maybe in the qubit state. Because if "now" changes day between
+  // adding today and buillding the todayKey might not get any widget.
+  for (var i = 0; i < events.length; i++) {
+    if (events[i].month == thisMonth) {
+      for (var j = 0; j < events[j].days.length; j++) {
+        if (events[i].days[j].day == today) return events;
+        events[i].days.add(_CalendarViewDay(day: today, events: []));
+        return events;
+      }
+    }
   }
+  return events;
 }
 
 /// A ScrollView that shows a calendar with [Event]s.
@@ -216,6 +257,9 @@ class CalendarScrollView extends StatelessWidget {
   static final monthFormatter = DateFormat('MMMM');
   static final monthYearFormatter = DateFormat('MMMM yyyy');
 
+  final GlobalKey? todayKey;
+  final GlobalKey? thisMonthKey;
+
   final Key centerkey = UniqueKey();
   final ScrollController controller;
   final CalendarState calendarState;
@@ -224,17 +268,20 @@ class CalendarScrollView extends StatelessWidget {
   final List<_CalendarViewMonth> _monthGroupedEventsDown;
   final bool _enableLoadMore;
 
-  CalendarScrollView({
-    Key? key,
-    required this.controller,
-    required this.calendarState,
-    required this.loadMoreUp,
-  })  : _monthGroupedEventsUp = _groupByMonth(calendarState.resultsUp)
+  CalendarScrollView(
+      {Key? key,
+      required this.controller,
+      required this.calendarState,
+      required this.loadMoreUp,
+      this.todayKey,
+      this.thisMonthKey})
+      : _monthGroupedEventsUp = _groupByMonth(calendarState.resultsUp)
             .sortedBy((element) => element.month)
             .reversed
             .toList(),
-        _monthGroupedEventsDown = _groupByMonth(calendarState.resultsDown)
-            .sortedBy((element) => element.month),
+        _monthGroupedEventsDown = _ensureContainsToday(
+            _groupByMonth(calendarState.resultsDown)
+                .sortedBy((element) => element.month)),
         _enableLoadMore = !calendarState.isDoneUp &&
             calendarState.resultsUp.isNotEmpty &&
             calendarState.resultsDown.isNotEmpty,
@@ -309,8 +356,10 @@ class CalendarScrollView extends StatelessWidget {
             key: centerkey,
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
-                (_, index) =>
-                    _CalendarMonth(events: _monthGroupedEventsDown[index]),
+                (_, index) => _CalendarMonth(
+                    events: _monthGroupedEventsDown[index],
+                    todayKey: todayKey,
+                    thisMonthKey: thisMonthKey),
                 childCount: _monthGroupedEventsDown.length,
               ),
             ),
@@ -330,37 +379,61 @@ class CalendarScrollView extends StatelessWidget {
 
 class _CalendarMonth extends StatelessWidget {
   final _CalendarViewMonth events;
+  final Key? todayKey;
+  final Key? thisMonthKey;
 
   static final monthFormatter = DateFormat('MMMM');
   static final monthYearFormatter = DateFormat('MMMM yyyy');
 
-  const _CalendarMonth({required this.events});
+  const _CalendarMonth(
+      {required this.events, this.todayKey, this.thisMonthKey});
 
   @override
   Widget build(BuildContext context) {
+    DateTime now = DateTime.now();
+    DateTime today = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    );
+    DateTime thisMonth = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    );
     return StickyHeader(
-      header: SizedBox(
-        width: double.infinity,
-        child: Material(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Text(
-              events.month.year == DateTime.now().year
-                  ? monthFormatter.format(events.month.toLocal()).toUpperCase()
-                  : monthYearFormatter
-                      .format(events.month.toLocal())
-                      .toUpperCase(),
-              style: Theme.of(context).textTheme.subtitle1,
+      header: Column(
+        key: events.month == thisMonth ? thisMonthKey : null,
+        children: [
+          SizedBox(
+            width: double.infinity,
+            child: Material(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Text(
+                  events.month.year == now.year
+                      ? monthFormatter
+                          .format(events.month.toLocal())
+                          .toUpperCase()
+                      : monthYearFormatter
+                          .format(events.month.toLocal())
+                          .toUpperCase(),
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
+              ),
             ),
           ),
-        ),
+          const SizedBox(height: 8),
+        ],
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(height: 8),
           for (final day in events.byDay())
-            _DayCard(day: day.day, events: day.events),
+            _DayCard(
+                day: day.day,
+                events: day.events,
+                key: day.day == today ? todayKey : null),
         ],
       ),
     );
@@ -373,13 +446,21 @@ class _DayCard extends StatelessWidget {
 
   static final dayFormatter = DateFormat(DateFormat.ABBR_WEEKDAY);
 
-  _DayCard({required DateTime day, required List<CalendarEvent> events})
+  _DayCard(
+      {required DateTime day, required List<CalendarEvent> events, Key? key})
       : eventWidgets = events.map((event) => _EventCard(event)).toList(),
         day = day.toLocal(),
-        super(key: ValueKey(day));
+        super(key: key ?? ValueKey(day));
 
   @override
   Widget build(BuildContext context) {
+    DateTime now = DateTime.now();
+    DateTime today = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    );
+
     final textTheme = Theme.of(context).textTheme;
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -396,11 +477,16 @@ class _DayCard extends StatelessWidget {
                 Text(
                   dayFormatter.format(day).toUpperCase(),
                   style: textTheme.bodySmall!.apply(
-                      color: textTheme.bodySmall!.color!.withOpacity(0.5)),
+                      color: day == today
+                          ? magenta
+                          : textTheme.bodySmall!.color!.withOpacity(0.5)),
                 ),
                 Text(
-                  day.toLocal().day.toString(),
-                  style: textTheme.displaySmall,
+                  day.day.toString(),
+                  style: textTheme.displaySmall!.apply(
+                      color: day == today
+                          ? magenta
+                          : textTheme.displaySmall!.color!.withOpacity(0.5)),
                   strutStyle: const StrutStyle(
                     forceStrutHeight: true,
                     leading: 2.2,
@@ -415,7 +501,26 @@ class _DayCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: eventWidgets,
+            children: eventWidgets.isNotEmpty
+                ? eventWidgets
+                : [
+                    Center(
+                      child: Text(
+                        'There are no events this day',
+                        style: TextStyle(
+                          color: day == today
+                              ? magenta
+                              : textTheme.displaySmall!.color!.withOpacity(0.5),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                        strutStyle: const StrutStyle(
+                          forceStrutHeight: true,
+                          leading: 4,
+                        ),
+                      ),
+                    )
+                  ],
           ),
         ),
       ],

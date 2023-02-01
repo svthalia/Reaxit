@@ -196,7 +196,7 @@ class CalendarCubit extends Cubit<CalendarState> {
       final pastPartnerEventsResponseFuture = api.getPartnerEvents(
         start: _splitTime,
         search: query,
-        ordering: 'start',
+        ordering: '-end',
       );
       final futureEventsResponse = await futureEventsResponseFuture;
       final futurePartnerEventsResponse =
@@ -264,6 +264,10 @@ class CalendarCubit extends Cubit<CalendarState> {
             .toList(),
       ].toList();
 
+      // Sort only the new events, because the old events in
+      // `_state.result` are known to be complete and sorted.
+      pastEvents.sort((a, b) => a.start.compareTo(b.start));
+
       // Remove the first partner events and day parts of events that could fill
       // up the calendar further then where the first not-loaded event will go
       // later.
@@ -274,9 +278,6 @@ class CalendarCubit extends Cubit<CalendarState> {
           _remainingPastEvents.add(pastEvents.removeAt(0));
         }
       }
-      // Sort only the new events, because the old events in
-      // `_state.result` are known to be complete and sorted.
-      pastEvents.sort((a, b) => a.start.compareTo(b.start));
 
       if (futureEventsResponse.results.isEmpty) {
         if (query?.isEmpty ?? true) {
