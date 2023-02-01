@@ -47,12 +47,12 @@ class _MarkPresentDialogState extends State<MarkPresentDialog> {
         } else if (state is SuccessMarkPresentState) {
           content = Text(
             state.message,
-            style: Theme.of(context).textTheme.bodyText2,
+            style: Theme.of(context).textTheme.bodyMedium,
           );
         } else {
           content = Text(
             (state as FailureMarkPresentState).message,
-            style: Theme.of(context).textTheme.bodyText2,
+            style: Theme.of(context).textTheme.bodyMedium,
           );
         }
 

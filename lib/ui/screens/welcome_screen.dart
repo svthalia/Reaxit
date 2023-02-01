@@ -48,7 +48,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         children: [
           Text(
             article.title.toUpperCase(),
-            style: Theme.of(context).textTheme.subtitle1,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           HtmlWidget(
             article.content,
@@ -115,7 +115,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             Text(
               'UPCOMING EVENTS',
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             ...dayGroupedEvents.entries.map<Widget>((entry) {
               final day = entry.key;
@@ -140,7 +140,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     Text(
                       dayText,
                       textAlign: TextAlign.left,
-                      style: Theme.of(context).textTheme.caption,
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                     for (final event in dayEvents)
                       EventDetailCard(event: event),

@@ -105,7 +105,7 @@ class __OderTileState extends State<_OrderTile> {
     late Widget paymentDropdown;
     if (order.isPaid && order.payment!.type == PaymentType.tpayPayment) {
       paymentDropdown = DropdownButton<PaymentType?>(
-        style: Theme.of(context).textTheme.bodyText2,
+        style: Theme.of(context).textTheme.bodyMedium,
         items: const [
           DropdownMenuItem(
             value: PaymentType.tpayPayment,
@@ -133,7 +133,7 @@ class __OderTileState extends State<_OrderTile> {
       );
     } else {
       paymentDropdown = DropdownButton<PaymentType?>(
-        style: Theme.of(context).textTheme.bodyText2,
+        style: Theme.of(context).textTheme.bodyMedium,
         items: const [
           DropdownMenuItem(
             value: PaymentType.cardPayment,
@@ -191,7 +191,7 @@ class __OderTileState extends State<_OrderTile> {
         children: [
           Text(
             '€${order.product.price}',
-            style: Theme.of(context).textTheme.subtitle2,
+            style: Theme.of(context).textTheme.titleSmall,
           ),
           const SizedBox(width: 16),
           paymentDropdown,
@@ -211,8 +211,8 @@ class FoodAdminSearchDelegate extends SearchDelegate {
     final theme = super.appBarTheme(context);
     return theme.copyWith(
       textTheme: theme.textTheme.copyWith(
-        headline6: GoogleFonts.openSans(
-          textStyle: Theme.of(context).textTheme.headline6,
+        titleLarge: GoogleFonts.openSans(
+          textStyle: Theme.of(context).textTheme.titleLarge,
         ),
       ),
     );

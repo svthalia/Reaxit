@@ -45,12 +45,12 @@ class _SalesOrderDialogState extends State<SalesOrderDialog> {
           if (order.numItems == 0) {
             content = Text(
               'The order is empty.',
-              style: textTheme.bodyText2,
+              style: textTheme.bodyMedium,
             );
           } else {
             content = Text(
               order.orderDescription,
-              style: textTheme.bodyText2,
+              style: textTheme.bodyMedium,
             );
           }
 
@@ -72,7 +72,7 @@ class _SalesOrderDialogState extends State<SalesOrderDialog> {
         } else if (orderState is ErrorState) {
           content = Text(
             orderState.message!,
-            style: textTheme.bodyText2,
+            style: textTheme.bodyMedium,
           );
           payButton = const SizedBox.shrink();
         } else {

@@ -64,7 +64,7 @@ class _FoodScreenState extends State<FoodScreen> {
       children: [
         Text(
           foodEvent.title,
-          style: Theme.of(context).textTheme.headline5,
+          style: Theme.of(context).textTheme.headlineSmall,
           textAlign: TextAlign.center,
         ),
         subtitle,
@@ -95,7 +95,7 @@ class _FoodScreenState extends State<FoodScreen> {
                     title: const Text('Cancel order'),
                     content: Text(
                       'Are you sure you want to cancel your order?',
-                      style: Theme.of(context).textTheme.bodyText2,
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     actions: [
                       TextButton.icon(
@@ -209,7 +209,7 @@ class _FoodScreenState extends State<FoodScreen> {
                       Expanded(
                         child: Text(
                           order.product.name,
-                          style: Theme.of(context).textTheme.headline6,
+                          style: Theme.of(context).textTheme.titleLarge,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                         ),
@@ -218,7 +218,7 @@ class _FoodScreenState extends State<FoodScreen> {
                         order.isPaid
                             ? 'has been paid'
                             : 'not yet paid: €${order.product.price}',
-                        style: Theme.of(context).textTheme.bodyText2,
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ],
                   ),
@@ -403,7 +403,7 @@ class __ProductTileState extends State<_ProductTile> {
             TextSpan(text: '${widget.product.name} '),
             TextSpan(
               text: '€${widget.product.price}',
-              style: Theme.of(context).textTheme.caption!.copyWith(
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
                 fontFeatures: const [FontFeature.tabularFigures()],
               ),
             ),
@@ -458,7 +458,7 @@ class __ProductTileState extends State<_ProductTile> {
           title: const Text('Change order'),
           content: Text(
             'Are you sure you want to change your order?',
-            style: Theme.of(context).textTheme.bodyText2,
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
           actions: [
             TextButton.icon(

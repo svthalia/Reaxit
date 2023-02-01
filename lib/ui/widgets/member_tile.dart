@@ -31,7 +31,7 @@ class MemberTile extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   member.displayName,
-                  style: Theme.of(context).primaryTextTheme.bodyText2,
+                  style: Theme.of(context).primaryTextTheme.bodyMedium,
                 ),
               ),
             ),
@@ -90,7 +90,7 @@ class DefaultMemberTile extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               name,
-              style: Theme.of(context).primaryTextTheme.bodyText2,
+              style: Theme.of(context).primaryTextTheme.bodyMedium,
             ),
           ),
         ),

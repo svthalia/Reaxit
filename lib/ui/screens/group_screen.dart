@@ -164,7 +164,7 @@ class _MembersHeader extends StatelessWidget {
       sliver: SliverToBoxAdapter(
         child: Text(
           'MEMBERS',
-          style: Theme.of(context).textTheme.caption,
+          style: Theme.of(context).textTheme.bodySmall,
         ),
       ),
     );
@@ -260,7 +260,7 @@ class _GroupInfo extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 group.name.toUpperCase(),
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               const Divider(height: 24),
               _Description(group: group),

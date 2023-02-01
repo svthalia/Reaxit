@@ -36,65 +36,65 @@ ColorScheme darkColorScheme = const ColorScheme(
 /// Generated and modified from:
 /// https://material.io/design/typography/the-type-system.html
 TextTheme generatedTextTheme = TextTheme(
-  headline1: GoogleFonts.oswald(
+  displayLarge: GoogleFonts.oswald(
     fontSize: 44,
     fontWeight: FontWeight.w400,
     letterSpacing: -1,
   ),
-  headline2: GoogleFonts.oswald(
+  displayMedium: GoogleFonts.oswald(
     fontSize: 36,
     fontWeight: FontWeight.w300,
   ),
-  headline3: GoogleFonts.oswald(
+  displaySmall: GoogleFonts.oswald(
     fontSize: 28,
     fontWeight: FontWeight.w400,
   ),
-  headline4: GoogleFonts.oswald(
+  headlineMedium: GoogleFonts.oswald(
     fontSize: 22,
     fontWeight: FontWeight.w500,
     letterSpacing: 0.25,
   ),
-  headline5: GoogleFonts.oswald(
+  headlineSmall: GoogleFonts.oswald(
     fontSize: 22,
     fontWeight: FontWeight.w400,
     letterSpacing: 0.4,
   ),
-  headline6: GoogleFonts.oswald(
+  titleLarge: GoogleFonts.oswald(
     fontSize: 20,
     fontWeight: FontWeight.w500,
     letterSpacing: 0.15,
   ),
-  subtitle1: GoogleFonts.oswald(
+  titleMedium: GoogleFonts.oswald(
     fontSize: 16,
     fontWeight: FontWeight.w500,
     letterSpacing: 0.15,
   ),
-  subtitle2: GoogleFonts.openSans(
+  titleSmall: GoogleFonts.openSans(
     fontSize: 16,
     fontWeight: FontWeight.w600,
     letterSpacing: -0.4,
   ),
-  bodyText1: GoogleFonts.openSans(
+  bodyLarge: GoogleFonts.openSans(
     fontSize: 16,
     fontWeight: FontWeight.w400,
     letterSpacing: 0.5,
   ),
-  bodyText2: GoogleFonts.openSans(
+  bodyMedium: GoogleFonts.openSans(
     fontSize: 14,
     fontWeight: FontWeight.w400,
     letterSpacing: 0.25,
   ),
-  button: GoogleFonts.oswald(
+  labelLarge: GoogleFonts.oswald(
     fontSize: 14,
     fontWeight: FontWeight.w500,
     letterSpacing: 1.25,
   ),
-  caption: GoogleFonts.openSans(
+  bodySmall: GoogleFonts.openSans(
     fontSize: 12,
     fontWeight: FontWeight.w700,
     letterSpacing: 0.4,
   ),
-  overline: GoogleFonts.openSans(
+  labelSmall: GoogleFonts.openSans(
     fontSize: 12,
     fontWeight: FontWeight.w400,
     letterSpacing: 1.5,
@@ -119,12 +119,34 @@ ThemeData darkTheme = ThemeData.from(
   textTheme: generatedTextTheme,
 ).copyWith(
   applyElevationOverlayColor: false,
-  toggleableActiveColor: darkColorScheme.primary,
   // TODO: Make text less white.
   primaryTextTheme: ThemeData.dark().primaryTextTheme.merge(generatedTextTheme),
   appBarTheme: lightTheme.appBarTheme.copyWith(
     color: darkColorScheme.background,
   ),
   dialogBackgroundColor: darkColorScheme.surface,
-  dividerColor: Colors.white60,
+  dividerColor: Colors.white60, checkboxTheme: CheckboxThemeData(
+ fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return darkColorScheme.primary; }
+ return null;
+ }),
+ ), radioTheme: RadioThemeData(
+ fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return darkColorScheme.primary; }
+ return null;
+ }),
+ ), switchTheme: SwitchThemeData(
+ thumbColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return darkColorScheme.primary; }
+ return null;
+ }),
+ trackColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return darkColorScheme.primary; }
+ return null;
+ }),
+ ),
 );

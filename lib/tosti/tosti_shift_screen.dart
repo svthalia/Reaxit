@@ -58,7 +58,7 @@ class TostiShiftScreen extends StatelessWidget {
                               const SizedBox(height: 16),
                               Text(
                                 shift.venueName.toUpperCase(),
-                                style: textTheme.headline6,
+                                style: textTheme.titleLarge,
                               ),
                               const Divider(height: 24),
                               Row(
@@ -71,9 +71,9 @@ class TostiShiftScreen extends StatelessWidget {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text('TIME', style: textTheme.caption),
+                                        Text('TIME', style: textTheme.bodySmall),
                                         const SizedBox(height: 4),
-                                        Text(time, style: textTheme.subtitle2),
+                                        Text(time, style: textTheme.titleSmall),
                                       ],
                                     ),
                                   ),
@@ -86,13 +86,13 @@ class TostiShiftScreen extends StatelessWidget {
                                       children: [
                                         Text(
                                           'CAPACITY',
-                                          style: textTheme.caption,
+                                          style: textTheme.bodySmall,
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
                                           '${shift.amountOfOrders}'
                                           ' / ${shift.maxOrdersTotal}',
-                                          style: textTheme.subtitle2,
+                                          style: textTheme.titleSmall,
                                         ),
                                       ],
                                     ),
@@ -100,7 +100,7 @@ class TostiShiftScreen extends StatelessWidget {
                                 ],
                               ),
                               const SizedBox(height: 12),
-                              Text('AT YOUR SERVICE', style: textTheme.caption),
+                              Text('AT YOUR SERVICE', style: textTheme.bodySmall),
                               const SizedBox(height: 4),
                               Text(
                                 shift.assignees.isNotEmpty
@@ -108,13 +108,13 @@ class TostiShiftScreen extends StatelessWidget {
                                         .map((e) => e.displayName)
                                         .join(', ')
                                     : '-',
-                                style: textTheme.subtitle2,
+                                style: textTheme.titleSmall,
                               ),
                               const Divider(height: 24),
                               if (shift.canOrder)
                                 Text(
                                   'PLACE YOUR ORDER',
-                                  style: textTheme.caption,
+                                  style: textTheme.bodySmall,
                                 )
                               else
                                 const Text(
@@ -310,7 +310,7 @@ class _OrderTile extends StatelessWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(statusText, style: Theme.of(context).textTheme.caption),
+          Text(statusText, style: Theme.of(context).textTheme.bodySmall),
           const SizedBox(width: 8.0),
           Container(
             width: 16.0,
