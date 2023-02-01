@@ -800,10 +800,16 @@ class __DescriptionFactState extends State<_DescriptionFact> {
                               : widget.member.profileDescription!,
                           style: (widget.member.profileDescription?.isEmpty ??
                                   true)
-                              ? Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              ? Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
                                     fontStyle: FontStyle.italic,
                                   )
-                              : Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              : Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
                                     fontStyle: FontStyle.normal,
                                   ),
                         ),

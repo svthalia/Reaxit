@@ -71,7 +71,8 @@ class TostiShiftScreen extends StatelessWidget {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text('TIME', style: textTheme.bodySmall),
+                                        Text('TIME',
+                                            style: textTheme.bodySmall),
                                         const SizedBox(height: 4),
                                         Text(time, style: textTheme.titleSmall),
                                       ],
@@ -100,7 +101,8 @@ class TostiShiftScreen extends StatelessWidget {
                                 ],
                               ),
                               const SizedBox(height: 12),
-                              Text('AT YOUR SERVICE', style: textTheme.bodySmall),
+                              Text('AT YOUR SERVICE',
+                                  style: textTheme.bodySmall),
                               const SizedBox(height: 4),
                               Text(
                                 shift.assignees.isNotEmpty
