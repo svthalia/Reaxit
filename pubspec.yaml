@@ -126,7 +126,7 @@ dev_dependencies:
   build_runner: ^2.2.0
 
   # JSON parsing.
-  json_serializable: ^6.3.1
+  json_serializable: ^6.6.1
 
   # Linting.
   flutter_lints: ^2.0.1
