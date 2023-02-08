@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -116,8 +115,8 @@ class CalendarEvent {
 }
 
 class CalendarState extends Equatable {
-  DateTime now;
-  DoubleListState<CalendarEvent> events;
+  final DateTime now;
+  final DoubleListState<CalendarEvent> events;
 
   /// The results to be shown in the up directoin. These are outdated if
   /// `isLoading` is true.
@@ -151,7 +150,7 @@ class CalendarState extends Equatable {
 
   bool get hasException => message != null;
 
-  CalendarState(this.now, this.events);
+  const CalendarState(this.now, this.events);
 
   @override
   List<Object?> get props => [now, events];
