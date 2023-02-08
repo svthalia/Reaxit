@@ -6,8 +6,7 @@ import 'package:reaxit/blocs/groups_cubit.dart';
 import 'package:reaxit/models/group.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:collection/collection.dart';
-
-import '../../api/api_repository.dart';
+import 'package:reaxit/api/api_repository.dart';
 
 class GroupsScreen extends StatefulWidget {
   final MemberGroupType? currentScreen;
@@ -255,19 +254,6 @@ class GroupSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return BlocBuilder<GroupsCubit, GroupsState>(
-      bloc: _cubit..search(query),
-      builder: (context, state) {
-        if (state is ErrorState) {
-          return ErrorScrollView(state.message!);
-        } else {
-          return GroupListScrollView(
-            key: const PageStorageKey('groups-search'),
-            groups: state.result ?? [],
-          );
-        }
-      },
-    );
-    //return const Text('TODO');
+    return buildResults(context);
   }
 }

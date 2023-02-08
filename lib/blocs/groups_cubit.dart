@@ -63,19 +63,19 @@ class AllGroupsCubit extends GroupsCubit {
 
   @override
   Future<void> load() async {
-    // print("AAA");
     emit(const LoadingState());
     try {
       final query = _searchQuery;
 
-      if (query != _searchQuery) return;
-
       final listResponse =
           await api.getGroups(limit: 1000, type: groupType, search: query);
 
+      // Don't load if the query changed in the meantime
+      if (query != _searchQuery) return;
+
       if (listResponse.results.isNotEmpty) {
         emit(ResultState(
-            listResponse.results)); //listResponse.results as GroupsState);
+            listResponse.results));
       } else {
         if (query?.isEmpty ?? true) {
           emit(const ErrorState('There are no results.'));
@@ -92,7 +92,7 @@ class AllGroupsCubit extends GroupsCubit {
       _searchQuery = query;
       _searchDebounceTimer?.cancel();
       if (query?.isEmpty ?? false) {
-        /// Don't get results when the query is empty.
+        // Don't get results when the query is empty.
         emit(const LoadingState());
       } else {
         _searchDebounceTimer = Timer(config.searchDebounceTime, load);
