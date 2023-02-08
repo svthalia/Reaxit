@@ -1,5 +1,7 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,8 +22,9 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   late ScrollController _controller;
   late CalendarCubit _cubit;
-  final todayKey = GlobalKey();
-  final thisMonthKey = GlobalKey();
+  GlobalKey todayKey = GlobalKey();
+  GlobalKey thisMonthKey = GlobalKey();
+  double? _todayOffset;
 
   @override
   void initState() {
@@ -30,11 +33,29 @@ class _CalendarScreenState extends State<CalendarScreen> {
     super.initState();
   }
 
+  void _assureTodayOffset() {
+    if (_todayOffset == null && todayKey.currentContext != null) {
+      // Calculate the position the widget should be in to avoid being
+      // drawn under the header
+      final offset = thisMonthKey.currentContext!.size!.height + 8;
+      final totalHeight =
+          Scrollable.of(todayKey.currentContext!)!.context.size!.height;
+
+      RenderObject renderObject = todayKey.currentContext!.findRenderObject()!;
+      RenderAbstractViewport viewport =
+          RenderAbstractViewport.of(renderObject)!;
+      _todayOffset = viewport
+          .getOffsetToReveal(renderObject, offset / totalHeight, rect: null)
+          .offset;
+    }
+  }
+
   void _scrollListener() {
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
       _cubit.more();
     }
+    _assureTodayOffset();
   }
 
   @override
@@ -56,6 +77,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
     searchCubit.close();
   }
 
+  void scrollToToday() {
+    _assureTodayOffset();
+    _controller.animateTo(
+      _todayOffset ?? 0,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.ease,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,6 +105,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
           if (calendarState.hasException) {
             return ErrorScrollView(calendarState.message!);
           } else {
+            todayKey = GlobalKey();
+            thisMonthKey = GlobalKey();
             return CalendarScrollView(
               key: const PageStorageKey('calendar'),
               controller: _controller,
@@ -82,26 +114,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
               loadMoreUp: _cubit.moreUp,
               todayKey: todayKey,
               thisMonthKey: thisMonthKey,
+              now: calendarState.now,
             );
           }
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          if (todayKey.currentContext != null) {
-            // Calculate the position the widget should be in to avoid being
-            // drawn under the header
-            final offset = thisMonthKey.currentContext!.size!.height + 8;
-            final totalHeight =
-                Scrollable.of(todayKey.currentContext!)!.context.size!.height;
-            Scrollable.ensureVisible(
-              todayKey.currentContext!,
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.ease,
-              alignment: offset / totalHeight,
-            );
-          }
-        },
+        onPressed: scrollToToday,
+        icon: const Icon(Icons.today),
         label: const Text('Today'),
         backgroundColor: magenta,
       ),
@@ -168,15 +188,16 @@ class CalendarSearchDelegate extends SearchDelegate {
   Widget buildResults(BuildContext context) {
     return BlocBuilder<CalendarCubit, CalendarState>(
       bloc: _cubit..search(query),
-      builder: (context, listState) {
-        if (listState.hasException) {
-          return ErrorScrollView(listState.message!);
+      builder: (context, calendarState) {
+        if (calendarState.hasException) {
+          return ErrorScrollView(calendarState.message!);
         } else {
           return CalendarScrollView(
             key: const PageStorageKey('calendar-search'),
             controller: _controller,
-            calendarState: listState,
+            calendarState: calendarState,
             loadMoreUp: _cubit.moreUp,
+            now: calendarState.now,
           );
         }
       },
@@ -220,8 +241,8 @@ class _CalendarViewMonth {
   List<_CalendarViewDay> byDay() => days;
 }
 
-List<_CalendarViewMonth> _ensureContainsToday(List<_CalendarViewMonth> events) {
-  DateTime now = DateTime.now();
+List<_CalendarViewMonth> _ensureContainsToday(
+    List<_CalendarViewMonth> events, DateTime now) {
   DateTime today = DateTime(
     now.year,
     now.month,
@@ -230,18 +251,22 @@ List<_CalendarViewMonth> _ensureContainsToday(List<_CalendarViewMonth> events) {
   DateTime thisMonth = DateTime(
     now.year,
     now.month,
-    now.day,
   );
-  // TODO: do this in qubit before sorting, thats ideal. Also make sure to have
-  // one "now", maybe in the qubit state. Because if "now" changes day between
-  // adding today and buillding the todayKey might not get any widget.
   for (var i = 0; i < events.length; i++) {
+    if (events[i].month.isAfter(thisMonth)) {
+      events.insert(i, _CalendarViewMonth(month: thisMonth, events: []));
+      events[i].days.add(_CalendarViewDay(day: today, events: []));
+
+      return events;
+    }
     if (events[i].month == thisMonth) {
-      for (var j = 0; j < events[j].days.length; j++) {
+      for (var j = 0; j < events[i].days.length; j++) {
         if (events[i].days[j].day == today) return events;
-        events[i].days.add(_CalendarViewDay(day: today, events: []));
-        return events;
+        if (events[i].days[j].day.isAfter(today)) {
+          events[i].days.add(_CalendarViewDay(day: today, events: []));
+        }
       }
+      return events;
     }
   }
   return events;
@@ -268,20 +293,24 @@ class CalendarScrollView extends StatelessWidget {
   final List<_CalendarViewMonth> _monthGroupedEventsDown;
   final bool _enableLoadMore;
 
-  CalendarScrollView(
-      {Key? key,
-      required this.controller,
-      required this.calendarState,
-      required this.loadMoreUp,
-      this.todayKey,
-      this.thisMonthKey})
-      : _monthGroupedEventsUp = _groupByMonth(calendarState.resultsUp)
+  final DateTime now;
+
+  CalendarScrollView({
+    Key? key,
+    required this.controller,
+    required this.calendarState,
+    required this.loadMoreUp,
+    this.todayKey,
+    this.thisMonthKey,
+    required this.now,
+  })  : _monthGroupedEventsUp = _groupByMonth(calendarState.resultsUp)
             .sortedBy((element) => element.month)
             .reversed
             .toList(),
         _monthGroupedEventsDown = _ensureContainsToday(
             _groupByMonth(calendarState.resultsDown)
-                .sortedBy((element) => element.month)),
+                .sortedBy((element) => element.month),
+            now),
         _enableLoadMore = !calendarState.isDoneUp &&
             calendarState.resultsUp.isNotEmpty &&
             calendarState.resultsDown.isNotEmpty,
@@ -345,8 +374,12 @@ class CalendarScrollView extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
-                (_, index) =>
-                    _CalendarMonth(events: _monthGroupedEventsUp[index]),
+                (_, index) => _CalendarMonth(
+                  events: _monthGroupedEventsUp[index],
+                  todayKey: todayKey,
+                  thisMonthKey: thisMonthKey,
+                  now: now,
+                ),
                 childCount: _monthGroupedEventsUp.length,
               ),
             ),
@@ -357,9 +390,11 @@ class CalendarScrollView extends StatelessWidget {
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (_, index) => _CalendarMonth(
-                    events: _monthGroupedEventsDown[index],
-                    todayKey: todayKey,
-                    thisMonthKey: thisMonthKey),
+                  events: _monthGroupedEventsDown[index],
+                  todayKey: todayKey,
+                  thisMonthKey: thisMonthKey,
+                  now: now,
+                ),
                 childCount: _monthGroupedEventsDown.length,
               ),
             ),
@@ -381,16 +416,19 @@ class _CalendarMonth extends StatelessWidget {
   final _CalendarViewMonth events;
   final Key? todayKey;
   final Key? thisMonthKey;
+  final DateTime now;
 
   static final monthFormatter = DateFormat('MMMM');
   static final monthYearFormatter = DateFormat('MMMM yyyy');
 
   const _CalendarMonth(
-      {required this.events, this.todayKey, this.thisMonthKey});
+      {required this.events,
+      this.todayKey,
+      this.thisMonthKey,
+      required this.now});
 
   @override
   Widget build(BuildContext context) {
-    DateTime now = DateTime.now();
     DateTime today = DateTime(
       now.year,
       now.month,
@@ -399,7 +437,6 @@ class _CalendarMonth extends StatelessWidget {
     DateTime thisMonth = DateTime(
       now.year,
       now.month,
-      now.day,
     );
     return StickyHeader(
       header: Column(
@@ -433,6 +470,7 @@ class _CalendarMonth extends StatelessWidget {
             _DayCard(
                 day: day.day,
                 events: day.events,
+                now: now,
                 key: day.day == today ? todayKey : null),
         ],
       ),
@@ -442,19 +480,22 @@ class _CalendarMonth extends StatelessWidget {
 
 class _DayCard extends StatelessWidget {
   final DateTime day;
+  final DateTime now;
   final List<Widget> eventWidgets;
 
   static final dayFormatter = DateFormat(DateFormat.ABBR_WEEKDAY);
 
   _DayCard(
-      {required DateTime day, required List<CalendarEvent> events, Key? key})
+      {required DateTime day,
+      required List<CalendarEvent> events,
+      required this.now,
+      Key? key})
       : eventWidgets = events.map((event) => _EventCard(event)).toList(),
         day = day.toLocal(),
         super(key: key ?? ValueKey(day));
 
   @override
   Widget build(BuildContext context) {
-    DateTime now = DateTime.now();
     DateTime today = DateTime(
       now.year,
       now.month,

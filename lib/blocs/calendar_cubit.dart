@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:ffi';
 
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/api/api_repository.dart';
@@ -113,7 +115,47 @@ class CalendarEvent {
       );
 }
 
-typedef CalendarState = DoubleListState<CalendarEvent>;
+class CalendarState extends Equatable {
+  DateTime now;
+  DoubleListState<CalendarEvent> events;
+
+  /// The results to be shown in the up directoin. These are outdated if
+  /// `isLoading` is true.
+  List<CalendarEvent> get resultsUp => events.resultsUp;
+
+  /// The results to be shown in the up directoin. These are outdated if
+  /// `isLoading` is true.
+  List<CalendarEvent> get resultsDown => events.resultsDown;
+
+  /// A message describing why there are no results.
+  String? get message => events.message;
+
+  /// Different results are being loaded. The results are outdated.
+  bool get isLoading => events.isLoadingMoreUp;
+
+  /// More of the same results are being loaded in the up direction. The results
+  /// are not outdated.
+  bool get isLoadingMoreUp => events.isLoadingMoreUp;
+
+  /// More of the same results are being loaded in the down direction. The results
+  /// are not outdated.
+  bool get isLoadingMoreDown => events.isDoneUp;
+
+  /// The last results have been loaded in the up direction. There are no more
+  /// pages left.
+  bool get isDoneUp => events.isDoneUp;
+
+  /// The last results have been loaded in the down direction. There are no more
+  /// pages left.
+  bool get isDoneDown => events.isDoneDown;
+
+  bool get hasException => message != null;
+
+  CalendarState(this.now, this.events);
+
+  @override
+  List<Object?> get props => [now, events];
+}
 
 class CalendarCubit extends Cubit<CalendarState> {
   static const int firstPageSize = 20;
@@ -136,7 +178,10 @@ class CalendarCubit extends Cubit<CalendarState> {
 
   /// The time rounded down to the month used to split the events in "past" and
   /// "future". Also used in the query. This is a final to avoid race conditions
-  DateTime _splitTime = DateTime(DateTime.now().year, DateTime.now().month);
+  DateTime get _splitTime => DateTime(_truthTime.year, _truthTime.month);
+
+  // _truthTime is the time that we base "now" on for the calendar.
+  DateTime _truthTime = DateTime.now();
 
   /// A list of events that have been removed from the previous results
   /// in order to prevent them filling up the calendar before today.
@@ -152,7 +197,8 @@ class CalendarCubit extends Cubit<CalendarState> {
   /// Debouncetimer to fix things like load
   Timer? _debounce;
 
-  CalendarCubit(this.api) : super(const CalendarState.loading());
+  CalendarCubit(this.api)
+      : super(CalendarState(DateTime.now(), const DoubleListState.loading()));
 
   Future<void> cachedLoad() async {
     if (_debounce == null || !_debounce!.isActive) {
@@ -161,10 +207,10 @@ class CalendarCubit extends Cubit<CalendarState> {
   }
 
   Future<void> load() async {
-    emit(const DoubleListState.loading());
+    emit(CalendarState(DateTime.now(), const DoubleListState.loading()));
 
     _debounce = Timer(const Duration(minutes: 10), () => {});
-    _splitTime = DateTime(DateTime.now().year, DateTime.now().month);
+    _truthTime = DateTime.now();
 
     try {
       final query = _searchQuery;
@@ -278,21 +324,27 @@ class CalendarCubit extends Cubit<CalendarState> {
 
       if (futureEventsResponse.results.isEmpty) {
         if (query?.isEmpty ?? true) {
-          emit(const CalendarState.failure(message: 'There are no events.'));
+          emit(CalendarState(_truthTime,
+              const DoubleListState.failure(message: 'There are no events.')));
         } else {
-          emit(CalendarState.failure(
-            message: 'There are no events found for "$query".',
-          ));
+          emit(CalendarState(
+              _truthTime,
+              DoubleListState.failure(
+                message: 'There are no events found for "$query".',
+              )));
         }
       } else {
-        emit(CalendarState.success(
-            resultsUp: pastEvents,
-            resultsDown: futureEvents,
-            isDoneUp: isDoneUp,
-            isDoneDown: isDoneDown));
+        emit(CalendarState(
+            _truthTime,
+            DoubleListState.success(
+                resultsUp: pastEvents,
+                resultsDown: futureEvents,
+                isDoneUp: isDoneUp,
+                isDoneDown: isDoneDown)));
       }
     } on ApiException catch (exception) {
-      emit(CalendarState.failure(message: exception.message));
+      emit(CalendarState(
+          _truthTime, DoubleListState.failure(message: exception.message)));
     }
   }
 
@@ -306,7 +358,8 @@ class CalendarCubit extends Cubit<CalendarState> {
       return;
     }
 
-    emit(oldState.copyWith(isLoadingMoreDown: true));
+    emit(CalendarState(
+        _truthTime, oldState.events.copyWith(isLoadingMoreDown: true)));
     try {
       final query = _searchQuery;
       final start = _splitTime;
@@ -361,21 +414,23 @@ class CalendarCubit extends Cubit<CalendarState> {
         events.removeAt(0);
       }
 
-      emit(oldState.copySuccessDown(events, isDone));
+      emit(CalendarState(
+          _truthTime, oldState.events.copySuccessDown(events, isDone)));
     } on ApiException catch (exception) {
-      emit(CalendarState.failure(message: exception.message));
+      emit(CalendarState(
+          _truthTime, DoubleListState.failure(message: exception.message)));
     }
   }
 
   Future<void> moreUp() async {
     final oldState = state;
-
     // Ignore calls to `moreUp()` if there is no data, or already more coming.
     if (oldState.isDoneUp || oldState.isLoading || oldState.isLoadingMoreUp) {
       return;
     }
 
-    emit(oldState.copyWith(isLoadingMoreUp: true));
+    emit(CalendarState(
+        _truthTime, oldState.events.copyWith(isLoadingMoreUp: true)));
     try {
       final query = _searchQuery;
 
@@ -417,9 +472,11 @@ class CalendarCubit extends Cubit<CalendarState> {
         events.removeLast();
       }
 
-      emit(oldState.copySuccessUp(events, isDoneUp));
+      emit(CalendarState(
+          _truthTime, oldState.events.copySuccessUp(events, isDoneUp)));
     } on ApiException catch (exception) {
-      emit(CalendarState.failure(message: exception.message));
+      emit(CalendarState(
+          _truthTime, DoubleListState.failure(message: exception.message)));
     }
   }
 
@@ -432,7 +489,7 @@ class CalendarCubit extends Cubit<CalendarState> {
       _searchDebounceTimer?.cancel();
       if (query?.isEmpty ?? false) {
         /// Don't get results when the query is empty.
-        emit(const CalendarState.loading());
+        emit(CalendarState(_truthTime, const DoubleListState.loading()));
       } else {
         _searchDebounceTimer = Timer(config.searchDebounceTime, load);
       }

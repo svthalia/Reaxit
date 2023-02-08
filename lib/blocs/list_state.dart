@@ -185,7 +185,7 @@ class DoubleListState<T> extends Equatable {
     required this.isDoneUp,
     required this.isDoneDown,
   })  : message = null,
-        isLoading = true,
+        isLoading = false,
         isLoadingMoreUp = false,
         isLoadingMoreDown = false;
 
