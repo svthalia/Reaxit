@@ -455,7 +455,7 @@ class _CalendarMonth extends StatelessWidget {
                       : monthYearFormatter
                           .format(events.month.toLocal())
                           .toUpperCase(),
-                  style: Theme.of(context).textTheme.subtitle1,
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
             ),

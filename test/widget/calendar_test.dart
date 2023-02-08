@@ -25,15 +25,17 @@ void main() {
         end: DateTime.parse('2022-05-01 12:00'),
         location: 'Dolor 2',
       );
-
-      final state = CalendarState.success(
-        resultsDown: [
-          ...CalendarEvent.splitEventIntoCalendarEvents(event1),
-          ...CalendarEvent.splitEventIntoCalendarEvents(event2),
-        ],
-        isDoneDown: true,
-        isDoneUp: true,
-      );
+      DateTime now = DateTime.now();
+      final state = CalendarState(
+          now,
+          DoubleListState.success(
+            resultsDown: [
+              ...CalendarEvent.splitEventIntoCalendarEvents(event1),
+              ...CalendarEvent.splitEventIntoCalendarEvents(event2),
+            ],
+            isDoneDown: true,
+            isDoneUp: true,
+          ));
 
       await tester.pumpWidget(
         MaterialApp(
@@ -42,6 +44,7 @@ void main() {
               controller: ScrollController(),
               calendarState: state,
               loadMoreUp: (() {}),
+              now: now,
             ),
           ),
         ),
