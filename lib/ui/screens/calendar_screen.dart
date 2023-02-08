@@ -38,11 +38,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
       // drawn under the header
       final offset = thisMonthKey.currentContext!.size!.height + 8;
       final totalHeight =
-          Scrollable.of(todayKey.currentContext!)!.context.size!.height;
+          Scrollable.of(todayKey.currentContext!).context.size!.height;
 
       RenderObject renderObject = todayKey.currentContext!.findRenderObject()!;
-      RenderAbstractViewport viewport =
-          RenderAbstractViewport.of(renderObject)!;
+      RenderAbstractViewport viewport = RenderAbstractViewport.of(renderObject);
       _todayOffset = viewport
           .getOffsetToReveal(renderObject, offset / totalHeight, rect: null)
           .offset;
