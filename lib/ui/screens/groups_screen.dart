@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/blocs/groups_cubit.dart';
 import 'package:reaxit/models/group.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:collection/collection.dart';
+
+import '../../api/api_repository.dart';
 
 class GroupsScreen extends StatefulWidget {
   final MemberGroupType? currentScreen;
@@ -68,6 +71,23 @@ class _GroupsScreenState extends State<GroupsScreen>
           ],
           indicatorColor: Theme.of(context).colorScheme.primary,
         ),
+        actions: [
+          IconButton(
+            padding: const EdgeInsets.all(16),
+            icon: const Icon(Icons.search),
+            onPressed: () async {
+              final searchCubit =
+                  AllGroupsCubit(RepositoryProvider.of<ApiRepository>(context));
+
+              await showSearch(
+                context: context,
+                delegate: GroupSearchDelegate(searchCubit),
+              );
+
+              searchCubit.close();
+            },
+          )
+        ],
       ),
       drawer: MenuDrawer(),
       body: TabBarView(
@@ -171,5 +191,83 @@ class GroupListScrollView extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class GroupSearchDelegate extends SearchDelegate {
+  final AllGroupsCubit _cubit;
+
+  GroupSearchDelegate(this._cubit);
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    final theme = super.appBarTheme(context);
+    return theme.copyWith(
+      textTheme: theme.textTheme.copyWith(
+        titleLarge: GoogleFonts.openSans(
+          textStyle: Theme.of(context).textTheme.titleLarge,
+        ),
+      ),
+    );
+  }
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    if (query.isNotEmpty) {
+      return <Widget>[
+        IconButton(
+          padding: const EdgeInsets.all(16),
+          tooltip: 'Clear search bar',
+          icon: const Icon(Icons.clear),
+          onPressed: () {
+            query = '';
+          },
+        )
+      ];
+    } else {
+      return [];
+    }
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return BackButton(
+      onPressed: () => close(context, null),
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return BlocBuilder<AllGroupsCubit, GroupsState>(
+      bloc: _cubit..search(query),
+      builder: (context, state) {
+        if (state is ErrorState) {
+          return ErrorScrollView(state.message!);
+        } else {
+          return GroupListScrollView(
+            key: const PageStorageKey('groups-search'),
+            groups: state.result ?? [],
+          );
+        }
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return BlocBuilder<GroupsCubit, GroupsState>(
+      bloc: _cubit..search(query),
+      builder: (context, state) {
+        if (state is ErrorState) {
+          return ErrorScrollView(state.message!);
+        } else {
+          return GroupListScrollView(
+            key: const PageStorageKey('groups-search'),
+            groups: state.result ?? [],
+          );
+        }
+      },
+    );
+    //return const Text('TODO');
   }
 }
