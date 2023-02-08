@@ -74,8 +74,7 @@ class AllGroupsCubit extends GroupsCubit {
       if (query != _searchQuery) return;
 
       if (listResponse.results.isNotEmpty) {
-        emit(ResultState(
-            listResponse.results));
+        emit(ResultState(listResponse.results));
       } else {
         if (query?.isEmpty ?? true) {
           emit(const ErrorState('There are no results.'));
