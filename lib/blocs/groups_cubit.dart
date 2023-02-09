@@ -5,8 +5,7 @@ import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/models/group.dart';
 import 'package:reaxit/config.dart' as config;
-
-import 'detail_state.dart';
+import 'package:reaxit/blocs/detail_state.dart';
 
 typedef GroupsState = DetailState<List<ListGroup>>;
 
@@ -59,11 +58,13 @@ class AllGroupsCubit extends GroupsCubit {
   /// A timer used to debounce calls to `this.load()` from `this.search()`.
   Timer? _searchDebounceTimer;
 
+  // We pass null as MemberGroupType, so we get all groups.
   AllGroupsCubit(ApiRepository api) : super(api, null);
 
   @override
   Future<void> load() async {
     emit(const LoadingState());
+
     try {
       final query = _searchQuery;
 
