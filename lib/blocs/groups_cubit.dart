@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
-import 'package:reaxit/models/group.dart';
+import 'package:reaxit/blocs.dart';
+import 'package:reaxit/models.dart';
 import 'package:reaxit/config.dart' as config;
-import 'package:reaxit/blocs/detail_state.dart';
 
 typedef GroupsState = DetailState<List<ListGroup>>;
 
@@ -25,16 +25,7 @@ class GroupsCubit extends Cubit<GroupsState> {
         emit(const ErrorState('There are no groups.'));
       }
     } on ApiException catch (exception) {
-      emit(ErrorState(_failureMessage(exception)));
-    }
-  }
-
-  String _failureMessage(ApiException exception) {
-    switch (exception) {
-      case ApiException.noInternet:
-        return 'Not connected to the internet.';
-      default:
-        return 'An unknown error occurred.';
+      emit(ErrorState(exception.message));
     }
   }
 }
@@ -83,7 +74,7 @@ class AllGroupsCubit extends GroupsCubit {
         emit(ErrorState('There are no results for "$query".'));
       }
     } on ApiException catch (exception) {
-      emit(ErrorState(_failureMessage(exception)));
+      emit(ErrorState(exception.message));
     }
   }
 
