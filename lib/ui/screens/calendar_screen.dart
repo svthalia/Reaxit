@@ -262,6 +262,7 @@ List<_CalendarViewMonth> _ensureContainsToday(
         if (events[i].days[j].day == today) return events;
         if (events[i].days[j].day.isAfter(today)) {
           events[i].days.add(_CalendarViewDay(day: today, events: []));
+          return events;
         }
       }
       return events;
