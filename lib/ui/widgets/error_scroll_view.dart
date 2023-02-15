@@ -15,7 +15,7 @@ class ErrorScrollView extends StatelessWidget {
           height: 100,
           margin: const EdgeInsets.all(12),
           child: Image.asset(
-            'assets/img/sad_cloud.png',
+            'assets/img/sad-cloud.png',
             fit: BoxFit.fitHeight,
           ),
         ),

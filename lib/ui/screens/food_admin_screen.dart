@@ -62,9 +62,9 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
               },
               child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
                 builder: (context, state) {
-                  if (state.hasException) {
+                  if (state is ErrorState) {
                     return ErrorScrollView(state.message!);
-                  } else if (state.isLoading) {
+                  } else if (state is LoadingState) {
                     return const Center(child: CircularProgressIndicator());
                   } else {
                     return Scrollbar(
@@ -106,7 +106,7 @@ class __OderTileState extends State<_OrderTile> {
     late Widget paymentDropdown;
     if (order.isPaid && order.payment!.type == PaymentType.tpayPayment) {
       paymentDropdown = DropdownButton<PaymentType?>(
-        style: Theme.of(context).textTheme.bodyText2,
+        style: Theme.of(context).textTheme.bodyMedium,
         items: const [
           DropdownMenuItem(
             value: PaymentType.tpayPayment,
@@ -134,7 +134,7 @@ class __OderTileState extends State<_OrderTile> {
       );
     } else {
       paymentDropdown = DropdownButton<PaymentType?>(
-        style: Theme.of(context).textTheme.bodyText2,
+        style: Theme.of(context).textTheme.bodyMedium,
         items: const [
           DropdownMenuItem(
             value: PaymentType.cardPayment,
@@ -192,7 +192,7 @@ class __OderTileState extends State<_OrderTile> {
         children: [
           Text(
             '€${order.product.price}',
-            style: Theme.of(context).textTheme.subtitle2,
+            style: Theme.of(context).textTheme.titleSmall,
           ),
           const SizedBox(width: 16),
           paymentDropdown,
@@ -212,8 +212,8 @@ class FoodAdminSearchDelegate extends SearchDelegate {
     final theme = super.appBarTheme(context);
     return theme.copyWith(
       textTheme: theme.textTheme.copyWith(
-        headline6: GoogleFonts.openSans(
-          textStyle: Theme.of(context).textTheme.headline6,
+        titleLarge: GoogleFonts.openSans(
+          textStyle: Theme.of(context).textTheme.titleLarge,
         ),
       ),
     );
@@ -250,9 +250,9 @@ class FoodAdminSearchDelegate extends SearchDelegate {
       value: _adminCubit..search(query),
       child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
         builder: (context, state) {
-          if (state.hasException) {
+          if (state is ErrorState) {
             return ErrorScrollView(state.message!);
-          } else if (state.isLoading) {
+          } else if (state is LoadingState) {
             return const SizedBox.shrink();
           } else {
             return ListView.separated(
@@ -275,9 +275,9 @@ class FoodAdminSearchDelegate extends SearchDelegate {
       value: _adminCubit..search(query),
       child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
         builder: (context, state) {
-          if (state.hasException) {
+          if (state is ErrorState) {
             return ErrorScrollView(state.message!);
-          } else if (state.isLoading) {
+          } else if (state is LoadingState) {
             return const SizedBox.shrink();
           } else {
             return ListView.separated(

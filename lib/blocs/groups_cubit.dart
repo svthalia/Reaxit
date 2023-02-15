@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
-import 'package:reaxit/blocs/detail_state.dart';
-import 'package:reaxit/models/group.dart';
+import 'package:reaxit/blocs.dart';
+import 'package:reaxit/models.dart';
+import 'package:reaxit/config.dart' as config;
 
 typedef GroupsState = DetailState<List<ListGroup>>;
 
@@ -10,28 +13,19 @@ class GroupsCubit extends Cubit<GroupsState> {
   final ApiRepository api;
   final MemberGroupType? groupType;
 
-  GroupsCubit(this.api, this.groupType) : super(const GroupsState.loading());
+  GroupsCubit(this.api, this.groupType) : super(const LoadingState());
 
   Future<void> load() async {
-    emit(state.copyWith(isLoading: true));
+    emit(LoadingState.from(state));
     try {
       final listResponse = await api.getGroups(limit: 1000, type: groupType);
       if (listResponse.results.isNotEmpty) {
-        emit(GroupsState.result(result: listResponse.results));
+        emit(ResultState(listResponse.results));
       } else {
-        emit(const GroupsState.failure(message: 'There are no boards.'));
+        emit(const ErrorState('There are no groups.'));
       }
     } on ApiException catch (exception) {
-      emit(GroupsState.failure(message: _failureMessage(exception)));
-    }
-  }
-
-  String _failureMessage(ApiException exception) {
-    switch (exception) {
-      case ApiException.noInternet:
-        return 'Not connected to the internet.';
-      default:
-        return 'An unknown error occurred.';
+      emit(ErrorState(exception.message));
     }
   }
 }
@@ -46,4 +40,54 @@ class CommitteesCubit extends GroupsCubit {
 
 class SocietiesCubit extends GroupsCubit {
   SocietiesCubit(ApiRepository api) : super(api, MemberGroupType.society);
+}
+
+class AllGroupsCubit extends GroupsCubit {
+  /// The last used search query. Can be set through `this.search(query)`.
+  String? _searchQuery;
+
+  /// A timer used to debounce calls to `this.load()` from `this.search()`.
+  Timer? _searchDebounceTimer;
+
+  // We pass null as MemberGroupType, so we get all groups.
+  AllGroupsCubit(ApiRepository api) : super(api, null);
+
+  @override
+  Future<void> load() async {
+    emit(const LoadingState());
+
+    try {
+      final query = _searchQuery;
+
+      final listResponse =
+          await api.getGroups(limit: 1000, type: groupType, search: query);
+
+      // Don't load if the query changed in the meantime
+      if (query != _searchQuery) return;
+
+      if (listResponse.results.isNotEmpty) {
+        emit(ResultState(listResponse.results));
+      } else {
+        if (query?.isEmpty ?? true) {
+          emit(const ErrorState('There are no results.'));
+        }
+        emit(ErrorState('There are no results for "$query".'));
+      }
+    } on ApiException catch (exception) {
+      emit(ErrorState(exception.message));
+    }
+  }
+
+  void search(String? query) {
+    if (query != _searchQuery) {
+      _searchQuery = query;
+      _searchDebounceTimer?.cancel();
+      if (query?.isEmpty ?? false) {
+        // Don't get results when the query is empty.
+        emit(const LoadingState());
+      } else {
+        _searchDebounceTimer = Timer(config.searchDebounceTime, load);
+      }
+    }
+  }
 }

@@ -175,8 +175,8 @@ class _FakeSalesOrder_14 extends _i1.SmartFake implements _i3.SalesOrder {
         );
 }
 
-class _FakeApiRepository_15 extends _i1.SmartFake implements _i4.ApiRepository {
-  _FakeApiRepository_15(
+class _FakeGroup_15 extends _i1.SmartFake implements _i3.Group {
+  _FakeGroup_15(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -185,9 +185,19 @@ class _FakeApiRepository_15 extends _i1.SmartFake implements _i4.ApiRepository {
         );
 }
 
-class _FakeDetailState_16<E> extends _i1.SmartFake
-    implements _i2.DetailState<E> {
-  _FakeDetailState_16(
+class _FakeApiRepository_16 extends _i1.SmartFake implements _i4.ApiRepository {
+  _FakeApiRepository_16(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeDetailState_17<T> extends _i1.SmartFake
+    implements _i2.DetailState<T> {
+  _FakeDetailState_17(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -573,6 +583,22 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
               ),
             )),
           ) as _i5.Future<_i3.ListResponse<_i3.AdminEventRegistration>>);
+  @override
+  _i5.Future<String> markPresentEventRegistration({
+    required int? eventPk,
+    required String? token,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #markPresentEventRegistration,
+          [],
+          {
+            #eventPk: eventPk,
+            #token: token,
+          },
+        ),
+        returnValue: _i5.Future<String>.value(''),
+      ) as _i5.Future<String>);
   @override
   _i5.Future<_i3.AdminEventRegistration> markPresentAdminEventRegistration({
     required int? eventPk,
@@ -1348,6 +1374,87 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
           ),
         )),
       ) as _i5.Future<_i3.SalesOrder>);
+  @override
+  _i5.Future<_i3.ListResponse<_i3.ListGroup>> getGroups({
+    int? limit,
+    int? offset,
+    _i3.MemberGroupType? type,
+    DateTime? start,
+    DateTime? end,
+    String? search,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getGroups,
+          [],
+          {
+            #limit: limit,
+            #offset: offset,
+            #type: type,
+            #start: start,
+            #end: end,
+            #search: search,
+          },
+        ),
+        returnValue: _i5.Future<_i3.ListResponse<_i3.ListGroup>>.value(
+            _FakeListResponse_2<_i3.ListGroup>(
+          this,
+          Invocation.method(
+            #getGroups,
+            [],
+            {
+              #limit: limit,
+              #offset: offset,
+              #type: type,
+              #start: start,
+              #end: end,
+              #search: search,
+            },
+          ),
+        )),
+      ) as _i5.Future<_i3.ListResponse<_i3.ListGroup>>);
+  @override
+  _i5.Future<_i3.Group> getGroup({required int? pk}) => (super.noSuchMethod(
+        Invocation.method(
+          #getGroup,
+          [],
+          {#pk: pk},
+        ),
+        returnValue: _i5.Future<_i3.Group>.value(_FakeGroup_15(
+          this,
+          Invocation.method(
+            #getGroup,
+            [],
+            {#pk: pk},
+          ),
+        )),
+      ) as _i5.Future<_i3.Group>);
+  @override
+  _i5.Future<_i3.Group> getBoardGroup({
+    required int? since,
+    required int? until,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getBoardGroup,
+          [],
+          {
+            #since: since,
+            #until: until,
+          },
+        ),
+        returnValue: _i5.Future<_i3.Group>.value(_FakeGroup_15(
+          this,
+          Invocation.method(
+            #getBoardGroup,
+            [],
+            {
+              #since: since,
+              #until: until,
+            },
+          ),
+        )),
+      ) as _i5.Future<_i3.Group>);
 }
 
 /// A class which mocks [PaymentUserCubit].
@@ -1361,7 +1468,7 @@ class MockPaymentUserCubit extends _i1.Mock implements _i2.PaymentUserCubit {
   @override
   _i4.ApiRepository get api => (super.noSuchMethod(
         Invocation.getter(#api),
-        returnValue: _FakeApiRepository_15(
+        returnValue: _FakeApiRepository_16(
           this,
           Invocation.getter(#api),
         ),
@@ -1369,7 +1476,7 @@ class MockPaymentUserCubit extends _i1.Mock implements _i2.PaymentUserCubit {
   @override
   _i2.DetailState<_i3.PaymentUser> get state => (super.noSuchMethod(
         Invocation.getter(#state),
-        returnValue: _FakeDetailState_16<_i3.PaymentUser>(
+        returnValue: _FakeDetailState_17<_i3.PaymentUser>(
           this,
           Invocation.getter(#state),
         ),

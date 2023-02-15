@@ -8,9 +8,19 @@ class ThaliedjePlayer {
   final String slug;
   final String displayName;
   final int? venue;
+
   final ThaliedjeCurrentTrack? track;
+
   final bool isPlaying;
-  final int? currentVolume;
+  final double? currentVolume;
+  final bool? shuffle;
+  final String? repeat;
+  final int? timestamp;
+
+  @JsonKey(name: 'duration_ms')
+  final int? duration;
+  @JsonKey(name: 'progress_ms')
+  final int? progress;
 
   ThaliedjePlayer(
     this.id,
@@ -20,6 +30,11 @@ class ThaliedjePlayer {
     this.track,
     this.isPlaying,
     this.currentVolume,
+    this.shuffle,
+    this.repeat,
+    this.timestamp,
+    this.duration,
+    this.progress,
   );
 
   factory ThaliedjePlayer.fromJson(Map<String, dynamic> json) =>
@@ -29,7 +44,7 @@ class ThaliedjePlayer {
 @JsonSerializable(fieldRename: FieldRename.snake)
 class ThaliedjeCurrentTrack {
   final Uri? image;
-  final String name;
+  final String? name;
   final List<String> artists;
 
   ThaliedjeCurrentTrack(this.image, this.name, this.artists);

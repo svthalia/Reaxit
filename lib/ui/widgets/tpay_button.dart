@@ -67,7 +67,7 @@ class _TPayButtonState extends State<TPayButton> {
           title: const Text('Confirm payment'),
           content: Text(
             confirmationMessage,
-            style: Theme.of(context).textTheme.bodyText2,
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
           actions: [
             TextButton.icon(
@@ -113,14 +113,14 @@ class _TPayButtonState extends State<TPayButton> {
             label: buttonLabel,
           );
           // TODO: provide custom tooltip.
-        } else if (state.isLoading) {
+        } else if (state is LoadingState) {
           // PaymentUser loading.
           return ElevatedButton.icon(
             onPressed: null,
             icon: icon,
             label: buttonLabel,
           );
-        } else if (state.hasException) {
+        } else if (state is ErrorState) {
           // PaymentUser couldn't load.
           return ElevatedButton.icon(
             onPressed: null,

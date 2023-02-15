@@ -22,13 +22,13 @@ class SettingsScreen extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  Text('THEME', style: textTheme.caption),
+                  Text('THEME', style: textTheme.bodySmall),
                   const _ThemeModeCard(),
                   const SizedBox(height: 8),
-                  Text('NOTIFICATIONS', style: textTheme.caption),
+                  Text('NOTIFICATIONS', style: textTheme.bodySmall),
                   Center(child: Text(state.message!)),
                   const SizedBox(height: 8),
-                  Text('ABOUT', style: textTheme.caption),
+                  Text('ABOUT', style: textTheme.bodySmall),
                   const _AboutCard(),
                   const SizedBox(height: 8),
                   const _LogOutButton(),
@@ -39,16 +39,16 @@ class SettingsScreen extends StatelessWidget {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                Text('THEME', style: textTheme.caption),
+                Text('THEME', style: textTheme.bodySmall),
                 const _ThemeModeCard(),
                 const SizedBox(height: 8),
-                Text('NOTIFICATIONS', style: textTheme.caption),
+                Text('NOTIFICATIONS', style: textTheme.bodySmall),
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 16),
                   child: Center(child: CircularProgressIndicator()),
                 ),
                 const SizedBox(height: 8),
-                Text('ABOUT', style: textTheme.caption),
+                Text('ABOUT', style: textTheme.bodySmall),
                 const _AboutCard(),
                 const SizedBox(height: 8),
                 const _LogOutButton(),
@@ -58,10 +58,10 @@ class SettingsScreen extends StatelessWidget {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                Text('THEME', style: textTheme.caption),
+                Text('THEME', style: textTheme.bodySmall),
                 const _ThemeModeCard(),
                 const SizedBox(height: 8),
-                Text('NOTIFICATIONS', style: textTheme.caption),
+                Text('NOTIFICATIONS', style: textTheme.bodySmall),
                 if (!state.hasPermissions!) ...[
                   Card(
                     margin: const EdgeInsets.symmetric(vertical: 8),
@@ -77,8 +77,8 @@ class SettingsScreen extends StatelessWidget {
                             child: Text(
                               'Notifications are disabled. Enable '
                               'them in your device settings.',
-                              style: textTheme.bodyText2!.copyWith(
-                                color: textTheme.caption!.color,
+                              style: textTheme.bodyMedium!.copyWith(
+                                color: textTheme.bodySmall!.color,
                               ),
                             ),
                           ),
@@ -107,7 +107,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text('ABOUT', style: textTheme.caption),
+                Text('ABOUT', style: textTheme.bodySmall),
                 const _AboutCard(),
                 const SizedBox(height: 8),
                 const _LogOutButton(),
@@ -205,13 +205,13 @@ class _ThemeModeCard extends StatelessWidget {
       child: ListTile(
         title: Text(
           'COLOR SCHEME',
-          style: Theme.of(context).textTheme.subtitle1,
+          style: Theme.of(context).textTheme.titleMedium,
         ),
         trailing: BlocBuilder<ThemeCubit, ThemeMode>(
           builder: (context, themeMode) {
             return DropdownButton(
               value: themeMode,
-              style: Theme.of(context).textTheme.bodyText2,
+              style: Theme.of(context).textTheme.bodyMedium,
               onChanged: (ThemeMode? newMode) async {
                 BlocProvider.of<ThemeCubit>(context).change(newMode!);
               },
@@ -284,11 +284,11 @@ class _AboutCard extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           'ThaliApp',
-                          style: Theme.of(context).textTheme.headline5,
+                          style: Theme.of(context).textTheme.headlineSmall,
                         ),
                         Text(
                           config.versionNumber,
-                          style: Theme.of(context).textTheme.bodyText2,
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],
                     ),
@@ -299,7 +299,7 @@ class _AboutCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               'There is an app for everything.',
-              style: Theme.of(context).textTheme.bodyText1,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 8),
             OutlinedButton.icon(

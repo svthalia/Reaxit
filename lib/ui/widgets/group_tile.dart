@@ -31,7 +31,7 @@ class GroupTile extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   group.name,
-                  style: Theme.of(context).primaryTextTheme.bodyText2,
+                  style: Theme.of(context).primaryTextTheme.bodyMedium,
                 ),
               ),
             ),

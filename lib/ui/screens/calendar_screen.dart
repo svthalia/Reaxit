@@ -104,8 +104,8 @@ class CalendarSearchDelegate extends SearchDelegate {
     final theme = super.appBarTheme(context);
     return theme.copyWith(
       textTheme: theme.textTheme.copyWith(
-        headline6: GoogleFonts.openSans(
-          textStyle: Theme.of(context).textTheme.headline6,
+        titleLarge: GoogleFonts.openSans(
+          textStyle: Theme.of(context).textTheme.titleLarge,
         ),
       ),
     );
@@ -244,25 +244,29 @@ class CalendarScrollView extends StatelessWidget {
           SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                final month = months[index];
-                final events = monthGroupedEvents[month]!;
+                  final month = months[index];
+                  final events = monthGroupedEvents[month]!;
 
-                final dayGroupedEvents = _groupByDay(events);
-                final days = dayGroupedEvents.keys.toList();
+                  final dayGroupedEvents = _groupByDay(events);
+                  final days = dayGroupedEvents.keys.toList();
 
-                return StickyHeader(
-                  header: SizedBox(
-                    width: double.infinity,
-                    child: Material(
-                      child: Text(
-                        month.year == DateTime.now().year
-                            ? monthFormatter
-                                .format(month.toLocal())
-                                .toUpperCase()
-                            : monthYearFormatter
-                                .format(month.toLocal())
-                                .toUpperCase(),
-                        style: Theme.of(context).textTheme.subtitle1,
+                  return StickyHeader(
+                    header: SizedBox(
+                      width: double.infinity,
+                      child: Material(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Text(
+                            month.year == DateTime.now().year
+                                ? monthFormatter
+                                    .format(month.toLocal())
+                                    .toUpperCase()
+                                : monthYearFormatter
+                                    .format(month.toLocal())
+                                    .toUpperCase(),
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -317,16 +321,16 @@ class _DayCard extends StatelessWidget {
               children: [
                 Text(
                   dayFormatter.format(day.toLocal()).toUpperCase(),
-                  style: Theme.of(context).textTheme.caption!.apply(
+                  style: Theme.of(context).textTheme.bodySmall!.apply(
                       color: Theme.of(context)
                           .textTheme
-                          .caption!
+                          .bodySmall!
                           .color!
                           .withOpacity(0.5)),
                 ),
                 Text(
                   day.day.toString(),
-                  style: Theme.of(context).textTheme.headline3,
+                  style: Theme.of(context).textTheme.displaySmall,
                   strutStyle: const StrutStyle(
                     forceStrutHeight: true,
                     leading: 2.2,
@@ -409,7 +413,7 @@ class _EventCard extends StatelessWidget {
                   event.label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         color: Colors.white.withOpacity(0.8),
                       ),
                 ),

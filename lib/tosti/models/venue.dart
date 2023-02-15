@@ -12,10 +12,10 @@ class TostiVenue {
   final String? colorInCalendar;
   final bool canBeReserved;
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false)
   final TostiShift? shift;
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false)
   final ThaliedjePlayer? player;
 
   TostiVenue(

@@ -72,7 +72,7 @@ class _Page extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (state.hasException) {
+    if (state is ErrorState) {
       return Scaffold(
         appBar: ThaliaAppBar(
           title: Text(listGroup?.name.toUpperCase() ?? 'GROUP'),
@@ -82,12 +82,16 @@ class _Page extends StatelessWidget {
           child: ErrorScrollView(state.message!),
         ),
       );
-    } else if (state.isLoading && listGroup == null && state.result == null) {
+    } else if (state is LoadingState &&
+        state is! ResultState &&
+        listGroup == null) {
       return Scaffold(
         appBar: ThaliaAppBar(title: const Text('GROUP')),
         body: const Center(child: CircularProgressIndicator()),
       );
-    } else if (state.isLoading && listGroup != null && state.result == null) {
+    } else if (state is LoadingState &&
+        state is! ResultState &&
+        listGroup != null) {
       final group = listGroup!;
       return Scaffold(
         appBar: ThaliaAppBar(title: Text(group.name.toUpperCase())),
@@ -160,7 +164,7 @@ class _MembersHeader extends StatelessWidget {
       sliver: SliverToBoxAdapter(
         child: Text(
           'MEMBERS',
-          style: Theme.of(context).textTheme.caption,
+          style: Theme.of(context).textTheme.bodySmall,
         ),
       ),
     );
@@ -256,7 +260,7 @@ class _GroupInfo extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 group.name.toUpperCase(),
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               const Divider(height: 24),
               _Description(group: group),

@@ -46,8 +46,8 @@ void main() {
       );
 
       expect(find.text('Lorem 1'), findsOneWidget);
-      expect(find.text('APRIL'), findsOneWidget);
-      expect(find.text('MAY'), findsOneWidget);
+      expect(find.textContaining('APRIL'), findsOneWidget);
+      expect(find.textContaining('MAY'), findsOneWidget);
       expect(find.textContaining('Lorem 2'), findsNWidgets(3));
     });
   });

@@ -22,12 +22,12 @@ class SalesOrder {
 
   final Uri paymentUrl;
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false)
   bool? _tpayAllowed;
 
   /// Whether this order can be paid with Thalia Pay.
   /// See https://github.com/svthalia/concrexit/issues/1784.
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false)
   bool get tpayAllowed => _tpayAllowed ?? false;
   set tpayAllowed(bool value) => _tpayAllowed = value;
 

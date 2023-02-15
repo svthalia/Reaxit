@@ -136,7 +136,7 @@ class _MarkPresentQrButton extends StatelessWidget {
                           padding: const EdgeInsets.all(16),
                           child: Text(
                             'Scan to mark yourself present.',
-                            style: theme.textTheme.subtitle2,
+                            style: theme.textTheme.titleSmall,
                           ),
                         ),
                         QrImage(
@@ -150,7 +150,7 @@ class _MarkPresentQrButton extends StatelessWidget {
                             quarterTurns: 2,
                             child: Text(
                               'Scan to mark yourself present.',
-                              style: theme.textTheme.subtitle2,
+                              style: theme.textTheme.titleSmall,
                             ),
                           ),
                         )
@@ -238,7 +238,7 @@ class __RegistrationTileState extends State<_RegistrationTile> {
       if (registration.isPaid &&
           registration.payment!.type == PaymentType.tpayPayment) {
         paymentDropdown = DropdownButton<PaymentType?>(
-          style: Theme.of(context).textTheme.bodyText2,
+          style: Theme.of(context).textTheme.bodyMedium,
           items: const [
             DropdownMenuItem(
               value: PaymentType.tpayPayment,
@@ -266,7 +266,7 @@ class __RegistrationTileState extends State<_RegistrationTile> {
         );
       } else {
         paymentDropdown = DropdownButton<PaymentType?>(
-          style: Theme.of(context).textTheme.bodyText2,
+          style: Theme.of(context).textTheme.bodyMedium,
           items: const [
             DropdownMenuItem(
               value: PaymentType.cardPayment,
@@ -320,7 +320,7 @@ class __RegistrationTileState extends State<_RegistrationTile> {
         children: [
           Text(
             'Present:',
-            style: Theme.of(context).textTheme.caption,
+            style: Theme.of(context).textTheme.bodySmall,
           ),
           presentCheckbox,
           paymentDropdown,
@@ -340,8 +340,8 @@ class EventAdminSearchDelegate extends SearchDelegate {
     final theme = super.appBarTheme(context);
     return theme.copyWith(
       textTheme: theme.textTheme.copyWith(
-        headline6: GoogleFonts.openSans(
-          textStyle: Theme.of(context).textTheme.headline6,
+        titleLarge: GoogleFonts.openSans(
+          textStyle: Theme.of(context).textTheme.titleLarge,
         ),
       ),
     );

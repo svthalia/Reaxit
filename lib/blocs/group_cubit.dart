@@ -14,20 +14,18 @@ class GroupCubit extends Cubit<GroupState> implements BaseGroupCubit {
   final ApiRepository api;
   final int pk;
 
-  GroupCubit(this.api, {required this.pk}) : super(const GroupState.loading());
+  GroupCubit(this.api, {required this.pk}) : super(const LoadingState());
 
   @override
   Future<void> load() async {
-    emit(state.copyWith(isLoading: true));
+    emit(LoadingState.from(state));
     try {
       final group = await api.getGroup(pk: pk);
-      emit(DetailState.result(result: group));
+      emit(ResultState(group));
     } on ApiException catch (exception) {
-      emit(DetailState.failure(
-        message: exception.getMessage(
-          notFound: 'The group does not exist.',
-        ),
-      ));
+      emit(ErrorState(exception.getMessage(
+        notFound: 'The group does not exist.',
+      )));
     }
   }
 }
@@ -38,20 +36,18 @@ class BoardCubit extends Cubit<GroupState> implements BaseGroupCubit {
   final int until;
 
   BoardCubit(this.api, {required this.since, required this.until})
-      : super(const GroupState.loading());
+      : super(const LoadingState());
 
   @override
   Future<void> load() async {
-    emit(state.copyWith(isLoading: true));
+    emit(LoadingState.from(state));
     try {
       final group = await api.getBoardGroup(since: since, until: until);
-      emit(DetailState.result(result: group));
+      emit(ResultState(group));
     } on ApiException catch (exception) {
-      emit(DetailState.failure(
-        message: exception.getMessage(
-          notFound: 'The group does not exist.',
-        ),
-      ));
+      emit(ErrorState(exception.getMessage(
+        notFound: 'The group does not exist.',
+      )));
     }
   }
 }

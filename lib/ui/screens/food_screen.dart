@@ -64,7 +64,7 @@ class _FoodScreenState extends State<FoodScreen> {
       children: [
         Text(
           foodEvent.title,
-          style: Theme.of(context).textTheme.headline5,
+          style: Theme.of(context).textTheme.headlineSmall,
           textAlign: TextAlign.center,
         ),
         subtitle,
@@ -95,7 +95,7 @@ class _FoodScreenState extends State<FoodScreen> {
                     title: const Text('Cancel order'),
                     content: Text(
                       'Are you sure you want to cancel your order?',
-                      style: Theme.of(context).textTheme.bodyText2,
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     actions: [
                       TextButton.icon(
@@ -140,16 +140,20 @@ class _FoodScreenState extends State<FoodScreen> {
 
       late Widget payButton;
       if (order.isPaid || !order.tpayAllowed) {
-        payButton = const SizedBox.shrink();
+        payButton = const SizedBox.shrink(key: ValueKey(false));
       } else {
-        payButton = TPayButton(
-          onPay: () => _foodCubit.thaliaPayOrder(orderPk: order.pk),
-          confirmationMessage: 'Are you sure you '
-              'want to pay €${order.product.price} '
-              'for your "${order.product.name}"?',
-          failureMessage: 'Could not pay your order.',
-          successMessage: 'Paid your order with Thalia Pay.',
-          amount: order.product.price,
+        payButton = SizedBox(
+          width: double.infinity,
+          key: const ValueKey(true),
+          child: TPayButton(
+            onPay: () => _foodCubit.thaliaPayOrder(orderPk: order.pk),
+            confirmationMessage: 'Are you sure you '
+                'want to pay €${order.product.price} '
+                'for your "${order.product.name}"?',
+            failureMessage: 'Could not pay your order.',
+            successMessage: 'Paid your order with Thalia Pay.',
+            amount: order.product.price,
+          ),
         );
       }
 
@@ -205,7 +209,7 @@ class _FoodScreenState extends State<FoodScreen> {
                       Expanded(
                         child: Text(
                           order.product.name,
-                          style: Theme.of(context).textTheme.headline6,
+                          style: Theme.of(context).textTheme.titleLarge,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                         ),
@@ -214,7 +218,7 @@ class _FoodScreenState extends State<FoodScreen> {
                         order.isPaid
                             ? 'has been paid'
                             : 'not yet paid: €${order.product.price}',
-                        style: Theme.of(context).textTheme.bodyText2,
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ],
                   ),
@@ -399,7 +403,7 @@ class __ProductTileState extends State<_ProductTile> {
             TextSpan(text: '${widget.product.name} '),
             TextSpan(
               text: '€${widget.product.price}',
-              style: Theme.of(context).textTheme.caption!.copyWith(
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
                 fontFeatures: const [FontFeature.tabularFigures()],
               ),
             ),
@@ -412,10 +416,9 @@ class __ProductTileState extends State<_ProductTile> {
           ? Text(widget.product.description)
           : null,
       trailing: BlocBuilder<FoodCubit, FoodState>(
-        buildWhen: (previous, current) => current.foodEvent != null,
         builder: (context, state) {
           return ElevatedButton(
-            onPressed: state.foodEvent!.canOrder()
+            onPressed: state.foodEvent?.canOrder() ?? false
                 ? () {
                     if (state.foodEvent!.hasOrder) {
                       _changeOrder(state.foodEvent!);
@@ -455,7 +458,7 @@ class __ProductTileState extends State<_ProductTile> {
           title: const Text('Change order'),
           content: Text(
             'Are you sure you want to change your order?',
-            style: Theme.of(context).textTheme.bodyText2,
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
           actions: [
             TextButton.icon(

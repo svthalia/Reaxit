@@ -47,7 +47,7 @@ class MenuDrawer extends StatelessWidget {
                       bottom: 8,
                       child: Text(
                         me.displayName,
-                        style: Theme.of(context).primaryTextTheme.headline5,
+                        style: Theme.of(context).primaryTextTheme.headlineSmall,
                       ),
                     ),
                     SafeArea(
@@ -116,7 +116,7 @@ class MenuDrawer extends StatelessWidget {
                       bottom: 8,
                       child: Text(
                         'Loading...',
-                        style: Theme.of(context).primaryTextTheme.headline5,
+                        style: Theme.of(context).primaryTextTheme.headlineSmall,
                       ),
                     ),
                     SafeArea(
