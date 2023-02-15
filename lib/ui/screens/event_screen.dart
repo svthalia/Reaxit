@@ -221,7 +221,7 @@ class _EventScreenState extends State<EventScreen> {
         registrationButton = _makeCreateRegistrationButton(event);
       }
     } else if (event.canCancelRegistration) {
-      if (event.cancelDeadlinePassed()) {
+      if (event.cancelDeadlinePassed() && event.registration!.isInvited) {
         // Cancel too late message, cancel button with fine warning.
         textSpans.add(TextSpan(
           text: event.cancelTooLateMessage,
@@ -587,7 +587,6 @@ class _EventScreenState extends State<EventScreen> {
               ) ??
               false;
         }
-
         if (confirmed) {
           try {
             final registration = await _eventCubit.register();
