@@ -244,28 +244,27 @@ class CalendarScrollView extends StatelessWidget {
           SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                  final month = months[index];
-                  final events = monthGroupedEvents[month]!;
+                final month = months[index];
+                final events = monthGroupedEvents[month]!;
 
-                  final dayGroupedEvents = _groupByDay(events);
-                  final days = dayGroupedEvents.keys.toList();
+                final dayGroupedEvents = _groupByDay(events);
+                final days = dayGroupedEvents.keys.toList();
 
-                  return StickyHeader(
-                    header: SizedBox(
-                      width: double.infinity,
-                      child: Material(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Text(
-                            month.year == DateTime.now().year
-                                ? monthFormatter
-                                    .format(month.toLocal())
-                                    .toUpperCase()
-                                : monthYearFormatter
-                                    .format(month.toLocal())
-                                    .toUpperCase(),
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
+                return StickyHeader(
+                  header: SizedBox(
+                    width: double.infinity,
+                    child: Material(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Text(
+                          month.year == DateTime.now().year
+                              ? monthFormatter
+                                  .format(month.toLocal())
+                                  .toUpperCase()
+                              : monthYearFormatter
+                                  .format(month.toLocal())
+                                  .toUpperCase(),
+                          style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ),
                     ),
