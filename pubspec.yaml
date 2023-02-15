@@ -102,7 +102,7 @@ dependencies:
   sticky_headers:
     git:
       url: https://github.com/JAicewizard/flutter_sticky_headers
-      ref: master # branch name
+      ref: a3f6cba75471ba16462e5def50794c1c0ce53dfc
 
 
   # Predefined animations.
