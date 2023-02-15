@@ -259,9 +259,10 @@ List<_CalendarViewMonth> _ensureContainsToday(
     }
     if (events[i].month == thisMonth) {
       for (var j = 0; j < events[i].days.length; j++) {
+        print(events[i].days.map((e) => e.day));
         if (events[i].days[j].day == today) return events;
         if (events[i].days[j].day.isAfter(today)) {
-          events[i].days.add(_CalendarViewDay(day: today, events: []));
+          events[i].days.insert(i, _CalendarViewDay(day: today, events: []));
           return events;
         }
       }
