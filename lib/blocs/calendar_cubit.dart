@@ -214,7 +214,7 @@ class CalendarCubit extends Cubit<CalendarState> {
         (event) => event.parentEvent is! PartnerEvent && event.isFirstPart);
     // Remove anything before
     return events
-        .where((element) => events.last.start.isAfter(lastIncludedEvent.start))
+        .where((element) => lastIncludedEvent.start.isAfter(events.last.start))
         .toList();
   }
 
@@ -224,7 +224,7 @@ class CalendarCubit extends Cubit<CalendarState> {
         (event) => event.parentEvent is! PartnerEvent && event.isLasttPart);
     // Remove anything before
     return events
-        .where((element) => events.last.start.isBefore(lastIncludedEvent.start))
+        .where((element) => lastIncludedEvent.start.isBefore(events.last.start))
         .toList();
   }
 
@@ -293,9 +293,11 @@ class CalendarCubit extends Cubit<CalendarState> {
       // Split multi-day events and merge the lists
       List<CalendarEvent> futureEvents = [
         ...futurePartnerEventsResponse.results
-            .expand(CalendarEvent.splitEventIntoCalendarEvents),
+            .expand(CalendarEvent.splitEventIntoCalendarEvents)
+            .where((element) => element.start.isAfter(_splitTime)),
         ...futureEventsResponse.results
-            .expand(CalendarEvent.splitEventIntoCalendarEvents),
+            .expand(CalendarEvent.splitEventIntoCalendarEvents)
+            .where((element) => element.start.isAfter(_splitTime)),
       ];
 
       futureEvents.sort((a, b) => a.start.compareTo(b.start));
@@ -309,11 +311,11 @@ class CalendarCubit extends Cubit<CalendarState> {
       List<CalendarEvent> pastEvents = [
         ...pastPartnerEventsResponse.results
             .expand(CalendarEvent.splitEventIntoCalendarEvents)
-            .toList(),
+            .where((element) => !element.start.isAfter(_splitTime)),
         ...pastEventsResponse.results
             .expand(CalendarEvent.splitEventIntoCalendarEvents)
-            .toList(),
-      ].toList();
+            .where((element) => !element.start.isAfter(_splitTime)),
+      ];
 
       pastEvents.sort((a, b) => a.start.compareTo(b.start));
 
@@ -386,9 +388,11 @@ class CalendarCubit extends Cubit<CalendarState> {
 
       List<CalendarEvent> newEvents = [
         ..._remainingFutureEvents..clear(),
-        ...eventsResponse.results.expand(
-          CalendarEvent.splitEventIntoCalendarEvents,
-        ),
+        ...eventsResponse.results
+            .expand(
+              CalendarEvent.splitEventIntoCalendarEvents,
+            )
+            .where((element) => element.start.isAfter(_splitTime)),
       ];
 
       // Sort only the new events, because the old events in
@@ -445,9 +449,11 @@ class CalendarCubit extends Cubit<CalendarState> {
 
       List<CalendarEvent> newEvents = [
         ..._remainingPastEvents..clear(),
-        ...eventsResponse.results.expand(
-          CalendarEvent.splitEventIntoCalendarEvents,
-        ),
+        ...eventsResponse.results
+            .expand(
+              CalendarEvent.splitEventIntoCalendarEvents,
+            )
+            .where((element) => !element.start.isAfter(_splitTime)),
       ].toList();
 
       // Sort only the new events, because the old events in
