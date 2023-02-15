@@ -352,11 +352,12 @@ class CalendarScrollView extends StatelessWidget {
             : scrollPhysics,
         center: centerkey,
         slivers: [
-          SliverToBoxAdapter(
-            child: AnimatedLoader(
-              visible: calendarState.isLoadingMoreUp,
+          if (_enableLoadMore)
+            SliverToBoxAdapter(
+              child: AnimatedLoader(
+                visible: calendarState.isLoadingMoreUp,
+              ),
             ),
-          ),
           if (_enableLoadMore)
             SliverToBoxAdapter(
               child: ListView(

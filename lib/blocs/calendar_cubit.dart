@@ -141,7 +141,7 @@ class CalendarState extends Equatable {
 
   /// More of the same results are being loaded in the down direction. The results
   /// are not outdated.
-  bool get isLoadingMoreDown => events.isDoneUp;
+  bool get isLoadingMoreDown => events.isLoadingMoreDown;
 
   /// The last results have been loaded in the up direction. There are no more
   /// pages left.
@@ -250,7 +250,7 @@ class CalendarCubit extends Cubit<CalendarState> {
         end: _splitTime,
         search: query,
         ordering: '-end',
-        limit: pageSize,
+        limit: firstPageSize,
         offset: 0,
       );
 
@@ -286,7 +286,6 @@ class CalendarCubit extends Cubit<CalendarState> {
 
       final isDoneDown =
           futureEventsResponse.results.length == futureEventsResponse.count;
-
       final isDoneUp = _nextPastOffset + pastEventsResponse.results.length ==
           pastEventsResponse.count;
 
