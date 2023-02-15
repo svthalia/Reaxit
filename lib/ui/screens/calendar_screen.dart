@@ -239,7 +239,7 @@ class CalendarScrollView extends StatelessWidget {
         physics: const RangeMaintainingScrollPhysics(
           parent: AlwaysScrollableScrollPhysics(),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.all(8),
         slivers: [
           SliverList(
             delegate: SliverChildBuilderDelegate(
