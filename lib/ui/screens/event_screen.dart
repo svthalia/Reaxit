@@ -443,7 +443,7 @@ class _EventScreenState extends State<EventScreen> {
       textSpans.add(const TextSpan(
           text:
               'You are registered. This is only an indication that you intend '
-              'to be present. Access to the event is not handled by thalia.'));
+              'to be present. Access to the event is not handled by Thalia.'));
     } else if (event.canCreateRegistration) {
       textSpans.add(const TextSpan(
         text: 'Even though registration is not required for this event, you '
