@@ -587,6 +587,7 @@ class _EventScreenState extends State<EventScreen> {
               ) ??
               false;
         }
+
         if (confirmed) {
           try {
             final registration = await _eventCubit.register();
