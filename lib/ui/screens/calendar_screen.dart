@@ -261,7 +261,7 @@ List<_CalendarViewMonth> _ensureContainsToday(
       for (var j = 0; j < events[i].days.length; j++) {
         if (events[i].days[j].day == today) return events;
         if (events[i].days[j].day.isAfter(today)) {
-          events[i].days.insert(i, _CalendarViewDay(day: today, events: []));
+          events[i].days.insert(j, _CalendarViewDay(day: today, events: []));
           return events;
         }
       }
@@ -338,6 +338,7 @@ class CalendarScrollView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(_monthGroupedEventsDown.firstOrNull);
     ScrollPhysics scrollPhysics = const AlwaysScrollableScrollPhysics();
 
     return Scrollbar(

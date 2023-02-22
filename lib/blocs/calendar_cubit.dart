@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/api/api_repository.dart';
@@ -214,7 +215,7 @@ class CalendarCubit extends Cubit<CalendarState> {
         (event) => event.parentEvent is! PartnerEvent && event.isFirstPart);
     // Remove anything before
     return events
-        .where((element) => lastIncludedEvent.start.isAfter(events.last.start))
+        .where((element) => lastIncludedEvent.start.isAfter(element.start))
         .toList();
   }
 
@@ -222,9 +223,10 @@ class CalendarCubit extends Cubit<CalendarState> {
     // Get the first non-parter event that will be shown on the calendar.
     CalendarEvent lastIncludedEvent = events.firstWhere(
         (event) => event.parentEvent is! PartnerEvent && event.isLasttPart);
+    print(lastIncludedEvent.label);
     // Remove anything before
     return events
-        .where((element) => lastIncludedEvent.start.isBefore(events.last.start))
+        .where((element) => lastIncludedEvent.start.isBefore(element.start))
         .toList();
   }
 
@@ -316,7 +318,12 @@ class CalendarCubit extends Cubit<CalendarState> {
             .where((element) => !element.start.isAfter(_splitTime)),
       ];
 
+      // Move any events that started before _splitTime but ended after to the
+      // future events
       pastEvents.sort((a, b) => a.start.compareTo(b.start));
+      while (pastEvents.last.end.isAfter(_splitTime)) {
+        futureEvents.add(pastEvents.removeLast());
+      }
 
       // Remove the first partner events and day parts of events that could fill
       // up the calendar further then where the first not-loaded event will go
