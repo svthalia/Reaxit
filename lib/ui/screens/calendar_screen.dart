@@ -338,7 +338,6 @@ class CalendarScrollView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(_monthGroupedEventsDown.firstOrNull);
     ScrollPhysics scrollPhysics = const AlwaysScrollableScrollPhysics();
 
     return Scrollbar(

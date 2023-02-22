@@ -223,7 +223,6 @@ class CalendarCubit extends Cubit<CalendarState> {
     // Get the first non-parter event that will be shown on the calendar.
     CalendarEvent lastIncludedEvent = events.firstWhere(
         (event) => event.parentEvent is! PartnerEvent && event.isLasttPart);
-    print(lastIncludedEvent.label);
     // Remove anything before
     return events
         .where((element) => lastIncludedEvent.start.isBefore(element.start))

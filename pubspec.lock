@@ -1140,8 +1140,8 @@ packages:
       url: "https://github.com/JAicewizard/flutter_sticky_headers"
     source: git
       path: "."
-      ref: master
-      resolved-ref: "11a34626f863ff9a071e327578e12a94fedab12c"
+      ref: a3f6cba75471ba16462e5def50794c1c0ce53dfc
+      resolved-ref: a3f6cba75471ba16462e5def50794c1c0ce53dfc
       url: "https://github.com/JAicewizard/flutter_sticky_headers"
     source: git
     version: "0.3.0+2"
