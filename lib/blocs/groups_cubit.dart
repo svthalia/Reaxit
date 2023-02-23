@@ -20,7 +20,13 @@ class GroupsCubit extends Cubit<GroupsState> {
     try {
       final listResponse = await api.getGroups(limit: 1000, type: groupType);
       if (listResponse.results.isNotEmpty) {
-        emit(ResultState(listResponse.results));
+        List<ListGroup> results = listResponse.results;
+
+        if (results.first.type == MemberGroupType.board) {
+          results = results.reversed.toList();
+        }
+
+        emit(ResultState(results));
       } else {
         emit(const ErrorState('There are no groups.'));
       }
