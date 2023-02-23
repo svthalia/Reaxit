@@ -22,9 +22,7 @@ class GroupsCubit extends Cubit<GroupsState> {
       if (listResponse.results.isNotEmpty) {
         List<ListGroup> results = listResponse.results;
 
-        // Reverse because for some reason commitees and societies
-        // are sorted in reverse alphabetical order.
-        if (results.first.type != MemberGroupType.board) {
+        if (results.first.type == MemberGroupType.board) {
           results = results.reversed.toList();
         }
 
