@@ -426,7 +426,7 @@ packages:
       name: flutter_widget_from_html_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.9.1"
+    version: "0.10.0"
   frontend_server_client:
     dependency: transitive
     description:
@@ -1193,4 +1193,4 @@ packages:
     version: "3.1.1"
 sdks:
   dart: ">=2.19.0 <3.0.0"
-  flutter: ">=3.3.0"
+  flutter: ">=3.7.0-0"
