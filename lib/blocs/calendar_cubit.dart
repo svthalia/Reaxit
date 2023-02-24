@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -188,13 +189,13 @@ class CalendarCubit extends Cubit<CalendarState> {
   /// A list of events that have been removed from the previous results
   /// in order to prevent them filling up the calendar before today.
   /// These should be added in later calls to [moreUp()].
-  final List<CalendarEvent> _remainingPastEvents = [];
+  List<CalendarEvent> _remainingPastEvents = [];
 
   /// A list of events that have been removed from the previous results
   /// in order to prevent them filling up the calendar further then where
   /// the first not-loaded event will go later. These should be added in
   /// later calls to [more()].
-  final List<CalendarEvent> _remainingFutureEvents = [];
+  List<CalendarEvent> _remainingFutureEvents = [];
 
   /// Debouncetimer to fix things like load
   Timer? _debounce;
@@ -213,6 +214,9 @@ class CalendarCubit extends Cubit<CalendarState> {
     CalendarEvent lastIncludedEvent = events.lastWhere(
         (event) => event.parentEvent is! PartnerEvent && event.isFirstPart);
     // Remove anything before
+    _remainingFutureEvents = events
+        .whereNot((element) => lastIncludedEvent.start.isAfter(element.start))
+        .toList();
     return events
         .where((element) => lastIncludedEvent.start.isAfter(element.start))
         .toList();
@@ -223,6 +227,9 @@ class CalendarCubit extends Cubit<CalendarState> {
     CalendarEvent lastIncludedEvent = events.firstWhere(
         (event) => event.parentEvent is! PartnerEvent && event.isLasttPart);
     // Remove anything before
+    _remainingPastEvents = events
+        .whereNot((element) => lastIncludedEvent.start.isBefore(element.start))
+        .toList();
     return events
         .where((element) => lastIncludedEvent.start.isBefore(element.start))
         .toList();
@@ -282,7 +289,7 @@ class CalendarCubit extends Cubit<CalendarState> {
       _remainingPastEvents.clear();
 
       _nextOffset = firstPageSize;
-      _nextPastOffset = 0;
+      _nextPastOffset = firstPageSize;
 
       final isDoneDown =
           futureEventsResponse.results.length == futureEventsResponse.count;
