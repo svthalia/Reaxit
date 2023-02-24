@@ -30,7 +30,7 @@ dependencies:
   collection: ^1.16.0
 
   # Fonts.
-  google_fonts: ^4.0.1
+  google_fonts: ^4.0.3
 
   # DateTime formatting.
   intl: ^0.18.0
