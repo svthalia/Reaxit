@@ -269,7 +269,7 @@ class ConcrexitApiRepository implements ApiRepository {
     );
     return sandbox(() async {
       final uri = _uri(
-        path: '/partners/events/',
+        path: '/events/external/',
         query: {
           if (search != null) 'search': search,
           if (limit != null) 'limit': limit.toString(),
