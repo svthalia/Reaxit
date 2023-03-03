@@ -212,8 +212,8 @@ class MenuDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            title: const Text('Pay'),
-            leading: const Icon(Icons.abc),
+            title: const Text('Payments'),
+            leading: const Icon(Icons.euro),
             selected: router.location == '/pay',
             onTap: () {
               if (router.location.startsWith('/pay')) {
