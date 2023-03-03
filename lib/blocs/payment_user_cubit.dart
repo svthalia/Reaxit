@@ -72,8 +72,8 @@ class PaymentUserCubit extends Cubit<PaymentUserState> {
     emit(state.copyWith(isLoading: true));
     try {
       final paymentUser = await api.getPaymentUser();
-      final payments = await api
-          .getPayments(type: [PaymentType.tpayPayment], settled: false);
+      final payments =
+          await api.getPayments(type: [PaymentType.tpayPayment], settled: true);
 
       emit(PaymentUserState.result(
           user: paymentUser, payments: payments.results));
