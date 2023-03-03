@@ -1473,20 +1473,20 @@ class MockPaymentUserCubit extends _i1.Mock implements _i2.PaymentUserCubit {
           Invocation.getter(#api),
         ),
       ) as _i4.ApiRepository);
-  @override
-  _i2.DetailState<_i3.PaymentUser> get state => (super.noSuchMethod(
-        Invocation.getter(#state),
-        returnValue: _FakeDetailState_17<_i3.PaymentUser>(
-          this,
-          Invocation.getter(#state),
-        ),
-      ) as _i2.DetailState<_i3.PaymentUser>);
-  @override
-  _i5.Stream<_i2.DetailState<_i3.PaymentUser>> get stream =>
-      (super.noSuchMethod(
-        Invocation.getter(#stream),
-        returnValue: _i5.Stream<_i2.DetailState<_i3.PaymentUser>>.empty(),
-      ) as _i5.Stream<_i2.DetailState<_i3.PaymentUser>>);
+  // @override
+  // _i2.DetailState<_i3.PaymentUser> get state => (super.noSuchMethod(
+  //       Invocation.getter(#state),
+  //       returnValue: _FakeDetailState_17<_i3.PaymentUser>(
+  //         this,
+  //         Invocation.getter(#state),
+  //       ),
+  //     ) as _i2.DetailState<_i3.PaymentUser>);
+  // @override
+  // _i5.Stream<_i2.DetailState<_i3.PaymentUser>> get stream =>
+  //     (super.noSuchMethod(
+  //       Invocation.getter(#stream),
+  //       returnValue: _i5.Stream<_i2.DetailState<_i3.PaymentUser>>.empty(),
+  //     ) as _i5.Stream<_i2.DetailState<_i3.PaymentUser>>);
   @override
   bool get isClosed => (super.noSuchMethod(
         Invocation.getter(#isClosed),
@@ -1501,23 +1501,23 @@ class MockPaymentUserCubit extends _i1.Mock implements _i2.PaymentUserCubit {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
-  @override
-  void emit(_i2.DetailState<_i3.PaymentUser>? state) => super.noSuchMethod(
-        Invocation.method(
-          #emit,
-          [state],
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  void onChange(_i6.Change<_i2.DetailState<_i3.PaymentUser>>? change) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #onChange,
-          [change],
-        ),
-        returnValueForMissingStub: null,
-      );
+  // @override
+  // void emit(_i2.DetailState<_i3.PaymentUser>? state) => super.noSuchMethod(
+  //       Invocation.method(
+  //         #emit,
+  //         [state],
+  //       ),
+  //       returnValueForMissingStub: null,
+  //     );
+  // @override
+  // void onChange(_i6.Change<_i2.DetailState<_i3.PaymentUser>>? change) =>
+  //     super.noSuchMethod(
+  //       Invocation.method(
+  //         #onChange,
+  //         [change],
+  //       ),
+  //       returnValueForMissingStub: null,
+  //     );
   @override
   void addError(
     Object? error, [

@@ -6,6 +6,7 @@ import 'package:reaxit/tosti/tosti_api_repository.dart';
 import 'package:reaxit/tosti/tosti_screen.dart';
 import 'package:reaxit/tosti/tosti_shift_screen.dart';
 import 'package:reaxit/ui/screens.dart';
+import 'package:reaxit/ui/screens/pay_screen.dart';
 import 'package:reaxit/ui/widgets.dart';
 
 /// Returns true if [uri] is a deep link that can be handled by the app.
@@ -403,6 +404,11 @@ final List<RouteBase> routes = [
       child: const LoginScreen(),
     ),
   ),
+  GoRoute(
+      path: '/pay',
+      name: 'pay',
+      pageBuilder: (context, state) =>
+          MaterialPage(key: state.pageKey, child: PayScreen())),
   if (config.tostiEnabled) // Otherwise, all T.O.S.T.I. stuff is removed.
     GoRoute(
       path: '/tosti',

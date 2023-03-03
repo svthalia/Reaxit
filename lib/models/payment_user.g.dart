@@ -14,7 +14,7 @@ PaymentUser _$PaymentUserFromJson(Map<String, dynamic> json) => PaymentUser(
 
 Map<String, dynamic> _$PaymentUserToJson(PaymentUser instance) =>
     <String, dynamic>{
-      'balance': instance.balance,
+      'balance': instance.tpayBalance,
       'tpay_allowed': instance.tpayAllowed,
       'tpay_enabled': instance.tpayEnabled,
     };

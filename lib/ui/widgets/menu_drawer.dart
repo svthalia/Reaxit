@@ -211,6 +211,18 @@ class MenuDrawer extends StatelessWidget {
               }
             },
           ),
+          ListTile(
+            title: const Text('Pay'),
+            leading: const Icon(Icons.abc),
+            selected: router.location == '/pay',
+            onTap: () {
+              if (router.location.startsWith('/pay')) {
+                Navigator.of(context).pop();
+              } else {
+                context.goNamed('pay');
+              }
+            },
+          ),
           const Divider(thickness: 1),
           ListTile(
             title: const Text('Settings'),

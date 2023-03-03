@@ -128,7 +128,7 @@ class _TPayButtonState extends State<TPayButton> {
             label: buttonLabel,
           );
         } else {
-          final paymentUser = state.result!;
+          final paymentUser = state.user!;
           if (!paymentUser.tpayAllowed) {
             // TPay not allowed for the user.
             return Tooltip(
