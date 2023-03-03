@@ -1227,7 +1227,6 @@ class ConcrexitApiRepository implements ApiRepository {
     return sandbox(() async {
       const paymentTypeMap = {
         PaymentType.tpayPayment: 'tpay_payment',
-        //PaymentType.cardPayment: 'card_payment'
       };
 
       final uri = _baseUri.replace(
