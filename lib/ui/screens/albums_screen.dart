@@ -46,6 +46,11 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
         title: const Text('ALBUMS'),
         actions: [
           IconButton(
+              onPressed: () => context.pushNamed(
+                    'liked',
+                  ),
+              icon: const Icon(Icons.favorite)),
+          IconButton(
             padding: const EdgeInsets.all(16),
             icon: const Icon(Icons.search),
             onPressed: () async {
@@ -61,11 +66,6 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
               searchCubit.close();
             },
           ),
-          IconButton(
-              onPressed: () => context.pushNamed(
-                    'liked',
-                  ),
-              icon: const Icon(Icons.monitor_heart))
         ],
       ),
       drawer: MenuDrawer(),
