@@ -7,6 +7,7 @@ import 'package:mime/mime.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs/liked_photos_cubit.dart';
@@ -20,7 +21,7 @@ import 'package:gallery_saver/gallery_saver.dart';
 
 /// Screen that loads and shows the Album with `slug`.
 class LikedPhotosScreen extends StatefulWidget {
-  const LikedPhotosScreen({super.key});
+  const LikedPhotosScreen();
 
   @override
   State<LikedPhotosScreen> createState() => _LikedPhotosScreenState();
@@ -213,26 +214,26 @@ class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
     }
   }
 
-  // Future<void> _likePhoto(List<AlbumPhoto> photos, int index) async {
-  //   final messenger = ScaffoldMessenger.of(context);
-  //   if (photos[index].liked) {
-  //     unlikeController.forward();
-  //   } else {
-  //     likeController.forward();
-  //   }
-  //   try {
-  //     await BlocProvider.of<LikedPhotosCubit>(context).updateLike(
-  //       liked: !photos[index].liked,
-  //       index: index,
-  //     );
-  //   } on ApiException {
-  //     messenger.showSnackBar(
-  //       const SnackBar(
-  //         content: Text('Something went wrong while liking the photo.'),
-  //       ),
-  //     );
-  //   }
-  // }
+  Future<void> _likePhoto(List<AlbumPhoto> photos, int index) async {
+    final messenger = ScaffoldMessenger.of(context);
+    if (photos[index].liked) {
+      unlikeController.forward();
+    } else {
+      likeController.forward();
+    }
+    try {
+      await BlocProvider.of<LikedPhotosCubit>(context).updateLike(
+        liked: !photos[index].liked,
+        index: index,
+      );
+    } on ApiException {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('Something went wrong while liking the photo.'),
+        ),
+      );
+    }
+  }
 
   Widget _gallery(List<AlbumPhoto> photos) => PhotoViewGallery.builder(
         backgroundDecoration: const BoxDecoration(color: Colors.transparent),
@@ -244,7 +245,7 @@ class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
         builder: (context, i) {
           return PhotoViewGalleryPageOptions.customChild(
             child: GestureDetector(
-              // onDoubleTap: () => _likePhoto(photos, i),
+              onDoubleTap: () => _likePhoto(photos, i),
               child: Image.network(photos[i].full),
             ),
             minScale: PhotoViewComputedScale.contained * 0.8,
@@ -302,6 +303,7 @@ class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
                 controller,
                 widget.initialPage,
                 widget.photos,
+                _likePhoto,
               ),
             ),
           ),
@@ -356,12 +358,10 @@ class _PageCounter extends StatefulWidget {
   final PageController controller;
   final int initialPage;
   final List<AlbumPhoto> photos;
+  final void Function(List<AlbumPhoto> photos, int index) likePhoto;
 
   const _PageCounter(
-    this.controller,
-    this.initialPage,
-    this.photos,
-  );
+      this.controller, this.initialPage, this.photos, this.likePhoto);
 
   @override
   State<_PageCounter> createState() => __PageCounterState();
@@ -402,6 +402,20 @@ class __PageCounterState extends State<_PageCounter> {
           '${currentIndex + 1} / ${widget.photos.length}',
           style:
               textTheme.bodyLarge?.copyWith(fontSize: 24, color: Colors.white),
+        ),
+        Tooltip(
+          message: 'unlike photo',
+          child: IconButton(
+            iconSize: 24,
+            icon: Icon(
+              color: photo.liked ? magenta : Colors.white,
+              photo.liked ? Icons.favorite : Icons.favorite_outline,
+            ),
+            onPressed: () => widget.likePhoto(
+              widget.photos,
+              currentIndex,
+            ),
+          ),
         ),
         Text(
           '${photo.numLikes}',

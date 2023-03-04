@@ -22,4 +22,27 @@ class LikedPhotosCubit extends Cubit<LikedPhotosState> {
       ));
     }
   }
+
+  Future<void> updateLike({required bool liked, required int index}) async {
+    if (state is! ResultState) return;
+    final oldState = state as ResultState<List<AlbumPhoto>>;
+    final oldPhoto = oldState.result[index];
+    if (oldPhoto.liked == liked) return;
+
+    // Emit expected state after (un)liking.
+    AlbumPhoto newphoto = oldPhoto.copyWith(
+      liked: liked,
+      numLikes: oldPhoto.numLikes + (liked ? 1 : -1),
+    );
+    List<AlbumPhoto> newphotos = oldState.result;
+    newphotos[index] = newphoto;
+    emit(ResultState(newphotos));
+    try {
+      await api.updateLiked(newphoto.pk, liked);
+    } on ApiException {
+      // Revert to state before (un)liking.
+      emit(oldState);
+      rethrow;
+    }
+  }
 }
