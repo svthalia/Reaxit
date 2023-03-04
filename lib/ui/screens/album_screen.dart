@@ -14,6 +14,7 @@ import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/theme.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:reaxit/config.dart' as config;
+import 'package:reaxit/ui/widgets/photo_tile.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 
@@ -374,7 +375,7 @@ class _PhotoGrid extends StatelessWidget {
         itemCount: photos.length,
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(8),
-        itemBuilder: (context, index) => _PhotoTile(
+        itemBuilder: (context, index) => PhotoTile(
           photo: photos[index],
           openGallery: () => _openGallery(context, index),
         ),

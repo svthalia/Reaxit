@@ -14,15 +14,13 @@ import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/theme.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:reaxit/config.dart' as config;
+import 'package:reaxit/ui/widgets/photo_tile.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 
 /// Screen that loads and shows the Album with `slug`.
 class LikedPhotosScreen extends StatefulWidget {
-  // final String slug;
-  // final ListAlbum? album;
-
-  const LikedPhotosScreen() : super();
+  const LikedPhotosScreen({super.key});
 
   @override
   State<LikedPhotosScreen> createState() => _LikedPhotosScreenState();
@@ -108,32 +106,10 @@ class _PhotoGrid extends StatelessWidget {
         itemCount: photos.length,
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(8),
-        itemBuilder: (context, index) => _PhotoTile(
+        itemBuilder: (context, index) => PhotoTile(
           photo: photos[index],
           openGallery: () => _openGallery(context, index),
         ),
-      ),
-    );
-  }
-}
-
-class _PhotoTile extends StatelessWidget {
-  final AlbumPhoto photo;
-  final void Function() openGallery;
-
-  _PhotoTile({
-    required this.photo,
-    required this.openGallery,
-  }) : super(key: ValueKey(photo.pk));
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: openGallery,
-      child: FadeInImage.assetNetwork(
-        placeholder: 'assets/img/photo_placeholder.png',
-        image: photo.small,
-        fit: BoxFit.cover,
       ),
     );
   }
