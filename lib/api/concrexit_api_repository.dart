@@ -36,8 +36,9 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   static final Uri _baseUri = Uri(
-    scheme: 'https',
+    scheme: config.apiScheme,
     host: config.apiHost,
+    port: config.apiPort,
   );
 
   static const String _basePath = 'api/v2';

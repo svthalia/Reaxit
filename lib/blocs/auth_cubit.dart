@@ -21,14 +21,16 @@ final _redirectUrl = Uri.parse(
 );
 
 final Uri _authorizationEndpoint = Uri(
-  scheme: 'https',
+  scheme: config.apiScheme,
   host: config.apiHost,
+  port: config.apiPort,
   path: 'user/oauth/authorize/',
 );
 
 final Uri _tokenEndpoint = Uri(
-  scheme: 'https',
+  scheme: config.apiScheme,
   host: config.apiHost,
+  port: config.apiPort,
   path: 'user/oauth/token/',
 );
 

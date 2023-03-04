@@ -25,6 +25,10 @@ const String apiIdentifier = String.fromEnvironment(
   defaultValue: '3zlt7pqGVMiUCGxOnKTZEpytDUN7haeFBP2kVkig',
 );
 
+const String apiScheme =
+    String.fromEnvironment('THALIA_API_SCHEME', defaultValue: 'https');
+const int apiPort = int.fromEnvironment('THALIA_API_PORT', defaultValue: 443);
+
 const String sentryDSN = String.fromEnvironment('SENTRY_DSN');
 
 const String tostiApiHost = String.fromEnvironment('TOSTI_API_HOST');
