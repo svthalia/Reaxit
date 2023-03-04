@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/ui/screens/liked_photos_screen.dart';
 import 'package:reaxit/ui/widgets.dart';
 
 class AlbumsScreen extends StatefulWidget {
@@ -59,6 +61,11 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
               searchCubit.close();
             },
           ),
+          IconButton(
+              onPressed: () => context.goNamed(
+                    'liked',
+                  ),
+              icon: const Icon(Icons.monitor_heart))
         ],
       ),
       drawer: MenuDrawer(),
