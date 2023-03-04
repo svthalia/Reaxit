@@ -62,7 +62,7 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
             },
           ),
           IconButton(
-              onPressed: () => context.goNamed(
+              onPressed: () => context.pushNamed(
                     'liked',
                   ),
               icon: const Icon(Icons.monitor_heart))
