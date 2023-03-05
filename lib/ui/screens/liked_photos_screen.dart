@@ -9,7 +9,6 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
-import 'package:reaxit/blocs.dart';
 import 'package:reaxit/blocs/liked_photos_cubit.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/theme.dart';
@@ -26,51 +25,67 @@ class LikedPhotosScreen extends StatefulWidget {
 }
 
 class _LikedPhotosScreenState extends State<LikedPhotosScreen> {
+  late ScrollController _controller;
   late final LikedPhotosCubit _cubit;
 
   @override
   void initState() {
-    super.initState();
+    _controller = ScrollController()..addListener(_scrollListener);
     _cubit = LikedPhotosCubit(RepositoryProvider.of<ApiRepository>(context))
       ..load();
+    super.initState();
+  }
+
+  void _scrollListener() {
+    if (_controller.position.pixels >=
+        _controller.position.maxScrollExtent - 300) {
+      _cubit.more();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: _cubit,
-      child: BlocBuilder<LikedPhotosCubit, LikedPhotosState>(
-        builder: (context, state) {
-          late final Widget body;
-          if (state is ResultState) {
-            body = _PhotoGrid(state.result!);
-          } else if (state is ErrorState) {
-            body = ErrorScrollView(state.message!);
-          } else {
-            body = const Center(child: CircularProgressIndicator());
-          }
-
-          return RefreshIndicator(
-            onRefresh: () async {
-              await _cubit.load();
-            },
-            child: Scaffold(
-              appBar: ThaliaAppBar(
-                title: const Text('LIKED PHOTOS'),
-              ),
-              body: body,
+        value: _cubit,
+        child: Scaffold(
+            appBar: ThaliaAppBar(
+              title: const Text('LIKED PHOTOS'),
             ),
-          );
-        },
-      ),
-    );
+            body: RefreshIndicator(
+              onRefresh: () async {
+                await _cubit.load();
+              },
+              child: BlocBuilder<LikedPhotosCubit, LikedPhotosState>(
+                builder: (context, state) {
+                  if (state.hasException) {
+                    return ErrorScrollView(state.message!);
+                  } else {
+                    return _PhotoGridScrollView(
+                      controller: _controller,
+                      listState: state,
+                    );
+                  }
+                },
+              ),
+            )));
   }
 }
 
-class _PhotoGrid extends StatelessWidget {
-  final List<AlbumPhoto> photos;
+class _PhotoGridScrollView extends StatelessWidget {
+  final ScrollController controller;
+  final LikedPhotosState listState;
 
-  const _PhotoGrid(this.photos);
+  const _PhotoGridScrollView({
+    Key? key,
+    required this.controller,
+    required this.listState,
+  }) : super(key: key);
 
   void _openGallery(BuildContext context, int index) {
     final cubit = BlocProvider.of<LikedPhotosCubit>(context);
@@ -82,11 +97,11 @@ class _PhotoGrid extends StatelessWidget {
         return BlocProvider.value(
           value: cubit,
           child: BlocBuilder<LikedPhotosCubit, LikedPhotosState>(
-            buildWhen: (previous, current) => current is ResultState,
+            buildWhen: (previous, current) =>
+                !current.isLoading && !current.isLoadingMore,
             builder: (context, state) {
               return _Gallery(
-                // TODO: buildWhen actually does not guarantee not building without result.
-                photos: state.result!,
+                photos: state.results,
                 initialPage: index,
               );
             },
@@ -99,20 +114,42 @@ class _PhotoGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scrollbar(
-      child: GridView.builder(
-        key: const PageStorageKey('album'),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
-          crossAxisCount: 3,
+      controller: controller,
+      child: CustomScrollView(
+        controller: controller,
+        physics: const RangeMaintainingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
         ),
-        itemCount: photos.length,
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(8),
-        itemBuilder: (context, index) => PhotoTile(
-          photo: photos[index],
-          openGallery: () => _openGallery(context, index),
-        ),
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.all(8),
+            sliver: SliverGrid(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => PhotoTile(
+                  photo: listState.results[index],
+                  openGallery: () => _openGallery(context, index),
+                ),
+                childCount: listState.results.length,
+              ),
+            ),
+          ),
+          if (listState.isLoadingMore)
+            const SliverPadding(
+              padding: EdgeInsets.all(8),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate.fixed([
+                  Center(
+                    child: CircularProgressIndicator(),
+                  )
+                ]),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -371,6 +408,7 @@ class _PageCounter extends StatefulWidget {
 
 class __PageCounterState extends State<_PageCounter> {
   late int currentIndex;
+  // bool refresh = false;
 
   void onPageChange() {
     final newIndex = widget.controller.page!.round();
@@ -406,17 +444,21 @@ class __PageCounterState extends State<_PageCounter> {
               textTheme.bodyLarge?.copyWith(fontSize: 24, color: Colors.white),
         ),
         Tooltip(
-          message: 'unlike photo',
+          message: photo.liked ? 'unlike photo' : 'like photo',
           child: IconButton(
             iconSize: 24,
             icon: Icon(
               color: photo.liked ? magenta : Colors.white,
               photo.liked ? Icons.favorite : Icons.favorite_outline,
             ),
-            onPressed: () => widget.likePhoto(
-              widget.photos,
-              currentIndex,
-            ),
+            onPressed: () {
+              widget.likePhoto(
+                widget.photos,
+                currentIndex,
+              );
+              // Force an update to refresh the like count and icon
+              setState(() {});
+            },
           ),
         ),
         Text(
