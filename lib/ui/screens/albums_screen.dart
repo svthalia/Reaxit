@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/api/api_repository.dart';
-import 'package:reaxit/ui/screens/liked_photos_screen.dart';
 import 'package:reaxit/ui/widgets.dart';
 
 class AlbumsScreen extends StatefulWidget {
@@ -47,7 +46,7 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
         actions: [
           IconButton(
               onPressed: () => context.pushNamed(
-                    'liked',
+                    'liked-photos',
                   ),
               icon: const Icon(Icons.favorite)),
           IconButton(

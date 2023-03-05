@@ -28,6 +28,7 @@ final List<RegExp> _deepLinkRegExps = <RegExp>[
   RegExp('^/events/?\$'),
   RegExp('^/events/([0-9]+)/?\$'),
   RegExp('^/members/photos/?\$'),
+  RegExp('^/members/photos/liked-photos/?\$'),
   RegExp('^/members/photos/([a-z0-9-_]+)/?\$'),
   RegExp('^/sales/order/$_uuid/pay/?\$'),
   RegExp('^/events/([0-9]+)/mark-present/$_uuid/?\$'),
@@ -216,6 +217,14 @@ final List<RouteBase> routes = [
     ),
     routes: [
       GoRoute(
+        path: 'liked-photos',
+        name: 'liked-photos',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: const LikedPhotosScreen(),
+        ),
+      ),
+      GoRoute(
         path: ':albumSlug',
         name: 'album',
         pageBuilder: (context, state) => MaterialPage(
@@ -227,6 +236,10 @@ final List<RouteBase> routes = [
         ),
       ),
     ],
+  ),
+  GoRoute(
+    path: '/members/photos/liked-photos',
+    redirect: (context, state) => '/albums/liked-photos',
   ),
   GoRoute(
     path: '/association/committees/:groupSlug',
@@ -405,14 +418,6 @@ final List<RouteBase> routes = [
     pageBuilder: (context, state) => MaterialPage(
       key: state.pageKey,
       child: const LoginScreen(),
-    ),
-  ),
-  GoRoute(
-    path: '/liked',
-    name: 'liked',
-    pageBuilder: (context, state) => MaterialPage(
-      key: state.pageKey,
-      child: const LikedPhotosScreen(),
     ),
   ),
   if (config.tostiEnabled) // Otherwise, all T.O.S.T.I. stuff is removed.
