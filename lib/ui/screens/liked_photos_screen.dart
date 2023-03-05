@@ -7,6 +7,7 @@ import 'package:mime/mime.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/blocs/liked_photos_cubit.dart';
@@ -17,29 +18,50 @@ import 'package:reaxit/ui/widgets/photo_tile.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 
-/// Screen that loads and shows the Album with `slug`.
-class LikedPhotosScreen extends StatelessWidget {
+class LikedPhotosScreen extends StatefulWidget {
   const LikedPhotosScreen();
 
   @override
+  State<LikedPhotosScreen> createState() => _LikedPhotosScreenState();
+}
+
+class _LikedPhotosScreenState extends State<LikedPhotosScreen> {
+  late final LikedPhotosCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = LikedPhotosCubit(RepositoryProvider.of<ApiRepository>(context))
+      ..load();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: ThaliaAppBar(
-        title: const Text('LIKED PHOTOS'),
-      ),
-      body: RefreshIndicator(
-        onRefresh: () => BlocProvider.of<LikedPhotosCubit>(context).load(),
-        child: BlocBuilder<LikedPhotosCubit, LikedPhotosState>(
-          builder: (context, state) {
-            if (state is ResultState) {
-              return _PhotoGrid(state.result!);
-            } else if (state is ErrorState) {
-              return ErrorScrollView(state.message!);
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          },
-        ),
+    return BlocProvider.value(
+      value: _cubit,
+      child: BlocBuilder<LikedPhotosCubit, LikedPhotosState>(
+        builder: (context, state) {
+          late final Widget body;
+          if (state is ResultState) {
+            body = _PhotoGrid(state.result!);
+          } else if (state is ErrorState) {
+            body = ErrorScrollView(state.message!);
+          } else {
+            body = const Center(child: CircularProgressIndicator());
+          }
+
+          return RefreshIndicator(
+            onRefresh: () async {
+              await _cubit.load();
+            },
+            child: Scaffold(
+              appBar: ThaliaAppBar(
+                title: const Text('LIKED PHOTOS'),
+              ),
+              body: body,
+            ),
+          );
+        },
       ),
     );
   }
