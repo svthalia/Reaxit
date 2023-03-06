@@ -312,16 +312,19 @@ class __PageCounterState extends State<_PageCounter> {
         Tooltip(
           message: photo.liked ? 'unlike photo' : 'like photo',
           child: IconButton(
-            iconSize: 24,
-            icon: Icon(
-              color: photo.liked ? magenta : Colors.white,
-              photo.liked ? Icons.favorite : Icons.favorite_outline,
-            ),
-            onPressed: () => widget.likePhoto(
-              widget.photos,
-              currentIndex,
-            ),
-          ),
+              iconSize: 24,
+              icon: Icon(
+                color: photo.liked ? magenta : Colors.white,
+                photo.liked ? Icons.favorite : Icons.favorite_outline,
+              ),
+              onPressed: () {
+                widget.likePhoto(
+                  widget.photos,
+                  currentIndex,
+                );
+                // Force update to set liked icon and count correctly
+                setState(() {});
+              }),
         ),
         Text(
           '${photo.numLikes}',
