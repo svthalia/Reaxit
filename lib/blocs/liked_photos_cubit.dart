@@ -3,10 +3,11 @@ import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
+import 'package:reaxit/ui/widgets/gallery.dart';
 
 typedef LikedPhotosState = ListState<AlbumPhoto>;
 
-class LikedPhotosCubit extends Cubit<LikedPhotosState> {
+class LikedPhotosCubit extends Cubit<LikedPhotosState> with LikeableCubit {
   static const int firstPageSize = 60;
   static const int pageSize = 30;
 
@@ -62,6 +63,7 @@ class LikedPhotosCubit extends Cubit<LikedPhotosState> {
     }
   }
 
+  @override
   Future<void> updateLike({required bool liked, required int index}) async {
     assert(index < state.results.length);
     if (state.isLoading) return;

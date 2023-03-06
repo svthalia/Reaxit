@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:reaxit/blocs/liked_photos_cubit.dart';
 import 'package:reaxit/models/photo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
@@ -8,11 +9,14 @@ import 'package:mime/mime.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:reaxit/api/exceptions.dart';
-import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/theme.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:gallery_saver/gallery_saver.dart';
+
+abstract class LikeableCubit {
+  Future<void> updateLike({required bool liked, required int index});
+}
 
 class Gallery extends StatefulWidget {
   final List<AlbumPhoto> photos;
@@ -120,7 +124,7 @@ class _GalleryState extends State<Gallery> with TickerProviderStateMixin {
       likeController.forward();
     }
     try {
-      await BlocProvider.of<AlbumCubit>(context).updateLike(
+      await BlocProvider.of<LikedPhotosCubit>(context).updateLike(
         liked: !photos[index].liked,
         index: index,
       );
