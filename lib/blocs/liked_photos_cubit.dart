@@ -51,7 +51,7 @@ class LikedPhotosCubit extends Cubit<LikedPhotosState>
       );
 
       final photos = state.results + photosResponse.results;
-      final isDone = photos.length == photosResponse.count;
+      final isDone = photos.length >= photosResponse.count;
 
       _nextOffset += pageSize;
 
@@ -69,10 +69,15 @@ class LikedPhotosCubit extends Cubit<LikedPhotosState>
     assert(index < state.results.length);
     if (state.isLoading) return;
 
+    final oldNextOffset = _nextOffset;
     final oldState = state;
     final oldPhoto = oldState.results[index];
 
     if (oldPhoto.liked == liked) return;
+
+    // If a photo is unliked, the offset should decrease by 1
+    // so the next page is loaded correctly, and vice-versa.
+    _nextOffset += liked ? 1 : -1;
 
     // Emit expected state after (un)liking.
     AlbumPhoto newphoto = oldPhoto.copyWith(
@@ -89,6 +94,7 @@ class LikedPhotosCubit extends Cubit<LikedPhotosState>
       await api.updateLiked(newphoto.pk, liked);
     } on ApiException {
       // Revert to state before (un)liking.
+      _nextOffset = oldNextOffset;
       emit(oldState);
       rethrow;
     }
