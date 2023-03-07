@@ -100,7 +100,7 @@ class _PhotoGrid extends StatelessWidget {
           child: BlocBuilder<AlbumCubit, AlbumState>(
             buildWhen: (previous, current) => current is ResultState,
             builder: (context, state) {
-              return Gallery(
+              return Gallery<AlbumCubit>(
                 // TODO: buildWhen actually does not guarantee not building without result.
                 photos: state.result!.photos,
                 initialPage: index,

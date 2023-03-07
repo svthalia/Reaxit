@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:reaxit/blocs/liked_photos_cubit.dart';
 import 'package:reaxit/models/photo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
@@ -14,21 +13,22 @@ import 'package:reaxit/ui/theme.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 
-abstract class LikeableCubit {
+abstract class LikeableCubit<T> extends StateStreamableSource<T> {
   Future<void> updateLike({required bool liked, required int index});
 }
 
-class Gallery extends StatefulWidget {
+class Gallery<C extends LikeableCubit> extends StatefulWidget {
   final List<AlbumPhoto> photos;
   final int initialPage;
 
   const Gallery({required this.photos, required this.initialPage});
 
   @override
-  State<Gallery> createState() => _GalleryState();
+  State<Gallery> createState() => _GalleryState<C>();
 }
 
-class _GalleryState extends State<Gallery> with TickerProviderStateMixin {
+class _GalleryState<C extends LikeableCubit> extends State<Gallery>
+    with TickerProviderStateMixin {
   late final PageController controller;
 
   late final AnimationController likeController;
@@ -124,7 +124,7 @@ class _GalleryState extends State<Gallery> with TickerProviderStateMixin {
       likeController.forward();
     }
     try {
-      await BlocProvider.of<LikedPhotosCubit>(context).updateLike(
+      await BlocProvider.of<C>(context).updateLike(
         liked: !photos[index].liked,
         index: index,
       );
@@ -137,24 +137,26 @@ class _GalleryState extends State<Gallery> with TickerProviderStateMixin {
     }
   }
 
-  Widget _gallery(List<AlbumPhoto> photos) => PhotoViewGallery.builder(
-        backgroundDecoration: const BoxDecoration(color: Colors.transparent),
-        pageController: controller,
-        itemCount: photos.length,
-        loadingBuilder: (_, __) => const Center(
-          child: CircularProgressIndicator(),
-        ),
-        builder: (context, i) {
-          return PhotoViewGalleryPageOptions.customChild(
-            child: GestureDetector(
-              onDoubleTap: () => _likePhoto(photos, i),
-              child: Image.network(photos[i].full),
-            ),
-            minScale: PhotoViewComputedScale.contained * 0.8,
-            maxScale: PhotoViewComputedScale.covered * 2,
-          );
-        },
-      );
+  Widget _gallery(List<AlbumPhoto> photos) {
+    return PhotoViewGallery.builder(
+      backgroundDecoration: const BoxDecoration(color: Colors.transparent),
+      pageController: controller,
+      itemCount: photos.length,
+      loadingBuilder: (_, __) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+      builder: (context, i) {
+        return PhotoViewGalleryPageOptions.customChild(
+          child: GestureDetector(
+            onDoubleTap: () => _likePhoto(photos, i),
+            child: Image.network(photos[i].full),
+          ),
+          minScale: PhotoViewComputedScale.contained * 0.8,
+          maxScale: PhotoViewComputedScale.covered * 2,
+        );
+      },
+    );
+  }
 
   Widget _downloadButton(List<AlbumPhoto> photos) {
     return IconButton(

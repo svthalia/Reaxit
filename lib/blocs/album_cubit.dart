@@ -7,7 +7,8 @@ import 'package:reaxit/ui/widgets/gallery.dart';
 
 typedef AlbumState = DetailState<Album>;
 
-class AlbumCubit extends Cubit<AlbumState> with LikeableCubit {
+class AlbumCubit extends Cubit<AlbumState>
+    implements LikeableCubit<AlbumState> {
   final ApiRepository api;
 
   AlbumCubit(this.api) : super(const LoadingState());

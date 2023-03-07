@@ -7,7 +7,8 @@ import 'package:reaxit/ui/widgets/gallery.dart';
 
 typedef LikedPhotosState = ListState<AlbumPhoto>;
 
-class LikedPhotosCubit extends Cubit<LikedPhotosState> with LikeableCubit {
+class LikedPhotosCubit extends Cubit<LikedPhotosState>
+    implements LikeableCubit<LikedPhotosState> {
   static const int firstPageSize = 60;
   static const int pageSize = 30;
 

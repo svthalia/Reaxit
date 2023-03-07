@@ -35,34 +35,37 @@ class _LikedPhotosScreenState extends State<LikedPhotosScreen> {
   @override
   void dispose() {
     _controller.dispose();
+    _cubit.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-        value: _cubit,
-        child: Scaffold(
-            appBar: ThaliaAppBar(
-              title: const Text('LIKED PHOTOS'),
-            ),
-            body: RefreshIndicator(
-              onRefresh: () async {
-                await _cubit.load();
-              },
-              child: BlocBuilder<LikedPhotosCubit, LikedPhotosState>(
-                builder: (context, state) {
-                  if (state.hasException) {
-                    return ErrorScrollView(state.message!);
-                  } else {
-                    return _PhotoGridScrollView(
-                      controller: _controller,
-                      listState: state,
-                    );
-                  }
-                },
-              ),
-            )));
+      value: _cubit,
+      child: Scaffold(
+        appBar: ThaliaAppBar(
+          title: const Text('LIKED PHOTOS'),
+        ),
+        body: RefreshIndicator(
+          onRefresh: () async {
+            await _cubit.load();
+          },
+          child: BlocBuilder<LikedPhotosCubit, LikedPhotosState>(
+            builder: (context, state) {
+              if (state.hasException) {
+                return ErrorScrollView(state.message!);
+              } else {
+                return _PhotoGridScrollView(
+                  controller: _controller,
+                  listState: state,
+                );
+              }
+            },
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -89,7 +92,7 @@ class _PhotoGridScrollView extends StatelessWidget {
             buildWhen: (previous, current) =>
                 !current.isLoading && !current.isLoadingMore,
             builder: (context, state) {
-              return Gallery(
+              return Gallery<LikedPhotosCubit>(
                 photos: state.results,
                 initialPage: index,
               );
@@ -131,11 +134,9 @@ class _PhotoGridScrollView extends StatelessWidget {
             const SliverPadding(
               padding: EdgeInsets.all(8),
               sliver: SliverList(
-                delegate: SliverChildListDelegate.fixed([
-                  Center(
-                    child: CircularProgressIndicator(),
-                  )
-                ]),
+                delegate: SliverChildListDelegate.fixed(
+                  [Center(child: CircularProgressIndicator())],
+                ),
               ),
             ),
         ],
