@@ -48,7 +48,7 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
               onPressed: () => context.pushNamed(
                     'liked-photos',
                   ),
-              icon: const Icon(Icons.favorite)),
+              icon: const Icon(Icons.favorite_border)),
           IconButton(
             padding: const EdgeInsets.all(16),
             icon: const Icon(Icons.search),
