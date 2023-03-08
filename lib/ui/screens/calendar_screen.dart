@@ -239,7 +239,8 @@ class _CalendarViewMonth {
   List<_CalendarViewDay> byDay() => days;
 }
 
-List<_CalendarViewMonth> _ensureContainsToday(
+@visibleForTesting
+List<_CalendarViewMonth> ensureContainsToday(
     List<_CalendarViewMonth> events, DateTime now) {
   DateTime today = DateTime(
     now.year,
@@ -306,7 +307,7 @@ class CalendarScrollView extends StatelessWidget {
             .sortedBy((element) => element.month)
             .reversed
             .toList(),
-        _monthGroupedEventsDown = _ensureContainsToday(
+        _monthGroupedEventsDown = ensureContainsToday(
             _groupByMonth(calendarState.resultsDown)
                 .sortedBy((element) => element.month),
             now),
