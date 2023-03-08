@@ -8,20 +8,12 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:488731759938:android:ce90d9e7effcbbfb",
+        "mobilesdk_app_id": "1:488731759938:android:e93c4179c580fad569e4db",
         "android_client_info": {
           "package_name": "com.thaliapp"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "488731759938-doctddnhajp9teh4t1dktdcd18he6g6k.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.thaliapp",
-            "certificate_hash": "8edc920194acd6f1184ebca7e2f84ef8a08d6705"
-          }
-        },
         {
           "client_id": "488731759938-k103fp2m146qhfsf7s3to9bm43qhcous.apps.googleusercontent.com",
           "client_type": 3
@@ -29,7 +21,10 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAJMgr3wSpkB8Kf4N1-ibi7MUctxoDrDyI"
+          "current_key": "AIzaSyC_s17iKXfDOK-yJZc47n9Omgk0GNl56q8"
+        },
+        {
+          "current_key": "AIzaSyBUa6snCpaDz-6YV04fwE3foy79LdbDR4A"
         }
       ],
       "services": {
