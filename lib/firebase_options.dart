@@ -65,8 +65,10 @@ class DefaultFirebaseOptions {
     projectId: 'thalia-493a0',
     databaseURL: 'https://thalia-493a0.firebaseio.com',
     storageBucket: 'thalia-493a0.appspot.com',
-    androidClientId: '488731759938-doctddnhajp9teh4t1dktdcd18he6g6k.apps.googleusercontent.com',
-    iosClientId: '488731759938-vkauvr25l1n4te0urfe721pi60hetttu.apps.googleusercontent.com',
+    androidClientId:
+        '488731759938-doctddnhajp9teh4t1dktdcd18he6g6k.apps.googleusercontent.com',
+    iosClientId:
+        '488731759938-vkauvr25l1n4te0urfe721pi60hetttu.apps.googleusercontent.com',
     iosBundleId: 'com.thaliapp',
   );
 }
