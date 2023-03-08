@@ -7,8 +7,7 @@ import 'package:reaxit/ui/widgets/gallery.dart';
 
 typedef AlbumState = DetailState<Album>;
 
-class AlbumCubit extends Cubit<AlbumState>
-    implements LikeableCubit<AlbumState> {
+class AlbumCubit extends Cubit<AlbumState> implements GalleryCubit<AlbumState> {
   final ApiRepository api;
 
   AlbumCubit(this.api) : super(const LoadingState());
@@ -51,4 +50,12 @@ class AlbumCubit extends Cubit<AlbumState>
       ));
     }
   }
+
+  @override
+  int photoAmount() {
+    return state.result?.photos.length ?? 0;
+  }
+
+  @override
+  Future<void> more() async {}
 }

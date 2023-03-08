@@ -13,11 +13,13 @@ import 'package:reaxit/ui/theme.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 
-abstract class LikeableCubit<T> extends StateStreamableSource<T> {
+abstract class GalleryCubit<T> extends StateStreamableSource<T> {
   Future<void> updateLike({required bool liked, required int index});
+  Future<void> more();
+  int photoAmount();
 }
 
-class Gallery<C extends LikeableCubit> extends StatefulWidget {
+class Gallery<C extends GalleryCubit> extends StatefulWidget {
   final List<AlbumPhoto> photos;
   final int initialPage;
 
@@ -27,7 +29,7 @@ class Gallery<C extends LikeableCubit> extends StatefulWidget {
   State<Gallery> createState() => _GalleryState<C>();
 }
 
-class _GalleryState<C extends LikeableCubit> extends State<Gallery>
+class _GalleryState<C extends GalleryCubit> extends State<Gallery>
     with TickerProviderStateMixin {
   late final PageController controller;
 
@@ -137,6 +139,19 @@ class _GalleryState<C extends LikeableCubit> extends State<Gallery>
     }
   }
 
+  Future<void> _loadMorePhotos() async {
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await BlocProvider.of<C>(context).more();
+    } on ApiException {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('Something went wrong while liking the photo.'),
+        ),
+      );
+    }
+  }
+
   Widget _gallery(List<AlbumPhoto> photos) {
     return PhotoViewGallery.builder(
       backgroundDecoration: const BoxDecoration(color: Colors.transparent),
@@ -207,7 +222,9 @@ class _GalleryState<C extends LikeableCubit> extends State<Gallery>
                 controller,
                 widget.initialPage,
                 widget.photos,
+                BlocProvider.of<C>(context).photoAmount(),
                 _likePhoto,
+                _loadMorePhotos,
               ),
             ),
           ),
@@ -262,13 +279,17 @@ class _PageCounter extends StatefulWidget {
   final PageController controller;
   final int initialPage;
   final List<AlbumPhoto> photos;
+  final int photoAmount;
   final void Function(List<AlbumPhoto> photos, int index) likePhoto;
+  final void Function() loadMorePhotos;
 
   const _PageCounter(
     this.controller,
     this.initialPage,
     this.photos,
+    this.photoAmount,
     this.likePhoto,
+    this.loadMorePhotos,
   );
 
   @override
@@ -279,7 +300,12 @@ class __PageCounterState extends State<_PageCounter> {
   late int currentIndex;
 
   void onPageChange() {
-    final newIndex = widget.controller.page!.round();
+    final newIndex = widget.controller.page!.floor();
+
+    if (newIndex == widget.photos.length - 1) {
+      widget.loadMorePhotos();
+    }
+
     if (newIndex != currentIndex) {
       setState(() => currentIndex = newIndex);
     }
@@ -307,7 +333,7 @@ class __PageCounterState extends State<_PageCounter> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          '${currentIndex + 1} / ${widget.photos.length}',
+          '${currentIndex + 1} / ${widget.photoAmount}',
           style:
               textTheme.bodyLarge?.copyWith(fontSize: 24, color: Colors.white),
         ),

@@ -8,9 +8,10 @@ import 'package:reaxit/ui/widgets/gallery.dart';
 typedef LikedPhotosState = ListState<AlbumPhoto>;
 
 class LikedPhotosCubit extends Cubit<LikedPhotosState>
-    implements LikeableCubit<LikedPhotosState> {
-  static const int firstPageSize = 60;
+    implements GalleryCubit<LikedPhotosState> {
+  static const int firstPageSize = 10;
   static const int pageSize = 30;
+  late int count;
 
   final ApiRepository api;
 
@@ -30,6 +31,7 @@ class LikedPhotosCubit extends Cubit<LikedPhotosState>
       final isDone = photos.results.length == photos.count;
 
       _nextOffset = firstPageSize;
+      count = photos.count;
 
       emit(LikedPhotosState.success(results: photos.results, isDone: isDone));
     } on ApiException catch (exception) {
@@ -37,6 +39,7 @@ class LikedPhotosCubit extends Cubit<LikedPhotosState>
     }
   }
 
+  @override
   Future<void> more() async {
     final oldState = state;
 
@@ -54,6 +57,7 @@ class LikedPhotosCubit extends Cubit<LikedPhotosState>
       final isDone = photos.length >= photosResponse.count;
 
       _nextOffset += pageSize;
+      count = photosResponse.count;
 
       emit(LikedPhotosState.success(
         results: photos,
@@ -95,5 +99,10 @@ class LikedPhotosCubit extends Cubit<LikedPhotosState>
       emit(oldState);
       rethrow;
     }
+  }
+
+  @override
+  int photoAmount() {
+    return count;
   }
 }
