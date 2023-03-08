@@ -55,5 +55,39 @@ void main() {
       expect(find.textContaining('MAY'), findsOneWidget);
       expect(find.textContaining('Lorem 2'), findsNWidgets(3));
     });
+    testWidgets('adds today', (WidgetTester tester) async {
+      final now = DateTime.now();
+      final event1 = FakeEvent(
+        pk: 1,
+        title: 'Lorem 1',
+        description: 'Ipsum 1',
+        start: now.add(const Duration(days: 3)),
+        end: now.add(const Duration(days: 4)),
+        location: 'Dolor 1',
+      );
+      final state = CalendarState(
+          now,
+          DoubleListState.success(
+            resultsDown: [
+              ...CalendarEvent.splitEventIntoCalendarEvents(event1),
+            ],
+            isDoneDown: true,
+            isDoneUp: true,
+          ));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: CalendarScrollView(
+              controller: ScrollController(),
+              calendarState: state,
+              loadMoreUp: (() {}),
+              now: now,
+            ),
+          ),
+        ),
+      );
+      expect(find.text('There are no events this day'), findsOneWidget);
+    });
   });
 }
