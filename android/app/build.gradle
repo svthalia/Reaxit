@@ -85,8 +85,7 @@ android {
 
     buildTypes {
         debug {
-            applicationIdSuffix '.debug'
-            versionNameSuffix '-DEBUG'
+            applicationIdSuffix '.staging'
         }
 
         release {
