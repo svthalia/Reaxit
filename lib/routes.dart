@@ -242,6 +242,10 @@ final List<RouteBase> routes = [
     redirect: (context, state) => '/albums/liked-photos',
   ),
   GoRoute(
+    path: '/members/photos/liked',
+    redirect: (context, state) => '/albums/liked-photos',
+  ),
+  GoRoute(
     path: '/association/committees/:groupSlug',
     redirect: (context, state) =>
         '/groups/committees/${state.params['groupSlug']}',
