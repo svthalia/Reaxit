@@ -1,5 +1,7 @@
+import 'package:collection/collection.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reaxit/blocs.dart';
+import 'package:reaxit/ui/screens/calendar_screen.dart';
 
 import '../fakes.dart';
 
@@ -103,6 +105,28 @@ void main() {
       expect(calendarEvents.last.end, event.end);
       expect(calendarEvents.last.title, 'Lorem day 7/7');
       expect(calendarEvents.last.label, 'Until 12:00 | Dolor');
+    });
+  });
+  group('CalendarEvent.addsToday', () {
+    test('EmptyCalendar', () {
+      final now = DateTime.now();
+      final event = FakeEvent(
+        pk: 1,
+        title: 'Lorem',
+        description: 'Ipsum',
+        start: DateTime.parse('2022-03-04 13:37'),
+        end: DateTime.parse('2022-03-04 14:37'),
+        location: 'Dolor',
+      );
+
+      final calendarEvents = CalendarEvent.splitEventIntoCalendarEvents(event);
+      final monthGroupedEventsDown = ensureContainsToday(
+          groupByMonth(calendarEvents).sortedBy((element) => element.month),
+          now);
+
+      expect(monthGroupedEventsDown.length, 2);
+      expect(monthGroupedEventsDown[1].days.length, 1);
+      expect(monthGroupedEventsDown[1].days[0].events.length, 0);
     });
   });
 }

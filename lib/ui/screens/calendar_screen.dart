@@ -209,20 +209,22 @@ class CalendarSearchDelegate extends SearchDelegate {
 }
 
 /// _CalendarViewDay holds events attached to a day
-class _CalendarViewDay {
+@visibleForTesting
+class CalendarViewDay {
   final DateTime day;
   final List<CalendarEvent> events;
 
-  _CalendarViewDay({required this.day, required List<CalendarEvent> events})
+  CalendarViewDay({required this.day, required List<CalendarEvent> events})
       : events = events.sortedBy((element) => element.start);
 }
 
 /// _CalendarViewMonth holds events attached to a month
-class _CalendarViewMonth {
+@visibleForTesting
+class CalendarViewMonth {
   final DateTime month;
-  final List<_CalendarViewDay> days;
+  final List<CalendarViewDay> days;
 
-  _CalendarViewMonth({required this.month, required List<CalendarEvent> events})
+  CalendarViewMonth({required this.month, required List<CalendarEvent> events})
       : days = groupBy<CalendarEvent, DateTime>(
           events.sortedBy((element) => element.start),
           (event) => DateTime(
@@ -232,16 +234,16 @@ class _CalendarViewMonth {
           ),
         )
             .entries
-            .map((entry) =>
-                _CalendarViewDay(day: entry.key, events: entry.value))
+            .map(
+                (entry) => CalendarViewDay(day: entry.key, events: entry.value))
             .sortedBy((element) => element.day);
 
-  List<_CalendarViewDay> byDay() => days;
+  List<CalendarViewDay> byDay() => days;
 }
 
 @visibleForTesting
-List<_CalendarViewMonth> ensureContainsToday(
-    List<_CalendarViewMonth> events, DateTime now) {
+List<CalendarViewMonth> ensureContainsToday(
+    List<CalendarViewMonth> events, DateTime now) {
   DateTime today = DateTime(
     now.year,
     now.month,
@@ -253,8 +255,8 @@ List<_CalendarViewMonth> ensureContainsToday(
   );
   for (var i = 0; i < events.length; i++) {
     if (events[i].month.isAfter(thisMonth)) {
-      events.insert(i, _CalendarViewMonth(month: thisMonth, events: []));
-      events[i].days.add(_CalendarViewDay(day: today, events: []));
+      events.insert(i, CalendarViewMonth(month: thisMonth, events: []));
+      events[i].days.add(CalendarViewDay(day: today, events: []));
 
       return events;
     }
@@ -262,15 +264,34 @@ List<_CalendarViewMonth> ensureContainsToday(
       for (var j = 0; j < events[i].days.length; j++) {
         if (events[i].days[j].day == today) return events;
         if (events[i].days[j].day.isAfter(today)) {
-          events[i].days.insert(j, _CalendarViewDay(day: today, events: []));
+          events[i].days.insert(j, CalendarViewDay(day: today, events: []));
           return events;
         }
       }
       return events;
     }
   }
+  events.add(CalendarViewMonth(month: thisMonth, events: []));
+  events.last.days.add(CalendarViewDay(day: today, events: []));
+
   return events;
 }
+
+@visibleForTesting
+List<CalendarViewMonth> groupByMonth(
+  List<CalendarEvent> eventList,
+) =>
+    groupBy<CalendarEvent, DateTime>(
+      eventList,
+      (event) => DateTime(
+        event.start.year,
+        event.start.month,
+      ),
+    )
+        .entries
+        .map(
+            (entry) => CalendarViewMonth(month: entry.key, events: entry.value))
+        .toList();
 
 /// A ScrollView that shows a calendar with [Event]s.
 ///
@@ -289,8 +310,8 @@ class CalendarScrollView extends StatelessWidget {
   final ScrollController controller;
   final CalendarState calendarState;
   final Function() loadMoreUp;
-  final List<_CalendarViewMonth> _monthGroupedEventsUp;
-  final List<_CalendarViewMonth> _monthGroupedEventsDown;
+  final List<CalendarViewMonth> _monthGroupedEventsUp;
+  final List<CalendarViewMonth> _monthGroupedEventsDown;
   final bool _enableLoadMore;
 
   final DateTime now;
@@ -303,33 +324,18 @@ class CalendarScrollView extends StatelessWidget {
     this.todayKey,
     this.thisMonthKey,
     required this.now,
-  })  : _monthGroupedEventsUp = _groupByMonth(calendarState.resultsUp)
+  })  : _monthGroupedEventsUp = groupByMonth(calendarState.resultsUp)
             .sortedBy((element) => element.month)
             .reversed
             .toList(),
         _monthGroupedEventsDown = ensureContainsToday(
-            _groupByMonth(calendarState.resultsDown)
+            groupByMonth(calendarState.resultsDown)
                 .sortedBy((element) => element.month),
             now),
         _enableLoadMore = !calendarState.isDoneUp &&
             calendarState.resultsUp.isNotEmpty &&
             calendarState.resultsDown.isNotEmpty,
         super(key: key);
-
-  static List<_CalendarViewMonth> _groupByMonth(
-    List<CalendarEvent> eventList,
-  ) =>
-      groupBy<CalendarEvent, DateTime>(
-        eventList,
-        (event) => DateTime(
-          event.start.year,
-          event.start.month,
-        ),
-      )
-          .entries
-          .map((entry) =>
-              _CalendarViewMonth(month: entry.key, events: entry.value))
-          .toList();
 
   @override
   Widget build(BuildContext context) {
@@ -410,7 +416,7 @@ class CalendarScrollView extends StatelessWidget {
 }
 
 class _CalendarMonth extends StatelessWidget {
-  final _CalendarViewMonth events;
+  final CalendarViewMonth events;
   final Key? todayKey;
   final Key? thisMonthKey;
   final DateTime now;
