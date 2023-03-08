@@ -97,7 +97,7 @@ class MemberListCubit extends Cubit<MemberListState> {
         isDone: isDone,
       ));
     } on ApiException catch (exception) {
-      emit(MemberListState.failure(message: exception.getMessage()));
+      emit(MemberListState.failure(message: exception.message));
     }
   }
 
