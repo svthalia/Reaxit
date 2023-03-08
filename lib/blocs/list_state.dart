@@ -17,6 +17,8 @@ class ListState<T> extends Equatable {
   /// The last results have been loaded. There are no more pages left.
   final bool isDone;
 
+  final int? count;
+
   bool get hasException => message != null;
 
   const ListState({
@@ -25,6 +27,7 @@ class ListState<T> extends Equatable {
     required this.isLoading,
     required this.isLoadingMore,
     required this.isDone,
+    required this.count,
   });
 
   ListState<T> copyWith({
@@ -33,6 +36,7 @@ class ListState<T> extends Equatable {
     bool? isLoading,
     bool? isLoadingMore,
     bool? isDone,
+    int? count,
   }) =>
       ListState<T>(
         results: results ?? this.results,
@@ -40,6 +44,7 @@ class ListState<T> extends Equatable {
         isLoading: isLoading ?? this.isLoading,
         isLoadingMore: isLoadingMore ?? this.isLoadingMore,
         isDone: isDone ?? this.isDone,
+        count: count ?? this.count,
       );
 
   @override
@@ -61,15 +66,17 @@ class ListState<T> extends Equatable {
       : message = null,
         isLoading = true,
         isLoadingMore = false,
-        isDone = true;
+        isDone = true,
+        count = 0;
 
-  const ListState.loadingMore({required this.results})
+  const ListState.loadingMore(this.count, {required this.results})
       : message = null,
         isLoading = false,
         isLoadingMore = true,
         isDone = true;
 
-  const ListState.success({required this.results, required this.isDone})
+  const ListState.success(
+      {required this.results, required this.isDone, this.count})
       : message = null,
         isLoading = false,
         isLoadingMore = false;
@@ -78,5 +85,6 @@ class ListState<T> extends Equatable {
       : results = const [],
         isLoading = false,
         isLoadingMore = false,
-        isDone = true;
+        isDone = true,
+        count = 0;
 }

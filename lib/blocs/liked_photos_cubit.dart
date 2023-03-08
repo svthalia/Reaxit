@@ -11,7 +11,6 @@ class LikedPhotosCubit extends Cubit<LikedPhotosState>
     implements GalleryCubit<LikedPhotosState> {
   static const int firstPageSize = 10;
   static const int pageSize = 30;
-  late int count;
 
   final ApiRepository api;
 
@@ -31,9 +30,9 @@ class LikedPhotosCubit extends Cubit<LikedPhotosState>
       final isDone = photos.results.length == photos.count;
 
       _nextOffset = firstPageSize;
-      count = photos.count;
 
-      emit(LikedPhotosState.success(results: photos.results, isDone: isDone));
+      emit(LikedPhotosState.success(
+          results: photos.results, isDone: isDone, count: photos.count));
     } on ApiException catch (exception) {
       emit(LikedPhotosState.failure(message: exception.message));
     }
@@ -57,11 +56,11 @@ class LikedPhotosCubit extends Cubit<LikedPhotosState>
       final isDone = photos.length >= photosResponse.count;
 
       _nextOffset += pageSize;
-      count = photosResponse.count;
 
       emit(LikedPhotosState.success(
         results: photos,
         isDone: isDone,
+        count: photosResponse.count,
       ));
     } on ApiException catch (exception) {
       emit(LikedPhotosState.failure(message: exception.message));
@@ -103,6 +102,6 @@ class LikedPhotosCubit extends Cubit<LikedPhotosState>
 
   @override
   int photoAmount() {
-    return count;
+    return state.count ?? 0;
   }
 }
