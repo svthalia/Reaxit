@@ -50,8 +50,8 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAJMgr3wSpkB8Kf4N1-ibi7MUctxoDrDyI',
-    appId: '1:488731759938:android:ce90d9e7effcbbfb',
+    apiKey: 'AIzaSyBUa6snCpaDz-6YV04fwE3foy79LdbDR4A',
+    appId: '1:488731759938:android:e93c4179c580fad569e4db',
     messagingSenderId: '488731759938',
     projectId: 'thalia-493a0',
     databaseURL: 'https://thalia-493a0.firebaseio.com',
@@ -65,10 +65,8 @@ class DefaultFirebaseOptions {
     projectId: 'thalia-493a0',
     databaseURL: 'https://thalia-493a0.firebaseio.com',
     storageBucket: 'thalia-493a0.appspot.com',
-    androidClientId:
-        '488731759938-doctddnhajp9teh4t1dktdcd18he6g6k.apps.googleusercontent.com',
-    iosClientId:
-        '488731759938-vkauvr25l1n4te0urfe721pi60hetttu.apps.googleusercontent.com',
+    androidClientId: '488731759938-doctddnhajp9teh4t1dktdcd18he6g6k.apps.googleusercontent.com',
+    iosClientId: '488731759938-vkauvr25l1n4te0urfe721pi60hetttu.apps.googleusercontent.com',
     iosBundleId: 'com.thaliapp',
   );
 }
