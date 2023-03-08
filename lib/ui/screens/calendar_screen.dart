@@ -330,84 +330,80 @@ class CalendarScrollView extends StatelessWidget {
               _CalendarViewMonth(month: entry.key, events: entry.value))
           .toList();
 
-  void startLoadMoreUp() {
-    controller.animateTo(controller.position.minScrollExtent,
-        duration: const Duration(milliseconds: 100), curve: Curves.ease);
-    loadMoreUp();
-  }
-
   @override
   Widget build(BuildContext context) {
     ScrollPhysics scrollPhysics = const AlwaysScrollableScrollPhysics();
-
-    return Scrollbar(
-      controller: controller,
-      child: CustomScrollView(
-        controller: controller,
-        physics: _enableLoadMore
-            ? OverscrollableScrollPhysics(
-                parent: scrollPhysics,
-                onhittop: startLoadMoreUp,
-              )
-            : scrollPhysics,
-        center: centerkey,
-        slivers: [
-          if (_enableLoadMore)
-            SliverToBoxAdapter(
-              child: AnimatedLoader(
-                visible: calendarState.isLoadingMoreUp,
-              ),
-            ),
-          if (_enableLoadMore)
-            SliverToBoxAdapter(
-              child: ListView(
-                shrinkWrap: true,
-                children: [
-                  TextButton(
-                    onPressed: loadMoreUp,
-                    child: const Text('LOAD MORE'),
+    return Column(
+      children: [
+        if (_enableLoadMore)
+          AnimatedLoader(
+            visible: calendarState.isLoadingMoreUp,
+          ),
+        Expanded(
+          child: CustomScrollView(
+            controller: controller,
+            physics: _enableLoadMore
+                ? OnTopCallbackScrollPhysics(
+                    parent: BouncingScrollPhysics(
+                        decelerationRate: ScrollDecelerationRate.fast,
+                        parent: scrollPhysics),
+                    onhittop: loadMoreUp,
+                  )
+                : scrollPhysics,
+            center: centerkey,
+            slivers: [
+              if (_enableLoadMore)
+                SliverToBoxAdapter(
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      TextButton(
+                        onPressed: loadMoreUp,
+                        child: const Text('LOAD MORE'),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (_, index) => _CalendarMonth(
-                  events: _monthGroupedEventsUp[index],
-                  todayKey: todayKey,
-                  thisMonthKey: thisMonthKey,
-                  now: now,
                 ),
-                childCount: _monthGroupedEventsUp.length,
-              ),
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-            key: centerkey,
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (_, index) => _CalendarMonth(
-                  events: _monthGroupedEventsDown[index],
-                  todayKey: todayKey,
-                  thisMonthKey: thisMonthKey,
-                  now: now,
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (_, index) => _CalendarMonth(
+                      events: _monthGroupedEventsUp[index],
+                      todayKey: todayKey,
+                      thisMonthKey: thisMonthKey,
+                      now: now,
+                    ),
+                    childCount: _monthGroupedEventsUp.length,
+                  ),
                 ),
-                childCount: _monthGroupedEventsDown.length,
               ),
-            ),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                key: centerkey,
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (_, index) => _CalendarMonth(
+                      events: _monthGroupedEventsDown[index],
+                      todayKey: todayKey,
+                      thisMonthKey: thisMonthKey,
+                      now: now,
+                    ),
+                    childCount: _monthGroupedEventsDown.length,
+                  ),
+                ),
+              ),
+              if (calendarState.isLoadingMoreDown)
+                const SliverPadding(
+                  padding: EdgeInsets.all(12),
+                  sliver: SliverToBoxAdapter(
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                ),
+            ],
           ),
-          if (calendarState.isLoadingMoreDown)
-            const SliverPadding(
-              padding: EdgeInsets.all(12),
-              sliver: SliverToBoxAdapter(
-                child: Center(child: CircularProgressIndicator()),
-              ),
-            ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -693,14 +689,14 @@ class _AnimatedLoaderState extends State<AnimatedLoader>
   }
 }
 
-class OverscrollableScrollPhysics extends ScrollPhysics {
+class OnTopCallbackScrollPhysics extends ScrollPhysics {
   final Function() onhittop;
 
-  const OverscrollableScrollPhysics({super.parent, required this.onhittop});
+  const OnTopCallbackScrollPhysics({super.parent, required this.onhittop});
 
   @override
-  OverscrollableScrollPhysics applyTo(ScrollPhysics? ancestor) {
-    return OverscrollableScrollPhysics(
+  OnTopCallbackScrollPhysics applyTo(ScrollPhysics? ancestor) {
+    return OnTopCallbackScrollPhysics(
         parent: buildParent(ancestor), onhittop: onhittop);
   }
 
@@ -710,12 +706,7 @@ class OverscrollableScrollPhysics extends ScrollPhysics {
     if (position.pixels < position.minScrollExtent) {
       onhittop();
     }
+
     return super.createBallisticSimulation(position, velocity);
   }
-
-  @override
-  double applyBoundaryConditions(ScrollMetrics position, double value) =>
-      super.applyBoundaryConditions(
-          position.copyWith(minScrollExtent: position.minScrollExtent), value) *
-      0.9;
 }
