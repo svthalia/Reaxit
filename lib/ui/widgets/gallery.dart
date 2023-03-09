@@ -159,16 +159,26 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
     return PhotoViewGallery.builder(
       backgroundDecoration: const BoxDecoration(color: Colors.transparent),
       pageController: controller,
-      itemCount: photos.length,
+      itemCount: widget.photoAmount,
       loadingBuilder: (_, __) => const Center(
         child: CircularProgressIndicator(),
       ),
       builder: (context, i) {
-        return PhotoViewGalleryPageOptions.customChild(
-          child: GestureDetector(
+        final Widget child;
+
+        if (i < photos.length) {
+          child = GestureDetector(
             onDoubleTap: () => _likePhoto(photos, i),
             child: Image.network(photos[i].full),
-          ),
+          );
+        } else {
+          child = const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        return PhotoViewGalleryPageOptions.customChild(
+          child: child,
           minScale: PhotoViewComputedScale.contained * 0.8,
           maxScale: PhotoViewComputedScale.covered * 2,
         );
@@ -330,16 +340,18 @@ class __PageCounterState extends State<_PageCounter> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final photo = widget.photos[currentIndex];
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          '${currentIndex + 1} / ${widget.photoAmount}',
-          style:
-              textTheme.bodyLarge?.copyWith(fontSize: 24, color: Colors.white),
-        ),
+    List<Widget> children = [
+      Text(
+        '${currentIndex + 1} / ${widget.photoAmount}',
+        style: textTheme.bodyLarge?.copyWith(fontSize: 24, color: Colors.white),
+      ),
+    ];
+
+    if (currentIndex < widget.photos.length) {
+      final photo = widget.photos[currentIndex];
+
+      children.addAll([
         Tooltip(
           message: photo.liked ? 'unlike photo' : 'like photo',
           child: IconButton(
@@ -364,7 +376,12 @@ class __PageCounterState extends State<_PageCounter> {
             color: Colors.white,
           ),
         ),
-      ],
+      ]);
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: children,
     );
   }
 }
