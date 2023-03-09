@@ -160,7 +160,7 @@ void main() {
         })
         ..add(const PaymentUserState.loading())
         ..add(const PaymentUserState.result(
-            user: PaymentUser('0.00', true, true), payments: []));
+            user: PaymentUser('0.00', false, false), payments: []));
 
       when(paymentUserCubit.load()).thenAnswer((_) => Future.value(null));
       when(paymentUserCubit.stream).thenAnswer((_) => streamController.stream);
@@ -193,7 +193,7 @@ void main() {
       );
 
       streamController.add(const PaymentUserState.result(
-          user: PaymentUser('0.00', true, true), payments: []));
+          user: PaymentUser('0.00', true, false), payments: []));
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('THALIA PAY: €13.37'));
