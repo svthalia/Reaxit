@@ -9,7 +9,7 @@ typedef LikedPhotosState = ListState<AlbumPhoto>;
 
 class LikedPhotosCubit extends Cubit<LikedPhotosState>
     implements GalleryCubit<LikedPhotosState> {
-  static const int firstPageSize = 10;
+  static const int firstPageSize = 60;
   static const int pageSize = 30;
 
   final ApiRepository api;
@@ -98,10 +98,5 @@ class LikedPhotosCubit extends Cubit<LikedPhotosState>
       emit(oldState);
       rethrow;
     }
-  }
-
-  @override
-  int photoAmount() {
-    return state.count ?? 0;
   }
 }

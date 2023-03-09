@@ -39,6 +39,9 @@ class AlbumCubit extends Cubit<AlbumState> implements GalleryCubit<AlbumState> {
     }
   }
 
+  @override
+  Future<void> more() async {}
+
   Future<void> load(String slug) async {
     emit(LoadingState.from(state));
     try {
@@ -50,12 +53,4 @@ class AlbumCubit extends Cubit<AlbumState> implements GalleryCubit<AlbumState> {
       ));
     }
   }
-
-  @override
-  int photoAmount() {
-    return state.result?.photos.length ?? 0;
-  }
-
-  @override
-  Future<void> more() async {}
 }

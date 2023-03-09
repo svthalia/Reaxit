@@ -16,14 +16,17 @@ import 'package:gallery_saver/gallery_saver.dart';
 abstract class GalleryCubit<T> extends StateStreamableSource<T> {
   Future<void> updateLike({required bool liked, required int index});
   Future<void> more();
-  int photoAmount();
 }
 
 class Gallery<C extends GalleryCubit> extends StatefulWidget {
   final List<AlbumPhoto> photos;
   final int initialPage;
+  final int photoAmount;
 
-  const Gallery({required this.photos, required this.initialPage});
+  const Gallery(
+      {required this.photos,
+      required this.initialPage,
+      required this.photoAmount});
 
   @override
   State<Gallery> createState() => _GalleryState<C>();
@@ -146,7 +149,7 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
     } on ApiException {
       messenger.showSnackBar(
         const SnackBar(
-          content: Text('Something went wrong while liking the photo.'),
+          content: Text('Something went wrong while loading the photos.'),
         ),
       );
     }
@@ -222,7 +225,7 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
                 controller,
                 widget.initialPage,
                 widget.photos,
-                BlocProvider.of<C>(context).photoAmount(),
+                widget.photoAmount,
                 _likePhoto,
                 _loadMorePhotos,
               ),
@@ -300,7 +303,7 @@ class __PageCounterState extends State<_PageCounter> {
   late int currentIndex;
 
   void onPageChange() {
-    final newIndex = widget.controller.page!.floor();
+    final newIndex = widget.controller.page!.round();
 
     if (newIndex == widget.photos.length - 1) {
       widget.loadMorePhotos();

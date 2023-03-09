@@ -95,6 +95,7 @@ class _PhotoGridScrollView extends StatelessWidget {
               return Gallery<LikedPhotosCubit>(
                 photos: state.results,
                 initialPage: index,
+                photoAmount: state.count!,
               );
             },
           ),

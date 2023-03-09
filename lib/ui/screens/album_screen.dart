@@ -104,6 +104,7 @@ class _PhotoGrid extends StatelessWidget {
                 // TODO: buildWhen actually does not guarantee not building without result.
                 photos: state.result!.photos,
                 initialPage: index,
+                photoAmount: state.result!.photos.length,
               );
             },
           ),
