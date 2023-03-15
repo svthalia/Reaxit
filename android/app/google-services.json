@@ -22,6 +22,48 @@
       "api_key": [
         {
           "current_key": "AIzaSyBUa6snCpaDz-6YV04fwE3foy79LdbDR4A"
+        },
+        {
+          "current_key": "AIzaSyC_s17iKXfDOK-yJZc47n9Omgk0GNl56q8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "117962852883189844316",
+              "client_type": 3
+            },
+            {
+              "client_id": "488731759938-ulu3n53j018i4qcdjl94hqr675jvh10l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "nu.thalia.app"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:488731759938:android:a939879d1283d4e269e4db",
+        "android_client_info": {
+          "package_name": "com.thaliapp.staging"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "488731759938-k103fp2m146qhfsf7s3to9bm43qhcous.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUa6snCpaDz-6YV04fwE3foy79LdbDR4A"
+        },
+        {
+          "current_key": "AIzaSyC_s17iKXfDOK-yJZc47n9Omgk0GNl56q8"
         }
       ],
       "services": {

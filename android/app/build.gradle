@@ -81,7 +81,13 @@ android {
         }
     }
 
+    
+
     buildTypes {
+        debug {
+            applicationIdSuffix '.staging'
+        }
+
         release {
             signingConfig signingConfigs.release
         }
