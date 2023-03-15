@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart'
 ///
 /// Example:
 /// ```dart
-/// import 'firebase_options.dart';
+/// import 'firebase_options_staging.dart';
 /// // ...
 /// await Firebase.initializeApp(
 ///   options: DefaultFirebaseOptions.currentPlatform,
@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBUa6snCpaDz-6YV04fwE3foy79LdbDR4A',
-    appId: '1:488731759938:android:e93c4179c580fad569e4db',
+    appId: '1:488731759938:android:a939879d1283d4e269e4db',
     messagingSenderId: '488731759938',
     projectId: 'thalia-493a0',
     databaseURL: 'https://thalia-493a0.firebaseio.com',
