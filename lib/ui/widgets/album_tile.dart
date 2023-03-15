@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reaxit/models.dart';
-import 'package:reaxit/ui/widgets.dart';
 
 class AlbumTile extends StatelessWidget {
   final ListAlbum album;
@@ -13,9 +12,14 @@ class AlbumTile extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        CachedImage(
-          imageUrl: album.cover.small,
-          placeholder: 'assets/img/album_placeholder.png',
+        RotatedBox(
+          quarterTurns: album.cover.rotation ~/ 90,
+          child: FadeInImage.assetNetwork(
+            placeholder:
+                'assets/img/photo_placeholder_${(360 - album.cover.rotation) % 360}.png',
+            image: album.cover.small,
+            fit: BoxFit.cover,
+          ),
         ),
         const _BlackGradient(),
         Align(
