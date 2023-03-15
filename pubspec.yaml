@@ -71,7 +71,7 @@ dependencies:
   sentry_flutter: ^6.20.1
 
   # Share menu.
-  share_plus: ^6.3.0
+  share_plus: ^6.3.1
 
   # Get mime type from file extension.
   mime: ^1.0.4
