@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../models/payment.dart';
+import 'package:reaxit/models/payment.dart';
 
 class PayTile extends StatefulWidget {
   final Payment payment;
@@ -12,7 +12,7 @@ class PayTile extends StatefulWidget {
   State<StatefulWidget> createState() => _PayTileState();
 }
 
-class _PayTileState extends State<PayTile> with SingleTickerProviderStateMixin {
+class _PayTileState extends State<PayTile> {
   static final timeFormatter = DateFormat('E d MMM y, HH:mm');
 
   late bool _isExpanded;
@@ -58,11 +58,11 @@ class _PayTileState extends State<PayTile> with SingleTickerProviderStateMixin {
         )),
         AnimatedSize(
           duration: const Duration(milliseconds: 200),
-          child: _isExpanded
+          child: _isExpanded && widget.payment.notes != null
               ? Card(
                   child: ListTile(
                     title: Text(
-                      widget.payment.notes ?? 'No notes provided',
+                      widget.payment.notes!,
                       style: Theme.of(context)
                           .textTheme
                           .bodyMedium!
