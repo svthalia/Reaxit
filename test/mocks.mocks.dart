@@ -923,6 +923,48 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
         )),
       ) as _i6.Future<_i3.PaymentUser>);
   @override
+  _i6.Future<_i3.ListResponse<_i3.Payment>> getPayments({
+    int? limit,
+    int? offset,
+    String? ordering,
+    DateTime? start,
+    DateTime? end,
+    List<_i3.PaymentType>? type,
+    bool? settled,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getPayments,
+          [],
+          {
+            #limit: limit,
+            #offset: offset,
+            #ordering: ordering,
+            #start: start,
+            #end: end,
+            #type: type,
+            #settled: settled,
+          },
+        ),
+        returnValue: _i6.Future<_i3.ListResponse<_i3.Payment>>.value(
+            _FakeListResponse_2<_i3.Payment>(
+          this,
+          Invocation.method(
+            #getPayments,
+            [],
+            {
+              #limit: limit,
+              #offset: offset,
+              #ordering: ordering,
+              #start: start,
+              #end: end,
+              #type: type,
+              #settled: settled,
+            },
+          ),
+        )),
+      ) as _i6.Future<_i3.ListResponse<_i3.Payment>>);
+  @override
   _i6.Future<_i3.Payable> getFoodOrderPayable({required int? foodOrderPk}) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1456,48 +1498,6 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
           ),
         )),
       ) as _i6.Future<_i3.Group>);
-  @override
-  _i6.Future<_i3.ListResponse<_i3.Payment>> getPayments({
-    int? limit,
-    int? offset,
-    String? ordering,
-    DateTime? start,
-    DateTime? end,
-    List<_i3.PaymentType>? type,
-    bool? settled,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getPayments,
-          [],
-          {
-            #limit: limit,
-            #offset: offset,
-            #ordering: ordering,
-            #start: start,
-            #end: end,
-            #type: type,
-            #settled: settled,
-          },
-        ),
-        returnValue: _i6.Future<_i3.ListResponse<_i3.Payment>>.value(
-            _FakeListResponse_2<_i3.Payment>(
-          this,
-          Invocation.method(
-            #getPayments,
-            [],
-            {
-              #limit: limit,
-              #offset: offset,
-              #ordering: ordering,
-              #start: start,
-              #end: end,
-              #type: type,
-              #settled: settled,
-            },
-          ),
-        )),
-      ) as _i6.Future<_i3.ListResponse<_i3.Payment>>);
 }
 
 /// A class which mocks [PaymentUserCubit].
@@ -1529,20 +1529,6 @@ class MockPaymentUserCubit extends _i1.Mock implements _i5.PaymentUserCubit {
         Invocation.getter(#stream),
         returnValue: _i6.Stream<_i5.PaymentUserState>.empty(),
       ) as _i6.Stream<_i5.PaymentUserState>);
-  @override
-  _i2.DetailState<_i3.PaymentUser> get state => (super.noSuchMethod(
-        Invocation.getter(#state),
-        returnValue: _FakeDetailState_17<_i3.PaymentUser>(
-          this,
-          Invocation.getter(#state),
-        ),
-      ) as _i2.DetailState<_i3.PaymentUser>);
-  @override
-  _i5.Stream<_i2.DetailState<_i3.PaymentUser>> get stream =>
-      (super.noSuchMethod(
-        Invocation.getter(#stream),
-        returnValue: _i5.Stream<_i2.DetailState<_i3.PaymentUser>>.empty(),
-      ) as _i5.Stream<_i2.DetailState<_i3.PaymentUser>>);
   @override
   bool get isClosed => (super.noSuchMethod(
         Invocation.getter(#isClosed),
