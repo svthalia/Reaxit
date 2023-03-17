@@ -403,11 +403,6 @@ final List<RouteBase> routes = [
       child: const LoginScreen(),
     ),
   ),
-  GoRoute(
-      path: '/pay',
-      name: 'pay',
-      pageBuilder: (context, state) =>
-          MaterialPage(key: state.pageKey, child: PayScreen())),
   if (config.tostiEnabled) // Otherwise, all T.O.S.T.I. stuff is removed.
     GoRoute(
       path: '/tosti',
