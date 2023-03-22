@@ -113,14 +113,14 @@ class _TPayButtonState extends State<TPayButton> {
             label: buttonLabel,
           );
           // TODO: provide custom tooltip.
-        } else if (state is LoadingState) {
+        } else if (state.isLoading) {
           // PaymentUser loading.
           return ElevatedButton.icon(
             onPressed: null,
             icon: icon,
             label: buttonLabel,
           );
-        } else if (state is ErrorState) {
+        } else if (state.hasException) {
           // PaymentUser couldn't load.
           return ElevatedButton.icon(
             onPressed: null,
@@ -128,7 +128,7 @@ class _TPayButtonState extends State<TPayButton> {
             label: buttonLabel,
           );
         } else {
-          final paymentUser = state.result!;
+          final paymentUser = state.user!;
           if (!paymentUser.tpayAllowed) {
             // TPay not allowed for the user.
             return Tooltip(

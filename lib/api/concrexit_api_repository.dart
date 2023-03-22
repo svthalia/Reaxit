@@ -1181,4 +1181,38 @@ class ConcrexitApiRepository implements ApiRepository {
     final response = await _handleExceptions(() => _client.get(uri));
     return Group.fromJson(_jsonDecode(response));
   }
+
+  @override
+  Future<ListResponse<Payment>> getPayments(
+      {int? limit,
+      int? offset,
+      String? ordering,
+      DateTime? start,
+      DateTime? end,
+      List<PaymentType>? type,
+      bool? settled}) {
+    return sandbox(() async {
+      const paymentTypeMap = {
+        PaymentType.tpayPayment: 'tpay_payment',
+      };
+
+      final uri = _baseUri.replace(
+        path: '$_basePath/payments/',
+        queryParameters: {
+          if (limit != null) 'limit': limit.toString(),
+          if (offset != null) 'offset': offset.toString(),
+          if (type != null)
+            'type': type.map((t) => paymentTypeMap[t]).join(','),
+          if (start != null) 'start': start.toIso8601String(),
+          if (end != null) 'end': end.toIso8601String(),
+          if (ordering != null) 'ordering': ordering,
+          if (settled != null) 'settled': settled.toString(),
+        },
+      );
+
+      final response = await _handleExceptions(() => _client.get(uri));
+      return ListResponse<Payment>.fromJson(_jsonDecode(response),
+          (json) => Payment.fromJson(json as Map<String, dynamic>));
+    });
+  }
 }

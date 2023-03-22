@@ -13,3 +13,4 @@ export 'screens/settings_screen.dart';
 export 'screens/welcome_screen.dart';
 export 'screens/group_screen.dart';
 export 'screens/groups_screen.dart';
+export 'screens/pay_screen.dart';

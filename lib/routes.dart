@@ -431,4 +431,9 @@ final List<RouteBase> routes = [
         )
       ],
     ),
+  GoRoute(
+      path: '/pay',
+      name: 'pay',
+      pageBuilder: (context, state) =>
+          MaterialPage(key: state.pageKey, child: PayScreen())),
 ];
