@@ -1,9 +1,11 @@
 export 'widgets/album_tile.dart';
+export 'widgets/animated_loading_icon.dart';
 export 'widgets/app_bar.dart';
 export 'widgets/cached_image.dart';
 export 'widgets/error_center.dart';
 export 'widgets/error_scroll_view.dart';
 export 'widgets/event_detail_card.dart';
+export 'widgets/events.dart';
 export 'widgets/mark_present_dialog.dart';
 export 'widgets/member_tile.dart';
 export 'widgets/menu_drawer.dart';

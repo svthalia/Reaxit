@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reaxit/blocs.dart';
-import 'package:reaxit/ui/screens/calendar_screen.dart';
+import 'package:reaxit/ui/widgets.dart';
 
 import '../fakes.dart';
 
