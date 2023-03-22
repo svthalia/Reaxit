@@ -34,31 +34,32 @@ class _PayTileState extends State<PayTile> {
     return Column(
       children: [
         Card(
-            child: ListTile(
-          onTap: _onTap,
-          title: Text(
-            timeFormatter.format(widget.payment.createdAt.toLocal()),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium!
-                .copyWith(fontWeight: FontWeight.bold),
+          child: ListTile(
+            onTap: _onTap,
+            title: Text(
+              timeFormatter.format(widget.payment.createdAt.toLocal()),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium!
+                  .copyWith(fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(
+              widget.payment.topic,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: Text(
+              '€ ${widget.payment.amount}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-          subtitle: Text(
-            widget.payment.topic,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          trailing: Text(
-            '€ ${widget.payment.amount}',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        )),
+        ),
         AnimatedSize(
           duration: const Duration(milliseconds: 200),
-          child: _isExpanded && widget.payment.notes != null
+          child: _isExpanded && (widget.payment.notes?.isNotEmpty ?? false)
               ? Card(
                   child: ListTile(
                     title: Text(
