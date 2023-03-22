@@ -28,13 +28,13 @@ final List<RegExp> _deepLinkRegExps = <RegExp>[
   RegExp('^/events/?\$'),
   RegExp('^/events/([0-9]+)/?\$'),
   RegExp('^/members/photos/?\$'),
-  RegExp('^/members/photos/liked-photos/?\$'),
+  RegExp('^/members/photos/liked/?\$'),
   RegExp('^/members/photos/([a-z0-9-_]+)/?\$'),
   RegExp('^/sales/order/$_uuid/pay/?\$'),
   RegExp('^/events/([0-9]+)/mark-present/$_uuid/?\$'),
+  RegExp('^/association/societies(/[0-9]+)?/?\$'),
   RegExp('^/association/committees(/[0-9]+)?/?\$'),
   RegExp('^/association/boards/([0-9]{4}-[0-9]{4})/?\$'),
-  RegExp('^/association/societies(/[0-9]+)?/?\$'),
 ];
 
 final List<RouteBase> routes = [
@@ -202,6 +202,10 @@ final List<RouteBase> routes = [
     ],
   ),
   GoRoute(
+    path: '/members/photos/liked',
+    redirect: (context, state) => '/albums/liked-photos',
+  ),
+  GoRoute(
     path: '/albums',
     name: 'albums',
     pageBuilder: (context, state) => CustomTransitionPage(
@@ -236,14 +240,6 @@ final List<RouteBase> routes = [
         ),
       ),
     ],
-  ),
-  GoRoute(
-    path: '/members/photos/liked-photos',
-    redirect: (context, state) => '/albums/liked-photos',
-  ),
-  GoRoute(
-    path: '/members/photos/liked',
-    redirect: (context, state) => '/albums/liked-photos',
   ),
   GoRoute(
     path: '/association/committees/:groupSlug',
