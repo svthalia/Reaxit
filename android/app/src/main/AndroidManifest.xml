@@ -61,6 +61,8 @@
                 <data
                     android:path="/events/"/>
                 <data
+                    android:path="/members/photos"/>
+                <data
                     android:path="/association/boards/"/>
                 <data
                     android:path="/association/committees/"/>
