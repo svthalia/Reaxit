@@ -78,6 +78,8 @@
                     android:pathPattern="/members/photos/.*/"/>
                 <data
                     android:pathPattern="/sales/order/.*/pay/"/>
+                <data
+                    android:path="/pay/"/>
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
