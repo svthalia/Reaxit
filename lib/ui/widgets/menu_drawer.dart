@@ -6,6 +6,12 @@ import 'package:reaxit/ui/widgets.dart';
 import 'package:reaxit/config.dart' as config;
 
 class MenuDrawer extends StatelessWidget {
+  void _goTo(BuildContext context, String location) {
+    context.pushNamed(location);
+    // Pop the menu drawer
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     final router = GoRouter.of(context);
@@ -159,7 +165,7 @@ class MenuDrawer extends StatelessWidget {
               if (router.location == '/') {
                 Navigator.of(context).pop();
               } else {
-                context.goNamed('welcome');
+                _goTo(context, 'welcome');
               }
             },
           ),
@@ -171,7 +177,7 @@ class MenuDrawer extends StatelessWidget {
               if (router.location == '/events') {
                 Navigator.of(context).pop();
               } else {
-                context.goNamed('calendar');
+                _goTo(context, 'calendar');
               }
             },
           ),
@@ -183,7 +189,7 @@ class MenuDrawer extends StatelessWidget {
               if (router.location == '/members') {
                 Navigator.of(context).pop();
               } else {
-                context.goNamed('members');
+                _goTo(context, 'members');
               }
             },
           ),
@@ -195,7 +201,7 @@ class MenuDrawer extends StatelessWidget {
               if (router.location == '/groups') {
                 Navigator.of(context).pop();
               } else {
-                context.goNamed('groups');
+                _goTo(context, 'groups');
               }
             },
           ),
@@ -207,7 +213,7 @@ class MenuDrawer extends StatelessWidget {
               if (router.location == '/albums') {
                 Navigator.of(context).pop();
               } else {
-                context.goNamed('albums');
+                _goTo(context, 'albums');
               }
             },
           ),
@@ -219,7 +225,7 @@ class MenuDrawer extends StatelessWidget {
               if (router.location.startsWith('/pay')) {
                 Navigator.of(context).pop();
               } else {
-                context.goNamed('pay');
+                _goTo(context, 'pay');
               }
             },
           ),
@@ -232,7 +238,7 @@ class MenuDrawer extends StatelessWidget {
               if (router.location == '/settings') {
                 Navigator.of(context).pop();
               } else {
-                context.goNamed('settings');
+                _goTo(context, 'settings');
               }
             },
           ),
@@ -245,7 +251,7 @@ class MenuDrawer extends StatelessWidget {
                 if (router.location.startsWith('/tosti')) {
                   Navigator.of(context).pop();
                 } else {
-                  context.goNamed('tosti');
+                  _goTo(context, 'tosti');
                 }
               },
             ),
