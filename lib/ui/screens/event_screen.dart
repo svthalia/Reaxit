@@ -320,7 +320,8 @@ class _EventScreenState extends State<EventScreen> {
     late Widget paymentButton;
     if (event.isInvited &&
         event.paymentIsRequired &&
-        !event.registration!.isPaid) {
+        !event.registration!.isPaid &&
+        event.registration!.tpayAllowed) {
       paymentButton = TPayButton(
         onPay: () => _eventCubit.thaliaPayRegistration(
           registrationPk: event.registration!.pk,
