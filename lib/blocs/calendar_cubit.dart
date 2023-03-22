@@ -134,7 +134,7 @@ class CalendarState extends Equatable {
   String? get message => events.message;
 
   /// Different results are being loaded. The results are outdated.
-  bool get isLoading => events.isLoadingMoreUp;
+  bool get isLoading => events.isLoading;
 
   /// More of the same results are being loaded in the up direction. The results
   /// are not outdated.
@@ -212,7 +212,8 @@ class CalendarCubit extends Cubit<CalendarState> {
   List<CalendarEvent> filterDown(Iterable<CalendarEvent> events) {
     // Get the last non-parter event that will be shown on the calendar.
     CalendarEvent lastIncludedEvent = events.lastWhere(
-        (event) => event.parentEvent is! PartnerEvent && event.isFirstPart);
+        (event) => event.parentEvent is! PartnerEvent && event.isFirstPart,
+        orElse: () => events.last);
     // Remove anything before
     _remainingFutureEvents = events
         .whereNot((element) => lastIncludedEvent.start.isAfter(element.start))
@@ -225,7 +226,9 @@ class CalendarCubit extends Cubit<CalendarState> {
   List<CalendarEvent> filterUp(Iterable<CalendarEvent> events) {
     // Get the first non-parter event that will be shown on the calendar.
     CalendarEvent lastIncludedEvent = events.firstWhere(
-        (event) => event.parentEvent is! PartnerEvent && event.isLasttPart);
+      (event) => event.parentEvent is! PartnerEvent && event.isLasttPart,
+      orElse: () => events.first,
+    );
     // Remove anything before
     _remainingPastEvents = events
         .whereNot((element) => lastIncludedEvent.start.isBefore(element.start))
@@ -293,8 +296,8 @@ class CalendarCubit extends Cubit<CalendarState> {
 
       final isDoneDown =
           futureEventsResponse.results.length == futureEventsResponse.count;
-      final isDoneUp = _nextPastOffset + pastEventsResponse.results.length ==
-          pastEventsResponse.count;
+      final isDoneUp =
+          pastEventsResponse.results.length == pastEventsResponse.count;
 
       // Split multi-day events and merge the lists
       List<CalendarEvent> futureEvents = [
@@ -326,7 +329,7 @@ class CalendarCubit extends Cubit<CalendarState> {
       // Move any events that started before _splitTime but ended after to the
       // future events
       pastEvents.sort((a, b) => a.start.compareTo(b.start));
-      while (pastEvents.last.end.isAfter(_splitTime)) {
+      while (pastEvents.isNotEmpty && pastEvents.last.end.isAfter(_splitTime)) {
         futureEvents.add(pastEvents.removeLast());
       }
 
@@ -497,7 +500,8 @@ class CalendarCubit extends Cubit<CalendarState> {
       _searchDebounceTimer?.cancel();
       if (query?.isEmpty ?? false) {
         /// Don't get results when the query is empty.
-        emit(CalendarState(_truthTime, const DoubleListState.loading()));
+        emit(CalendarState(_truthTime,
+            const DoubleListState.success(isDoneUp: true, isDoneDown: false)));
       } else {
         _searchDebounceTimer = Timer(config.searchDebounceTime, load);
       }

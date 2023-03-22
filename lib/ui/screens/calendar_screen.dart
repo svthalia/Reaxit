@@ -29,6 +29,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void initState() {
     _cubit = BlocProvider.of<CalendarCubit>(context);
     _controller = ScrollController()..addListener(_scrollListener);
+    WidgetsBinding.instance.endOfFrame.then(
+      (_) => _scrollToToday(false),
+    );
     super.initState();
   }
 
@@ -53,7 +56,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
         _controller.position.maxScrollExtent - 300) {
       _cubit.more();
     }
-    _assureTodayOffset();
   }
 
   @override
@@ -75,13 +77,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
     searchCubit.close();
   }
 
-  void scrollToToday() {
+  void _scrollToToday(bool animate) {
     _assureTodayOffset();
-    _controller.animateTo(
-      _todayOffset ?? 0,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.ease,
-    );
+    if (animate) {
+      _controller.animateTo(
+        _todayOffset ?? 0,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.ease,
+      );
+    } else {
+      _controller.jumpTo(_todayOffset ?? 0);
+    }
   }
 
   @override
@@ -102,6 +108,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
         builder: (context, calendarState) {
           if (calendarState.hasException) {
             return ErrorScrollView(calendarState.message!);
+          } else if (calendarState.isLoading) {
+            return const Center(child: CircularProgressIndicator());
           } else {
             todayKey = GlobalKey();
             thisMonthKey = GlobalKey();
@@ -118,7 +126,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: scrollToToday,
+        onPressed: () => _scrollToToday(true),
         icon: const Icon(Icons.today),
         label: const Text('Today'),
         backgroundColor: magenta,
@@ -189,6 +197,8 @@ class CalendarSearchDelegate extends SearchDelegate {
       builder: (context, calendarState) {
         if (calendarState.hasException) {
           return ErrorScrollView(calendarState.message!);
+        } else if (calendarState.isLoading) {
+          return const Center(child: CircularProgressIndicator());
         } else {
           return CalendarScrollView(
             key: const PageStorageKey('calendar-search'),
@@ -328,13 +338,16 @@ class CalendarScrollView extends StatelessWidget {
             .sortedBy((element) => element.month)
             .reversed
             .toList(),
-        _monthGroupedEventsDown = ensureContainsToday(
-            groupByMonth(calendarState.resultsDown)
-                .sortedBy((element) => element.month),
-            now),
         _enableLoadMore = !calendarState.isDoneUp &&
             calendarState.resultsUp.isNotEmpty &&
             calendarState.resultsDown.isNotEmpty,
+        _monthGroupedEventsDown = calendarState.resultsDown.isEmpty
+            ? groupByMonth(calendarState.resultsDown)
+                .sortedBy((element) => element.month)
+            : ensureContainsToday(
+                groupByMonth(calendarState.resultsDown)
+                    .sortedBy((element) => element.month),
+                now),
         super(key: key);
 
   @override
@@ -552,9 +565,8 @@ class _DayCard extends StatelessWidget {
                       child: Text(
                         'There are no events this day',
                         style: TextStyle(
-                          color: day == today
-                              ? magenta
-                              : textTheme.displaySmall!.color!.withOpacity(0.5),
+                          color:
+                              textTheme.displaySmall!.color!.withOpacity(0.5),
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
                         ),
