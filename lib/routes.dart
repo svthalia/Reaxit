@@ -16,6 +16,9 @@ bool isDeepLink(Uri uri) {
 
 const _uuid = '([a-z0-9]{8}-([a-z0-9]{4}-){3}[a-z0-9]{12})';
 
+/* Any route added here also needs to be added to 
+android/app/src/main/AndroidManifest.xml and android/app/src/debug/AndroidManifest.xml */
+
 /// The [RegExp]s that can used as deep links. This list should
 /// contain all deep links that should be handled by the app.
 final List<RegExp> _deepLinkRegExps = <RegExp>[
