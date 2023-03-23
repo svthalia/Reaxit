@@ -50,16 +50,15 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
       duration: const Duration(milliseconds: 500),
       vsync: this,
       upperBound: 0.8,
-    )..addStatusListener((status) {
-        if (status == AnimationStatus.completed) likeController.reset();
-      });
+    )..addStatusListener((status) =>
+        status == AnimationStatus.completed ? likeController.reset() : null);
+
     unlikeController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
       upperBound: 0.8,
-    )..addStatusListener((status) {
-        if (status == AnimationStatus.completed) unlikeController.reset();
-      });
+    )..addStatusListener((status) =>
+        status == AnimationStatus.completed ? unlikeController.reset() : null);
 
     unlikeAnimation = CurvedAnimation(
       parent: unlikeController,
