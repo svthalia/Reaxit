@@ -162,6 +162,10 @@ final List<RouteBase> routes = [
     ],
   ),
   GoRoute(
+    path: '/members/photos/liked',
+    redirect: (context, state) => '/albums/liked-photos',
+  ),
+  GoRoute(
     // This redirect is above the members route because
     // the members path is a prefix of this albums path.
     path: '/members/photos/:albumSlug',
@@ -200,10 +204,6 @@ final List<RouteBase> routes = [
         ),
       ),
     ],
-  ),
-  GoRoute(
-    path: '/members/photos/liked',
-    redirect: (context, state) => '/albums/liked-photos',
   ),
   GoRoute(
     path: '/albums',
