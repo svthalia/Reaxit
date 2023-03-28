@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reaxit/models.dart';
 
+import 'cached_image.dart';
+
 class AlbumTile extends StatelessWidget {
   final ListAlbum album;
 
@@ -14,11 +16,10 @@ class AlbumTile extends StatelessWidget {
       children: [
         RotatedBox(
           quarterTurns: album.cover.rotation ~/ 90,
-          child: FadeInImage.assetNetwork(
+          child: CachedImage(
             placeholder:
                 'assets/img/photo_placeholder_${(360 - album.cover.rotation) % 360}.png',
-            image: album.cover.small,
-            fit: BoxFit.cover,
+            imageUrl: album.cover.small,
           ),
         ),
         const _BlackGradient(),
