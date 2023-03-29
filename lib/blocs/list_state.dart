@@ -69,7 +69,7 @@ class ListState<T> extends Equatable {
         isDone = true,
         count = 0;
 
-  const ListState.loadingMore(this.count, {required this.results})
+  const ListState.loadingMore({this.count, required this.results})
       : message = null,
         isLoading = false,
         isLoadingMore = true,
