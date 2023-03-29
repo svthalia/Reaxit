@@ -13,6 +13,8 @@ const String apiHost = String.fromEnvironment(
   defaultValue: 'staging.thalia.nu',
 );
 
+String apiHostCDN = 'cdn.$apiHost';
+
 const String apiSecret = String.fromEnvironment(
   'THALIA_OAUTH_APP_SECRET',
   defaultValue:

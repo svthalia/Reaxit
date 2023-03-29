@@ -39,7 +39,8 @@ class CachedImage extends CachedNetworkImage {
           /// only used for authentication, not to identify the image, so the
           /// remaining path is a unique key.
           /// If the url is not from thalia.nu, use the full url as the key.
-          cacheKey: Uri.parse(imageUrl).host == config.apiHost
+          cacheKey: (Uri.parse(imageUrl).host == config.apiHost ||
+                  Uri.parse(imageUrl).host == config.apiHostCDN)
               ? Uri.parse(imageUrl).replace(query: '').toString()
               : imageUrl,
           fit: fit,
