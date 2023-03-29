@@ -19,8 +19,8 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   static final dateFormatter = DateFormat('EEEE d MMMM');
 
-  static Map<DateTime, List<Event>> _groupByDay(List<Event> events) {
-    return groupBy<Event, DateTime>(
+  static Map<DateTime, List<BaseEvent>> _groupByDay(List<BaseEvent> events) {
+    return groupBy<BaseEvent, DateTime>(
       events,
       (event) => DateTime(
         event.start.year,
@@ -102,7 +102,20 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
-  Widget _makeUpcomingEvents(List<Event> events) {
+  Widget _makeEventCard(BaseEvent event) {
+    if (event is Event) {
+      return EventDetailCard(event: event);
+    }
+
+    if (event is PartnerEvent) {
+      return PartnerEventDetailCard(event: (event));
+    }
+
+    // Should not happen
+    return const SizedBox.shrink();
+  }
+
+  Widget _makeUpcomingEvents(List<BaseEvent> events) {
     final dayGroupedEvents = _groupByDay(events);
     return AnimatedSize(
       curve: Curves.ease,
@@ -142,8 +155,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       textAlign: TextAlign.left,
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
-                    for (final event in dayEvents)
-                      EventDetailCard(event: event),
+                    for (final event in dayEvents) _makeEventCard(event),
                   ]);
             }).toList(),
             if (events.isEmpty)
