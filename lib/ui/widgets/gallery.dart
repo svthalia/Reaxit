@@ -168,7 +168,10 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
         if (i < photos.length) {
           child = GestureDetector(
             onDoubleTap: () => _likePhoto(photos, i),
-            child: Image.network(photos[i].full),
+            child: RotatedBox(
+              quarterTurns: photos[i].rotation ~/ 90,
+              child: Image.network(photos[i].full),
+            ),
           );
         } else {
           child = const Center(

@@ -13,12 +13,14 @@ class PhotoTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: openGallery,
-      child: FadeInImage.assetNetwork(
-        placeholder: 'assets/img/photo_placeholder.png',
-        image: photo.small,
-        fit: BoxFit.cover,
-      ),
-    );
+        onTap: openGallery,
+        child: RotatedBox(
+            quarterTurns: photo.rotation ~/ 90,
+            child: FadeInImage.assetNetwork(
+              placeholder:
+                  'assets/img/photo_placeholder_${(360 - photo.rotation) % 360}.png',
+              image: photo.small,
+              fit: BoxFit.cover,
+            )));
   }
 }
