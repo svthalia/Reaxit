@@ -283,6 +283,7 @@ class CalendarScrollView extends StatelessWidget {
                   )
                 : scrollPhysics,
             center: centerkey,
+            anchor: calendarState.resultsDown.isEmpty ? 1.0 : 0.0,
             slivers: [
               if (_enableLoadMore)
                 SliverToBoxAdapter(
@@ -311,7 +312,9 @@ class CalendarScrollView extends StatelessWidget {
                 ),
               ),
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                padding: calendarState.resultsDown.isEmpty
+                    ? EdgeInsets.zero
+                    : const EdgeInsets.fromLTRB(12, 0, 12, 12),
                 key: centerkey,
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
