@@ -3,14 +3,16 @@ import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
+import 'package:reaxit/ui/widgets/gallery.dart';
 
 typedef AlbumState = DetailState<Album>;
 
-class AlbumCubit extends Cubit<AlbumState> {
+class AlbumCubit extends Cubit<AlbumState> implements GalleryCubit<AlbumState> {
   final ApiRepository api;
 
   AlbumCubit(this.api) : super(const LoadingState());
 
+  @override
   Future<void> updateLike({required bool liked, required int index}) async {
     if (state is! ResultState) return;
     final oldState = state as ResultState<Album>;
@@ -36,6 +38,9 @@ class AlbumCubit extends Cubit<AlbumState> {
       rethrow;
     }
   }
+
+  @override
+  Future<void> more() async {}
 
   Future<void> load(String slug) async {
     emit(LoadingState.from(state));

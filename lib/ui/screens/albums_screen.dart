@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/api/api_repository.dart';
@@ -43,6 +44,11 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
       appBar: ThaliaAppBar(
         title: const Text('ALBUMS'),
         actions: [
+          IconButton(
+              onPressed: () => context.pushNamed(
+                    'liked-photos',
+                  ),
+              icon: const Icon(Icons.favorite_border)),
           IconButton(
             padding: const EdgeInsets.all(16),
             icon: const Icon(Icons.search),

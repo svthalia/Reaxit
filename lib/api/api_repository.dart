@@ -344,6 +344,11 @@ abstract class ApiRepository {
   /// Get the [Group] of a board with the `since` and `until`.
   Future<Group> getBoardGroup({required int since, required int until});
 
+  Future<ListResponse<AlbumPhoto>> getLikedPhotos({
+    int? limit,
+    int? offset,
+  });
+
   /// Get a list of [Payment]'s of the current user.
   Future<ListResponse<Payment>> getPayments({
     int? limit,
