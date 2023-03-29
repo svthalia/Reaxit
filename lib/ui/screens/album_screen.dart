@@ -221,7 +221,10 @@ class __GalleryState extends State<_Gallery> with TickerProviderStateMixin {
           return PhotoViewGalleryPageOptions.customChild(
             child: GestureDetector(
               onDoubleTap: () => _likePhoto(photos, i),
-              child: Image.network(photos[i].full),
+              child: RotatedBox(
+                quarterTurns: photos[i].rotation ~/ 90,
+                child: Image.network(photos[i].full),
+              ),
             ),
             minScale: PhotoViewComputedScale.contained * 0.8,
             maxScale: PhotoViewComputedScale.covered * 2,
@@ -393,10 +396,14 @@ class _PhotoTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: openGallery,
-      child: FadeInImage.assetNetwork(
-        placeholder: 'assets/img/photo_placeholder.png',
-        image: photo.small,
-        fit: BoxFit.cover,
+      child: RotatedBox(
+        quarterTurns: photo.rotation ~/ 90,
+        child: FadeInImage.assetNetwork(
+          placeholder:
+              'assets/img/photo_placeholder_${(360 - photo.rotation) % 360}.png',
+          image: photo.small,
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
