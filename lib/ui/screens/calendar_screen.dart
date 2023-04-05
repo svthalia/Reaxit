@@ -197,6 +197,9 @@ class CalendarSearchDelegate extends SearchDelegate {
         } else if (calendarState.isLoading) {
           return const Center(child: CircularProgressIndicator());
         } else {
+          if (_controller.hasClients) {
+            _controller.jumpTo(0);
+          }
           return CalendarScrollView(
             key: const PageStorageKey('calendar-search'),
             controller: _controller,
@@ -254,8 +257,7 @@ class CalendarScrollView extends StatelessWidget {
             calendarState.resultsUp.isNotEmpty &&
             calendarState.resultsDown.isNotEmpty,
         _monthGroupedEventsDown = calendarState.resultsDown.isEmpty
-            ? groupByMonth(calendarState.resultsDown)
-                .sortedBy((element) => element.month)
+            ? List.empty()
             : ensureContainsToday(
                 groupByMonth(calendarState.resultsDown)
                     .sortedBy((element) => element.month),
@@ -264,6 +266,14 @@ class CalendarScrollView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // If there are no future events we should still display some events
+    final upEvents = _monthGroupedEventsDown.isEmpty && calendarState.isDoneDown
+        ? _monthGroupedEventsUp.skip(1).toList()
+        : _monthGroupedEventsUp;
+    final downEvents =
+        _monthGroupedEventsDown.isEmpty && calendarState.isDoneDown
+            ? [_monthGroupedEventsUp.first]
+            : _monthGroupedEventsDown;
     ScrollPhysics scrollPhysics = const AlwaysScrollableScrollPhysics();
     return Column(
       children: [
@@ -277,13 +287,14 @@ class CalendarScrollView extends StatelessWidget {
             physics: _enableLoadMore
                 ? OnTopCallbackScrollPhysics(
                     parent: BouncingScrollPhysics(
-                        decelerationRate: ScrollDecelerationRate.fast,
-                        parent: scrollPhysics),
+                      decelerationRate: ScrollDecelerationRate.fast,
+                      parent: scrollPhysics,
+                    ),
                     onhittop: loadMoreUp,
                   )
                 : scrollPhysics,
             center: centerkey,
-            anchor: calendarState.resultsDown.isEmpty ? 1.0 : 0.0,
+            anchor: 0.0,
             slivers: [
               if (_enableLoadMore)
                 SliverToBoxAdapter(
@@ -302,29 +313,29 @@ class CalendarScrollView extends StatelessWidget {
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (_, index) => CalendarMonth(
-                      events: _monthGroupedEventsUp[index],
+                      events: upEvents[index],
                       todayKey: todayKey,
                       thisMonthKey: thisMonthKey,
                       now: now,
                     ),
-                    childCount: _monthGroupedEventsUp.length,
+                    childCount: upEvents.length,
                   ),
                 ),
               ),
               SliverPadding(
-                padding: calendarState.resultsDown.isEmpty
+                padding: downEvents.isEmpty
                     ? EdgeInsets.zero
                     : const EdgeInsets.fromLTRB(12, 0, 12, 12),
                 key: centerkey,
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (_, index) => CalendarMonth(
-                      events: _monthGroupedEventsDown[index],
+                      events: downEvents[index],
                       todayKey: todayKey,
                       thisMonthKey: thisMonthKey,
                       now: now,
                     ),
-                    childCount: _monthGroupedEventsDown.length,
+                    childCount: downEvents.length,
                   ),
                 ),
               ),
