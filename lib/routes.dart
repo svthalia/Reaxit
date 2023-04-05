@@ -99,13 +99,26 @@ final List<RouteBase> routes = [
       GoRoute(
         path: ':eventPk',
         name: 'event',
-        pageBuilder: (context, state) => MaterialPage(
-          key: state.pageKey,
-          child: EventScreen(
-            pk: int.parse(state.params['eventPk']!),
-            event: state.extra as Event?,
-          ),
-        ),
+        pageBuilder: (context, state) {
+          int? pk;
+          String? slug;
+
+          try {
+            pk = int.parse(state.params['eventPk']!);
+          } on FormatException catch (_) {
+            pk = null;
+            slug = state.params['eventPk']!;
+          }
+
+          return MaterialPage(
+            key: state.pageKey,
+            child: EventScreen(
+              pk: pk,
+              slug: slug,
+              event: state.extra as Event?,
+            ),
+          );
+        },
         routes: [
           GoRoute(
             path: 'mark-present/:token',

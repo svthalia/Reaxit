@@ -334,7 +334,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
         returnValueForMissingStub: null,
       );
   @override
-  _i6.Future<_i3.Event> getEvent({required int? pk}) => (super.noSuchMethod(
+  _i6.Future<_i3.Event> getEventPk({required int? pk}) => (super.noSuchMethod(
         Invocation.method(
           #getEvent,
           [],

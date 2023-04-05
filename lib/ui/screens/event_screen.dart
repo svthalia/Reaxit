@@ -16,10 +16,11 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:reaxit/config.dart' as config;
 
 class EventScreen extends StatefulWidget {
-  final int pk;
+  final String? slug;
   final Event? event;
+  final int? pk;
 
-  EventScreen({required this.pk, this.event}) : super(key: ValueKey(pk));
+  const EventScreen({required this.pk, required this.slug, this.event});
 
   @override
   State<EventScreen> createState() => _EventScreenState();
@@ -31,13 +32,13 @@ class _EventScreenState extends State<EventScreen> {
   late ScrollController _controller;
 
   late final EventCubit _eventCubit;
-  late final RegistrationsCubit _registrationsCubit;
 
   @override
   void initState() {
     final api = RepositoryProvider.of<ApiRepository>(context);
-    _eventCubit = EventCubit(api, eventPk: widget.pk)..load();
-    _registrationsCubit = RegistrationsCubit(api, eventPk: widget.pk)..load();
+    _eventCubit = EventCubit(api, eventPk: widget.pk, eventSlug: widget.slug)
+      ..load();
+
     _controller = ScrollController()..addListener(_scrollListener);
     super.initState();
   }
@@ -46,8 +47,8 @@ class _EventScreenState extends State<EventScreen> {
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
       // Only request loading more if that's not already happening.
-      if (!_registrationsCubit.state.isLoadingMore) {
-        _registrationsCubit.more();
+      if (!_eventCubit.state.isLoadingMore) {
+        _eventCubit.more();
       }
     }
   }
@@ -55,7 +56,7 @@ class _EventScreenState extends State<EventScreen> {
   @override
   void dispose() {
     _eventCubit.close();
-    _registrationsCubit.close();
+    _eventCubit.close();
     super.dispose();
   }
 
@@ -513,7 +514,7 @@ class _EventScreenState extends State<EventScreen> {
         try {
           final calendarCubit = BlocProvider.of<CalendarCubit>(context);
           await _eventCubit.register();
-          await _registrationsCubit.load();
+          await _eventCubit.load();
           calendarCubit.load();
         } on ApiException {
           messenger.showSnackBar(const SnackBar(
@@ -536,7 +537,7 @@ class _EventScreenState extends State<EventScreen> {
           await _eventCubit.cancelRegistration(
             registrationPk: event.registration!.pk,
           );
-          await _registrationsCubit.load();
+          await _eventCubit.load();
           calendarCubit.load();
         } on ApiException {
           messenger.showSnackBar(const SnackBar(
@@ -608,7 +609,7 @@ class _EventScreenState extends State<EventScreen> {
               content: Text('Could not register for the event.'),
             ));
           }
-          await _registrationsCubit.load();
+          await _eventCubit.load();
         }
       },
       icon: const Icon(Icons.create_outlined),
@@ -640,7 +641,7 @@ class _EventScreenState extends State<EventScreen> {
             content: Text('Could not join the waiting list for the event.'),
           ));
         }
-        await _registrationsCubit.load();
+        await _eventCubit.load();
       },
       icon: const Icon(Icons.create_outlined),
       label: const Text('JOIN QUEUE'),
@@ -696,7 +697,7 @@ class _EventScreenState extends State<EventScreen> {
             ));
           }
         }
-        await _registrationsCubit.load();
+        await _eventCubit.load();
         calendarCubit.load();
         await welcomeCubit.load();
       },
@@ -795,7 +796,7 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  SliverPadding _makeRegistrationsHeader(RegistrationsState state) {
+  SliverPadding _makeRegistrationsHeader() {
     return SliverPadding(
       padding: const EdgeInsets.only(left: 16),
       sliver: SliverToBoxAdapter(
@@ -807,8 +808,8 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  SliverPadding _makeRegistrations(RegistrationsState state) {
-    if (state.isLoading && state.results.isEmpty) {
+  SliverPadding _makeRegistrations(EventState state) {
+    if (state.isLoading && state.registrations.isEmpty) {
       return const SliverPadding(
         padding: EdgeInsets.all(16),
         sliver: SliverToBoxAdapter(
@@ -833,17 +834,17 @@ class _EventScreenState extends State<EventScreen> {
           ),
           delegate: SliverChildBuilderDelegate(
             (context, index) {
-              if (state.results[index].member != null) {
+              if (state.registrations[index].member != null) {
                 return MemberTile(
-                  member: state.results[index].member!,
+                  member: state.registrations[index].member!,
                 );
               } else {
                 return DefaultMemberTile(
-                  name: state.results[index].name!,
+                  name: state.registrations[index].name!,
                 );
               }
             },
-            childCount: state.results.length,
+            childCount: state.registrations.length,
           ),
         ),
       );
@@ -895,39 +896,36 @@ class _EventScreenState extends State<EventScreen> {
     return BlocBuilder<EventCubit, EventState>(
       bloc: _eventCubit,
       builder: (context, state) {
-        if (state is ErrorState) {
+        if (state.hasException) {
           return Scaffold(
             appBar: ThaliaAppBar(
               title: Text(widget.event?.title.toUpperCase() ?? 'EVENT'),
-              actions: [_makeShareEventButton(widget.pk)],
+              actions: [_makeShareEventButton(_eventCubit.eventPk!)],
             ),
             body: RefreshIndicator(
               onRefresh: () async {
                 // Await only the event info.
-                _registrationsCubit.load();
+                _eventCubit.load();
                 await _eventCubit.load();
               },
               child: ErrorScrollView(state.message!),
             ),
           );
-        } else if (state is LoadingState &&
-            state is! ResultState &&
-            widget.event == null) {
+        } else if (state.isLoading && widget.event == null) {
           return Scaffold(
             appBar: ThaliaAppBar(
               title: const Text('EVENT'),
-              actions: [_makeShareEventButton(widget.pk)],
             ),
             body: const Center(child: CircularProgressIndicator()),
           );
         } else {
-          final event = (state.result ?? widget.event)!;
+          final event = (state.event ?? widget.event)!;
           return Scaffold(
             appBar: ThaliaAppBar(
               title: Text(event.title.toUpperCase()),
               actions: [
                 _makeCalendarExportButton(event),
-                _makeShareEventButton(widget.pk),
+                _makeShareEventButton(_eventCubit.eventPk!),
                 if (event.userPermissions.manageEvent)
                   IconButton(
                     padding: const EdgeInsets.all(16),
@@ -942,11 +940,11 @@ class _EventScreenState extends State<EventScreen> {
             body: RefreshIndicator(
               onRefresh: () async {
                 // Await only the event info.
-                _registrationsCubit.load();
+                _eventCubit.load();
                 await _eventCubit.load();
               },
-              child: BlocBuilder<RegistrationsCubit, RegistrationsState>(
-                bloc: _registrationsCubit,
+              child: BlocBuilder<EventCubit, EventState>(
+                bloc: _eventCubit,
                 builder: (context, listState) {
                   return Scrollbar(
                     controller: _controller,
@@ -966,20 +964,19 @@ class _EventScreenState extends State<EventScreen> {
                             ],
                           ),
                         ),
-                        if (event.registrationIsOptional ||
-                            event.registrationIsRequired) ...[
-                          const SliverToBoxAdapter(child: Divider()),
-                          _makeRegistrationsHeader(listState),
-                          _makeRegistrations(listState),
-                          if (listState.isLoadingMore)
-                            const SliverPadding(
-                              padding: EdgeInsets.all(8),
-                              sliver: SliverList(
-                                delegate: SliverChildListDelegate.fixed([
-                                  Center(child: CircularProgressIndicator()),
-                                ]),
-                              ),
+                        const SliverToBoxAdapter(child: Divider()),
+                        if (state.isLoading || state.isLoadingMore) ...[
+                          const SliverPadding(
+                            padding: EdgeInsets.all(8),
+                            sliver: SliverList(
+                              delegate: SliverChildListDelegate.fixed([
+                                Center(child: CircularProgressIndicator()),
+                              ]),
                             ),
+                          ),
+                        ] else if (state.registrations.isNotEmpty) ...[
+                          _makeRegistrationsHeader(),
+                          _makeRegistrations(state),
                         ],
                       ],
                     ),
