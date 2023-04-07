@@ -141,7 +141,7 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
-  Future<Event> getEventPk({required int pk}) {
+  Future<Event> getEventByPk({required int pk}) {
     return sandbox(() async {
       final uri = _uri(path: '/events/$pk/');
       final response = await _handleExceptions(() => _client.get(uri));
@@ -161,7 +161,7 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
-  Future<Event> getEventSlug({required String slug}) {
+  Future<Event> getEventBySlug({required String slug}) {
     return sandbox(() async {
       final uri = _uri(path: '/events/$slug/');
       final response = await _handleExceptions(() => _client.get(uri));

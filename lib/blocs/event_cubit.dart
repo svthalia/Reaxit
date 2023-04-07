@@ -20,13 +20,14 @@ class EventState extends Equatable {
   /// The last results have been loaded. There are no more pages left.
   final bool isDone;
 
-  const EventState(
-      {required this.event,
-      required this.registrations,
-      required this.isLoading,
-      required this.message,
-      required this.isLoadingMore,
-      required this.isDone});
+  const EventState({
+    required this.event,
+    required this.registrations,
+    required this.isLoading,
+    required this.message,
+    required this.isLoadingMore,
+    required this.isDone,
+  });
 
   bool get hasException => message != null;
 
@@ -114,8 +115,8 @@ class EventCubit extends Cubit<EventState> {
 
     try {
       Event event = eventPk == null
-          ? await api.getEventSlug(slug: eventSlug!)
-          : await api.getEventPk(pk: eventPk!);
+          ? await api.getEventBySlug(slug: eventSlug!)
+          : await api.getEventByPk(pk: eventPk!);
 
       eventPk = event.pk;
 

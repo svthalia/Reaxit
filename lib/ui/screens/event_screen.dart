@@ -20,7 +20,8 @@ class EventScreen extends StatefulWidget {
   final Event? event;
   final int? pk;
 
-  const EventScreen({required this.pk, required this.slug, this.event});
+  const EventScreen({this.pk, this.slug, this.event})
+      : assert(!(pk == null && slug == null));
 
   @override
   State<EventScreen> createState() => _EventScreenState();
