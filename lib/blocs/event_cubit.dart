@@ -5,7 +5,10 @@ import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/models.dart';
 
 class EventState extends Equatable {
+  /// The event, will only be null if event has not yet been loaded.
   final Event? event;
+
+  /// List of all the registrations.
   final List<EventRegistration> registrations;
 
   /// A message describing why there are no results.
@@ -64,21 +67,20 @@ class EventState extends Equatable {
         ' isDone: $isDone, message: $message, event: $event, registrations: $registrations)';
   }
 
-  const EventState.loading({required this.event, required this.registrations})
+  const EventState.loading({this.event, required this.registrations})
       : message = null,
         isLoading = true,
         isLoadingMore = false,
         isDone = true;
 
-  const EventState.loadingMore(
-      {required this.event, required this.registrations})
+  const EventState.loadingMore({this.event, required this.registrations})
       : message = null,
         isLoading = false,
         isLoadingMore = true,
         isDone = true;
 
   const EventState.success({
-    required this.event,
+    this.event,
     required this.registrations,
     required this.isDone,
   })  : message = null,
@@ -95,8 +97,8 @@ class EventState extends Equatable {
 
 class EventCubit extends Cubit<EventState> {
   final ApiRepository api;
-  final String? eventSlug;
-  int? eventPk;
+  final String? _eventSlug;
+  int? _eventPk;
 
   static const int firstPageSize = 60;
   static const int pageSize = 30;
@@ -104,30 +106,34 @@ class EventCubit extends Cubit<EventState> {
   /// The offset to be used for the next paginated request.
   int _nextOffset = 0;
 
-  EventCubit(this.api, {required this.eventPk, required this.eventSlug})
-      : assert((eventPk == null && eventSlug != null) ||
-            (eventPk != null && eventSlug == null)),
-        super(const EventState.loading(registrations: [], event: null));
+  EventCubit(this.api, {int? eventPk, String? eventSlug})
+      : assert(!(eventPk == null && eventSlug == null)),
+        _eventSlug = eventSlug,
+        _eventPk = eventPk,
+        super(const EventState.loading(registrations: []));
 
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
 
     try {
-      Event event = eventPk == null
-          ? await api.getEventBySlug(slug: eventSlug!)
-          : await api.getEventByPk(pk: eventPk!);
+      Event event = _eventPk == null
+          ? await api.getEventBySlug(slug: _eventSlug!)
+          : await api.getEventByPk(pk: _eventPk!);
 
-      eventPk = event.pk;
+      _eventPk = event.pk;
 
       final listResponse = await api.getEventRegistrations(
-          pk: eventPk!, limit: firstPageSize, offset: 0);
+          pk: _eventPk!, limit: firstPageSize, offset: 0);
 
       final isDone = listResponse.results.length == listResponse.count;
 
       _nextOffset = firstPageSize;
 
       emit(EventState.success(
-          event: event, registrations: listResponse.results, isDone: isDone));
+        event: event,
+        registrations: listResponse.results,
+        isDone: isDone,
+      ));
     } on ApiException catch (exception) {
       emit(EventState.failure(
           message: exception.getMessage(
@@ -140,7 +146,7 @@ class EventCubit extends Cubit<EventState> {
   ///
   /// This throws an [ApiException] if registration fails.
   Future<EventRegistration> register() async {
-    final registration = await api.registerForEvent(eventPk!);
+    final registration = await api.registerForEvent(_eventPk!);
     // Reload the event for updated registration status.
     await load();
     return registration;
@@ -154,7 +160,7 @@ class EventCubit extends Cubit<EventState> {
     required int registrationPk,
   }) async {
     await api.cancelRegistration(
-      eventPk: eventPk!,
+      eventPk: _eventPk!,
       registrationPk: registrationPk,
     );
     // Reload the event for updated registration status.
@@ -178,7 +184,7 @@ class EventCubit extends Cubit<EventState> {
 
     try {
       var listResponse = await api.getEventRegistrations(
-        pk: eventPk!,
+        pk: _eventPk!,
         limit: pageSize,
         offset: _nextOffset,
       );
@@ -189,7 +195,10 @@ class EventCubit extends Cubit<EventState> {
       _nextOffset += pageSize;
 
       emit(EventState.success(
-          event: oldState.event, registrations: registrations, isDone: isDone));
+        event: oldState.event,
+        registrations: registrations,
+        isDone: isDone,
+      ));
     } on ApiException catch (exception) {
       emit(EventState.failure(
         message: exception.getMessage(notFound: 'The event does not exist.'),

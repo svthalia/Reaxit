@@ -30,7 +30,7 @@ class EventScreen extends StatefulWidget {
 class _EventScreenState extends State<EventScreen> {
   static final dateTimeFormatter = DateFormat('E d MMM y, HH:mm');
 
-  late ScrollController _controller;
+  late final ScrollController _controller;
 
   late final EventCubit _eventCubit;
 
@@ -57,7 +57,7 @@ class _EventScreenState extends State<EventScreen> {
   @override
   void dispose() {
     _eventCubit.close();
-    _eventCubit.close();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -901,12 +901,12 @@ class _EventScreenState extends State<EventScreen> {
           return Scaffold(
             appBar: ThaliaAppBar(
               title: Text(widget.event?.title.toUpperCase() ?? 'EVENT'),
-              actions: [_makeShareEventButton(_eventCubit.eventPk!)],
+              actions: [
+                if (widget.pk != null) _makeShareEventButton(widget.pk!)
+              ],
             ),
             body: RefreshIndicator(
               onRefresh: () async {
-                // Await only the event info.
-                _eventCubit.load();
                 await _eventCubit.load();
               },
               child: ErrorScrollView(state.message!),
@@ -926,7 +926,7 @@ class _EventScreenState extends State<EventScreen> {
               title: Text(event.title.toUpperCase()),
               actions: [
                 _makeCalendarExportButton(event),
-                _makeShareEventButton(_eventCubit.eventPk!),
+                _makeShareEventButton(event.pk),
                 if (event.userPermissions.manageEvent)
                   IconButton(
                     padding: const EdgeInsets.all(16),
@@ -940,8 +940,6 @@ class _EventScreenState extends State<EventScreen> {
             ),
             body: RefreshIndicator(
               onRefresh: () async {
-                // Await only the event info.
-                _eventCubit.load();
                 await _eventCubit.load();
               },
               child: BlocBuilder<EventCubit, EventState>(
