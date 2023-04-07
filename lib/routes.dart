@@ -106,7 +106,6 @@ final List<RouteBase> routes = [
           try {
             pk = int.parse(state.params['eventPk']!);
           } on FormatException catch (_) {
-            pk = null;
             slug = state.params['eventPk']!;
           }
 
