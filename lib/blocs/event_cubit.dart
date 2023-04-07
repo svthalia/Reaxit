@@ -60,9 +60,8 @@ class EventState extends Equatable {
 
   @override
   String toString() {
-    // return 'EventState(isLoading: $isLoading, isLoadingMore: $isLoadingMore,'
-    //     ' isDone: $isDone, message: $message, ${results.length} ${T}s)';
-    return '';
+    return 'EventState(isLoading: $isLoading, isLoadingMore: $isLoadingMore,'
+        ' isDone: $isDone, message: $message, event: $event, registrations: $registrations)';
   }
 
   const EventState.loading({required this.event, required this.registrations})
