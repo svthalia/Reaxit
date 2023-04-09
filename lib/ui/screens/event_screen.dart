@@ -158,7 +158,8 @@ class _EventScreenState extends State<EventScreen> {
                     dateTimeFormatter.format(event.end.toLocal()),
                     style: textTheme.titleSmall,
                   ),
-                  Text(event.organisers[0].name),
+                  if (event.organisers.isNotEmpty)
+                    (Text(event.organisers[0].name)),
                 ],
               ),
             )

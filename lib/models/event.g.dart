@@ -11,10 +11,8 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       json['title'] as String,
       json['url'] as String,
       json['caption'] as String,
-      (json['organisers'] as List<dynamic>)
-          .map((e) => Group.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      json['description'] as String,
+      (json['organisers'] as List<Map<String, dynamic>>)
+          .map((x) => Group.fromJson(x)) as List<Group>,
       DateTime.parse(json['start'] as String),
       DateTime.parse(json['end'] as String),
       $enumDecode(_$EventCategoryEnumMap, json['category']),
@@ -106,9 +104,8 @@ Map<String, dynamic> _$EventPermissionsToJson(EventPermissions instance) =>
 PartnerEvent _$PartnerEventFromJson(Map<String, dynamic> json) => PartnerEvent(
       json['pk'] as int,
       json['title'] as String,
-      (json['organisers'] as List<dynamic>)
-          .map((e) => Group.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      (json['organisers'] as List<Map<String, dynamic>>)
+          .map((x) => Group.fromJson(x)) as List<Group>,
       json['description'] as String,
       DateTime.parse(json['start'] as String),
       DateTime.parse(json['end'] as String),
@@ -131,9 +128,8 @@ Map<String, dynamic> _$PartnerEventToJson(PartnerEvent instance) =>
 AdminEvent _$AdminEventFromJson(Map<String, dynamic> json) => AdminEvent(
       json['id'] as int,
       json['title'] as String,
-      (json['organisers'] as List<dynamic>)
-          .map((e) => Group.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      (json['organisers'] as List<Map<String, dynamic>>)
+          .map((x) => Group.fromJson(x)) as List<Group>,
       json['caption'] as String,
       DateTime.parse(json['start'] as String),
       DateTime.parse(json['end'] as String),
