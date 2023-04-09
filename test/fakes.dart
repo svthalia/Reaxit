@@ -6,7 +6,7 @@ class FakeEvent implements BaseEvent {
   @override
   final String title;
   @override
-  final String organiser;
+  final List<Group> organisers;
   @override
   final String caption;
   @override
@@ -19,7 +19,7 @@ class FakeEvent implements BaseEvent {
   FakeEvent({
     required this.pk,
     required this.title,
-    this.organiser = "hi",
+    this.organisers = const [],
     required this.caption,
     required this.start,
     required this.end,
