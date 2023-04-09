@@ -16,6 +16,7 @@ enum RegistrationStatus {
 abstract class BaseEvent {
   abstract final int pk;
   abstract final String title;
+  abstract final String organizer;
   abstract final String caption;
   abstract final DateTime start;
   abstract final DateTime end;
@@ -28,6 +29,8 @@ class Event implements BaseEvent {
   final int pk;
   @override
   final String title;
+  @override
+  final String organizer;
   @override
   final String caption;
   @override
@@ -108,6 +111,7 @@ class Event implements BaseEvent {
     this.url,
     this.caption,
     this.description,
+    this.organizer,
     this.start,
     this.end,
     this.category,
@@ -156,6 +160,8 @@ class PartnerEvent implements BaseEvent {
   @override
   final String title;
   @override
+  final String organizer;
+  @override
   @JsonKey(name: 'description')
   final String caption;
   @override
@@ -173,6 +179,7 @@ class PartnerEvent implements BaseEvent {
   const PartnerEvent(
     this.pk,
     this.title,
+    this.organizer,
     this.caption,
     this.start,
     this.end,
@@ -188,6 +195,8 @@ class AdminEvent implements BaseEvent {
   final int pk;
   @override
   final String title;
+  @override
+  final String organizer;
   @override
   final String caption;
   @override
@@ -235,6 +244,7 @@ class AdminEvent implements BaseEvent {
   AdminEvent(
     this.pk,
     this.title,
+    this.organizer,
     this.caption,
     this.start,
     this.end,
