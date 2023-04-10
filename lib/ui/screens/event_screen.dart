@@ -224,6 +224,23 @@ class _EventScreenState extends State<EventScreen> {
               ),
             ],
           ),
+        const SizedBox(height: 12),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Flexible(
+              fit: FlexFit.tight,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('ORGANISERS', style: textTheme.bodySmall),
+                    const SizedBox(height: 4),
+                    Text(event.organisers.toString(),
+                        style: textTheme.titleSmall)
+                  ]),
+            )
+          ],
+        ),
         const Divider(height: 24),
       ],
     );

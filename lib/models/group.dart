@@ -5,7 +5,7 @@ part 'group.g.dart';
 
 enum MemberGroupType { committee, society, board }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class ListGroup {
   final int pk;
   final String name;
@@ -36,7 +36,7 @@ class ListGroup {
       _$ListGroupFromJson(json);
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class Group extends ListGroup {
   final List<GroupMembership> members;
 
@@ -55,7 +55,7 @@ class Group extends ListGroup {
   factory Group.fromJson(Map<String, dynamic> json) => _$GroupFromJson(json);
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class GroupMembership {
   final ListMember member;
   final bool chair;
@@ -66,4 +66,6 @@ class GroupMembership {
       this.member, this.chair, this.since, this.until, this.role);
   factory GroupMembership.fromJson(Map<String, dynamic> json) =>
       _$GroupMembershipFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GroupMembershipToJson(this);
 }

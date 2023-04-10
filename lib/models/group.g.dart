@@ -25,7 +25,7 @@ Map<String, dynamic> _$ListGroupToJson(ListGroup instance) => <String, dynamic>{
       'since': instance.since?.toIso8601String(),
       'until': instance.until?.toIso8601String(),
       'contact_address': instance.contactAddress,
-      'photo': instance.photo,
+      'photo': instance.photo.toJson(),
     };
 
 const _$MemberGroupTypeEnumMap = {
@@ -56,8 +56,8 @@ Map<String, dynamic> _$GroupToJson(Group instance) => <String, dynamic>{
       'since': instance.since?.toIso8601String(),
       'until': instance.until?.toIso8601String(),
       'contact_address': instance.contactAddress,
-      'photo': instance.photo,
-      'members': instance.members,
+      'photo': instance.photo.toJson(),
+      'members': instance.members.map((e) => e.toJson()).toList(),
     };
 
 GroupMembership _$GroupMembershipFromJson(Map<String, dynamic> json) =>
@@ -71,7 +71,7 @@ GroupMembership _$GroupMembershipFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$GroupMembershipToJson(GroupMembership instance) =>
     <String, dynamic>{
-      'member': instance.member,
+      'member': instance.member.toJson(),
       'chair': instance.chair,
       'since': instance.since.toIso8601String(),
       'until': instance.until?.toIso8601String(),

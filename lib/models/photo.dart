@@ -29,11 +29,13 @@ class CoverPhoto {
 
   const CoverPhoto(this.pk, this.rotation, this.file);
 
+  Map<String, dynamic> toJson() => _$CoverPhotoToJson(this);
+
   factory CoverPhoto.fromJson(Map<String, dynamic> json) =>
       _$CoverPhotoFromJson(json);
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class AlbumPhoto extends CoverPhoto {
   final bool liked;
   final int numLikes;
@@ -57,11 +59,14 @@ class AlbumPhoto extends CoverPhoto {
   const AlbumPhoto(int pk, int rotation, Photo file, this.liked, this.numLikes)
       : super(pk, rotation, file);
 
+  @override
+  Map<String, dynamic> toJson() => _$AlbumPhotoToJson(this);
+
   factory AlbumPhoto.fromJson(Map<String, dynamic> json) =>
       _$AlbumPhotoFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class Photo {
   final String full;
   final String small;
@@ -70,4 +75,6 @@ class Photo {
 
   const Photo(this.full, this.small, this.medium, this.large);
   factory Photo.fromJson(Map<String, dynamic> json) => _$PhotoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PhotoToJson(this);
 }

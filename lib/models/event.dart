@@ -160,8 +160,6 @@ class PartnerEvent implements BaseEvent {
   @override
   final String title;
   @override
-  final List<Group> organisers;
-  @override
   @JsonKey(name: 'description')
   final String caption;
   @override
@@ -170,6 +168,8 @@ class PartnerEvent implements BaseEvent {
   final DateTime end;
   @override
   final String location;
+  @override
+  final List<Group> organisers;
 
   final Uri url;
 
@@ -179,12 +179,12 @@ class PartnerEvent implements BaseEvent {
   const PartnerEvent(
     this.pk,
     this.title,
-    this.organisers,
     this.caption,
     this.start,
     this.end,
     this.location,
     this.url,
+    this.organisers,
   );
 }
 
@@ -196,8 +196,6 @@ class AdminEvent implements BaseEvent {
   @override
   final String title;
   @override
-  final List<Group> organisers;
-  @override
   final String caption;
   @override
   final DateTime start;
@@ -205,6 +203,8 @@ class AdminEvent implements BaseEvent {
   final DateTime end;
   @override
   final String location;
+  @override
+  final List<Group> organisers;
 
   final String description;
   final EventCategory category;
@@ -244,7 +244,6 @@ class AdminEvent implements BaseEvent {
   AdminEvent(
     this.pk,
     this.title,
-    this.organisers,
     this.caption,
     this.start,
     this.end,
@@ -258,5 +257,6 @@ class AdminEvent implements BaseEvent {
     this.price,
     this.fine,
     this.markPresentUrlToken,
+    this.organisers,
   );
 }
