@@ -462,8 +462,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         bloc: _memberCubit,
         builder: (context, state) {
           if (state is ErrorState) {
-            return CustomScrollView(
+            return SafeCustomScrollView(
               controller: _scrollController,
+              top: false,
               slivers: [
                 _makeAppBar(),
                 SliverFillRemaining(
@@ -472,8 +473,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             );
           } else if (state is LoadingState && widget.member == null) {
-            return CustomScrollView(
+            return SafeCustomScrollView(
               controller: _scrollController,
+              top: false,
               slivers: [
                 _makeAppBar(),
                 const SliverFillRemaining(
@@ -482,9 +484,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             );
           } else {
-            return CustomScrollView(
+            return SafeCustomScrollView(
               key: const PageStorageKey('profile'),
               controller: _scrollController,
+              top: false,
               slivers: [
                 _makeAppBar((state.result ?? widget.member)!),
                 _makeFactsSliver((state.result ?? widget.member)!),
@@ -501,7 +504,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                 ],
-                const SliverToBoxAdapter(child: SizedBox(height: 32))
+                const SliverToBoxAdapter(
+                    child: SizedBox(height: 32)), // Im pretty sure this can go?
               ],
             );
           }

@@ -175,7 +175,7 @@ class TostiShiftScreen extends StatelessWidget {
 
                 return RefreshIndicator(
                   onRefresh: () => cubit.load(id),
-                  child: CustomScrollView(
+                  child: SafeCustomScrollView(
                     slivers: [header, orderList],
                   ),
                 );

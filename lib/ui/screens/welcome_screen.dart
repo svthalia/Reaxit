@@ -175,22 +175,23 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               return const Center(child: CircularProgressIndicator());
             } else {
               return Scrollbar(
-                  child: ListView(
-                key: const PageStorageKey('welcome'),
-                physics: const AlwaysScrollableScrollPhysics(),
-                children: [
-                  _makeSlides(state.slides!),
-                  if (state.slides!.isNotEmpty) const Divider(height: 0),
-                  _makeArticles(state.articles!),
-                  if (state.articles!.isNotEmpty)
-                    const Divider(indent: 16, endIndent: 16, height: 8),
-                  _makeUpcomingEvents(state.upcomingEvents!),
-                  TextButton(
-                    onPressed: () => context.goNamed('calendar'),
-                    child: const Text('SHOW THE ENTIRE AGENDA'),
-                  ),
-                ],
-              ));
+                child: ListView(
+                  key: const PageStorageKey('welcome'),
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: [
+                    _makeSlides(state.slides!),
+                    if (state.slides!.isNotEmpty) const Divider(height: 0),
+                    _makeArticles(state.articles!),
+                    if (state.articles!.isNotEmpty)
+                      const Divider(indent: 16, endIndent: 16, height: 8),
+                    _makeUpcomingEvents(state.upcomingEvents!),
+                    TextButton(
+                      onPressed: () => context.goNamed('calendar'),
+                      child: const Text('SHOW THE ENTIRE AGENDA'),
+                    ),
+                  ],
+                ),
+              );
             }
           },
         ),

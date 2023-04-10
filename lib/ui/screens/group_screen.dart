@@ -98,7 +98,7 @@ class _Page extends StatelessWidget {
         body: RefreshIndicator(
           onRefresh: () => cubit.load(),
           child: Scrollbar(
-            child: CustomScrollView(
+            child: SafeCustomScrollView(
               key: const PageStorageKey('group'),
               slivers: [
                 SliverToBoxAdapter(
@@ -125,7 +125,7 @@ class _Page extends StatelessWidget {
         body: RefreshIndicator(
           onRefresh: () => cubit.load(),
           child: Scrollbar(
-            child: CustomScrollView(
+            child: SafeCustomScrollView(
               key: const PageStorageKey('group'),
               slivers: [
                 SliverToBoxAdapter(

@@ -154,7 +154,7 @@ class GroupListScrollView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scrollbar(
-      child: CustomScrollView(
+      child: SafeCustomScrollView(
         physics: const RangeMaintainingScrollPhysics(
           parent: AlwaysScrollableScrollPhysics(),
         ),
@@ -162,25 +162,22 @@ class GroupListScrollView extends StatelessWidget {
           if (activeBoard != null)
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.only(bottom: 8),
                 child: AspectRatio(
                   aspectRatio: 3 / 2,
                   child: GroupTile(group: activeBoard!),
                 ),
               ),
             ),
-          SliverPadding(
-            padding: const EdgeInsets.all(8),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 8,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => GroupTile(group: groups[index]),
-                childCount: groups.length,
-              ),
+          SliverGrid(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => GroupTile(group: groups[index]),
+              childCount: groups.length,
             ),
           ),
         ],

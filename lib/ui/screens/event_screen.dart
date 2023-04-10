@@ -902,24 +902,22 @@ class _EventScreenState extends State<EventScreen> {
               actions: [_makeShareEventButton(widget.pk)],
             ),
             body: RefreshIndicator(
-              onRefresh: () async {
-                // Await only the event info.
-                _registrationsCubit.load();
-                await _eventCubit.load();
-              },
-              child: ErrorScrollView(state.message!),
-            ),
+                onRefresh: () async {
+                  // Await only the event info.
+                  _registrationsCubit.load();
+                  await _eventCubit.load();
+                },
+                child: ErrorScrollView(state.message!)),
           );
         } else if (state is LoadingState &&
             state is! ResultState &&
             widget.event == null) {
           return Scaffold(
-            appBar: ThaliaAppBar(
-              title: const Text('EVENT'),
-              actions: [_makeShareEventButton(widget.pk)],
-            ),
-            body: const Center(child: CircularProgressIndicator()),
-          );
+              appBar: ThaliaAppBar(
+                title: const Text('EVENT'),
+                actions: [_makeShareEventButton(widget.pk)],
+              ),
+              body: const Center(child: CircularProgressIndicator()));
         } else {
           final event = (state.result ?? widget.event)!;
           return Scaffold(
@@ -950,7 +948,7 @@ class _EventScreenState extends State<EventScreen> {
                 builder: (context, listState) {
                   return Scrollbar(
                     controller: _controller,
-                    child: CustomScrollView(
+                    child: SafeCustomScrollView(
                       controller: _controller,
                       key: const PageStorageKey('event'),
                       slivers: [
