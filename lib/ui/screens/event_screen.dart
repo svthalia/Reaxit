@@ -158,8 +158,6 @@ class _EventScreenState extends State<EventScreen> {
                     dateTimeFormatter.format(event.end.toLocal()),
                     style: textTheme.titleSmall,
                   ),
-                  if (event.organisers.isNotEmpty)
-                    (Text(event.organisers[0].name)),
                 ],
               ),
             )
@@ -235,8 +233,10 @@ class _EventScreenState extends State<EventScreen> {
                   children: [
                     Text('ORGANISERS', style: textTheme.bodySmall),
                     const SizedBox(height: 4),
-                    Text(event.organisers.toString(),
-                        style: textTheme.titleSmall)
+                    Text(
+                      event.organisers.map((e) => e.name).join(', '),
+                      style: textTheme.titleSmall,
+                    )
                   ]),
             )
           ],
