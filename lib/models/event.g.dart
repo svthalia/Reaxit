@@ -12,7 +12,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       json['url'] as String,
       json['caption'] as String,
       (json['organisers'] as List<dynamic>)
-          .map((e) => Group.fromJson(e as Map<String, dynamic>))
+          .map((e) => ListGroup.fromJson(e as Map<String, dynamic>))
           .toList(),
       json['description'] as String,
       DateTime.parse(json['start'] as String),
@@ -112,7 +112,7 @@ PartnerEvent _$PartnerEventFromJson(Map<String, dynamic> json) => PartnerEvent(
       json['location'] as String,
       Uri.parse(json['url'] as String),
       (json['organisers'] as List<dynamic>)
-          .map((e) => Group.fromJson(e as Map<String, dynamic>))
+          .map((e) => ListGroup.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
@@ -151,7 +151,7 @@ AdminEvent _$AdminEventFromJson(Map<String, dynamic> json) => AdminEvent(
       json['fine'] as String,
       json['mark_present_url_token'] as String,
       (json['organisers'] as List<dynamic>)
-          .map((e) => Group.fromJson(e as Map<String, dynamic>))
+          .map((e) => ListGroup.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 

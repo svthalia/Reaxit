@@ -56,8 +56,8 @@ Map<String, dynamic> _$GroupToJson(Group instance) => <String, dynamic>{
       'since': instance.since?.toIso8601String(),
       'until': instance.until?.toIso8601String(),
       'contact_address': instance.contactAddress,
-      'photo': instance.photo.toJson(),
-      'members': instance.members.map((e) => e.toJson()).toList(),
+      'photo': instance.photo,
+      'members': instance.members,
     };
 
 GroupMembership _$GroupMembershipFromJson(Map<String, dynamic> json) =>
@@ -71,7 +71,7 @@ GroupMembership _$GroupMembershipFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$GroupMembershipToJson(GroupMembership instance) =>
     <String, dynamic>{
-      'member': instance.member.toJson(),
+      'member': instance.member,
       'chair': instance.chair,
       'since': instance.since.toIso8601String(),
       'until': instance.until?.toIso8601String(),

@@ -34,9 +34,10 @@ class ListGroup {
 
   factory ListGroup.fromJson(Map<String, dynamic> json) =>
       _$ListGroupFromJson(json);
+  Map<String, dynamic> toJson() => _$ListGroupToJson(this);
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
+@JsonSerializable(fieldRename: FieldRename.snake)
 class Group extends ListGroup {
   final List<GroupMembership> members;
 
@@ -55,7 +56,7 @@ class Group extends ListGroup {
   factory Group.fromJson(Map<String, dynamic> json) => _$GroupFromJson(json);
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
+@JsonSerializable(fieldRename: FieldRename.snake)
 class GroupMembership {
   final ListMember member;
   final bool chair;
@@ -66,6 +67,4 @@ class GroupMembership {
       this.member, this.chair, this.since, this.until, this.role);
   factory GroupMembership.fromJson(Map<String, dynamic> json) =>
       _$GroupMembershipFromJson(json);
-
-  Map<String, dynamic> toJson() => _$GroupMembershipToJson(this);
 }

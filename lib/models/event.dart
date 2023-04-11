@@ -16,7 +16,7 @@ enum RegistrationStatus {
 abstract class BaseEvent {
   abstract final int pk;
   abstract final String title;
-  abstract final List<Group> organisers;
+  abstract final List<ListGroup> organisers;
   abstract final String caption;
   abstract final DateTime start;
   abstract final DateTime end;
@@ -30,7 +30,7 @@ class Event implements BaseEvent {
   @override
   final String title;
   @override
-  final List<Group> organisers;
+  final List<ListGroup> organisers;
   @override
   final String caption;
   @override
@@ -169,7 +169,7 @@ class PartnerEvent implements BaseEvent {
   @override
   final String location;
   @override
-  final List<Group> organisers;
+  final List<ListGroup> organisers;
 
   final Uri url;
 
@@ -204,7 +204,7 @@ class AdminEvent implements BaseEvent {
   @override
   final String location;
   @override
-  final List<Group> organisers;
+  final List<ListGroup> organisers;
 
   final String description;
   final EventCategory category;
