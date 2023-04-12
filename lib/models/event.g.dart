@@ -14,7 +14,6 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       (json['organisers'] as List<dynamic>)
           .map((e) => ListGroup.fromJson(e as Map<String, dynamic>))
           .toList(),
-      json['description'] as String,
       DateTime.parse(json['start'] as String),
       DateTime.parse(json['end'] as String),
       $enumDecode(_$EventCategoryEnumMap, json['category']),
@@ -52,13 +51,12 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
 Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'pk': instance.pk,
       'title': instance.title,
-      'organisers': instance.organisers,
       'caption': instance.caption,
       'start': instance.start.toIso8601String(),
       'end': instance.end.toIso8601String(),
       'location': instance.location,
-      'description': instance.description,
       'url': instance.url,
+      'organisers': instance.organisers,
       'category': _$EventCategoryEnumMap[instance.category]!,
       'has_fields': instance.hasFields,
       'optional_registrations': instance.optionalRegistrations,
@@ -111,9 +109,6 @@ PartnerEvent _$PartnerEventFromJson(Map<String, dynamic> json) => PartnerEvent(
       DateTime.parse(json['end'] as String),
       json['location'] as String,
       Uri.parse(json['url'] as String),
-      (json['organisers'] as List<dynamic>)
-          .map((e) => ListGroup.fromJson(e as Map<String, dynamic>))
-          .toList(),
     );
 
 Map<String, dynamic> _$PartnerEventToJson(PartnerEvent instance) =>
@@ -124,7 +119,6 @@ Map<String, dynamic> _$PartnerEventToJson(PartnerEvent instance) =>
       'start': instance.start.toIso8601String(),
       'end': instance.end.toIso8601String(),
       'location': instance.location,
-      'organisers': instance.organisers,
       'url': instance.url.toString(),
     };
 
@@ -150,9 +144,6 @@ AdminEvent _$AdminEventFromJson(Map<String, dynamic> json) => AdminEvent(
       json['price'] as String,
       json['fine'] as String,
       json['mark_present_url_token'] as String,
-      (json['organisers'] as List<dynamic>)
-          .map((e) => ListGroup.fromJson(e as Map<String, dynamic>))
-          .toList(),
     );
 
 Map<String, dynamic> _$AdminEventToJson(AdminEvent instance) =>
@@ -163,7 +154,6 @@ Map<String, dynamic> _$AdminEventToJson(AdminEvent instance) =>
       'start': instance.start.toIso8601String(),
       'end': instance.end.toIso8601String(),
       'location': instance.location,
-      'organisers': instance.organisers,
       'description': instance.description,
       'category': _$EventCategoryEnumMap[instance.category]!,
       'optional_registrations': instance.optionalRegistrations,

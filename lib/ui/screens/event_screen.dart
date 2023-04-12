@@ -119,6 +119,37 @@ class _EventScreenState extends State<EventScreen> {
   /// Create the title, start, end, location and price of an event.
   Widget _makeBasicEventInfo(Event event) {
     final textTheme = Theme.of(context).textTheme;
+
+    List<Widget> clickableOrganisers = [];
+    bool orgFlag = false;
+
+    for (ListGroup org in event.organisers) {
+      if (orgFlag) {
+        clickableOrganisers.add(Text(', ', style: textTheme.titleSmall));
+      }
+
+      clickableOrganisers.add(GestureDetector(
+          onTap: () {
+            if (org.type == MemberGroupType.board) {
+              // Ugly fix because only slugs work for board
+              context.pushNamed('board', params: {
+                'boardSlug': org.name
+                    .toString()
+                    .substring(org.name.toString().length - 9)
+              });
+            } else if (org.type == MemberGroupType.committee) {
+              context.pushNamed('committee',
+                  params: {'groupPk': org.pk.toString()});
+            } else {
+              context
+                  .pushNamed('society', params: {'groupPk': org.pk.toString()});
+            }
+          },
+          child: Text(org.name, style: textTheme.titleSmall)));
+
+      orgFlag = true;
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -233,9 +264,8 @@ class _EventScreenState extends State<EventScreen> {
                   children: [
                     Text('ORGANISERS', style: textTheme.bodySmall),
                     const SizedBox(height: 4),
-                    Text(
-                      event.organisers.map((e) => e.name).join(', '),
-                      style: textTheme.titleSmall,
+                    Row(
+                      children: clickableOrganisers,
                     )
                   ]),
             )

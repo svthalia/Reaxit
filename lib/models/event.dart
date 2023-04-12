@@ -16,7 +16,6 @@ enum RegistrationStatus {
 abstract class BaseEvent {
   abstract final int pk;
   abstract final String title;
-  abstract final List<ListGroup> organisers;
   abstract final String caption;
   abstract final DateTime start;
   abstract final DateTime end;
@@ -30,8 +29,6 @@ class Event implements BaseEvent {
   @override
   final String title;
   @override
-  final List<ListGroup> organisers;
-  @override
   final String caption;
   @override
   final DateTime start;
@@ -40,9 +37,8 @@ class Event implements BaseEvent {
   @override
   final String location;
 
-  final String description;
-
   final String url;
+  final List<ListGroup> organisers;
 
   final EventCategory category;
 
@@ -111,7 +107,6 @@ class Event implements BaseEvent {
     this.url,
     this.caption,
     this.organisers,
-    this.description,
     this.start,
     this.end,
     this.category,
@@ -168,8 +163,6 @@ class PartnerEvent implements BaseEvent {
   final DateTime end;
   @override
   final String location;
-  @override
-  final List<ListGroup> organisers;
 
   final Uri url;
 
@@ -184,7 +177,6 @@ class PartnerEvent implements BaseEvent {
     this.end,
     this.location,
     this.url,
-    this.organisers,
   );
 }
 
@@ -203,8 +195,6 @@ class AdminEvent implements BaseEvent {
   final DateTime end;
   @override
   final String location;
-  @override
-  final List<ListGroup> organisers;
 
   final String description;
   final EventCategory category;
@@ -257,6 +247,5 @@ class AdminEvent implements BaseEvent {
     this.price,
     this.fine,
     this.markPresentUrlToken,
-    this.organisers,
   );
 }
