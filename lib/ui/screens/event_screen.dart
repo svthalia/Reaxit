@@ -852,7 +852,7 @@ class _EventScreenState extends State<EventScreen> {
     }
   }
 
-  Widget _makeShareEventButton(int pk) {
+  Widget _makeShareEventButton(Event event) {
     return IconButton(
       padding: const EdgeInsets.all(16),
       color: Theme.of(context).primaryIconTheme.color,
@@ -864,7 +864,7 @@ class _EventScreenState extends State<EventScreen> {
       onPressed: () async {
         final messenger = ScaffoldMessenger.of(context);
         try {
-          await Share.share('https://${config.apiHost}/events/$pk/');
+          await Share.share(event.url);
         } catch (_) {
           messenger.showSnackBar(const SnackBar(
             behavior: SnackBarBehavior.floating,
@@ -901,9 +901,6 @@ class _EventScreenState extends State<EventScreen> {
           return Scaffold(
             appBar: ThaliaAppBar(
               title: Text(widget.event?.title.toUpperCase() ?? 'EVENT'),
-              actions: [
-                if (widget.pk != null) _makeShareEventButton(widget.pk!)
-              ],
             ),
             body: RefreshIndicator(
               onRefresh: () async {
@@ -926,7 +923,7 @@ class _EventScreenState extends State<EventScreen> {
               title: Text(event.title.toUpperCase()),
               actions: [
                 _makeCalendarExportButton(event),
-                _makeShareEventButton(event.pk),
+                _makeShareEventButton(event),
                 if (event.userPermissions.manageEvent)
                   IconButton(
                     padding: const EdgeInsets.all(16),

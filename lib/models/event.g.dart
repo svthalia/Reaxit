@@ -9,6 +9,7 @@ part of 'event.dart';
 Event _$EventFromJson(Map<String, dynamic> json) => Event(
       json['pk'] as int,
       json['title'] as String,
+      json['url'] as String,
       json['description'] as String,
       DateTime.parse(json['start'] as String),
       DateTime.parse(json['end'] as String),
@@ -48,6 +49,7 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'start': instance.start.toIso8601String(),
       'end': instance.end.toIso8601String(),
       'location': instance.location,
+      'url': instance.url,
       'category': _$EventCategoryEnumMap[instance.category]!,
       'has_fields': instance.hasFields,
       'optional_registrations': instance.optionalRegistrations,
