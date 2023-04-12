@@ -12,7 +12,6 @@ class ApiException implements Exception {
   static const notAllowed = _NotAllowedException();
   static const notLoggedIn = _NotLoggedInException();
   static const noInternet = _NoInternetException();
-  static const internalServerError = _InternalServerException();
 
   const ApiException._(this._message);
   factory ApiException.message(String message) => _MessageException(message);
