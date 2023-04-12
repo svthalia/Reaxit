@@ -8,7 +8,7 @@ import 'package:reaxit/ui/theme.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// _CalendarViewDay holds events attached to a day
+/// CalendarViewDay holds events attached to a day
 class CalendarViewDay {
   final DateTime day;
   final List<CalendarEvent> events;

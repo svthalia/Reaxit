@@ -11,6 +11,9 @@ class ListState<T> extends Equatable {
   /// Different results are being loaded. The results are outdated.
   final bool isLoading;
 
+  /// More of the same results are being loaded. The results are not outdated.
+  final bool isLoadingMore;
+
   /// The last results have been loaded. There are no more pages left.
   final bool isDone;
 
@@ -59,11 +62,12 @@ class ListState<T> extends Equatable {
         ' isDone: $isDone, message: $message, ${results.length} ${T}s)';
   }
 
-  const ListState.loading({this.count, required this.results})
+  const ListState.loading({required this.results})
       : message = null,
         isLoading = true,
         isLoadingMore = false,
-        isDone = true;
+        isDone = true,
+        count = 0;
 
   const ListState.loadingMore({this.count, required this.results})
       : message = null,

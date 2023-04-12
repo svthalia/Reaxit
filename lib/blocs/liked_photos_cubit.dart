@@ -34,7 +34,6 @@ class LikedPhotosCubit extends Cubit<LikedPhotosState>
       emit(LikedPhotosState.success(
         results: photos.results,
         isDone: isDone,
-        isDoneUp: true,
         count: photos.count,
       ));
     } on ApiException catch (exception) {
@@ -64,7 +63,6 @@ class LikedPhotosCubit extends Cubit<LikedPhotosState>
       emit(LikedPhotosState.success(
         results: photos,
         isDone: isDone,
-        isDoneUp: true,
         count: photosResponse.count,
       ));
     } on ApiException catch (exception) {

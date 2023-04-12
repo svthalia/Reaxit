@@ -8,7 +8,6 @@ class AnimatedLoader extends StatefulWidget {
   State<AnimatedLoader> createState() => _AnimatedLoaderState();
 }
 
-/// AnimationControllers can be created with `vsync: this` because of TickerProviderStateMixin.
 class _AnimatedLoaderState extends State<AnimatedLoader>
     with TickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
