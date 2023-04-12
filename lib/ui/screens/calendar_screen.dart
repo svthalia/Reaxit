@@ -298,14 +298,9 @@ class CalendarScrollView extends StatelessWidget {
             slivers: [
               if (_enableLoadMore)
                 SliverToBoxAdapter(
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: [
-                      TextButton(
-                        onPressed: loadMoreUp,
-                        child: const Text('LOAD MORE'),
-                      ),
-                    ],
+                  child: TextButton(
+                    onPressed: loadMoreUp,
+                    child: const Text('LOAD MORE'),
                   ),
                 ),
               SliverPadding(
