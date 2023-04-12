@@ -38,6 +38,8 @@ class Event implements BaseEvent {
   @override
   final String location;
 
+  final String url;
+
   final EventCategory category;
 
   final bool hasFields;
@@ -100,6 +102,7 @@ class Event implements BaseEvent {
   const Event(
     this.pk,
     this.title,
+    this.url,
     this.description,
     this.start,
     this.end,

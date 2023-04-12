@@ -13,7 +13,9 @@ abstract class ApiRepository {
   void close();
 
   /// Get the [Event] with the `pk`.
-  Future<Event> getEvent({required int pk});
+  Future<Event> getEventByPk({required int pk});
+
+  Future<Event> getEventBySlug({required String slug});
 
   /// Get a list of [Event]s.
   ///

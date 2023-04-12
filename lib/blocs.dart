@@ -16,7 +16,6 @@ export 'blocs/member_cubit.dart';
 export 'blocs/member_list_cubit.dart';
 export 'blocs/payment_user_cubit.dart';
 export 'blocs/registration_fields_cubit.dart';
-export 'blocs/registrations_cubit.dart';
 export 'blocs/sales_order_cubit.dart';
 export 'blocs/setting_cubit.dart';
 export 'blocs/theme_cubit.dart';

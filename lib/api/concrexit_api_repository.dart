@@ -141,9 +141,29 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
-  Future<Event> getEvent({required int pk}) {
+  Future<Event> getEventByPk({required int pk}) {
     return sandbox(() async {
       final uri = _uri(path: '/events/$pk/');
+      final response = await _handleExceptions(() => _client.get(uri));
+      final event = Event.fromJson(_jsonDecode(response));
+      if (event.isRegistered) {
+        try {
+          await getEventRegistrationPayable(
+            registrationPk: event.registration!.pk,
+          );
+          event.registration!.tpayAllowed = true;
+        } on ApiException catch (exception) {
+          if (exception != ApiException.notAllowed) rethrow;
+        }
+      }
+      return event;
+    });
+  }
+
+  @override
+  Future<Event> getEventBySlug({required String slug}) {
+    return sandbox(() async {
+      final uri = _uri(path: '/events/$slug/');
       final response = await _handleExceptions(() => _client.get(uri));
       final event = Event.fromJson(_jsonDecode(response));
       if (event.isRegistered) {
