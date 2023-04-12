@@ -148,7 +148,7 @@ class GroupListScrollView extends StatelessWidget {
       : activeBoard = groups.firstWhereOrNull(
           (element) => element.isActiveBoard(),
         ),
-        groups = groups.toList(),
+        groups = groups.where((element) => !element.isActiveBoard()).toList(),
         super(key: key);
 
   @override

@@ -21,11 +21,6 @@ class ListGroup {
       (since?.isBefore(DateTime.now()) ?? false) &&
       !(until?.isBefore(DateTime.now()) ?? false);
 
-  bool isCandidateBoard() =>
-      type == MemberGroupType.board &&
-      ((since?.isAfter(DateTime.now()) ?? false) ||
-          !(until?.isBefore(DateTime.now()) ?? true));
-
   const ListGroup(
     this.pk,
     this.name,
