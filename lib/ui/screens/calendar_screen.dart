@@ -197,9 +197,6 @@ class CalendarSearchDelegate extends SearchDelegate {
         } else if (calendarState.isLoading) {
           return const Center(child: CircularProgressIndicator());
         } else {
-          if (_controller.hasClients) {
-            _controller.jumpTo(0);
-          }
           return CalendarScrollView(
             key: const PageStorageKey('calendar-search'),
             controller: _controller,
@@ -214,6 +211,9 @@ class CalendarSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
+    if (_controller.hasClients) {
+      _controller.jumpTo(0);
+    }
     return buildResults(context);
   }
 }
