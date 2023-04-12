@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +12,7 @@ import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
+import 'package:reaxit/ui/screens/group_screen.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -399,7 +401,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
 
-    return ListTile(
+    final tile = ListTile(
       title: Text(
         achievement.name,
         style: Theme.of(context).textTheme.titleMedium,
@@ -407,6 +409,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
       subtitle: periodColumn,
       dense: true,
     );
+
+    if (achievement.pk == null && achievement.url == null) {
+      return tile;
+    } else {
+      return OpenContainer(
+        transitionType: ContainerTransitionType.fadeThrough,
+        closedShape: const RoundedRectangleBorder(),
+        closedColor: Theme.of(context).colorScheme.surface,
+        closedBuilder: (_, __) => tile,
+        openBuilder: (_, __) {
+          if (achievement.pk != null) {
+            return GroupScreen(pk: achievement.pk!);
+          } else if (achievement.url != null) {
+            launchUrl(
+              achievement.url!,
+              mode: LaunchMode.externalApplication,
+            );
+          }
+
+          // Should not happen
+          return const SizedBox.shrink();
+        },
+      );
+    }
   }
 
   SliverToBoxAdapter _makeAchievementsSliver(Member member) {
