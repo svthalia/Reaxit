@@ -12,12 +12,13 @@ class ApiException implements Exception {
   static const notAllowed = _NotAllowedException();
   static const notLoggedIn = _NotLoggedInException();
   static const noInternet = _NoInternetException();
+  static const internalServerError = _InternalServerException();
 
-  const ApiException._([this._message]);
+  const ApiException._(this._message);
   factory ApiException.message(String message) => _MessageException(message);
 
-  final String? _message;
-  String get message => _message ?? 'An unknown error occurred.';
+  final String _message;
+  String get message => _message;
 
   bool get isMessage => this is _MessageException;
 
@@ -35,27 +36,42 @@ class ApiException implements Exception {
   /// Without specifying `notFound`, the default message would also be used for
   /// [ApiException.notFound].
   String getMessage({
+    String? unknown,
     String? notFound,
     String? notAllowed,
-    String? unknown,
+    String? notLoggedIn,
+    String? noInternet,
+    String? serverError,
   }) {
-    if (this is _NotFoundException) return notFound ?? message;
-    if (this is _NotAllowedException) return notAllowed ?? message;
-    if (this is _UnknownException) return unknown ?? message;
-    return message;
+    switch (runtimeType) {
+      case _UnknownException:
+        return unknown ?? message;
+      case _NotFoundException:
+        return notFound ?? message;
+      case _NotAllowedException:
+        return notAllowed ?? message;
+      case _NotLoggedInException:
+        return notLoggedIn ?? message;
+      case _NoInternetException:
+        return notAllowed ?? message;
+      case _InternalServerException:
+        return serverError ?? message;
+      default:
+        return message;
+    }
   }
 }
 
 class _UnknownException extends ApiException {
-  const _UnknownException() : super._();
+  const _UnknownException() : super._('An unknown error occurred.');
 }
 
 class _NotFoundException extends ApiException {
-  const _NotFoundException() : super._();
+  const _NotFoundException() : super._('Could not find this.');
 }
 
 class _NotAllowedException extends ApiException {
-  const _NotAllowedException() : super._();
+  const _NotAllowedException() : super._('You are not allowed to view this.');
 }
 
 class _NotLoggedInException extends ApiException {
@@ -64,6 +80,10 @@ class _NotLoggedInException extends ApiException {
 
 class _NoInternetException extends ApiException {
   const _NoInternetException() : super._('Could not connect to the server.');
+}
+
+class _InternalServerException extends ApiException {
+  const _InternalServerException() : super._('Server error.');
 }
 
 class _MessageException extends ApiException {
