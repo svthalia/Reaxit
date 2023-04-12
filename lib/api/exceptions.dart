@@ -41,6 +41,7 @@ class ApiException implements Exception {
     String? notAllowed,
     String? notLoggedIn,
     String? noInternet,
+    String? serverError,
   }) {
     switch (runtimeType) {
       case _UnknownException:
@@ -53,6 +54,8 @@ class ApiException implements Exception {
         return notLoggedIn ?? message;
       case _NoInternetException:
         return notAllowed ?? message;
+      case _InternalServerException:
+        return serverError ?? message;
       default:
         return message;
     }
