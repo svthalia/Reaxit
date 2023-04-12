@@ -18,7 +18,8 @@ class ListGroup {
 
   bool isActiveBoard() =>
       type == MemberGroupType.board &&
-      (until?.isAfter(DateTime.now()) ?? false);
+      (since?.isBefore(DateTime.now()) ?? false) &&
+      !(until?.isBefore(DateTime.now()) ?? false);
 
   const ListGroup(
     this.pk,
