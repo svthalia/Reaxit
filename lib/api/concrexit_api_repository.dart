@@ -95,6 +95,8 @@ class ConcrexitApiRepository implements ApiRepository {
           throw ApiException.notAllowed;
         case 404:
           throw ApiException.notFound;
+        case 500:
+          throw ApiException.internalServerError;
         default:
           throw ApiException.unknownError;
       }

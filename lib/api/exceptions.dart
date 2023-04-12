@@ -12,6 +12,7 @@ class ApiException implements Exception {
   static const notAllowed = _NotAllowedException();
   static const notLoggedIn = _NotLoggedInException();
   static const noInternet = _NoInternetException();
+  static const internalServerError = _InternalServerException();
 
   const ApiException._(this._message);
   factory ApiException.message(String message) => _MessageException(message);
@@ -76,6 +77,10 @@ class _NotLoggedInException extends ApiException {
 
 class _NoInternetException extends ApiException {
   const _NoInternetException() : super._('Could not connect to the server.');
+}
+
+class _InternalServerException extends ApiException {
+  const _InternalServerException() : super._('Server error.');
 }
 
 class _MessageException extends ApiException {
