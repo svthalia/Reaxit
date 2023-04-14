@@ -357,13 +357,12 @@ final List<RouteBase> routes = [
         ),
         routes: [
           GoRoute(
-            path: ':boardSlug',
+            path: ':groupPk',
             name: 'board',
             pageBuilder: (context, state) => MaterialPage(
               key: state.pageKey,
-              child: BoardScreen(
-                since: int.parse(state.params['boardSlug']!.split('-')[0]),
-                until: int.parse(state.params['boardSlug']!.split('-')[1]),
+              child: GroupScreen(
+                pk: int.parse(state.params['groupPk']!),
                 group: state.extra as ListGroup?,
               ),
             ),

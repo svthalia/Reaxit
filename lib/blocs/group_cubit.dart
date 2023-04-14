@@ -29,25 +29,3 @@ class GroupCubit extends Cubit<GroupState> implements BaseGroupCubit {
     }
   }
 }
-
-class BoardCubit extends Cubit<GroupState> implements BaseGroupCubit {
-  final ApiRepository api;
-  final int since;
-  final int until;
-
-  BoardCubit(this.api, {required this.since, required this.until})
-      : super(const LoadingState());
-
-  @override
-  Future<void> load() async {
-    emit(LoadingState.from(state));
-    try {
-      final group = await api.getBoardGroup(since: since, until: until);
-      emit(ResultState(group));
-    } on ApiException catch (exception) {
-      emit(ErrorState(exception.getMessage(
-        notFound: 'The group does not exist.',
-      )));
-    }
-  }
-}

@@ -32,32 +32,6 @@ class GroupScreen extends StatelessWidget {
   }
 }
 
-class BoardScreen extends StatelessWidget {
-  final int since;
-  final int until;
-  final ListGroup? group;
-
-  const BoardScreen(
-      {super.key, required this.since, required this.until, this.group});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider<BoardCubit>(
-      create: (context) => BoardCubit(
-          RepositoryProvider.of<ApiRepository>(context),
-          since: since,
-          until: until)
-        ..load(),
-      child: BlocBuilder<BoardCubit, GroupState>(
-        builder: (context, state) => _Page(
-            state: state,
-            cubit: BlocProvider.of<BoardCubit>(context),
-            listGroup: group),
-      ),
-    );
-  }
-}
-
 class _Page extends StatelessWidget {
   const _Page({
     Key? key,
