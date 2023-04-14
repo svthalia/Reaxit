@@ -978,11 +978,7 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
         )),
       ) as _i8.Future<_i4.PaymentUser>);
   @override
-<<<<<<< HEAD
   _i8.Future<_i4.Payable> getFoodOrderPayable({required int? foodOrderPk}) =>
-=======
-  _i6.Future<_i3.Payable> getFoodOrderPayable({required int? foodOrderPk}) =>
->>>>>>> e194e15 (Removed "board copies" of group types (BoardCubit, BoardScreen))
       (super.noSuchMethod(
         Invocation.method(
           #getFoodOrderPayable,
@@ -1490,33 +1486,24 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
         )),
       ) as _i8.Future<_i4.Group>);
   @override
-<<<<<<< HEAD
   _i8.Future<_i4.Group> getGroupBySlug({
     required _i4.MemberGroupType? type,
     required String? slug,
   }) =>
-=======
-  _i6.Future<_i3.Group> getBoardGroup({required int? pk}) =>
->>>>>>> e194e15 (Removed "board copies" of group types (BoardCubit, BoardScreen))
       (super.noSuchMethod(
         Invocation.method(
           #getGroupBySlug,
           [],
-<<<<<<< HEAD
           {
             #type: type,
             #slug: slug,
           },
-=======
-          {#pk: pk},
->>>>>>> e194e15 (Removed "board copies" of group types (BoardCubit, BoardScreen))
         ),
         returnValue: _i8.Future<_i4.Group>.value(_FakeGroup_16(
           this,
           Invocation.method(
             #getGroupBySlug,
             [],
-<<<<<<< HEAD
             {
               #type: type,
               #slug: slug,
@@ -1526,14 +1513,6 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
       ) as _i8.Future<_i4.Group>);
   @override
   _i8.Future<_i4.ListResponse<_i4.AlbumPhoto>> getLikedPhotos({
-=======
-            {#pk: pk},
-          ),
-        )),
-      ) as _i6.Future<_i3.Group>);
-  @override
-  _i6.Future<_i3.ListResponse<_i3.AlbumPhoto>> getLikedPhotos({
->>>>>>> e194e15 (Removed "board copies" of group types (BoardCubit, BoardScreen))
     int? limit,
     int? offset,
   }) =>
@@ -1546,13 +1525,8 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
             #offset: offset,
           },
         ),
-<<<<<<< HEAD
         returnValue: _i8.Future<_i4.ListResponse<_i4.AlbumPhoto>>.value(
             _FakeListResponse_3<_i4.AlbumPhoto>(
-=======
-        returnValue: _i6.Future<_i3.ListResponse<_i3.AlbumPhoto>>.value(
-            _FakeListResponse_2<_i3.AlbumPhoto>(
->>>>>>> e194e15 (Removed "board copies" of group types (BoardCubit, BoardScreen))
           this,
           Invocation.method(
             #getLikedPhotos,
@@ -1563,25 +1537,15 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
             },
           ),
         )),
-<<<<<<< HEAD
       ) as _i8.Future<_i4.ListResponse<_i4.AlbumPhoto>>);
   @override
   _i8.Future<_i4.ListResponse<_i4.Payment>> getPayments({
-=======
-      ) as _i6.Future<_i3.ListResponse<_i3.AlbumPhoto>>);
-  @override
-  _i6.Future<_i3.ListResponse<_i3.Payment>> getPayments({
->>>>>>> e194e15 (Removed "board copies" of group types (BoardCubit, BoardScreen))
     int? limit,
     int? offset,
     String? ordering,
     DateTime? start,
     DateTime? end,
-<<<<<<< HEAD
     List<_i4.PaymentType>? type,
-=======
-    List<_i3.PaymentType>? type,
->>>>>>> e194e15 (Removed "board copies" of group types (BoardCubit, BoardScreen))
     bool? settled,
   }) =>
       (super.noSuchMethod(
@@ -1598,13 +1562,8 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
             #settled: settled,
           },
         ),
-<<<<<<< HEAD
         returnValue: _i8.Future<_i4.ListResponse<_i4.Payment>>.value(
             _FakeListResponse_3<_i4.Payment>(
-=======
-        returnValue: _i6.Future<_i3.ListResponse<_i3.Payment>>.value(
-            _FakeListResponse_2<_i3.Payment>(
->>>>>>> e194e15 (Removed "board copies" of group types (BoardCubit, BoardScreen))
           this,
           Invocation.method(
             #getPayments,
@@ -1620,11 +1579,7 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
             },
           ),
         )),
-<<<<<<< HEAD
       ) as _i8.Future<_i4.ListResponse<_i4.Payment>>);
-=======
-      ) as _i6.Future<_i3.ListResponse<_i3.Payment>>);
->>>>>>> e194e15 (Removed "board copies" of group types (BoardCubit, BoardScreen))
 }
 
 /// A class which mocks [PaymentUserCubit].
