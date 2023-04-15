@@ -6,17 +6,12 @@ import 'package:reaxit/models.dart';
 
 typedef GroupState = DetailState<Group>;
 
-abstract class BaseGroupCubit {
-  Future<void> load();
-}
-
-class GroupCubit extends Cubit<GroupState> implements BaseGroupCubit {
+class GroupCubit extends Cubit<GroupState> {
   final ApiRepository api;
   final int pk;
 
   GroupCubit(this.api, {required this.pk}) : super(const LoadingState());
 
-  @override
   Future<void> load() async {
     emit(LoadingState.from(state));
     try {

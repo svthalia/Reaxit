@@ -41,7 +41,7 @@ class _Page extends StatelessWidget {
   }) : super(key: key);
 
   final DetailState<Group> state;
-  final BaseGroupCubit cubit;
+  final GroupCubit cubit;
   final ListGroup? listGroup;
 
   @override
