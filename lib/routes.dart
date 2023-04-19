@@ -379,7 +379,7 @@ final List<RouteBase> routes = [
               key: state.pageKey,
               child: GroupScreen.bySlug(
                 groupType: MemberGroupType.board,
-                slug: state.params['groupPk']!,
+                slug: state.params['boardSlug']!,
                 group: state.extra as ListGroup?,
               ),
             ),
