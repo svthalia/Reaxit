@@ -36,15 +36,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
     if (_todayOffset == null && todayKey.currentContext != null) {
       // Calculate the position the widget should be in to avoid being
       // drawn under the header
-      final offset = thisMonthKey.currentContext!.size!.height + 16;
-      final totalHeight =
-          Scrollable.of(todayKey.currentContext!).context.size!.height;
-
+      final offset = thisMonthKey.currentContext!.size!.height;
       RenderObject renderObject = todayKey.currentContext!.findRenderObject()!;
       RenderAbstractViewport viewport = RenderAbstractViewport.of(renderObject);
-      _todayOffset = viewport
-          .getOffsetToReveal(renderObject, offset / totalHeight, rect: null)
-          .offset;
+      _todayOffset =
+          viewport.getOffsetToReveal(renderObject, 0, rect: null).offset -
+              offset;
     }
   }
 
