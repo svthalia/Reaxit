@@ -341,6 +341,9 @@ abstract class ApiRepository {
   /// Get the [Group] with the `pk`.
   Future<Group> getGroup({required int pk});
 
+  /// Get the [Group] of a board with the `slug`.
+  Future<Group> getBoardGroup({required String slug});
+
   Future<ListResponse<AlbumPhoto>> getLikedPhotos({
     int? limit,
     int? offset,

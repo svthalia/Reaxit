@@ -8,14 +8,33 @@ typedef GroupState = DetailState<Group>;
 
 class GroupCubit extends Cubit<GroupState> {
   final ApiRepository api;
-  final int pk;
 
-  GroupCubit(this.api, {required this.pk}) : super(const LoadingState());
+  // By PK
+  final int? pk;
+
+  // By slug
+  final MemberGroupType? groupType;
+  final String? slug;
+
+  // Default: init by PK
+  GroupCubit(this.api,
+      {required this.pk, this.groupType = null, this.slug = null})
+      : super(const LoadingState());
+
+  // Alternative: init by slug
+  GroupCubit.bySlug(this.api,
+      {required this.groupType, required this.slug, this.pk = null})
+      : super(const LoadingState());
 
   Future<void> load() async {
     emit(LoadingState.from(state));
     try {
-      final group = await api.getGroup(pk: pk);
+      Group group;
+      if (pk != null) {
+        group = await api.getGroup(pk: pk!);
+      } else {
+        group = await api.getBoardGroup(slug: slug!);
+      }
       emit(ResultState(group));
     } on ApiException catch (exception) {
       emit(ErrorState(exception.getMessage(

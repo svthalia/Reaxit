@@ -283,6 +283,22 @@ final List<RouteBase> routes = [
     ),
     routes: [
       GoRoute(
+          path: ':groupPk',
+          name: 'group',
+          pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: GroupScreen(
+                  pk: int.parse(state.params['groupPk']!),
+                  group: state.extra as ListGroup?))),
+      GoRoute(
+          path: ':groupPk',
+          name: 'board',
+          pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: GroupScreen(
+                  pk: int.parse(state.params['groupPk']!),
+                  group: state.extra as ListGroup?))),
+      GoRoute(
         path: 'committees',
         name: 'committees',
         pageBuilder: (context, state) => CustomTransitionPage(
@@ -357,12 +373,13 @@ final List<RouteBase> routes = [
         ),
         routes: [
           GoRoute(
-            path: ':groupPk',
-            name: 'board',
+            path: ':boardSlug',
+            name: 'boardBySlug',
             pageBuilder: (context, state) => MaterialPage(
               key: state.pageKey,
-              child: GroupScreen(
-                pk: int.parse(state.params['groupPk']!),
+              child: GroupScreen.bySlug(
+                groupType: MemberGroupType.board,
+                slug: state.params['groupPk']!,
                 group: state.extra as ListGroup?,
               ),
             ),

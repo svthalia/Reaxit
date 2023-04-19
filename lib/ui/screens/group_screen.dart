@@ -10,18 +10,48 @@ import 'package:reaxit/ui/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GroupScreen extends StatelessWidget {
-  final int pk;
   final ListGroup? group;
 
-  const GroupScreen({super.key, required this.pk, this.group});
+  // By PK
+  final int? pk;
+
+  // By slug
+  final MemberGroupType? groupType;
+  final String? slug;
+
+  // Default: by PK
+  const GroupScreen(
+      {super.key,
+      required this.pk,
+      this.group,
+      this.groupType = null,
+      this.slug = null});
+
+  // Alternative: by Slug
+  const GroupScreen.bySlug(
+      {super.key,
+      this.group,
+      required this.groupType,
+      required this.slug,
+      this.pk = null});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<GroupCubit>(
-      create: (context) => GroupCubit(
-        RepositoryProvider.of<ApiRepository>(context),
-        pk: pk,
-      )..load(),
+      create: (BuildContext context) {
+        if (pk != null) {
+          return GroupCubit(
+            RepositoryProvider.of<ApiRepository>(context),
+            pk: pk!,
+          )..load();
+        } else {
+          return GroupCubit.bySlug(
+            RepositoryProvider.of<ApiRepository>(context),
+            groupType: groupType!,
+            slug: slug!,
+          )..load();
+        }
+      },
       child: BlocBuilder<GroupCubit, GroupState>(
         builder: (context, state) => _Page(
             state: state,

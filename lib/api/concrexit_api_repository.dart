@@ -1175,6 +1175,14 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
+  Future<Group> getBoardGroup({required String slug}) async {
+    final uri =
+        _baseUri.replace(path: '$_basePath/activemembers/boards/${slug}/');
+    final response = await _handleExceptions(() => _client.get(uri));
+    return Group.fromJson(_jsonDecode(response));
+  }
+
+  @override
   Future<ListResponse<AlbumPhoto>> getLikedPhotos({
     int? limit,
     int? offset,
