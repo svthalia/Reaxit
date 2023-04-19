@@ -130,20 +130,7 @@ class _EventScreenState extends State<EventScreen> {
 
       clickableOrganisers.add(GestureDetector(
           onTap: () {
-            if (org.type == MemberGroupType.board) {
-              // Ugly fix because only slugs work for board
-              context.pushNamed('board', params: {
-                'boardSlug': org.name
-                    .toString()
-                    .substring(org.name.toString().length - 9)
-              });
-            } else if (org.type == MemberGroupType.committee) {
-              context.pushNamed('committee',
-                  params: {'groupPk': org.pk.toString()});
-            } else {
-              context
-                  .pushNamed('society', params: {'groupPk': org.pk.toString()});
-            }
+            context.pushNamed('group', params: {'groupPk': org.pk.toString()});
           },
           child: Text(org.name, style: textTheme.titleSmall)));
 
