@@ -20,20 +20,17 @@ class GroupScreen extends StatelessWidget {
   final String? slug;
 
   // Default: by PK
-  const GroupScreen(
-      {super.key,
-      required this.pk,
-      this.group,
-      this.groupType = null,
-      this.slug = null});
+  const GroupScreen({
+    super.key,
+    this.group,
+    required this.pk,
+  })  : groupType = null,
+        slug = null;
 
   // Alternative: by Slug
   const GroupScreen.bySlug(
-      {super.key,
-      this.group,
-      required this.groupType,
-      required this.slug,
-      this.pk = null});
+      {super.key, this.group, required this.groupType, required this.slug})
+      : pk = null;
 
   @override
   Widget build(BuildContext context) {

@@ -17,14 +17,15 @@ class GroupCubit extends Cubit<GroupState> {
   final String? slug;
 
   // Default: init by PK
-  GroupCubit(this.api,
-      {required this.pk, this.groupType = null, this.slug = null})
-      : super(const LoadingState());
+  GroupCubit(this.api, {required this.pk})
+      : groupType = null,
+        slug = null,
+        super(const LoadingState());
 
   // Alternative: init by slug
-  GroupCubit.bySlug(this.api,
-      {required this.groupType, required this.slug, this.pk = null})
-      : super(const LoadingState());
+  GroupCubit.bySlug(this.api, {required this.groupType, required this.slug})
+      : pk = null,
+        super(const LoadingState());
 
   Future<void> load() async {
     emit(LoadingState.from(state));
