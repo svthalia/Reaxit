@@ -121,20 +121,37 @@ class _EventScreenState extends State<EventScreen> {
     final textTheme = Theme.of(context).textTheme;
 
     List<Widget> clickableOrganisers = [];
-    bool orgFlag = false;
+    bool commaFlag = false;
 
     for (ListGroup org in event.organisers) {
-      if (orgFlag) {
+      if (commaFlag) {
         clickableOrganisers.add(Text(', ', style: textTheme.titleSmall));
       }
 
-      clickableOrganisers.add(GestureDetector(
-          onTap: () {
-            context.pushNamed('group', params: {'groupPk': org.pk.toString()});
-          },
-          child: Text(org.name, style: textTheme.titleSmall)));
+      bool spaceFlag = false;
+      List<String> nameParts = org.name.split(' ');
 
-      orgFlag = true;
+      for (String namePart in nameParts) {
+        if (spaceFlag) {
+          clickableOrganisers.add(GestureDetector(
+              onTap: () {
+                context
+                    .pushNamed('group', params: {'groupPk': org.pk.toString()});
+              },
+              child: Text(' ', style: textTheme.titleSmall)));
+        }
+
+        clickableOrganisers.add(GestureDetector(
+            onTap: () {
+              context
+                  .pushNamed('group', params: {'groupPk': org.pk.toString()});
+            },
+            child: Text(namePart, style: textTheme.titleSmall)));
+
+        spaceFlag = true;
+      }
+
+      commaFlag = true;
     }
 
     return Column(
@@ -251,7 +268,7 @@ class _EventScreenState extends State<EventScreen> {
                   children: [
                     Text('ORGANISERS', style: textTheme.bodySmall),
                     const SizedBox(height: 4),
-                    Row(
+                    Wrap(
                       children: clickableOrganisers,
                     )
                   ]),
