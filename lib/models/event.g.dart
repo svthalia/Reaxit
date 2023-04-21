@@ -40,6 +40,9 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
               json['user_registration'] as Map<String, dynamic>),
       json['cancel_too_late_message'] as String,
       json['optional_registrations'] as bool,
+      (json['documents'] as List<dynamic>)
+          .map((e) => Document.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
@@ -66,6 +69,7 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'maps_url': instance.mapsUrl,
       'user_permissions': instance.userPermissions,
       'user_registration': instance.registration,
+      'documents': instance.documents,
     };
 
 const _$EventCategoryEnumMap = {

@@ -1,5 +1,6 @@
 export 'models/album.dart';
 export 'models/device.dart';
+export 'models/document.dart';
 export 'models/event_registration.dart';
 export 'models/event.dart';
 export 'models/food_event.dart';
