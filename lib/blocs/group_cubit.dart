@@ -34,7 +34,7 @@ class GroupCubit extends Cubit<GroupState> {
       if (pk != null) {
         group = await api.getGroup(pk: pk!);
       } else {
-        group = await api.getBoardGroup(slug: slug!);
+        group = await api.getGroupBySlug(type: groupType!, slug: slug!);
       }
       emit(ResultState(group));
     } on ApiException catch (exception) {

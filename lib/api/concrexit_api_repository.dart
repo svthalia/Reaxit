@@ -1175,11 +1175,20 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
-  Future<Group> getBoardGroup({required String slug}) async {
-    final uri =
-        _baseUri.replace(path: '$_basePath/activemembers/boards/${slug}/');
-    final response = await _handleExceptions(() => _client.get(uri));
-    return Group.fromJson(_jsonDecode(response));
+  Future<Group> getGroupBySlug(
+      {required MemberGroupType type, required String slug}) async {
+    // Only boards have slug support right now
+    assert(type == MemberGroupType.board);
+
+    if (type == MemberGroupType.board) {
+      final uri =
+          _baseUri.replace(path: '$_basePath/activemembers/boards/$slug/');
+      final response = await _handleExceptions(() => _client.get(uri));
+      return Group.fromJson(_jsonDecode(response));
+    } else {
+      throw ApiException.message(
+          'Slugs are unsupported for groups of this type.');
+    }
   }
 
   @override
