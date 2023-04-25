@@ -57,7 +57,7 @@ class TostiShiftScreen extends StatelessWidget {
                             children: [
                               const SizedBox(height: 16),
                               Text(
-                                shift.venueName.toUpperCase(),
+                                shift.venue.venue.name.toUpperCase(),
                                 style: textTheme.titleLarge,
                               ),
                               const Divider(height: 24),
