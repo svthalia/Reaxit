@@ -13,6 +13,7 @@ import 'package:reaxit/routes.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:pdf_render/pdf_render_widgets.dart';
 import 'package:reaxit/config.dart' as config;
 
 class EventScreen extends StatefulWidget {
@@ -194,7 +195,25 @@ class _EventScreenState extends State<EventScreen> {
                   ),
                 ],
               ),
-            )
+            ),
+            const SizedBox(width: 8),
+            if (event.documents.isNotEmpty)
+              Flexible(
+                fit: FlexFit.tight,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('DOCUMENTS', style: textTheme.bodySmall),
+                    const SizedBox(height: 4),
+                    GestureDetector(
+                        onTap: () {
+                          ;
+                        },
+                        child: Text(event.documents[0].name,
+                            style: textTheme.titleSmall)),
+                  ],
+                ),
+              )
           ],
         ),
         const Divider(height: 24),

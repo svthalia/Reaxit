@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
+import 'package:pdf_render/pdf_render_widgets.dart';
 import 'package:reaxit/config.dart' as config;
 
 /// A [BaseCacheManager] with customized configurations.
@@ -58,4 +60,14 @@ class CachedImageProvider extends CachedNetworkImageProvider {
           cacheManager: _ThaliaCacheManager(),
           cacheKey: Uri.parse(imageUrl).replace(query: '').toString(),
         );
+}
+
+class PDFDownload extends TextButton {
+  PDFDownload({required String fileUrl, required String fileName})
+      : super(
+            child: Text(fileName),
+            onPressed: () async {
+              var file = await _ThaliaCacheManager().getSingleFile(fileUrl);
+              PdfViewer.openFile(file.path);
+            });
 }
