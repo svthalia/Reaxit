@@ -50,9 +50,7 @@ class GroupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<GroupCubit>(
-      create: (BuildContext context) {
-        _selectCubit(context);
-      },
+      create: _selectCubit,
       child: BlocBuilder<GroupCubit, GroupState>(
         builder: (context, state) => _Page(
             state: state,
