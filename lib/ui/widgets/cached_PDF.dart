@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pdf_render/pdf_render.dart';
-import 'package:reaxit/cache.dart' as cache;
+import 'package:pdf_render/pdf_render_widgets.dart';
+import 'package:reaxit/utilities/cache_manager.dart' as cache;
 import 'package:reaxit/config.dart' as config;
 
-class PDFButton extends UnconstrainedBox {}
+class PdfButton extends GestureDetector {
 
-class CachedPdf extends PdfDocument {
-  
+  PdfButton({required String path, required String name})
+      : super(child: PdfBox(path, name), onTap: () async => PdfViewer.openFile((await cache.cacheManager.getSingleFile(path)).path));
+
+}
+
+class PdfBox extends UnconstrainedBox {
+
+  PdfBox(String path, String name)
 }
