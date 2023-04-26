@@ -37,3 +37,13 @@ class TostiVenue {
   TostiVenue copyWithPlayer(ThaliedjePlayer? player) =>
       TostiVenue(id, name, slug, colorInCalendar, canBeReserved, shift, player);
 }
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class TostiOrderVenue {
+  final TostiVenue venue;
+
+  TostiOrderVenue(this.venue);
+
+  factory TostiOrderVenue.fromJson(Map<String, dynamic> json) =>
+      _$TostiOrderVenueFromJson(json);
+}

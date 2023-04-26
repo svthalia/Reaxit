@@ -29,7 +29,7 @@ class TostiHomeCubit extends Cubit<TostiHomeState> {
 
       final venues = venuesResponse.results.map((final venue) {
         final shift = shiftsResponse.results.firstWhereOrNull(
-          (final shift) => shift.venue == venue.id,
+          (final shift) => shift.venue.venue.id == venue.id,
         );
 
         return shift != null ? venue.copyWithShift(shift) : venue;

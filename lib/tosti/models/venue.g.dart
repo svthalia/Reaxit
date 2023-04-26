@@ -22,3 +22,13 @@ Map<String, dynamic> _$TostiVenueToJson(TostiVenue instance) =>
       'color_in_calendar': instance.colorInCalendar,
       'can_be_reserved': instance.canBeReserved,
     };
+
+TostiOrderVenue _$TostiOrderVenueFromJson(Map<String, dynamic> json) =>
+    TostiOrderVenue(
+      TostiVenue.fromJson(json['venue'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$TostiOrderVenueToJson(TostiOrderVenue instance) =>
+    <String, dynamic>{
+      'venue': instance.venue,
+    };
