@@ -32,22 +32,26 @@ class GroupScreen extends StatelessWidget {
       {super.key, this.group, required this.groupType, required this.slug})
       : pk = null;
 
+  GroupCubit _selectCubit(BuildContext context) {
+    if (pk != null) {
+      return GroupCubit(
+        RepositoryProvider.of<ApiRepository>(context),
+        pk: pk!,
+      )..load();
+    } else {
+      return GroupCubit.bySlug(
+        RepositoryProvider.of<ApiRepository>(context),
+        groupType: groupType!,
+        slug: slug!,
+      )..load();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<GroupCubit>(
       create: (BuildContext context) {
-        if (pk != null) {
-          return GroupCubit(
-            RepositoryProvider.of<ApiRepository>(context),
-            pk: pk!,
-          )..load();
-        } else {
-          return GroupCubit.bySlug(
-            RepositoryProvider.of<ApiRepository>(context),
-            groupType: groupType!,
-            slug: slug!,
-          )..load();
-        }
+        _selectCubit(context);
       },
       child: BlocBuilder<GroupCubit, GroupState>(
         builder: (context, state) => _Page(
