@@ -1,24 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
-import 'package:pdf_render/pdf_render_widgets.dart';
+import 'package:reaxit/utilities/cache_manager.dart' as cache;
 import 'package:reaxit/config.dart' as config;
-
-/// A [BaseCacheManager] with customized configurations.
-class _ThaliaCacheManager extends CacheManager with ImageCacheManager {
-  static const key = 'thaliaCachedData';
-
-  static final _ThaliaCacheManager _instance = _ThaliaCacheManager._();
-  factory _ThaliaCacheManager() => _instance;
-
-  _ThaliaCacheManager._()
-      : super(Config(
-          key,
-          stalePeriod: config.cacheStalePeriod,
-          maxNrOfCacheObjects: config.cacheMaxObjects,
-        ));
-}
 
 /// Wrapper for [CachedNetworkImage] with sensible defaults.
 class CachedImage extends CachedNetworkImage {
@@ -31,7 +15,7 @@ class CachedImage extends CachedNetworkImage {
   }) : super(
           key: ValueKey(imageUrl),
           imageUrl: imageUrl,
-          cacheManager: _ThaliaCacheManager(),
+          cacheManager: cache.cacheManager,
 
           /// If the image is from thalia.nu, remove the query part of the url
           /// from its key in the cache. Private images from concrexit have a
@@ -57,17 +41,7 @@ class CachedImageProvider extends CachedNetworkImageProvider {
   CachedImageProvider(String imageUrl)
       : super(
           imageUrl,
-          cacheManager: _ThaliaCacheManager(),
+          cacheManager: cache.cacheManager,
           cacheKey: Uri.parse(imageUrl).replace(query: '').toString(),
         );
-}
-
-class PDFDownload extends TextButton {
-  PDFDownload({required String fileUrl, required String fileName})
-      : super(
-            child: Text(fileName),
-            onPressed: () async {
-              var file = await _ThaliaCacheManager().getSingleFile(fileUrl);
-              PdfViewer.openFile(file.path);
-            });
 }
