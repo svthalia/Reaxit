@@ -6,43 +6,36 @@ import 'package:reaxit/models.dart';
 
 typedef GroupState = DetailState<Group>;
 
-abstract class BaseGroupCubit {
-  Future<void> load();
-}
-
-class GroupCubit extends Cubit<GroupState> implements BaseGroupCubit {
+class GroupCubit extends Cubit<GroupState> {
   final ApiRepository api;
-  final int pk;
 
-  GroupCubit(this.api, {required this.pk}) : super(const LoadingState());
+  // By PK
+  final int? pk;
 
-  @override
+  // By slug
+  final MemberGroupType? groupType;
+  final String? slug;
+
+  // Default: init by PK
+  GroupCubit(this.api, {required this.pk})
+      : groupType = null,
+        slug = null,
+        super(const LoadingState());
+
+  // Alternative: init by slug
+  GroupCubit.bySlug(this.api, {required this.groupType, required this.slug})
+      : pk = null,
+        super(const LoadingState());
+
   Future<void> load() async {
     emit(LoadingState.from(state));
     try {
-      final group = await api.getGroup(pk: pk);
-      emit(ResultState(group));
-    } on ApiException catch (exception) {
-      emit(ErrorState(exception.getMessage(
-        notFound: 'The group does not exist.',
-      )));
-    }
-  }
-}
-
-class BoardCubit extends Cubit<GroupState> implements BaseGroupCubit {
-  final ApiRepository api;
-  final int since;
-  final int until;
-
-  BoardCubit(this.api, {required this.since, required this.until})
-      : super(const LoadingState());
-
-  @override
-  Future<void> load() async {
-    emit(LoadingState.from(state));
-    try {
-      final group = await api.getBoardGroup(since: since, until: until);
+      Group group;
+      if (pk != null) {
+        group = await api.getGroup(pk: pk!);
+      } else {
+        group = await api.getGroupBySlug(type: groupType!, slug: slug!);
+      }
       emit(ResultState(group));
     } on ApiException catch (exception) {
       emit(ErrorState(exception.getMessage(

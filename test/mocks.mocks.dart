@@ -1448,27 +1448,27 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
         )),
       ) as _i6.Future<_i3.Group>);
   @override
-  _i6.Future<_i3.Group> getBoardGroup({
-    required int? since,
-    required int? until,
+  _i6.Future<_i3.Group> getGroupBySlug({
+    required _i3.MemberGroupType? type,
+    required String? slug,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
-          #getBoardGroup,
+          #getGroupBySlug,
           [],
           {
-            #since: since,
-            #until: until,
+            #type: type,
+            #slug: slug,
           },
         ),
         returnValue: _i6.Future<_i3.Group>.value(_FakeGroup_15(
           this,
           Invocation.method(
-            #getBoardGroup,
+            #getGroupBySlug,
             [],
             {
-              #since: since,
-              #until: until,
+              #type: type,
+              #slug: slug,
             },
           ),
         )),
