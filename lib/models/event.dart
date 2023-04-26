@@ -38,6 +38,7 @@ class Event implements BaseEvent {
   final String location;
 
   final String url;
+
   final List<ListGroup> organisers;
 
   final EventCategory category;
