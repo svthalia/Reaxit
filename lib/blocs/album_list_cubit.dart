@@ -9,8 +9,15 @@ import 'package:reaxit/models.dart';
 
 typedef AlbumListState = ListState<ListAlbum>;
 
+/// The state manager for the [AlbumsScreen] screen.
+///
+/// When [load]ed, fetches the albums matching [_searchQuery] from [api].
+/// Also has [more] for loading additional pages and [search] to reload with a different [_searchQuery].
 class AlbumListCubit extends Cubit<AlbumListState> {
+  /// The amount of albums displayed on [load].
   static const int firstPageSize = 60;
+
+  /// The amount of additional albums displayed on [more].
   static const int pageSize = 30;
 
   final ApiRepository api;
@@ -29,6 +36,11 @@ class AlbumListCubit extends Cubit<AlbumListState> {
 
   AlbumListCubit(this.api) : super(const AlbumListState.loading(results: []));
 
+  /// Initializes [state] to proper `success` [AlbumListState] for [AlbumsScreen] by fetching the first [firstPageSize] albums matching [_searchQuery] from [api].
+  ///
+  /// [state] defaults to `loading` [AlbumListState] while waiting for a response from [api].
+  /// Does nothing if [_searchQuery] was changed before the [api] responded.
+  /// Updates [state] to `failure` [AlbumListState] with relevant message if no albums exist, no album matches [_searchQuery], or upon [ApiException].
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
     try {
@@ -66,6 +78,11 @@ class AlbumListCubit extends Cubit<AlbumListState> {
     }
   }
 
+  /// Updates [state] to proper `success` [AlbumListState] for [AlbumsScreen] by fetching [pageSize] more unloaded albums matching [_searchQuery] from [api].
+  ///
+  /// [state] defaults to `loadingMore` [AlbumListState] while waiting for a response from [api].
+  /// Does nothing if [_searchQuery] was changed before the [api] responded.
+  /// Updates [state] to `failure` [AlbumListState] on [ApiException].
   Future<void> more() async {
     final oldState = state;
 
@@ -101,9 +118,11 @@ class AlbumListCubit extends Cubit<AlbumListState> {
     }
   }
 
-  /// Set this cubit's `searchQuery` and load the albums for that query.
+  /// Sets [_searchQuery] to [query] and [load]s the albums matching [query].
   ///
-  /// Use `null` as argument to remove the search query.
+  /// Does nothing if [query] is equal to [_searchQuery].
+  /// Clears [_searchQuery] if [query] is `null`.
+  /// Updates [state] to `loading` [AlbumListState] if [query] is empty.
   void search(String? query) {
     if (query != _searchQuery) {
       _searchQuery = query;
