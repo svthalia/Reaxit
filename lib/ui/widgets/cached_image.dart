@@ -15,7 +15,7 @@ class CachedImage extends CachedNetworkImage {
   }) : super(
           key: ValueKey(imageUrl),
           imageUrl: imageUrl,
-          cacheManager: cache.cacheManager,
+          cacheManager: cache.ThaliaCacheManager(),
 
           /// If the image is from thalia.nu, remove the query part of the url
           /// from its key in the cache. Private images from concrexit have a
@@ -41,7 +41,7 @@ class CachedImageProvider extends CachedNetworkImageProvider {
   CachedImageProvider(String imageUrl)
       : super(
           imageUrl,
-          cacheManager: cache.cacheManager,
+          cacheManager: cache.ThaliaCacheManager(),
           cacheKey: Uri.parse(imageUrl).replace(query: '').toString(),
         );
 }
