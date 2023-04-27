@@ -116,8 +116,7 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  /// Create the title, start, end, location and price of an event.
-  Widget _makeBasicEventInfo(Event event) {
+  List<Widget> _makeOrganiserChildren(Event event) {
     final textTheme = Theme.of(context).textTheme;
 
     List<Widget> clickableOrganisers = [];
@@ -153,6 +152,13 @@ class _EventScreenState extends State<EventScreen> {
 
       commaFlag = true;
     }
+
+    return clickableOrganisers;
+  }
+
+  /// Create the title, start, end, location and price of an event.
+  Widget _makeBasicEventInfo(Event event) {
+    final textTheme = Theme.of(context).textTheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -269,7 +275,7 @@ class _EventScreenState extends State<EventScreen> {
                     Text('ORGANISERS', style: textTheme.bodySmall),
                     const SizedBox(height: 4),
                     Wrap(
-                      children: clickableOrganisers,
+                      children: _makeOrganiserChildren(event),
                     )
                   ]),
             )
