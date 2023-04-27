@@ -116,6 +116,7 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
+  /// Makes a list of linking organisers.
   List<Widget> _makeOrganiserChildren(Event event) {
     final textTheme = Theme.of(context).textTheme;
 
