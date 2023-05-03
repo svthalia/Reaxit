@@ -4,12 +4,14 @@ import 'package:pdf_render/pdf_render.dart';
 import 'package:pdf_render/pdf_render_widgets.dart';
 import 'package:reaxit/utilities/cache_manager.dart' as cache;
 import 'package:reaxit/config.dart' as config;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
-class PdfButton extends StatelessWidget {
+class FileButton extends StatelessWidget {
   final String path;
   final String name;
 
-  const PdfButton({
+  const FileButton({
     required this.path,
     required this.name,
   });
@@ -18,7 +20,7 @@ class PdfButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
         onPressed: () {
-          cache.ThaliaCacheManager().downloadFile(path);
+          launchUrlString(path, mode: LaunchMode.externalApplication);
         },
         icon: const Icon(Icons.pages),
         label: Text(name));

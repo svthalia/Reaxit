@@ -11,7 +11,7 @@ import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/routes.dart';
 import 'package:reaxit/ui/widgets.dart';
-import 'package:reaxit/ui/widgets/cached_PDF.dart';
+import 'package:reaxit/ui/widgets/file_button.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:reaxit/config.dart' as config;
@@ -205,7 +205,7 @@ class _EventScreenState extends State<EventScreen> {
                   children: [
                     Text('DOCUMENTS', style: textTheme.bodySmall),
                     const SizedBox(height: 4),
-                    PdfButton(
+                    FileButton(
                         path: event.documents[0].url,
                         name: event.documents[0].name),
                   ],
