@@ -196,8 +196,13 @@ class _EventScreenState extends State<EventScreen> {
                 ],
               ),
             ),
-            const SizedBox(width: 8),
-            if (event.documents.isNotEmpty)
+          ],
+        ),
+        if (event.documents.isNotEmpty) const SizedBox(height: 12),
+        if (event.documents.isNotEmpty)
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
               Flexible(
                 fit: FlexFit.tight,
                 child: Column(
@@ -210,9 +215,9 @@ class _EventScreenState extends State<EventScreen> {
                         name: event.documents[0].name),
                   ],
                 ),
-              )
-          ],
-        ),
+              ),
+            ],
+          ),
         const Divider(height: 24),
       ],
     );
