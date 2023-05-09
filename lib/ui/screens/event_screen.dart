@@ -210,9 +210,13 @@ class _EventScreenState extends State<EventScreen> {
                   children: [
                     Text('DOCUMENTS', style: textTheme.bodySmall),
                     const SizedBox(height: 4),
-                    FileButton(
-                        path: event.documents[0].url,
-                        name: event.documents[0].name),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (Document doc in event.documents)
+                          FileButton(path: doc.url, name: doc.name)
+                      ],
+                    )
                   ],
                 ),
               ),

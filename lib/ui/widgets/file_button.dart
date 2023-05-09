@@ -18,13 +18,14 @@ class FileButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
-        onPressed: () async {
-          var file = (await cache.ThaliaCacheManager().getSingleFile(path));
+      onPressed: () async {
+        var file = (await cache.ThaliaCacheManager().getSingleFile(path));
 
-          OpenFile.open(file.path,
-              type: extensionToType(extension), uti: extensionToUti(extension));
-        },
-        icon: const Icon(Icons.pages),
-        label: Text(name));
+        OpenFile.open(file.path,
+            type: extensionToType(extension), uti: extensionToUti(extension));
+      },
+      icon: const Icon(Icons.description),
+      label: Text(name),
+    );
   }
 }
