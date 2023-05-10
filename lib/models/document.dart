@@ -1,6 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:reaxit/models.dart';
-import 'package:reaxit/config.dart' as config;
 
 part 'document.g.dart';
 
