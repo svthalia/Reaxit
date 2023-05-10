@@ -16,7 +16,7 @@ void main() {
         (WidgetTester tester) async {
       final normalEvent = Event(
         1,
-        'Lorem 2',
+        'Lorem 1',
         'Ipsum 1',
         '',
         DateTime.parse('2022-03-04 13:37'),
