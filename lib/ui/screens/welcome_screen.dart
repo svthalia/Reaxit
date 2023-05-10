@@ -102,19 +102,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
-  Widget _makeEventCard(BaseEvent event) {
-    if (event is Event) {
-      return EventDetailCard(event: event);
-    }
-
-    if (event is PartnerEvent) {
-      return PartnerEventDetailCard(event: (event));
-    }
-
-    // Should not happen
-    return const SizedBox.shrink();
-  }
-
   Widget _makeUpcomingEvents(List<BaseEvent> events) {
     final dayGroupedEvents = _groupByDay(events);
     return AnimatedSize(
@@ -155,7 +142,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       textAlign: TextAlign.left,
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
-                    for (final event in dayEvents) _makeEventCard(event),
+                    for (final event in dayEvents)
+                      EventDetailCard(event: event),
                   ]);
             }).toList(),
             if (events.isEmpty)
