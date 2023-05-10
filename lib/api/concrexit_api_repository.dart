@@ -121,7 +121,8 @@ class ConcrexitApiRepository implements ApiRepository {
     }
   }
 
-  Future<Response> _makeRequest(
+  /// A wrapper for making requests that handles logging the requests in debug mode.
+  Future<Response> _logRequest(
       Uri url, Future<Response> Function() request) async {
     try {
       var response = await _handleExceptions(request);
@@ -165,10 +166,10 @@ class ConcrexitApiRepository implements ApiRepository {
   Future<Event> getEventByPk({required int pk}) {
     return sandbox(() async {
       final uri = _uri(path: '/events/$pk/');
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
 
       final uri2 = _uri(path: '/fioejfiejiejfe/');
-      await _makeRequest(uri2, () => _client.get(uri2));
+      await _logRequest(uri2, () => _client.get(uri2));
       final event = Event.fromJson(_jsonDecode(response));
       if (event.isRegistered) {
         try {
@@ -188,7 +189,7 @@ class ConcrexitApiRepository implements ApiRepository {
   Future<Event> getEventBySlug({required String slug}) {
     return sandbox(() async {
       final uri = _uri(path: '/events/$slug/');
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       final event = Event.fromJson(_jsonDecode(response));
       if (event.isRegistered) {
         try {
@@ -230,7 +231,7 @@ class ConcrexitApiRepository implements ApiRepository {
         },
       );
 
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       return await compute(_parseEvents, response);
     });
   }
@@ -268,7 +269,7 @@ class ConcrexitApiRepository implements ApiRepository {
         },
       );
 
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       return await compute(_parsePartnerEvents, response);
     });
   }
@@ -295,7 +296,7 @@ class ConcrexitApiRepository implements ApiRepository {
         },
       );
 
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       return await compute(_parseEventRegistrations, response);
     });
   }
@@ -313,7 +314,7 @@ class ConcrexitApiRepository implements ApiRepository {
   Future<EventRegistration> registerForEvent(int pk) async {
     return sandbox(() async {
       final uri = _uri(path: '/events/$pk/registrations/');
-      final response = await _makeRequest(uri, () => _client.post(uri));
+      final response = await _logRequest(uri, () => _client.post(uri));
       return EventRegistration.fromJson(_jsonDecode(response));
     });
   }
@@ -325,7 +326,7 @@ class ConcrexitApiRepository implements ApiRepository {
   }) async {
     return sandbox(() async {
       final uri = _uri(path: '/events/$eventPk/registrations/$registrationPk/');
-      await _makeRequest(uri, () => _client.delete(uri));
+      await _logRequest(uri, () => _client.delete(uri));
     });
   }
 
@@ -338,7 +339,7 @@ class ConcrexitApiRepository implements ApiRepository {
       final uri = _uri(
         path: '/events/$eventPk/registrations/$registrationPk/fields/',
       );
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       var json = _jsonDecode(response);
       return json.map(
         (key, jsonField) => MapEntry(
@@ -372,7 +373,7 @@ class ConcrexitApiRepository implements ApiRepository {
   Future<AdminEvent> getAdminEvent({required int pk}) {
     return sandbox(() async {
       final uri = _uri(path: '/admin/events/$pk/');
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       return AdminEvent.fromJson(_jsonDecode(response));
     });
   }
@@ -409,7 +410,7 @@ class ConcrexitApiRepository implements ApiRepository {
           if (cancelled != null) 'cancelled': cancelled.toString(),
         },
       );
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       return await compute(_parseAdminEventRegistrations, response);
     });
   }
@@ -502,7 +503,7 @@ class ConcrexitApiRepository implements ApiRepository {
         path:
             '/admin/payments/payables/events/eventregistration/$registrationPk/',
       );
-      await _makeRequest(uri, () => _client.delete(uri));
+      await _logRequest(uri, () => _client.delete(uri));
     });
   }
 
@@ -522,7 +523,7 @@ class ConcrexitApiRepository implements ApiRepository {
           if (search != null) 'search': search,
         },
       );
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       return await compute(_parseAdminFoodOrders, response);
     });
   }
@@ -576,7 +577,7 @@ class ConcrexitApiRepository implements ApiRepository {
       final uri = _uri(
         path: '/admin/payments/payables/pizzas/foodorder/$orderPk/',
       );
-      await _makeRequest(uri, () => _client.delete(uri));
+      await _logRequest(uri, () => _client.delete(uri));
     });
   }
 
@@ -584,7 +585,7 @@ class ConcrexitApiRepository implements ApiRepository {
   Future<FoodEvent> getFoodEvent(int pk) async {
     return sandbox(() async {
       final uri = _uri(path: '/food/events/$pk/');
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       final foodEvent = FoodEvent.fromJson(_jsonDecode(response));
       if (foodEvent.hasOrder) {
         try {
@@ -622,7 +623,7 @@ class ConcrexitApiRepository implements ApiRepository {
         },
       );
 
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       return await compute(_parseFoodEvents, response);
     });
   }
@@ -646,7 +647,7 @@ class ConcrexitApiRepository implements ApiRepository {
           'end': now.add(const Duration(hours: 8)).toIso8601String(),
         },
       );
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       final events = ListResponse<FoodEvent>.fromJson(
         _jsonDecode(response),
         (json) => FoodEvent.fromJson(json as Map<String, dynamic>),
@@ -687,7 +688,7 @@ class ConcrexitApiRepository implements ApiRepository {
   Future<FoodOrder> getFoodOrder(int pk) async {
     return sandbox(() async {
       final uri = _uri(path: '/food/events/$pk/order/');
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       final foodOrder = FoodOrder.fromJson(_jsonDecode(response));
       try {
         await getFoodOrderPayable(foodOrderPk: foodOrder.pk);
@@ -703,7 +704,7 @@ class ConcrexitApiRepository implements ApiRepository {
   Future<void> cancelFoodOrder(int pk) async {
     return sandbox(() async {
       final uri = _uri(path: '/food/events/$pk/order/');
-      await _makeRequest(uri, () => _client.delete(uri));
+      await _logRequest(uri, () => _client.delete(uri));
     });
   }
 
@@ -767,7 +768,7 @@ class ConcrexitApiRepository implements ApiRepository {
         },
       );
 
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       return await compute(_parseFoodEventProducts, response);
     });
   }
@@ -789,7 +790,7 @@ class ConcrexitApiRepository implements ApiRepository {
         path: '/payments/payables/$appLabel/$modelName/$payablePk/',
       );
 
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       return Payable.fromJson(_jsonDecode(response));
     });
   }
@@ -805,7 +806,7 @@ class ConcrexitApiRepository implements ApiRepository {
             '$modelName/${Uri.encodeComponent(payablePk)}/',
       );
 
-      final response = await _makeRequest(uri, () => _client.patch(uri));
+      final response = await _logRequest(uri, () => _client.patch(uri));
       return Payable.fromJson(_jsonDecode(response));
     });
   }
@@ -814,7 +815,7 @@ class ConcrexitApiRepository implements ApiRepository {
   Future<PaymentUser> getPaymentUser() async {
     return sandbox(() async {
       final uri = _uri(path: '/payments/users/me/');
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       return PaymentUser.fromJson(_jsonDecode(response));
     });
   }
@@ -871,7 +872,7 @@ class ConcrexitApiRepository implements ApiRepository {
   Future<Member> getMember({required int pk}) async {
     return sandbox(() async {
       final uri = _uri(path: '/members/$pk/');
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       return Member.fromJson(_jsonDecode(response));
     });
   }
@@ -906,7 +907,7 @@ class ConcrexitApiRepository implements ApiRepository {
         },
       );
 
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       return await compute(_parseMembers, response);
     });
   }
@@ -922,7 +923,7 @@ class ConcrexitApiRepository implements ApiRepository {
   Future<FullMember> getMe() async {
     return sandbox(() async {
       final uri = _uri(path: '/members/me/');
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       return FullMember.fromJson(_jsonDecode(response));
     });
   }
@@ -939,7 +940,7 @@ class ConcrexitApiRepository implements ApiRepository {
           contentType: MediaType('image', 'jpeg'),
         ),
       );
-      await _makeRequest(uri, () async {
+      await _logRequest(uri, () async {
         final streamedResponse = await _client.send(request);
         return Response.fromStream(streamedResponse);
       });
@@ -963,7 +964,7 @@ class ConcrexitApiRepository implements ApiRepository {
   Future<Album> getAlbum({required String slug}) async {
     return sandbox(() async {
       final uri = _uri(path: '/photos/albums/$slug/');
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       return Album.fromJson(_jsonDecode(response));
     });
   }
@@ -996,7 +997,7 @@ class ConcrexitApiRepository implements ApiRepository {
         },
       );
 
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       return await compute(_parseAlbums, response);
     });
   }
@@ -1022,7 +1023,7 @@ class ConcrexitApiRepository implements ApiRepository {
         },
       );
 
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       return await compute(_parseSlides, response);
     });
   }
@@ -1048,7 +1049,7 @@ class ConcrexitApiRepository implements ApiRepository {
         },
       );
 
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       return await compute(_parseFrontpageArticles, response);
     });
   }
@@ -1086,7 +1087,7 @@ class ConcrexitApiRepository implements ApiRepository {
   Future<Device> getDevice({required int pk}) async {
     return sandbox(() async {
       final uri = _uri(path: '/pushnotifications/devices/$pk/');
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       return Device.fromJson(_jsonDecode(response));
     });
   }
@@ -1137,7 +1138,7 @@ class ConcrexitApiRepository implements ApiRepository {
   Future<ListResponse<PushNotificationCategory>> getCategories() async {
     return sandbox(() async {
       final uri = _uri(path: '/pushnotifications/categories/');
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       return await compute(_parseCategories, response);
     });
   }
@@ -1204,7 +1205,7 @@ class ConcrexitApiRepository implements ApiRepository {
       },
     );
 
-    final response = await _makeRequest(uri, () => _client.get(uri));
+    final response = await _logRequest(uri, () => _client.get(uri));
     return ListResponse<ListGroup>.fromJson(
       _jsonDecode(response),
       (json) => ListGroup.fromJson(json as Map<String, dynamic>),
@@ -1214,7 +1215,7 @@ class ConcrexitApiRepository implements ApiRepository {
   @override
   Future<Group> getGroup({required int pk}) async {
     final uri = _baseUri.replace(path: '$_basePath/activemembers/groups/$pk/');
-    final response = await _makeRequest(uri, () => _client.get(uri));
+    final response = await _logRequest(uri, () => _client.get(uri));
     return Group.fromJson(_jsonDecode(response));
   }
 
@@ -1227,7 +1228,7 @@ class ConcrexitApiRepository implements ApiRepository {
     if (type == MemberGroupType.board) {
       final uri =
           _baseUri.replace(path: '$_basePath/activemembers/boards/$slug/');
-      final response = await _makeRequest(uri, () => _client.get(uri));
+      final response = await _logRequest(uri, () => _client.get(uri));
       return Group.fromJson(_jsonDecode(response));
     } else {
       throw ApiException.message(
@@ -1248,7 +1249,7 @@ class ConcrexitApiRepository implements ApiRepository {
       },
     );
 
-    final response = await _makeRequest(uri, () => _client.get(uri));
+    final response = await _logRequest(uri, () => _client.get(uri));
     return ListResponse<AlbumPhoto>.fromJson(
       _jsonDecode(response),
       (json) => AlbumPhoto.fromJson(json as Map<String, dynamic>),
