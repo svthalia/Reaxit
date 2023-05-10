@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 import 'package:reaxit/utilities/cache_manager.dart' as cache;
 import 'package:reaxit/config.dart' as config;
 import 'package:open_file_plus/open_file_plus.dart';
-import 'package:reaxit/utilities/filetype_translator.dart';
 
 class FileButton extends StatelessWidget {
   final String path;
@@ -19,10 +18,15 @@ class FileButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
       onPressed: () async {
-        var file = (await cache.ThaliaCacheManager().getSingleFile(path));
+        var file =
+            (await cache.ThaliaCacheManager().getSingleFile(path, key: name));
 
-        OpenFile.open(file.path,
-            type: extensionToType(extension), uti: extensionToUti(extension));
+        file = await cache.ThaliaCacheManager()
+            .putFile(path, file.readAsBytesSync(), fileExtension: extension);
+
+        await cache.ThaliaCacheManager().removeFile(name);
+
+        OpenFile.open(file.path);
       },
       icon: const Icon(Icons.description),
       label: Text(name),
