@@ -129,14 +129,11 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                     tooltip: 'Show presence QR code',
                   ),
                 ],
-                bottom: TabBar(
-                  indicatorColor: Theme.of(context).colorScheme.primary,
-                  tabs: const [
-                    Tab(text: 'QUEUED'),
-                    Tab(text: 'REGISTERED'),
-                    Tab(text: 'CANCELLED'),
-                  ],
-                ),
+                bottom: const TabBar(tabs: [
+                  Tab(text: 'QUEUED'),
+                  Tab(text: 'REGISTERED'),
+                  Tab(text: 'CANCELLED'),
+                ]),
               ),
               body: RefreshIndicator(
                 onRefresh: () async {
