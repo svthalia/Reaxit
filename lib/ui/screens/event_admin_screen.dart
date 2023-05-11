@@ -8,6 +8,7 @@ import 'package:reaxit/blocs.dart';
 import 'package:reaxit/config.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/widgets.dart';
+import 'package:intl/intl.dart';
 
 class EventAdminScreen extends StatefulWidget {
   final int pk;
@@ -88,73 +89,168 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
       )..load(),
       child: Builder(
         builder: (context) {
-          return Scaffold(
-            appBar: ThaliaAppBar(
-              title: const Text('REGISTRATIONS'),
-              collapsingActions: [
-                IconAppbarAction(
-                  'SEARCH',
-                  Icons.search,
-                  () async {
-                    final adminCubit =
-                        BlocProvider.of<EventAdminCubit>(context);
-                    final searchCubit = EventAdminCubit(
-                      RepositoryProvider.of<ApiRepository>(context),
-                      eventPk: widget.pk,
-                    );
+          return DefaultTabController(
+            length: 3,
+            initialIndex: 1,
+            child: Scaffold(
+              appBar: ThaliaAppBar(
+                title: const Text('REGISTRATIONS'),
+                collapsingActions: [
+                  IconAppbarAction(
+                    'SEARCH',
+                    Icons.search,
+                    () async {
+                      final adminCubit =
+                          BlocProvider.of<EventAdminCubit>(context);
+                      final searchCubit = EventAdminCubit(
+                        RepositoryProvider.of<ApiRepository>(context),
+                        eventPk: widget.pk,
+                      );
 
-                    await showSearch(
-                      context: context,
-                      delegate: EventAdminSearchDelegate(searchCubit),
-                    );
+                      await showSearch(
+                        context: context,
+                        delegate: EventAdminSearchDelegate(searchCubit),
+                      );
 
-                    searchCubit.close();
+                      searchCubit.close();
 
-                    // After the search dialog closes, refresh the results,
-                    // since the search screen may have changed stuff through
-                    // its own EventAdminCubit, that do not show up in the cubit
-                    // for the EventAdminScreen until a refresh.
-                    adminCubit.loadRegistrations();
+                      // After the search dialog closes, refresh the results,
+                      // since the search screen may have changed stuff through
+                      // its own EventAdminCubit, that do not show up in the cubit
+                      // for the EventAdminScreen until a refresh.
+                      adminCubit.loadRegistrations();
+                    },
+                  ),
+                  IconAppbarAction(
+                    'QR Code',
+                    Icons.qr_code,
+                    () =>
+                        _showQRCode(BlocProvider.of<EventAdminCubit>(context)),
+                    tooltip: 'Show presence QR code',
+                  ),
+                ],
+                bottom: TabBar(
+                  indicatorColor: Theme.of(context).colorScheme.primary,
+                  tabs: const [
+                    Tab(text: 'QUEUED'),
+                    Tab(text: 'REGISTERED'),
+                    Tab(text: 'CANCELLED'),
+                  ],
+                ),
+              ),
+              body: RefreshIndicator(
+                onRefresh: () async {
+                  await BlocProvider.of<EventAdminCubit>(
+                    context,
+                  ).loadRegistrations();
+                },
+                child: BlocBuilder<EventAdminCubit, EventAdminState>(
+                  builder: (context, state) {
+                    if (state.hasException) {
+                      return ErrorScrollView(state.message!);
+                    } else if (state.isLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else {
+                      return TabBarView(children: [
+                        Scrollbar(
+                          child: ListView.separated(
+                            key: const PageStorageKey('event-admin'),
+                            itemBuilder: (context, index) =>
+                                _QueuedRegistrationTile(
+                              registration: state.queuedRegistrations[index],
+                            ),
+                            separatorBuilder: (_, __) => const Divider(),
+                            itemCount: state.queuedRegistrations.length,
+                          ),
+                        ),
+                        Scrollbar(
+                          child: ListView.separated(
+                            key: const PageStorageKey('event-admin'),
+                            itemBuilder: (context, index) => _RegistrationTile(
+                              registration: state.registrations[index],
+                              requiresPayment: state.event!.paymentIsRequired,
+                            ),
+                            separatorBuilder: (_, __) => const Divider(),
+                            itemCount: state.registrations.length,
+                          ),
+                        ),
+                        Scrollbar(
+                          child: ListView.separated(
+                            key: const PageStorageKey('event-admin'),
+                            itemBuilder: (context, index) =>
+                                _CancelledRegistrationTile(
+                              registration: state.cancelledRegistrations[index],
+                            ),
+                            separatorBuilder: (_, __) => const Divider(),
+                            itemCount: state.cancelledRegistrations.length,
+                          ),
+                        ),
+                      ]);
+                    }
                   },
                 ),
-                IconAppbarAction(
-                  'QR Code',
-                  Icons.qr_code,
-                  () => _showQRCode(BlocProvider.of<EventAdminCubit>(context)),
-                  tooltip: 'Show presence QR code',
-                ),
-              ],
-            ),
-            body: RefreshIndicator(
-              onRefresh: () async {
-                await BlocProvider.of<EventAdminCubit>(
-                  context,
-                ).loadRegistrations();
-              },
-              child: BlocBuilder<EventAdminCubit, EventAdminState>(
-                builder: (context, state) {
-                  if (state.hasException) {
-                    return ErrorScrollView(state.message!);
-                  } else if (state.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else {
-                    return Scrollbar(
-                      child: ListView.separated(
-                        key: const PageStorageKey('event-admin'),
-                        itemBuilder: (context, index) => _RegistrationTile(
-                          registration: state.registrations[index],
-                          requiresPayment: state.event!.paymentIsRequired,
-                        ),
-                        separatorBuilder: (_, __) => const Divider(),
-                        itemCount: state.registrations.length,
-                      ),
-                    );
-                  }
-                },
               ),
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class _QueuedRegistrationTile extends StatelessWidget {
+  final AdminEventRegistration registration;
+
+  const _QueuedRegistrationTile({
+    required this.registration,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      horizontalTitleGap: 8,
+      title: Text(
+        registration.member?.fullName ?? registration.name!,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Queue position: ${registration.queuePosition!.toString()}',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CancelledRegistrationTile extends StatelessWidget {
+  final AdminEventRegistration registration;
+
+  const _CancelledRegistrationTile({
+    required this.registration,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      horizontalTitleGap: 8,
+      title: Text(
+        registration.member?.fullName ?? registration.name!,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Cancelled on: ${DateFormat('dd/MM, HH:mm').format(registration.dateCancelled!)}',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ],
       ),
     );
   }

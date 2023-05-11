@@ -76,6 +76,7 @@ class AdminEventRegistration implements EventRegistration {
   final bool present;
   final int? queuePosition;
   final DateTime date;
+  final DateTime? dateCancelled;
   final Payment? payment;
 
   bool get isInQueue => queuePosition != null;
@@ -89,6 +90,7 @@ class AdminEventRegistration implements EventRegistration {
     this.present,
     this.queuePosition,
     this.date,
+    this.dateCancelled,
     this.payment,
   ) : assert(
           member != null || name != null,
@@ -103,6 +105,7 @@ class AdminEventRegistration implements EventRegistration {
         newPresent,
         queuePosition,
         date,
+        dateCancelled,
         payment,
       );
 
@@ -114,6 +117,7 @@ class AdminEventRegistration implements EventRegistration {
         present,
         queuePosition,
         date,
+        dateCancelled,
         newPayment,
       );
 
