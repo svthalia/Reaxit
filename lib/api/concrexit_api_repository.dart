@@ -12,7 +12,21 @@ import 'package:reaxit/models.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class LoggingClient extends oauth2.Client {
-  LoggingClient(super.credentials);
+  LoggingClient(
+    super.credentials, {
+    super.identifier,
+    super.secret,
+    super.basicAuth,
+    super.httpClient,
+    super.onCredentialsRefreshed,
+  });
+
+  LoggingClient.fromClient(oauth2.Client client)
+      : super(
+          client.credentials,
+          identifier: client.identifier,
+          secret: client.secret,
+        );
 
   static void logResponse(Uri url, Response response) {
     if (kDebugMode) {
