@@ -588,6 +588,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
     String? search,
     String? ordering,
     bool? cancelled,
+    bool? queued,
   }) =>
           (super.noSuchMethod(
             Invocation.method(
@@ -600,6 +601,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
                 #search: search,
                 #ordering: ordering,
                 #cancelled: cancelled,
+                #queued: queued,
               },
             ),
             returnValue:
@@ -616,6 +618,7 @@ class MockApiRepository extends _i1.Mock implements _i4.ApiRepository {
                   #search: search,
                   #ordering: ordering,
                   #cancelled: cancelled,
+                  #queued: queued,
                 },
               ),
             )),
