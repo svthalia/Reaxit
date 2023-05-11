@@ -168,8 +168,6 @@ class ConcrexitApiRepository implements ApiRepository {
       final uri = _uri(path: '/events/$pk/');
       final response = await _logRequest(uri, () => _client.get(uri));
 
-      final uri2 = _uri(path: '/fioejfiejiejfe/');
-      await _logRequest(uri2, () => _client.get(uri2));
       final event = Event.fromJson(_jsonDecode(response));
       if (event.isRegistered) {
         try {
