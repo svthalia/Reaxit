@@ -125,7 +125,10 @@ class EventAdminCubit extends Cubit<EventAdminState> {
         limit: 999999999,
         cancelled: true,
         queued: false,
+<<<<<<< HEAD
         ordering: '-date_cancelled',
+=======
+>>>>>>> 1750326 (Implemented fetching from api using 'queued' parameter; added cancelled registrations and queued registrations to the admin state and cubit)
       );
       final queuedRegistrations = await api.getAdminEventRegistrations(
         pk: eventPk,
@@ -133,7 +136,10 @@ class EventAdminCubit extends Cubit<EventAdminState> {
         limit: 999999999,
         cancelled: false,
         queued: true,
+<<<<<<< HEAD
         ordering: 'queue_position',
+=======
+>>>>>>> 1750326 (Implemented fetching from api using 'queued' parameter; added cancelled registrations and queued registrations to the admin state and cubit)
       );
 
       // Discard result if _searchQuery has
@@ -188,7 +194,10 @@ class EventAdminCubit extends Cubit<EventAdminState> {
           limit: 999999999,
           cancelled: true,
           queued: false,
+<<<<<<< HEAD
           ordering: '-date_cancelled',
+=======
+>>>>>>> 1750326 (Implemented fetching from api using 'queued' parameter; added cancelled registrations and queued registrations to the admin state and cubit)
         );
         final queuedRegistrations = await api.getAdminEventRegistrations(
           pk: eventPk,
@@ -196,7 +205,10 @@ class EventAdminCubit extends Cubit<EventAdminState> {
           limit: 999999999,
           cancelled: false,
           queued: true,
+<<<<<<< HEAD
           ordering: 'queue_position',
+=======
+>>>>>>> 1750326 (Implemented fetching from api using 'queued' parameter; added cancelled registrations and queued registrations to the admin state and cubit)
         );
 
         // Discard result if _searchQuery has
