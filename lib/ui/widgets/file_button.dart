@@ -3,25 +3,33 @@ import 'package:reaxit/utilities/cache_manager.dart';
 import 'package:open_file_plus/open_file_plus.dart';
 
 class FileButton extends StatelessWidget {
-  final String path;
+  final Uri url;
   final String name;
   final String extension;
 
   FileButton({
-    required this.path,
+    required String url,
     required this.name,
-  }) : extension = Uri.parse(path).path.split('.').last;
+  })  : extension = Uri.parse(url).path.split('.').last,
+        url = Uri.parse(url);
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
       onPressed: () async {
-        var file = (await ThaliaCacheManager().getSingleFile(path, key: name));
+        var file = (await ThaliaCacheManager()
+                .getFileFromCache('${url.origin}${url.path}'))
+            ?.file;
 
-        file = await ThaliaCacheManager()
-            .putFile(path, file.readAsBytesSync(), fileExtension: extension);
+        if (file == null) {
+          var newFile = await ThaliaCacheManager()
+              .downloadFile(url.toString(), key: name);
+          file = await ThaliaCacheManager().putFile(
+              '${url.origin}${url.path}', await newFile.file.readAsBytes(),
+              fileExtension: extension);
 
-        await ThaliaCacheManager().removeFile(name);
+          await ThaliaCacheManager().removeFile(name);
+        }
 
         OpenFile.open(file.path);
       },

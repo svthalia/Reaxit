@@ -214,7 +214,7 @@ class _EventScreenState extends State<EventScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         for (Document doc in event.documents)
-                          FileButton(path: doc.url, name: doc.name)
+                          FileButton(url: doc.url, name: doc.name)
                       ],
                     )
                   ],
