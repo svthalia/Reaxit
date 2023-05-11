@@ -14,7 +14,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 class LoggingClient extends oauth2.Client {
   LoggingClient(super.credentials);
 
-  void _logResponse(Uri url, Response response) {
+  static void logResponse(Uri url, Response response) {
     if (kDebugMode) {
       print('url: $url, response code: ${response.statusCode}');
     }
@@ -23,7 +23,7 @@ class LoggingClient extends oauth2.Client {
   @override
   Future<Response> get(Uri url, {Map<String, String>? headers}) async {
     final response = await super.get(url, headers: headers);
-    _logResponse(url, response);
+    logResponse(url, response);
     return response;
   }
 
@@ -36,7 +36,7 @@ class LoggingClient extends oauth2.Client {
   }) async {
     final response =
         await super.post(url, headers: headers, body: body, encoding: encoding);
-    _logResponse(url, response);
+    logResponse(url, response);
     return response;
   }
 
@@ -49,7 +49,7 @@ class LoggingClient extends oauth2.Client {
   }) async {
     final response = await super
         .delete(url, headers: headers, body: body, encoding: encoding);
-    _logResponse(url, response);
+    logResponse(url, response);
     return response;
   }
 
@@ -62,7 +62,7 @@ class LoggingClient extends oauth2.Client {
   }) async {
     final response = await super
         .patch(url, headers: headers, body: body, encoding: encoding);
-    _logResponse(url, response);
+    logResponse(url, response);
     return response;
   }
 
@@ -71,7 +71,7 @@ class LoggingClient extends oauth2.Client {
       {Map<String, String>? headers, Object? body, Encoding? encoding}) async {
     final response = await super
         .patch(url, headers: headers, body: body, encoding: encoding);
-    _logResponse(url, response);
+    logResponse(url, response);
     return response;
   }
 }
@@ -983,10 +983,12 @@ class ConcrexitApiRepository implements ApiRepository {
           contentType: MediaType('image', 'jpeg'),
         ),
       );
-      await _handleExceptions(() async {
+      final response = await _handleExceptions(() async {
         final streamedResponse = await _client.send(request);
         return Response.fromStream(streamedResponse);
       });
+
+      LoggingClient.logResponse(uri, response);
     });
   }
 
