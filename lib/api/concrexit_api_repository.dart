@@ -417,6 +417,7 @@ class ConcrexitApiRepository implements ApiRepository {
     String? search,
     String? ordering,
     bool? cancelled,
+    bool? queued,
   }) async {
     assert(
       ordering == null ||
@@ -439,6 +440,7 @@ class ConcrexitApiRepository implements ApiRepository {
           if (ordering != null) 'ordering': ordering,
           if (search != null) 'search': search,
           if (cancelled != null) 'cancelled': cancelled.toString(),
+          if (queued != null) 'queued': queued.toString(),
         },
       );
       final response = await _handleExceptions(() => _client.get(uri));
