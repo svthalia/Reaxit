@@ -267,17 +267,14 @@ class CalendarScrollView extends StatelessWidget {
     final upEvents = _monthGroupedEventsDown.isEmpty && calendarState.isDoneDown
         ? _monthGroupedEventsUp.skip(1).toList()
         : _monthGroupedEventsUp;
-    final downEvents =
-        _monthGroupedEventsDown.isEmpty && calendarState.isDoneDown
+    final downEvents = _monthGroupedEventsUp.isEmpty
+        ? List<CalendarViewMonth>.empty()
+        : _monthGroupedEventsDown.isEmpty && calendarState.isDoneDown
             ? [_monthGroupedEventsUp.first]
             : _monthGroupedEventsDown;
     ScrollPhysics scrollPhysics = const AlwaysScrollableScrollPhysics();
     return Column(
       children: [
-        if (_enableLoadMore)
-          AnimatedLoader(
-            visible: calendarState.isLoadingMoreUp,
-          ),
         Expanded(
           child: CustomScrollView(
             controller: controller,
@@ -297,7 +294,9 @@ class CalendarScrollView extends StatelessWidget {
                 SliverToBoxAdapter(
                   child: TextButton(
                     onPressed: loadMoreUp,
-                    child: const Text('LOAD MORE'),
+                    child: _enableLoadMore
+                        ? const Text('LOADING MORE')
+                        : const Text('SCROLL TO LOAD MORE'),
                   ),
                 ),
               SliverPadding(

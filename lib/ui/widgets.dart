@@ -1,5 +1,4 @@
 export 'widgets/album_tile.dart';
-export 'widgets/animated_loading_icon.dart';
 export 'widgets/app_bar.dart';
 export 'widgets/cached_image.dart';
 export 'widgets/error_center.dart';

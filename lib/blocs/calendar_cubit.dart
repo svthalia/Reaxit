@@ -496,12 +496,14 @@ class CalendarCubit extends Cubit<CalendarState> {
   /// Use `null` as argument to remove the search query.
   void search(String? query) {
     if (query != _searchQuery) {
+      _remainingFutureEvents = [];
+      _remainingPastEvents = [];
       _searchQuery = query;
       _searchDebounceTimer?.cancel();
       if (query?.isEmpty ?? false) {
         /// Don't get results when the query is empty.
         emit(CalendarState(_truthTime,
-            const DoubleListState.success(isDoneUp: true, isDoneDown: false)));
+            const DoubleListState.success(isDoneUp: true, isDoneDown: true)));
       } else {
         _searchDebounceTimer = Timer(config.searchDebounceTime, load);
       }
