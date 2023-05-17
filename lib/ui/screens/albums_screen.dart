@@ -64,7 +64,7 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
 
               searchCubit.close();
             },
-          )
+          ),
         ],
       ),
       drawer: MenuDrawer(),

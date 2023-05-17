@@ -15,7 +15,9 @@ class IconAppbarAction extends AppbarAction {
   final IconData icon;
   final void Function() onpressed;
 
-  const IconAppbarAction(this.text, this.icon, this.onpressed, {this.tooltip});
+  const IconAppbarAction(this.text, this.icon, this.onpressed,
+      {String? tooltip})
+      : tooltip = tooltip ?? text;
 
   @override
   Widget asIcon(BuildContext _) {
