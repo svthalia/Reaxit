@@ -35,64 +35,11 @@ class LoggingClient extends oauth2.Client {
   }
 
   @override
-  Future<Response> get(Uri url, {Map<String, String>? headers}) async {
-    final response = await super.get(url, headers: headers);
-    logResponse(url, response.statusCode);
-    return response;
-  }
-
-  @override
-  Future<Response> post(
-    Uri url, {
-    Map<String, String>? headers,
-    Object? body,
-    Encoding? encoding,
-  }) async {
-    final response =
-        await super.post(url, headers: headers, body: body, encoding: encoding);
-    logResponse(url, response.statusCode);
-    return response;
-  }
-
-  @override
-  Future<Response> delete(
-    Uri url, {
-    Map<String, String>? headers,
-    Object? body,
-    Encoding? encoding,
-  }) async {
-    final response = await super
-        .delete(url, headers: headers, body: body, encoding: encoding);
-    logResponse(url, response.statusCode);
-    return response;
-  }
-
-  @override
-  Future<Response> patch(
-    Uri url, {
-    Map<String, String>? headers,
-    Object? body,
-    Encoding? encoding,
-  }) async {
-    final response = await super
-        .patch(url, headers: headers, body: body, encoding: encoding);
-    logResponse(url, response.statusCode);
-    return response;
-  }
-
-  @override
-  Future<Response> put(Uri url,
-      {Map<String, String>? headers, Object? body, Encoding? encoding}) async {
-    final response = await super
-        .patch(url, headers: headers, body: body, encoding: encoding);
-    logResponse(url, response.statusCode);
-    return response;
-  }
-
-  @override
   Future<StreamedResponse> send(BaseRequest request) async {
     final response = await super.send(request);
-    logResponse(request.url, response.statusCode);
+    if (kDebugMode) {
+      print('url: ${request.url}, response code: ${response.statusCode}');
+    }
     return response;
   }
 }
