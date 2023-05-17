@@ -267,11 +267,11 @@ class CalendarScrollView extends StatelessWidget {
     final upEvents = _monthGroupedEventsDown.isEmpty && calendarState.isDoneDown
         ? _monthGroupedEventsUp.skip(1).toList()
         : _monthGroupedEventsUp;
-    final downEvents = _monthGroupedEventsUp.isEmpty
-        ? List<CalendarViewMonth>.empty()
-        : _monthGroupedEventsDown.isEmpty && calendarState.isDoneDown
-            ? [_monthGroupedEventsUp.first]
-            : _monthGroupedEventsDown;
+    final downEvents = _monthGroupedEventsUp.isEmpty &&
+            _monthGroupedEventsDown.isEmpty &&
+            calendarState.isDoneDown
+        ? [_monthGroupedEventsUp.first]
+        : _monthGroupedEventsDown;
     ScrollPhysics scrollPhysics = const AlwaysScrollableScrollPhysics();
     return Column(
       children: [
