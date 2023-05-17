@@ -11,17 +11,20 @@ class AlbumTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cover = album.cover;
     return Stack(
       fit: StackFit.expand,
       children: [
-        RotatedBox(
-          quarterTurns: album.cover.rotation ~/ 90,
-          child: CachedImage(
-            placeholder:
-                'assets/img/photo_placeholder_${(360 - album.cover.rotation) % 360}.png',
-            imageUrl: album.cover.small,
+        if (cover != null)
+          RotatedBox(
+            quarterTurns: cover.rotation ~/ 90,
+            child: CachedImage(
+              placeholder:
+                  'assets/img/photo_placeholder_${(360 - cover.rotation) % 360}.png',
+              imageUrl: cover.small,
+            ),
           ),
-        ),
+        if (cover == null) Image.asset('assets/img/photo_placeholder_0.png'),
         const _BlackGradient(),
         Align(
           alignment: Alignment.bottomLeft,
