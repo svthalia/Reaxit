@@ -70,11 +70,11 @@ class _GroupsScreenState extends State<GroupsScreen>
           ],
           indicatorColor: Theme.of(context).colorScheme.primary,
         ),
-        actions: [
-          IconButton(
-            padding: const EdgeInsets.all(16),
-            icon: const Icon(Icons.search),
-            onPressed: () async {
+        collapsingActions: [
+          IconAppbarAction(
+            'SEARCH',
+            Icons.search,
+            () async {
               final searchCubit =
                   AllGroupsCubit(RepositoryProvider.of<ApiRepository>(context));
 
@@ -82,7 +82,6 @@ class _GroupsScreenState extends State<GroupsScreen>
                 context: context,
                 delegate: GroupSearchDelegate(searchCubit),
               );
-
               searchCubit.close();
             },
           )

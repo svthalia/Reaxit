@@ -864,46 +864,6 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  Widget _makeShareEventButton(Event event) {
-    return IconButton(
-      padding: const EdgeInsets.all(16),
-      color: Theme.of(context).primaryIconTheme.color,
-      icon: Icon(
-        Theme.of(context).platform == TargetPlatform.iOS
-            ? Icons.ios_share
-            : Icons.share,
-      ),
-      onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        try {
-          await Share.share(event.url);
-        } catch (_) {
-          messenger.showSnackBar(const SnackBar(
-            behavior: SnackBarBehavior.floating,
-            content: Text('Could not share the event.'),
-          ));
-        }
-      },
-    );
-  }
-
-  Widget _makeCalendarExportButton(Event event) {
-    return IconButton(
-      padding: const EdgeInsets.all(16),
-      color: Theme.of(context).primaryIconTheme.color,
-      icon: const Icon(Icons.edit_calendar_outlined),
-      onPressed: () async {
-        final exportableEvent = add2calendar.Event(
-          title: event.title,
-          location: event.location,
-          startDate: event.start,
-          endDate: event.end,
-        );
-        await add2calendar.Add2Calendar.addEvent2Cal(exportableEvent);
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<EventCubit, EventState>(
@@ -933,14 +893,43 @@ class _EventScreenState extends State<EventScreen> {
           return Scaffold(
             appBar: ThaliaAppBar(
               title: Text(event.title.toUpperCase()),
-              actions: [
-                _makeCalendarExportButton(event),
-                _makeShareEventButton(event),
+              collapsingActions: [
+                IconAppbarAction(
+                  'EXPORT',
+                  Icons.edit_calendar_outlined,
+                  () async {
+                    final exportableEvent = add2calendar.Event(
+                      title: event.title,
+                      location: event.location,
+                      startDate: event.start,
+                      endDate: event.end,
+                    );
+                    await add2calendar.Add2Calendar.addEvent2Cal(
+                        exportableEvent);
+                  },
+                ),
+                IconAppbarAction(
+                  'SHARE',
+                  Theme.of(context).platform == TargetPlatform.iOS
+                      ? Icons.ios_share
+                      : Icons.share,
+                  () async {
+                    final messenger = ScaffoldMessenger.of(context);
+                    try {
+                      await Share.share(event.url);
+                    } catch (_) {
+                      messenger.showSnackBar(const SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: Text('Could not share the event.'),
+                      ));
+                    }
+                  },
+                ),
                 if (event.userPermissions.manageEvent)
-                  IconButton(
-                    padding: const EdgeInsets.all(16),
-                    icon: const Icon(Icons.settings),
-                    onPressed: () => context.pushNamed(
+                  IconAppbarAction(
+                    'EDIT',
+                    Icons.settings,
+                    () => context.pushNamed(
                       'event-admin',
                       pathParameters: {'eventPk': event.pk.toString()},
                     ),

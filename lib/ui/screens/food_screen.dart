@@ -339,16 +339,15 @@ class _FoodScreenState extends State<FoodScreen> {
             return Scaffold(
               appBar: ThaliaAppBar(
                 title: const Text('ORDER FOOD'),
-                actions: [
-                  if (foodEvent.canManage)
-                    IconButton(
-                      padding: const EdgeInsets.all(16),
-                      icon: const Icon(Icons.settings),
-                      onPressed: () => context.pushNamed(
-                        'food-admin',
-                        extra: foodEvent.pk,
-                      ),
+                collapsingActions: [
+                  IconAppbarAction(
+                    'text',
+                    Icons.settings,
+                    () => context.pushNamed(
+                      'food-admin',
+                      extra: foodEvent.pk,
                     ),
+                  )
                 ],
               ),
               body: RefreshIndicator(

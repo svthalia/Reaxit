@@ -88,12 +88,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Scaffold(
       appBar: ThaliaAppBar(
         title: const Text('CALENDAR'),
-        actions: [
-          IconButton(
-            padding: const EdgeInsets.all(16),
-            icon: const Icon(Icons.search),
-            onPressed: openSearch,
-          ),
+        collapsingActions: [
+          IconAppbarAcation(
+            'SEARCH',
+            Icons.search,
+            openSearch,
+          )
         ],
       ),
       drawer: MenuDrawer(),
