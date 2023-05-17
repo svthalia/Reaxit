@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
@@ -13,7 +14,7 @@ class WelcomeState extends Equatable {
   final List<FrontpageArticle>? articles;
 
   /// This can only be null when [isLoading] or [hasException] is true.
-  final List<Event>? upcomingEvents;
+  final List<BaseEvent>? upcomingEvents;
 
   /// A message describing why there are no results.
   final String? message;
@@ -41,7 +42,7 @@ class WelcomeState extends Equatable {
   WelcomeState copyWith({
     List<Slide>? slides,
     List<FrontpageArticle>? articles,
-    List<Event>? upcomingEvents,
+    List<BaseEvent>? upcomingEvents,
     bool? isLoading,
     String? message,
   }) =>
@@ -56,7 +57,7 @@ class WelcomeState extends Equatable {
   const WelcomeState.result({
     required List<Slide> this.slides,
     required List<FrontpageArticle> this.articles,
-    required List<Event> this.upcomingEvents,
+    required List<BaseEvent> this.upcomingEvents,
   })  : message = null,
         isLoading = false;
 
@@ -86,6 +87,18 @@ class WelcomeCubit extends Cubit<WelcomeState> {
         ordering: 'start',
         limit: 3,
       );
+      final partnerEventsResponse = await api.getPartnerEvents(
+        start: DateTime.now(),
+        ordering: 'start',
+        limit: 3,
+      );
+
+      List<BaseEvent> events = eventsResponse.results
+          .map<BaseEvent>((e) => e)
+          .followedBy(partnerEventsResponse.results.map<BaseEvent>((e) => e))
+          .sortedBy((element) => element.start)
+          .take(3)
+          .toList();
 
       // Filter out SVG slides, as long as concrexit does not offer an alternative.
       final slides = slidesResponse.results
@@ -95,7 +108,7 @@ class WelcomeCubit extends Cubit<WelcomeState> {
       emit(WelcomeState.result(
         slides: slides,
         articles: articlesResponse.results,
-        upcomingEvents: eventsResponse.results,
+        upcomingEvents: events,
       ));
     } on ApiException catch (exception) {
       emit(WelcomeState.failure(message: exception.message));
