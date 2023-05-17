@@ -11,7 +11,7 @@ abstract class AppbarAction {
 
 class IconAppbarAction extends AppbarAction {
   final String text;
-  final String? tooltip;
+  final String tooltip;
   final IconData icon;
   final void Function() onpressed;
 
