@@ -115,6 +115,9 @@ dependencies:
   # Displaying QR codes.
   qr_flutter: ^4.0.0
 
+  # Open files.
+  open_file_plus: ^3.3.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
