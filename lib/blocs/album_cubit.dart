@@ -7,11 +7,20 @@ import 'package:reaxit/ui/widgets/gallery.dart';
 
 typedef AlbumState = DetailState<Album>;
 
+/// The state manager for the [AlbumScreen] screen.
+///
+/// When [load]ed, fetches the relevant album from [api].
+/// Also manages liked photo status locally and in [api].
 class AlbumCubit extends Cubit<AlbumState> implements GalleryCubit<AlbumState> {
   final ApiRepository api;
 
   AlbumCubit(this.api) : super(const LoadingState());
 
+  /// Updates the like status of photo [index] to [liked] both locally and in [api].
+  ///
+  /// Does not update [state] and rethrows on [ApiException].
+  /// Does nothing if [state] is [LoadingState] or [ErrorState].
+  /// Does nothing if [liked] is equal to the current liked status.
   @override
   Future<void> updateLike({required bool liked, required int index}) async {
     if (state is! ResultState) return;
@@ -42,6 +51,10 @@ class AlbumCubit extends Cubit<AlbumState> implements GalleryCubit<AlbumState> {
   @override
   Future<void> more() async {}
 
+  /// Initializes [state] to proper [ResultState] for [AlbumScreen] by fetching all photos and properties of the album with slug [slug] from [api].
+  ///
+  /// [state] defaults to [LoadingState] while waiting for a response from [api].
+  /// On [ApiException], [state] is set to [ErrorState] instead.
   Future<void> load(String slug) async {
     emit(LoadingState.from(state));
     try {
