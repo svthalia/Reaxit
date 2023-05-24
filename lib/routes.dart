@@ -165,7 +165,8 @@ final List<RouteBase> routes = [
               key: state.pageKey,
               child: RegistrationScreen(
                 eventPk: int.parse(state.pathParameters['eventPk']!),
-                registrationPk: int.parse(state.pathParameters['registrationPk']!),
+                registrationPk:
+                    int.parse(state.pathParameters['registrationPk']!),
               ),
             ),
           ),
@@ -181,7 +182,8 @@ final List<RouteBase> routes = [
     // This redirect is above the members route because
     // the members path is a prefix of this albums path.
     path: '/members/photos/:albumSlug',
-    redirect: (context, state) => '/albums/${state.pathParameters['albumSlug']}',
+    redirect: (context, state) =>
+        '/albums/${state.pathParameters['albumSlug']}',
   ),
   GoRoute(
     // This redirect is above the members route because
