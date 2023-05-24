@@ -45,7 +45,7 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
         title: const Text('ALBUMS'),
         collapsingActions: [
           IconAppbarAction(
-            'FAVOURITE',
+            'LIKED PHOTOS',
             Icons.favorite_border,
             () => context.pushNamed('liked-photos'),
           ),
