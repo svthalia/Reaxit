@@ -38,6 +38,7 @@ void main() {
         null,
         '',
         false,
+        [],
       );
 
       final partnerEvent = PartnerEvent(
