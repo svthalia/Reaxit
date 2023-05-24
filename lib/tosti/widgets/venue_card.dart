@@ -65,7 +65,7 @@ class _VenueCardState extends State<VenueCard> {
               onPressed: () {
                 context.pushNamed(
                   'tosti-shift',
-                  params: {'shiftId': shift.id.toString()},
+                  pathParameters: {'shiftId': shift.id.toString()},
                   extra: RepositoryProvider.of<TostiApiRepository>(context),
                 );
               },
