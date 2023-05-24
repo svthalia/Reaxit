@@ -84,12 +84,12 @@ class ThaliaAppBar extends AppBar {
 
   ThaliaAppBar({
     Widget? title,
-    List<AppbarAction>? collapsingActions,
+    List<AppbarAction> collapsingActions = const [],
     Widget? leading,
     PreferredSizeWidget? bottom,
   }) : super(
           title: title,
-          actions: collapse(collapsingActions ?? []),
+          actions: collapse(collapsingActions),
           leading: leading,
           systemOverlayStyle: SystemUiOverlayStyle.light,
           // The bottom decoration only needs to be shown
