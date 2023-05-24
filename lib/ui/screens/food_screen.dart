@@ -341,12 +341,13 @@ class _FoodScreenState extends State<FoodScreen> {
                 title: const Text('ORDER FOOD'),
                 collapsingActions: [
                   IconAppbarAction(
-                    'text',
+                    'ADMIN',
                     Icons.settings,
                     () => context.pushNamed(
                       'food-admin',
                       extra: foodEvent.pk,
                     ),
+                    tooltip: 'food admin',
                   )
                 ],
               ),

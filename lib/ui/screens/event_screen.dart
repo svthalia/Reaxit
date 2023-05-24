@@ -907,6 +907,7 @@ class _EventScreenState extends State<EventScreen> {
                     await add2calendar.Add2Calendar.addEvent2Cal(
                         exportableEvent);
                   },
+                  tooltip: 'add event to calendar',
                 ),
                 IconAppbarAction(
                   'SHARE',

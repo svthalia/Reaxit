@@ -72,6 +72,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
                   'SHARE',
                   Icons.adaptive.share,
                   () => _shareAlbum(context),
+                  tooltip: 'share album',
                 )
               ],
             ),
