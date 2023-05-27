@@ -835,46 +835,30 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   SliverPadding _makeRegistrations(EventState state) {
-    if (state.isLoading && state.registrations.isEmpty) {
-      return const SliverPadding(
-        padding: EdgeInsets.all(16),
-        sliver: SliverToBoxAdapter(
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
+    return SliverPadding(
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
+      sliver: SliverGrid(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
         ),
-      );
-    } else if (state.hasException) {
-      return SliverPadding(
-        padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 16),
-        sliver: SliverToBoxAdapter(child: Text(state.message!)),
-      );
-    } else {
-      return SliverPadding(
-        padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
-        sliver: SliverGrid(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            mainAxisSpacing: 8,
-            crossAxisSpacing: 8,
-          ),
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              if (state.registrations[index].member != null) {
-                return MemberTile(
-                  member: state.registrations[index].member!,
-                );
-              } else {
-                return DefaultMemberTile(
-                  name: state.registrations[index].name!,
-                );
-              }
-            },
-            childCount: state.registrations.length,
-          ),
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            if (state.registrations[index].member != null) {
+              return MemberTile(
+                member: state.registrations[index].member!,
+              );
+            } else {
+              return DefaultMemberTile(
+                name: state.registrations[index].name!,
+              );
+            }
+          },
+          childCount: state.registrations.length,
         ),
-      );
-    }
+      ),
+    );
   }
 
   Widget _makeShareEventButton(Event event) {
@@ -964,45 +948,39 @@ class _EventScreenState extends State<EventScreen> {
               onRefresh: () async {
                 await _eventCubit.load();
               },
-              child: BlocBuilder<EventCubit, EventState>(
-                bloc: _eventCubit,
-                builder: (context, listState) {
-                  return Scrollbar(
-                    controller: _controller,
-                    child: CustomScrollView(
-                      controller: _controller,
-                      key: const PageStorageKey('event'),
-                      slivers: [
-                        SliverToBoxAdapter(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              _makeMap(event),
-                              const Divider(height: 0),
-                              _makeEventInfo(event),
-                              const Divider(),
-                              _makeDescription(event),
-                            ],
-                          ),
-                        ),
-                        const SliverToBoxAdapter(child: Divider()),
-                        if (state.isLoading || state.isLoadingMore) ...[
-                          const SliverPadding(
-                            padding: EdgeInsets.all(8),
-                            sliver: SliverList(
-                              delegate: SliverChildListDelegate.fixed([
-                                Center(child: CircularProgressIndicator()),
-                              ]),
-                            ),
-                          ),
-                        ] else if (state.registrations.isNotEmpty) ...[
-                          _makeRegistrationsHeader(),
-                          _makeRegistrations(state),
+              child: Scrollbar(
+                controller: _controller,
+                child: CustomScrollView(
+                  controller: _controller,
+                  key: const PageStorageKey('event'),
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _makeMap(event),
+                          const Divider(height: 0),
+                          _makeEventInfo(event),
+                          const Divider(),
+                          _makeDescription(event),
                         ],
-                      ],
+                      ),
                     ),
-                  );
-                },
+                    const SliverToBoxAdapter(child: Divider()),
+                    _makeRegistrationsHeader(),
+                    _makeRegistrations(state),
+                    if (state.isLoading || state.isLoadingMore) ...[
+                      const SliverPadding(
+                        padding: EdgeInsets.all(8),
+                        sliver: SliverList(
+                          delegate: SliverChildListDelegate.fixed([
+                            Center(child: CircularProgressIndicator()),
+                          ]),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
               ),
             ),
           );
