@@ -64,6 +64,8 @@ class Event implements BaseEvent {
   @JsonKey(name: 'user_registration')
   final UserEventRegistration? registration;
 
+  final List<Document> documents;
+
   bool get hasFoodEvent => foodEvent != null;
 
   bool get isRegistered => registration?.isRegistered ?? false;
@@ -123,6 +125,7 @@ class Event implements BaseEvent {
     this.registration,
     this.cancelTooLateMessage,
     this.optionalRegistrations,
+    this.documents,
   );
 }
 

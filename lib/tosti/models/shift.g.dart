@@ -8,8 +8,7 @@ part of 'shift.dart';
 
 TostiShift _$TostiShiftFromJson(Map<String, dynamic> json) => TostiShift(
       json['id'] as int,
-      json['venue'] as int,
-      json['venue_name'] as String,
+      TostiOrderVenue.fromJson(json['venue'] as Map<String, dynamic>),
       DateTime.parse(json['start'] as String),
       DateTime.parse(json['end'] as String),
       json['can_order'] as bool,
@@ -27,7 +26,6 @@ Map<String, dynamic> _$TostiShiftToJson(TostiShift instance) =>
     <String, dynamic>{
       'id': instance.id,
       'venue': instance.venue,
-      'venue_name': instance.venueName,
       'start': instance.start.toIso8601String(),
       'end': instance.end.toIso8601String(),
       'can_order': instance.canOrder,

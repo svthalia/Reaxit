@@ -110,7 +110,7 @@ class AuthCubit extends Cubit<AuthState> {
         if (scopes.containsAll(config.oauthScopes)) {
           // Create the API repository.
           final apiRepository = ConcrexitApiRepository(
-            client: Client(
+            client: LoggingClient(
               credentials,
               identifier: config.apiIdentifier,
               secret: config.apiSecret,
@@ -221,7 +221,7 @@ class AuthCubit extends Cubit<AuthState> {
       );
 
       final apiRepository = ConcrexitApiRepository(
-        client: client,
+        client: LoggingClient.fromClient(client),
         onLogOut: logOut,
       );
 

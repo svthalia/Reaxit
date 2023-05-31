@@ -11,6 +11,39 @@ import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/models.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+class LoggingClient extends oauth2.Client {
+  LoggingClient(
+    super.credentials, {
+    super.identifier,
+    super.secret,
+    super.basicAuth,
+    super.httpClient,
+    super.onCredentialsRefreshed,
+  });
+
+  LoggingClient.fromClient(oauth2.Client client)
+      : super(
+          client.credentials,
+          identifier: client.identifier,
+          secret: client.secret,
+        );
+
+  static void logResponse(Uri url, int statusCode) {
+    if (kDebugMode) {
+      print('url: $url, response code: $statusCode');
+    }
+  }
+
+  @override
+  Future<StreamedResponse> send(BaseRequest request) async {
+    final response = await super.send(request);
+    if (kDebugMode) {
+      print('url: ${request.url}, response code: ${response.statusCode}');
+    }
+    return response;
+  }
+}
+
 /// Provides an interface to the api.
 ///
 /// Its methods may throw an [ApiException] if there are unexpected results.
@@ -18,12 +51,12 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 /// close the client and indicates that the user is no longer logged in.
 class ConcrexitApiRepository implements ApiRepository {
   /// The [oauth2.Client] used to access the API.
-  final oauth2.Client _client;
+  final LoggingClient _client;
   final Function() _onLogOut;
 
   ConcrexitApiRepository({
     /// The [oauth2.Client] used to access the API.
-    required oauth2.Client client,
+    required LoggingClient client,
 
     /// Called when the client can no longer authenticate.
     required Function() onLogOut,
@@ -145,6 +178,7 @@ class ConcrexitApiRepository implements ApiRepository {
     return sandbox(() async {
       final uri = _uri(path: '/events/$pk/');
       final response = await _handleExceptions(() => _client.get(uri));
+
       final event = Event.fromJson(_jsonDecode(response));
       if (event.isRegistered) {
         try {
@@ -233,7 +267,7 @@ class ConcrexitApiRepository implements ApiRepository {
     );
     return sandbox(() async {
       final uri = _uri(
-        path: '/partners/events/',
+        path: '/events/external/',
         query: {
           if (search != null) 'search': search,
           if (limit != null) 'limit': limit.toString(),
@@ -915,6 +949,7 @@ class ConcrexitApiRepository implements ApiRepository {
           contentType: MediaType('image', 'jpeg'),
         ),
       );
+
       await _handleExceptions(() async {
         final streamedResponse = await _client.send(request);
         return Response.fromStream(streamedResponse);
@@ -1195,11 +1230,20 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
-  Future<Group> getBoardGroup({required int since, required int until}) async {
-    final uri = _baseUri.replace(
-        path: '$_basePath/activemembers/boards/$since-$until/');
-    final response = await _handleExceptions(() => _client.get(uri));
-    return Group.fromJson(_jsonDecode(response));
+  Future<Group> getGroupBySlug(
+      {required MemberGroupType type, required String slug}) async {
+    // Only boards have slug support right now
+    assert(type == MemberGroupType.board);
+
+    if (type == MemberGroupType.board) {
+      final uri =
+          _baseUri.replace(path: '$_basePath/activemembers/boards/$slug/');
+      final response = await _handleExceptions(() => _client.get(uri));
+      return Group.fromJson(_jsonDecode(response));
+    } else {
+      throw ApiException.message(
+          'Slugs are unsupported for groups of this type.');
+    }
   }
 
   @override

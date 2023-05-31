@@ -10,48 +10,51 @@ import 'package:reaxit/ui/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GroupScreen extends StatelessWidget {
-  final int pk;
   final ListGroup? group;
 
-  const GroupScreen({super.key, required this.pk, this.group});
+  // By PK
+  final int? pk;
+
+  // By slug
+  final MemberGroupType? groupType;
+  final String? slug;
+
+  // Default: by PK
+  const GroupScreen({
+    super.key,
+    this.group,
+    required this.pk,
+  })  : groupType = null,
+        slug = null;
+
+  // Alternative: by Slug
+  const GroupScreen.bySlug(
+      {super.key, this.group, required this.groupType, required this.slug})
+      : pk = null;
+
+  GroupCubit _selectCubit(BuildContext context) {
+    if (pk != null) {
+      return GroupCubit(
+        RepositoryProvider.of<ApiRepository>(context),
+        pk: pk!,
+      )..load();
+    } else {
+      return GroupCubit.bySlug(
+        RepositoryProvider.of<ApiRepository>(context),
+        groupType: groupType!,
+        slug: slug!,
+      )..load();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<GroupCubit>(
-      create: (context) => GroupCubit(
-        RepositoryProvider.of<ApiRepository>(context),
-        pk: pk,
-      )..load(),
+      create: _selectCubit,
       child: BlocBuilder<GroupCubit, GroupState>(
         builder: (context, state) => _Page(
             state: state,
             cubit: BlocProvider.of<GroupCubit>(context),
-            listGroup: group),
-      ),
-    );
-  }
-}
-
-class BoardScreen extends StatelessWidget {
-  final int since;
-  final int until;
-  final ListGroup? group;
-
-  const BoardScreen(
-      {super.key, required this.since, required this.until, this.group});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider<BoardCubit>(
-      create: (context) => BoardCubit(
-          RepositoryProvider.of<ApiRepository>(context),
-          since: since,
-          until: until)
-        ..load(),
-      child: BlocBuilder<BoardCubit, GroupState>(
-        builder: (context, state) => _Page(
-            state: state,
-            cubit: BlocProvider.of<BoardCubit>(context),
             listGroup: group),
       ),
     );
@@ -67,7 +70,7 @@ class _Page extends StatelessWidget {
   }) : super(key: key);
 
   final DetailState<Group> state;
-  final BaseGroupCubit cubit;
+  final GroupCubit cubit;
   final ListGroup? listGroup;
 
   @override

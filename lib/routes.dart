@@ -76,7 +76,7 @@ final List<RouteBase> routes = [
                   child: child,
                 );
               },
-              child: SalesOrderDialog(pk: state.params['pk']!),
+              child: SalesOrderDialog(pk: state.pathParameters['pk']!),
             );
           },
         ),
@@ -104,9 +104,9 @@ final List<RouteBase> routes = [
           String? slug;
 
           try {
-            pk = int.parse(state.params['eventPk']!);
+            pk = int.parse(state.pathParameters['eventPk']!);
           } on FormatException catch (_) {
-            slug = state.params['eventPk']!;
+            slug = state.pathParameters['eventPk']!;
           }
 
           return MaterialPage(
@@ -142,8 +142,8 @@ final List<RouteBase> routes = [
                   );
                 },
                 child: MarkPresentDialog(
-                  pk: int.parse(state.params['eventPk']!),
-                  token: state.params['token']!,
+                  pk: int.parse(state.pathParameters['eventPk']!),
+                  token: state.pathParameters['token']!,
                 ),
               );
             },
@@ -154,7 +154,7 @@ final List<RouteBase> routes = [
             pageBuilder: (context, state) => MaterialPage(
               key: state.pageKey,
               child: EventAdminScreen(
-                pk: int.parse(state.params['eventPk']!),
+                pk: int.parse(state.pathParameters['eventPk']!),
               ),
             ),
           ),
@@ -164,8 +164,9 @@ final List<RouteBase> routes = [
             pageBuilder: (context, state) => MaterialPage(
               key: state.pageKey,
               child: RegistrationScreen(
-                eventPk: int.parse(state.params['eventPk']!),
-                registrationPk: int.parse(state.params['registrationPk']!),
+                eventPk: int.parse(state.pathParameters['eventPk']!),
+                registrationPk:
+                    int.parse(state.pathParameters['registrationPk']!),
               ),
             ),
           ),
@@ -181,7 +182,8 @@ final List<RouteBase> routes = [
     // This redirect is above the members route because
     // the members path is a prefix of this albums path.
     path: '/members/photos/:albumSlug',
-    redirect: (context, state) => '/albums/${state.params['albumSlug']}',
+    redirect: (context, state) =>
+        '/albums/${state.pathParameters['albumSlug']}',
   ),
   GoRoute(
     // This redirect is above the members route because
@@ -210,7 +212,7 @@ final List<RouteBase> routes = [
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
           child: ProfileScreen(
-            pk: int.parse(state.params['memberPk']!),
+            pk: int.parse(state.pathParameters['memberPk']!),
             member: state.extra as ListMember?,
           ),
         ),
@@ -246,7 +248,7 @@ final List<RouteBase> routes = [
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
           child: AlbumScreen(
-            slug: state.params['albumSlug']!,
+            slug: state.pathParameters['albumSlug']!,
             album: state.extra as ListAlbum?,
           ),
         ),
@@ -256,16 +258,17 @@ final List<RouteBase> routes = [
   GoRoute(
     path: '/association/committees/:groupSlug',
     redirect: (context, state) =>
-        '/groups/committees/${state.params['groupSlug']}',
+        '/groups/committees/${state.pathParameters['groupSlug']}',
   ),
   GoRoute(
     path: '/association/societies/:groupSlug',
     redirect: (context, state) =>
-        '/groups/societies/${state.params['groupSlug']}',
+        '/groups/societies/${state.pathParameters['groupSlug']}',
   ),
   GoRoute(
     path: '/association/boards/:groupSlug',
-    redirect: (context, state) => '/groups/boards/${state.params['groupSlug']}',
+    redirect: (context, state) =>
+        '/groups/boards/${state.pathParameters['groupSlug']}',
   ),
   GoRoute(
     path: '/association/committees',
@@ -295,6 +298,22 @@ final List<RouteBase> routes = [
     ),
     routes: [
       GoRoute(
+          path: ':groupPk',
+          name: 'group',
+          pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: GroupScreen(
+                  pk: int.parse(state.pathParameters['groupPk']!),
+                  group: state.extra as ListGroup?))),
+      GoRoute(
+          path: ':groupPk',
+          name: 'board',
+          pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: GroupScreen(
+                  pk: int.parse(state.pathParameters['groupPk']!),
+                  group: state.extra as ListGroup?))),
+      GoRoute(
         path: 'committees',
         name: 'committees',
         pageBuilder: (context, state) => CustomTransitionPage(
@@ -317,7 +336,7 @@ final List<RouteBase> routes = [
             pageBuilder: (context, state) => MaterialPage(
               key: state.pageKey,
               child: GroupScreen(
-                pk: int.parse(state.params['groupPk']!),
+                pk: int.parse(state.pathParameters['groupPk']!),
                 group: state.extra as ListGroup?,
               ),
             ),
@@ -346,7 +365,7 @@ final List<RouteBase> routes = [
             pageBuilder: (context, state) => MaterialPage(
               key: state.pageKey,
               child: GroupScreen(
-                pk: int.parse(state.params['groupPk']!),
+                pk: int.parse(state.pathParameters['groupPk']!),
                 group: state.extra as ListGroup?,
               ),
             ),
@@ -370,12 +389,12 @@ final List<RouteBase> routes = [
         routes: [
           GoRoute(
             path: ':boardSlug',
-            name: 'board',
+            name: 'boardBySlug',
             pageBuilder: (context, state) => MaterialPage(
               key: state.pageKey,
-              child: BoardScreen(
-                since: int.parse(state.params['boardSlug']!.split('-')[0]),
-                until: int.parse(state.params['boardSlug']!.split('-')[1]),
+              child: GroupScreen.bySlug(
+                groupType: MemberGroupType.board,
+                slug: state.pathParameters['boardSlug']!,
                 group: state.extra as ListGroup?,
               ),
             ),
@@ -453,7 +472,7 @@ final List<RouteBase> routes = [
           pageBuilder: (context, state) => MaterialPage(
             key: state.pageKey,
             child: TostiShiftScreen(
-              id: int.parse(state.params['shiftId']!),
+              id: int.parse(state.pathParameters['shiftId']!),
               api: state.extra as TostiApiRepository,
             ),
           ),

@@ -99,6 +99,9 @@ class AlbumsSearchDelegate extends SearchDelegate {
   }
 
   void _scrollListener() {
+    if (!_controller.hasClients) {
+      return;
+    }
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
       // Only request loading more if that's not already happening.

@@ -1,13 +1,13 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:reaxit/tosti/models/user.dart';
+import 'package:reaxit/tosti/models/venue.dart';
 
 part 'shift.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class TostiShift {
   final int id;
-  final int venue;
-  final String venueName;
+  final TostiOrderVenue venue;
   final DateTime start;
   final DateTime end;
   final bool canOrder;
@@ -21,7 +21,6 @@ class TostiShift {
   TostiShift(
     this.id,
     this.venue,
-    this.venueName,
     this.start,
     this.end,
     this.canOrder,

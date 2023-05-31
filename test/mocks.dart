@@ -6,5 +6,6 @@ import 'package:reaxit/blocs.dart';
   AuthCubit,
   ApiRepository,
   PaymentUserCubit,
+  WelcomeCubit,
 ])
 void main() {}

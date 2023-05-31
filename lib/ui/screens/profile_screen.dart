@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -406,6 +407,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       subtitle: periodColumn,
       dense: true,
+      onTap: () {
+        if (achievement.pk != null) {
+          context.pushNamed('committee',
+              pathParameters: {'groupPk': '${achievement.pk!}'});
+        } else if (achievement.url != null) {
+          launchUrl(
+            achievement.url!,
+            mode: LaunchMode.externalApplication,
+          );
+        }
+      },
     );
   }
 

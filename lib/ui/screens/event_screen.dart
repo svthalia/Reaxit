@@ -11,6 +11,7 @@ import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/routes.dart';
 import 'package:reaxit/ui/widgets.dart';
+import 'package:reaxit/ui/widgets/file_button.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:reaxit/config.dart' as config;
@@ -194,9 +195,33 @@ class _EventScreenState extends State<EventScreen> {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
+        if (event.documents.isNotEmpty) const SizedBox(height: 12),
+        if (event.documents.isNotEmpty)
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Flexible(
+                fit: FlexFit.tight,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('DOCUMENTS', style: textTheme.bodySmall),
+                    const SizedBox(height: 4),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (Document doc in event.documents)
+                          FileButton(url: doc.url, name: doc.name)
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
         const Divider(height: 24),
       ],
     );
@@ -598,10 +623,13 @@ class _EventScreenState extends State<EventScreen> {
           try {
             final registration = await _eventCubit.register();
             if (event.hasFields) {
-              router.pushNamed('event-registration', params: {
-                'eventPk': event.pk.toString(),
-                'registrationPk': registration.pk.toString(),
-              });
+              router.pushNamed(
+                'event-registration',
+                pathParameters: {
+                  'eventPk': event.pk.toString(),
+                  'registrationPk': registration.pk.toString(),
+                },
+              );
             }
             calendarCubit.load();
           } on ApiException {
@@ -629,7 +657,7 @@ class _EventScreenState extends State<EventScreen> {
           if (event.hasFields) {
             router.pushNamed(
               'event-registration',
-              params: {
+              pathParameters: {
                 'eventPk': event.pk.toString(),
                 'registrationPk': registration.pk.toString(),
               },
@@ -711,7 +739,7 @@ class _EventScreenState extends State<EventScreen> {
     return ElevatedButton.icon(
       onPressed: () => context.pushNamed(
         'event-registration',
-        params: {
+        pathParameters: {
           'eventPk': event.pk.toString(),
           'registrationPk': event.registration!.pk.toString(),
         },
@@ -930,7 +958,7 @@ class _EventScreenState extends State<EventScreen> {
                     icon: const Icon(Icons.settings),
                     onPressed: () => context.pushNamed(
                       'event-admin',
-                      params: {'eventPk': event.pk.toString()},
+                      pathParameters: {'eventPk': event.pk.toString()},
                     ),
                   ),
               ],
