@@ -31,15 +31,11 @@ class IconAppbarAction extends AppbarAction {
 
   @override
   Widget asMenuItem(BuildContext _) {
-    return IconButton(
+    return TextButton.icon(
+      style: ButtonStyle(foregroundColor: MaterialStateColor.resolveWith((states) => Colors.white)),
       onPressed: onpressed,
-      icon: Column(
-        children: [
-          Text(text),
-          Icon(icon),
-        ],
-      ),
-      tooltip: tooltip,
+      label: Text(text),
+      icon: Icon(icon),
     );
   }
 }
@@ -63,18 +59,19 @@ class _MenuAction extends StatelessWidget {
 }
 
 class ThaliaAppBar extends AppBar {
+  static const defaultIcons = 3;
   static List<Widget> collapse(List<AppbarAction> widgets) {
-    if (widgets.length <= 3) {
+    if (widgets.length <= defaultIcons) {
       return widgets.map((e) => _IconAction(e)).toList();
     }
 
     return [
-      ...widgets.take(2).map((item) => _IconAction(item)),
+      ...widgets.take(defaultIcons-1).map((item) => _IconAction(item)),
       PopupMenuButton(
         icon: const Icon(Icons.more_vert, color: Colors.white),
         itemBuilder: (BuildContext context) {
           return widgets
-              .skip(2)
+              .skip(defaultIcons-1)
               .map((item) => PopupMenuItem(child: _MenuAction(item)))
               .toList();
         },
