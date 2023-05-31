@@ -32,7 +32,10 @@ class LikedPhotosCubit extends Cubit<LikedPhotosState>
       _nextOffset = firstPageSize;
 
       emit(LikedPhotosState.success(
-          results: photos.results, isDone: isDone, count: photos.count));
+        results: photos.results,
+        isDone: isDone,
+        count: photos.count,
+      ));
     } on ApiException catch (exception) {
       emit(LikedPhotosState.failure(message: exception.message));
     }

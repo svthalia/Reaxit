@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/api/api_repository.dart';
@@ -16,18 +18,24 @@ class CalendarEvent {
   final BaseEvent parentEvent;
   final DateTime start;
   final DateTime end;
-  final String title;
   final String label;
+  final int part;
+  final int totalParts;
+
+  String get title => totalParts == 1
+      ? parentEvent.title
+      : '${parentEvent.title} day $part/$totalParts';
 
   int get pk => parentEvent.pk;
   String get location => parentEvent.location;
 
   const CalendarEvent._({
     required this.parentEvent,
-    required this.title,
     required this.start,
     required this.end,
     required this.label,
+    required this.part,
+    required this.totalParts,
   });
 
   static List<CalendarEvent> splitEventIntoCalendarEvents(BaseEvent event) {
@@ -62,35 +70,39 @@ class CalendarEvent {
       return [
         CalendarEvent._(
           parentEvent: event,
-          title: event.title,
           start: event.start,
           end: event.end,
           label: '$startTime - $endTime | ${event.location}',
+          part: 1,
+          totalParts: 1,
         )
       ];
     } else {
       return [
         CalendarEvent._(
           parentEvent: event,
-          title: '${event.title} day 1/$daySpan',
           start: event.start,
           end: _addDays(startDate, 1),
           label: 'From $startTime | ${event.location}',
+          part: 1,
+          totalParts: daySpan,
         ),
         for (var day in Iterable.generate(daySpan - 2, (i) => i + 2))
           CalendarEvent._(
             parentEvent: event,
-            title: '${event.title} day $day/$daySpan',
             start: _addDays(startDate, day - 1),
             end: _addDays(startDate, day),
-            label: event.location,
+            label: 'All day | ${event.location}',
+            part: day,
+            totalParts: daySpan,
           ),
         CalendarEvent._(
           parentEvent: event,
-          title: '${event.title} day $daySpan/$daySpan',
           start: endDate,
           end: event.end,
           label: 'Until $endTime | ${event.location}',
+          part: daySpan,
+          totalParts: daySpan,
         ),
       ];
     }
@@ -101,13 +113,56 @@ class CalendarEvent {
         x.month,
         x.day + days,
       );
+
+  bool get isFirstPart => part == 1;
+  bool get isLasttPart => part == totalParts;
 }
 
-typedef CalendarState = ListState<CalendarEvent>;
+class CalendarState extends Equatable {
+  final DateTime now;
+  final DoubleListState<CalendarEvent> events;
+
+  /// The results to be shown in the up directoin. These are outdated if
+  /// `isLoading` is true.
+  List<CalendarEvent> get resultsUp => events.resultsUp;
+
+  /// The results to be shown in the up directoin. These are outdated if
+  /// `isLoading` is true.
+  List<CalendarEvent> get resultsDown => events.resultsDown;
+
+  /// A message describing why there are no results.
+  String? get message => events.message;
+
+  /// Different results are being loaded. The results are outdated.
+  bool get isLoading => events.isLoading;
+
+  /// More of the same results are being loaded in the up direction. The results
+  /// are not outdated.
+  bool get isLoadingMoreUp => events.isLoadingMoreUp;
+
+  /// More of the same results are being loaded in the down direction. The results
+  /// are not outdated.
+  bool get isLoadingMoreDown => events.isLoadingMoreDown;
+
+  /// The last results have been loaded in the up direction. There are no more
+  /// pages left.
+  bool get isDoneUp => events.isDoneUp;
+
+  /// The last results have been loaded in the down direction. There are no more
+  /// pages left.
+  bool get isDoneDown => events.isDoneDown;
+
+  bool get hasException => message != null;
+
+  const CalendarState(this.now, this.events);
+
+  @override
+  List<Object?> get props => [now, events];
+}
 
 class CalendarCubit extends Cubit<CalendarState> {
   static const int firstPageSize = 20;
-  static const int pageSize = 10;
+  static const int pageSize = 5;
 
   final ApiRepository api;
 
@@ -122,100 +177,192 @@ class CalendarCubit extends Cubit<CalendarState> {
 
   /// The offset to be used for the next paginated request.
   int _nextOffset = 0;
+  int _nextPastOffset = 0;
 
-  /// The time used as filter, stored so that later
-  /// paginated requests have the correct offset.
-  DateTime? _lastLoadTime;
+  /// The time rounded down to the month used to split the events in "past" and
+  /// "future". Also used in the query. This is a final to avoid race conditions
+  DateTime get _splitTime => DateTime(_truthTime.year, _truthTime.month);
+
+  // _truthTime is the time that we base "now" on for the calendar.
+  DateTime _truthTime = DateTime.now();
+
+  /// A list of events that have been removed from the previous results
+  /// in order to prevent them filling up the calendar before today.
+  /// These should be added in later calls to [moreUp()].
+  List<CalendarEvent> _remainingPastEvents = [];
 
   /// A list of events that have been removed from the previous results
   /// in order to prevent them filling up the calendar further then where
   /// the first not-loaded event will go later. These should be added in
   /// later calls to [more()].
-  final List<CalendarEvent> _remainingEvents = [];
+  List<CalendarEvent> _remainingFutureEvents = [];
 
-  CalendarCubit(this.api) : super(const CalendarState.loading(results: []));
+  /// Debouncetimer to fix things like load
+  Timer? _debounce;
+
+  CalendarCubit(this.api)
+      : super(CalendarState(DateTime.now(), const DoubleListState.loading()));
+
+  Future<void> cachedLoad() async {
+    if (_debounce == null || !_debounce!.isActive) {
+      await load();
+    }
+  }
+
+  List<CalendarEvent> filterDown(Iterable<CalendarEvent> events) {
+    // Get the last non-parter event that will be shown on the calendar.
+    CalendarEvent lastIncludedEvent = events.lastWhere(
+        (event) => event.parentEvent is! PartnerEvent && event.isFirstPart,
+        orElse: () => events.last);
+    // Remove anything before
+    _remainingFutureEvents = events
+        .whereNot((element) => lastIncludedEvent.start.isAfter(element.start))
+        .toList();
+    return events
+        .where((element) => lastIncludedEvent.start.isAfter(element.start))
+        .toList();
+  }
+
+  List<CalendarEvent> filterUp(Iterable<CalendarEvent> events) {
+    // Get the first non-parter event that will be shown on the calendar.
+    CalendarEvent lastIncludedEvent = events.firstWhere(
+      (event) => event.parentEvent is! PartnerEvent && event.isLasttPart,
+      orElse: () => events.first,
+    );
+    // Remove anything before
+    _remainingPastEvents = events
+        .whereNot((element) => lastIncludedEvent.start.isBefore(element.start))
+        .toList();
+    return events
+        .where((element) => lastIncludedEvent.start.isBefore(element.start))
+        .toList();
+  }
 
   Future<void> load() async {
-    emit(state.copyWith(isLoading: true));
+    emit(CalendarState(DateTime.now(), const DoubleListState.loading()));
+
+    _debounce = Timer(const Duration(minutes: 10), () => {});
+    _truthTime = DateTime.now();
+
     try {
-      _lastLoadTime = DateTime.now();
       final query = _searchQuery;
-      final start = query == null ? _lastLoadTime : null;
 
       // Get first page of events.
-      final eventsResponse = await api.getEvents(
-        start: start,
+      final futureEventsResponseFuture = api.getEvents(
+        start: _splitTime,
         search: query,
         ordering: 'start',
         limit: firstPageSize,
         offset: 0,
       );
+      // get -1st page
+      final pastEventsResponseFuture = api.getEvents(
+        end: _splitTime,
+        search: query,
+        ordering: '-end',
+        limit: firstPageSize,
+        offset: 0,
+      );
+
+      // Get all partner events.
+      final futurePartnerEventsResponseFuture = api.getPartnerEvents(
+        start: _splitTime,
+        search: query,
+        ordering: 'start',
+      );
+      // Get all partner events.
+      final pastPartnerEventsResponseFuture = api.getPartnerEvents(
+        start: _splitTime,
+        search: query,
+        ordering: '-end',
+      );
+
+      // Wait for all the events to come in
+      final futureEventsResponse = await futureEventsResponseFuture;
+      final futurePartnerEventsResponse =
+          await futurePartnerEventsResponseFuture;
+      final pastEventsResponse = await pastEventsResponseFuture;
+      final pastPartnerEventsResponse = await pastPartnerEventsResponseFuture;
 
       // Discard result if _searchQuery has
       // changed since the request was made.
       if (query != _searchQuery) return;
 
-      final isDone = eventsResponse.results.length == eventsResponse.count;
+      _remainingFutureEvents.clear();
+      _remainingPastEvents.clear();
 
       _nextOffset = firstPageSize;
+      _nextPastOffset = firstPageSize;
 
-      // Get all partner events.
-      final partnerEventsResponse = await api.getPartnerEvents(
-        start: start,
-        search: query,
-        ordering: 'start',
-      );
+      final isDoneDown =
+          futureEventsResponse.results.length == futureEventsResponse.count;
+      final isDoneUp =
+          pastEventsResponse.results.length == pastEventsResponse.count;
 
-      // Split multi-day events.
-      final events = eventsResponse.results
-          .expand((event) => CalendarEvent.splitEventIntoCalendarEvents(event))
-          .toList();
+      // Split multi-day events and merge the lists
+      List<CalendarEvent> futureEvents = [
+        ...futurePartnerEventsResponse.results
+            .expand(CalendarEvent.splitEventIntoCalendarEvents)
+            .where((element) => element.start.isAfter(_splitTime)),
+        ...futureEventsResponse.results
+            .expand(CalendarEvent.splitEventIntoCalendarEvents)
+            .where((element) => element.start.isAfter(_splitTime)),
+      ];
 
-      // Split multi-day partner events.
-      final partnerEvents = partnerEventsResponse.results
-          .expand((event) => CalendarEvent.splitEventIntoCalendarEvents(event))
-          .toList();
+      futureEvents.sort((a, b) => a.start.compareTo(b.start));
 
-      // Merge the two lists.
-      events.addAll(partnerEvents);
-      events.sort((a, b) => a.start.compareTo(b.start));
-
-      // If `load()` and `more()` cause jank, the expensive operations
-      // on the events could be moved to an isolate in `compute()`.
-
-      _remainingEvents.clear();
-
-      // Remove the last partner events and day parts of events that could fill
-      // fill up the calendar further then where the first not-loaded event will
-      // go later.
-      if (!isDone) {
-        while (events.isNotEmpty &&
-            (events.last.parentEvent is PartnerEvent ||
-                events.last.start != events.last.parentEvent.start)) {
-          _remainingEvents.add(events.removeLast());
-        }
+      if (!isDoneDown) {
+        // Filter events that we dont want to show just yet
+        futureEvents = filterDown(futureEvents);
       }
 
-      if (start != null) {
-        // Remove the past days of current long-running events.
-        while (events.isNotEmpty && events.first.end.isBefore(start)) {
-          events.removeAt(0);
-        }
+      // Split multi-day events and merge the lists
+      List<CalendarEvent> pastEvents = [
+        ...pastPartnerEventsResponse.results
+            .expand(CalendarEvent.splitEventIntoCalendarEvents)
+            .where((element) => !element.start.isAfter(_splitTime)),
+        ...pastEventsResponse.results
+            .expand(CalendarEvent.splitEventIntoCalendarEvents)
+            .where((element) => !element.start.isAfter(_splitTime)),
+      ];
+
+      // Move any events that started before _splitTime but ended after to the
+      // future events
+      pastEvents.sort((a, b) => a.start.compareTo(b.start));
+      while (pastEvents.isNotEmpty && pastEvents.last.end.isAfter(_splitTime)) {
+        futureEvents.add(pastEvents.removeLast());
       }
 
-      if (eventsResponse.results.isEmpty) {
+      // Remove the first partner events and day parts of events that could fill
+      // up the calendar further then where the first not-loaded event will go
+      // later.
+      if (!isDoneUp) {
+        pastEvents = filterUp(pastEvents);
+      }
+
+      if (pastEvents.isEmpty && futureEvents.isEmpty) {
         if (query?.isEmpty ?? true) {
-          emit(const CalendarState.failure(message: 'There are no events.'));
+          emit(CalendarState(_truthTime,
+              const DoubleListState.failure(message: 'There are no events.')));
         } else {
-          emit(CalendarState.failure(
-            message: 'There are no events found for "$query".',
-          ));
+          emit(CalendarState(
+              _truthTime,
+              DoubleListState.failure(
+                message: 'There are no events found for "$query".',
+              )));
         }
       } else {
-        emit(CalendarState.success(results: events, isDone: isDone));
+        emit(CalendarState(
+            _truthTime,
+            DoubleListState.success(
+                resultsUp: pastEvents,
+                resultsDown: futureEvents,
+                isDoneUp: isDoneUp,
+                isDoneDown: isDoneDown)));
       }
     } on ApiException catch (exception) {
-      emit(CalendarState.failure(message: exception.message));
+      emit(CalendarState(
+          _truthTime, DoubleListState.failure(message: exception.message)));
     }
   }
 
@@ -223,12 +370,17 @@ class CalendarCubit extends Cubit<CalendarState> {
     final oldState = state;
 
     // Ignore calls to `more()` if there is no data, or already more coming.
-    if (oldState.isDone || oldState.isLoading || oldState.isLoadingMore) return;
+    if (oldState.isDoneDown ||
+        oldState.isLoading ||
+        oldState.isLoadingMoreDown) {
+      return;
+    }
 
-    emit(oldState.copyWith(isLoadingMore: true));
+    emit(CalendarState(
+        _truthTime, oldState.events.copyWith(isLoadingMoreDown: true)));
     try {
       final query = _searchQuery;
-      final start = query == null ? _lastLoadTime : null;
+      final start = _splitTime;
 
       // Get next page of events.
       final eventsResponse = await api.getEvents(
@@ -248,36 +400,94 @@ class CalendarCubit extends Cubit<CalendarState> {
 
       _nextOffset += pageSize;
 
-      final newEvents = [
-        ..._remainingEvents..clear(),
-        ...eventsResponse.results.expand(
-          (event) => CalendarEvent.splitEventIntoCalendarEvents(event),
-        ),
+      List<CalendarEvent> newEvents = [
+        ..._remainingFutureEvents..clear(),
+        ...eventsResponse.results
+            .expand(
+              CalendarEvent.splitEventIntoCalendarEvents,
+            )
+            .where((element) => element.start.isAfter(_splitTime)),
       ];
 
       // Sort only the new events, because the old events in
       // `_state.result` are known to be complete and sorted.
       newEvents.sort((a, b) => a.start.compareTo(b.start));
 
+      // Remove events we don't want to see yet, because we have not loaded up
+      // to there yet
+      if (!isDone) {
+        newEvents = filterDown(newEvents);
+      }
+
       final events = [
-        ...oldState.results,
+        ...oldState.resultsDown,
         ...newEvents,
       ];
 
-      // Remove the last partner events and day parts of events that could fill
-      // up the calendar further then where the first not-loaded event will go
-      // later.
-      if (!isDone) {
-        while (events.isNotEmpty &&
-            (events.last.parentEvent is PartnerEvent ||
-                events.last.start != events.last.parentEvent.start)) {
-          _remainingEvents.add(events.removeLast());
-        }
+      emit(CalendarState(
+          _truthTime, oldState.events.copySuccessDown(events, isDone)));
+    } on ApiException catch (exception) {
+      emit(CalendarState(
+          _truthTime, DoubleListState.failure(message: exception.message)));
+    }
+  }
+
+  Future<void> moreUp() async {
+    final oldState = state;
+    // Ignore calls to `moreUp()` if there is no data, or already more coming.
+    if (oldState.isDoneUp || oldState.isLoading || oldState.isLoadingMoreUp) {
+      return;
+    }
+
+    emit(CalendarState(
+        _truthTime, oldState.events.copyWith(isLoadingMoreUp: true)));
+    try {
+      final query = _searchQuery;
+
+      // Get next page of events.
+      final eventsResponse = await api.getEvents(
+        end: _splitTime,
+        search: query,
+        ordering: '-end',
+        limit: pageSize,
+        offset: _nextPastOffset,
+      );
+
+      // Discard result if _searchQuery has
+      // changed since the request was made.
+      if (query != _searchQuery) return;
+
+      final isDoneUp = _nextPastOffset + eventsResponse.results.length ==
+          eventsResponse.count;
+      _nextPastOffset += pageSize;
+
+      List<CalendarEvent> newEvents = [
+        ..._remainingPastEvents..clear(),
+        ...eventsResponse.results
+            .expand(
+              CalendarEvent.splitEventIntoCalendarEvents,
+            )
+            .where((element) => !element.start.isAfter(_splitTime)),
+      ].toList();
+
+      // Sort only the new events, because the old events in
+      // `_state.result` are known to be complete and sorted.
+      newEvents.sort((a, b) => a.start.compareTo(b.start));
+
+      if (!isDoneUp) {
+        newEvents = filterUp(newEvents);
       }
 
-      emit(CalendarState.success(results: events, isDone: isDone));
+      final events = [
+        ...newEvents,
+        ...oldState.resultsUp,
+      ];
+
+      emit(CalendarState(
+          _truthTime, oldState.events.copySuccessUp(events, isDoneUp)));
     } on ApiException catch (exception) {
-      emit(CalendarState.failure(message: exception.message));
+      emit(CalendarState(
+          _truthTime, DoubleListState.failure(message: exception.message)));
     }
   }
 
@@ -286,11 +496,14 @@ class CalendarCubit extends Cubit<CalendarState> {
   /// Use `null` as argument to remove the search query.
   void search(String? query) {
     if (query != _searchQuery) {
+      _remainingFutureEvents = [];
+      _remainingPastEvents = [];
       _searchQuery = query;
       _searchDebounceTimer?.cancel();
       if (query?.isEmpty ?? false) {
         /// Don't get results when the query is empty.
-        emit(const CalendarState.loading(results: []));
+        emit(CalendarState(_truthTime,
+            const DoubleListState.success(isDoneUp: true, isDoneDown: true)));
       } else {
         _searchDebounceTimer = Timer(config.searchDebounceTime, load);
       }

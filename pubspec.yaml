@@ -97,7 +97,13 @@ dependencies:
   overlay_support: ^2.1.0
 
   # Sticky headers for calendar.
-  sticky_headers: ^0.3.0+2
+  # wait for https://github.com/letsar/flutter_sticky_header/issues/88 to move to that library
+  # when https://github.com/fluttercommunity/flutter_sticky_headers/pull/72 gets merged we can at least go back to upstream
+  sticky_headers:
+    git:
+      url: https://github.com/JAicewizard/flutter_sticky_headers
+      ref: a3f6cba75471ba16462e5def50794c1c0ce53dfc
+
 
   # Predefined animations.
   animations: ^2.0.7

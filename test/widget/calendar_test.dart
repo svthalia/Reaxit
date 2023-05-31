@@ -25,14 +25,17 @@ void main() {
         end: DateTime.parse('2022-05-01 12:00'),
         location: 'Dolor 2',
       );
-
-      final state = CalendarState.success(
-        results: [
-          ...CalendarEvent.splitEventIntoCalendarEvents(event1),
-          ...CalendarEvent.splitEventIntoCalendarEvents(event2),
-        ],
-        isDone: true,
-      );
+      DateTime now = DateTime.now();
+      final state = CalendarState(
+          now,
+          DoubleListState.success(
+            resultsDown: [
+              ...CalendarEvent.splitEventIntoCalendarEvents(event1),
+              ...CalendarEvent.splitEventIntoCalendarEvents(event2),
+            ],
+            isDoneDown: true,
+            isDoneUp: true,
+          ));
 
       await tester.pumpWidget(
         MaterialApp(
@@ -40,15 +43,51 @@ void main() {
             body: CalendarScrollView(
               controller: ScrollController(),
               calendarState: state,
+              loadMoreUp: (() {}),
+              now: now,
             ),
           ),
         ),
       );
 
       expect(find.text('Lorem 1'), findsOneWidget);
-      expect(find.textContaining('APRIL'), findsOneWidget);
-      expect(find.textContaining('MAY'), findsOneWidget);
+      expect(find.textContaining('APRIL 2022'), findsOneWidget);
+      expect(find.textContaining('MAY 2022'), findsOneWidget);
       expect(find.textContaining('Lorem 2'), findsNWidgets(3));
+    });
+    testWidgets('adds today', (WidgetTester tester) async {
+      final now = DateTime.now();
+      final event1 = FakeEvent(
+        pk: 1,
+        title: 'Lorem 1',
+        description: 'Ipsum 1',
+        start: now.add(const Duration(days: 3)),
+        end: now.add(const Duration(days: 4)),
+        location: 'Dolor 1',
+      );
+      final state = CalendarState(
+          now,
+          DoubleListState.success(
+            resultsDown: [
+              ...CalendarEvent.splitEventIntoCalendarEvents(event1),
+            ],
+            isDoneDown: true,
+            isDoneUp: true,
+          ));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: CalendarScrollView(
+              controller: ScrollController(),
+              calendarState: state,
+              loadMoreUp: (() {}),
+              now: now,
+            ),
+          ),
+        ),
+      );
+      expect(find.text('There are no events this day'), findsOneWidget);
     });
   });
 }

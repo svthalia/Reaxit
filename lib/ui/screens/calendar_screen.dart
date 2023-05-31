@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/api/api_repository.dart';
@@ -9,8 +9,6 @@ import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/theme.dart';
 import 'package:reaxit/ui/widgets.dart';
-import 'package:sticky_headers/sticky_headers/widget.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class CalendarScreen extends StatefulWidget {
   @override
@@ -20,21 +18,37 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   late ScrollController _controller;
   late CalendarCubit _cubit;
+  GlobalKey todayKey = GlobalKey();
+  GlobalKey thisMonthKey = GlobalKey();
+  double? _todayOffset;
 
   @override
   void initState() {
     _cubit = BlocProvider.of<CalendarCubit>(context);
     _controller = ScrollController()..addListener(_scrollListener);
+    WidgetsBinding.instance.endOfFrame.then(
+      (_) => _scrollToToday(false),
+    );
     super.initState();
+  }
+
+  void _assureTodayOffset() {
+    if (_todayOffset == null && todayKey.currentContext != null) {
+      // Calculate the position the widget should be in to avoid being
+      // drawn under the header
+      final offset = thisMonthKey.currentContext!.size!.height;
+      RenderObject renderObject = todayKey.currentContext!.findRenderObject()!;
+      RenderAbstractViewport viewport = RenderAbstractViewport.of(renderObject);
+      _todayOffset =
+          viewport.getOffsetToReveal(renderObject, 0, rect: null).offset -
+              offset;
+    }
   }
 
   void _scrollListener() {
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
-      // Only request loading more if that's not already happening.
-      if (!_cubit.state.isLoadingMore) {
-        _cubit.more();
-      }
+      _cubit.more();
     }
   }
 
@@ -42,6 +56,32 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void openSearch() async {
+    final searchCubit = CalendarCubit(
+      RepositoryProvider.of<ApiRepository>(context),
+    );
+
+    await showSearch(
+      context: context,
+      delegate: CalendarSearchDelegate(searchCubit),
+    );
+
+    searchCubit.close();
+  }
+
+  void _scrollToToday(bool animate) {
+    _assureTodayOffset();
+    if (animate) {
+      _controller.animateTo(
+        _todayOffset ?? 0,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.ease,
+      );
+    } else {
+      _controller.jumpTo(_todayOffset ?? 0);
+    }
   }
 
   @override
@@ -53,39 +93,37 @@ class _CalendarScreenState extends State<CalendarScreen> {
           IconButton(
             padding: const EdgeInsets.all(16),
             icon: const Icon(Icons.search),
-            onPressed: () async {
-              final searchCubit = CalendarCubit(
-                RepositoryProvider.of<ApiRepository>(context),
-              );
-
-              await showSearch(
-                context: context,
-                delegate: CalendarSearchDelegate(searchCubit),
-              );
-
-              searchCubit.close();
-            },
+            onPressed: openSearch,
           ),
         ],
       ),
       drawer: MenuDrawer(),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await _cubit.load();
+      body: BlocBuilder<CalendarCubit, CalendarState>(
+        builder: (context, calendarState) {
+          if (calendarState.hasException) {
+            return ErrorScrollView(calendarState.message!);
+          } else if (calendarState.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            todayKey = GlobalKey();
+            thisMonthKey = GlobalKey();
+            return CalendarScrollView(
+              key: const PageStorageKey('calendar'),
+              controller: _controller,
+              calendarState: calendarState,
+              loadMoreUp: _cubit.moreUp,
+              todayKey: todayKey,
+              thisMonthKey: thisMonthKey,
+              now: calendarState.now,
+            );
+          }
         },
-        child: BlocBuilder<CalendarCubit, CalendarState>(
-          builder: (context, calendarState) {
-            if (calendarState.hasException) {
-              return ErrorScrollView(calendarState.message!);
-            } else {
-              return CalendarScrollView(
-                key: const PageStorageKey('calendar'),
-                controller: _controller,
-                calendarState: calendarState,
-              );
-            }
-          },
-        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _scrollToToday(true),
+        icon: const Icon(Icons.today),
+        label: const Text('Today'),
+        backgroundColor: magenta,
       ),
     );
   }
@@ -112,10 +150,10 @@ class CalendarSearchDelegate extends SearchDelegate {
   }
 
   void _scrollListener() {
+    // Only request loading more if that's not already happening.
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
-      // Only request loading more if that's not already happening.
-      if (!_cubit.state.isLoadingMore) {
+      if (!_cubit.state.isLoadingMoreDown) {
         _cubit.more();
       }
     }
@@ -150,14 +188,18 @@ class CalendarSearchDelegate extends SearchDelegate {
   Widget buildResults(BuildContext context) {
     return BlocBuilder<CalendarCubit, CalendarState>(
       bloc: _cubit..search(query),
-      builder: (context, listState) {
-        if (listState.hasException) {
-          return ErrorScrollView(listState.message!);
+      builder: (context, calendarState) {
+        if (calendarState.hasException) {
+          return ErrorScrollView(calendarState.message!);
+        } else if (calendarState.isLoading) {
+          return const Center(child: CircularProgressIndicator());
         } else {
           return CalendarScrollView(
             key: const PageStorageKey('calendar-search'),
             controller: _controller,
-            calendarState: listState,
+            calendarState: calendarState,
+            loadMoreUp: _cubit.moreUp,
+            now: calendarState.now,
           );
         }
       },
@@ -166,20 +208,10 @@ class CalendarSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return BlocBuilder<CalendarCubit, CalendarState>(
-      bloc: _cubit..search(query),
-      builder: (context, listState) {
-        if (listState.hasException) {
-          return ErrorScrollView(listState.message!);
-        } else {
-          return CalendarScrollView(
-            key: const PageStorageKey('calendar-search'),
-            controller: _controller,
-            calendarState: listState,
-          );
-        }
-      },
-    );
+    if (_controller.hasClients) {
+      _controller.jumpTo(0);
+    }
+    return buildResults(context);
   }
 }
 
@@ -193,160 +225,116 @@ class CalendarScrollView extends StatelessWidget {
   static final monthFormatter = DateFormat('MMMM');
   static final monthYearFormatter = DateFormat('MMMM yyyy');
 
+  final GlobalKey? todayKey;
+  final GlobalKey? thisMonthKey;
+
+  final Key centerkey = UniqueKey();
   final ScrollController controller;
   final CalendarState calendarState;
+  final Function() loadMoreUp;
+  final List<CalendarViewMonth> _monthGroupedEventsUp;
+  final List<CalendarViewMonth> _monthGroupedEventsDown;
+  final bool _enableLoadMore;
 
-  const CalendarScrollView({
+  final DateTime now;
+
+  CalendarScrollView({
     Key? key,
     required this.controller,
     required this.calendarState,
-  }) : super(key: key);
-
-  static Map<DateTime, List<CalendarEvent>> _groupByMonth(
-    List<CalendarEvent> eventList,
-  ) {
-    return groupBy<CalendarEvent, DateTime>(
-      eventList,
-      (event) => DateTime(
-        event.start.year,
-        event.start.month,
-      ),
-    );
-  }
-
-  static Map<DateTime, List<CalendarEvent>> _groupByDay(
-    List<CalendarEvent> eventList,
-  ) {
-    return groupBy<CalendarEvent, DateTime>(
-      eventList,
-      (event) => DateTime(
-        event.start.year,
-        event.start.month,
-        event.start.day,
-      ),
-    );
-  }
+    required this.loadMoreUp,
+    this.todayKey,
+    this.thisMonthKey,
+    required this.now,
+  })  : _monthGroupedEventsUp = groupByMonth(calendarState.resultsUp)
+            .sortedBy((element) => element.month)
+            .reversed
+            .toList(),
+        _enableLoadMore = !calendarState.isDoneUp &&
+            calendarState.resultsUp.isNotEmpty &&
+            calendarState.resultsDown.isNotEmpty,
+        _monthGroupedEventsDown = calendarState.resultsDown.isEmpty
+            ? List.empty()
+            : ensureContainsToday(
+                groupByMonth(calendarState.resultsDown)
+                    .sortedBy((element) => element.month),
+                now),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final monthGroupedEvents = _groupByMonth(calendarState.results);
-    final months = monthGroupedEvents.keys.toList();
-
-    return Scrollbar(
-      controller: controller,
-      child: CustomScrollView(
-        controller: controller,
-        physics: const RangeMaintainingScrollPhysics(
-          parent: AlwaysScrollableScrollPhysics(),
-        ),
-        slivers: [
-          SliverPadding(
-            padding: const EdgeInsets.all(12),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final month = months[index];
-                  final events = monthGroupedEvents[month]!;
-
-                  final dayGroupedEvents = _groupByDay(events);
-                  final days = dayGroupedEvents.keys.toList();
-
-                  return StickyHeader(
-                    header: SizedBox(
-                      width: double.infinity,
-                      child: Material(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Text(
-                            month.year == DateTime.now().year
-                                ? monthFormatter
-                                    .format(month.toLocal())
-                                    .toUpperCase()
-                                : monthYearFormatter
-                                    .format(month.toLocal())
-                                    .toUpperCase(),
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                        ),
-                      ),
-                    ),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(height: 8),
-                        for (final day in days)
-                          _DayCard(day: day, events: dayGroupedEvents[day]!),
-                      ],
-                    ),
-                  );
-                },
-                childCount: monthGroupedEvents.length,
-              ),
-            ),
-          ),
-          if (calendarState.isLoadingMore)
-            const SliverPadding(
-              padding: EdgeInsets.all(12),
-              sliver: SliverToBoxAdapter(
-                child: Center(child: CircularProgressIndicator()),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DayCard extends StatelessWidget {
-  final DateTime day;
-  final List<CalendarEvent> events;
-
-  static final dayFormatter = DateFormat(DateFormat.ABBR_WEEKDAY);
-
-  _DayCard({required this.day, required this.events})
-      : super(key: ValueKey(day));
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
+    // If there are no future events we should still display some events
+    final upEvents = _monthGroupedEventsDown.isEmpty && calendarState.isDoneDown
+        ? _monthGroupedEventsUp.skip(1).toList()
+        : _monthGroupedEventsUp;
+    final downEvents = _monthGroupedEventsUp.isEmpty &&
+            _monthGroupedEventsDown.isEmpty &&
+            calendarState.isDoneDown
+        ? [_monthGroupedEventsUp.first]
+        : _monthGroupedEventsDown;
+    ScrollPhysics scrollPhysics = const AlwaysScrollableScrollPhysics();
+    return Column(
       children: [
-        SizedBox(
-          width: 60,
-          child: Padding(
-            padding: const EdgeInsets.only(right: 12, top: 4),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  dayFormatter.format(day.toLocal()).toUpperCase(),
-                  style: Theme.of(context).textTheme.bodySmall!.apply(
-                      color: Theme.of(context)
-                          .textTheme
-                          .bodySmall!
-                          .color!
-                          .withOpacity(0.5)),
-                ),
-                Text(
-                  day.day.toString(),
-                  style: Theme.of(context).textTheme.displaySmall,
-                  strutStyle: const StrutStyle(
-                    forceStrutHeight: true,
-                    leading: 2.2,
+        Expanded(
+          child: CustomScrollView(
+            controller: controller,
+            physics: _enableLoadMore
+                ? OnTopCallbackScrollPhysics(
+                    parent: BouncingScrollPhysics(
+                      decelerationRate: ScrollDecelerationRate.fast,
+                      parent: scrollPhysics,
+                    ),
+                    onhittop: loadMoreUp,
+                  )
+                : scrollPhysics,
+            center: centerkey,
+            anchor: 0.0,
+            slivers: [
+              if (_enableLoadMore)
+                SliverToBoxAdapter(
+                  child: Text(
+                    _enableLoadMore ? 'LOADING MORE' : 'SCROLL TO LOAD MORE',
                   ),
                 ),
-              ],
-            ),
-          ),
-        ),
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [for (final event in events) _EventCard(event)],
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (_, index) => CalendarMonth(
+                      events: upEvents[index],
+                      todayKey: todayKey,
+                      thisMonthKey: thisMonthKey,
+                      now: now,
+                    ),
+                    childCount: upEvents.length,
+                  ),
+                ),
+              ),
+              SliverPadding(
+                padding: downEvents.isEmpty
+                    ? EdgeInsets.zero
+                    : const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                key: centerkey,
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (_, index) => CalendarMonth(
+                      events: downEvents[index],
+                      todayKey: todayKey,
+                      thisMonthKey: thisMonthKey,
+                      now: now,
+                    ),
+                    childCount: downEvents.length,
+                  ),
+                ),
+              ),
+              if (calendarState.isLoadingMoreDown)
+                const SliverPadding(
+                  padding: EdgeInsets.all(12),
+                  sliver: SliverToBoxAdapter(
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                ),
+            ],
           ),
         ),
       ],
@@ -354,75 +342,24 @@ class _DayCard extends StatelessWidget {
   }
 }
 
-class _EventCard extends StatelessWidget {
-  final CalendarEvent event;
+class OnTopCallbackScrollPhysics extends ScrollPhysics {
+  final Function() onhittop;
 
-  _EventCard(this.event) : super(key: ObjectKey(event));
+  const OnTopCallbackScrollPhysics({super.parent, required this.onhittop});
 
   @override
-  Widget build(BuildContext context) {
-    Color color;
-    if (event.parentEvent is Event &&
-        (event.parentEvent as Event).isRegistered) {
-      color = magenta;
-    } else if (event.parentEvent is PartnerEvent) {
-      color = Colors.black;
-    } else {
-      color = Colors.grey[800]!;
+  OnTopCallbackScrollPhysics applyTo(ScrollPhysics? ancestor) {
+    return OnTopCallbackScrollPhysics(
+        parent: buildParent(ancestor), onhittop: onhittop);
+  }
+
+  @override
+  Simulation? createBallisticSimulation(
+      ScrollMetrics position, double velocity) {
+    if (position.pixels < position.minScrollExtent) {
+      onhittop();
     }
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Material(
-        borderRadius: const BorderRadius.all(Radius.circular(2)),
-        type: MaterialType.card,
-        color: color,
-        child: InkWell(
-          onTap: () {
-            if (event.parentEvent is PartnerEvent) {
-              launchUrl(
-                (event.parentEvent as PartnerEvent).url,
-                mode: LaunchMode.externalApplication,
-              );
-            } else {
-              context.pushNamed(
-                'event',
-                pathParameters: {'eventPk': event.pk.toString()},
-                extra: event.parentEvent,
-              );
-            }
-          },
-          // Prevent painting ink outside of the card.
-          borderRadius: const BorderRadius.all(Radius.circular(2)),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  event.title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  event.label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: Colors.white.withOpacity(0.8),
-                      ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+    return super.createBallisticSimulation(position, velocity);
   }
 }
