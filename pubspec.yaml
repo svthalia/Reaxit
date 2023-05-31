@@ -30,13 +30,13 @@ dependencies:
   collection: ^1.17.0
 
   # Fonts.
-  google_fonts: ^4.0.3
+  google_fonts: ^4.0.4
 
   # DateTime formatting.
-  intl: ^0.18.0
+  intl: ^0.18.1
 
   # Networking basics.
-  http: ^0.13.5
+  http: ^0.13.6
   http_parser: ^4.0.2
 
   # OAuth2 authorized http Client.
@@ -46,52 +46,52 @@ dependencies:
   flutter_secure_storage: ^8.0.0
 
   # JSON parsing.
-  json_annotation: ^4.8.0
+  json_annotation: ^4.8.1
 
   # BLoC state management.
-  flutter_bloc: ^8.1.2
+  flutter_bloc: ^8.1.3
   equatable: ^2.0.5
 
   # Persistent storage.
-  shared_preferences: ^2.1.0
+  shared_preferences: ^2.1.1
 
   # Opening urls.
-  url_launcher: ^6.1.10
+  url_launcher: ^6.1.11
 
   # Authenticating in browser.
-  flutter_web_auth_2: ^2.1.3
+  flutter_web_auth_2: ^2.1.4
 
   # Modal photo views.
   photo_view: ^0.14.0
 
   # HTML widget.
-  flutter_widget_from_html_core: ^0.10.0
+  flutter_widget_from_html_core: ^0.10.1
 
   # Sentry error reporting.
-  sentry_flutter: ^7.4.2
+  sentry_flutter: ^7.6.2
 
   # Share menu.
-  share_plus: ^6.3.2
+  share_plus: ^7.0.1
 
   # Get mime type from file extension.
   mime: ^1.0.4
 
   # Path for temporary files.
-  path_provider: ^2.0.14
+  path_provider: ^2.0.15
   
   # Access camera and gallery.
-  image_picker: ^0.8.7+2
+  image_picker: ^0.8.7+5
   gallery_saver: ^2.3.2
 
   # Resize images.
-  image_cropper: ^3.0.2
+  image_cropper: ^4.0.1
 
   # Carousel.
   carousel_slider: ^4.2.1
 
   # Firebase for push notifications.
-  firebase_core: ^2.9.0
-  firebase_messaging: ^14.4.0
+  firebase_core: ^2.13.0
+  firebase_messaging: ^14.6.1
 
   # Push notifications in app. 
   overlay_support: ^2.1.0
@@ -116,7 +116,7 @@ dependencies:
   flutter_cache_manager: ^3.3.0
 
   # Navigation.
-  go_router: ^6.5.6
+  go_router: ^7.1.1
 
   # Displaying QR codes.
   qr_flutter: ^4.0.0
