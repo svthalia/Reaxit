@@ -36,7 +36,7 @@ class EventDetailCard extends StatelessWidget {
     if (event is Event) {
       context.pushNamed(
         'event',
-        params: {'eventPk': event.pk.toString()},
+        pathParameters: {'eventPk': event.pk.toString()},
         extra: event,
       );
     } else if (event is PartnerEvent) {

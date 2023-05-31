@@ -39,7 +39,7 @@ class AlbumTile extends StatelessWidget {
             child: InkWell(
               onTap: () => context.pushNamed(
                 'album',
-                params: {'albumSlug': album.slug},
+                pathParameters: {'albumSlug': album.slug},
                 extra: album,
               ),
             ),

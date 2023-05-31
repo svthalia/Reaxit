@@ -623,10 +623,13 @@ class _EventScreenState extends State<EventScreen> {
           try {
             final registration = await _eventCubit.register();
             if (event.hasFields) {
-              router.pushNamed('event-registration', params: {
-                'eventPk': event.pk.toString(),
-                'registrationPk': registration.pk.toString(),
-              });
+              router.pushNamed(
+                'event-registration',
+                pathParameters: {
+                  'eventPk': event.pk.toString(),
+                  'registrationPk': registration.pk.toString(),
+                },
+              );
             }
             calendarCubit.load();
           } on ApiException {
@@ -654,7 +657,7 @@ class _EventScreenState extends State<EventScreen> {
           if (event.hasFields) {
             router.pushNamed(
               'event-registration',
-              params: {
+              pathParameters: {
                 'eventPk': event.pk.toString(),
                 'registrationPk': registration.pk.toString(),
               },
@@ -736,7 +739,7 @@ class _EventScreenState extends State<EventScreen> {
     return ElevatedButton.icon(
       onPressed: () => context.pushNamed(
         'event-registration',
-        params: {
+        pathParameters: {
           'eventPk': event.pk.toString(),
           'registrationPk': event.registration!.pk.toString(),
         },
@@ -955,7 +958,7 @@ class _EventScreenState extends State<EventScreen> {
                     icon: const Icon(Icons.settings),
                     onPressed: () => context.pushNamed(
                       'event-admin',
-                      params: {'eventPk': event.pk.toString()},
+                      pathParameters: {'eventPk': event.pk.toString()},
                     ),
                   ),
               ],

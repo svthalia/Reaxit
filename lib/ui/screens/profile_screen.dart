@@ -410,7 +410,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       onTap: () {
         if (achievement.pk != null) {
           context.pushNamed('committee',
-              params: {'groupPk': '${achievement.pk!}'});
+              pathParameters: {'groupPk': '${achievement.pk!}'});
         } else if (achievement.url != null) {
           launchUrl(
             achievement.url!,
