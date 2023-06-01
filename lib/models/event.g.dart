@@ -6,11 +6,41 @@ part of 'event.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+InternalListEvent _$InternalListEventFromJson(Map<String, dynamic> json) =>
+    InternalListEvent(
+      json['pk'] as int,
+      json['title'] as String,
+      json['caption'] as String,
+      DateTime.parse(json['start'] as String),
+      DateTime.parse(json['end'] as String),
+      json['location'] as String,
+      json['food_event'] as int?,
+      EventPermissions.fromJson(
+          json['user_permissions'] as Map<String, dynamic>),
+      json['user_registration'] == null
+          ? null
+          : UserEventRegistration.fromJson(
+              json['user_registration'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$InternalListEventToJson(InternalListEvent instance) =>
+    <String, dynamic>{
+      'pk': instance.pk,
+      'title': instance.title,
+      'caption': instance.caption,
+      'start': instance.start.toIso8601String(),
+      'end': instance.end.toIso8601String(),
+      'location': instance.location,
+      'food_event': instance.foodEvent,
+      'user_permissions': instance.userPermissions.toJson(),
+      'user_registration': instance.registration?.toJson(),
+    };
+
 Event _$EventFromJson(Map<String, dynamic> json) => Event(
       json['pk'] as int,
       json['title'] as String,
       json['url'] as String,
-      json['caption'] as String,
+      json['description'] as String,
       (json['organisers'] as List<dynamic>)
           .map((e) => ListGroup.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -51,10 +81,10 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
 Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'pk': instance.pk,
       'title': instance.title,
-      'caption': instance.caption,
       'start': instance.start.toIso8601String(),
       'end': instance.end.toIso8601String(),
       'location': instance.location,
+      'description': instance.description,
       'url': instance.url,
       'organisers': instance.organisers,
       'category': _$EventCategoryEnumMap[instance.category]!,
@@ -101,21 +131,22 @@ Map<String, dynamic> _$EventPermissionsToJson(EventPermissions instance) =>
       'manage_event': instance.manageEvent,
     };
 
-PartnerEvent _$PartnerEventFromJson(Map<String, dynamic> json) => PartnerEvent(
+PartnerListEvent _$PartnerListEventFromJson(Map<String, dynamic> json) =>
+    PartnerListEvent(
       json['pk'] as int,
       json['title'] as String,
-      json['description'] as String,
+      json['caption'] as String,
       DateTime.parse(json['start'] as String),
       DateTime.parse(json['end'] as String),
       json['location'] as String,
       Uri.parse(json['url'] as String),
     );
 
-Map<String, dynamic> _$PartnerEventToJson(PartnerEvent instance) =>
+Map<String, dynamic> _$PartnerListEventToJson(PartnerListEvent instance) =>
     <String, dynamic>{
       'pk': instance.pk,
       'title': instance.title,
-      'description': instance.caption,
+      'caption': instance.caption,
       'start': instance.start.toIso8601String(),
       'end': instance.end.toIso8601String(),
       'location': instance.location,

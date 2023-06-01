@@ -19,8 +19,8 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   static final dateFormatter = DateFormat('EEEE d MMMM');
 
-  static Map<DateTime, List<BaseEvent>> _groupByDay(List<BaseEvent> events) {
-    return groupBy<BaseEvent, DateTime>(
+  static Map<DateTime, List<ListEvent>> _groupByDay(List<ListEvent> events) {
+    return groupBy<ListEvent, DateTime>(
       events,
       (event) => DateTime(
         event.start.year,
@@ -102,7 +102,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
-  Widget _makeUpcomingEvents(List<BaseEvent> events) {
+  Widget _makeUpcomingEvents(List<ListEvent> events) {
     final dayGroupedEvents = _groupByDay(events);
     return AnimatedSize(
       curve: Curves.ease,

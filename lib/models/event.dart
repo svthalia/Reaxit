@@ -13,7 +13,7 @@ enum RegistrationStatus {
   lateCancelled
 }
 
-abstract class BaseEvent {
+abstract class ListEvent {
   abstract final int pk;
   abstract final String title;
   abstract final String caption;
@@ -22,8 +22,8 @@ abstract class BaseEvent {
   abstract final String location;
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
-class Event implements BaseEvent {
+@JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
+class InternalListEvent implements ListEvent {
   @override
   final int pk;
   @override
@@ -36,6 +36,48 @@ class Event implements BaseEvent {
   final DateTime end;
   @override
   final String location;
+
+  final int? foodEvent;
+
+  final EventPermissions userPermissions;
+
+  @JsonKey(name: 'user_registration')
+  final UserEventRegistration? registration;
+
+  bool get hasFoodEvent => foodEvent != null;
+
+  bool get isRegistered => registration?.isRegistered ?? false;
+  bool get isInQueue => registration?.isInQueue ?? false;
+  bool get isInvited => registration?.isInvited ?? false;
+
+  bool get canCreateRegistration => userPermissions.createRegistration;
+
+  factory InternalListEvent.fromJson(Map<String, dynamic> json) =>
+      _$InternalListEventFromJson(json);
+  Map<String, dynamic> toJson() => _$InternalListEventToJson(this);
+
+  const InternalListEvent(
+    this.pk,
+    this.title,
+    this.caption,
+    this.start,
+    this.end,
+    this.location,
+    this.foodEvent,
+    this.userPermissions,
+    this.registration,
+  );
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class Event {
+  final int pk;
+  final String title;
+  final DateTime start;
+  final DateTime end;
+  final String location;
+
+  final String description;
 
   final String url;
 
@@ -106,7 +148,7 @@ class Event implements BaseEvent {
     this.pk,
     this.title,
     this.url,
-    this.caption,
+    this.description,
     this.organisers,
     this.start,
     this.end,
@@ -131,7 +173,7 @@ class Event implements BaseEvent {
   );
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class EventPermissions {
   final bool createRegistration;
   final bool cancelRegistration;
@@ -147,16 +189,16 @@ class EventPermissions {
 
   factory EventPermissions.fromJson(Map<String, dynamic> json) =>
       _$EventPermissionsFromJson(json);
+  Map<String, dynamic> toJson() => _$EventPermissionsToJson(this);
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class PartnerEvent implements BaseEvent {
+class PartnerListEvent implements ListEvent {
   @override
   final int pk;
   @override
   final String title;
   @override
-  @JsonKey(name: 'description')
   final String caption;
   @override
   final DateTime start;
@@ -164,13 +206,12 @@ class PartnerEvent implements BaseEvent {
   final DateTime end;
   @override
   final String location;
-
   final Uri url;
 
-  factory PartnerEvent.fromJson(Map<String, dynamic> json) =>
-      _$PartnerEventFromJson(json);
+  factory PartnerListEvent.fromJson(Map<String, dynamic> json) =>
+      _$PartnerListEventFromJson(json);
 
-  const PartnerEvent(
+  const PartnerListEvent(
     this.pk,
     this.title,
     this.caption,
@@ -182,19 +223,18 @@ class PartnerEvent implements BaseEvent {
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class AdminEvent implements BaseEvent {
-  @override
+class AdminEvent {
   @JsonKey(name: 'id')
   final int pk;
-  @override
+
   final String title;
-  @override
+
   final String caption;
-  @override
+
   final DateTime start;
-  @override
+
   final DateTime end;
-  @override
+
   final String location;
 
   final String description;

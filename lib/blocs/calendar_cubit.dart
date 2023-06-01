@@ -15,7 +15,7 @@ import 'package:reaxit/models.dart';
 class CalendarEvent {
   static final _timeFormatter = DateFormat('HH:mm');
 
-  final BaseEvent parentEvent;
+  final ListEvent parentEvent;
   final DateTime start;
   final DateTime end;
   final String label;
@@ -38,7 +38,7 @@ class CalendarEvent {
     required this.totalParts,
   });
 
-  static List<CalendarEvent> splitEventIntoCalendarEvents(BaseEvent event) {
+  static List<CalendarEvent> splitEventIntoCalendarEvents(ListEvent event) {
     final localStart = event.start.toLocal();
     late final DateTime localEnd;
 

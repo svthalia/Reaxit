@@ -13,7 +13,7 @@ enum PaymentType {
   wirePayment,
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class Payment {
   final String pk;
   final String topic;
@@ -24,6 +24,7 @@ class Payment {
 
   factory Payment.fromJson(Map<String, dynamic> json) =>
       _$PaymentFromJson(json);
+  Map<String, dynamic> toJson() => _$PaymentToJson(this);
 
   const Payment(
     this.pk,

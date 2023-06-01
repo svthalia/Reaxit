@@ -405,7 +405,7 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
         )),
       ) as _i8.Future<_i4.Event>);
   @override
-  _i8.Future<_i4.ListResponse<_i4.Event>> getEvents({
+  _i8.Future<_i4.ListResponse<_i4.ListEvent>> getEvents({
     String? search,
     int? limit,
     int? offset,
@@ -426,8 +426,8 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
             #end: end,
           },
         ),
-        returnValue: _i8.Future<_i4.ListResponse<_i4.Event>>.value(
-            _FakeListResponse_3<_i4.Event>(
+        returnValue: _i8.Future<_i4.ListResponse<_i4.ListEvent>>.value(
+            _FakeListResponse_3<_i4.ListEvent>(
           this,
           Invocation.method(
             #getEvents,
@@ -442,9 +442,9 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
             },
           ),
         )),
-      ) as _i8.Future<_i4.ListResponse<_i4.Event>>);
+      ) as _i8.Future<_i4.ListResponse<_i4.ListEvent>>);
   @override
-  _i8.Future<_i4.ListResponse<_i4.PartnerEvent>> getPartnerEvents({
+  _i8.Future<_i4.ListResponse<_i4.PartnerListEvent>> getPartnerEvents({
     String? search,
     int? limit,
     int? offset,
@@ -465,8 +465,8 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
             #end: end,
           },
         ),
-        returnValue: _i8.Future<_i4.ListResponse<_i4.PartnerEvent>>.value(
-            _FakeListResponse_3<_i4.PartnerEvent>(
+        returnValue: _i8.Future<_i4.ListResponse<_i4.PartnerListEvent>>.value(
+            _FakeListResponse_3<_i4.PartnerListEvent>(
           this,
           Invocation.method(
             #getPartnerEvents,
@@ -481,7 +481,7 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
             },
           ),
         )),
-      ) as _i8.Future<_i4.ListResponse<_i4.PartnerEvent>>);
+      ) as _i8.Future<_i4.ListResponse<_i4.PartnerListEvent>>);
   @override
   _i8.Future<_i4.ListResponse<_i4.EventRegistration>> getEventRegistrations({
     required int? pk,

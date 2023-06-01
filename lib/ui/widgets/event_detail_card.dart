@@ -8,13 +8,13 @@ import 'package:reaxit/ui/theme.dart';
 
 class EventDetailCard extends StatelessWidget {
   static final timeFormatter = DateFormat('HH:mm');
-  final BaseEvent event;
+  final ListEvent event;
   final Color _indicatorColor;
   final bool _hasFoodEvent;
   final Color? _color;
   final Color? _textColor;
 
-  static Color _getIndicatorColor(Event event) {
+  static Color _getIndicatorColor(InternalListEvent event) {
     if (event.isInvited) {
       return magenta;
     } else if (event.isInQueue) {
@@ -41,9 +41,9 @@ class EventDetailCard extends StatelessWidget {
         pathParameters: {'eventPk': event.pk.toString()},
         extra: event,
       );
-    } else if (event is PartnerEvent) {
+    } else if (event is PartnerListEvent) {
       launchUrl(
-        (event as PartnerEvent).url,
+        (event as PartnerListEvent).url,
         mode: LaunchMode.externalApplication,
       );
     }

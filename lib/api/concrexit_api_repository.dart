@@ -237,7 +237,7 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
-  Future<ListResponse<Event>> getEvents({
+  Future<ListResponse<ListEvent>> getEvents({
     String? search,
     int? limit,
     int? offset,
@@ -267,15 +267,15 @@ class ConcrexitApiRepository implements ApiRepository {
     });
   }
 
-  static ListResponse<Event> _parseEvents(Response response) {
-    return ListResponse<Event>.fromJson(
+  static ListResponse<InternalListEvent> _parseEvents(Response response) {
+    return ListResponse<InternalListEvent>.fromJson(
       _jsonDecode(response),
-      (json) => Event.fromJson(json as Map<String, dynamic>),
+      (json) => InternalListEvent.fromJson(json as Map<String, dynamic>),
     );
   }
 
   @override
-  Future<ListResponse<PartnerEvent>> getPartnerEvents({
+  Future<ListResponse<PartnerListEvent>> getPartnerEvents({
     String? search,
     int? limit,
     int? offset,
@@ -305,10 +305,10 @@ class ConcrexitApiRepository implements ApiRepository {
     });
   }
 
-  static ListResponse<PartnerEvent> _parsePartnerEvents(Response response) {
-    return ListResponse<PartnerEvent>.fromJson(
+  static ListResponse<PartnerListEvent> _parsePartnerEvents(Response response) {
+    return ListResponse<PartnerListEvent>.fromJson(
       _jsonDecode(response),
-      (json) => PartnerEvent.fromJson(json as Map<String, dynamic>),
+      (json) => PartnerListEvent.fromJson(json as Map<String, dynamic>),
     );
   }
 

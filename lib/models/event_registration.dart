@@ -19,7 +19,7 @@ class EventRegistration {
         );
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class UserEventRegistration {
   final int pk;
   final bool? present;
@@ -52,6 +52,7 @@ class UserEventRegistration {
 
   factory UserEventRegistration.fromJson(Map<String, dynamic> json) =>
       _$UserEventRegistrationFromJson(json);
+  Map<String, dynamic> toJson() => _$UserEventRegistrationToJson(this);
 
   UserEventRegistration(
     this.pk,
