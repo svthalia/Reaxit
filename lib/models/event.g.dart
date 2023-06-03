@@ -40,12 +40,10 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       json['pk'] as int,
       json['title'] as String,
       json['url'] as String,
-      json['description'] as String,
-      (json['organisers'] as List<dynamic>)
-          .map((e) => ListGroup.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      json['caption'] as String,
       DateTime.parse(json['start'] as String),
       DateTime.parse(json['end'] as String),
+      json['description'] as String,
       $enumDecode(_$EventCategoryEnumMap, json['category']),
       json['registration_start'] == null
           ? null
@@ -71,6 +69,9 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
           ? null
           : UserEventRegistration.fromJson(
               json['user_registration'] as Map<String, dynamic>),
+      (json['organisers'] as List<dynamic>)
+          .map((e) => ListGroup.fromJson(e as Map<String, dynamic>))
+          .toList(),
       json['cancel_too_late_message'] as String,
       json['optional_registrations'] as bool,
       (json['documents'] as List<dynamic>)
@@ -81,6 +82,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
 Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'pk': instance.pk,
       'title': instance.title,
+      'caption': instance.caption,
       'start': instance.start.toIso8601String(),
       'end': instance.end.toIso8601String(),
       'location': instance.location,

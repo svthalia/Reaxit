@@ -70,11 +70,18 @@ class InternalListEvent implements ListEvent {
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class Event {
+class Event implements ListEvent {
+  @override
   final int pk;
+  @override
   final String title;
+  @override
+  final String caption;
+  @override
   final DateTime start;
+  @override
   final DateTime end;
+  @override
   final String location;
 
   final String description;
@@ -148,10 +155,10 @@ class Event {
     this.pk,
     this.title,
     this.url,
-    this.description,
-    this.organisers,
+    this.caption,
     this.start,
     this.end,
+    this.description,
     this.category,
     this.registrationStart,
     this.registrationEnd,
@@ -167,6 +174,7 @@ class Event {
     this.mapsUrl,
     this.userPermissions,
     this.registration,
+    this.organisers,
     this.cancelTooLateMessage,
     this.optionalRegistrations,
     this.documents,

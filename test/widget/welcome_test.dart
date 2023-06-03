@@ -38,12 +38,13 @@ void main() {
         '',
         const EventPermissions(false, false, false, false),
         null,
+        [],
         '',
         false,
         [],
       );
 
-      final partnerEvent = PartnerEvent(
+      final partnerEvent = PartnerListEvent(
         1,
         'Lorem 2',
         'Ipsum 1',

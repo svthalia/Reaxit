@@ -35,7 +35,7 @@ class EventDetailCard extends StatelessWidget {
         _hasFoodEvent = event is Event ? event.hasFoodEvent : false;
 
   void _onTap(BuildContext context) {
-    if (event is Event) {
+    if (event is InternalListEvent) {
       context.pushNamed(
         'event',
         pathParameters: {'eventPk': event.pk.toString()},
