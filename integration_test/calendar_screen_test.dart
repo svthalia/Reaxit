@@ -141,6 +141,7 @@ void testCallender() {
           'test',
           'https://staging.thalia.nu',
           'test123',
+          'test123',
           today,
           today.add(const Duration(hours: 5)),
           EventCategory.leisure,
