@@ -30,14 +30,14 @@ class Event implements BaseEvent {
   final String title;
   @override
   final String caption;
-
-  final String description;
   @override
   final DateTime start;
   @override
   final DateTime end;
   @override
   final String location;
+
+  final String description;
 
   final String url;
 
@@ -190,8 +190,6 @@ class AdminEvent implements BaseEvent {
   final String title;
   @override
   final String caption;
-
-  final String description;
   @override
   final DateTime start;
   @override
@@ -199,6 +197,7 @@ class AdminEvent implements BaseEvent {
   @override
   final String location;
 
+  final String description;
   final EventCategory category;
   final bool optionalRegistrations;
   final DateTime? registrationStart;
@@ -237,10 +236,10 @@ class AdminEvent implements BaseEvent {
     this.pk,
     this.title,
     this.caption,
-    this.description,
     this.start,
     this.end,
     this.location,
+    this.description,
     this.category,
     this.optionalRegistrations,
     this.registrationStart,
