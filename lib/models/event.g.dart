@@ -39,7 +39,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
           : UserEventRegistration.fromJson(
               json['user_registration'] as Map<String, dynamic>),
       (json['organisers'] as List<dynamic>)
-          .map((e) => ListGroup.fromJson(e as Map<String, dynamic>))
+          .map((e) => SmallGroup.fromJson(e as Map<String, dynamic>))
           .toList(),
       json['cancel_too_late_message'] as String,
       json['optional_registrations'] as bool,

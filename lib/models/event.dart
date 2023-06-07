@@ -39,7 +39,7 @@ class Event implements BaseEvent {
 
   final String url;
 
-  final List<ListGroup> organisers;
+  final List<SmallGroup> organisers;
 
   final EventCategory category;
 

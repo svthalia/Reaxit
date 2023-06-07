@@ -6,26 +6,23 @@ part of 'group.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ListGroup _$ListGroupFromJson(Map<String, dynamic> json) => ListGroup(
+SmallGroup _$SmallGroupFromJson(Map<String, dynamic> json) => SmallGroup(
       json['pk'] as int,
       json['name'] as String,
       $enumDecode(_$MemberGroupTypeEnumMap, json['type']),
-      json['description'] as String,
       json['since'] == null ? null : DateTime.parse(json['since'] as String),
       json['until'] == null ? null : DateTime.parse(json['until'] as String),
       json['contact_address'] as String,
-      Photo.fromJson(json['photo'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$ListGroupToJson(ListGroup instance) => <String, dynamic>{
+Map<String, dynamic> _$SmallGroupToJson(SmallGroup instance) =>
+    <String, dynamic>{
       'pk': instance.pk,
       'name': instance.name,
       'type': _$MemberGroupTypeEnumMap[instance.type]!,
-      'description': instance.description,
       'since': instance.since?.toIso8601String(),
       'until': instance.until?.toIso8601String(),
       'contact_address': instance.contactAddress,
-      'photo': instance.photo.toJson(),
     };
 
 const _$MemberGroupTypeEnumMap = {
@@ -33,6 +30,28 @@ const _$MemberGroupTypeEnumMap = {
   MemberGroupType.society: 'society',
   MemberGroupType.board: 'board',
 };
+
+ListGroup _$ListGroupFromJson(Map<String, dynamic> json) => ListGroup(
+      json['pk'] as int,
+      json['name'] as String,
+      $enumDecode(_$MemberGroupTypeEnumMap, json['type']),
+      json['since'] == null ? null : DateTime.parse(json['since'] as String),
+      json['until'] == null ? null : DateTime.parse(json['until'] as String),
+      json['contact_address'] as String,
+      json['description'] as String,
+      Photo.fromJson(json['photo'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$ListGroupToJson(ListGroup instance) => <String, dynamic>{
+      'pk': instance.pk,
+      'name': instance.name,
+      'type': _$MemberGroupTypeEnumMap[instance.type]!,
+      'since': instance.since?.toIso8601String(),
+      'until': instance.until?.toIso8601String(),
+      'contact_address': instance.contactAddress,
+      'description': instance.description,
+      'photo': instance.photo.toJson(),
+    };
 
 Group _$GroupFromJson(Map<String, dynamic> json) => Group(
       json['pk'] as int,
@@ -52,10 +71,10 @@ Map<String, dynamic> _$GroupToJson(Group instance) => <String, dynamic>{
       'pk': instance.pk,
       'name': instance.name,
       'type': _$MemberGroupTypeEnumMap[instance.type]!,
-      'description': instance.description,
       'since': instance.since?.toIso8601String(),
       'until': instance.until?.toIso8601String(),
       'contact_address': instance.contactAddress,
+      'description': instance.description,
       'photo': instance.photo,
       'members': instance.members,
     };

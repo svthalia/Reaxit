@@ -123,7 +123,7 @@ class _EventScreenState extends State<EventScreen> {
     List<Widget> clickableOrganisers = [];
     bool commaFlag = false;
 
-    for (ListGroup org in event.organisers) {
+    for (SmallGroup org in event.organisers) {
       if (commaFlag) {
         clickableOrganisers.add(Text(', ', style: textTheme.titleSmall));
       }
