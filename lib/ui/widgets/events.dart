@@ -270,7 +270,7 @@ class EventCard extends StatelessWidget {
     Color color;
     if (event.parentEvent is Event &&
         (event.parentEvent as Event).isRegistered) {
-      color = Theme.of(context).highlightColor;
+      color = Theme.of(context).colorScheme.primary;
     } else if (event.parentEvent is PartnerEvent) {
       color = Colors.black;
     } else {
