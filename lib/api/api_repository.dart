@@ -27,7 +27,7 @@ abstract class ApiRepository {
   /// Use `search` to filter on name, `ordering` to order with values in
   /// {'start', 'end', '-start', '-end'}, and `start` and/or `end` to filter on
   /// a time range.
-  Future<ListResponse<ListEvent>> getEvents({
+  Future<ListResponse<Event>> getEvents({
     String? search,
     int? limit,
     int? offset,
@@ -43,7 +43,7 @@ abstract class ApiRepository {
   /// Use `search` to filter on name, `ordering` to order with values in
   /// {'start', 'end', '-start', '-end'}, and `start` and/or `end` to filter on
   /// a time range.
-  Future<ListResponse<PartnerListEvent>> getPartnerEvents({
+  Future<ListResponse<PartnerEvent>> getPartnerEvents({
     String? search,
     int? limit,
     int? offset,

@@ -14,7 +14,7 @@ class WelcomeState extends Equatable {
   final List<FrontpageArticle>? articles;
 
   /// This can only be null when [isLoading] or [hasException] is true.
-  final List<ListEvent>? upcomingEvents;
+  final List<BaseEvent>? upcomingEvents;
 
   /// A message describing why there are no results.
   final String? message;
@@ -42,7 +42,7 @@ class WelcomeState extends Equatable {
   WelcomeState copyWith({
     List<Slide>? slides,
     List<FrontpageArticle>? articles,
-    List<ListEvent>? upcomingEvents,
+    List<BaseEvent>? upcomingEvents,
     bool? isLoading,
     String? message,
   }) =>
@@ -57,7 +57,7 @@ class WelcomeState extends Equatable {
   const WelcomeState.result({
     required List<Slide> this.slides,
     required List<FrontpageArticle> this.articles,
-    required List<ListEvent> this.upcomingEvents,
+    required List<BaseEvent> this.upcomingEvents,
   })  : message = null,
         isLoading = false;
 
@@ -93,10 +93,9 @@ class WelcomeCubit extends Cubit<WelcomeState> {
         limit: 3,
       );
 
-      List<ListEvent> events = eventsResponse.results
-          .map<ListEvent>((e) => e)
-          .followedBy(
-              partnerEventsResponse.results.map<PartnerListEvent>((e) => e))
+      List<BaseEvent> events = eventsResponse.results
+          .map<BaseEvent>((e) => e)
+          .followedBy(partnerEventsResponse.results.map<BaseEvent>((e) => e))
           .sortedBy((element) => element.start)
           .take(3)
           .toList();

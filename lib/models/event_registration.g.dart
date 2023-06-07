@@ -43,7 +43,7 @@ Map<String, dynamic> _$UserEventRegistrationToJson(
       'present': instance.present,
       'queue_position': instance.queuePosition,
       'date': instance.date.toIso8601String(),
-      'payment': instance.payment?.toJson(),
+      'payment': instance.payment,
       'is_cancelled': instance.isCancelled,
       'is_late_cancellation': instance.isLateCancellation,
     };

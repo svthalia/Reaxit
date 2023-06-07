@@ -8,13 +8,13 @@ import 'package:reaxit/ui/theme.dart';
 
 class EventDetailCard extends StatelessWidget {
   static final timeFormatter = DateFormat('HH:mm');
-  final ListEvent event;
+  final BaseEvent event;
   final Color _indicatorColor;
   final bool _hasFoodEvent;
   final Color? _color;
   final Color? _textColor;
 
-  static Color _getIndicatorColor(InternalListEvent event) {
+  static Color _getIndicatorColor(Event event) {
     if (event.isInvited) {
       return magenta;
     } else if (event.isInQueue) {
@@ -35,15 +35,15 @@ class EventDetailCard extends StatelessWidget {
         _hasFoodEvent = event is Event ? event.hasFoodEvent : false;
 
   void _onTap(BuildContext context) {
-    if (event is InternalListEvent) {
+    if (event is Event) {
       context.pushNamed(
         'event',
         pathParameters: {'eventPk': event.pk.toString()},
         extra: event,
       );
-    } else if (event is PartnerListEvent) {
+    } else if (event is PartnerEvent) {
       launchUrl(
-        (event as PartnerListEvent).url,
+        (event as PartnerEvent).url,
         mode: LaunchMode.externalApplication,
       );
     }
@@ -55,7 +55,8 @@ class EventDetailCard extends StatelessWidget {
     final end = timeFormatter.format(event.end.toLocal());
 
     // Remove HTML tags.
-    final caption = event.caption.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), '');
+    final description =
+        event.caption.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), '');
 
     final textTheme = Theme.of(context).textTheme;
     return Card(
@@ -117,7 +118,7 @@ class EventDetailCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                caption,
+                description,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
                 style: DefaultTextStyle.of(context)

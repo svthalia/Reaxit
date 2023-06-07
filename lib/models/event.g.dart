@@ -6,36 +6,6 @@ part of 'event.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-InternalListEvent _$InternalListEventFromJson(Map<String, dynamic> json) =>
-    InternalListEvent(
-      json['pk'] as int,
-      json['title'] as String,
-      json['caption'] as String,
-      DateTime.parse(json['start'] as String),
-      DateTime.parse(json['end'] as String),
-      json['location'] as String,
-      json['food_event'] as int?,
-      EventPermissions.fromJson(
-          json['user_permissions'] as Map<String, dynamic>),
-      json['user_registration'] == null
-          ? null
-          : UserEventRegistration.fromJson(
-              json['user_registration'] as Map<String, dynamic>),
-    );
-
-Map<String, dynamic> _$InternalListEventToJson(InternalListEvent instance) =>
-    <String, dynamic>{
-      'pk': instance.pk,
-      'title': instance.title,
-      'caption': instance.caption,
-      'start': instance.start.toIso8601String(),
-      'end': instance.end.toIso8601String(),
-      'location': instance.location,
-      'food_event': instance.foodEvent,
-      'user_permissions': instance.userPermissions.toJson(),
-      'user_registration': instance.registration?.toJson(),
-    };
-
 Event _$EventFromJson(Map<String, dynamic> json) => Event(
       json['pk'] as int,
       json['title'] as String,
@@ -43,7 +13,6 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       json['caption'] as String,
       DateTime.parse(json['start'] as String),
       DateTime.parse(json['end'] as String),
-      json['description'] as String,
       $enumDecode(_$EventCategoryEnumMap, json['category']),
       json['registration_start'] == null
           ? null
@@ -86,7 +55,6 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'start': instance.start.toIso8601String(),
       'end': instance.end.toIso8601String(),
       'location': instance.location,
-      'description': instance.description,
       'url': instance.url,
       'organisers': instance.organisers,
       'category': _$EventCategoryEnumMap[instance.category]!,
@@ -133,8 +101,7 @@ Map<String, dynamic> _$EventPermissionsToJson(EventPermissions instance) =>
       'manage_event': instance.manageEvent,
     };
 
-PartnerListEvent _$PartnerListEventFromJson(Map<String, dynamic> json) =>
-    PartnerListEvent(
+PartnerEvent _$PartnerEventFromJson(Map<String, dynamic> json) => PartnerEvent(
       json['pk'] as int,
       json['title'] as String,
       json['caption'] as String,
@@ -144,7 +111,7 @@ PartnerListEvent _$PartnerListEventFromJson(Map<String, dynamic> json) =>
       Uri.parse(json['url'] as String),
     );
 
-Map<String, dynamic> _$PartnerListEventToJson(PartnerListEvent instance) =>
+Map<String, dynamic> _$PartnerEventToJson(PartnerEvent instance) =>
     <String, dynamic>{
       'pk': instance.pk,
       'title': instance.title,

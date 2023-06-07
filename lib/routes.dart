@@ -117,6 +117,7 @@ final List<RouteBase> routes = [
             child: EventScreen(
               pk: pk,
               slug: slug,
+              event: state.extra as Event?,
             ),
           );
         },
