@@ -272,6 +272,9 @@ class CalendarScrollView extends StatelessWidget {
         : _monthGroupedEventsUp;
     final downEvents =
         moveMonth ? [_monthGroupedEventsUp.first] : _monthGroupedEventsDown;
+
+    final ThemeData theme = Theme.of(context);
+
     ScrollPhysics scrollPhysics = const AlwaysScrollableScrollPhysics();
     return Column(
       children: [
@@ -292,8 +295,24 @@ class CalendarScrollView extends StatelessWidget {
             slivers: [
               if (_enableLoadMore)
                 SliverToBoxAdapter(
-                  child: Text(
-                    _enableLoadMore ? 'LOADING MORE' : 'SCROLL TO LOAD MORE',
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: calendarState.isLoadingMoreUp
+                          ? Icon(
+                              Icons.more_horiz,
+                              size: 50,
+                              color: theme.colorScheme.secondary,
+                            )
+                          : Text(
+                              'SCROLL TO LOAD MORE',
+                              style: theme.textTheme.bodyLarge!.copyWith(
+                                color: theme.colorScheme.secondary,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                    ),
                   ),
                 ),
               SliverPadding(
