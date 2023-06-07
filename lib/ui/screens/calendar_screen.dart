@@ -263,17 +263,18 @@ class CalendarScrollView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool moveMonth = _monthGroupedEventsUp.isNotEmpty &&
+        _monthGroupedEventsDown.isEmpty &&
+        calendarState.isDoneDown;
     // If there are no future events we should still display some events
-    final upEvents = _monthGroupedEventsDown.isEmpty && calendarState.isDoneDown
+    final upEvents = moveMonth
         ? _monthGroupedEventsUp.skip(1).toList()
         : _monthGroupedEventsUp;
-    final downEvents = _monthGroupedEventsUp.isEmpty &&
-            _monthGroupedEventsDown.isEmpty &&
-            calendarState.isDoneDown
-        ? [_monthGroupedEventsUp.first]
-        : _monthGroupedEventsDown;
+    final downEvents =
+        moveMonth ? [_monthGroupedEventsUp.first] : _monthGroupedEventsDown;
 
     final ThemeData theme = Theme.of(context);
+
     ScrollPhysics scrollPhysics = const AlwaysScrollableScrollPhysics();
     return Column(
       children: [
