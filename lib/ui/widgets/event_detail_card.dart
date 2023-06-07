@@ -55,8 +55,7 @@ class EventDetailCard extends StatelessWidget {
     final end = timeFormatter.format(event.end.toLocal());
 
     // Remove HTML tags.
-    final description =
-        event.description.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), '');
+    final caption = event.caption.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), '');
 
     final textTheme = Theme.of(context).textTheme;
     return Card(
@@ -118,7 +117,7 @@ class EventDetailCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                description,
+                caption,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
                 style: DefaultTextStyle.of(context)

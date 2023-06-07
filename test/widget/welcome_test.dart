@@ -20,6 +20,7 @@ void main() {
         'Lorem 1',
         'Ipsum 1',
         '',
+        '',
         DateTime.parse('2022-03-04 13:37'),
         DateTime.parse('2022-03-04 14:37'),
         EventCategory.other,

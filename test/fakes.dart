@@ -6,7 +6,7 @@ class FakeEvent implements BaseEvent {
   @override
   final String title;
   @override
-  final String description;
+  final String caption;
   @override
   final DateTime start;
   @override
@@ -17,7 +17,7 @@ class FakeEvent implements BaseEvent {
   FakeEvent({
     required this.pk,
     required this.title,
-    required this.description,
+    required this.caption,
     required this.start,
     required this.end,
     required this.location,

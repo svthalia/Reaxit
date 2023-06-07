@@ -10,6 +10,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       json['pk'] as int,
       json['title'] as String,
       json['url'] as String,
+      json['caption'] as String,
       json['description'] as String,
       DateTime.parse(json['start'] as String),
       DateTime.parse(json['end'] as String),
@@ -48,6 +49,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
 Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'pk': instance.pk,
       'title': instance.title,
+      'caption': instance.caption,
       'description': instance.description,
       'start': instance.start.toIso8601String(),
       'end': instance.end.toIso8601String(),
@@ -111,7 +113,7 @@ Map<String, dynamic> _$PartnerEventToJson(PartnerEvent instance) =>
     <String, dynamic>{
       'pk': instance.pk,
       'title': instance.title,
-      'description': instance.description,
+      'description': instance.caption,
       'start': instance.start.toIso8601String(),
       'end': instance.end.toIso8601String(),
       'location': instance.location,
@@ -121,6 +123,7 @@ Map<String, dynamic> _$PartnerEventToJson(PartnerEvent instance) =>
 AdminEvent _$AdminEventFromJson(Map<String, dynamic> json) => AdminEvent(
       json['id'] as int,
       json['title'] as String,
+      json['caption'] as String,
       json['description'] as String,
       DateTime.parse(json['start'] as String),
       DateTime.parse(json['end'] as String),
@@ -145,6 +148,7 @@ Map<String, dynamic> _$AdminEventToJson(AdminEvent instance) =>
     <String, dynamic>{
       'id': instance.pk,
       'title': instance.title,
+      'caption': instance.caption,
       'description': instance.description,
       'start': instance.start.toIso8601String(),
       'end': instance.end.toIso8601String(),

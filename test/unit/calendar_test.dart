@@ -11,7 +11,7 @@ void main() {
       final event = FakeEvent(
         pk: 1,
         title: 'Lorem',
-        description: 'Ipsum',
+        caption: 'Ipsum',
         start: DateTime.parse('2022-03-04 13:37'),
         end: DateTime.parse('2022-03-04 14:37'),
         location: 'Dolor',
@@ -31,7 +31,7 @@ void main() {
       final event = FakeEvent(
         pk: 1,
         title: 'Lorem',
-        description: 'Ipsum',
+        caption: 'Ipsum',
         start: DateTime.parse('2022-03-04 13:37'),
         end: DateTime.parse('2022-03-05 00:00'),
         location: 'Dolor',
@@ -51,7 +51,7 @@ void main() {
       final event = FakeEvent(
         pk: 1,
         title: 'Lorem',
-        description: 'Ipsum',
+        caption: 'Ipsum',
         start: DateTime.parse('2022-03-04 21:00'),
         end: DateTime.parse('2022-03-05 04:00'),
         location: 'Dolor',
@@ -78,7 +78,7 @@ void main() {
       final event = FakeEvent(
         pk: 1,
         title: 'Lorem',
-        description: 'Ipsum',
+        caption: 'Ipsum',
         start: DateTime.parse('2022-03-04 15:00'),
         end: DateTime.parse('2022-03-10 12:00'),
         location: 'Dolor',
@@ -113,7 +113,7 @@ void main() {
       final event = FakeEvent(
         pk: 1,
         title: 'Lorem',
-        description: 'Ipsum',
+        caption: 'Ipsum',
         start: DateTime.parse('2022-03-04 13:37'),
         end: DateTime.parse('2022-03-04 14:37'),
         location: 'Dolor',
