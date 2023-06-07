@@ -296,7 +296,7 @@ class CalendarScrollView extends StatelessWidget {
                 SliverToBoxAdapter(
                   child: Center(
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 20, bottom: 10),
+                      padding: const EdgeInsets.only(top: 10),
                       child: calendarState.isLoadingMoreUp
                           ? Icon(
                               Icons.more_horiz,
