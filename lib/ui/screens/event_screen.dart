@@ -135,16 +135,16 @@ class _EventScreenState extends State<EventScreen> {
         if (spaceFlag) {
           clickableOrganisers.add(GestureDetector(
               onTap: () {
-                context
-                    .pushNamed('group', params: {'groupPk': org.pk.toString()});
+                context.pushNamed('group',
+                    pathParameters: {'groupPk': org.pk.toString()});
               },
               child: Text(' ', style: textTheme.titleSmall)));
         }
 
         clickableOrganisers.add(GestureDetector(
             onTap: () {
-              context
-                  .pushNamed('group', params: {'groupPk': org.pk.toString()});
+              context.pushNamed('group',
+                  pathParameters: {'groupPk': org.pk.toString()});
             },
             child: Text(namePart, style: textTheme.titleSmall)));
 
