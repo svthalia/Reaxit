@@ -8,7 +8,7 @@ on:
       - master
 
 env:
-  FLUTTER_VERSION: 3.7.0
+  FLUTTER_VERSION: 3.10.2
 
 jobs:
   linting:
@@ -27,8 +27,8 @@ jobs:
       - name: Flutter version
         run: flutter --version
 
-      - name: Flutter format
-        run: flutter format --set-exit-if-changed .
+      - name: Dart format
+        run: dart format --set-exit-if-changed .
 
       - name: Flutter analyze
         run: flutter analyze
