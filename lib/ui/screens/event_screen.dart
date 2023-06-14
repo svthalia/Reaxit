@@ -117,44 +117,28 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   /// Makes a list of clickable organisers.
-  List<Widget> _makeOrganiserChildren(Event event) {
+  Widget _makeOrganiserChildren(Event event) {
     final textTheme = Theme.of(context).textTheme;
 
-    List<Widget> clickableOrganisers = [];
-    bool commaFlag = false;
-
-    for (SmallGroup org in event.organisers) {
-      if (commaFlag) {
-        clickableOrganisers.add(Text(', ', style: textTheme.titleSmall));
-      }
-
-      bool spaceFlag = false;
-      List<String> nameParts = org.name.split(' ');
-
-      for (String namePart in nameParts) {
-        if (spaceFlag) {
-          clickableOrganisers.add(GestureDetector(
-              onTap: () {
-                context.pushNamed('group',
-                    pathParameters: {'groupPk': org.pk.toString()});
-              },
-              child: Text(' ', style: textTheme.titleSmall)));
-        }
-
-        clickableOrganisers.add(GestureDetector(
-            onTap: () {
-              context.pushNamed('group',
-                  pathParameters: {'groupPk': org.pk.toString()});
-            },
-            child: Text(namePart, style: textTheme.titleSmall)));
-
-        spaceFlag = true;
-      }
-
-      commaFlag = true;
-    }
-
-    return clickableOrganisers;
+    return RichText(
+      text: TextSpan(
+        children: [
+          for (SmallGroup org in event.organisers)
+            TextSpan(children: [
+              if (org != event.organisers[0]) const TextSpan(text: ', '),
+              TextSpan(
+                text: org.name,
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    context.pushNamed('group',
+                        pathParameters: {'groupPk': org.pk.toString()});
+                  },
+              ),
+            ]),
+        ],
+        style: textTheme.titleSmall,
+      ),
+    );
   }
 
   /// Create the title, start, end, location and price of an event.
@@ -275,9 +259,7 @@ class _EventScreenState extends State<EventScreen> {
                   children: [
                     Text('ORGANISERS', style: textTheme.bodySmall),
                     const SizedBox(height: 4),
-                    Wrap(
-                      children: _makeOrganiserChildren(event),
-                    )
+                    _makeOrganiserChildren(event),
                   ]),
             )
           ],
