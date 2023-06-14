@@ -152,39 +152,50 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                       return const Center(child: CircularProgressIndicator());
                     } else {
                       return TabBarView(children: [
-                        Scrollbar(
-                          child: ListView.separated(
-                            key: const PageStorageKey('event-admin'),
-                            itemBuilder: (context, index) =>
-                                _QueuedRegistrationTile(
-                              registration: state.queuedRegistrations[index],
+                        if (state.queuedRegistrations.isEmpty)
+                          const ErrorCenter('No queued registrations found')
+                        else
+                          Scrollbar(
+                            child: ListView.separated(
+                              key: const PageStorageKey('event-admin'),
+                              itemBuilder: (context, index) =>
+                                  _QueuedRegistrationTile(
+                                registration: state.queuedRegistrations[index],
+                              ),
+                              separatorBuilder: (_, __) => const Divider(),
+                              itemCount: state.queuedRegistrations.length,
                             ),
-                            separatorBuilder: (_, __) => const Divider(),
-                            itemCount: state.queuedRegistrations.length,
                           ),
-                        ),
-                        Scrollbar(
-                          child: ListView.separated(
-                            key: const PageStorageKey('event-admin'),
-                            itemBuilder: (context, index) => _RegistrationTile(
-                              registration: state.registrations[index],
-                              requiresPayment: state.event!.paymentIsRequired,
+                        if (state.registrations.isEmpty)
+                          const ErrorCenter('No registrations found')
+                        else
+                          Scrollbar(
+                            child: ListView.separated(
+                              key: const PageStorageKey('event-admin'),
+                              itemBuilder: (context, index) =>
+                                  _RegistrationTile(
+                                registration: state.registrations[index],
+                                requiresPayment: state.event!.paymentIsRequired,
+                              ),
+                              separatorBuilder: (_, __) => const Divider(),
+                              itemCount: state.registrations.length,
                             ),
-                            separatorBuilder: (_, __) => const Divider(),
-                            itemCount: state.registrations.length,
                           ),
-                        ),
-                        Scrollbar(
-                          child: ListView.separated(
-                            key: const PageStorageKey('event-admin'),
-                            itemBuilder: (context, index) =>
-                                _CancelledRegistrationTile(
-                              registration: state.cancelledRegistrations[index],
+                        if (state.cancelledRegistrations.isEmpty)
+                          const ErrorCenter('No cancelled registrations found')
+                        else
+                          Scrollbar(
+                            child: ListView.separated(
+                              key: const PageStorageKey('event-admin'),
+                              itemBuilder: (context, index) =>
+                                  _CancelledRegistrationTile(
+                                registration:
+                                    state.cancelledRegistrations[index],
+                              ),
+                              separatorBuilder: (_, __) => const Divider(),
+                              itemCount: state.cancelledRegistrations.length,
                             ),
-                            separatorBuilder: (_, __) => const Divider(),
-                            itemCount: state.cancelledRegistrations.length,
                           ),
-                        ),
                       ]);
                     }
                   },
