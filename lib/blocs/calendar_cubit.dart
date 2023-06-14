@@ -312,7 +312,7 @@ class CalendarCubit extends Cubit<CalendarState> {
       futureEvents.sort((a, b) => a.start.compareTo(b.start));
 
       if (!isDoneDown) {
-        // Filter events that we dont want to show just yet
+        // Filter events that we don't want to show just yet
         futureEvents = filterDown(futureEvents);
       }
 
