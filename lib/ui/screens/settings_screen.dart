@@ -215,11 +215,11 @@ class _ThemeModeCard extends StatelessWidget {
               onChanged: (ThemeMode? newMode) async {
                 BlocProvider.of<ThemeCubit>(context).change(newMode!);
               },
-              items: [
+              items: const [
                 DropdownMenuItem(
                   value: ThemeMode.light,
                   child: Row(
-                    children: const [
+                    children: [
                       Icon(Icons.wb_sunny_outlined),
                       SizedBox(width: 16),
                       Text('Light')
@@ -229,7 +229,7 @@ class _ThemeModeCard extends StatelessWidget {
                 DropdownMenuItem(
                   value: ThemeMode.system,
                   child: Row(
-                    children: const [
+                    children: [
                       Icon(Icons.settings),
                       SizedBox(width: 16),
                       Text('System default')
@@ -239,7 +239,7 @@ class _ThemeModeCard extends StatelessWidget {
                 DropdownMenuItem(
                   value: ThemeMode.dark,
                   child: Row(
-                    children: const [
+                    children: [
                       Icon(Icons.brightness_2_outlined),
                       SizedBox(width: 16),
                       Text('Dark')
