@@ -53,14 +53,23 @@ abstract class ListCubit<T, S> extends Cubit<S> {
           downResponse.results.length == downResponse.count;
 
     List<T> upResults = processUp(upResponse.results);
-    List<T> downResults = processUp(downResponse.results);
+    List<T> downResults = processDown(downResponse.results);
 
-    (upResults: upResults, downResults: downResults) = shuffleData(upResults, downResults);
+    (upResults: upResults, downResults: downResults) =
+        shuffleData(upResults, downResults);
 
     upResults = filterUp(upResults);
     downResults = filterDown(downResults);
 
-    // TODO: handle errors and emit results
+    if (upResults.isEmpty && downResults.isEmpty) {
+      emit(empty(query ?? ''));
+    } else {
+      emit(newState(
+          resultsUp: upResults,
+          resultsDown: downResults,
+          isDoneUp: isDoneUp,
+          isDoneDown: isDoneDown));
+    }
   }
 
   Future<void> moreDown() async {
@@ -80,7 +89,7 @@ abstract class ListCubit<T, S> extends Cubit<S> {
       Future<ListResponse<T>> downResultsFuture = getUp();
       downResponse = await downResultsFuture;
     } on ApiException catch (exception) {
-      emit(ListState.failure(message: exception.message));
+      emit(failure(exception.message));
       return;
     }
 
@@ -88,13 +97,15 @@ abstract class ListCubit<T, S> extends Cubit<S> {
     // changed since the request was made.
     if (query != searchQuery) return;
 
-    final isDoneDown =
-          _nextOffsetDown + downResponse.results.length == downResponse.count;
+    _nextOffsetDown += downResponse.results.length;
+    final isDoneDown = _nextOffsetDown == downResponse.count;
 
-    List<T> upResults = processDown(downResponse.results);
-    upResults = filterDown(upResults);
+    List<T> downResults = processDown(downResponse.results);
+    downResults = filterDown(downResults);
 
-    final totalUpResults = oldState.results + upResults;
+    final totalDownResults = combineDown(downResults, oldState);
+
+    emit(updateDown(oldState, totalDownResults, isDoneDown));
   }
 
   /// Set this cubit's `searchQuery` and load the albums for that query.
@@ -132,6 +143,17 @@ abstract class ListCubit<T, S> extends Cubit<S> {
   List<T> filterDown(List<T> downResults) => downResults;
 
   S loading();
+  S loadingUp(S oldstate);
+  S loadingDown(S oldstate);
+  S empty(String query);
   S failure(String message);
+  S newState({
+    List<T> resultsUp = const [],
+    List<T> resultsDown = const [],
+    required bool isDoneUp,
+    required bool isDoneDown,
+  });
+  S updateUp(S oldstate, List<T> upResults, bool isDoneUp);
+  S updateDown(S oldstate, List<T> downResults, bool isDoneDown);
 
 }
