@@ -13,11 +13,6 @@ abstract class ListCubit<T, S> extends Cubit<S> {
   /// The last used search query. Can be set through `this.search(query)`.
   String? searchQuery;
 
-
-  // TODO: force implementors to set these somehow?
-  int firstPageSizeUp = 0;
-  int firstPageSizeDown = 0;
-
   /// The offset to be used for the next paginated request.
   int _nextOffsetUp = 0;
   int _nextOffsetDown = 0;
@@ -25,13 +20,17 @@ abstract class ListCubit<T, S> extends Cubit<S> {
   /// A timer used to debounce calls to `this.load()` from `this.search()`.
   Timer? _searchDebounceTimer;
 
+  ListCubit(this.api, S state) : super(state);
+
   Future<void> load() async {
     final query = searchQuery;
+    _nextOffsetUp = 0;
+    _nextOffsetDown = 0;
     ListResponse<T> upResponse;
     ListResponse<T> downResponse;
-    try{
-      Future<ListResponse<T>> upResultsFuture = getUp();
-      Future<ListResponse<T>> downResultsFuture = getDown();
+    try {
+      Future<ListResponse<T>> upResultsFuture = getUp(_nextOffsetUp);
+      Future<ListResponse<T>> downResultsFuture = getDown(_nextOffsetDown);
       cleanupOldState();
       upResponse = await upResultsFuture;
       downResponse = await downResultsFuture;
@@ -43,14 +42,12 @@ abstract class ListCubit<T, S> extends Cubit<S> {
     // Discard result if _searchQuery has
     // changed since the request was made.
     if (query != searchQuery) return;
-  
-    _nextOffsetUp = firstPageSizeUp;
-    _nextOffsetDown = firstPageSizeDown;
 
-    final isDoneDown =
-          upResponse.results.length == upResponse.count;
-    final isDoneUp =
-          downResponse.results.length == downResponse.count;
+    _nextOffsetUp = upResponse.results.length;
+    _nextOffsetDown = downResponse.results.length;
+
+    final isDoneUp = _nextOffsetUp == upResponse.count;
+    final isDoneDown = _nextOffsetDown == downResponse.count;
 
     List<T> upResults = processUp(upResponse.results);
     List<T> downResults = processDown(downResponse.results);
@@ -85,8 +82,8 @@ abstract class ListCubit<T, S> extends Cubit<S> {
     // }
 
     ListResponse<T> downResponse;
-    try{
-      Future<ListResponse<T>> downResultsFuture = getUp();
+    try {
+      Future<ListResponse<T>> downResultsFuture = getDown(_nextOffsetDown);
       downResponse = await downResultsFuture;
     } on ApiException catch (exception) {
       emit(failure(exception.message));
@@ -123,15 +120,15 @@ abstract class ListCubit<T, S> extends Cubit<S> {
       }
     }
   }
-  
-  Future<ListResponse<T>> getUp();
-  Future<ListResponse<T>> getDown();
+
+  Future<ListResponse<T>> getUp(int offset);
+  Future<ListResponse<T>> getDown(int offset);
 
   // This is called when a new load is triggered (after the API is called)
   void cleanupOldState() => {};
 
-  List<T> processUp(List<T> upResults);
-  List<T> processDown(List<T> downResults);
+  List<T> processUp(List<T> upResults) => upResults;
+  List<T> processDown(List<T> downResults) => downResults;
 
   // This is supposed to resolve some issues around the up/down boundry.
   // For example, when some results from up should be moved to down, this can be overwritten.
@@ -141,6 +138,9 @@ abstract class ListCubit<T, S> extends Cubit<S> {
 
   List<T> filterUp(List<T> upResults) => upResults;
   List<T> filterDown(List<T> downResults) => downResults;
+
+  List<T> combineUp(List<T> upResults, S oldstate);
+  List<T> combineDown(List<T> downResults, S oldstate);
 
   S loading();
   S loadingUp(S oldstate);
