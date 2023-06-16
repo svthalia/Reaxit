@@ -7,7 +7,7 @@ import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 
-abstract class ListCubit<T> extends Cubit<ListState<T>> {
+abstract class ListCubit<T, S> extends Cubit<S> {
   final ApiRepository api;
 
   /// The last used search query. Can be set through `this.search(query)`.
@@ -22,7 +22,6 @@ abstract class ListCubit<T> extends Cubit<ListState<T>> {
   int _nextOffsetUp = 0;
   int _nextOffsetDown = 0;
 
-  ListCubit(this.api) : super(const ListState.loading(results: []));
   /// A timer used to debounce calls to `this.load()` from `this.search()`.
   Timer? _searchDebounceTimer;
 
@@ -37,7 +36,7 @@ abstract class ListCubit<T> extends Cubit<ListState<T>> {
       upResponse = await upResultsFuture;
       downResponse = await downResultsFuture;
     } on ApiException catch (exception) {
-      emit(ListState.failure(message: exception.message));
+      emit(failure(exception.message));
       return;
     }
 
@@ -125,8 +124,14 @@ abstract class ListCubit<T> extends Cubit<ListState<T>> {
 
   // This is supposed to resolve some issues around the up/down boundry.
   // For example, when some results from up should be moved to down, this can be overwritten.
-  ({List<T> upResults, List<T> downResults}) shuffleData(List<T> upResults, List<T> downResults) => (upResults: upResults, downResults: downResults);
+  ({List<T> upResults, List<T> downResults}) shuffleData(
+          List<T> upResults, List<T> downResults) =>
+      (upResults: upResults, downResults: downResults);
 
-  List<T> filterUp(List<T> upResults);
-  List<T> filterDown(List<T> downResults);
+  List<T> filterUp(List<T> upResults) => upResults;
+  List<T> filterDown(List<T> downResults) => downResults;
+
+  S loading();
+  S failure(String message);
+
 }
