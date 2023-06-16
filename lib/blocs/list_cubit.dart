@@ -73,13 +73,12 @@ abstract class ListCubit<T, S> extends Cubit<S> {
     final oldState = state;
     final query = searchQuery;
 
-    // TODO: we need a 2 way ListState first
     // Ignore calls to `more()` if there is no data, or already more coming.
-    // if (oldState.isDoneDown ||
-    //     oldState.isLoading ||
-    //     oldState.isLoadingMoreDown) {
-    //   return;
-    // }
+    if (supressMoreDown(oldState)) {
+      return;
+    }
+
+    emit(loadingDown(oldState));
 
     ListResponse<T> downResponse;
     try {
@@ -141,6 +140,9 @@ abstract class ListCubit<T, S> extends Cubit<S> {
 
   List<T> combineUp(List<T> upResults, S oldstate);
   List<T> combineDown(List<T> downResults, S oldstate);
+
+  bool supressMoreUp(S oldstate);
+  bool supressMoreDown(S oldstate);
 
   S loading();
   S loadingUp(S oldstate);
