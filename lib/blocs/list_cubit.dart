@@ -104,6 +104,41 @@ abstract class ListCubit<T, S> extends Cubit<S> {
     emit(updateDown(oldState, totalDownResults, isDoneDown));
   }
 
+  Future<void> moreUp() async {
+    final oldState = state;
+    final query = searchQuery;
+
+    // Ignore calls to `more()` if there is no data, or already more coming.
+    if (supressMoreUp(oldState)) {
+      return;
+    }
+
+    emit(loadingUp(oldState));
+
+    ListResponse<T> upResponse;
+    try {
+      Future<ListResponse<T>> downResultsFuture = getUp(_nextOffsetUp);
+      upResponse = await downResultsFuture;
+    } on ApiException catch (exception) {
+      emit(failure(exception.message));
+      return;
+    }
+
+    // Discard result if _searchQuery has
+    // changed since the request was made.
+    if (query != searchQuery) return;
+
+    _nextOffsetUp += upResponse.results.length;
+    final isDoneUp = _nextOffsetUp == upResponse.count;
+
+    List<T> downResults = processUp(upResponse.results);
+    downResults = filterUp(downResults);
+
+    final totalUpResults = combineUp(downResults, oldState);
+
+    emit(updateUp(oldState, totalUpResults, isDoneUp));
+  }
+
   /// Set this cubit's `searchQuery` and load the albums for that query.
   ///
   /// Use `null` as argument to remove the search query.
