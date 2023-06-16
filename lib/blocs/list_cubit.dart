@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
@@ -9,7 +11,7 @@ abstract class ListCubit<T> extends Cubit<ListState<T>> {
   final ApiRepository api;
 
   /// The last used search query. Can be set through `this.search(query)`.
-  String? _searchQuery;
+  String? searchQuery;
 
 
   // TODO: force implementors to set these somehow?
@@ -21,9 +23,11 @@ abstract class ListCubit<T> extends Cubit<ListState<T>> {
   int _nextOffsetDown = 0;
 
   ListCubit(this.api) : super(const ListState.loading(results: []));
+  /// A timer used to debounce calls to `this.load()` from `this.search()`.
+  Timer? _searchDebounceTimer;
 
   Future<void> load() async {
-    final query = _searchQuery;
+    final query = searchQuery;
     ListResponse<T> upResponse;
     ListResponse<T> downResponse;
     try{
@@ -39,7 +43,7 @@ abstract class ListCubit<T> extends Cubit<ListState<T>> {
 
     // Discard result if _searchQuery has
     // changed since the request was made.
-    if (query != _searchQuery) return;
+    if (query != searchQuery) return;
   
     _nextOffsetUp = firstPageSizeUp;
     _nextOffsetDown = firstPageSizeDown;
@@ -60,10 +64,9 @@ abstract class ListCubit<T> extends Cubit<ListState<T>> {
     // TODO: handle errors and emit results
   }
 
-
   Future<void> moreDown() async {
     final oldState = state;
-    final query = _searchQuery;
+    final query = searchQuery;
 
     // TODO: we need a 2 way ListState first
     // Ignore calls to `more()` if there is no data, or already more coming.
@@ -84,7 +87,7 @@ abstract class ListCubit<T> extends Cubit<ListState<T>> {
 
     // Discard result if _searchQuery has
     // changed since the request was made.
-    if (query != _searchQuery) return;
+    if (query != searchQuery) return;
 
     final isDoneDown =
           _nextOffsetDown + downResponse.results.length == downResponse.count;
@@ -93,8 +96,22 @@ abstract class ListCubit<T> extends Cubit<ListState<T>> {
     upResults = filterDown(upResults);
 
     final totalUpResults = oldState.results + upResults;
+  }
 
-    // TODO: emit results
+  /// Set this cubit's `searchQuery` and load the albums for that query.
+  ///
+  /// Use `null` as argument to remove the search query.
+  void search(String? query) {
+    if (query != searchQuery) {
+      searchQuery = query;
+      _searchDebounceTimer?.cancel();
+      if (query?.isEmpty ?? false) {
+        /// Don't get results when the query is empty.
+        emit(loading());
+      } else {
+        _searchDebounceTimer = Timer(config.searchDebounceTime, load);
+      }
+    }
   }
   
   Future<ListResponse<T>> getUp();
