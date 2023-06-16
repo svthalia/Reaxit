@@ -192,5 +192,56 @@ abstract class ListCubit<T, S> extends Cubit<S> {
   });
   S updateUp(S oldstate, List<T> upResults, bool isDoneUp);
   S updateDown(S oldstate, List<T> downResults, bool isDoneDown);
+}
 
+abstract class SingleListCubit<T> extends ListCubit<T, ListState<T>> {
+  SingleListCubit(ApiRepository api)
+      : super(api, const ListState.loading(results: []));
+
+  @override
+  Future<ListResponse<T>> getUp(int offset) async => ListResponse<T>(0, []);
+
+  @override
+  List<T> combineUp(List<T> upResults, ListState oldstate) => upResults;
+
+  @override
+  bool supressMoreUp(ListState oldstate) => true;
+
+  @override
+  bool supressMoreDown(ListState oldstate) =>
+      oldstate.isDone || oldstate.isLoading || oldstate.isLoadingMore;
+
+  @override
+  ListState<T> loading() => const ListState.loading(results: []);
+
+  @override
+  ListState<T> loadingUp(ListState<T> oldstate) => oldstate;
+
+  @override
+  ListState<T> loadingDown(ListState<T> oldstate) =>
+      oldstate.copyWith(isLoadingMore: true);
+
+  @override
+  ListState<T> failure(String message) => ListState.failure(message: message);
+
+  @override
+  ListState<T> newState({
+    List<T> resultsUp = const [],
+    List<T> resultsDown = const [],
+    required bool isDoneUp,
+    required bool isDoneDown,
+  }) =>
+      ListState.success(results: resultsDown, isDone: isDoneDown);
+
+  @override
+  ListState<T> updateUp(
+          ListState<T> oldstate, List<T> upResults, bool isDoneUp) =>
+      oldstate;
+
+  @override
+  ListState<T> updateDown(
+          ListState<T> oldstate, List<T> downResults, bool isDoneDown) =>
+      oldstate.copyWith(results: downResults, isDone: isDoneDown);
+
+  Future<void> more() => moreDown();
 }
