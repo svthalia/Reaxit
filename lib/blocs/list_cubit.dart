@@ -35,7 +35,7 @@ abstract class ListCubit<T, S> extends Cubit<S> {
       upResponse = await upResultsFuture;
       downResponse = await downResultsFuture;
     } on ApiException catch (exception) {
-      emit(failure(exception.message));
+      _emit(failure(exception.message));
       return;
     }
 
@@ -59,9 +59,9 @@ abstract class ListCubit<T, S> extends Cubit<S> {
     downResults = filterDown(downResults);
 
     if (upResults.isEmpty && downResults.isEmpty) {
-      emit(empty(query ?? ''));
+      _emit(empty(query ?? ''));
     } else {
-      emit(newState(
+      _emit(newState(
           resultsUp: upResults,
           resultsDown: downResults,
           isDoneUp: isDoneUp,
@@ -78,14 +78,14 @@ abstract class ListCubit<T, S> extends Cubit<S> {
       return;
     }
 
-    emit(loadingDown(oldState));
+    _emit(loadingDown(oldState));
 
     ListResponse<T> downResponse;
     try {
       Future<ListResponse<T>> downResultsFuture = getDown(_nextOffsetDown);
       downResponse = await downResultsFuture;
     } on ApiException catch (exception) {
-      emit(failure(exception.message));
+      _emit(failure(exception.message));
       return;
     }
 
@@ -101,7 +101,7 @@ abstract class ListCubit<T, S> extends Cubit<S> {
 
     final totalDownResults = combineDown(downResults, oldState);
 
-    emit(updateDown(oldState, totalDownResults, isDoneDown));
+    _emit(updateDown(oldState, totalDownResults, isDoneDown));
   }
 
   Future<void> moreUp() async {
@@ -113,14 +113,14 @@ abstract class ListCubit<T, S> extends Cubit<S> {
       return;
     }
 
-    emit(loadingUp(oldState));
+    _emit(loadingUp(oldState));
 
     ListResponse<T> upResponse;
     try {
       Future<ListResponse<T>> downResultsFuture = getUp(_nextOffsetUp);
       upResponse = await downResultsFuture;
     } on ApiException catch (exception) {
-      emit(failure(exception.message));
+      _emit(failure(exception.message));
       return;
     }
 
@@ -136,7 +136,7 @@ abstract class ListCubit<T, S> extends Cubit<S> {
 
     final totalUpResults = combineUp(downResults, oldState);
 
-    emit(updateUp(oldState, totalUpResults, isDoneUp));
+    _emit(updateUp(oldState, totalUpResults, isDoneUp));
   }
 
   /// Set this cubit's `searchQuery` and load the albums for that query.
@@ -148,11 +148,18 @@ abstract class ListCubit<T, S> extends Cubit<S> {
       _searchDebounceTimer?.cancel();
       if (query?.isEmpty ?? false) {
         /// Don't get results when the query is empty.
-        emit(loading());
+        _emit(empty(query ?? ''));
       } else {
         _searchDebounceTimer = Timer(Config.searchDebounceTime, load);
       }
     }
+  }
+
+  void _emit(S state) {
+    if (isClosed) {
+      return;
+    }
+    emit(state);
   }
 
   Future<ListResponse<T>> getUp(int offset);
