@@ -123,7 +123,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
         onPressed: () => _scrollToToday(true),
         icon: const Icon(Icons.today),
         label: const Text('Today'),
-        backgroundColor: magenta,
       ),
     );
   }
