@@ -138,6 +138,9 @@ ThemeData darkTheme = ThemeData.from(
       return null;
     }),
   ),
+  floatingActionButtonTheme: FloatingActionButtonThemeData(
+    extendedTextStyle: generatedTextTheme.labelLarge,
+  ),
   radioTheme: RadioThemeData(
     fillColor:
         MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
