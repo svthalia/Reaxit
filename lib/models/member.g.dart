@@ -137,10 +137,6 @@ FullProfile _$FullProfileFromJson(Map<String, dynamic> json) => FullProfile(
       json['nickname'] as String?,
       $enumDecode(
           _$DisplayNamePreferenceEnumMap, json['display_name_preference']),
-      json['receive_optin'] as bool,
-      json['receive_newsletter'] as bool,
-      json['receive_magazine'] as bool,
-      json['email_gsuite_only'] as bool,
     );
 
 Map<String, dynamic> _$FullProfileToJson(FullProfile instance) =>
@@ -166,10 +162,6 @@ Map<String, dynamic> _$FullProfileToJson(FullProfile instance) =>
       'nickname': instance.nickname,
       'display_name_preference':
           _$DisplayNamePreferenceEnumMap[instance.displayNamePreference]!,
-      'receive_optin': instance.receiveOptin,
-      'receive_newsletter': instance.receiveNewsletter,
-      'receive_magazine': instance.receiveMagazine,
-      'email_gsuite_only': instance.emailGsuiteOnly,
     };
 
 const _$DisplayNamePreferenceEnumMap = {

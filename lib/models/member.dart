@@ -148,12 +148,6 @@ class FullProfile extends Profile {
   final String? nickname;
   final DisplayNamePreference displayNamePreference;
 
-  final bool receiveOptin;
-  final bool receiveNewsletter;
-  final bool receiveMagazine;
-
-  final bool emailGsuiteOnly;
-
   const FullProfile(
     String displayName,
     String shortDisplayName,
@@ -175,10 +169,6 @@ class FullProfile extends Profile {
     this.initials,
     this.nickname,
     this.displayNamePreference,
-    this.receiveOptin,
-    this.receiveNewsletter,
-    this.receiveMagazine,
-    this.emailGsuiteOnly,
   ) : super(
           displayName,
           shortDisplayName,
