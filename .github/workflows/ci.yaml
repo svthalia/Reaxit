@@ -80,6 +80,7 @@ jobs:
         with:
           path: |
             **/build
+            **/Pods
             **/.packages
             **/.flutter-plugins
             **/.flutter-plugin-dependencies
