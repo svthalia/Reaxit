@@ -42,7 +42,7 @@ jobs:
         run: dart format --set-exit-if-changed .
 
       - name: Flutter analyze
-        run: flutter analyze
+        run: flutter analyze -v
 
   testing:
     name: Testing
@@ -110,14 +110,6 @@ jobs:
           key: build-pubspec-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
             build-pubspec-
-      - name: Cache pods
-        uses: actions/cache@v3
-        with:
-          path: |
-            **/Pods
-          key: pods-${{ runner.os }}-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            build-pods-
       - name: Install Flutter dependencies
         run: flutter pub get
       - name: Run integration tests
@@ -157,14 +149,6 @@ jobs:
           key: build-pubspec-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
             build-pubspec-
-      - name: Cache pods
-        uses: actions/cache@v3
-        with:
-          path: |
-            **/Pods
-          key: pods-${{ runner.os }}-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            build-pods-
       - name: Flutter version
         run: flutter --version
 
