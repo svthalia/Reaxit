@@ -99,7 +99,7 @@ jobs:
         run: flutter pub get
       - name: Run integration tests
         run: |
-          flutter test -v integration_test/main.dart -r expanded
+          flutter test integration_test/main.dart -r expanded
           ls -la
 
   deploy-ios:
