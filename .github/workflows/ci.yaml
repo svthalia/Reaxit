@@ -79,7 +79,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            **/Pod
+            **/build
             **/.packages
             **/.flutter-plugins
             **/.flutter-plugin-dependencies
