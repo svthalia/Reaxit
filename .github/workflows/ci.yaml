@@ -75,11 +75,11 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
-      - name: Cache pubspec dependencies
+      - name: Cache build files
         uses: actions/cache@v2
         with:
           path: |
-            ${{ env.FLUTTER_HOME }}/.pub-cache
+            **/.build
             **/.packages
             **/.flutter-plugins
             **/.flutter-plugin-dependencies
