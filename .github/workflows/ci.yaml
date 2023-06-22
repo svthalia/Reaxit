@@ -79,18 +79,20 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            **/.build
+            **/Pod
             **/.packages
             **/.flutter-plugins
             **/.flutter-plugin-dependencies
             **/.dart_tool/package_config.json
-          key: build-pubspec-${{ hashFiles('**/pubspec.lock') }}
+          key: build-pubspec-ios-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
             build-pubspec-
       - name: Install Flutter dependencies
         run: flutter pub get
       - name: Run integration tests
-        run: flutter test integration_test/main.dart -r expanded
+        run: |
+          flutter test -v integration_test/main.dart -r expanded
+          ls -la
 
   deploy-ios:
     name: Deploy - iOS
