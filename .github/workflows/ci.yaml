@@ -76,11 +76,10 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
       - name: Cache build files
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             **/build
-            **/Pods
             **/.packages
             **/.flutter-plugins
             **/.flutter-plugin-dependencies
@@ -88,6 +87,14 @@ jobs:
           key: build-pubspec-ios-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
             build-pubspec-
+      - name: Cache pods
+        uses: actions/cache@v3
+        with:
+          path: |
+            **/Pods
+          key: pods-ios-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            build-pods-
       - name: Install Flutter dependencies
         run: flutter pub get
       - name: Run integration tests
