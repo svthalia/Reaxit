@@ -6,8 +6,8 @@ analyzer:
     - lib/models/*.g.dart
     - lib/tosti/models/*.g.dart
   
-  strong-mode:
-    implicit-casts: false
+  language:
+    strict-casts: false
 
 linter:
   rules:
