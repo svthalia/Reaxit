@@ -89,7 +89,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       appBar: ThaliaAppBar(
         title: const Text('CALENDAR'),
         collapsingActions: [
-          IconAppbarAcation(
+          IconAppbarAction(
             'SEARCH',
             Icons.search,
             openSearch,
