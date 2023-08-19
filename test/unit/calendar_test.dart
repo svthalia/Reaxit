@@ -129,7 +129,7 @@ void main() {
       expect(monthGroupedEventsDown[1].days[0].events.length, 0);
     });
     test('AddToEnd', () {
-      final now = DateTime.parse('2022-03-05 13:37');
+      final now = DateTime.parse('2022-04-05 13:37');
       final event = FakeEvent(
         pk: 1,
         title: 'Lorem',

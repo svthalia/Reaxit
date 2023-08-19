@@ -39,6 +39,7 @@ List<CalendarViewMonth> ensureMonthsContainsToday(
     }
     if (events[i].month == thisMonth) {
       events[i] = ensureMonthContainsDay(events[i], now.day);
+      return events;
     }
   }
   // We did not find the current month, and there was no month after the current month
