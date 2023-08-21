@@ -121,7 +121,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _scrollToToday(true),
         icon: const Icon(Icons.today),
-        label: const Text('Today'),
+        label: const Text('TODAY'),
       ),
     );
   }
