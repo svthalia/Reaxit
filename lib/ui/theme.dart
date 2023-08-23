@@ -7,7 +7,7 @@ ColorScheme lightColorScheme = ColorScheme(
   primary: magenta,
   onPrimary: Colors.white,
   secondary: magenta,
-  onSecondary: Colors.black,
+  onSecondary: Colors.white,
   surface: Colors.white,
   onSurface: Colors.black,
   background: Colors.grey[50]!,
@@ -21,7 +21,7 @@ ColorScheme darkColorScheme = const ColorScheme(
   primary: magenta,
   onPrimary: Colors.white,
   secondary: magenta,
-  onSecondary: Colors.black,
+  onSecondary: Colors.white,
   surface: Color(0xFF212121),
   onSurface: Colors.white,
   background: Color(0xFF111111),
@@ -137,6 +137,9 @@ ThemeData darkTheme = ThemeData.from(
       }
       return null;
     }),
+  ),
+  floatingActionButtonTheme: FloatingActionButtonThemeData(
+    extendedTextStyle: generatedTextTheme.labelLarge,
   ),
   radioTheme: RadioThemeData(
     fillColor:

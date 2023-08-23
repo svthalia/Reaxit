@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
-import 'package:reaxit/ui/theme.dart';
 import 'package:reaxit/ui/widgets.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -122,8 +121,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _scrollToToday(true),
         icon: const Icon(Icons.today),
-        label: const Text('Today'),
-        backgroundColor: magenta,
+        label: const Text('TODAY'),
       ),
     );
   }
