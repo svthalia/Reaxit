@@ -5,8 +5,10 @@ part 'photo.g.dart';
 @JsonSerializable(fieldRename: FieldRename.snake)
 class CoverPhoto {
   final int pk;
+
+  @JsonKey(defaultValue: 0)
   final int rotation;
-  final bool hidden;
+
   final Photo file;
 
   String get full => file.full;
@@ -17,17 +19,15 @@ class CoverPhoto {
   CoverPhoto copyWith({
     int? pk,
     int? rotation,
-    bool? hidden,
     Photo? file,
   }) =>
       CoverPhoto(
         pk ?? this.pk,
         rotation ?? this.rotation,
-        hidden ?? this.hidden,
         file ?? this.file,
       );
 
-  const CoverPhoto(this.pk, this.rotation, this.hidden, this.file);
+  const CoverPhoto(this.pk, this.rotation, this.file);
 
   factory CoverPhoto.fromJson(Map<String, dynamic> json) =>
       _$CoverPhotoFromJson(json);
@@ -42,7 +42,6 @@ class AlbumPhoto extends CoverPhoto {
   AlbumPhoto copyWith({
     int? pk,
     int? rotation,
-    bool? hidden,
     Photo? file,
     bool? liked,
     int? numLikes,
@@ -50,15 +49,13 @@ class AlbumPhoto extends CoverPhoto {
       AlbumPhoto(
         pk ?? this.pk,
         rotation ?? this.rotation,
-        hidden ?? this.hidden,
         file ?? this.file,
         liked ?? this.liked,
         numLikes ?? this.numLikes,
       );
 
-  const AlbumPhoto(
-      int pk, int rotation, bool hidden, Photo file, this.liked, this.numLikes)
-      : super(pk, rotation, hidden, file);
+  const AlbumPhoto(int pk, int rotation, Photo file, this.liked, this.numLikes)
+      : super(pk, rotation, file);
 
   factory AlbumPhoto.fromJson(Map<String, dynamic> json) =>
       _$AlbumPhotoFromJson(json);
