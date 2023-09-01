@@ -7,8 +7,6 @@ packages:
       name: _fe_analyzer_shared
       sha256: a36ec4843dc30ea6bf652bf25e3448db6c5e8bcf4aa55f063a5d1dad216d8214
       url: "https://pub.dev"
-      sha256: a36ec4843dc30ea6bf652bf25e3448db6c5e8bcf4aa55f063a5d1dad216d8214
-      url: "https://pub.dev"
     source: hosted
     version: "61.0.0"
   _flutterfire_internals:
@@ -31,8 +29,6 @@ packages:
     dependency: transitive
     description:
       name: analyzer
-      sha256: cc4242565347e98424ce9945c819c192ec0838cb9d1f6aa4a97cc96becbc5b27
-      url: "https://pub.dev"
       sha256: cc4242565347e98424ce9945c819c192ec0838cb9d1f6aa4a97cc96becbc5b27
       url: "https://pub.dev"
     source: hosted
@@ -66,17 +62,13 @@ packages:
     description:
       name: async
       sha256: bfe67ef28df125b7dddcea62755991f807aa39a2492a23e1550161692950bbe0
-      sha256: bfe67ef28df125b7dddcea62755991f807aa39a2492a23e1550161692950bbe0
       url: "https://pub.dev"
     source: hosted
-    version: "2.10.0"
     version: "2.10.0"
   bloc:
     dependency: transitive
     description:
       name: bloc
-      sha256: "658a5ae59edcf1e58aac98b000a71c762ad8f46f1394c34a52050cafb3e11a80"
-      url: "https://pub.dev"
       sha256: "658a5ae59edcf1e58aac98b000a71c762ad8f46f1394c34a52050cafb3e11a80"
       url: "https://pub.dev"
     source: hosted
@@ -193,13 +185,10 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.1"
-    version: "1.2.1"
   checked_yaml:
     dependency: transitive
     description:
       name: checked_yaml
-      sha256: "3d1505d91afa809d177efd4eed5bb0eb65805097a1463abdd2add076effae311"
-      url: "https://pub.dev"
       sha256: "3d1505d91afa809d177efd4eed5bb0eb65805097a1463abdd2add076effae311"
       url: "https://pub.dev"
     source: hosted
@@ -346,8 +335,6 @@ packages:
       name: firebase_core_platform_interface
       sha256: "0df0a064ab0cad7f8836291ca6f3272edd7b83ad5b3540478ee46a0849d8022b"
       url: "https://pub.dev"
-      sha256: "0df0a064ab0cad7f8836291ca6f3272edd7b83ad5b3540478ee46a0849d8022b"
-      url: "https://pub.dev"
     source: hosted
     version: "4.8.0"
   firebase_core_web:
@@ -399,8 +386,6 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_bloc
-      sha256: "434951eea948dbe87f737b674281465f610b8259c16c097b8163ce138749a775"
-      url: "https://pub.dev"
       sha256: "434951eea948dbe87f737b674281465f610b8259c16c097b8163ce138749a775"
       url: "https://pub.dev"
     source: hosted
@@ -509,8 +494,6 @@ packages:
       name: flutter_web_auth_2_platform_interface
       sha256: "91ff7f0bf4ca530aabf857433db2fbcc3d1b8e3c5347ecf58e5ace8f9d29edb0"
       url: "https://pub.dev"
-      sha256: "91ff7f0bf4ca530aabf857433db2fbcc3d1b8e3c5347ecf58e5ace8f9d29edb0"
-      url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
   flutter_web_plugins:
@@ -553,8 +536,6 @@ packages:
       name: glob
       sha256: "4515b5b6ddb505ebdd242a5f2cc5d22d3d6a80013789debfbda7777f47ea308c"
       url: "https://pub.dev"
-      sha256: "4515b5b6ddb505ebdd242a5f2cc5d22d3d6a80013789debfbda7777f47ea308c"
-      url: "https://pub.dev"
     source: hosted
     version: "2.1.2"
   go_router:
@@ -577,8 +558,6 @@ packages:
     dependency: transitive
     description:
       name: graphs
-      sha256: f9e130f3259f52d26f0cfc0e964513796dafed572fa52e45d2f8d6ca14db39b2
-      url: "https://pub.dev"
       sha256: f9e130f3259f52d26f0cfc0e964513796dafed572fa52e45d2f8d6ca14db39b2
       url: "https://pub.dev"
     source: hosted
@@ -619,8 +598,6 @@ packages:
     dependency: transitive
     description:
       name: image
-      sha256: "483a389d6ccb292b570c31b3a193779b1b0178e7eb571986d9a49904b6861227"
-      url: "https://pub.dev"
       sha256: "483a389d6ccb292b570c31b3a193779b1b0178e7eb571986d9a49904b6861227"
       url: "https://pub.dev"
     source: hosted
@@ -724,8 +701,6 @@ packages:
       name: intl
       sha256: a3715e3bc90294e971cb7dc063fbf3cd9ee0ebf8604ffeafabd9e6f16abbdbe6
       url: "https://pub.dev"
-      sha256: a3715e3bc90294e971cb7dc063fbf3cd9ee0ebf8604ffeafabd9e6f16abbdbe6
-      url: "https://pub.dev"
     source: hosted
     version: "0.18.1"
   io:
@@ -744,13 +719,10 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.5"
-    version: "0.6.5"
   json_annotation:
     dependency: "direct main"
     description:
       name: json_annotation
-      sha256: c33da08e136c3df0190bd5bbe51ae1df4a7d96e7954d1d7249fea2968a72d317
-      url: "https://pub.dev"
       sha256: c33da08e136c3df0190bd5bbe51ae1df4a7d96e7954d1d7249fea2968a72d317
       url: "https://pub.dev"
     source: hosted
@@ -775,8 +747,6 @@ packages:
     dependency: transitive
     description:
       name: logging
-      sha256: "04094f2eb032cbb06c6f6e8d3607edcfcb0455e2bb6cbc010cb01171dcb64e6d"
-      url: "https://pub.dev"
       sha256: "04094f2eb032cbb06c6f6e8d3607edcfcb0455e2bb6cbc010cb01171dcb64e6d"
       url: "https://pub.dev"
     source: hosted
@@ -804,7 +774,6 @@ packages:
       sha256: "6c268b42ed578a53088d834796959e4a1814b5e9e164f147f580a386e5decf42"
       url: "https://pub.dev"
     source: hosted
-    version: "1.8.0"
     version: "1.8.0"
   mime:
     dependency: "direct main"
@@ -893,7 +862,6 @@ packages:
       sha256: db9d4f58c908a4ba5953fcee2ae317c94889433e5024c27ce74a37f94267945b
       url: "https://pub.dev"
     source: hosted
-    version: "1.8.2"
     version: "1.8.2"
   path_provider:
     dependency: "direct main"
@@ -1013,16 +981,12 @@ packages:
       name: pub_semver
       sha256: "307de764d305289ff24ad257ad5c5793ce56d04947599ad68b3baa124105fc17"
       url: "https://pub.dev"
-      sha256: "307de764d305289ff24ad257ad5c5793ce56d04947599ad68b3baa124105fc17"
-      url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
   pubspec_parse:
     dependency: transitive
     description:
       name: pubspec_parse
-      sha256: ec85d7d55339d85f44ec2b682a82fea340071e8978257e5a43e69f79e98ef50c
-      url: "https://pub.dev"
       sha256: ec85d7d55339d85f44ec2b682a82fea340071e8978257e5a43e69f79e98ef50c
       url: "https://pub.dev"
     source: hosted
@@ -1145,16 +1109,12 @@ packages:
       name: shelf
       sha256: c24a96135a2ccd62c64b69315a14adc5c3419df63b4d7c05832a346fdb73682c
       url: "https://pub.dev"
-      sha256: c24a96135a2ccd62c64b69315a14adc5c3419df63b4d7c05832a346fdb73682c
-      url: "https://pub.dev"
     source: hosted
     version: "1.4.1"
   shelf_web_socket:
     dependency: transitive
     description:
       name: shelf_web_socket
-      sha256: a988c0e8d8ffbdb8a28aa7ec8e449c260f3deb808781fe1284d22c5bba7156e8
-      url: "https://pub.dev"
       sha256: a988c0e8d8ffbdb8a28aa7ec8e449c260f3deb808781fe1284d22c5bba7156e8
       url: "https://pub.dev"
     source: hosted
@@ -1218,8 +1178,6 @@ packages:
       name: sticky_headers
       sha256: "9b3dd2cb0fd6a7038170af3261f855660cbb241cb56c501452cb8deed7023ede"
       url: "https://pub.dev"
-      sha256: "9b3dd2cb0fd6a7038170af3261f855660cbb241cb56c501452cb8deed7023ede"
-      url: "https://pub.dev"
     source: hosted
     version: "0.3.0+2"
   stream_channel:
@@ -1258,8 +1216,6 @@ packages:
     dependency: transitive
     description:
       name: synchronized
-      sha256: "33b31b6beb98100bf9add464a36a8dd03eb10c7a8cf15aeec535e9b054aaf04b"
-      url: "https://pub.dev"
       sha256: "33b31b6beb98100bf9add464a36a8dd03eb10c7a8cf15aeec535e9b054aaf04b"
       url: "https://pub.dev"
     source: hosted
@@ -1424,7 +1380,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
-    version: "3.0.1"
   win32:
     dependency: transitive
     description:
@@ -1461,8 +1416,6 @@ packages:
     dependency: transitive
     description:
       name: yaml
-      sha256: "23812a9b125b48d4007117254bca50abb6c712352927eece9e155207b1db2370"
-      url: "https://pub.dev"
       sha256: "23812a9b125b48d4007117254bca50abb6c712352927eece9e155207b1db2370"
       url: "https://pub.dev"
     source: hosted
