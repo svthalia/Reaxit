@@ -5,7 +5,7 @@ import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
-import 'package:reaxit/config.dart' as config;
+import 'package:reaxit/config.dart';
 
 typedef GroupsState = DetailState<List<ListGroup>>;
 
@@ -92,7 +92,7 @@ class AllGroupsCubit extends GroupsCubit {
         // Don't get results when the query is empty.
         emit(const LoadingState());
       } else {
-        _searchDebounceTimer = Timer(config.searchDebounceTime, load);
+        _searchDebounceTimer = Timer(Config.searchDebounceTime, load);
       }
     }
   }

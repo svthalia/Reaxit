@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:reaxit/config.dart' as config;
+import 'package:reaxit/config.dart';
 
 class TPayButton extends StatefulWidget {
   /// A function that performs the payment. If null, the button is disabled.
@@ -141,7 +141,7 @@ class _TPayButtonState extends State<TPayButton> {
             );
           } else if (!paymentUser.tpayEnabled) {
             // TPay not yet enabled.
-            final url = config.tpaySignDirectDebitMandateUrl;
+            final url = Config.of(context).tpaySignDirectDebitMandateUrl;
             final message = TextSpan(
               children: [
                 const TextSpan(

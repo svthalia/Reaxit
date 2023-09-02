@@ -1,17 +1,18 @@
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:reaxit/config.dart' as config;
+import 'package:flutter_cache_manager/flutter_cache_manager.dart' as cache;
+import 'package:reaxit/config.dart';
 
 /// A [BaseCacheManager] with customized configurations.
-class ThaliaCacheManager extends CacheManager with ImageCacheManager {
+class ThaliaCacheManager extends cache.CacheManager
+    with cache.ImageCacheManager {
   static const key = 'thaliaCachedData';
 
   static final ThaliaCacheManager _instance = ThaliaCacheManager._();
   factory ThaliaCacheManager() => _instance;
 
   ThaliaCacheManager._()
-      : super(Config(
+      : super(cache.Config(
           key,
-          stalePeriod: config.cacheStalePeriod,
-          maxNrOfCacheObjects: config.cacheMaxObjects,
+          stalePeriod: Config.cacheStalePeriod,
+          maxNrOfCacheObjects: Config.cacheMaxObjects,
         ));
 }

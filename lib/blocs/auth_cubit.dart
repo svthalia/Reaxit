@@ -29,9 +29,8 @@ enum Environment {
   production,
   local;
 
-  static const defaultEnvironment = ApiConfig.production != null
-      ? Environment.production
-      : Environment.staging;
+  static const defaultEnvironment =
+      Config.production != null ? Environment.production : Environment.staging;
 }
 
 class AuthState extends Equatable {
@@ -113,15 +112,15 @@ class AuthCubit extends Cubit<AuthState> {
         // Restore credentials from the storage.
         final credentials = Credentials.fromJson(stored);
 
-        final ApiConfig apiConfig;
-        if (ApiConfig.production != null &&
-            credentials.tokenEndpoint == ApiConfig.production!.tokenEndpoint) {
-          apiConfig = ApiConfig.production!;
-        } else if (ApiConfig.local != null &&
-            credentials.tokenEndpoint == ApiConfig.local!.tokenEndpoint) {
-          apiConfig = ApiConfig.local!;
+        final Config apiConfig;
+        if (Config.production != null &&
+            credentials.tokenEndpoint == Config.production!.tokenEndpoint) {
+          apiConfig = Config.production!;
+        } else if (Config.local != null &&
+            credentials.tokenEndpoint == Config.local!.tokenEndpoint) {
+          apiConfig = Config.local!;
         } else {
-          apiConfig = ApiConfig.staging;
+          apiConfig = Config.staging;
         }
 
         // Log out if not all required scopes are available. After an update that
@@ -129,7 +128,7 @@ class AuthCubit extends Cubit<AuthState> {
         // credentials with the required scopes, instead of just getting 403's
         // until you manually log out.
         final scopes = credentials.scopes?.toSet() ?? <String>{};
-        if (scopes.containsAll(oauthScopes)) {
+        if (scopes.containsAll(Config.oauthScopes)) {
           // Create the API repository.
           final apiRepository = ConcrexitApiRepository(
             client: LoggingClient(
@@ -196,9 +195,9 @@ class AuthCubit extends Cubit<AuthState> {
     emit(LoadingAuthState());
 
     final apiConfig = switch (environment) {
-      Environment.staging => ApiConfig.staging,
-      Environment.production => ApiConfig.production ?? ApiConfig.staging,
-      Environment.local => ApiConfig.local ?? ApiConfig.staging,
+      Environment.staging => Config.staging,
+      Environment.production => Config.production ?? Config.staging,
+      Environment.local => Config.local ?? Config.staging,
     };
 
     // Prepare for the authentication flow.
@@ -222,7 +221,7 @@ class AuthCubit extends Cubit<AuthState> {
 
     final authorizeUrl = grant.getAuthorizationUrl(
       _redirectUrl,
-      scopes: oauthScopes,
+      scopes: Config.oauthScopes,
     );
 
     try {
@@ -304,7 +303,6 @@ class AuthCubit extends Cubit<AuthState> {
 
   /// Change the selected environment when on the login screen.
   void selectEnvironment(Environment environment) {
-    print(environment);
     final state = this.state;
     if (state is LoggedOutAuthState) {
       emit(LoggedOutAuthState(

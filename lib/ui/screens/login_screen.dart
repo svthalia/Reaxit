@@ -124,7 +124,7 @@ class SelectEnvironmentDialog extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             const Divider(height: 0),
-            if (ApiConfig.production != null)
+            if (Config.production != null)
               RadioListTile(
                 title: const Text('PRODUCTION'),
                 subtitle: const Text('Default: thalia.nu'),
@@ -149,7 +149,7 @@ class SelectEnvironmentDialog extends StatelessWidget {
                 );
               },
             ),
-            if (ApiConfig.local != null)
+            if (Config.local != null)
               RadioListTile(
                 title: const Text('LOCAL'),
                 subtitle: const Text('You should know what you are doing.'),

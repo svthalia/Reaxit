@@ -5,6 +5,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
+import 'package:reaxit/config.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/widgets.dart';
 
@@ -129,6 +130,10 @@ class _MarkPresentQrButton extends StatelessWidget {
                 builder: (context, state) {
                   final theme = Theme.of(context);
                   if (state.event != null) {
+                    final host = Config.of(context).host;
+                    final pk = state.event!.pk;
+                    final token = state.event!.markPresentUrlToken;
+                    final url = 'https://$host/events/$pk/mark-present/$token';
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -140,7 +145,7 @@ class _MarkPresentQrButton extends StatelessWidget {
                           ),
                         ),
                         QrImage(
-                          data: state.event!.markPresentUrl.toString(),
+                          data: url,
                           padding: const EdgeInsets.all(24),
                           backgroundColor: Colors.grey[50]!,
                         ),

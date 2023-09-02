@@ -10,7 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs.dart';
-import 'package:reaxit/config.dart' as config;
+import 'package:reaxit/config.dart';
 import 'package:reaxit/firebase_options.dart';
 import 'package:reaxit/routes.dart';
 import 'package:reaxit/tosti/blocs/auth_cubit.dart';
@@ -42,7 +42,7 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await SentryFlutter.init(
     (options) {
-      options.dsn = config.sentryDSN;
+      options.dsn = sentryDSN;
     },
     appRunner: () async {
       runApp(BlocProvider(
@@ -290,65 +290,70 @@ class _ThaliAppState extends State<ThaliApp> {
                           (authState as LoggedOutAuthState).apiRepository!;
                     }
 
-                    return RepositoryProvider.value(
-                      value: apiRepository,
-                      child: MultiBlocProvider(
-                        providers: [
-                          BlocProvider(
-                            create: (_) =>
-                                PaymentUserCubit(apiRepository)..load(),
-                            lazy: false,
-                          ),
-                          BlocProvider(
-                            create: (_) =>
-                                FullMemberCubit(apiRepository)..load(),
-                            lazy: false,
-                          ),
-                          BlocProvider(
-                            create: (_) => WelcomeCubit(apiRepository)..load(),
-                            lazy: false,
-                          ),
-                          BlocProvider(
-                            create: (_) =>
-                                CalendarCubit(apiRepository)..cachedLoad(),
-                            lazy: false,
-                          ),
-                          BlocProvider(
-                            create: (_) =>
-                                MemberListCubit(apiRepository)..load(),
-                            lazy: false,
-                          ),
-                          BlocProvider(
-                            create: (_) =>
-                                AlbumListCubit(apiRepository)..load(),
-                            lazy: false,
-                          ),
-                          BlocProvider(
-                            // The SettingsCubit must not be lazy, since
-                            // it handles setting up push notifications.
-                            create: (_) => SettingsCubit(apiRepository)..load(),
-                            lazy: false,
-                          ),
-                          BlocProvider(
-                            create: (_) => TostiAuthCubit()..load(),
-                            lazy: true,
-                          ),
-                          BlocProvider(
-                            create: (_) => BoardsCubit(apiRepository)..load(),
-                            lazy: true,
-                          ),
-                          BlocProvider(
-                            create: (_) =>
-                                CommitteesCubit(apiRepository)..load(),
-                            lazy: true,
-                          ),
-                          BlocProvider(
-                            create: (_) =>
-                                SocietiesCubit(apiRepository)..load(),
-                            lazy: true,
-                          ),
-                        ],
-                        child: navigator!,
+                    return InheritedConfig(
+                      config: apiRepository.config,
+                      child: RepositoryProvider.value(
+                        value: apiRepository,
+                        child: MultiBlocProvider(
+                          providers: [
+                            BlocProvider(
+                              create: (_) =>
+                                  PaymentUserCubit(apiRepository)..load(),
+                              lazy: false,
+                            ),
+                            BlocProvider(
+                              create: (_) =>
+                                  FullMemberCubit(apiRepository)..load(),
+                              lazy: false,
+                            ),
+                            BlocProvider(
+                              create: (_) =>
+                                  WelcomeCubit(apiRepository)..load(),
+                              lazy: false,
+                            ),
+                            BlocProvider(
+                              create: (_) =>
+                                  CalendarCubit(apiRepository)..cachedLoad(),
+                              lazy: false,
+                            ),
+                            BlocProvider(
+                              create: (_) =>
+                                  MemberListCubit(apiRepository)..load(),
+                              lazy: false,
+                            ),
+                            BlocProvider(
+                              create: (_) =>
+                                  AlbumListCubit(apiRepository)..load(),
+                              lazy: false,
+                            ),
+                            BlocProvider(
+                              // The SettingsCubit must not be lazy, since
+                              // it handles setting up push notifications.
+                              create: (_) =>
+                                  SettingsCubit(apiRepository)..load(),
+                              lazy: false,
+                            ),
+                            BlocProvider(
+                              create: (_) => TostiAuthCubit()..load(),
+                              lazy: true,
+                            ),
+                            BlocProvider(
+                              create: (_) => BoardsCubit(apiRepository)..load(),
+                              lazy: true,
+                            ),
+                            BlocProvider(
+                              create: (_) =>
+                                  CommitteesCubit(apiRepository)..load(),
+                              lazy: true,
+                            ),
+                            BlocProvider(
+                              create: (_) =>
+                                  SocietiesCubit(apiRepository)..load(),
+                              lazy: true,
+                            ),
+                          ],
+                          child: navigator!,
+                        ),
                       ),
                     );
                   } else {
