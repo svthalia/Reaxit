@@ -21,7 +21,7 @@ void testLogin() {
             when(authCubit.state).thenReturn(state);
           })
           ..add(LoadingAuthState())
-          ..add(LoggedOutAuthState());
+          ..add(const LoggedOutAuthState());
 
         when(authCubit.load()).thenAnswer((_) => Future.value(null));
         when(authCubit.stream).thenAnswer((_) => streamController.stream);
@@ -138,7 +138,7 @@ void testLogin() {
 
         verify(authCubit.logOut()).called(1);
 
-        streamController.add(LoggedOutAuthState());
+        streamController.add(const LoggedOutAuthState());
         await tester.pumpAndSettle();
 
         expect(find.text('LOGIN'), findsOneWidget);

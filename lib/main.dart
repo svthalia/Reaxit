@@ -8,12 +8,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:overlay_support/overlay_support.dart';
+import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/firebase_options.dart';
 import 'package:reaxit/routes.dart';
 import 'package:reaxit/tosti/blocs/auth_cubit.dart';
-import 'package:reaxit/ui/screens.dart';
 import 'package:reaxit/ui/theme.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -276,56 +276,57 @@ class _ThaliAppState extends State<ThaliApp> {
                     ));
                   }
                 },
-
+                buildWhen: (previous, current) => current is! FailureAuthState,
                 builder: (context, authState) {
                   // Build with cubits provided when logged in.
-                  if (authState is LoggedInAuthState) {
+                  if (authState is LoggedInAuthState ||
+                      (authState is LoggedOutAuthState &&
+                          authState.apiRepository != null)) {
+                    final ApiRepository apiRepository;
+                    if (authState is LoggedInAuthState) {
+                      apiRepository = authState.apiRepository;
+                    } else {
+                      apiRepository =
+                          (authState as LoggedOutAuthState).apiRepository!;
+                    }
+
                     return RepositoryProvider.value(
-                      value: authState.apiRepository,
+                      value: apiRepository,
                       child: MultiBlocProvider(
                         providers: [
                           BlocProvider(
-                            create: (_) => PaymentUserCubit(
-                              authState.apiRepository,
-                            )..load(),
+                            create: (_) =>
+                                PaymentUserCubit(apiRepository)..load(),
                             lazy: false,
                           ),
                           BlocProvider(
-                            create: (_) => FullMemberCubit(
-                              authState.apiRepository,
-                            )..load(),
+                            create: (_) =>
+                                FullMemberCubit(apiRepository)..load(),
                             lazy: false,
                           ),
                           BlocProvider(
-                            create: (_) => WelcomeCubit(
-                              authState.apiRepository,
-                            )..load(),
+                            create: (_) => WelcomeCubit(apiRepository)..load(),
                             lazy: false,
                           ),
                           BlocProvider(
-                            create: (_) => CalendarCubit(
-                              authState.apiRepository,
-                            )..cachedLoad(),
+                            create: (_) =>
+                                CalendarCubit(apiRepository)..cachedLoad(),
                             lazy: false,
                           ),
                           BlocProvider(
-                            create: (_) => MemberListCubit(
-                              authState.apiRepository,
-                            )..load(),
+                            create: (_) =>
+                                MemberListCubit(apiRepository)..load(),
                             lazy: false,
                           ),
                           BlocProvider(
-                            create: (_) => AlbumListCubit(
-                              authState.apiRepository,
-                            )..load(),
+                            create: (_) =>
+                                AlbumListCubit(apiRepository)..load(),
                             lazy: false,
                           ),
                           BlocProvider(
                             // The SettingsCubit must not be lazy, since
                             // it handles setting up push notifications.
-                            create: (_) => SettingsCubit(
-                              authState.apiRepository,
-                            )..load(),
+                            create: (_) => SettingsCubit(apiRepository)..load(),
                             lazy: false,
                           ),
                           BlocProvider(
@@ -333,36 +334,23 @@ class _ThaliAppState extends State<ThaliApp> {
                             lazy: true,
                           ),
                           BlocProvider(
-                            create: (_) => BoardsCubit(
-                              authState.apiRepository,
-                            )..load(),
+                            create: (_) => BoardsCubit(apiRepository)..load(),
                             lazy: true,
                           ),
                           BlocProvider(
-                            create: (_) => CommitteesCubit(
-                              authState.apiRepository,
-                            )..load(),
+                            create: (_) =>
+                                CommitteesCubit(apiRepository)..load(),
                             lazy: true,
                           ),
                           BlocProvider(
-                            create: (_) => SocietiesCubit(
-                              authState.apiRepository,
-                            )..load(),
+                            create: (_) =>
+                                SocietiesCubit(apiRepository)..load(),
                             lazy: true,
                           ),
                         ],
                         child: navigator!,
                       ),
                     );
-                  } else if (authState is LoggedOutAuthState) {
-                    // Don't show the navigator (which is animating from a logged-in
-                    // stack towards only the login screen). This prevents getting
-                    // `ProviderNotFoundException`s during the animation, caused by
-                    // the cubits no longer being provided after logging out.
-                    // There is no transition shown when logging out, because
-                    // there is temporarily no navigator rendering an animation.
-                    return const LoginScreen();
-                    // TODO: This is hacky. There should be a neat way to handle this.
                   } else {
                     return navigator!;
                   }

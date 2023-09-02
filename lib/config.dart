@@ -106,3 +106,79 @@ const Duration cacheStalePeriod = Duration(days: 30);
 /// Assuming most cached images are 'small' (300x300), the
 /// storage used will be +- 20KB * [cacheMaxObjects].
 const int cacheMaxObjects = 2000;
+
+class ApiConfig {
+  final String host;
+  final String secret;
+  final String identifier;
+  final String scheme;
+  final int port;
+
+  const ApiConfig({
+    required this.host,
+    required this.secret,
+    required this.identifier,
+    required this.scheme,
+    required this.port,
+  });
+
+  String get cdn => 'cdn.$host';
+  Uri get authorizationEndpoint => Uri(
+        scheme: scheme,
+        host: host,
+        port: port,
+        path: 'user/oauth/authorize/',
+      );
+
+  Uri get tokenEndpoint => Uri(
+        scheme: scheme,
+        host: host,
+        port: port,
+        path: 'user/oauth/token/',
+      );
+
+  static const ApiConfig defaultConfig =
+      ApiConfig.production ?? ApiConfig.staging;
+
+  static const ApiConfig staging = ApiConfig(
+    host: 'staging.thalia.nu',
+    secret: 'Chwh1BE3MgfU1OZZmYRV3LU3e3GzpZJ6tiWrqzFY3dPhMlS7VYD3qMm1RC1pPBvg'
+        '3WaWmJxfRq8bv5ElVOpjRZwabAGOZ0DbuHhW3chAMaNlOmwXixNfUJIKIBzlnr7I',
+    identifier: '3zlt7pqGVMiUCGxOnKTZEpytDUN7haeFBP2kVkig',
+    scheme: 'https',
+    port: 443,
+  );
+
+  static const ApiConfig? production =
+      (bool.hasEnvironment('THALIA_OAUTH_APP_SECRET') &&
+              bool.hasEnvironment('THALIA_OAUTH_APP_ID'))
+          ? ApiConfig(
+              host: 'thalia.nu',
+              secret: String.fromEnvironment('THALIA_OAUTH_APP_SECRET'),
+              identifier: '3zlt7pqGVMiUCGxOnKTZEpytDUN7haeFBP2kVkig',
+              scheme: 'https',
+              port: 443,
+            )
+          : null;
+
+  static const ApiConfig? local =
+      (bool.hasEnvironment('LOCAL_THALIA_OAUTH_APP_SECRET') &&
+              bool.hasEnvironment('LOCAL_THALIA_OAUTH_APP_ID'))
+          ? ApiConfig(
+              host: String.fromEnvironment(
+                'LOCAL_THALIA_API_HOST',
+                defaultValue: '127.0.0.1',
+              ),
+              secret: String.fromEnvironment('LOCAL_THALIA_OAUTH_APP_SECRET'),
+              identifier: String.fromEnvironment('LOCAL_THALIA_OAUTH_APP_ID'),
+              scheme: String.fromEnvironment(
+                'LOCAL_THALIA_API_SCHEME',
+                defaultValue: 'http',
+              ),
+              port: int.fromEnvironment(
+                'LOCAL_THALIA_API_PORT',
+                defaultValue: 8000,
+              ),
+            )
+          : null;
+}
