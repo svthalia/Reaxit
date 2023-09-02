@@ -253,7 +253,7 @@ class CalendarScrollView extends StatelessWidget {
             calendarState.resultsDown.isNotEmpty,
         _monthGroupedEventsDown = calendarState.resultsDown.isEmpty
             ? List.empty()
-            : ensureContainsToday(
+            : ensureMonthsContainsToday(
                 groupByMonth(calendarState.resultsDown)
                     .sortedBy((element) => element.month),
                 now),
