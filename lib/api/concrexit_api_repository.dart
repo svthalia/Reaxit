@@ -53,12 +53,13 @@ class ConcrexitApiRepository implements ApiRepository {
   @override
   final Config config;
 
-  /// The [oauth2.Client] used to access the API.
-  final LoggingClient _client;
+  /// The authenticated client used to access the API.
+  LoggingClient? _innerClient;
+
   final Function() _onLogOut;
 
   ConcrexitApiRepository({
-    /// The [oauth2.Client] used to access the API.
+    /// The authenticated client used to access the API.
     required LoggingClient client,
 
     /// An [Config] describing the API.
@@ -66,7 +67,7 @@ class ConcrexitApiRepository implements ApiRepository {
 
     /// Called when the client can no longer authenticate.
     required Function() onLogOut,
-  })  : _client = client,
+  })  : _innerClient = client,
         _onLogOut = onLogOut,
         _baseUri = Uri(
           scheme: config.scheme,
@@ -76,7 +77,21 @@ class ConcrexitApiRepository implements ApiRepository {
 
   @override
   void close() {
-    _client.close();
+    if (_innerClient != null) {
+      _innerClient!.close();
+      _innerClient = null;
+    }
+  }
+
+  /// The authenticated client used to access the API.
+  ///
+  /// Throws [ApiException.notLoggedIn] if the ApiRepository is not closed.
+  LoggingClient get _client {
+    if (_innerClient == null) {
+      throw ApiException.notLoggedIn;
+    } else {
+      return _innerClient!;
+    }
   }
 
   final Uri _baseUri;
