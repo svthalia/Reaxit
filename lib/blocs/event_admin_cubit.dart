@@ -124,14 +124,12 @@ class EventAdminCubit extends Cubit<EventAdminState> {
         search: query,
         limit: 999999999,
         cancelled: true,
-        queued: false,
         ordering: '-date_cancelled',
       );
       final queuedRegistrations = await api.getAdminEventRegistrations(
         pk: eventPk,
         search: query,
         limit: 999999999,
-        cancelled: false,
         queued: true,
         ordering: 'queue_position',
       );
@@ -187,14 +185,12 @@ class EventAdminCubit extends Cubit<EventAdminState> {
           search: query,
           limit: 999999999,
           cancelled: true,
-          queued: false,
           ordering: '-date_cancelled',
         );
         final queuedRegistrations = await api.getAdminEventRegistrations(
           pk: eventPk,
           search: query,
           limit: 999999999,
-          cancelled: false,
           queued: true,
           ordering: 'queue_position',
         );

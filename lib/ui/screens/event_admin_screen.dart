@@ -132,9 +132,9 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                 bottom: TabBar(
                   indicatorColor: Theme.of(context).colorScheme.primary,
                   tabs: const [
-                    Tab(text: 'QUEUED'),
-                    Tab(text: 'REGISTERED'),
-                    Tab(text: 'CANCELLED'),
+                    Tab(text: 'Queued'),
+                    Tab(text: 'Registered'),
+                    Tab(text: 'Cancelled'),
                   ],
                 ),
               ),
