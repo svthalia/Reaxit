@@ -138,7 +138,7 @@ void testLogin() {
 
         verify(authCubit.logOut()).called(1);
 
-        streamController.add(const LoggedOutAuthState());
+        streamController.add(LoggedOutAuthState(apiRepository: api));
         await tester.pumpAndSettle();
 
         expect(find.text('LOGIN'), findsOneWidget);

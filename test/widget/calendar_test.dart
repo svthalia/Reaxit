@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reaxit/blocs.dart';
+import 'package:reaxit/config.dart';
 import 'package:reaxit/ui/screens.dart';
 
 import '../fakes.dart';
@@ -39,12 +40,15 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: CalendarScrollView(
-              controller: ScrollController(),
-              calendarState: state,
-              loadMoreUp: (() {}),
-              now: now,
+          home: InheritedConfig(
+            config: Config.defaultConfig,
+            child: Scaffold(
+              body: CalendarScrollView(
+                controller: ScrollController(),
+                calendarState: state,
+                loadMoreUp: (() {}),
+                now: now,
+              ),
             ),
           ),
         ),
@@ -77,12 +81,15 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: CalendarScrollView(
-              controller: ScrollController(),
-              calendarState: state,
-              loadMoreUp: (() {}),
-              now: now,
+          home: InheritedConfig(
+            config: Config.defaultConfig,
+            child: Scaffold(
+              body: CalendarScrollView(
+                controller: ScrollController(),
+                calendarState: state,
+                loadMoreUp: (() {}),
+                now: now,
+              ),
             ),
           ),
         ),
