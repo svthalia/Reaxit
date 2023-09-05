@@ -278,7 +278,12 @@ class _ThaliAppState extends State<ThaliApp> {
                 },
                 buildWhen: (previous, current) => current is! FailureAuthState,
                 builder: (context, authState) {
-                  // Build with cubits provided when logged in.
+                  // Build with ApiRepository and cubits provided when an
+                  // ApiRepository is available. This is the case when logged
+                  // in, but also when just logged out (after having been logged
+                  // in), with a closed ApiRepository.
+                  // The latter allows us to keep the cubits alive
+                  // while animating towards the login screen.
                   if (authState is LoggedInAuthState ||
                       (authState is LoggedOutAuthState &&
                           authState.apiRepository != null)) {
