@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
 import 'package:reaxit/utilities/cache_manager.dart' as cache;
-import 'package:reaxit/config.dart' as config;
 
 /// Wrapper for [CachedNetworkImage] with sensible defaults.
 class CachedImage extends CachedNetworkImage {
@@ -16,19 +15,7 @@ class CachedImage extends CachedNetworkImage {
           key: ValueKey(imageUrl),
           imageUrl: imageUrl,
           cacheManager: cache.ThaliaCacheManager(),
-
-          /// If the image is from thalia.nu, remove the query part of the url
-          /// from its key in the cache. Private images from concrexit have a
-          /// signature in the url that expires every 3 hours. Removing this
-          /// signature makes sure that the same cache object can be used
-          /// regardless of the signature. This assumes that the qurey part is
-          /// only used for authentication, not to identify the image, so the
-          /// remaining path is a unique key.
-          /// If the url is not from thalia.nu, use the full url as the key.
-          cacheKey: (Uri.parse(imageUrl).host == config.apiHost ||
-                  Uri.parse(imageUrl).host == config.apiHostCDN)
-              ? Uri.parse(imageUrl).replace(query: '').toString()
-              : imageUrl,
+          cacheKey: _getCacheKey(imageUrl),
           fit: fit,
           fadeOutDuration: fadeOutDuration,
           fadeInDuration: fadeInDuration,
@@ -42,6 +29,27 @@ class CachedImageProvider extends CachedNetworkImageProvider {
       : super(
           imageUrl,
           cacheManager: cache.ThaliaCacheManager(),
-          cacheKey: Uri.parse(imageUrl).replace(query: '').toString(),
+          cacheKey: _getCacheKey(imageUrl),
         );
+}
+
+/// If the image is from thalia.nu, remove the query part of the url from its
+/// key in the cache. Private images from concrexit have a signature in the url
+/// that expires every few hours. Removing this signature makes sure that the
+/// same cache object can be used regardless of the signature.
+///
+/// This assumes that the query part is only used for authentication,
+/// not to identify the image, so the remaining path is a unique key.
+///
+/// If the url is not from thalia.nu, use the full url as the key.
+String _getCacheKey(String url) {
+  final uri = Uri.parse(url);
+  if (uri.host
+      case 'thalia.nu' ||
+          'staging.thalia.nu' ||
+          'cdn.thalia.nu' ||
+          'cdn.staging.thalia.nu') {
+    return uri.replace(query: '').toString();
+  }
+  return url;
 }

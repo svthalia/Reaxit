@@ -122,7 +122,6 @@ jobs:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           KEYCHAIN_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_PRIVATE_KEY: ${{ secrets.PASSWORDS_REPO_DEPLOY_KEY }}
-          THALIA_API_HOST: ${{ vars.THALIA_API_HOST }}
           THALIA_OAUTH_APP_ID: ${{ secrets.THALIA_OAUTH_APP_ID }}
           THALIA_OAUTH_APP_SECRET: ${{ secrets.THALIA_OAUTH_APP_SECRET }}
           TOSTI_API_HOST: ${{ vars.TOSTI_API_HOST }}
@@ -198,7 +197,6 @@ jobs:
       - name: Build app
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-          THALIA_API_HOST: ${{ vars.THALIA_API_HOST }}
           THALIA_OAUTH_APP_ID: ${{ secrets.THALIA_OAUTH_APP_ID }}
           THALIA_OAUTH_APP_SECRET: ${{ secrets.THALIA_OAUTH_APP_SECRET }}
           TOSTI_API_HOST: ${{ vars.TOSTI_API_HOST }}

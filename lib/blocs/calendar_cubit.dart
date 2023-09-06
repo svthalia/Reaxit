@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
-import 'package:reaxit/config.dart' as config;
+import 'package:reaxit/config.dart';
 import 'package:reaxit/models.dart';
 
 /// Wrapper around a [BaseEvent] to be shown in the calendar.
@@ -505,7 +505,7 @@ class CalendarCubit extends Cubit<CalendarState> {
         emit(CalendarState(_truthTime,
             const DoubleListState.success(isDoneUp: true, isDoneDown: true)));
       } else {
-        _searchDebounceTimer = Timer(config.searchDebounceTime, load);
+        _searchDebounceTimer = Timer(Config.searchDebounceTime, load);
       }
     }
   }

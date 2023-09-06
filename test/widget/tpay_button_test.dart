@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
+import 'package:reaxit/config.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/widgets.dart';
 
@@ -30,15 +31,18 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: BlocProvider<PaymentUserCubit>.value(
-              value: paymentUserCubit,
-              child: TPayButton(
-                amount: '13.37',
-                successMessage: 'Nice!',
-                confirmationMessage: 'Are you sure?',
-                failureMessage: ':(',
-                onPay: () async => payCompleter.complete(),
+          home: InheritedConfig(
+            config: Config.defaultConfig,
+            child: Scaffold(
+              body: BlocProvider<PaymentUserCubit>.value(
+                value: paymentUserCubit,
+                child: TPayButton(
+                  amount: '13.37',
+                  successMessage: 'Nice!',
+                  confirmationMessage: 'Are you sure?',
+                  failureMessage: ':(',
+                  onPay: () async => payCompleter.complete(),
+                ),
               ),
             ),
           ),
@@ -80,15 +84,18 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: BlocProvider<PaymentUserCubit>.value(
-              value: paymentUserCubit,
-              child: TPayButton(
-                amount: '13.37',
-                successMessage: 'Nice!',
-                confirmationMessage: 'Are you sure?',
-                failureMessage: ':(',
-                onPay: () async => payCompleter.complete(),
+          home: InheritedConfig(
+            config: Config.defaultConfig,
+            child: Scaffold(
+              body: BlocProvider<PaymentUserCubit>.value(
+                value: paymentUserCubit,
+                child: TPayButton(
+                  amount: '13.37',
+                  successMessage: 'Nice!',
+                  confirmationMessage: 'Are you sure?',
+                  failureMessage: ':(',
+                  onPay: () async => payCompleter.complete(),
+                ),
               ),
             ),
           ),
@@ -127,17 +134,20 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: BlocProvider<PaymentUserCubit>.value(
-              value: paymentUserCubit,
-              child: TPayButton(
-                amount: '13.37',
-                successMessage: 'Nice!',
-                confirmationMessage: 'Are you sure?',
-                failureMessage: ':(',
-                onPay: () async {
-                  throw ApiException.unknownError;
-                },
+          home: InheritedConfig(
+            config: Config.defaultConfig,
+            child: Scaffold(
+              body: BlocProvider<PaymentUserCubit>.value(
+                value: paymentUserCubit,
+                child: TPayButton(
+                  amount: '13.37',
+                  successMessage: 'Nice!',
+                  confirmationMessage: 'Are you sure?',
+                  failureMessage: ':(',
+                  onPay: () async {
+                    throw ApiException.unknownError;
+                  },
+                ),
               ),
             ),
           ),
@@ -167,17 +177,20 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: BlocProvider<PaymentUserCubit>.value(
-              value: paymentUserCubit,
-              child: TPayButton(
-                amount: '13.37',
-                successMessage: 'Nice!',
-                confirmationMessage: 'Are you sure?',
-                failureMessage: ':(',
-                onPay: () async {
-                  throw ApiException.unknownError;
-                },
+          home: InheritedConfig(
+            config: Config.defaultConfig,
+            child: Scaffold(
+              body: BlocProvider<PaymentUserCubit>.value(
+                value: paymentUserCubit,
+                child: TPayButton(
+                  amount: '13.37',
+                  successMessage: 'Nice!',
+                  confirmationMessage: 'Are you sure?',
+                  failureMessage: ':(',
+                  onPay: () async {
+                    throw ApiException.unknownError;
+                  },
+                ),
               ),
             ),
           ),
