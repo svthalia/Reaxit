@@ -203,10 +203,16 @@ class _ThaliAppState extends State<ThaliApp> {
       // logged in. If the user is logged in, and there is an original
       // path in the query parameters, redirect to that original path.
       redirect: (context, state) {
-        final loggedIn = _authCubit.state is LoggedInAuthState;
+        final authState = _authCubit.state;
+        final loggedIn = authState is LoggedInAuthState;
+        final justLoggedOut =
+            authState is LoggedOutAuthState && authState.apiRepository != null;
         final goingToLogin = state.location.startsWith('/login');
 
         if (!loggedIn && !goingToLogin) {
+          // Drop original location if you just logged out.
+          if (justLoggedOut) return '/login';
+
           return Uri(path: '/login', queryParameters: {
             'from': state.location,
           }).toString();
