@@ -1,3 +1,4 @@
+import 'package:reaxit/config.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/api/exceptions.dart';
 
@@ -7,7 +8,9 @@ import 'package:reaxit/api/exceptions.dart';
 /// In case credentials cannot be refreshed, this calls `logOut`, which should
 /// close the client and indicates that the user is no longer logged in.
 abstract class ApiRepository {
-  ApiRepository();
+  final Config config;
+
+  ApiRepository(this.config);
 
   /// Closes the connection to the api. This must be called when logging out.
   void close();

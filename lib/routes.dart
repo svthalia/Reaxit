@@ -11,14 +11,17 @@ import 'package:reaxit/ui/widgets.dart';
 
 /// Returns true if [uri] is a deep link that can be handled by the app.
 bool isDeepLink(Uri uri) {
-  if (uri.host != config.apiHost) return false;
-  return _deepLinkRegExps.any((re) => re.hasMatch(uri.path));
+  if (uri.host case 'thalia.nu' || 'staging.thalia.nu') {
+    return _deepLinkRegExps.any((re) => re.hasMatch(uri.path));
+  }
+  return false;
 }
 
 const _uuid = '([a-z0-9]{8}-([a-z0-9]{4}-){3}[a-z0-9]{12})';
 
-/* Any route added here also needs to be added to 
-android/app/src/main/AndroidManifest.xml and android/app/src/debug/AndroidManifest.xml */
+// Any route added here also needs to be added to
+// android/app/src/main/AndroidManifest.xml and
+// android/app/src/debug/AndroidManifest.xml
 
 /// The [RegExp]s that can used as deep links. This list should
 /// contain all deep links that should be handled by the app.

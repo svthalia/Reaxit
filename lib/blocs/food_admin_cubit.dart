@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
-import 'package:reaxit/config.dart' as config;
+import 'package:reaxit/config.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 
@@ -66,7 +66,7 @@ class FoodAdminCubit extends Cubit<FoodAdminState> {
         /// Don't get results when the query is empty.
         emit(const LoadingState());
       } else {
-        _searchDebounceTimer = Timer(config.searchDebounceTime, load);
+        _searchDebounceTimer = Timer(Config.searchDebounceTime, load);
       }
     }
   }

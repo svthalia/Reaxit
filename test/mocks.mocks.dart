@@ -254,10 +254,10 @@ class MockAuthCubit extends _i1.Mock implements _i2.AuthCubit {
         returnValueForMissingStub: _i7.Future<void>.value(),
       ) as _i7.Future<void>);
   @override
-  _i7.Future<void> logIn() => (super.noSuchMethod(
+  _i7.Future<void> logIn(_i2.Environment? environment) => (super.noSuchMethod(
         Invocation.method(
           #logIn,
-          [],
+          [environment],
         ),
         returnValue: _i7.Future<void>.value(),
         returnValueForMissingStub: _i7.Future<void>.value(),
@@ -271,6 +271,14 @@ class MockAuthCubit extends _i1.Mock implements _i2.AuthCubit {
         returnValue: _i7.Future<void>.value(),
         returnValueForMissingStub: _i7.Future<void>.value(),
       ) as _i7.Future<void>);
+  @override
+  void selectEnvironment(_i2.Environment? environment) => super.noSuchMethod(
+        Invocation.method(
+          #selectEnvironment,
+          [environment],
+        ),
+        returnValueForMissingStub: null,
+      );
   @override
   void emit(_i2.AuthState? state) => super.noSuchMethod(
         Invocation.method(

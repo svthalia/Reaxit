@@ -14,7 +14,7 @@ import 'package:reaxit/ui/widgets.dart';
 import 'package:reaxit/ui/widgets/file_button.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:reaxit/config.dart' as config;
+import 'package:reaxit/config.dart';
 
 class EventScreen extends StatefulWidget {
   final String? slug;
@@ -761,7 +761,7 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   TextSpan _makeTermsAndConditions(Event event) {
-    final url = config.termsAndConditionsUrl;
+    final url = Config.of(context).termsAndConditionsUrl;
     return TextSpan(
       children: [
         const TextSpan(

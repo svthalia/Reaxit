@@ -12,7 +12,7 @@ import 'package:oauth2/oauth2.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/concrexit_api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
-import 'package:reaxit/config.dart' as config;
+import 'package:reaxit/config.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,25 +20,20 @@ final _redirectUrl = Uri.parse(
   'nu.thalia://callback',
 );
 
-final Uri _authorizationEndpoint = Uri(
-  scheme: config.apiScheme,
-  host: config.apiHost,
-  port: config.apiPort,
-  path: 'user/oauth/authorize/',
-);
-
-final Uri _tokenEndpoint = Uri(
-  scheme: config.apiScheme,
-  host: config.apiHost,
-  port: config.apiPort,
-  path: 'user/oauth/token/',
-);
-
 const _credentialsStorageKey = 'ThaliApp OAuth2 credentials';
 
 const _devicePkPreferenceKey = 'deviceRegistrationId';
 
-abstract class AuthState extends Equatable {
+enum Environment {
+  staging,
+  production,
+  local;
+
+  static const defaultEnvironment =
+      Config.production != null ? Environment.production : Environment.staging;
+}
+
+class AuthState extends Equatable {
   const AuthState();
 
   @override
@@ -49,7 +44,21 @@ abstract class AuthState extends Equatable {
 class LoadingAuthState extends AuthState {}
 
 /// Not logged in.
-class LoggedOutAuthState extends AuthState {}
+class LoggedOutAuthState extends AuthState {
+  final Environment selectedEnvironment;
+
+  /// A closed [ApiRepository] left over after logging out, that allows
+  /// keeping cubits alive while animating towards the login screen.
+  final ApiRepository? apiRepository;
+
+  const LoggedOutAuthState({
+    this.selectedEnvironment = Environment.defaultEnvironment,
+    this.apiRepository,
+  });
+
+  @override
+  List<Object?> get props => [selectedEnvironment, apiRepository];
+}
 
 /// Logged in.
 class LoggedInAuthState extends AuthState {
@@ -94,26 +103,38 @@ class AuthCubit extends Cubit<AuthState> {
       // Retrieve existing credentials.
       final stored = await storage.read(
         key: _credentialsStorageKey,
-        iOptions:
-            const IOSOptions(accessibility: KeychainAccessibility.first_unlock),
+        iOptions: const IOSOptions(
+          accessibility: KeychainAccessibility.first_unlock,
+        ),
       );
 
       if (stored != null) {
         // Restore credentials from the storage.
         final credentials = Credentials.fromJson(stored);
 
+        final Config apiConfig;
+        if (Config.production != null &&
+            credentials.tokenEndpoint == Config.production!.tokenEndpoint) {
+          apiConfig = Config.production!;
+        } else if (Config.local != null &&
+            credentials.tokenEndpoint == Config.local!.tokenEndpoint) {
+          apiConfig = Config.local!;
+        } else {
+          apiConfig = Config.staging;
+        }
+
         // Log out if not all required scopes are available. After an update that
         // introduces a new scope, this will cause the app to log out and get new
         // credentials with the required scopes, instead of just getting 403's
         // until you manually log out.
         final scopes = credentials.scopes?.toSet() ?? <String>{};
-        if (scopes.containsAll(config.oauthScopes)) {
+        if (scopes.containsAll(Config.oauthScopes)) {
           // Create the API repository.
           final apiRepository = ConcrexitApiRepository(
             client: LoggingClient(
               credentials,
-              identifier: config.apiIdentifier,
-              secret: config.apiSecret,
+              identifier: apiConfig.identifier,
+              secret: apiConfig.secret,
               onCredentialsRefreshed: (credentials) async {
                 const storage = FlutterSecureStorage();
                 await storage.write(
@@ -129,6 +150,7 @@ class AuthCubit extends Cubit<AuthState> {
                 SentryStatusCode.range(405, 499),
               ]),
             ),
+            config: apiConfig,
             onLogOut: logOut,
           );
 
@@ -145,7 +167,7 @@ class AuthCubit extends Cubit<AuthState> {
       } else {
         // Clear username for sentry.
         Sentry.configureScope((scope) => scope.setUser(null));
-        emit(LoggedOutAuthState());
+        emit(const LoggedOutAuthState());
       }
     } on PlatformException {
       try {
@@ -158,7 +180,7 @@ class AuthCubit extends Cubit<AuthState> {
       } on PlatformException {
         // Ignore.
       }
-      emit(LoggedOutAuthState());
+      emit(const LoggedOutAuthState());
     }
   }
 
@@ -169,15 +191,21 @@ class AuthCubit extends Cubit<AuthState> {
   /// authenticated client to make requests to the API. Furthermore, it will
   /// handle whatever need to happen upon loggin in, such as setting up push
   /// notifications.
-  Future<void> logIn() async {
+  Future<void> logIn(Environment environment) async {
     emit(LoadingAuthState());
+
+    final apiConfig = switch (environment) {
+      Environment.staging => Config.staging,
+      Environment.production => Config.production ?? Config.staging,
+      Environment.local => Config.local ?? Config.staging,
+    };
 
     // Prepare for the authentication flow.
     final grant = AuthorizationCodeGrant(
-      config.apiIdentifier,
-      _authorizationEndpoint,
-      _tokenEndpoint,
-      secret: config.apiSecret,
+      apiConfig.identifier,
+      apiConfig.authorizationEndpoint,
+      apiConfig.tokenEndpoint,
+      secret: apiConfig.secret,
       onCredentialsRefreshed: (credentials) async {
         // When credentials are refreshed, store them.
         const storage = FlutterSecureStorage();
@@ -193,7 +221,7 @@ class AuthCubit extends Cubit<AuthState> {
 
     final authorizeUrl = grant.getAuthorizationUrl(
       _redirectUrl,
-      scopes: config.oauthScopes,
+      scopes: Config.oauthScopes,
     );
 
     try {
@@ -222,6 +250,7 @@ class AuthCubit extends Cubit<AuthState> {
 
       final apiRepository = ConcrexitApiRepository(
         client: LoggingClient.fromClient(client),
+        config: apiConfig,
         onLogOut: logOut,
       );
 
@@ -231,12 +260,16 @@ class AuthCubit extends Cubit<AuthState> {
     } on PlatformException catch (exception) {
       // Forward exceptions from the authentication flow.
       emit(FailureAuthState(message: exception.message));
+      emit(LoggedOutAuthState(selectedEnvironment: environment));
     } on SocketException catch (_) {
       emit(const FailureAuthState(message: 'No internet.'));
+      emit(LoggedOutAuthState(selectedEnvironment: environment));
     } on AuthorizationException catch (_) {
       emit(const FailureAuthState(message: 'Authorization failed.'));
+      emit(LoggedOutAuthState(selectedEnvironment: environment));
     } catch (_) {
       emit(const FailureAuthState(message: 'An unknown error occurred.'));
+      emit(LoggedOutAuthState(selectedEnvironment: environment));
     }
   }
 
@@ -262,7 +295,21 @@ class AuthCubit extends Cubit<AuthState> {
 
     // Clear username for sentry.
     Sentry.configureScope((scope) => scope.setUser(null));
-    emit(LoggedOutAuthState());
+
+    if (state is LoggedInAuthState) {
+      emit(LoggedOutAuthState(apiRepository: state.apiRepository));
+    }
+  }
+
+  /// Change the selected environment when on the login screen.
+  void selectEnvironment(Environment environment) {
+    final state = this.state;
+    if (state is LoggedOutAuthState) {
+      emit(LoggedOutAuthState(
+        selectedEnvironment: environment,
+        apiRepository: state.apiRepository,
+      ));
+    }
   }
 
   /// Set up push notifications.
