@@ -65,7 +65,7 @@ class _MenuAction extends StatelessWidget {
 }
 
 class ThaliaAppBar extends AppBar {
-  static const defaultIcons = 2;
+  static const defaultIcons = 3;
 
   static List<Widget> collapse(List<AppbarAction> widgets) {
     if (widgets.length <= defaultIcons) {
@@ -76,6 +76,7 @@ class ThaliaAppBar extends AppBar {
     return [
       ...widgets.take(defaultIcons - 1).map((item) => _IconAction(item)),
       MenuAnchor(
+        alignmentOffset: const Offset(0, -1),
         controller: controller,
         menuChildren: widgets
             .skip(defaultIcons - 1)
