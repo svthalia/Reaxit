@@ -5,6 +5,7 @@ import 'package:reaxit/ui/theme.dart';
 abstract class AppbarAction {
   Widget asIcon(BuildContext _);
   Widget asMenuItem(BuildContext _);
+  void ontap();
 
   const AppbarAction();
 }
@@ -40,6 +41,9 @@ class IconAppbarAction extends AppbarAction {
       icon: Icon(icon),
     );
   }
+
+  @override
+  void ontap() => onpressed();
 }
 
 class _IconAction extends StatelessWidget {
@@ -61,23 +65,30 @@ class _MenuAction extends StatelessWidget {
 }
 
 class ThaliaAppBar extends AppBar {
-  static const defaultIcons = 3;
+  static const defaultIcons = 2;
+
   static List<Widget> collapse(List<AppbarAction> widgets) {
     if (widgets.length <= defaultIcons) {
       return widgets.map((e) => _IconAction(e)).toList();
     }
 
+    MenuController controller = MenuController();
     return [
       ...widgets.take(defaultIcons - 1).map((item) => _IconAction(item)),
-      PopupMenuButton(
-        icon: const Icon(Icons.more_vert, color: Colors.white),
-        itemBuilder: (BuildContext context) {
-          return widgets
-              .skip(defaultIcons - 1)
-              .map((item) => PopupMenuItem(child: _MenuAction(item)))
-              .toList();
-        },
-      ),
+      MenuAnchor(
+        controller: controller,
+        menuChildren: widgets
+            .skip(defaultIcons - 1)
+            .map((item) => MenuItemButton(
+                  onPressed: item.ontap,
+                  child: _MenuAction(item),
+                ))
+            .toList(),
+        child: IconButton(
+          onPressed: controller.open,
+          icon: const Icon(Icons.more_vert, color: Colors.white),
+        ),
+      )
     ];
   }
 
