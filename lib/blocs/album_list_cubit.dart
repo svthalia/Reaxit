@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:reaxit/api/api_repository.dart';
-import 'package:reaxit/api/exceptions.dart';
-import 'package:reaxit/config.dart';
 import 'package:reaxit/blocs/list_cubit.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
