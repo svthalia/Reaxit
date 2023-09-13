@@ -184,6 +184,7 @@ abstract class ListCubit<T, S> extends Cubit<S> {
   /// getUp returns a future with more data in the up direction.
   /// This is where you would want to do an http request for example.
   Future<ListResponse<T>> getUp(int offset);
+
   /// getDown returns a future with more data in the down direction
   /// This is where you would want to do an http request for example.
   Future<ListResponse<T>> getDown(int offset);
@@ -194,6 +195,7 @@ abstract class ListCubit<T, S> extends Cubit<S> {
   /// processUp is called after getUp, and is used to process the data.
   /// For example, this can split daturned calendar events into multiple events.
   List<T> processUp(List<T> upResults) => upResults;
+
   /// processDown is called after getDown, and is used to process the data.
   /// For example, this can split daturned calendar events into multiple events.
   List<T> processDown(List<T> downResults) => downResults;
@@ -209,6 +211,7 @@ abstract class ListCubit<T, S> extends Cubit<S> {
   /// This can be used to remove data that should not (yet) be shown to
   /// the user.
   List<T> filterUp(List<T> upResults) => upResults;
+
   /// filterDown filters results in the down direction.
   /// This can be used to remove data that should not (yet) be shown to
   /// the user.
@@ -216,6 +219,7 @@ abstract class ListCubit<T, S> extends Cubit<S> {
 
   /// combineUp merges the new data with the new data, for the final result
   List<T> combineUp(List<T> upResults, S oldstate);
+
   /// combineDown merges the new data with the new data, for the final result
   List<T> combineDown(List<T> downResults, S oldstate);
 
@@ -223,6 +227,7 @@ abstract class ListCubit<T, S> extends Cubit<S> {
   /// (in loadMoreUp). For example when there is no more data, or we are
   /// already loading more data.
   bool canLoadMoreDown(S oldstate);
+
   /// canLoadMoreUp is called to check if more data can/should be loaded
   /// (in loadMoreDown). For example when there is no more data, or we are
   /// already loading more data.
@@ -230,14 +235,19 @@ abstract class ListCubit<T, S> extends Cubit<S> {
 
   /// loading returns a state to be used when loading fully new data
   S loading();
+
   /// loadingUp returns a state to be used when loading new data in the up direction
   S loadingUp(S oldstate);
+
   /// loadingDown returns a state to be used when loading new data in the down direction
   S loadingDown(S oldstate);
+
   /// empty returns a state to be used when showing there is no data
   S empty(String query);
+
   /// failure returns a state to be used when showing there was a failure
   S failure(String message);
+
   /// newState returns a fully new state to be used in load
   S newState({
     List<T> resultsUp = const [],
@@ -245,9 +255,11 @@ abstract class ListCubit<T, S> extends Cubit<S> {
     required bool isDoneUp,
     required bool isDoneDown,
   });
+
   /// updateUp returns a state to be used when there is new data in the
   /// up direction
   S updateUp(S oldstate, List<T> upResults, bool isDoneUp);
+
   /// updateDown returns a state to be used when there is new data in the
   /// down direction
   S updateDown(S oldstate, List<T> downResults, bool isDoneDown);
