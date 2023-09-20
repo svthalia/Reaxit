@@ -4,7 +4,7 @@ import 'package:reaxit/ui/theme.dart';
 
 abstract class AppbarAction {
   Widget asIcon(BuildContext _);
-  Widget asMenuItem(BuildContext _, Function() callback);
+  Widget asMenuItem(BuildContext context, Function() callback);
   void ontap();
 
   const AppbarAction();
