@@ -128,6 +128,7 @@ jobs:
           TOSTI_OAUTH_APP_ID: ${{ secrets.TOSTI_OAUTH_APP_ID }}
           TOSTI_OAUTH_APP_SECRET: ${{ secrets.TOSTI_OAUTH_APP_SECRET }}
           CHANGELOG: ${{ github.ref }}
+          SUPPLY_UPLOAD_MAX_RETRIES: ${{ vars.SUPPLY_UPLOAD_MAX_RETRIES }}
         run: bundle exec fastlane ios deploy_internal changelog:"$CHANGELOG"
 
   deploy-android:
