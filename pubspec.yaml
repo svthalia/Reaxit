@@ -24,7 +24,7 @@ dependencies:
     sdk: flutter
 
   # Annotations.
-  meta: ^1.8.0
+  meta: ^1.9.1
 
   # Nice functions for collections.
   collection: ^1.17.0
@@ -40,10 +40,10 @@ dependencies:
   http_parser: ^4.0.2
 
   # OAuth2 authorized http Client.
-  oauth2: ^2.0.1
+  oauth2: ^2.0.2
 
   # Secure storage for OAuth2 credentials.
-  flutter_secure_storage: ^8.0.0
+  flutter_secure_storage: ^9.0.0
 
   # JSON parsing.
   json_annotation: ^4.8.1
@@ -53,34 +53,34 @@ dependencies:
   equatable: ^2.0.5
 
   # Persistent storage.
-  shared_preferences: ^2.1.1
+  shared_preferences: ^2.2.1
 
   # Opening urls.
-  url_launcher: ^6.1.11
+  url_launcher: ^6.1.14
 
   # Authenticating in browser.
-  flutter_web_auth_2: ^2.1.4
+  flutter_web_auth_2: ^2.2.1
 
   # Modal photo views.
   photo_view: ^0.14.0
 
   # HTML widget.
-  flutter_widget_from_html_core: ^0.10.1
+  flutter_widget_from_html_core: ^0.10.5
 
   # Sentry error reporting.
-  sentry_flutter: ^7.6.2
+  sentry_flutter: ^7.10.1
 
   # Share menu.
-  share_plus: ^7.0.1
+  share_plus: ^7.1.0
 
   # Get mime type from file extension.
   mime: ^1.0.4
 
   # Path for temporary files.
-  path_provider: ^2.0.15
+  path_provider: ^2.1.1
   
   # Access camera and gallery.
-  image_picker: ^0.8.7+5
+  image_picker: ^1.0.4
   gallery_saver: ^2.3.2
 
   # Resize images.
@@ -90,8 +90,8 @@ dependencies:
   carousel_slider: ^4.2.1
 
   # Firebase for push notifications.
-  firebase_core: ^2.13.0
-  firebase_messaging: ^14.6.1
+  firebase_core: ^2.16.0
+  firebase_messaging: ^14.6.8
 
   # Push notifications in app. 
   overlay_support: ^2.1.0
@@ -106,10 +106,10 @@ dependencies:
 
 
   # Predefined animations.
-  animations: ^2.0.7
+  animations: ^2.0.8
 
   # Export event to calendar.
-  add_2_calendar: ^2.2.3
+  add_2_calendar: ^2.2.4
 
   # Cached images.
   cached_network_image: ^3.2.3
@@ -119,10 +119,10 @@ dependencies:
   go_router: ^7.1.1
 
   # Displaying QR codes.
-  qr_flutter: ^4.0.0
+  qr_flutter: ^4.1.0
 
   # Open files.
-  open_file_plus: ^3.3.0
+  open_file_plus: ^3.4.1
 
 dev_dependencies:
   flutter_test:
