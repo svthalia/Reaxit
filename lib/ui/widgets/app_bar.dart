@@ -4,7 +4,7 @@ import 'package:reaxit/ui/theme.dart';
 
 abstract class AppbarAction {
   Widget asIcon(BuildContext _);
-  Widget asMenuItem(BuildContext _);
+  Widget asMenuItem(BuildContext _, Function() callback);
   void ontap();
 
   const AppbarAction();
@@ -31,12 +31,15 @@ class IconAppbarAction extends AppbarAction {
   }
 
   @override
-  Widget asMenuItem(BuildContext _) {
+  Widget asMenuItem(BuildContext _, Function() callback) {
     return TextButton.icon(
       style: ButtonStyle(
           foregroundColor:
               MaterialStateColor.resolveWith((states) => Colors.white)),
-      onPressed: onpressed,
+      onPressed: () {
+        onpressed();
+        callback();
+      },
       label: Text(text),
       icon: Icon(icon),
     );
@@ -57,15 +60,15 @@ class _IconAction extends StatelessWidget {
 
 class _MenuAction extends StatelessWidget {
   final AppbarAction action;
-
-  const _MenuAction(this.action);
+  final Function() callback;
+  const _MenuAction(this.action, this.callback);
 
   @override
-  Widget build(BuildContext context) => action.asMenuItem(context);
+  Widget build(BuildContext context) => action.asMenuItem(context, callback);
 }
 
 class ThaliaAppBar extends AppBar {
-  static const defaultIcons = 3;
+  static const defaultIcons = 2;
 
   static List<Widget> collapse(List<AppbarAction> widgets) {
     if (widgets.length <= defaultIcons) {
@@ -80,10 +83,11 @@ class ThaliaAppBar extends AppBar {
         controller: controller,
         menuChildren: widgets
             .skip(defaultIcons - 1)
-            .map((item) => MenuItemButton(
-                  onPressed: item.ontap,
-                  child: _MenuAction(item),
-                ))
+            .map(
+              (item) => MenuItemButton(
+                child: _MenuAction(item, controller.close),
+              ),
+            )
             .toList(),
         child: IconButton(
           onPressed: controller.open,
