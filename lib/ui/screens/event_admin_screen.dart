@@ -19,6 +19,66 @@ class EventAdminScreen extends StatefulWidget {
 }
 
 class _EventAdminScreenState extends State<EventAdminScreen> {
+  void _showQRCode(EventAdminCubit cubit) async {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: BlocBuilder<EventAdminCubit, EventAdminState>(
+            bloc: cubit,
+            builder: (context, state) {
+              final theme = Theme.of(context);
+              if (state.event != null) {
+                final host = Config.of(context).host;
+                final pk = state.event!.pk;
+                final token = state.event!.markPresentUrlToken;
+                final url = 'https://$host/events/$pk/mark-present/$token';
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Text(
+                        'Scan to mark yourself present.',
+                        style: theme.textTheme.titleSmall,
+                      ),
+                    ),
+                    QrImage(
+                      data: url,
+                      padding: const EdgeInsets.all(24),
+                      backgroundColor: Colors.grey[50]!,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: RotatedBox(
+                        quarterTurns: 2,
+                        child: Text(
+                          'Scan to mark yourself present.',
+                          style: theme.textTheme.titleSmall,
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              } else if (state.isLoading) {
+                return const AspectRatio(
+                  aspectRatio: 1,
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              } else {
+                return AspectRatio(
+                  aspectRatio: 1,
+                  child: Center(child: Text(state.message!)),
+                );
+              }
+            },
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -31,9 +91,38 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
           return Scaffold(
             appBar: ThaliaAppBar(
               title: const Text('REGISTRATIONS'),
-              actions: [
-                const _MarkPresentQrButton(),
-                _SearchButton(eventPk: widget.pk),
+              collapsingActions: [
+                IconAppbarAction(
+                  'SEARCH',
+                  Icons.search,
+                  () async {
+                    final adminCubit =
+                        BlocProvider.of<EventAdminCubit>(context);
+                    final searchCubit = EventAdminCubit(
+                      RepositoryProvider.of<ApiRepository>(context),
+                      eventPk: widget.pk,
+                    );
+
+                    await showSearch(
+                      context: context,
+                      delegate: EventAdminSearchDelegate(searchCubit),
+                    );
+
+                    searchCubit.close();
+
+                    // After the search dialog closes, refresh the results,
+                    // since the search screen may have changed stuff through
+                    // its own EventAdminCubit, that do not show up in the cubit
+                    // for the EventAdminScreen until a refresh.
+                    adminCubit.loadRegistrations();
+                  },
+                ),
+                IconAppbarAction(
+                  'QR Code',
+                  Icons.qr_code,
+                  () => _showQRCode(BlocProvider.of<EventAdminCubit>(context)),
+                  tooltip: 'Show presence QR code',
+                ),
               ],
             ),
             body: RefreshIndicator(
@@ -67,117 +156,6 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
           );
         },
       ),
-    );
-  }
-}
-
-class _SearchButton extends StatelessWidget {
-  const _SearchButton({
-    Key? key,
-    required this.eventPk,
-  }) : super(key: key);
-
-  final int eventPk;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      padding: const EdgeInsets.all(16),
-      icon: const Icon(Icons.search),
-      onPressed: () async {
-        final adminCubit = BlocProvider.of<EventAdminCubit>(context);
-        final searchCubit = EventAdminCubit(
-          RepositoryProvider.of<ApiRepository>(context),
-          eventPk: eventPk,
-        );
-
-        await showSearch(
-          context: context,
-          delegate: EventAdminSearchDelegate(searchCubit),
-        );
-
-        searchCubit.close();
-
-        // After the search dialog closes, refresh the results,
-        // since the search screen may have changed stuff through
-        // its own EventAdminCubit, that do not show up in the cubit
-        // for the EventAdminScreen until a refresh.
-        adminCubit.loadRegistrations();
-      },
-    );
-  }
-}
-
-class _MarkPresentQrButton extends StatelessWidget {
-  const _MarkPresentQrButton({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final cubit = BlocProvider.of<EventAdminCubit>(context);
-    return IconButton(
-      icon: const Icon(Icons.qr_code),
-      tooltip: 'Show presence QR code',
-      onPressed: () async {
-        showModalBottomSheet(
-          isScrollControlled: true,
-          context: context,
-          builder: (context) {
-            return SafeArea(
-              child: BlocBuilder<EventAdminCubit, EventAdminState>(
-                bloc: cubit,
-                builder: (context, state) {
-                  final theme = Theme.of(context);
-                  if (state.event != null) {
-                    final host = Config.of(context).host;
-                    final pk = state.event!.pk;
-                    final token = state.event!.markPresentUrlToken;
-                    final url = 'https://$host/events/$pk/mark-present/$token';
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Text(
-                            'Scan to mark yourself present.',
-                            style: theme.textTheme.titleSmall,
-                          ),
-                        ),
-                        QrImage(
-                          data: url,
-                          padding: const EdgeInsets.all(24),
-                          backgroundColor: Colors.grey[50]!,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: RotatedBox(
-                            quarterTurns: 2,
-                            child: Text(
-                              'Scan to mark yourself present.',
-                              style: theme.textTheme.titleSmall,
-                            ),
-                          ),
-                        )
-                      ],
-                    );
-                  } else if (state.isLoading) {
-                    return const AspectRatio(
-                      aspectRatio: 1,
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  } else {
-                    return AspectRatio(
-                      aspectRatio: 1,
-                      child: Center(child: Text(state.message!)),
-                    );
-                  }
-                },
-              ),
-            );
-          },
-        );
-      },
     );
   }
 }
