@@ -47,6 +47,7 @@ platform :android do
     build
     changelog_from_git_commits
     upload_to_play_store(
+      root_url: "https://androidpublisher.googleapis.com/",
       track: options[:track],
       skip_upload_metadata: true,
       skip_upload_images: true,

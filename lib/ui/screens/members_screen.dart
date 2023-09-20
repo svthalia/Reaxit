@@ -42,11 +42,11 @@ class _MembersScreenState extends State<MembersScreen> {
     return Scaffold(
       appBar: ThaliaAppBar(
         title: const Text('MEMBERS'),
-        actions: [
-          IconButton(
-            padding: const EdgeInsets.all(16),
-            icon: const Icon(Icons.search),
-            onPressed: () async {
+        collapsingActions: [
+          IconAppbarAction(
+            'SEARCH',
+            Icons.search,
+            () async {
               final searchCubit = MemberListCubit(
                 RepositoryProvider.of<ApiRepository>(context),
               );
@@ -58,7 +58,7 @@ class _MembersScreenState extends State<MembersScreen> {
 
               searchCubit.close();
             },
-          ),
+          )
         ],
       ),
       drawer: MenuDrawer(),

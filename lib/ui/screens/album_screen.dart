@@ -49,13 +49,6 @@ class _AlbumScreenState extends State<AlbumScreen> {
     }
   }
 
-  Widget _shareAlbumButton(BuildContext context) => IconButton(
-        padding: const EdgeInsets.all(16),
-        color: Theme.of(context).primaryIconTheme.color,
-        icon: Icon(Icons.adaptive.share),
-        onPressed: () => _shareAlbum(context),
-      );
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
@@ -74,7 +67,14 @@ class _AlbumScreenState extends State<AlbumScreen> {
           return Scaffold(
             appBar: ThaliaAppBar(
               title: Text(state.result?.title.toUpperCase() ?? title),
-              actions: [_shareAlbumButton(context)],
+              collapsingActions: [
+                IconAppbarAction(
+                  'SHARE',
+                  Icons.adaptive.share,
+                  () => _shareAlbum(context),
+                  tooltip: 'share album',
+                )
+              ],
             ),
             body: body,
           );

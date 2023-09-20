@@ -202,4 +202,5 @@ jobs:
           TOSTI_API_HOST: ${{ vars.TOSTI_API_HOST }}
           TOSTI_OAUTH_APP_ID: ${{ secrets.TOSTI_OAUTH_APP_ID }}
           TOSTI_OAUTH_APP_SECRET: ${{ secrets.TOSTI_OAUTH_APP_SECRET }}
+          SUPPLY_UPLOAD_MAX_RETRIES: ${{ vars.SUPPLY_UPLOAD_MAX_RETRIES }}
         run: bundle exec fastlane android deploy_internal

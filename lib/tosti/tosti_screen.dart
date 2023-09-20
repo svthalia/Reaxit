@@ -14,11 +14,12 @@ class TostiScreen extends StatelessWidget {
     return Scaffold(
       appBar: ThaliaAppBar(
         title: const Text('T.O.S.T.I.'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => BlocProvider.of<TostiAuthCubit>(context).logOut(),
-          ),
+        collapsingActions: [
+          IconAppbarAction(
+            'logout',
+            Icons.logout,
+            () => BlocProvider.of<TostiAuthCubit>(context).logOut(),
+          )
         ],
       ),
       drawer: MenuDrawer(),
