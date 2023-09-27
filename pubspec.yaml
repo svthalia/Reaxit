@@ -27,16 +27,16 @@ dependencies:
   meta: ^1.9.1
 
   # Nice functions for collections.
-  collection: ^1.17.0
+  collection: ^1.17.1
 
   # Fonts.
-  google_fonts: ^4.0.4
+  google_fonts: ^4.0.5
 
   # DateTime formatting.
   intl: ^0.18.1
 
   # Networking basics.
-  http: ^0.13.6
+  http: ^1.1.0
   http_parser: ^4.0.2
 
   # OAuth2 authorized http Client.
@@ -81,10 +81,10 @@ dependencies:
   
   # Access camera and gallery.
   image_picker: ^1.0.4
-  gallery_saver: ^2.3.2
+  gal: ^2.1.1
 
   # Resize images.
-  image_cropper: ^4.0.1
+  image_cropper: ^5.0.0
 
   # Carousel.
   carousel_slider: ^4.2.1
@@ -112,11 +112,11 @@ dependencies:
   add_2_calendar: ^2.2.4
 
   # Cached images.
-  cached_network_image: ^3.2.3
-  flutter_cache_manager: ^3.3.0
+  cached_network_image: ^3.3.0
+  flutter_cache_manager: ^3.3.1
 
   # Navigation.
-  go_router: ^7.1.1
+  go_router: ^10.0.0
 
   # Displaying QR codes.
   qr_flutter: ^4.1.0

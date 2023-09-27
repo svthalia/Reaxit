@@ -160,9 +160,9 @@ class MenuDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Welcome'),
             leading: const Icon(Icons.home),
-            selected: router.location == '/',
+            selected: GoRouterState.of(context).uri.toString() == '/',
             onTap: () {
-              if (router.location == '/') {
+              if (GoRouterState.of(context).uri.toString() == '/') {
                 Navigator.of(context).pop();
               } else {
                 _goTo(context, 'welcome');
@@ -172,9 +172,9 @@ class MenuDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Calendar'),
             leading: const Icon(Icons.event),
-            selected: router.location == '/events',
+            selected: GoRouterState.of(context).uri.toString() == '/events',
             onTap: () {
-              if (router.location == '/events') {
+              if (GoRouterState.of(context).uri.toString() == '/events') {
                 Navigator.of(context).pop();
               } else {
                 _goTo(context, 'calendar');
@@ -184,9 +184,9 @@ class MenuDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Member list'),
             leading: const Icon(Icons.people),
-            selected: router.location == '/members',
+            selected: GoRouterState.of(context).uri.toString() == '/members',
             onTap: () {
-              if (router.location == '/members') {
+              if (GoRouterState.of(context).uri.toString() == '/members') {
                 Navigator.of(context).pop();
               } else {
                 _goTo(context, 'members');
@@ -196,9 +196,9 @@ class MenuDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Groups'),
             leading: const Icon(Icons.groups),
-            selected: router.location.startsWith('/groups'),
+            selected: GoRouterState.of(context).uri.toString().startsWith('/groups'),
             onTap: () {
-              if (router.location == '/groups') {
+              if (GoRouterState.of(context).uri.toString() == '/groups') {
                 Navigator.of(context).pop();
               } else {
                 _goTo(context, 'groups');
@@ -208,9 +208,9 @@ class MenuDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Photos'),
             leading: const Icon(Icons.photo),
-            selected: router.location == '/albums',
+            selected: GoRouterState.of(context).uri.toString() == '/albums',
             onTap: () {
-              if (router.location == '/albums') {
+              if (GoRouterState.of(context).uri.toString() == '/albums') {
                 Navigator.of(context).pop();
               } else {
                 _goTo(context, 'albums');
@@ -220,9 +220,9 @@ class MenuDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Payments'),
             leading: const Icon(Icons.euro),
-            selected: router.location == '/pay',
+            selected: GoRouterState.of(context).uri.toString() == '/pay',
             onTap: () {
-              if (router.location.startsWith('/pay')) {
+              if (GoRouterState.of(context).uri.toString().startsWith('/pay')) {
                 Navigator.of(context).pop();
               } else {
                 _goTo(context, 'pay');
@@ -233,9 +233,9 @@ class MenuDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Settings'),
             leading: const Icon(Icons.settings),
-            selected: router.location == '/settings',
+            selected: GoRouterState.of(context).uri.toString() == '/settings',
             onTap: () {
-              if (router.location == '/settings') {
+              if (GoRouterState.of(context).uri.toString() == '/settings') {
                 Navigator.of(context).pop();
               } else {
                 _goTo(context, 'settings');
@@ -246,9 +246,9 @@ class MenuDrawer extends StatelessWidget {
             ListTile(
               title: const Text('T.O.S.T.I.'),
               leading: const Icon(Icons.breakfast_dining),
-              selected: router.location.startsWith('/tosti'),
+              selected: GoRouterState.of(context).uri.toString().startsWith('/tosti'),
               onTap: () {
-                if (router.location.startsWith('/tosti')) {
+                if (GoRouterState.of(context).uri.toString().startsWith('/tosti')) {
                   Navigator.of(context).pop();
                 } else {
                   _goTo(context, 'tosti');
