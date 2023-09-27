@@ -43,16 +43,16 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
     return Scaffold(
       appBar: ThaliaAppBar(
         title: const Text('ALBUMS'),
-        actions: [
-          IconButton(
-              onPressed: () => context.pushNamed(
-                    'liked-photos',
-                  ),
-              icon: const Icon(Icons.favorite_border)),
-          IconButton(
-            padding: const EdgeInsets.all(16),
-            icon: const Icon(Icons.search),
-            onPressed: () async {
+        collapsingActions: [
+          IconAppbarAction(
+            'LIKED PHOTOS',
+            Icons.favorite_border,
+            () => context.pushNamed('liked-photos'),
+          ),
+          IconAppbarAction(
+            'SEARCH',
+            Icons.search,
+            () async {
               final searchCubit = AlbumListCubit(
                 RepositoryProvider.of<ApiRepository>(context),
               );

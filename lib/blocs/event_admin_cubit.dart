@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
-import 'package:reaxit/config.dart' as config;
+import 'package:reaxit/config.dart';
 import 'package:reaxit/models.dart';
 
 class EventAdminState extends Equatable {
@@ -183,7 +183,7 @@ class EventAdminCubit extends Cubit<EventAdminState> {
         ));
       } else {
         _searchDebounceTimer = Timer(
-          config.searchDebounceTime,
+          Config.searchDebounceTime,
           loadRegistrations,
         );
       }

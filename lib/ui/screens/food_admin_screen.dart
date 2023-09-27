@@ -29,11 +29,11 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
           return Scaffold(
             appBar: ThaliaAppBar(
               title: const Text('ORDERS'),
-              actions: [
-                IconButton(
-                  padding: const EdgeInsets.all(16),
-                  icon: const Icon(Icons.search),
-                  onPressed: () async {
+              collapsingActions: [
+                IconAppbarAction(
+                  'SEACH',
+                  Icons.search,
+                  () async {
                     final adminCubit = BlocProvider.of<FoodAdminCubit>(context);
                     final searchCubit = FoodAdminCubit(
                       RepositoryProvider.of<ApiRepository>(context),
@@ -53,7 +53,7 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
                     // for the FoodAdminScreen until a refresh.
                     adminCubit.load();
                   },
-                ),
+                )
               ],
             ),
             body: RefreshIndicator(

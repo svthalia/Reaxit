@@ -18,7 +18,6 @@ const imagelink2 =
 const coverphoto1 = CoverPhoto(
   0,
   0,
-  true,
   Photo(
     imagelink1,
     imagelink1,
@@ -30,7 +29,6 @@ const coverphoto1 = CoverPhoto(
 const albumphoto1 = AlbumPhoto(
   0,
   0,
-  false,
   Photo(
     imagelink1,
     imagelink1,
@@ -44,7 +42,6 @@ const albumphoto1 = AlbumPhoto(
 const albumphoto2 = AlbumPhoto(
   0,
   0,
-  false,
   Photo(
     imagelink2,
     imagelink2,

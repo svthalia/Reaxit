@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:reaxit/models.dart';
-import 'package:reaxit/config.dart' as config;
 
 part 'event.g.dart';
 
@@ -205,11 +204,6 @@ class AdminEvent implements BaseEvent {
 
   // final Uri markPresentUrl;
   final String markPresentUrlToken;
-  Uri get markPresentUrl => Uri(
-        scheme: 'https',
-        host: config.apiHost,
-        path: '/events/$pk/mark-present/$markPresentUrlToken',
-      );
 
   bool get registrationIsRequired =>
       registrationStart != null || registrationEnd != null;

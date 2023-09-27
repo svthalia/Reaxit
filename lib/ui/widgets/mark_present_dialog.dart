@@ -40,9 +40,9 @@ class _MarkPresentDialogState extends State<MarkPresentDialog> {
       builder: (context, state) {
         late final Widget content;
         if (state is LoadingMarkPresentState) {
-          content = Row(
+          content = const Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [CircularProgressIndicator()],
+            children: [CircularProgressIndicator()],
           );
         } else if (state is SuccessMarkPresentState) {
           content = Text(

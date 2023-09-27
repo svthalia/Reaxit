@@ -22,8 +22,7 @@ platform :android do
       build_cmd += " appbundle"
     end
 
-    if ENV["THALIA_OAUTH_APP_ID"] and ENV["THALIA_OAUTH_APP_SECRET"] and ENV["THALIA_API_HOST"]
-      build_cmd += " --dart-define=THALIA_API_HOST=\"#{ENV["THALIA_API_HOST"]}\""
+    if ENV["THALIA_OAUTH_APP_ID"] and ENV["THALIA_OAUTH_APP_SECRET"]
       build_cmd += " --dart-define=THALIA_OAUTH_APP_ID=\"#{ENV["THALIA_OAUTH_APP_ID"]}\""
       build_cmd += " --dart-define=THALIA_OAUTH_APP_SECRET=\"#{ENV["THALIA_OAUTH_APP_SECRET"]}\""
     end
@@ -48,6 +47,7 @@ platform :android do
     build
     changelog_from_git_commits
     upload_to_play_store(
+      root_url: "https://androidpublisher.googleapis.com/",
       track: options[:track],
       skip_upload_metadata: true,
       skip_upload_images: true,

@@ -7,7 +7,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
-import 'package:reaxit/config.dart' as config;
+import 'package:reaxit/config.dart';
 import 'package:reaxit/models.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -50,29 +50,51 @@ class LoggingClient extends oauth2.Client {
 /// In case credentials cannot be refreshed, this calls `logOut`, which should
 /// close the client and indicates that the user is no longer logged in.
 class ConcrexitApiRepository implements ApiRepository {
-  /// The [oauth2.Client] used to access the API.
-  final LoggingClient _client;
+  @override
+  final Config config;
+
+  /// The authenticated client used to access the API.
+  LoggingClient? _innerClient;
+
   final Function() _onLogOut;
 
   ConcrexitApiRepository({
-    /// The [oauth2.Client] used to access the API.
+    /// The authenticated client used to access the API.
     required LoggingClient client,
+
+    /// An [Config] describing the API.
+    required this.config,
 
     /// Called when the client can no longer authenticate.
     required Function() onLogOut,
-  })  : _client = client,
-        _onLogOut = onLogOut;
+  })  : _innerClient = client,
+        _onLogOut = onLogOut,
+        _baseUri = Uri(
+          scheme: config.scheme,
+          host: config.host,
+          port: config.port,
+        );
 
   @override
   void close() {
-    _client.close();
+    if (_innerClient != null) {
+      _innerClient!.close();
+      _innerClient = null;
+    }
   }
 
-  static final Uri _baseUri = Uri(
-    scheme: config.apiScheme,
-    host: config.apiHost,
-    port: config.apiPort,
-  );
+  /// The authenticated client used to access the API.
+  ///
+  /// Throws [ApiException.notLoggedIn] if the ApiRepository is not closed.
+  LoggingClient get _client {
+    if (_innerClient == null) {
+      throw ApiException.notLoggedIn;
+    } else {
+      return _innerClient!;
+    }
+  }
+
+  final Uri _baseUri;
 
   static const String _basePath = 'api/v2';
 
@@ -82,7 +104,7 @@ class ConcrexitApiRepository implements ApiRepository {
   };
 
   /// Convenience method for building a URL to an API endpoint.
-  static Uri _uri({required String path, Map<String, dynamic>? query}) {
+  Uri _uri({required String path, Map<String, dynamic>? query}) {
     return _baseUri.replace(
       path: path.startsWith('/') ? '$_basePath$path' : '$_basePath/$path',
       queryParameters: query,

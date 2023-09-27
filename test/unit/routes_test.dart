@@ -1,11 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reaxit/routes.dart';
-import 'package:reaxit/config.dart' as config;
 
 void main() {
   group('isDeepLink', () {
     test('returns true if uri is a deep link', () {
-      const apiHost = config.apiHost;
+      const apiHost = 'thalia.nu';
       final validUris = [
         'https://$apiHost/events/1/',
         'https://$apiHost/events/1',
@@ -28,7 +27,7 @@ void main() {
     });
 
     test('returns false if uri is not a deep link', () {
-      const apiHost = config.apiHost;
+      const apiHost = 'thalia.nu';
       final invalidUris = [
         'https://$apiHost/contact',
         'https://example.org/events/1/',

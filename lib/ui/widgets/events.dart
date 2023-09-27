@@ -17,7 +17,7 @@ class CalendarViewDay {
       : events = events.sortedBy((element) => element.start);
 }
 
-List<CalendarViewMonth> ensureContainsToday(
+List<CalendarViewMonth> ensureMonthsContainsToday(
     List<CalendarViewMonth> events, DateTime now) {
   DateTime today = DateTime(
     now.year,
@@ -28,28 +28,55 @@ List<CalendarViewMonth> ensureContainsToday(
     now.year,
     now.month,
   );
+  CalendarViewDay emptyDay = CalendarViewDay(day: today, events: []);
   for (var i = 0; i < events.length; i++) {
     if (events[i].month.isAfter(thisMonth)) {
+      // The current month does not exist yet
+      // Make a new month with only today
       events.insert(i, CalendarViewMonth(month: thisMonth, events: []));
-      events[i].days.add(CalendarViewDay(day: today, events: []));
-
+      events[i].days.add(emptyDay);
       return events;
     }
     if (events[i].month == thisMonth) {
-      for (var j = 0; j < events[i].days.length; j++) {
-        if (events[i].days[j].day == today) return events;
-        if (events[i].days[j].day.isAfter(today)) {
-          events[i].days.insert(j, CalendarViewDay(day: today, events: []));
-          return events;
-        }
-      }
+      events[i] = ensureMonthContainsDay(events[i], now.day);
       return events;
     }
   }
+  // We did not find the current month, and there was no month after the current month
+  // Add a new month to the end
   events.add(CalendarViewMonth(month: thisMonth, events: []));
-  events.last.days.add(CalendarViewDay(day: today, events: []));
+  events.last.days.add(emptyDay);
 
   return events;
+}
+
+CalendarViewMonth ensureMonthContainsDay(CalendarViewMonth month, int day) {
+  DateTime thisMonth = month.month;
+  DateTime today = DateTime(
+    thisMonth.year,
+    thisMonth.month,
+    day,
+  );
+
+  CalendarViewDay emptyDay = CalendarViewDay(day: today, events: []);
+  // Try to find the right day, or a day after
+  for (var j = 0; j < month.days.length; j++) {
+    if (month.days[j].day == today) {
+      // There already exists a day for today in the calendar
+      // Nothing to be done
+      return month;
+    }
+    if (month.days[j].day.isAfter(today)) {
+      // We did not find today, but there was is a day after today
+      // Insert a new day
+      month.days.insert(j, emptyDay);
+      return month;
+    }
+  }
+  // We did not find today, and there was no day after today
+  // Add a new to to the end
+  month.days.add(emptyDay);
+  return month;
 }
 
 List<CalendarViewMonth> groupByMonth(
@@ -270,7 +297,7 @@ class EventCard extends StatelessWidget {
     Color color;
     if (event.parentEvent is Event &&
         (event.parentEvent as Event).isRegistered) {
-      color = Theme.of(context).highlightColor;
+      color = Theme.of(context).colorScheme.primary;
     } else if (event.parentEvent is PartnerEvent) {
       color = Colors.black;
     } else {

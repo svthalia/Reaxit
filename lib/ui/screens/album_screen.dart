@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/config.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/widgets.dart';
-import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/ui/widgets/gallery.dart';
 import 'package:reaxit/ui/widgets/photo_tile.dart';
 import 'package:share_plus/share_plus.dart';
@@ -35,8 +35,9 @@ class _AlbumScreenState extends State<AlbumScreen> {
   Future<void> _shareAlbum(BuildContext context) async {
     final messenger = ScaffoldMessenger.of(context);
     try {
+      final host = Config.of(context).host;
       await Share.share(
-        'https://${config.apiHost}/members/photos/${widget.slug}/',
+        'https://$host/members/photos/${widget.slug}/',
       );
     } catch (_) {
       messenger.showSnackBar(
@@ -47,13 +48,6 @@ class _AlbumScreenState extends State<AlbumScreen> {
       );
     }
   }
-
-  Widget _shareAlbumButton(BuildContext context) => IconButton(
-        padding: const EdgeInsets.all(16),
-        color: Theme.of(context).primaryIconTheme.color,
-        icon: Icon(Icons.adaptive.share),
-        onPressed: () => _shareAlbum(context),
-      );
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +67,14 @@ class _AlbumScreenState extends State<AlbumScreen> {
           return Scaffold(
             appBar: ThaliaAppBar(
               title: Text(state.result?.title.toUpperCase() ?? title),
-              actions: [_shareAlbumButton(context)],
+              collapsingActions: [
+                IconAppbarAction(
+                  'SHARE',
+                  Icons.adaptive.share,
+                  () => _shareAlbum(context),
+                  tooltip: 'share album',
+                )
+              ],
             ),
             body: body,
           );

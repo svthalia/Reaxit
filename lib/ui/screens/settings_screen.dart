@@ -4,7 +4,7 @@ import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/widgets.dart';
-import 'package:reaxit/config.dart' as config;
+import 'package:reaxit/config.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -215,11 +215,11 @@ class _ThemeModeCard extends StatelessWidget {
               onChanged: (ThemeMode? newMode) async {
                 BlocProvider.of<ThemeCubit>(context).change(newMode!);
               },
-              items: [
+              items: const [
                 DropdownMenuItem(
                   value: ThemeMode.light,
                   child: Row(
-                    children: const [
+                    children: [
                       Icon(Icons.wb_sunny_outlined),
                       SizedBox(width: 16),
                       Text('Light')
@@ -229,7 +229,7 @@ class _ThemeModeCard extends StatelessWidget {
                 DropdownMenuItem(
                   value: ThemeMode.system,
                   child: Row(
-                    children: const [
+                    children: [
                       Icon(Icons.settings),
                       SizedBox(width: 16),
                       Text('System default')
@@ -239,7 +239,7 @@ class _ThemeModeCard extends StatelessWidget {
                 DropdownMenuItem(
                   value: ThemeMode.dark,
                   child: Row(
-                    children: const [
+                    children: [
                       Icon(Icons.brightness_2_outlined),
                       SizedBox(width: 16),
                       Text('Dark')
@@ -287,7 +287,7 @@ class _AboutCard extends StatelessWidget {
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
                         Text(
-                          config.versionNumber,
+                          Config.versionNumber,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],
@@ -305,7 +305,7 @@ class _AboutCard extends StatelessWidget {
             OutlinedButton.icon(
               onPressed: () async {
                 await launchUrl(
-                  config.changelogUri,
+                  Config.changelogUri,
                   mode: LaunchMode.externalApplication,
                 );
               },
@@ -315,7 +315,7 @@ class _AboutCard extends StatelessWidget {
             OutlinedButton.icon(
               onPressed: () async {
                 await launchUrl(
-                  config.feedbackUri,
+                  Config.feedbackUri,
                   mode: LaunchMode.externalApplication,
                 );
               },
@@ -325,7 +325,7 @@ class _AboutCard extends StatelessWidget {
             OutlinedButton.icon(
               onPressed: () => showLicensePage(
                 context: context,
-                applicationVersion: config.versionNumber,
+                applicationVersion: Config.versionNumber,
                 applicationIcon: Builder(builder: (context) {
                   return Image.asset(
                     Theme.of(context).brightness == Brightness.light

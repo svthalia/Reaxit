@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
-import 'package:reaxit/ui/theme.dart';
 import 'package:reaxit/ui/widgets.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -89,12 +88,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Scaffold(
       appBar: ThaliaAppBar(
         title: const Text('CALENDAR'),
-        actions: [
-          IconButton(
-            padding: const EdgeInsets.all(16),
-            icon: const Icon(Icons.search),
-            onPressed: openSearch,
-          ),
+        collapsingActions: [
+          IconAppbarAction(
+            'SEARCH',
+            Icons.search,
+            openSearch,
+          )
         ],
       ),
       drawer: MenuDrawer(),
@@ -122,8 +121,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _scrollToToday(true),
         icon: const Icon(Icons.today),
-        label: const Text('Today'),
-        backgroundColor: magenta,
+        label: const Text('TODAY'),
       ),
     );
   }
@@ -255,7 +253,7 @@ class CalendarScrollView extends StatelessWidget {
             calendarState.resultsDown.isNotEmpty,
         _monthGroupedEventsDown = calendarState.resultsDown.isEmpty
             ? List.empty()
-            : ensureContainsToday(
+            : ensureMonthsContainsToday(
                 groupByMonth(calendarState.resultsDown)
                     .sortedBy((element) => element.month),
                 now),
@@ -263,15 +261,18 @@ class CalendarScrollView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool moveMonth = _monthGroupedEventsUp.isNotEmpty &&
+        _monthGroupedEventsDown.isEmpty &&
+        calendarState.isDoneDown;
     // If there are no future events we should still display some events
-    final upEvents = _monthGroupedEventsDown.isEmpty && calendarState.isDoneDown
+    final upEvents = moveMonth
         ? _monthGroupedEventsUp.skip(1).toList()
         : _monthGroupedEventsUp;
-    final downEvents = _monthGroupedEventsUp.isEmpty &&
-            _monthGroupedEventsDown.isEmpty &&
-            calendarState.isDoneDown
-        ? [_monthGroupedEventsUp.first]
-        : _monthGroupedEventsDown;
+    final downEvents =
+        moveMonth ? [_monthGroupedEventsUp.first] : _monthGroupedEventsDown;
+
+    final ThemeData theme = Theme.of(context);
+
     ScrollPhysics scrollPhysics = const AlwaysScrollableScrollPhysics();
     return Column(
       children: [
@@ -292,8 +293,24 @@ class CalendarScrollView extends StatelessWidget {
             slivers: [
               if (_enableLoadMore)
                 SliverToBoxAdapter(
-                  child: Text(
-                    _enableLoadMore ? 'LOADING MORE' : 'SCROLL TO LOAD MORE',
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: calendarState.isLoadingMoreUp
+                          ? Icon(
+                              Icons.more_horiz,
+                              size: 50,
+                              color: theme.colorScheme.secondary,
+                            )
+                          : Text(
+                              'SCROLL TO LOAD MORE',
+                              style: theme.textTheme.bodyLarge!.copyWith(
+                                color: theme.colorScheme.secondary,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                    ),
                   ),
                 ),
               SliverPadding(
