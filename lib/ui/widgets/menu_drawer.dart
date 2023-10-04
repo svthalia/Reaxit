@@ -14,7 +14,6 @@ class MenuDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final router = GoRouter.of(context);
     return Drawer(
       child: ListView(
         primary: false,
