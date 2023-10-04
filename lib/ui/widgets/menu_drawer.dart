@@ -196,7 +196,8 @@ class MenuDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Groups'),
             leading: const Icon(Icons.groups),
-            selected: GoRouterState.of(context).uri.toString().startsWith('/groups'),
+            selected:
+                GoRouterState.of(context).uri.toString().startsWith('/groups'),
             onTap: () {
               if (GoRouterState.of(context).uri.toString() == '/groups') {
                 Navigator.of(context).pop();
@@ -246,9 +247,13 @@ class MenuDrawer extends StatelessWidget {
             ListTile(
               title: const Text('T.O.S.T.I.'),
               leading: const Icon(Icons.breakfast_dining),
-              selected: GoRouterState.of(context).uri.toString().startsWith('/tosti'),
+              selected:
+                  GoRouterState.of(context).uri.toString().startsWith('/tosti'),
               onTap: () {
-                if (GoRouterState.of(context).uri.toString().startsWith('/tosti')) {
+                if (GoRouterState.of(context)
+                    .uri
+                    .toString()
+                    .startsWith('/tosti')) {
                   Navigator.of(context).pop();
                 } else {
                   _goTo(context, 'tosti');
