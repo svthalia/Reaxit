@@ -11,7 +11,7 @@ import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/theme.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:gallery_saver/gallery_saver.dart';
+import 'package:gal/gal.dart';
 
 abstract class GalleryCubit<T> extends StateStreamableSource<T> {
   Future<void> updateLike({required bool liked, required int index});
@@ -81,7 +81,7 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
         '${tempDir.path}/${url.pathSegments.last}',
       );
       await tempFile.writeAsBytes(response.bodyBytes);
-      await GallerySaver.saveImage(tempFile.path);
+      await Gal.putImage(tempFile.path);
 
       messenger.showSnackBar(
         const SnackBar(

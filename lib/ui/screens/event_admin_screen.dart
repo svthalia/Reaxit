@@ -44,7 +44,7 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                         style: theme.textTheme.titleSmall,
                       ),
                     ),
-                    QrImage(
+                    QrImageView(
                       data: url,
                       padding: const EdgeInsets.all(24),
                       backgroundColor: Colors.grey[50]!,

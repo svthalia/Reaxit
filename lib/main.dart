@@ -207,17 +207,17 @@ class _ThaliAppState extends State<ThaliApp> {
         final loggedIn = authState is LoggedInAuthState;
         final justLoggedOut =
             authState is LoggedOutAuthState && authState.apiRepository != null;
-        final goingToLogin = state.location.startsWith('/login');
+        final goingToLogin = state.uri.toString().startsWith('/login');
 
         if (!loggedIn && !goingToLogin) {
           // Drop original location if you just logged out.
           if (justLoggedOut) return '/login';
 
           return Uri(path: '/login', queryParameters: {
-            'from': state.location,
+            'from': state.uri.toString(),
           }).toString();
         } else if (loggedIn && goingToLogin) {
-          return Uri.parse(state.location).queryParameters['from'] ?? '/';
+          return Uri.parse(state.uri.toString()).queryParameters['from'] ?? '/';
         } else {
           return null;
         }
