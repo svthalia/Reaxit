@@ -79,6 +79,15 @@
 		<key>CADisableMinimumFrameDurationOnPhone</key>
 		<true/>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-</dict>
+		<true/>
+		<!-- gal: Required -->
+		<key>NSPhotoLibraryAddUsageDescription</key>
+		<string>We need add only access to save medias</string>
+		<!-- gal: Required -->
+
+		<!-- gal: Required for ios < 14 or saving to album -->
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>We need access to save medias</string>
+		<!-- gal: Required for ios < 14 or saving to album -->
+	</dict>
 </plist>
