@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
+import 'package:reaxit/config.dart';
 import 'package:reaxit/main.dart' as app;
 
 import '../test/mocks.mocks.dart';
@@ -32,8 +33,8 @@ void testLogin() {
         await Future.delayed(const Duration(seconds: 1));
         await tester.pumpAndSettle();
 
-        expect(find.text('LOGIN'), findsOneWidget);
-        await tester.tap(find.text('LOGIN'));
+        expect(find.text('LOG IN - STAGING'), findsOneWidget);
+        await tester.tap(find.text('LOG IN - STAGING'));
 
         streamController.add(LoadingAuthState());
 
@@ -41,6 +42,7 @@ void testLogin() {
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
         final api = MockApiRepository();
+        when(api.config).thenReturn(Config.testing);
         throwOnMissingStub(
           api,
           exceptionBuilder: (_) {
@@ -63,6 +65,7 @@ void testLogin() {
         // Setup signed-in AuthCubit.
         final authCubit = MockAuthCubit();
         final api = MockApiRepository();
+        when(api.config).thenReturn(Config.testing);
         throwOnMissingStub(
           api,
           exceptionBuilder: (_) {
@@ -96,6 +99,7 @@ void testLogin() {
         // Setup signed-in AuthCubit.
         final authCubit = MockAuthCubit();
         final api = MockApiRepository();
+        when(api.config).thenReturn(Config.testing);
         throwOnMissingStub(
           api,
           exceptionBuilder: (_) {
@@ -141,7 +145,7 @@ void testLogin() {
         streamController.add(LoggedOutAuthState(apiRepository: api));
         await tester.pumpAndSettle();
 
-        expect(find.text('LOGIN'), findsOneWidget);
+        expect(find.text('LOG IN - STAGING'), findsOneWidget);
       },
     );
   });

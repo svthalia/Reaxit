@@ -9,7 +9,7 @@ void main() async {
 
   await Future.delayed(const Duration(seconds: 5));
 
-  testLogin();
   testAlbum();
   testCallender();
+  testLogin();
 }
