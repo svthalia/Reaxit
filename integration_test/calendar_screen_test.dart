@@ -168,5 +168,171 @@ void testCallender() {
       'showsToday',
       getTestMethod(const [], DateTime.now()),
     );
+    testWidgets('eventuallyAdd', (tester) async {
+      List<Event> events = [
+        Event(
+          0,
+          'test',
+          'https://staging.thalia.nu',
+          'test123',
+          today,
+          today.add(const Duration(hours: 5)),
+          EventCategory.leisure,
+          null,
+          null,
+          null,
+          'heaven',
+          '5 euro',
+          '5 euro',
+          5,
+          null,
+          null,
+          false,
+          null,
+          'no',
+          const EventPermissions(false, false, false, false),
+          null,
+          'sucks2bu',
+          true,
+          [],
+        ),
+        Event(
+          1,
+          'test1',
+          'https://staging.thalia.nu',
+          'test123',
+          today.add(const Duration(hours: 5)),
+          today.add(const Duration(hours: 10)),
+          EventCategory.leisure,
+          null,
+          null,
+          null,
+          'heaven',
+          '5 euro',
+          '5 euro',
+          5,
+          null,
+          null,
+          false,
+          null,
+          'no',
+          const EventPermissions(false, false, false, false),
+          null,
+          'sucks2bu',
+          true,
+          [],
+        ),
+        Event(
+          2,
+          'test2',
+          'https://staging.thalia.nu',
+          'test123',
+          today.add(const Duration(hours: 10)),
+          today.add(const Duration(hours: 15)),
+          EventCategory.leisure,
+          null,
+          null,
+          null,
+          'heaven',
+          '5 euro',
+          '5 euro',
+          5,
+          null,
+          null,
+          false,
+          null,
+          'no',
+          const EventPermissions(false, false, false, false),
+          null,
+          'sucks2bu',
+          true,
+          [],
+        ),
+      ];
+
+      List<PartnerEvent> pevents = [
+        PartnerEvent(
+          0,
+          'PE0',
+          'PE0',
+          today.add(const Duration(hours: 5)),
+          today.add(const Duration(hours: 10)),
+          'heaven2',
+          Uri.https('thalia.nu'),
+        )
+      ];
+
+      final split = DateTime(now.year, now.month);
+
+      // Setup mock.
+      final api = MockApiRepository();
+      when(api.config).thenReturn(Config.testing);
+      when(api.getEvents(
+        start: split,
+        search: null,
+        ordering: 'start',
+        limit: CalendarCubit.firstPageSize,
+        offset: 0,
+        end: null,
+      )).thenAnswer(
+        (realInvocation) async {
+          return ListResponse(events.length, events);
+        },
+      );
+      when(api.getEvents(
+              end: split,
+              search: null,
+              ordering: '-end',
+              limit: CalendarCubit.firstPageSize,
+              offset: 0))
+          .thenAnswer(
+        (realInvocation) async {
+          return ListResponse(events.length, events);
+        },
+      );
+      when(api.getPartnerEvents(start: split, search: null, ordering: 'start'))
+          .thenAnswer(
+              (realInvocation) async => ListResponse(pevents.length, pevents));
+      when(api.getPartnerEvents(start: split, search: null, ordering: '-end'))
+          .thenAnswer((realInvocation) async => const ListResponse(0, []));
+      final authCubit = MockAuthCubit();
+
+      throwOnMissingStub(
+        api,
+        exceptionBuilder: (invocation) {
+          throw ApiException.unknownError;
+        },
+      );
+
+      final streamController = StreamController<AuthState>.broadcast()
+        ..stream.listen((state) {
+          when(authCubit.state).thenReturn(state);
+        })
+        ..add(LoadingAuthState())
+        ..add(LoggedInAuthState(apiRepository: api));
+
+      when(authCubit.load()).thenAnswer((_) => Future.value(null));
+      when(authCubit.stream).thenAnswer((_) => streamController.stream);
+
+      // Start app
+      app.testingMain(authCubit, '/events');
+      await tester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
+
+      final calendarEvents =
+          events.expand(CalendarEvent.splitEventIntoCalendarEvents);
+
+      for (CalendarEvent event in calendarEvents) {
+        expect(find.text(event.title), findsOneWidget);
+        expect(find.text(event.label), findsOneWidget);
+      }
+
+      if (events.any((element) =>
+          element.end.isBefore(today) &&
+          element.start.isAfter(now.add(const Duration(days: 1))))) {
+        expect(find.text('There are no events this day'), findsOneWidget);
+      }
+    });
   });
 }
