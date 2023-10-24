@@ -291,8 +291,8 @@ class CalendarCubit extends Cubit<CalendarState> {
       _remainingFutureEvents.clear();
       _remainingPastEvents.clear();
 
-      _nextOffset = firstPageSize;
-      _nextPastOffset = firstPageSize;
+      _nextOffset = futureEventsResponse.results.length;
+      _nextPastOffset = pastEventsResponse.results.length;
 
       final isDoneDown =
           futureEventsResponse.results.length == futureEventsResponse.count;

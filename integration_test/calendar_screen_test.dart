@@ -7,6 +7,7 @@ import 'package:reaxit/blocs.dart';
 import 'package:reaxit/config.dart';
 import 'package:reaxit/main.dart' as app;
 import 'package:reaxit/models.dart';
+import 'package:reaxit/ui/screens.dart';
 
 import '../test/mocks.mocks.dart';
 
@@ -228,7 +229,33 @@ void testCallender() {
           'https://staging.thalia.nu',
           'test123',
           today.add(const Duration(hours: 10)),
-          today.add(const Duration(hours: 15)),
+          today.add(const Duration(hours: 15, days: 2)),
+          EventCategory.leisure,
+          null,
+          null,
+          null,
+          'heaven',
+          '5 euro',
+          '5 euro',
+          5,
+          null,
+          null,
+          false,
+          null,
+          'no',
+          const EventPermissions(false, false, false, false),
+          null,
+          'sucks2bu',
+          true,
+          [],
+        ),
+        Event(
+          3,
+          'test3',
+          'https://staging.thalia.nu',
+          'test1234',
+          today.add(const Duration(hours: 10, days: 1)),
+          today.add(const Duration(hours: 15, days: 1)),
           EventCategory.leisure,
           null,
           null,
@@ -276,7 +303,19 @@ void testCallender() {
         end: null,
       )).thenAnswer(
         (realInvocation) async {
-          return ListResponse(events.length, events);
+          return ListResponse(4, events.take(3).toList());
+        },
+      );
+      when(api.getEvents(
+        start: split,
+        search: null,
+        ordering: 'start',
+        limit: CalendarCubit.pageSize,
+        offset: 3,
+        end: null,
+      )).thenAnswer(
+        (realInvocation) async {
+          return ListResponse(4, [events.last]);
         },
       );
       when(api.getEvents(
@@ -287,7 +326,7 @@ void testCallender() {
               offset: 0))
           .thenAnswer(
         (realInvocation) async {
-          return ListResponse(events.length, events);
+          return const ListResponse(0, []);
         },
       );
       when(api.getPartnerEvents(start: split, search: null, ordering: 'start'))
@@ -319,13 +358,34 @@ void testCallender() {
       await tester.pumpAndSettle();
       await Future.delayed(const Duration(seconds: 1));
       await tester.pumpAndSettle();
+      // Load more events
+      CalendarScrollView screen = find
+          .byType(CalendarScrollView)
+          .first
+          .evaluate()
+          .first
+          .widget as CalendarScrollView;
+      screen.controller.notifyListeners();
+      await Future.delayed(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
 
       final calendarEvents =
           events.expand(CalendarEvent.splitEventIntoCalendarEvents);
 
+      Map<String, int> calendarTitleCounts = {};
+      Map<String, int> calendarLableCounts = {};
       for (CalendarEvent event in calendarEvents) {
-        expect(find.text(event.title), findsOneWidget);
-        expect(find.text(event.label), findsOneWidget);
+        calendarTitleCounts.update(event.title, (c) => c + 1,
+            ifAbsent: () => 1);
+        calendarLableCounts.update(event.label, (c) => c + 1,
+            ifAbsent: () => 1);
+      }
+      for (MapEntry title in calendarTitleCounts.entries) {
+        // sleep(Duration(seconds: 10));
+        expect(find.text(title.key), findsNWidgets(title.value));
+      }
+      for (MapEntry label in calendarLableCounts.entries) {
+        expect(find.text(label.key), findsNWidgets(label.value));
       }
 
       if (events.any((element) =>
