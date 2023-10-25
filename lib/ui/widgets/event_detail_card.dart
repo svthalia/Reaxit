@@ -12,6 +12,7 @@ class EventDetailCard extends StatelessWidget {
   final Color _indicatorColor;
   final bool _hasFoodEvent;
   final Color? _color;
+  final Color? _textColor;
 
   static Color _getIndicatorColor(Event event) {
     if (event.isInvited) {
@@ -28,6 +29,7 @@ class EventDetailCard extends StatelessWidget {
   EventDetailCard({
     required this.event,
   })  : _color = event is PartnerEvent ? Colors.black : null,
+        _textColor = event is PartnerEvent ? Colors.white : null,
         _indicatorColor =
             event is Event ? _getIndicatorColor(event) : Colors.transparent,
         _hasFoodEvent = event is Event ? event.hasFoodEvent : false;
@@ -56,6 +58,7 @@ class EventDetailCard extends StatelessWidget {
     final description =
         event.description.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), '');
 
+    final textTheme = Theme.of(context).textTheme;
     return Card(
       color: _color,
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -87,14 +90,16 @@ class EventDetailCard extends StatelessWidget {
                           event.title.toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.titleMedium,
+                          style: textTheme.titleMedium!
+                              .copyWith(color: _textColor),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           '$start - $end | ${event.location}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodySmall,
+                          style:
+                              textTheme.bodySmall!.copyWith(color: _textColor),
                         ),
                       ],
                     ),
@@ -116,6 +121,9 @@ class EventDetailCard extends StatelessWidget {
                 description,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
+                style: DefaultTextStyle.of(context)
+                    .style
+                    .copyWith(color: _textColor),
               ),
             ),
             Padding(

@@ -118,9 +118,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               style: Theme.of(context).textTheme.titleMedium,
             ),
             ...dayGroupedEvents.entries.map<Widget>((entry) {
-              final day = entry.key;
               final now = DateTime.now();
               final today = DateTime(now.year, now.month, now.day);
+              final day = entry.key.isBefore(today) ? today : entry.key;
               final dayEvents = entry.value;
               String dayText;
               switch (day.difference(today).inDays) {
