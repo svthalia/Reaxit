@@ -120,7 +120,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             ...dayGroupedEvents.entries.map<Widget>((entry) {
               final now = DateTime.now();
               final today = DateTime(now.year, now.month, now.day);
-              final day = entry.key.isBefore(today) ? today : entry.key;
+              final day = entry.key;
               final dayEvents = entry.value;
               String dayText;
               switch (day.difference(today).inDays) {
