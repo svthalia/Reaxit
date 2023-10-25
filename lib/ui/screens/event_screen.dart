@@ -10,6 +10,7 @@ import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/routes.dart';
+import 'package:reaxit/ui/theme.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:reaxit/ui/widgets/file_button.dart';
 import 'package:share_plus/share_plus.dart';
@@ -133,10 +134,11 @@ class _EventScreenState extends State<EventScreen> {
                     context.pushNamed('group',
                         pathParameters: {'groupPk': org.pk.toString()});
                   },
+                style: TextStyle(color: Theme.of(context).colorScheme.primary),
               ),
             ]),
         ],
-        style: textTheme.titleSmall,
+        style: textTheme.bodyLarge,
       ),
     );
   }
