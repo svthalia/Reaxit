@@ -291,8 +291,8 @@ class CalendarCubit extends Cubit<CalendarState> {
       _remainingFutureEvents.clear();
       _remainingPastEvents.clear();
 
-      _nextOffset = firstPageSize;
-      _nextPastOffset = firstPageSize;
+      _nextOffset = futureEventsResponse.results.length;
+      _nextPastOffset = pastEventsResponse.results.length;
 
       final isDoneDown =
           futureEventsResponse.results.length == futureEventsResponse.count;
@@ -395,19 +395,17 @@ class CalendarCubit extends Cubit<CalendarState> {
       // changed since the request was made.
       if (query != _searchQuery) return;
 
-      final isDone =
-          _nextOffset + eventsResponse.results.length == eventsResponse.count;
-
-      _nextOffset += pageSize;
+      _nextOffset += eventsResponse.results.length;
 
       List<CalendarEvent> newEvents = [
-        ..._remainingFutureEvents..clear(),
+        ..._remainingFutureEvents,
         ...eventsResponse.results
             .expand(
               CalendarEvent.splitEventIntoCalendarEvents,
             )
             .where((element) => element.start.isAfter(_splitTime)),
       ];
+      _remainingFutureEvents.clear();
 
       // Sort only the new events, because the old events in
       // `_state.result` are known to be complete and sorted.
@@ -415,6 +413,7 @@ class CalendarCubit extends Cubit<CalendarState> {
 
       // Remove events we don't want to see yet, because we have not loaded up
       // to there yet
+      final isDone = _nextOffset == eventsResponse.count;
       if (!isDone) {
         newEvents = filterDown(newEvents);
       }
@@ -457,23 +456,23 @@ class CalendarCubit extends Cubit<CalendarState> {
       // changed since the request was made.
       if (query != _searchQuery) return;
 
-      final isDoneUp = _nextPastOffset + eventsResponse.results.length ==
-          eventsResponse.count;
-      _nextPastOffset += pageSize;
+      _nextPastOffset += eventsResponse.results.length;
 
       List<CalendarEvent> newEvents = [
-        ..._remainingPastEvents..clear(),
+        ..._remainingPastEvents,
         ...eventsResponse.results
             .expand(
               CalendarEvent.splitEventIntoCalendarEvents,
             )
             .where((element) => !element.start.isAfter(_splitTime)),
-      ].toList();
+      ];
+      _remainingPastEvents.clear();
 
       // Sort only the new events, because the old events in
       // `_state.result` are known to be complete and sorted.
       newEvents.sort((a, b) => a.start.compareTo(b.start));
 
+      final isDoneUp = _nextPastOffset == eventsResponse.count;
       if (!isDoneUp) {
         newEvents = filterUp(newEvents);
       }
