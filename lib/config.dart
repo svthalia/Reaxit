@@ -131,6 +131,14 @@ class Config {
     port: 443,
   );
 
+  static const Config testing = Config(
+    host: 'localhost',
+    secret: '',
+    identifier: 'MOCK',
+    scheme: 'func',
+    port: 250,
+  );
+
   static const Config? production =
       (bool.hasEnvironment('THALIA_OAUTH_APP_SECRET') &&
               bool.hasEnvironment('THALIA_OAUTH_APP_ID'))

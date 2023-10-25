@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
+import 'package:reaxit/config.dart';
 import 'package:reaxit/main.dart' as app;
 import 'package:reaxit/models.dart';
 
@@ -57,6 +58,7 @@ WidgetTesterCallback getTestMethod(Album album) {
   return (tester) async {
     // Setup mock.
     final api = MockApiRepository();
+    when(api.config).thenReturn(Config.testing);
     when(api.getAlbum(slug: album.slug)).thenAnswer(
       (realInvocation) async => album,
     );
@@ -142,6 +144,7 @@ void testAlbum() {
 
         // Setup mock.
         final api = MockApiRepository();
+        when(api.config).thenReturn(Config.testing);
         when(api.getAlbum(slug: album.slug)).thenAnswer(
           (realInvocation) async => album,
         );
@@ -188,7 +191,7 @@ void testAlbum() {
         await (widgetsAppState as WidgetsBindingObserver).didPopRoute();
         await tester.pumpAndSettle();
 
-        await tester.tap(find.byType(BackButton));
+        await tester.tap(find.byType(BackButton)); // TODO: fix
         await tester.pumpAndSettle();
         expect(find.text('2 / 2'), findsNothing);
       },

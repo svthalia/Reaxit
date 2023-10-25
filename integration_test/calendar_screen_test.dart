@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
+import 'package:reaxit/config.dart';
 import 'package:reaxit/main.dart' as app;
 import 'package:reaxit/models.dart';
 
@@ -58,6 +59,7 @@ WidgetTesterCallback getTestMethod(List<Event> events, DateTime now) {
 
     // Setup mock.
     final api = MockApiRepository();
+    when(api.config).thenReturn(Config.testing);
     when(api.getEvents(
       start: split,
       search: null,
@@ -129,7 +131,7 @@ void testCallender() {
   final now = DateTime.now();
   final today = DateTime(now.year, now.month, now.day);
 
-  group('AlbumScreen', () {
+  group('CalendarScreen', () {
     testWidgets(
       'showsEvents',
       getTestMethod([

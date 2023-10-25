@@ -71,15 +71,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   void _scrollToToday(bool animate) {
-    _assureTodayOffset();
-    if (animate) {
-      _controller.animateTo(
-        _todayOffset ?? 0,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.ease,
-      );
-    } else {
-      _controller.jumpTo(_todayOffset ?? 0);
+    if (_controller.hasClients) {
+      _assureTodayOffset();
+      if (animate) {
+        _controller.animateTo(
+          _todayOffset ?? 0,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.ease,
+        );
+      } else {
+        _controller.jumpTo(_todayOffset ?? 0);
+      }
     }
   }
 
