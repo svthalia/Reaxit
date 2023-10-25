@@ -1,119 +1,35 @@
 import 'dart:async';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
-import 'package:reaxit/api/exceptions.dart';
-import 'package:reaxit/config.dart';
+import 'package:reaxit/blocs/list_cubit.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 
 typedef AlbumListState = ListState<ListAlbum>;
 
-class AlbumListCubit extends Cubit<AlbumListState> {
-  static const int firstPageSize = 60;
-  static const int pageSize = 30;
+class AlbumListCubit extends SingleListCubit<ListAlbum> {
+  AlbumListCubit(ApiRepository api) : super(api);
 
-  final ApiRepository api;
+  static const int firstPageSize = 30;
 
-  /// The last used search query. Can be set through `this.search(query)`.
-  String? _searchQuery;
-
-  /// The last used search query. Can be set through `this.search(query)`.
-  String? get searchQuery => _searchQuery;
-
-  /// A timer used to debounce calls to `this.load()` from `this.search()`.
-  Timer? _searchDebounceTimer;
-
-  /// The offset to be used for the next paginated request.
-  int _nextOffset = 0;
-
-  AlbumListCubit(this.api) : super(const AlbumListState.loading(results: []));
-
-  Future<void> load() async {
-    emit(state.copyWith(isLoading: true));
-    try {
-      final query = _searchQuery;
-      final albumsResponse = await api.getAlbums(
-        search: query,
+  @override
+  Future<ListResponse<ListAlbum>> getDown(int offset) => api.getAlbums(
+        search: searchQuery,
         limit: firstPageSize,
-        offset: 0,
+        offset: offset,
       );
 
-      // Discard result if _searchQuery has
-      // changed since the request was made.
-      if (query != _searchQuery) return;
+  @override
+  List<ListAlbum> combineDown(
+          List<ListAlbum> downResults, ListState<ListAlbum> oldstate) =>
+      oldstate.results + downResults;
 
-      final isDone = albumsResponse.results.length == albumsResponse.count;
-
-      _nextOffset = firstPageSize;
-
-      if (albumsResponse.results.isEmpty) {
-        if (query?.isEmpty ?? true) {
-          emit(const AlbumListState.failure(message: 'There are no albums.'));
-        } else {
-          emit(AlbumListState.failure(
-            message: 'There are no albums found for "$query".',
-          ));
-        }
-      } else {
-        emit(AlbumListState.success(
-          results: albumsResponse.results,
-          isDone: isDone,
-        ));
-      }
-    } on ApiException catch (exception) {
-      emit(AlbumListState.failure(message: exception.message));
-    }
-  }
-
-  Future<void> more() async {
-    final oldState = state;
-
-    // Ignore calls to `more()` if there is no data, or already more coming.
-    if (oldState.isDone || oldState.isLoading || oldState.isLoadingMore) return;
-
-    emit(oldState.copyWith(isLoadingMore: true));
-    try {
-      final query = _searchQuery;
-
-      // Get next page of albums.
-      final albumsResponse = await api.getAlbums(
-        search: query,
-        limit: pageSize,
-        offset: _nextOffset,
-      );
-
-      // Discard result if _searchQuery has
-      // changed since the request was made.
-      if (query != _searchQuery) return;
-
-      final albums = state.results + albumsResponse.results;
-      final isDone = albums.length == albumsResponse.count;
-
-      _nextOffset += pageSize;
-
-      emit(AlbumListState.success(
-        results: albums,
-        isDone: isDone,
-      ));
-    } on ApiException catch (exception) {
-      emit(AlbumListState.failure(message: exception.message));
-    }
-  }
-
-  /// Set this cubit's `searchQuery` and load the albums for that query.
-  ///
-  /// Use `null` as argument to remove the search query.
-  void search(String? query) {
-    if (query != _searchQuery) {
-      _searchQuery = query;
-      _searchDebounceTimer?.cancel();
-      if (query?.isEmpty ?? false) {
-        /// Don't get results when the query is empty.
-        emit(const AlbumListState.loading(results: []));
-      } else {
-        _searchDebounceTimer = Timer(Config.searchDebounceTime, load);
-      }
+  @override
+  ListState<ListAlbum> empty(String query) {
+    if (query.isEmpty) {
+      return const ListState.failure(message: 'No albums found.');
+    } else {
+      return ListState.failure(message: 'No albums found for query $query.');
     }
   }
 }
