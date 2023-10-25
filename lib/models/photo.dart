@@ -29,8 +29,6 @@ class CoverPhoto {
 
   const CoverPhoto(this.pk, this.rotation, this.file);
 
-  Map<String, dynamic> toJson() => _$CoverPhotoToJson(this);
-
   factory CoverPhoto.fromJson(Map<String, dynamic> json) =>
       _$CoverPhotoFromJson(json);
 }
@@ -58,9 +56,6 @@ class AlbumPhoto extends CoverPhoto {
 
   const AlbumPhoto(int pk, int rotation, Photo file, this.liked, this.numLikes)
       : super(pk, rotation, file);
-
-  @override
-  Map<String, dynamic> toJson() => _$AlbumPhotoToJson(this);
 
   factory AlbumPhoto.fromJson(Map<String, dynamic> json) =>
       _$AlbumPhotoFromJson(json);
