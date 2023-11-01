@@ -133,7 +133,7 @@ void main() {
       final event = FakeEvent(
         pk: 1,
         title: 'Lorem',
-        description: 'Ipsum',
+        caption: 'Ipsum',
         start: DateTime.parse('2022-03-04 13:37'),
         end: DateTime.parse('2022-03-04 14:37'),
         location: 'Dolor',
