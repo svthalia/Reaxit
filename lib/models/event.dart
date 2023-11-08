@@ -37,6 +37,8 @@ class Event implements BaseEvent {
   @override
   final String location;
 
+  final String description;
+
   final String url;
 
   final List<SmallGroup> organisers;
@@ -107,6 +109,7 @@ class Event implements BaseEvent {
     this.title,
     this.url,
     this.caption,
+    this.description,
     this.start,
     this.end,
     this.category,
@@ -156,6 +159,7 @@ class PartnerEvent implements BaseEvent {
   @override
   final String title;
   @override
+  @JsonKey(name: 'description')
   final String caption;
   @override
   final DateTime start;
