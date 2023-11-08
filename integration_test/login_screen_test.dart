@@ -66,7 +66,8 @@ void testLogin() {
         throwOnMissingStub(
           api,
           exceptionBuilder: (i) {
-            print('${i.memberName} ${i.positionalArguments}, ${i.namedArguments}')
+            print(
+                '${i.memberName} ${i.positionalArguments}, ${i.namedArguments}');
             throw ApiException.unknownError;
           },
         );
