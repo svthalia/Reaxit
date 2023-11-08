@@ -56,7 +56,9 @@ To use Fastlane follow these steps:
 | deploy_production | Create a release and deploy to Play Store or App Store | Android, iOS |
 | match             | Get the certificates to sign iOS apps | iOS |
 
-Sometimes, Apple certificates and provisioning profiles expire. So far, we've been able to solve that with `fastlane match nuke development` and `fastlane match nuke distribution` to remove existing certificates, and `fastlane match appstore` and `fastlane match development` to get new ones.
+
+
+Sometimes, Apple certificates and provisioning profiles expire, which looks like `Your certificate 'XXX.cer' is not valid, please check end date and renew it if necessary`. So far, we've been able to solve that with `fastlane match nuke development` and `fastlane match nuke distribution` to remove existing certificates, and `fastlane match development` and `fastlane match appstore` to get new ones. This must be done on macos.
 
 ### Configuration
 
