@@ -65,7 +65,8 @@ void testLogin() {
         final api = MockApiRepository();
         throwOnMissingStub(
           api,
-          exceptionBuilder: (_) {
+          exceptionBuilder: (i) {
+            print('${i.memberName} ${i.positionalArguments}, ${i.namedArguments}')
             throw ApiException.unknownError;
           },
         );
