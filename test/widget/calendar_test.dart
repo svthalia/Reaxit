@@ -12,7 +12,7 @@ void main() {
       final event1 = FakeEvent(
         pk: 1,
         title: 'Lorem 1',
-        description: 'Ipsum 1',
+        caption: 'Ipsum 1',
         start: DateTime.parse('2022-03-04 13:37'),
         end: DateTime.parse('2022-03-04 14:37'),
         location: 'Dolor 1',
@@ -21,7 +21,7 @@ void main() {
       final event2 = FakeEvent(
         pk: 2,
         title: 'Lorem 2',
-        description: 'Ipsum 2',
+        caption: 'Ipsum 2',
         start: DateTime.parse('2022-04-29 15:00'),
         end: DateTime.parse('2022-05-01 12:00'),
         location: 'Dolor 2',
@@ -64,7 +64,7 @@ void main() {
       final event1 = FakeEvent(
         pk: 1,
         title: 'Lorem 1',
-        description: 'Ipsum 1',
+        caption: 'Ipsum 1',
         start: now.add(const Duration(days: 3)),
         end: now.add(const Duration(days: 4)),
         location: 'Dolor 1',
