@@ -116,9 +116,36 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
+  /// Makes a list of clickable organisers.
+  Widget _makeOrganiserChildren(Event event) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return RichText(
+      text: TextSpan(
+        children: [
+          for (SmallGroup org in event.organisers)
+            TextSpan(children: [
+              if (org != event.organisers[0]) const TextSpan(text: ', '),
+              TextSpan(
+                text: org.name,
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    context.pushNamed('group',
+                        pathParameters: {'groupPk': org.pk.toString()});
+                  },
+                style: TextStyle(color: Theme.of(context).colorScheme.primary),
+              ),
+            ]),
+        ],
+        style: textTheme.bodyLarge,
+      ),
+    );
+  }
+
   /// Create the title, start, end, location and price of an event.
   Widget _makeBasicEventInfo(Event event) {
     final textTheme = Theme.of(context).textTheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -222,6 +249,22 @@ class _EventScreenState extends State<EventScreen> {
               ),
             ],
           ),
+        const SizedBox(height: 12),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Flexible(
+              fit: FlexFit.tight,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('ORGANISERS', style: textTheme.bodySmall),
+                    const SizedBox(height: 4),
+                    _makeOrganiserChildren(event),
+                  ]),
+            )
+          ],
+        ),
         const Divider(height: 24),
       ],
     );

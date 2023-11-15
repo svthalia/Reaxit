@@ -31,7 +31,7 @@ Map<String, dynamic> _$AlbumPhotoToJson(AlbumPhoto instance) =>
     <String, dynamic>{
       'pk': instance.pk,
       'rotation': instance.rotation,
-      'file': instance.file,
+      'file': instance.file.toJson(),
       'liked': instance.liked,
       'num_likes': instance.numLikes,
     };

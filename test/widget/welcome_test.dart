@@ -38,6 +38,7 @@ void main() {
         '',
         const EventPermissions(false, false, false, false),
         null,
+        [],
         '',
         false,
         [],

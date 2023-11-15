@@ -41,6 +41,8 @@ class Event implements BaseEvent {
 
   final String url;
 
+  final List<SmallGroup> organisers;
+
   final EventCategory category;
 
   final bool hasFields;
@@ -125,6 +127,7 @@ class Event implements BaseEvent {
     this.mapsUrl,
     this.userPermissions,
     this.registration,
+    this.organisers,
     this.cancelTooLateMessage,
     this.optionalRegistrations,
     this.documents,

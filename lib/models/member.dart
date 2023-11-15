@@ -39,6 +39,8 @@ class ListMember {
 
   factory ListMember.fromJson(Map<String, dynamic> json) =>
       _$ListMemberFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ListMemberToJson(this);
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)

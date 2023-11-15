@@ -33,7 +33,7 @@ class CoverPhoto {
       _$CoverPhotoFromJson(json);
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class AlbumPhoto extends CoverPhoto {
   final bool liked;
   final int numLikes;
@@ -61,7 +61,7 @@ class AlbumPhoto extends CoverPhoto {
       _$AlbumPhotoFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class Photo {
   final String full;
   final String small;
@@ -70,4 +70,6 @@ class Photo {
 
   const Photo(this.full, this.small, this.medium, this.large);
   factory Photo.fromJson(Map<String, dynamic> json) => _$PhotoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PhotoToJson(this);
 }

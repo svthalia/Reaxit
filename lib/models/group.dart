@@ -5,15 +5,32 @@ part 'group.g.dart';
 
 enum MemberGroupType { committee, society, board }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
-class ListGroup {
+@JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
+class SmallGroup {
   final int pk;
   final String name;
   final MemberGroupType type;
-  final String description;
   final DateTime? since;
   final DateTime? until;
   final String contactAddress;
+
+  const SmallGroup(
+    this.pk,
+    this.name,
+    this.type,
+    this.since,
+    this.until,
+    this.contactAddress,
+  );
+
+  factory SmallGroup.fromJson(Map<String, dynamic> json) =>
+      _$SmallGroupFromJson(json);
+  Map<String, dynamic> toJson() => _$SmallGroupToJson(this);
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
+class ListGroup extends SmallGroup {
+  final String description;
   final Photo photo;
 
   bool isActiveBoard() =>
@@ -22,18 +39,27 @@ class ListGroup {
       !(until?.isBefore(DateTime.now()) ?? false);
 
   const ListGroup(
-    this.pk,
-    this.name,
-    this.type,
+    int pk,
+    String name,
+    MemberGroupType type,
+    DateTime? since,
+    DateTime? until,
+    String contactAddress,
     this.description,
-    this.since,
-    this.until,
-    this.contactAddress,
     this.photo,
-  );
+  ) : super(
+          pk,
+          name,
+          type,
+          since,
+          until,
+          contactAddress,
+        );
 
   factory ListGroup.fromJson(Map<String, dynamic> json) =>
       _$ListGroupFromJson(json);
+  @override
+  Map<String, dynamic> toJson() => _$ListGroupToJson(this);
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
@@ -50,7 +76,7 @@ class Group extends ListGroup {
     String contactAddress,
     Photo photo,
     this.members,
-  ) : super(pk, name, type, description, since, until, contactAddress, photo);
+  ) : super(pk, name, type, since, until, contactAddress, description, photo);
 
   factory Group.fromJson(Map<String, dynamic> json) => _$GroupFromJson(json);
 }
