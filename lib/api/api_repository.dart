@@ -105,7 +105,7 @@ abstract class ApiRepository {
   /// total number of registrations that can be returned.
   /// Use `search` to filter on name, `ordering` to order with values in
   /// {'date', 'date_cancelled', 'queue_position', '-date', '-date_cancelled',
-  /// '-queue_position'}, and `cancelled` to filter on cancelled registrations.
+  /// '-queue_position'}, `cancelled` to filter on cancelled registrations, and `queued` to filter on queued registrations.
   Future<ListResponse<AdminEventRegistration>> getAdminEventRegistrations({
     required int pk,
     int? limit,
@@ -113,6 +113,7 @@ abstract class ApiRepository {
     String? search,
     String? ordering,
     bool? cancelled,
+    bool? queued,
   });
 
   /// Mark the user's registration for [Event] `pk` as present, using `token`.

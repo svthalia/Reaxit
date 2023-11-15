@@ -14,6 +14,8 @@ class EventAdminState extends Equatable {
 
   /// These may be outdated when [isLoading] is true.
   final List<AdminEventRegistration> registrations;
+  final List<AdminEventRegistration> cancelledRegistrations;
+  final List<AdminEventRegistration> queuedRegistrations;
 
   final String? message;
   final bool isLoading;
@@ -24,6 +26,8 @@ class EventAdminState extends Equatable {
   const EventAdminState({
     required this.event,
     required this.registrations,
+    required this.cancelledRegistrations,
+    required this.queuedRegistrations,
     required this.isLoading,
     required this.message,
   }) : assert(
@@ -32,33 +36,53 @@ class EventAdminState extends Equatable {
         );
 
   @override
-  List<Object?> get props => [event, registrations, message, isLoading];
+  List<Object?> get props => [
+        event,
+        registrations,
+        cancelledRegistrations,
+        queuedRegistrations,
+        message,
+        isLoading
+      ];
 
   EventAdminState copyWith({
     AdminEvent? event,
     List<AdminEventRegistration>? registrations,
+    List<AdminEventRegistration>? cancelledRegistrations,
+    List<AdminEventRegistration>? queuedRegistrations,
     bool? isLoading,
     String? message,
   }) =>
       EventAdminState(
         event: event ?? this.event,
         registrations: registrations ?? this.registrations,
+        cancelledRegistrations:
+            cancelledRegistrations ?? this.cancelledRegistrations,
+        queuedRegistrations: queuedRegistrations ?? this.queuedRegistrations,
         isLoading: isLoading ?? this.isLoading,
         message: message ?? this.message,
       );
 
-  const EventAdminState.result({
-    required AdminEvent this.event,
-    required this.registrations,
-  })  : message = null,
+  const EventAdminState.result(
+      {required AdminEvent this.event,
+      required this.registrations,
+      required this.cancelledRegistrations,
+      required this.queuedRegistrations})
+      : message = null,
         isLoading = false;
 
-  const EventAdminState.loading({this.event, required this.registrations})
+  const EventAdminState.loading(
+      {this.event,
+      required this.registrations,
+      required this.cancelledRegistrations,
+      required this.queuedRegistrations})
       : message = null,
         isLoading = true;
 
   const EventAdminState.failure({required String this.message, this.event})
       : registrations = const [],
+        cancelledRegistrations = const [],
+        queuedRegistrations = const [],
         isLoading = false;
 }
 
@@ -78,7 +102,10 @@ class EventAdminCubit extends Cubit<EventAdminState> {
   EventAdminCubit(
     this.api, {
     required this.eventPk,
-  }) : super(const EventAdminState.loading(registrations: []));
+  }) : super(const EventAdminState.loading(
+            registrations: [],
+            cancelledRegistrations: [],
+            queuedRegistrations: []));
 
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
@@ -90,6 +117,21 @@ class EventAdminCubit extends Cubit<EventAdminState> {
         search: query,
         limit: 999999999,
         cancelled: false,
+        queued: false,
+      );
+      final cancelledRegistrations = await api.getAdminEventRegistrations(
+        pk: eventPk,
+        search: query,
+        limit: 999999999,
+        cancelled: true,
+        ordering: '-date_cancelled',
+      );
+      final queuedRegistrations = await api.getAdminEventRegistrations(
+        pk: eventPk,
+        search: query,
+        limit: 999999999,
+        queued: true,
+        ordering: 'queue_position',
       );
 
       // Discard result if _searchQuery has
@@ -114,6 +156,8 @@ class EventAdminCubit extends Cubit<EventAdminState> {
         emit(EventAdminState.result(
           event: event,
           registrations: registrations.results,
+          cancelledRegistrations: cancelledRegistrations.results,
+          queuedRegistrations: queuedRegistrations.results,
         ));
       }
     } on ApiException catch (exception) {
@@ -134,6 +178,21 @@ class EventAdminCubit extends Cubit<EventAdminState> {
           search: query,
           limit: 999999999,
           cancelled: false,
+          queued: false,
+        );
+        final cancelledRegistrations = await api.getAdminEventRegistrations(
+          pk: eventPk,
+          search: query,
+          limit: 999999999,
+          cancelled: true,
+          ordering: '-date_cancelled',
+        );
+        final queuedRegistrations = await api.getAdminEventRegistrations(
+          pk: eventPk,
+          search: query,
+          limit: 999999999,
+          queued: true,
+          ordering: 'queue_position',
         );
 
         // Discard result if _searchQuery has
@@ -156,6 +215,8 @@ class EventAdminCubit extends Cubit<EventAdminState> {
           emit(EventAdminState.result(
             event: event,
             registrations: registrations.results,
+            cancelledRegistrations: cancelledRegistrations.results,
+            queuedRegistrations: queuedRegistrations.results,
           ));
         }
       } on ApiException catch (exception) {
@@ -180,6 +241,8 @@ class EventAdminCubit extends Cubit<EventAdminState> {
         emit(EventAdminState.loading(
           event: state.event,
           registrations: const [],
+          cancelledRegistrations: const [],
+          queuedRegistrations: const [],
         ));
       } else {
         _searchDebounceTimer = Timer(

@@ -59,6 +59,9 @@ AdminEventRegistration _$AdminEventRegistrationFromJson(
       json['present'] as bool,
       json['queue_position'] as int?,
       DateTime.parse(json['date'] as String),
+      json['date_cancelled'] == null
+          ? null
+          : DateTime.parse(json['date_cancelled'] as String),
       json['payment'] == null
           ? null
           : Payment.fromJson(json['payment'] as Map<String, dynamic>),
@@ -73,5 +76,6 @@ Map<String, dynamic> _$AdminEventRegistrationToJson(
       'present': instance.present,
       'queue_position': instance.queuePosition,
       'date': instance.date.toIso8601String(),
+      'date_cancelled': instance.dateCancelled?.toIso8601String(),
       'payment': instance.payment,
     };
