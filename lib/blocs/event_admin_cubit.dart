@@ -17,10 +17,13 @@ class EventAdminState extends Equatable {
   final List<AdminEventRegistration> cancelledRegistrations;
   final List<AdminEventRegistration> queuedRegistrations;
 
+  final String? exception;
   final String? message;
+  final String? cancelledMessage;
+  final String? queuedMessage;
   final bool isLoading;
 
-  bool get hasException => message != null;
+  bool get hasException => exception != null;
 
   @protected
   const EventAdminState({
@@ -29,7 +32,10 @@ class EventAdminState extends Equatable {
     required this.cancelledRegistrations,
     required this.queuedRegistrations,
     required this.isLoading,
+    required this.exception,
     required this.message,
+    required this.cancelledMessage,
+    required this.queuedMessage,
   }) : assert(
           event != null || isLoading || message != null,
           'event can only be null when isLoading or hasException is true.',
@@ -42,6 +48,8 @@ class EventAdminState extends Equatable {
         cancelledRegistrations,
         queuedRegistrations,
         message,
+        cancelledMessage,
+        queuedMessage,
         isLoading
       ];
 
@@ -51,7 +59,10 @@ class EventAdminState extends Equatable {
     List<AdminEventRegistration>? cancelledRegistrations,
     List<AdminEventRegistration>? queuedRegistrations,
     bool? isLoading,
+    String? exception,
     String? message,
+    String? cancelledMessage,
+    String? queuedMessage,
   }) =>
       EventAdminState(
         event: event ?? this.event,
@@ -60,30 +71,42 @@ class EventAdminState extends Equatable {
             cancelledRegistrations ?? this.cancelledRegistrations,
         queuedRegistrations: queuedRegistrations ?? this.queuedRegistrations,
         isLoading: isLoading ?? this.isLoading,
+        exception: exception ?? this.exception,
         message: message ?? this.message,
+        cancelledMessage: cancelledMessage ?? this.cancelledMessage,
+        queuedMessage: queuedMessage ?? this.queuedMessage,
       );
 
-  const EventAdminState.result(
-      {required AdminEvent this.event,
-      required this.registrations,
-      required this.cancelledRegistrations,
-      required this.queuedRegistrations})
-      : message = null,
-        isLoading = false;
+  const EventAdminState.result({
+    required AdminEvent this.event,
+    required this.registrations,
+    required this.cancelledRegistrations,
+    required this.queuedRegistrations,
+    this.exception,
+    this.message,
+    this.cancelledMessage,
+    this.queuedMessage,
+  }) : isLoading = false;
 
   const EventAdminState.loading(
       {this.event,
       required this.registrations,
       required this.cancelledRegistrations,
       required this.queuedRegistrations})
-      : message = null,
+      : exception = null,
+        message = null,
+        cancelledMessage = null,
+        queuedMessage = null,
         isLoading = true;
 
-  const EventAdminState.failure({required String this.message, this.event})
+  const EventAdminState.failure({required String this.exception, this.event})
       : registrations = const [],
         cancelledRegistrations = const [],
         queuedRegistrations = const [],
-        isLoading = false;
+        isLoading = false,
+        message = null,
+        cancelledMessage = null,
+        queuedMessage = null;
 }
 
 class EventAdminCubit extends Cubit<EventAdminState> {
@@ -140,29 +163,38 @@ class EventAdminCubit extends Cubit<EventAdminState> {
 
       // temporary fix, remove when api is updated
       registrations.results.removeWhere((r) => r.queuePosition != null);
+
+      String? message;
       if (registrations.results.isEmpty) {
-        if (query?.isEmpty ?? true) {
-          emit(EventAdminState.failure(
-            event: event,
-            message: 'There are no registrations.',
-          ));
-        } else {
-          emit(EventAdminState.failure(
-            event: event,
-            message: 'There are no registrations matching "$query".',
-          ));
-        }
-      } else {
-        emit(EventAdminState.result(
-          event: event,
-          registrations: registrations.results,
-          cancelledRegistrations: cancelledRegistrations.results,
-          queuedRegistrations: queuedRegistrations.results,
-        ));
+        message = (query?.isEmpty ?? true)
+            ? 'There are no registrations.'
+            : 'There are no registrations matching "$query".';
       }
+      String? cancelledMessage;
+      if (cancelledRegistrations.results.isEmpty) {
+        cancelledMessage = (query?.isEmpty ?? true)
+            ? 'There are no cancelled registrations.'
+            : 'There are no cancelled registrations matching "$query".';
+      }
+      String? queuedMessage;
+      if (queuedRegistrations.results.isEmpty) {
+        queuedMessage = (query?.isEmpty ?? true)
+            ? 'There are no queued registrations.'
+            : 'There are no queued registrations matching "$query".';
+      }
+
+      emit(EventAdminState.result(
+        event: event,
+        registrations: registrations.results,
+        cancelledRegistrations: cancelledRegistrations.results,
+        queuedRegistrations: queuedRegistrations.results,
+        message: message,
+        cancelledMessage: cancelledMessage,
+        queuedMessage: queuedMessage,
+      ));
     } on ApiException catch (exception) {
       emit(EventAdminState.failure(
-        message: exception.getMessage(notFound: 'The event does not exist.'),
+        exception: exception.getMessage(notFound: 'The event does not exist.'),
       ));
     }
   }
@@ -201,27 +233,39 @@ class EventAdminCubit extends Cubit<EventAdminState> {
 
         // temporary fix, remove when api is updated
         registrations.results.removeWhere((r) => r.queuePosition != null);
+
+        String? message;
         if (registrations.results.isEmpty) {
-          if (query?.isEmpty ?? true) {
-            emit(const EventAdminState.failure(
-              message: 'There are no registrations.',
-            ));
-          } else {
-            emit(EventAdminState.failure(
-              message: 'There are no registrations matching "$query".',
-            ));
-          }
-        } else {
-          emit(EventAdminState.result(
-            event: event,
-            registrations: registrations.results,
-            cancelledRegistrations: cancelledRegistrations.results,
-            queuedRegistrations: queuedRegistrations.results,
-          ));
+          message = (query?.isEmpty ?? true)
+              ? 'There are no registrations.'
+              : 'There are no registrations matching "$query".';
         }
+        String? cancelledMessage;
+        if (cancelledRegistrations.results.isEmpty) {
+          cancelledMessage = (query?.isEmpty ?? true)
+              ? 'There are no cancelled registrations.'
+              : 'There are no cancelled registrations matching "$query".';
+        }
+        String? queuedMessage;
+        if (queuedRegistrations.results.isEmpty) {
+          queuedMessage = (query?.isEmpty ?? true)
+              ? 'There are no queued registrations.'
+              : 'There are no queued registrations matching "$query".';
+        }
+
+        emit(EventAdminState.result(
+          event: event,
+          registrations: registrations.results,
+          cancelledRegistrations: cancelledRegistrations.results,
+          queuedRegistrations: queuedRegistrations.results,
+          message: message,
+          cancelledMessage: cancelledMessage,
+          queuedMessage: queuedMessage,
+        ));
       } on ApiException catch (exception) {
         emit(EventAdminState.failure(
-          message: exception.getMessage(notFound: 'The event does not exist.'),
+          exception:
+              exception.getMessage(notFound: 'The event does not exist.'),
         ));
       }
     } else {

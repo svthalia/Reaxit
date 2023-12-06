@@ -147,13 +147,13 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                 child: BlocBuilder<EventAdminCubit, EventAdminState>(
                   builder: (context, state) {
                     if (state.hasException) {
-                      return ErrorScrollView(state.message!);
+                      return ErrorScrollView(state.exception!);
                     } else if (state.isLoading) {
                       return const Center(child: CircularProgressIndicator());
                     } else {
                       return TabBarView(children: [
-                        if (state.queuedRegistrations.isEmpty)
-                          const ErrorCenter('No queued registrations found')
+                        if (state.queuedMessage != null)
+                          ErrorCenter(state.queuedMessage!)
                         else
                           Scrollbar(
                             child: ListView.separated(
@@ -166,8 +166,8 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                               itemCount: state.queuedRegistrations.length,
                             ),
                           ),
-                        if (state.registrations.isEmpty)
-                          const ErrorCenter('No registrations found')
+                        if (state.message != null)
+                          ErrorCenter(state.message!)
                         else
                           Scrollbar(
                             child: ListView.separated(
@@ -181,8 +181,8 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                               itemCount: state.registrations.length,
                             ),
                           ),
-                        if (state.cancelledRegistrations.isEmpty)
-                          const ErrorCenter('No cancelled registrations found')
+                        if (state.cancelledMessage != null)
+                          ErrorCenter(state.cancelledMessage!)
                         else
                           Scrollbar(
                             child: ListView.separated(
