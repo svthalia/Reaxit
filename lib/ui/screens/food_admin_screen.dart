@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,6 +18,38 @@ class FoodAdminScreen extends StatefulWidget {
 }
 
 class _FoodAdminScreenState extends State<FoodAdminScreen> {
+  Filter<AdminFoodOrder> _filter = MultipleFilter(
+    [
+      MapFilter<PaymentType?, AdminFoodOrder>(
+          map: {
+            for (PaymentType value in PaymentType.values) value: true,
+            null: true,
+          },
+          title: 'Payment type',
+          asString: (item) => item?.toString() ?? 'Not paid',
+          toKey: (item) => item.payment?.type),
+    ],
+  );
+
+  _SortOrder _sortOrder = _SortOrder.none;
+
+  void _showPaymentFilter() async {
+    final Filter<AdminFoodOrder>? results = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return MultiSelectPopup(
+          filter: _filter.clone(),
+          title: 'Filter registrations',
+        );
+      },
+    );
+    if (results != null) {
+      setState(() {
+        _filter = results;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -26,6 +59,7 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
       )..load(),
       child: Builder(
         builder: (context) {
+          print('hey!');
           return Scaffold(
             appBar: ThaliaAppBar(
               title: const Text('ORDERS'),
@@ -53,7 +87,18 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
                     // for the FoodAdminScreen until a refresh.
                     adminCubit.load();
                   },
-                )
+                ),
+                SortButton<_SortOrder>(
+                  _SortOrder.values.map((e) => e.asSortItem()).toList(),
+                  (p0) => setState(() {
+                    _sortOrder = p0 ?? _SortOrder.none;
+                  }),
+                ),
+                IconAppbarAction(
+                  'FILTER',
+                  Icons.filter_alt_rounded,
+                  _showPaymentFilter,
+                ),
               ],
             ),
             body: RefreshIndicator(
@@ -67,14 +112,19 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
                   } else if (state is LoadingState) {
                     return const Center(child: CircularProgressIndicator());
                   } else {
+                    List<AdminFoodOrder> filtered = state.result!
+                        .where(_filter.passes)
+                        .sorted(_sortOrder.compare)
+                        .toList();
+
                     return Scrollbar(
                         child: ListView.separated(
                       key: const PageStorageKey('food-admin'),
                       itemBuilder: (context, index) => _OrderTile(
-                        order: state.result![index],
+                        order: filtered[index],
                       ),
                       separatorBuilder: (_, __) => const Divider(),
-                      itemCount: state.result!.length,
+                      itemCount: filtered.length,
                     ));
                   }
                 },
@@ -292,4 +342,63 @@ class FoodAdminSearchDelegate extends SearchDelegate {
       ),
     );
   }
+}
+
+enum _SortOrder {
+  none(text: 'None', icon: Icons.cancel, compare: equal),
+  payedUp(text: 'Paid', icon: Icons.keyboard_arrow_up, compare: cmpPaid),
+  payedDown(text: 'Paid', icon: Icons.keyboard_arrow_down, compare: cmpPaid_2),
+  nameUp(text: 'Name', icon: Icons.keyboard_arrow_up, compare: cmpName),
+  nameDown(text: 'Name', icon: Icons.keyboard_arrow_down, compare: cmpName_2),
+  productUp(
+      text: 'Product', icon: Icons.keyboard_arrow_up, compare: cmpProduct),
+  productDown(
+      text: 'Product', icon: Icons.keyboard_arrow_down, compare: cmpProduct_2);
+
+  final String text;
+  final IconData? icon;
+  final int Function(AdminFoodOrder, AdminFoodOrder) compare;
+
+  const _SortOrder({required this.text, this.icon, required this.compare});
+
+  SortItem<_SortOrder> asSortItem() {
+    return SortItem(this, text, icon);
+  }
+
+  static int equal(AdminFoodOrder e1, AdminFoodOrder e2) {
+    return 0;
+  }
+
+  static int cmpPaid(AdminFoodOrder e1, AdminFoodOrder e2) {
+    if (e1.isPaid) {
+      return -1;
+    }
+    if (e2.isPaid) {
+      return 1;
+    }
+    return 0;
+  }
+
+  static int cmpPaid_2(AdminFoodOrder e1, AdminFoodOrder e2) =>
+      -cmpPaid(e1, e2);
+
+  static int cmpName(AdminFoodOrder e1, AdminFoodOrder e2) {
+    if (e1.name == null) {
+      return -1;
+    }
+    if (e2.name == null) {
+      return 1;
+    }
+    return e1.name!.compareTo(e2.name!);
+  }
+
+  static int cmpName_2(AdminFoodOrder e1, AdminFoodOrder e2) =>
+      -cmpName(e1, e2);
+
+  static int cmpProduct(AdminFoodOrder e1, AdminFoodOrder e2) {
+    return e1.product.name.compareTo(e2.product.name);
+  }
+
+  static int cmpProduct_2(AdminFoodOrder e1, AdminFoodOrder e2) =>
+      -cmpName(e1, e2);
 }
