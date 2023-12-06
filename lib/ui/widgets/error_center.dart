@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
 class ErrorCenter extends StatelessWidget {
-  final String message;
+  final List<Widget> children;
 
-  const ErrorCenter(this.message, {Key? key}) : super(key: key);
+  const ErrorCenter(this.children, {Key? key}) : super(key: key);
+  ErrorCenter.fromMessage(String message, {Key? key})
+      : children = [Text(message, textAlign: TextAlign.center)],
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +23,7 @@ class ErrorCenter extends StatelessWidget {
                 fit: BoxFit.fitHeight,
               ),
             ),
-            Text(message, textAlign: TextAlign.center),
+            ...children,
           ],
         ),
       ),

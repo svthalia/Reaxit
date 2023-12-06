@@ -479,7 +479,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               slivers: [
                 _makeAppBar(),
                 SliverFillRemaining(
-                  child: ErrorCenter(state.message!),
+                  child: ErrorCenter.fromMessage(state.message!),
                 ),
               ],
             );
