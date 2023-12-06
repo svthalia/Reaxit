@@ -10,7 +10,21 @@ enum PaymentType {
   @JsonValue('tpay_payment')
   tpayPayment,
   @JsonValue('wire_payment')
-  wirePayment,
+  wirePayment;
+
+  @override
+  String toString() {
+    switch (this) {
+      case PaymentType.cashPayment:
+        return 'Cash payment';
+      case PaymentType.cardPayment:
+        return 'Card payment';
+      case PaymentType.tpayPayment:
+        return 'Thalia Pay';
+      case PaymentType.wirePayment:
+        return 'Wire payment';
+    }
+  }
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
