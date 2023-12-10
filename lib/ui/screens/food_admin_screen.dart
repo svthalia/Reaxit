@@ -33,6 +33,12 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
 
   _SortOrder _sortOrder = _SortOrder.none;
 
+  void _updateSortOrder(_SortOrder? order) {
+    setState(() {
+      _sortOrder = order ?? _SortOrder.none;
+    });
+  }
+
   void _showPaymentFilter() async {
     final Filter<AdminFoodOrder>? results = await showDialog(
       context: context,
@@ -50,6 +56,27 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
     }
   }
 
+  void _opensearch(BuildContext context) async {
+    final adminCubit = BlocProvider.of<FoodAdminCubit>(context);
+    final searchCubit = FoodAdminCubit(
+      RepositoryProvider.of<ApiRepository>(context),
+      foodEventPk: widget.pk,
+    );
+
+    await showSearch(
+      context: context,
+      delegate: FoodAdminSearchDelegate(searchCubit),
+    );
+
+    searchCubit.close();
+
+    // After the search dialog closes, refresh the results,
+    // since the search screen may have changed stuff through
+    // its own FoodAdminCubit, that do not show up in the cubit
+    // for the FoodAdminScreen until a refresh.
+    adminCubit.load();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -59,7 +86,6 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
       )..load(),
       child: Builder(
         builder: (context) {
-          print('hey!');
           return Scaffold(
             appBar: ThaliaAppBar(
               title: const Text('ORDERS'),
@@ -67,32 +93,11 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
                 IconAppbarAction(
                   'SEACH',
                   Icons.search,
-                  () async {
-                    final adminCubit = BlocProvider.of<FoodAdminCubit>(context);
-                    final searchCubit = FoodAdminCubit(
-                      RepositoryProvider.of<ApiRepository>(context),
-                      foodEventPk: widget.pk,
-                    );
-
-                    await showSearch(
-                      context: context,
-                      delegate: FoodAdminSearchDelegate(searchCubit),
-                    );
-
-                    searchCubit.close();
-
-                    // After the search dialog closes, refresh the results,
-                    // since the search screen may have changed stuff through
-                    // its own FoodAdminCubit, that do not show up in the cubit
-                    // for the FoodAdminScreen until a refresh.
-                    adminCubit.load();
-                  },
+                  () => _opensearch(context),
                 ),
                 SortButton<_SortOrder>(
                   _SortOrder.values.map((e) => e.asSortItem()).toList(),
-                  (p0) => setState(() {
-                    _sortOrder = p0 ?? _SortOrder.none;
-                  }),
+                  _updateSortOrder,
                 ),
                 IconAppbarAction(
                   'FILTER',
@@ -107,25 +112,27 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
               },
               child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
                 builder: (context, state) {
-                  if (state is ErrorState) {
-                    return ErrorScrollView(state.message!);
-                  } else if (state is LoadingState) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else {
-                    List<AdminFoodOrder> filtered = state.result!
-                        .where(_filter.passes)
-                        .sorted(_sortOrder.compare)
-                        .toList();
+                  switch (state) {
+                    case (ErrorState estate):
+                      return ErrorScrollView(estate.message);
+                    case (LoadingState _):
+                      return const Center(child: CircularProgressIndicator());
+                    case (ResultState<List<AdminFoodOrder>> rstate):
+                      List<AdminFoodOrder> filtered = rstate.result
+                          .where(_filter.passes)
+                          .sorted(_sortOrder.compare)
+                          .toList();
 
-                    return Scrollbar(
+                      return Scrollbar(
                         child: ListView.separated(
-                      key: const PageStorageKey('food-admin'),
-                      itemBuilder: (context, index) => _OrderTile(
-                        order: filtered[index],
-                      ),
-                      separatorBuilder: (_, __) => const Divider(),
-                      itemCount: filtered.length,
-                    ));
+                          key: const PageStorageKey('food-admin'),
+                          itemBuilder: (context, index) => _OrderTile(
+                            order: filtered[index],
+                          ),
+                          separatorBuilder: (_, __) => const Divider(),
+                          itemCount: filtered.length,
+                        ),
+                      );
                   }
                 },
               ),
@@ -299,19 +306,20 @@ class FoodAdminSearchDelegate extends SearchDelegate {
       value: _adminCubit..search(query),
       child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
         builder: (context, state) {
-          if (state is ErrorState) {
-            return ErrorScrollView(state.message!);
-          } else if (state is LoadingState) {
-            return const SizedBox.shrink();
-          } else {
-            return ListView.separated(
-              key: const PageStorageKey('food-admin-search'),
-              itemBuilder: (context, index) => _OrderTile(
-                order: state.result![index],
-              ),
-              separatorBuilder: (_, __) => const Divider(),
-              itemCount: state.result!.length,
-            );
+          switch (state) {
+            case (ErrorState state):
+              return ErrorScrollView(state.message);
+            case (LoadingState _):
+              return const SizedBox.shrink();
+            case (ResultState<List<AdminFoodOrder>> rstate):
+              return ListView.separated(
+                key: const PageStorageKey('food-admin-search'),
+                itemBuilder: (context, index) => _OrderTile(
+                  order: rstate.result[index],
+                ),
+                separatorBuilder: (_, __) => const Divider(),
+                itemCount: rstate.result.length,
+              );
           }
         },
       ),

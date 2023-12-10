@@ -14,7 +14,7 @@ import 'package:equatable/equatable.dart';
 ///   This is a subtype of both [ErrorState] and [LoadingState]
 ///
 /// Additional subtypes can be added as needed.
-abstract class DetailState<T> extends Equatable {
+sealed class DetailState<T> extends Equatable {
   const DetailState();
 
   T? get result => this is ResultState ? (this as ResultState<T>).result : null;
