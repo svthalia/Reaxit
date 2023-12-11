@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
@@ -53,9 +54,10 @@ class GroupScreen extends StatelessWidget {
       create: _selectCubit,
       child: BlocBuilder<GroupCubit, GroupState>(
         builder: (context, state) => _Page(
-            state: state,
-            cubit: BlocProvider.of<GroupCubit>(context),
-            listGroup: group),
+          state: state,
+          cubit: BlocProvider.of<GroupCubit>(context),
+          listGroup: group,
+        ),
       ),
     );
   }
@@ -75,32 +77,19 @@ class _Page extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (state is ErrorState) {
-      return Scaffold(
-        appBar: ThaliaAppBar(
-          title: Text(listGroup?.name.toUpperCase() ?? 'GROUP'),
-        ),
-        body: RefreshIndicator(
+    late Widget body;
+    switch (state) {
+      case (ErrorState estate):
+        body = RefreshIndicator(
           onRefresh: () => cubit.load(),
-          child: ErrorScrollView(state.message!),
-        ),
-      );
-    } else if (state is LoadingState &&
-        state is! ResultState &&
-        listGroup == null) {
-      return Scaffold(
-        appBar: ThaliaAppBar(title: const Text('GROUP')),
-        body: const Center(child: CircularProgressIndicator()),
-      );
-    } else if (state is LoadingState &&
-        state is! ResultState &&
-        listGroup != null) {
-      final group = listGroup!;
-      return Scaffold(
-        appBar: ThaliaAppBar(title: Text(group.name.toUpperCase())),
-        body: RefreshIndicator(
-          onRefresh: () => cubit.load(),
-          child: Scrollbar(
+          child: ErrorScrollView(estate.message),
+        );
+      case (LoadingState _):
+        if (listGroup == null) {
+          body = const Center(child: CircularProgressIndicator());
+        } else {
+          final group = listGroup!;
+          body = Scrollbar(
             child: CustomScrollView(
               key: const PageStorageKey('group'),
               slivers: [
@@ -118,14 +107,11 @@ class _Page extends StatelessWidget {
                 const _MembersGrid(members: null),
               ],
             ),
-          ),
-        ),
-      );
-    } else {
-      final group = (state.result)!;
-      return Scaffold(
-        appBar: ThaliaAppBar(title: Text(group.name.toUpperCase())),
-        body: RefreshIndicator(
+          );
+        }
+      case (ResultState<Group> rstate):
+        final group = rstate.result;
+        body = RefreshIndicator(
           onRefresh: () => cubit.load(),
           child: Scrollbar(
             child: CustomScrollView(
@@ -146,9 +132,14 @@ class _Page extends StatelessWidget {
               ],
             ),
           ),
-        ),
-      );
+        );
     }
+    return Scaffold(
+      appBar: ThaliaAppBar(
+        title: Text(listGroup?.name.toUpperCase() ?? 'GROUP'),
+      ),
+      body: body,
+    );
   }
 }
 
@@ -253,6 +244,8 @@ class _GroupInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Column(
       children: [
         Padding(
@@ -264,6 +257,35 @@ class _GroupInfo extends StatelessWidget {
               Text(
                 group.name.toUpperCase(),
                 style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const Divider(height: 24),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Flexible(
+                    fit: FlexFit.tight,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('CONTACT', style: textTheme.bodySmall),
+                        const SizedBox(height: 4),
+                        RichText(
+                          text: TextSpan(
+                            text: 'Email',
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                launchUrl(Uri.parse(
+                                    'mailto:${group.contactAddress}'));
+                              },
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               const Divider(height: 24),
               _Description(group: group),
