@@ -57,6 +57,8 @@ const albumphoto2 = AlbumPhoto(
 WidgetTesterCallback getTestMethod(List<Event> events, DateTime now) {
   return (tester) async {
     final split = DateTime(now.year, now.month);
+    final today = DateTime(now.year, now.month, now.day);
+    final tomorrow = today.add(const Duration(days: 1));
 
     // Setup mock.
     final api = MockApiRepository();
@@ -121,8 +123,8 @@ WidgetTesterCallback getTestMethod(List<Event> events, DateTime now) {
       expect(find.text(event.label), findsOneWidget);
     }
 
-    if (events.any(
-        (element) => element.start.isBefore(now) && element.end.isAfter(now))) {
+    if (events.any((element) =>
+        element.start.isAfter(today) && element.end.isBefore(tomorrow))) {
       expect(find.text('There are no events this day'), findsOneWidget);
     }
   };
