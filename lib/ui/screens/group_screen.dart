@@ -77,41 +77,33 @@ class _Page extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    late Widget body;
-    switch (state) {
-      case (ErrorState estate):
-        body = RefreshIndicator(
+    final body = switch (state) {
+      ErrorState estate => RefreshIndicator(
           onRefresh: () => cubit.load(),
           child: ErrorScrollView(estate.message),
-        );
-      case (LoadingState _):
-        if (listGroup == null) {
-          body = const Center(child: CircularProgressIndicator());
-        } else {
-          final group = listGroup!;
-          body = Scrollbar(
-            child: CustomScrollView(
-              key: const PageStorageKey('group'),
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _GroupImage(group: group),
-                      const Divider(height: 0),
-                      _GroupInfo(group: group)
-                    ],
-                  ),
+        ),
+      LoadingState _ when listGroup == null =>
+        const Center(child: CircularProgressIndicator()),
+      LoadingState _ => Scrollbar(
+          child: CustomScrollView(
+            key: const PageStorageKey('group'),
+            slivers: [
+              SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _GroupImage(group: listGroup!),
+                    const Divider(height: 0),
+                    _GroupInfo(group: listGroup!),
+                  ],
                 ),
-                _MembersHeader(group: group),
-                const _MembersGrid(members: null),
-              ],
-            ),
-          );
-        }
-      case (ResultState<Group> rstate):
-        final group = rstate.result;
-        body = RefreshIndicator(
+              ),
+              _MembersHeader(group: listGroup!),
+              const _MembersGrid(members: null),
+            ],
+          ),
+        ),
+      ResultState<Group> rstate => RefreshIndicator(
           onRefresh: () => cubit.load(),
           child: Scrollbar(
             child: CustomScrollView(
@@ -121,19 +113,19 @@ class _Page extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _GroupImage(group: group),
+                      _GroupImage(group: rstate.result),
                       const Divider(height: 0),
-                      _GroupInfo(group: group)
+                      _GroupInfo(group: rstate.result)
                     ],
                   ),
                 ),
-                _MembersHeader(group: group),
-                _MembersGrid(members: group.members),
+                _MembersHeader(group: rstate.result),
+                _MembersGrid(members: rstate.result.members),
               ],
             ),
           ),
-        );
-    }
+        ),
+    };
     return Scaffold(
       appBar: ThaliaAppBar(
         title: Text(listGroup?.name.toUpperCase() ?? 'GROUP'),
