@@ -97,7 +97,7 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   /// Create all info of an event until the description, including buttons.
-  Widget _makeEventInfo(Event event) {
+  Widget _makeEventInfo(Event event, bool ispaying) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Column(
@@ -105,7 +105,7 @@ class _EventScreenState extends State<EventScreen> {
         children: [
           _makeBasicEventInfo(event),
           if (event.registrationIsRequired)
-            _makeRequiredRegistrationInfo(event)
+            _makeRequiredRegistrationInfo(event, ispaying)
           else if (event.registrationIsOptional)
             _makeOptionalRegistrationInfo(event)
           else
@@ -271,7 +271,7 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   // Create the info for events with required registration.
-  Widget _makeRequiredRegistrationInfo(Event event) {
+  Widget _makeRequiredRegistrationInfo(Event event, bool isPaying) {
     assert(event.registrationIsRequired);
     final textTheme = Theme.of(context).textTheme;
     final dataStyle = textTheme.bodyMedium!.apply(fontSizeDelta: -1);
@@ -392,16 +392,21 @@ class _EventScreenState extends State<EventScreen> {
         event.paymentIsRequired &&
         !event.registration!.isPaid &&
         event.registration!.tpayAllowed) {
-      paymentButton = TPayButton(
-        onPay: () => _eventCubit.thaliaPayRegistration(
-          registrationPk: event.registration!.pk,
-        ),
-        confirmationMessage: 'Are you sure you want to pay €${event.price} for '
-            'your registration to "${event.title}"?',
-        failureMessage: 'Could not pay your registration.',
-        successMessage: 'Paid our registration with Thalia Pay.',
-        amount: event.price,
-      );
+      if (isPaying) {
+        paymentButton = TPayButton.disabled(amount: event.price);
+      } else {
+        paymentButton = TPayButton(
+          onPay: () => _eventCubit.thaliaPayRegistration(
+            registrationPk: event.registration!.pk,
+          ),
+          confirmationMessage:
+              'Are you sure you want to pay €${event.price} for '
+              'your registration to "${event.title}"?',
+          failureMessage: 'Could not pay your registration.',
+          successMessage: 'Paid our registration with Thalia Pay.',
+          amount: event.price,
+        );
+      }
     } else {
       paymentButton = const SizedBox.shrink();
     }
@@ -996,7 +1001,7 @@ class _EventScreenState extends State<EventScreen> {
                         children: [
                           _makeMap(event),
                           const Divider(height: 0),
-                          _makeEventInfo(event),
+                          _makeEventInfo(event, state.isPaying),
                           const Divider(),
                           _makeDescription(event),
                         ],
