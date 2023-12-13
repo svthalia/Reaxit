@@ -393,7 +393,7 @@ class _EventScreenState extends State<EventScreen> {
         !event.registration!.isPaid &&
         event.registration!.tpayAllowed) {
       paymentButton = TPayButton(
-        onPay: () => _eventCubit.thaliaPayRegistration(
+        onPay: () async => await _eventCubit.thaliaPayRegistration(
           registrationPk: event.registration!.pk,
         ),
         confirmationMessage: 'Are you sure you want to pay €${event.price} for '
