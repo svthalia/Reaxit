@@ -59,6 +59,8 @@ class TPayButton extends StatefulWidget {
 }
 
 class _TPayButtonState extends State<TPayButton> {
+  bool tmpDisabled = false;
+
   Future<bool> _showConfirmDialog(String confirmationMessage) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -105,7 +107,7 @@ class _TPayButtonState extends State<TPayButton> {
               : 'THALIA PAY',
         );
 
-        if (widget.onPay == null) {
+        if (widget.onPay == null || tmpDisabled) {
           // The button is disabled.
           return ElevatedButton.icon(
             onPressed: null,
@@ -196,11 +198,17 @@ class _TPayButtonState extends State<TPayButton> {
                 final messenger = ScaffoldMessenger.of(context);
                 if (await _showConfirmDialog(confirmationMessage)) {
                   try {
+                    setState(() {
+                      tmpDisabled = true;
+                    });
                     await onPay();
                     messenger.showSnackBar(SnackBar(
                       behavior: SnackBarBehavior.floating,
                       content: Text(successMessage),
                     ));
+                    setState(() {
+                      tmpDisabled = false;
+                    });
                   } on ApiException {
                     messenger.showSnackBar(SnackBar(
                       behavior: SnackBarBehavior.floating,

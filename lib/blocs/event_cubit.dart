@@ -22,9 +22,6 @@ class EventState extends Equatable {
   /// More of the same results are being loaded. The results are not outdated.
   final bool isLoadingMore;
 
-  /// If there is currently a payment request going to the server.
-  final bool isPaying;
-
   /// The last results have been loaded. There are no more pages left.
   final bool isDone;
 
@@ -34,7 +31,6 @@ class EventState extends Equatable {
     required this.isLoading,
     required this.message,
     required this.isLoadingMore,
-    required this.isPaying,
     required this.isDone,
   });
 
@@ -46,7 +42,6 @@ class EventState extends Equatable {
     String? message,
     bool? isLoading,
     bool? isLoadingMore,
-    bool? isPaying,
     bool? isDone,
   }) =>
       EventState(
@@ -55,7 +50,6 @@ class EventState extends Equatable {
         message: message ?? this.message,
         isLoading: isLoading ?? this.isLoading,
         isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-        isPaying: isPaying ?? this.isPaying,
         isDone: isDone ?? this.isDone,
       );
 
@@ -66,7 +60,6 @@ class EventState extends Equatable {
         message,
         isLoading,
         isLoadingMore,
-        isPaying,
         isDone,
       ];
 
@@ -80,21 +73,12 @@ class EventState extends Equatable {
       : message = null,
         isLoading = true,
         isLoadingMore = false,
-        isPaying = false,
-        isDone = true;
-
-  const EventState.paying({this.event, required this.registrations})
-      : message = null,
-        isLoading = true,
-        isLoadingMore = false,
-        isPaying = true,
         isDone = true;
 
   const EventState.loadingMore({this.event, required this.registrations})
       : message = null,
         isLoading = false,
         isLoadingMore = true,
-        isPaying = false,
         isDone = true;
 
   const EventState.success({
@@ -103,15 +87,13 @@ class EventState extends Equatable {
     required this.isDone,
   })  : message = null,
         isLoading = false,
-        isLoadingMore = false,
-        isPaying = false;
+        isLoadingMore = false;
 
   const EventState.failure({required String this.message})
       : event = null,
         registrations = const [],
         isLoading = false,
         isLoadingMore = false,
-        isPaying = false,
         isDone = true;
 }
 
@@ -191,11 +173,6 @@ class EventCubit extends Cubit<EventState> {
   Future<void> thaliaPayRegistration({
     required int registrationPk,
   }) async {
-    final oldState = state;
-
-    if (oldState.isPaying) return;
-
-    emit(oldState.copyWith(isPaying: true));
     await api.thaliaPayRegistration(registrationPk: registrationPk);
     await load();
   }
