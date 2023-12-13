@@ -51,7 +51,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               title: const Text('REGISTRATION'),
               leading: const CloseButton(),
             ),
-            body: ErrorCenter(state.message!),
+            body: ErrorCenter.fromMessage(state.message!),
           );
         } else if (state is LoadingState) {
           return Scaffold(

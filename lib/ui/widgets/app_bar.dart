@@ -5,7 +5,6 @@ import 'package:reaxit/ui/theme.dart';
 abstract class AppbarAction {
   Widget asIcon(BuildContext _);
   Widget asMenuItem(BuildContext context, Function() callback);
-  void ontap();
 
   const AppbarAction();
 }
@@ -35,9 +34,7 @@ class IconAppbarAction extends AppbarAction {
     return MenuItemButton(
       style: ButtonStyle(
           textStyle: MaterialStateTextStyle.resolveWith(
-              (states) => Theme.of(context).textTheme.labelLarge!),
-          foregroundColor:
-              MaterialStateColor.resolveWith((states) => Colors.white)),
+              (states) => Theme.of(context).textTheme.labelLarge!)),
       onPressed: () {
         onpressed();
         callback();
@@ -46,9 +43,6 @@ class IconAppbarAction extends AppbarAction {
       child: Text(text),
     );
   }
-
-  @override
-  void ontap() => onpressed();
 }
 
 class _IconAction extends StatelessWidget {
