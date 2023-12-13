@@ -197,24 +197,24 @@ class _TPayButtonState extends State<TPayButton> {
               onPressed: () async {
                 final messenger = ScaffoldMessenger.of(context);
                 if (await _showConfirmDialog(confirmationMessage)) {
+                  setState(() {
+                    tmpDisabled = true;
+                  });
                   try {
-                    setState(() {
-                      tmpDisabled = true;
-                    });
                     await onPay();
                     messenger.showSnackBar(SnackBar(
                       behavior: SnackBarBehavior.floating,
                       content: Text(successMessage),
                     ));
-                    setState(() {
-                      tmpDisabled = false;
-                    });
                   } on ApiException {
                     messenger.showSnackBar(SnackBar(
                       behavior: SnackBarBehavior.floating,
                       content: Text(failureMessage),
                     ));
                   }
+                  setState(() {
+                    tmpDisabled = false;
+                  });
                 }
               },
               icon: icon,
