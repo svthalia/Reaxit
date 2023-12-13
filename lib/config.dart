@@ -118,6 +118,8 @@ class Config {
 
   static const Duration searchDebounceTime = Duration(milliseconds: 200);
 
+  static const Duration payDebounceTime = Duration(milliseconds: 500);
+
   static const String versionNumber = 'v3.6.0';
 
   static const Config defaultConfig = Config.production ?? Config.staging;

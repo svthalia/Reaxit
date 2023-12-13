@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
+import 'package:reaxit/config.dart';
 import 'package:reaxit/models.dart';
 
 class EventState extends Equatable {
@@ -106,6 +109,9 @@ class EventCubit extends Cubit<EventState> {
   /// The offset to be used for the next paginated request.
   int _nextOffset = 0;
 
+  /// A debouncetimer to prevent paying for things twice.
+  Timer? _payDebounceTimer;
+
   EventCubit(this.api, {int? eventPk, String? eventSlug})
       : assert(!(eventPk == null && eventSlug == null)),
         _eventSlug = eventSlug,
@@ -171,6 +177,12 @@ class EventCubit extends Cubit<EventState> {
   Future<void> thaliaPayRegistration({
     required int registrationPk,
   }) async {
+    // To prevent the server from processing multiple payements,
+    // we prevent a second payment request right a first
+    if (_payDebounceTimer?.isActive ?? false) {
+      return;
+    }
+    _payDebounceTimer = Timer(Config.payDebounceTime, () {});
     await api.thaliaPayRegistration(registrationPk: registrationPk);
     await load();
   }
