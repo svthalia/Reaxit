@@ -262,9 +262,9 @@ class _GroupInfo extends StatelessWidget {
                       children: [
                         Text('CONTACT', style: textTheme.bodySmall),
                         const SizedBox(height: 4),
-                        RichText(
-                          text: TextSpan(
-                            text: 'Email',
+                        SelectableText.rich(
+                          TextSpan(
+                            text: group.contactAddress,
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
                                 launchUrl(Uri.parse(
