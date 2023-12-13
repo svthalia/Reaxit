@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
@@ -53,9 +54,10 @@ class GroupScreen extends StatelessWidget {
       create: _selectCubit,
       child: BlocBuilder<GroupCubit, GroupState>(
         builder: (context, state) => _Page(
-            state: state,
-            cubit: BlocProvider.of<GroupCubit>(context),
-            listGroup: group),
+          state: state,
+          cubit: BlocProvider.of<GroupCubit>(context),
+          listGroup: group,
+        ),
       ),
     );
   }
@@ -75,30 +77,33 @@ class _Page extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (state is ErrorState) {
-      return Scaffold(
-        appBar: ThaliaAppBar(
-          title: Text(listGroup?.name.toUpperCase() ?? 'GROUP'),
-        ),
-        body: RefreshIndicator(
+    final body = switch (state) {
+      ErrorState estate => RefreshIndicator(
           onRefresh: () => cubit.load(),
-          child: ErrorScrollView(state.message!),
+          child: ErrorScrollView(estate.message),
         ),
-      );
-    } else if (state is LoadingState &&
-        state is! ResultState &&
-        listGroup == null) {
-      return Scaffold(
-        appBar: ThaliaAppBar(title: const Text('GROUP')),
-        body: const Center(child: CircularProgressIndicator()),
-      );
-    } else if (state is LoadingState &&
-        state is! ResultState &&
-        listGroup != null) {
-      final group = listGroup!;
-      return Scaffold(
-        appBar: ThaliaAppBar(title: Text(group.name.toUpperCase())),
-        body: RefreshIndicator(
+      LoadingState _ when listGroup == null =>
+        const Center(child: CircularProgressIndicator()),
+      LoadingState _ => Scrollbar(
+          child: CustomScrollView(
+            key: const PageStorageKey('group'),
+            slivers: [
+              SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _GroupImage(group: listGroup!),
+                    const Divider(height: 0),
+                    _GroupInfo(group: listGroup!),
+                  ],
+                ),
+              ),
+              _MembersHeader(group: listGroup!),
+              const _MembersGrid(members: null),
+            ],
+          ),
+        ),
+      ResultState<Group> rstate => RefreshIndicator(
           onRefresh: () => cubit.load(),
           child: Scrollbar(
             child: CustomScrollView(
@@ -108,47 +113,25 @@ class _Page extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _GroupImage(group: group),
+                      _GroupImage(group: rstate.result),
                       const Divider(height: 0),
-                      _GroupInfo(group: group)
+                      _GroupInfo(group: rstate.result)
                     ],
                   ),
                 ),
-                _MembersHeader(group: group),
-                const _MembersGrid(members: null),
+                _MembersHeader(group: rstate.result),
+                _MembersGrid(members: rstate.result.members),
               ],
             ),
           ),
         ),
-      );
-    } else {
-      final group = (state.result)!;
-      return Scaffold(
-        appBar: ThaliaAppBar(title: Text(group.name.toUpperCase())),
-        body: RefreshIndicator(
-          onRefresh: () => cubit.load(),
-          child: Scrollbar(
-            child: CustomScrollView(
-              key: const PageStorageKey('group'),
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _GroupImage(group: group),
-                      const Divider(height: 0),
-                      _GroupInfo(group: group)
-                    ],
-                  ),
-                ),
-                _MembersHeader(group: group),
-                _MembersGrid(members: group.members),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
+    };
+    return Scaffold(
+      appBar: ThaliaAppBar(
+        title: Text(listGroup?.name.toUpperCase() ?? 'GROUP'),
+      ),
+      body: body,
+    );
   }
 }
 
@@ -253,6 +236,8 @@ class _GroupInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Column(
       children: [
         Padding(
@@ -264,6 +249,35 @@ class _GroupInfo extends StatelessWidget {
               Text(
                 group.name.toUpperCase(),
                 style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const Divider(height: 24),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Flexible(
+                    fit: FlexFit.tight,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('CONTACT', style: textTheme.bodySmall),
+                        const SizedBox(height: 4),
+                        SelectableText.rich(
+                          TextSpan(
+                            text: group.contactAddress,
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                launchUrl(Uri.parse(
+                                    'mailto:${group.contactAddress}'));
+                              },
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               const Divider(height: 24),
               _Description(group: group),
