@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 
-abstract class MarkPresentState extends Equatable {
+sealed class MarkPresentState extends Equatable {
   const MarkPresentState();
 
   @override

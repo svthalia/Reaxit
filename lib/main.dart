@@ -270,16 +270,18 @@ class _ThaliAppState extends State<ThaliApp> {
                 // Listen to display login status snackbars and set up notifications.
                 listener: (context, state) async {
                   // Show a snackbar when the user logs out or logging in fails.
-                  if (state is LoggedOutAuthState) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      behavior: SnackBarBehavior.floating,
-                      content: Text('Logged out.'),
-                    ));
-                  } else if (state is FailureAuthState) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      behavior: SnackBarBehavior.floating,
-                      content: Text(state.message ?? 'Logging in failed.'),
-                    ));
+                  switch (state) {
+                    case LoggedOutAuthState _:
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: Text('Logged out.'),
+                      ));
+                    case FailureAuthState(message: var message):
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: Text(message ?? 'Logging in failed.'),
+                      ));
+                    case _:
                   }
                 },
                 buildWhen: (previous, current) => current is! FailureAuthState,

@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'registration_field.g.dart';
 
-abstract class RegistrationField {
+sealed class RegistrationField {
   final String label;
   final String description;
   // ignore: prefer_typing_uninitialized_variables
@@ -33,11 +33,11 @@ class IntegerRegistrationField extends RegistrationField {
   int? value;
 
   IntegerRegistrationField(
-    String label,
-    String description,
-    bool isRequired,
+    super.label,
+    super.description,
+    super.isRequired,
     this.value,
-  ) : super(label, description, isRequired);
+  );
 
   factory IntegerRegistrationField.fromJson(Map<String, dynamic> json) =>
       _$IntegerRegistrationFieldFromJson(json);
@@ -49,11 +49,11 @@ class TextRegistrationField extends RegistrationField {
   String? value;
 
   TextRegistrationField(
-    String label,
-    String description,
-    bool isRequired,
+    super.label,
+    super.description,
+    super.isRequired,
     this.value,
-  ) : super(label, description, isRequired);
+  );
 
   factory TextRegistrationField.fromJson(Map<String, dynamic> json) =>
       _$TextRegistrationFieldFromJson(json);
@@ -65,11 +65,11 @@ class CheckboxRegistrationField extends RegistrationField {
   bool? value;
 
   CheckboxRegistrationField(
-    String label,
-    String description,
-    bool isRequired,
+    super.label,
+    super.description,
+    super.isRequired,
     this.value,
-  ) : super(label, description, isRequired);
+  );
 
   factory CheckboxRegistrationField.fromJson(Map<String, dynamic> json) =>
       _$CheckboxRegistrationFieldFromJson(json);

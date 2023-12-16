@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 class MultiSelectPopup extends StatelessWidget {
   final Filter filter;
   final String title;
-  const MultiSelectPopup({Key? key, required this.filter, required this.title})
-      : super(key: key);
+  const MultiSelectPopup(
+      {super.key, required this.filter, required this.title});
 
   // this function is called when the Cancel button is pressed
   void _cancel(BuildContext context) {

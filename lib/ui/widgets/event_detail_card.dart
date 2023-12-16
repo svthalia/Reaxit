@@ -35,6 +35,7 @@ class EventDetailCard extends StatelessWidget {
         _hasFoodEvent = event is Event ? event.hasFoodEvent : false;
 
   void _onTap(BuildContext context) {
+    // TODO: because adminevent is also a BaseEvent we should implement it as well, and make it a switch expr
     if (event is Event) {
       context.pushNamed(
         'event',

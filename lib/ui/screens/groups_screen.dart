@@ -92,45 +92,36 @@ class _GroupsScreenState extends State<GroupsScreen>
         controller: _tabController,
         children: [
           BlocBuilder<CommitteesCubit, GroupsState>(
-            builder: (context, state) {
-              if (state is ErrorState) {
-                return ErrorScrollView(state.message!);
-              } else if (state is LoadingState) {
-                return const Padding(
+            builder: (context, state) => switch (state) {
+              ErrorState(message: var message) => ErrorScrollView(message),
+              LoadingState _ => const Padding(
                   padding: EdgeInsets.all(16),
                   child: Center(child: CircularProgressIndicator()),
-                );
-              } else {
-                return GroupListScrollView(groups: state.result!);
-              }
+                ),
+              ResultState(result: var result) =>
+                GroupListScrollView(groups: result),
             },
           ),
           BlocBuilder<SocietiesCubit, GroupsState>(
-            builder: (context, state) {
-              if (state is ErrorState) {
-                return ErrorScrollView(state.message!);
-              } else if (state is LoadingState) {
-                return const Padding(
+            builder: (context, state) => switch (state) {
+              ErrorState(message: var message) => ErrorScrollView(message),
+              LoadingState _ => const Padding(
                   padding: EdgeInsets.all(16),
                   child: Center(child: CircularProgressIndicator()),
-                );
-              } else {
-                return GroupListScrollView(groups: state.result!);
-              }
+                ),
+              ResultState(result: var result) =>
+                GroupListScrollView(groups: result),
             },
           ),
           BlocBuilder<BoardsCubit, GroupsState>(
-            builder: (context, state) {
-              if (state is ErrorState) {
-                return ErrorScrollView(state.message!);
-              } else if (state is LoadingState) {
-                return const Padding(
+            builder: (context, state) => switch (state) {
+              ErrorState(message: var message) => ErrorScrollView(message),
+              LoadingState _ => const Padding(
                   padding: EdgeInsets.all(16),
                   child: Center(child: CircularProgressIndicator()),
-                );
-              } else {
-                return GroupListScrollView(groups: state.result!);
-              }
+                ),
+              ResultState(result: var result) =>
+                GroupListScrollView(groups: result),
             },
           )
         ],
@@ -143,12 +134,11 @@ class GroupListScrollView extends StatelessWidget {
   final List<ListGroup> groups;
   final ListGroup? activeBoard;
 
-  GroupListScrollView({Key? key, required List<ListGroup> groups})
+  GroupListScrollView({super.key, required List<ListGroup> groups})
       : activeBoard = groups.firstWhereOrNull(
           (element) => element.isActiveBoard(),
         ),
-        groups = groups.where((element) => !element.isActiveBoard()).toList(),
-        super(key: key);
+        groups = groups.where((element) => !element.isActiveBoard()).toList();
 
   @override
   Widget build(BuildContext context) {
@@ -234,15 +224,16 @@ class GroupSearchDelegate extends SearchDelegate {
   Widget buildResults(BuildContext context) {
     return BlocBuilder<AllGroupsCubit, GroupsState>(
       bloc: _cubit..search(query),
-      builder: (context, state) {
-        if (state is ErrorState) {
-          return ErrorScrollView(state.message!);
-        } else {
-          return GroupListScrollView(
+      builder: (context, state) => switch (state) {
+        ErrorState(message: var message) => ErrorScrollView(message),
+        LoadingState _ => GroupListScrollView(
             key: const PageStorageKey('groups-search'),
-            groups: state.result ?? [],
-          );
-        }
+            groups: const [],
+          ),
+        ResultState(result: var result) => GroupListScrollView(
+            key: const PageStorageKey('groups-search'),
+            groups: result,
+          ),
       },
     );
   }

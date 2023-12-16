@@ -35,16 +35,18 @@ class TostiScreen extends StatelessWidget {
         },
         listener: (context, state) async {
           // Show a snackbar when the user logs out or logging in fails.
-          if (state is LoggedOutTostiAuthState) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              behavior: SnackBarBehavior.floating,
-              content: Text('Logged out.'),
-            ));
-          } else if (state is FailureTostiAuthState) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              behavior: SnackBarBehavior.floating,
-              content: Text(state.message ?? 'Logging in failed.'),
-            ));
+          switch (state) {
+            case LoggedOutTostiAuthState _:
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                behavior: SnackBarBehavior.floating,
+                content: Text('Logged out.'),
+              ));
+            case FailureTostiAuthState(message: var message):
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                behavior: SnackBarBehavior.floating,
+                content: Text(state.message ?? 'Logging in failed.'),
+              ));
+            case _:
           }
         },
         builder: (context, state) {
@@ -106,34 +108,34 @@ class _SignedInTostiHomeView extends StatelessWidget {
       onRefresh: () => BlocProvider.of<TostiHomeCubit>(context).load(),
       child: BlocBuilder<TostiHomeCubit, TostiHomeState>(
         builder: (context, state) {
-          if (state is LoadingState) {
-            return ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              children: const [
+          late final List<Widget> children;
+          switch (state) {
+            case ErrorState(message: var message):
+              return ErrorScrollView(message);
+            case LoadingState():
+              children = const [
                 Center(
                   child: Padding(
                     padding: EdgeInsets.all(32),
                     child: CircularProgressIndicator(),
                   ),
                 )
-              ],
-            );
-          } else if (state is ErrorState) {
-            return ErrorScrollView(state.message!);
-          } else if (state.result!.isEmpty) {
-            return const ErrorScrollView('There are no venues.');
-          } else {
-            return ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              children: [
-                for (final venue in state.result!)
+              ];
+            case ResultState(result: var result) when result.isEmpty:
+              return const ErrorScrollView('There are no venues.');
+            case ResultState(result: var results):
+              children = [
+                for (final venue in results)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
                     child: VenueCard(venue),
                   ),
-              ],
-            );
+              ];
           }
+          return ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: children,
+          );
         },
       ),
     );

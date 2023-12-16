@@ -58,15 +58,12 @@ class ErrorState<T> extends DetailState<T> {
 class LoadingState<T> extends DetailState<T> {
   const LoadingState();
 
-  factory LoadingState.from(DetailState<T> state) {
-    if (state is ResultState<T>) {
-      return LoadingResultState(state.result);
-    } else if (state is ErrorState<T>) {
-      return LoadingErrorState(state.message);
-    } else {
-      return const LoadingState();
-    }
-  }
+  factory LoadingState.from(DetailState<T> state) => switch (state) {
+        ErrorState<T>(message: var message) =>
+          LoadingErrorState(message) as LoadingState<T>,
+        LoadingState<T> _ => const LoadingState(),
+        ResultState<T>(result: var result) => LoadingResultState(result),
+      };
 
   @override
   List<Object?> get props => [];
@@ -74,10 +71,10 @@ class LoadingState<T> extends DetailState<T> {
 
 /// A generic state that indicates that we are loading and there is a result.
 class LoadingResultState<T> extends ResultState<T> implements LoadingState<T> {
-  const LoadingResultState(T result) : super(result);
+  const LoadingResultState(super.result);
 }
 
 /// A generic state that indicates that we are loading and there is an error.
 class LoadingErrorState<T> extends ErrorState<T> implements LoadingState<T> {
-  const LoadingErrorState(String message) : super(message);
+  const LoadingErrorState(super.message);
 }

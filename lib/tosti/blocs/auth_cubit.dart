@@ -31,7 +31,7 @@ final Uri _tokenEndpoint = Uri(
 
 const _credentialsStorageKey = 'ThaliApp T.O.S.T.I. OAuth2 credentials';
 
-abstract class TostiAuthState extends Equatable {
+sealed class TostiAuthState extends Equatable {
   const TostiAuthState();
 
   @override

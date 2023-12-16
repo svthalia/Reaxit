@@ -473,50 +473,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: BlocBuilder<MemberCubit, MemberState>(
         bloc: _memberCubit,
         builder: (context, state) {
-          if (state is ErrorState) {
-            return CustomScrollView(
-              controller: _scrollController,
-              slivers: [
+          List<Widget> slivers = switch (state) {
+            ErrorState(message: var message) => [
                 _makeAppBar(),
                 SliverFillRemaining(
-                  child: ErrorCenter.fromMessage(state.message!),
+                  child: ErrorCenter.fromMessage(message),
                 ),
               ],
-            );
-          } else if (state is LoadingState && widget.member == null) {
-            return CustomScrollView(
-              controller: _scrollController,
-              slivers: [
+            LoadingState _ when widget.member == null => [
                 _makeAppBar(),
                 const SliverFillRemaining(
                   child: Center(child: CircularProgressIndicator()),
                 ),
               ],
-            );
-          } else {
-            return CustomScrollView(
-              key: const PageStorageKey('profile'),
-              controller: _scrollController,
-              slivers: [
-                _makeAppBar((state.result ?? widget.member)!),
-                _makeFactsSliver((state.result ?? widget.member)!),
-                if (state is! LoadingState) ...[
-                  if (state.result!.achievements.isNotEmpty)
-                    _makeAchievementsSliver(state.result!),
-                  if (state.result!.societies.isNotEmpty)
-                    _makeSocietiesSliver(state.result!),
-                ] else ...[
-                  const SliverPadding(
-                    padding: EdgeInsets.all(16),
-                    sliver: SliverToBoxAdapter(
-                      child: Center(child: CircularProgressIndicator()),
-                    ),
+            LoadingState _ => [
+                _makeAppBar(widget.member),
+                _makeFactsSliver(widget.member!),
+                const SliverPadding(
+                  padding: EdgeInsets.all(16),
+                  sliver: SliverToBoxAdapter(
+                    child: Center(child: CircularProgressIndicator()),
                   ),
-                ],
+                ),
                 const SliverToBoxAdapter(child: SizedBox(height: 32))
               ],
-            );
-          }
+            ResultState(result: var result) => [
+                _makeAppBar(result),
+                _makeFactsSliver(result),
+                if (result.achievements.isNotEmpty)
+                  _makeAchievementsSliver(result),
+                if (result.societies.isNotEmpty) _makeSocietiesSliver(result),
+                const SliverToBoxAdapter(child: SizedBox(height: 32))
+              ],
+          };
+          return CustomScrollView(
+            controller: _scrollController,
+            slivers: slivers,
+          );
         },
       ),
     );
@@ -525,10 +518,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 class AvatarViewDialog extends StatefulWidget {
   const AvatarViewDialog({
-    Key? key,
+    super.key,
     required this.member,
     required this.memberCubit,
-  }) : super(key: key);
+  });
 
   final ListMember member;
   final MemberCubit memberCubit;
@@ -715,10 +708,10 @@ class _DescriptionFact extends StatefulWidget {
   final ListMember member;
   final MemberCubit cubit;
   const _DescriptionFact({
-    Key? key,
+    super.key,
     required this.member,
     required this.cubit,
-  }) : super(key: key);
+  });
 
   @override
   __DescriptionFactState createState() => __DescriptionFactState();
