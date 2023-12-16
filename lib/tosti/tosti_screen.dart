@@ -7,7 +7,7 @@ import 'package:reaxit/tosti/widgets/venue_card.dart';
 import 'package:reaxit/ui/widgets.dart';
 
 class TostiScreen extends StatelessWidget {
-  const TostiScreen({Key? key}) : super(key: key);
+  const TostiScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class TostiScreen extends StatelessWidget {
             case FailureTostiAuthState(message: var message):
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 behavior: SnackBarBehavior.floating,
-                content: Text(state.message ?? 'Logging in failed.'),
+                content: Text(message ?? 'Logging in failed.'),
               ));
             case _:
           }
@@ -100,7 +100,7 @@ class TostiScreen extends StatelessWidget {
 }
 
 class _SignedInTostiHomeView extends StatelessWidget {
-  const _SignedInTostiHomeView({Key? key}) : super(key: key);
+  const _SignedInTostiHomeView();
 
   @override
   Widget build(BuildContext context) {

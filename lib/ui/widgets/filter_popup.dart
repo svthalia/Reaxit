@@ -42,7 +42,7 @@ class MultiSelectPopup extends StatelessWidget {
 
 class FilterWidget extends StatefulWidget {
   final Filter filter;
-  const FilterWidget({Key? key, required this.filter}) : super(key: key);
+  const FilterWidget({super.key, required this.filter});
 
   @override
   State<StatefulWidget> createState() => _FilterWidgetState();

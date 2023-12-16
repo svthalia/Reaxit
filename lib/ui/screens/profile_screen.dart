@@ -708,7 +708,6 @@ class _DescriptionFact extends StatefulWidget {
   final ListMember member;
   final MemberCubit cubit;
   const _DescriptionFact({
-    super.key,
     required this.member,
     required this.cubit,
   });

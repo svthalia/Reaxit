@@ -65,11 +65,10 @@ class GroupScreen extends StatelessWidget {
 
 class _Page extends StatelessWidget {
   const _Page({
-    Key? key,
     required this.state,
     required this.cubit,
     this.listGroup,
-  }) : super(key: key);
+  });
 
   final DetailState<Group> state;
   final GroupCubit cubit;
@@ -137,9 +136,8 @@ class _Page extends StatelessWidget {
 
 class _MembersHeader extends StatelessWidget {
   const _MembersHeader({
-    Key? key,
     required this.group,
-  }) : super(key: key);
+  });
 
   final ListGroup group;
 
@@ -159,9 +157,8 @@ class _MembersHeader extends StatelessWidget {
 
 class _GroupImage extends StatelessWidget {
   const _GroupImage({
-    Key? key,
     required this.group,
-  }) : super(key: key);
+  });
 
   final ListGroup group;
 
@@ -181,9 +178,8 @@ class _GroupImage extends StatelessWidget {
 
 class _MembersGrid extends StatelessWidget {
   const _MembersGrid({
-    Key? key,
     this.members,
-  }) : super(key: key);
+  });
 
   final List<GroupMembership>? members;
 
@@ -228,9 +224,8 @@ class _MembersGrid extends StatelessWidget {
 
 class _GroupInfo extends StatelessWidget {
   const _GroupInfo({
-    Key? key,
     required this.group,
-  }) : super(key: key);
+  });
 
   final ListGroup group;
 
@@ -292,9 +287,8 @@ class _GroupInfo extends StatelessWidget {
 
 class _Description extends StatelessWidget {
   const _Description({
-    Key? key,
     required this.group,
-  }) : super(key: key);
+  });
 
   final ListGroup group;
 

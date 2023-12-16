@@ -38,9 +38,8 @@ class _Body extends StatelessWidget {
   final List<Payment> payments;
 
   const _Body({
-    Key? key,
     required this.payments,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -59,9 +58,7 @@ class _Body extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({
-    Key? key,
-  }) : super(key: key);
+  const _Header();
 
   @override
   Widget build(BuildContext context) {

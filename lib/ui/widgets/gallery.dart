@@ -260,10 +260,10 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
 
 class HeartPopup extends StatelessWidget {
   const HeartPopup({
-    Key? key,
+    super.key,
     required this.animation,
     required this.color,
-  }) : super(key: key);
+  });
 
   final Animation<double> animation;
   final Color color;

@@ -51,12 +51,12 @@ class AdminListMember extends ListMember {
   String get fullName => '$firstName $lastName';
 
   const AdminListMember(
-    int pk,
-    MembershipType? membershipType,
-    Profile profile,
+    super.pk,
+    super.membershipType,
+    super.profile,
     this.firstName,
     this.lastName,
-  ) : super(pk, membershipType, profile);
+  );
 
   factory AdminListMember.fromJson(Map<String, dynamic> json) =>
       _$AdminListMemberFromJson(json);
@@ -68,16 +68,12 @@ class Member extends ListMember {
   final List<Achievement> societies;
 
   const Member(
-    int pk,
-    MembershipType? membershipType,
-    Profile profile,
+    super.pk,
+    super.membershipType,
+    super.profile,
     this.achievements,
     this.societies,
-  ) : super(
-          pk,
-          membershipType,
-          profile,
-        );
+  );
 
   factory Member.fromJson(Map<String, dynamic> json) => _$MemberFromJson(json);
 }
@@ -151,14 +147,14 @@ class FullProfile extends Profile {
   final DisplayNamePreference displayNamePreference;
 
   const FullProfile(
-    String displayName,
-    String shortDisplayName,
-    DateTime? birthday,
-    Photo photo,
-    Programme? programme,
-    int? startingYear,
-    Uri? website,
-    String? profileDescription,
+    super.displayName,
+    super.shortDisplayName,
+    super.birthday,
+    super.photo,
+    super.programme,
+    super.startingYear,
+    super.website,
+    super.profileDescription,
     this.addressStreet,
     this.addressStreet2,
     this.addressPostalCode,
@@ -171,16 +167,7 @@ class FullProfile extends Profile {
     this.initials,
     this.nickname,
     this.displayNamePreference,
-  ) : super(
-          displayName,
-          shortDisplayName,
-          birthday,
-          photo,
-          programme,
-          startingYear,
-          website,
-          profileDescription,
-        );
+  );
 
   factory FullProfile.fromJson(Map<String, dynamic> json) =>
       _$FullProfileFromJson(json);

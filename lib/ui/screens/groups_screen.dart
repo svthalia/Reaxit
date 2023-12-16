@@ -11,7 +11,7 @@ import 'package:reaxit/api/api_repository.dart';
 class GroupsScreen extends StatefulWidget {
   final MemberGroupType? currentScreen;
 
-  const GroupsScreen({Key? key, this.currentScreen}) : super(key: key);
+  const GroupsScreen({super.key, this.currentScreen});
 
   @override
   State<StatefulWidget> createState() => _GroupsScreenState();

@@ -33,7 +33,7 @@ enum Environment {
       Config.production != null ? Environment.production : Environment.staging;
 }
 
-sealed class AuthState extends Equatable {
+class AuthState extends Equatable {
   const AuthState();
 
   @override

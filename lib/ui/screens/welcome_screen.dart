@@ -145,7 +145,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     for (final event in dayEvents)
                       EventDetailCard(event: event),
                   ]);
-            }).toList(),
+            }),
             if (events.isEmpty)
               const Padding(
                 padding: EdgeInsets.all(8),
@@ -204,8 +204,8 @@ class SlidesCarousel extends StatefulWidget {
 
   const SlidesCarousel(
     this.slides, {
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<SlidesCarousel> createState() => _SlidesCarouselState();
