@@ -21,34 +21,38 @@ class EventAdminScreen extends StatefulWidget {
 }
 
 class _EventAdminScreenState extends State<EventAdminScreen> {
-  static Filter<AdminEventRegistration> _defaultFilter() => MultipleFilter(
+  static Filter<AdminEventRegistration> _defaultFilter(bool hidePayed) =>
+      MultipleFilter(
         [
           MapFilter<PaymentType?, AdminEventRegistration>(
-              map: {
-                for (PaymentType value in PaymentType.values) value: true,
-                null: true,
-              },
-              title: 'Payment type',
-              asString: (item) => item?.toString() ?? 'Not paid',
-              toKey: (item) => item.payment?.type),
+            map: {
+              for (PaymentType value in PaymentType.values) value: true,
+              null: true,
+            },
+            title: 'Payment type',
+            asString: (item) => item?.toString() ?? 'Not paid',
+            toKey: (item) => item.payment?.type,
+            disabled: hidePayed,
+          ),
           MapFilter<bool, AdminEventRegistration>(
-              map: {
-                true: true,
-                false: true,
-              },
-              title: 'Precense',
-              asString: (item) => item ? 'Is present' : 'Is not present',
-              toKey: (item) => item.present),
+            map: {
+              true: true,
+              false: true,
+            },
+            title: 'Precence',
+            asString: (item) => item ? 'Is present' : 'Is not present',
+            toKey: (item) => item.present,
+          ),
         ],
       );
 
-  Filter<AdminEventRegistration> _filter = _defaultFilter();
-
+  bool paymentsHidden = true;
+  Filter<AdminEventRegistration> _filter = _defaultFilter(true);
   _SortOrder _sortOrder = _SortOrder.none;
 
-  void _resetfilter() {
+  void _resetfilter(bool hidePayed) {
     setState(() {
-      _filter = _defaultFilter();
+      _filter = _defaultFilter(hidePayed);
     });
   }
 
@@ -155,7 +159,9 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
     return ErrorCenter([
       const Text('No results that match the filter',
           textAlign: TextAlign.center),
-      TextButton(onPressed: _resetfilter, child: const Text('Reset filter'))
+      TextButton(
+          onPressed: () => _resetfilter(paymentsHidden),
+          child: const Text('Reset filter'))
     ]);
   }
 
@@ -171,138 +177,149 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
           return DefaultTabController(
             length: 3,
             initialIndex: 1,
-            child: Scaffold(
-              appBar: ThaliaAppBar(
-                title: const Text('REGISTRATIONS'),
-                collapsingActions: [
-                  IconAppbarAction(
-                    'QR Code',
-                    Icons.qr_code,
-                    () =>
-                        _showQRCode(BlocProvider.of<EventAdminCubit>(context)),
-                    tooltip: 'Show presence QR code',
-                  ),
-                  IconAppbarAction(
-                    'SEARCH',
-                    Icons.search,
-                    () => _openSearch(context),
-                  ),
-                  SortButton<_SortOrder>(
-                    _SortOrder.values.map((e) => e.asSortItem()).toList(),
-                    (p0) => setState(() {
-                      _sortOrder = p0 ?? _SortOrder.none;
-                    }),
-                  ),
-                  IconAppbarAction(
-                    'Filter',
-                    Icons.filter_alt_rounded,
-                    _showPaymentFilter,
-                    tooltip: 'Filter registrations',
-                  ),
-                ],
-                bottom: TabBar(
-                  indicatorColor: Theme.of(context).colorScheme.primary,
-                  tabs: const [
-                    Tab(text: 'Queued'),
-                    Tab(text: 'Registered'),
-                    Tab(text: 'Cancelled'),
-                  ],
-                ),
-              ),
-              body: RefreshIndicator(
-                onRefresh: () async {
-                  await BlocProvider.of<EventAdminCubit>(
-                    context,
-                  ).loadRegistrations();
-                },
-                child: BlocBuilder<EventAdminCubit, EventAdminState>(
-                  builder: (context, state) {
-                    if (state.hasException) {
-                      return ErrorScrollView(state.exception!);
-                    } else if (state.isLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else {
-                      List<AdminEventRegistration> filteredRegistrations = state
-                          .registrations
-                          .where(_filter.passes)
-                          .sorted(_sortOrder.compare)
-                          .toList();
-                      List<AdminEventRegistration> filteredCancels = state
-                          .cancelledRegistrations
-                          .where(_filter.passes)
-                          .sorted(_sortOrder.compare)
-                          .toList();
-                      List<AdminEventRegistration> filteredQueue = state
-                          .queuedRegistrations
-                          .where(_filter.passes)
-                          .sorted(_sortOrder.compare)
-                          .toList();
-                      return TabBarView(
-                        children: [
-                          if (state.queuedMessage != null)
-                            ErrorCenter([
-                              Text(state.queuedMessage!,
-                                  textAlign: TextAlign.center)
-                            ])
-                          else if (filteredQueue.isEmpty)
-                            _resetfilterMessage()
-                          else
-                            Scrollbar(
-                              child: ListView.separated(
-                                key: const PageStorageKey('event-admin'),
-                                itemBuilder: (context, index) =>
-                                    _QueuedRegistrationTile(
-                                  registration: filteredQueue[index],
-                                ),
-                                separatorBuilder: (_, __) => const Divider(),
-                                itemCount: filteredQueue.length,
-                              ),
+            child: BlocBuilder<EventAdminCubit, EventAdminState>(
+              builder: (context, state) {
+                late final Widget body;
+                if (state.hasException) {
+                  body = ErrorScrollView(state.exception!);
+                } else if (state.isLoading) {
+                  body = const Center(child: CircularProgressIndicator());
+                } else {
+                  // If payment is required, but they are also hidden (or vise-versa)
+                  if (paymentsHidden == state.event!.paymentIsRequired) {
+                    setState(() {
+                      paymentsHidden = !state.event!.paymentIsRequired;
+                      _resetfilter(paymentsHidden);
+                    });
+                  }
+                  List<AdminEventRegistration> filteredRegistrations = state
+                      .registrations
+                      .where(_filter.passes)
+                      .sorted(_sortOrder.compare)
+                      .toList();
+                  List<AdminEventRegistration> filteredCancels = state
+                      .cancelledRegistrations
+                      .where(_filter.passes)
+                      .sorted(_sortOrder.compare)
+                      .toList();
+                  List<AdminEventRegistration> filteredQueue = state
+                      .queuedRegistrations
+                      .where(_filter.passes)
+                      .sorted(_sortOrder.compare)
+                      .toList();
+
+                  body = TabBarView(
+                    children: [
+                      if (state.queuedMessage != null)
+                        ErrorCenter([
+                          Text(state.queuedMessage!,
+                              textAlign: TextAlign.center)
+                        ])
+                      else if (filteredQueue.isEmpty)
+                        _resetfilterMessage()
+                      else
+                        Scrollbar(
+                          child: ListView.separated(
+                            key: const PageStorageKey('event-admin'),
+                            itemBuilder: (context, index) =>
+                                _QueuedRegistrationTile(
+                              registration: filteredQueue[index],
                             ),
-                          if (state.message != null)
-                            ErrorCenter([
-                              Text(state.message!, textAlign: TextAlign.center)
-                            ])
-                          else if (filteredRegistrations.isEmpty)
-                            _resetfilterMessage()
-                          else
-                            Scrollbar(
-                              child: ListView.separated(
-                                key: const PageStorageKey('event-admin'),
-                                itemBuilder: (context, index) =>
-                                    _RegistrationTile(
-                                  registration: filteredRegistrations[index],
-                                  requiresPayment:
-                                      state.event!.paymentIsRequired,
-                                ),
-                                separatorBuilder: (_, __) => const Divider(),
-                                itemCount: filteredRegistrations.length,
-                              ),
+                            separatorBuilder: (_, __) => const Divider(),
+                            itemCount: filteredQueue.length,
+                          ),
+                        ),
+                      if (state.message != null)
+                        ErrorCenter(
+                            [Text(state.message!, textAlign: TextAlign.center)])
+                      else if (filteredRegistrations.isEmpty)
+                        _resetfilterMessage()
+                      else
+                        Scrollbar(
+                          child: ListView.separated(
+                            key: const PageStorageKey('event-admin'),
+                            itemBuilder: (context, index) => _RegistrationTile(
+                              registration: filteredRegistrations[index],
+                              requiresPayment: state.event!.paymentIsRequired,
                             ),
-                          if (state.cancelledMessage != null)
-                            ErrorCenter([
-                              Text(state.cancelledMessage!,
-                                  textAlign: TextAlign.center)
-                            ])
-                          else if (filteredCancels.isEmpty)
-                            _resetfilterMessage()
-                          else
-                            Scrollbar(
-                              child: ListView.separated(
-                                key: const PageStorageKey('event-admin'),
-                                itemBuilder: (context, index) =>
-                                    _CancelledRegistrationTile(
-                                  registration: filteredCancels[index],
-                                ),
-                                separatorBuilder: (_, __) => const Divider(),
-                                itemCount: filteredCancels.length,
-                              ),
+                            separatorBuilder: (_, __) => const Divider(),
+                            itemCount: filteredRegistrations.length,
+                          ),
+                        ),
+                      if (state.cancelledMessage != null)
+                        ErrorCenter([
+                          Text(state.cancelledMessage!,
+                              textAlign: TextAlign.center)
+                        ])
+                      else if (filteredCancels.isEmpty)
+                        _resetfilterMessage()
+                      else
+                        Scrollbar(
+                          child: ListView.separated(
+                            key: const PageStorageKey('event-admin'),
+                            itemBuilder: (context, index) =>
+                                _CancelledRegistrationTile(
+                              registration: filteredCancels[index],
                             ),
-                        ],
-                      );
-                    }
-                  },
-                ),
-              ),
+                            separatorBuilder: (_, __) => const Divider(),
+                            itemCount: filteredCancels.length,
+                          ),
+                        ),
+                    ],
+                  );
+                }
+                return Scaffold(
+                  appBar: ThaliaAppBar(
+                    title: const Text('REGISTRATIONS'),
+                    collapsingActions: [
+                      IconAppbarAction(
+                        'QR Code',
+                        Icons.qr_code,
+                        () => _showQRCode(
+                            BlocProvider.of<EventAdminCubit>(context)),
+                        tooltip: 'Show presence QR code',
+                      ),
+                      IconAppbarAction(
+                        'SEARCH',
+                        Icons.search,
+                        () => _openSearch(context),
+                      ),
+                      SortButton<_SortOrder>(
+                        _SortOrder.values
+                            .whereNot((element) =>
+                                paymentsHidden && element.isPayment())
+                            .map((e) => e.asSortItem())
+                            .toList(),
+                        (p0) => setState(() {
+                          _sortOrder = p0 ?? _SortOrder.none;
+                        }),
+                      ),
+                      IconAppbarAction(
+                        'Filter',
+                        Icons.filter_alt_rounded,
+                        _showPaymentFilter,
+                        tooltip: 'Filter registrations',
+                      ),
+                    ],
+                    bottom: TabBar(
+                      indicatorColor: Theme.of(context).colorScheme.primary,
+                      tabs: const [
+                        Tab(text: 'Queued'),
+                        Tab(text: 'Registered'),
+                        Tab(text: 'Cancelled'),
+                      ],
+                    ),
+                  ),
+                  body: RefreshIndicator(
+                    onRefresh: () async {
+                      await BlocProvider.of<EventAdminCubit>(
+                        context,
+                      ).loadRegistrations();
+                    },
+                    child: body,
+                  ),
+                );
+              },
             ),
           );
         },
@@ -634,6 +651,10 @@ enum _SortOrder {
     return SortItem(this, text, icon);
   }
 
+  bool isPayment() {
+    return this == _SortOrder.payedUp || this == _SortOrder.payedDown;
+  }
+
   static int equal(AdminEventRegistration e1, AdminEventRegistration e2) {
     return 0;
   }
@@ -665,15 +686,8 @@ enum _SortOrder {
           AdminEventRegistration e1, AdminEventRegistration e2) =>
       -cmpPresent(e1, e2);
 
-  static int cmpName(AdminEventRegistration e1, AdminEventRegistration e2) {
-    if (e1.name == null) {
-      return -1;
-    }
-    if (e2.name == null) {
-      return 1;
-    }
-    return e1.name!.compareTo(e2.name!);
-  }
+  static int cmpName(AdminEventRegistration e1, AdminEventRegistration e2) =>
+      e1.displayName.compareTo(e2.displayName);
 
   static int cmpName_2(AdminEventRegistration e1, AdminEventRegistration e2) =>
       -cmpName(e1, e2);
