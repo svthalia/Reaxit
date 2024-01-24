@@ -161,9 +161,6 @@ class EventAdminCubit extends Cubit<EventAdminState> {
       // changed since the request was made.
       if (query != _searchQuery) return;
 
-      // temporary fix, remove when api is updated
-      registrations.results.removeWhere((r) => r.queuePosition != null);
-
       String? message;
       if (registrations.results.isEmpty) {
         message = (query?.isEmpty ?? true)
@@ -230,9 +227,6 @@ class EventAdminCubit extends Cubit<EventAdminState> {
         // Discard result if _searchQuery has
         // changed since the request was made.
         if (query != _searchQuery) return;
-
-        // temporary fix, remove when api is updated
-        registrations.results.removeWhere((r) => r.queuePosition != null);
 
         String? message;
         if (registrations.results.isEmpty) {
