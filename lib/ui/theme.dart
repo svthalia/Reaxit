@@ -137,7 +137,6 @@ ThemeData darkTheme = ThemeData.from(
   colorScheme: darkColorScheme,
   textTheme: generatedTextTheme,
 ).copyWith(
-  useMaterial3: true,
   applyElevationOverlayColor: false,
   // TODO: Make text less white.
   primaryTextTheme: ThemeData.dark().primaryTextTheme.merge(generatedTextTheme),
