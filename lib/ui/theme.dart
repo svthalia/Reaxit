@@ -9,6 +9,7 @@ ColorScheme lightColorScheme = ColorScheme(
   secondary: magenta,
   onSecondary: Colors.white,
   surface: Colors.white,
+  surfaceTint: Colors.transparent,
   onSurface: Colors.black,
   background: Colors.grey[50]!,
   onBackground: Colors.black,
@@ -23,6 +24,7 @@ ColorScheme darkColorScheme = const ColorScheme(
   secondary: magenta,
   onSecondary: Colors.white,
   surface: Color(0xFF212121),
+  surfaceTint: Colors.transparent,
   onSurface: Colors.white,
   background: Color(0xFF111111),
   onBackground: Colors.white,
@@ -101,6 +103,23 @@ TextTheme generatedTextTheme = TextTheme(
   ),
 );
 
+ButtonStyle darkElevatedButtonStyle = ButtonStyle(
+  backgroundColor:
+      MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+    if (states.contains(MaterialState.disabled)) {
+      return darkColorScheme.onSurface.withOpacity(0.12);
+    }
+    return darkColorScheme.primary;
+  }),
+  foregroundColor:
+      MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+    if (states.contains(MaterialState.disabled)) {
+      return darkColorScheme.onSurface.withOpacity(0.38);
+    }
+    return darkColorScheme.onPrimary;
+  }),
+);
+
 ThemeData lightBaseTheme = ThemeData.from(
   colorScheme: lightColorScheme,
   textTheme: generatedTextTheme,
@@ -118,9 +137,11 @@ ThemeData darkTheme = ThemeData.from(
   colorScheme: darkColorScheme,
   textTheme: generatedTextTheme,
 ).copyWith(
+  useMaterial3: true,
   applyElevationOverlayColor: false,
   // TODO: Make text less white.
   primaryTextTheme: ThemeData.dark().primaryTextTheme.merge(generatedTextTheme),
+  elevatedButtonTheme: ElevatedButtonThemeData(style: darkElevatedButtonStyle),
   appBarTheme: lightTheme.appBarTheme.copyWith(
     color: darkColorScheme.background,
   ),
