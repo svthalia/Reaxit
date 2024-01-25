@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/theme.dart';
-import 'package:sticky_headers/sticky_headers.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// CalendarViewDay holds events attached to a day
@@ -142,43 +141,83 @@ class CalendarMonth extends StatelessWidget {
       now.year,
       now.month,
     );
-    return StickyHeader(
-      header: Column(
-        key: events.month == thisMonth ? thisMonthKey : null,
-        children: [
-          SizedBox(
-            width: double.infinity,
-            child: Material(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Text(
-                  events.month.year == now.year
-                      ? monthFormatter
-                          .format(events.month.toLocal())
-                          .toUpperCase()
-                      : monthYearFormatter
-                          .format(events.month.toLocal())
-                          .toUpperCase(),
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+    return SliverMainAxisGroup(
+      slivers: [
+        SliverPersistentHeader(
+          delegate: MonthHeader(
+            key: events.month == thisMonth ? thisMonthKey : null,
+            now: now,
+            month: events.month,
+          ),
+          pinned: true,
+          floating: true,
+        ),
+        SliverToBoxAdapter(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final day in events.byDay())
+                EventsDayCard(
+                    day: day.day,
+                    events: day.events,
+                    now: now,
+                    key: day.day == today ? todayKey : null),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class MonthHeader extends SliverPersistentHeaderDelegate {
+  final Key? key;
+  final DateTime now;
+  final DateTime month;
+
+  static final monthFormatter = DateFormat('MMMM');
+  static final monthYearFormatter = DateFormat('MMMM yyyy');
+
+  MonthHeader({this.key, required this.now, required this.month});
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Column(
+      key: key,
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: Material(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Text(
+                month.year == now.year
+                    ? monthFormatter.format(month.toLocal()).toUpperCase()
+                    : monthYearFormatter.format(month.toLocal()).toUpperCase(),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
           ),
-          const SizedBox(height: 8),
-        ],
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (final day in events.byDay())
-            EventsDayCard(
-                day: day.day,
-                events: day.events,
-                now: now,
-                key: day.day == today ? todayKey : null),
-        ],
-      ),
+        ),
+        const SizedBox(height: 8),
+      ],
     );
+  }
+
+  @override
+  double get maxExtent => 100;
+
+  @override
+  double get minExtent => 50;
+
+  @override
+  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
+    if (oldDelegate is! MonthHeader) {
+      return true;
+    }
+    MonthHeader oldMonthDeligate = oldDelegate;
+    return oldMonthDeligate.now == now && oldMonthDeligate.month == month;
   }
 }
 

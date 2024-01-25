@@ -315,34 +315,26 @@ class CalendarScrollView extends StatelessWidget {
                     ),
                   ),
                 ),
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (_, index) => CalendarMonth(
-                      events: upEvents[index],
-                      todayKey: todayKey,
-                      thisMonthKey: thisMonthKey,
-                      now: now,
-                    ),
-                    childCount: upEvents.length,
+              ...upEvents.map(
+                (events) => SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  sliver: CalendarMonth(
+                    events: events,
+                    todayKey: todayKey,
+                    thisMonthKey: thisMonthKey,
+                    now: now,
                   ),
                 ),
               ),
-              SliverPadding(
-                padding: downEvents.isEmpty
-                    ? EdgeInsets.zero
-                    : const EdgeInsets.fromLTRB(12, 0, 12, 12),
-                key: centerkey,
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (_, index) => CalendarMonth(
-                      events: downEvents[index],
-                      todayKey: todayKey,
-                      thisMonthKey: thisMonthKey,
-                      now: now,
-                    ),
-                    childCount: downEvents.length,
+              SliverToBoxAdapter(key: centerkey),
+              ...downEvents.map(
+                (events) => SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  sliver: CalendarMonth(
+                    events: events,
+                    todayKey: todayKey,
+                    thisMonthKey: thisMonthKey,
+                    now: now,
                   ),
                 ),
               ),
