@@ -39,7 +39,7 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
               true: true,
               false: true,
             },
-            title: 'Precence',
+            title: 'Presence',
             asString: (item) => item ? 'Is present' : 'Is not present',
             toKey: (item) => item.present,
           ),
