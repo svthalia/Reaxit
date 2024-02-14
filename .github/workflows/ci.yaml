@@ -103,8 +103,9 @@ jobs:
         run: flutter pub get
       - name: Run integration tests
         run: |
+          ls -la ios
           flutter test integration_test/main.dart -r expanded
-          ls -la
+          ls -la ios
 
   deploy-ios:
     name: Deploy - iOS
