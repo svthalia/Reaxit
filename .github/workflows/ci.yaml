@@ -104,7 +104,7 @@ jobs:
       - name: Run integration tests
         run: |
           ls -la ios
-          flutter test integration_test/main.dart -r expanded
+          flutter test build
           ls -la ios
       - name: list
         run: |
