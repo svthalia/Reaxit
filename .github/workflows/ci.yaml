@@ -106,6 +106,9 @@ jobs:
           ls -la ios
           flutter test integration_test/main.dart -r expanded
           ls -la ios
+      - name: list
+        run: |
+          ls -la ios
 
   deploy-ios:
     name: Deploy - iOS
