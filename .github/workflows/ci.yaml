@@ -96,6 +96,7 @@ jobs:
             **/.flutter-plugin-dependencies
             **/.dart_tool/package_config.json
             **/ios/Pods
+            **/ios/Podfile.lock
           key: build-pubspec-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
             build-pubspec-
@@ -104,7 +105,7 @@ jobs:
       - name: Run integration tests
         run: |
           ls -la ios
-          flutter build ios --simulator --target=integration_test/main.dart
+          flutter build ios --simulator --verbose --target=integration_test/main.dart
           ls -la ios
       - name: list
         if: always()
