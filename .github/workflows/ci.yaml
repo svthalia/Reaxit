@@ -95,8 +95,7 @@ jobs:
             **/.flutter-plugins
             **/.flutter-plugin-dependencies
             **/.dart_tool/package_config.json
-            **/ios/Pods
-            **/ios/Podfile.lock
+            **/ios/*
           key: build2-pubspec-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
             build-pubspec-
