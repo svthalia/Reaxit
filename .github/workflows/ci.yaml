@@ -97,7 +97,7 @@ jobs:
             **/.dart_tool/package_config.json
             **/ios/Pods
             **/ios/Podfile.lock
-          key: build-pubspec-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
+          key: build2-pubspec-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
             build-pubspec-
       - name: Install Flutter dependencies
