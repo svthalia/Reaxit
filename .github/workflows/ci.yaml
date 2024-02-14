@@ -107,6 +107,7 @@ jobs:
           flutter build
           ls -la ios
       - name: list
+        if: always()
         run: |
           ls -la ios
 
