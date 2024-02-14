@@ -23,18 +23,6 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
-      - name: Cache build files
-        uses: actions/cache@v3
-        with:
-          path: |
-            **/build
-            **/.packages
-            **/.flutter-plugins
-            **/.flutter-plugin-dependencies
-            **/.dart_tool/package_config.json
-          key: build-pubspec-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
-          restore-keys: |
-            build-pubspec-
       - name: Flutter version
         run: flutter --version
 
