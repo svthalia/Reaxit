@@ -104,7 +104,7 @@ jobs:
       - name: Run integration tests
         run: |
           ls -la ios
-          flutter build
+          flutter build ios
           ls -la ios
       - name: list
         if: always()
