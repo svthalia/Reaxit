@@ -39,22 +39,15 @@ class ListGroup extends SmallGroup {
       !(until?.isBefore(DateTime.now()) ?? false);
 
   const ListGroup(
-    int pk,
-    String name,
-    MemberGroupType type,
-    DateTime? since,
-    DateTime? until,
-    String contactAddress,
+    super.pk,
+    super.name,
+    super.type,
+    super.since,
+    super.until,
+    super.contactAddress,
     this.description,
     this.photo,
-  ) : super(
-          pk,
-          name,
-          type,
-          since,
-          until,
-          contactAddress,
-        );
+  );
 
   factory ListGroup.fromJson(Map<String, dynamic> json) =>
       _$ListGroupFromJson(json);

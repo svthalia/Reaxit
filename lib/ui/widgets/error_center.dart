@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 class ErrorCenter extends StatelessWidget {
   final List<Widget> children;
 
-  const ErrorCenter(this.children, {Key? key}) : super(key: key);
-  ErrorCenter.fromMessage(String message, {Key? key})
-      : children = [Text(message, textAlign: TextAlign.center)],
-        super(key: key);
+  const ErrorCenter(this.children, {super.key});
+  ErrorCenter.fromMessage(String message, {super.key})
+      : children = [Text(message, textAlign: TextAlign.center)];
 
   @override
   Widget build(BuildContext context) {

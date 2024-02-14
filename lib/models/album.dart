@@ -39,13 +39,11 @@ class Album extends ListAlbum {
         photos ?? this.photos,
       );
 
-  const Album.fromlist(String slug, String title, bool accessible,
-      bool shareable, CoverPhoto cover, this.photos)
-      : super(slug, title, accessible, shareable, cover);
+  const Album.fromlist(super.slug, super.title, super.accessible,
+      super.shareable, CoverPhoto super.cover, this.photos);
 
-  const Album(String slug, String title, bool accessible, bool shareable,
-      CoverPhoto? cover, this.photos)
-      : super(slug, title, accessible, shareable, cover);
+  const Album(super.slug, super.title, super.accessible, super.shareable,
+      super.cover, this.photos);
 
   factory Album.fromJson(Map<String, dynamic> json) => _$AlbumFromJson(json);
 }

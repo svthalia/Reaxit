@@ -74,10 +74,9 @@ class _PhotoGridScrollView extends StatelessWidget {
   final LikedPhotosState listState;
 
   const _PhotoGridScrollView({
-    Key? key,
     required this.controller,
     required this.listState,
-  }) : super(key: key);
+  });
 
   void _openGallery(BuildContext context, int index) {
     final cubit = BlocProvider.of<LikedPhotosCubit>(context);

@@ -65,11 +65,10 @@ class GroupScreen extends StatelessWidget {
 
 class _Page extends StatelessWidget {
   const _Page({
-    Key? key,
     required this.state,
     required this.cubit,
     this.listGroup,
-  }) : super(key: key);
+  });
 
   final DetailState<Group> state;
   final GroupCubit cubit;
@@ -78,9 +77,9 @@ class _Page extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final body = switch (state) {
-      ErrorState estate => RefreshIndicator(
+      ErrorState(message: var message) => RefreshIndicator(
           onRefresh: () => cubit.load(),
-          child: ErrorScrollView(estate.message),
+          child: ErrorScrollView(message),
         ),
       LoadingState _ when listGroup == null =>
         const Center(child: CircularProgressIndicator()),
@@ -103,7 +102,7 @@ class _Page extends StatelessWidget {
             ],
           ),
         ),
-      ResultState<Group> rstate => RefreshIndicator(
+      ResultState(result: var result) => RefreshIndicator(
           onRefresh: () => cubit.load(),
           child: Scrollbar(
             child: CustomScrollView(
@@ -113,14 +112,14 @@ class _Page extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _GroupImage(group: rstate.result),
+                      _GroupImage(group: result),
                       const Divider(height: 0),
-                      _GroupInfo(group: rstate.result)
+                      _GroupInfo(group: result)
                     ],
                   ),
                 ),
-                _MembersHeader(group: rstate.result),
-                _MembersGrid(members: rstate.result.members),
+                _MembersHeader(group: result),
+                _MembersGrid(members: result.members),
               ],
             ),
           ),
@@ -137,9 +136,8 @@ class _Page extends StatelessWidget {
 
 class _MembersHeader extends StatelessWidget {
   const _MembersHeader({
-    Key? key,
     required this.group,
-  }) : super(key: key);
+  });
 
   final ListGroup group;
 
@@ -159,9 +157,8 @@ class _MembersHeader extends StatelessWidget {
 
 class _GroupImage extends StatelessWidget {
   const _GroupImage({
-    Key? key,
     required this.group,
-  }) : super(key: key);
+  });
 
   final ListGroup group;
 
@@ -181,9 +178,8 @@ class _GroupImage extends StatelessWidget {
 
 class _MembersGrid extends StatelessWidget {
   const _MembersGrid({
-    Key? key,
     this.members,
-  }) : super(key: key);
+  });
 
   final List<GroupMembership>? members;
 
@@ -228,9 +224,8 @@ class _MembersGrid extends StatelessWidget {
 
 class _GroupInfo extends StatelessWidget {
   const _GroupInfo({
-    Key? key,
     required this.group,
-  }) : super(key: key);
+  });
 
   final ListGroup group;
 
@@ -292,9 +287,8 @@ class _GroupInfo extends StatelessWidget {
 
 class _Description extends StatelessWidget {
   const _Description({
-    Key? key,
     required this.group,
-  }) : super(key: key);
+  });
 
   final ListGroup group;
 

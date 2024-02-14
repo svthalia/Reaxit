@@ -5,7 +5,7 @@ import 'package:reaxit/config.dart';
 import 'package:reaxit/ui/theme.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();

@@ -113,12 +113,12 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
               child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
                 builder: (context, state) {
                   switch (state) {
-                    case (ErrorState estate):
-                      return ErrorScrollView(estate.message);
-                    case (LoadingState _):
+                    case ErrorState(message: var message):
+                      return ErrorScrollView(message);
+                    case LoadingState _:
                       return const Center(child: CircularProgressIndicator());
-                    case (ResultState<List<AdminFoodOrder>> rstate):
-                      List<AdminFoodOrder> filtered = rstate.result
+                    case ResultState<List<AdminFoodOrder>>(result: var result):
+                      List<AdminFoodOrder> filtered = result
                           .where(_filter.passes)
                           .sorted(_sortOrder.compare)
                           .toList();
@@ -331,21 +331,17 @@ class FoodAdminSearchDelegate extends SearchDelegate {
     return BlocProvider.value(
       value: _adminCubit..search(query),
       child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
-        builder: (context, state) {
-          if (state is ErrorState) {
-            return ErrorScrollView(state.message!);
-          } else if (state is LoadingState) {
-            return const SizedBox.shrink();
-          } else {
-            return ListView.separated(
+        builder: (context, state) => switch (state) {
+          ErrorState(message: var message) => ErrorScrollView(message),
+          LoadingState _ => const SizedBox.shrink(),
+          ResultState(result: var result) => ListView.separated(
               key: const PageStorageKey('food-admin-search'),
               itemBuilder: (context, index) => _OrderTile(
-                order: state.result![index],
+                order: result[index],
               ),
               separatorBuilder: (_, __) => const Divider(),
-              itemCount: state.result!.length,
-            );
-          }
+              itemCount: result.length,
+            ),
         },
       ),
     );

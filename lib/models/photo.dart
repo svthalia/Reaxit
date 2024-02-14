@@ -54,8 +54,8 @@ class AlbumPhoto extends CoverPhoto {
         numLikes ?? this.numLikes,
       );
 
-  const AlbumPhoto(int pk, int rotation, Photo file, this.liked, this.numLikes)
-      : super(pk, rotation, file);
+  const AlbumPhoto(
+      super.pk, super.rotation, super.file, this.liked, this.numLikes);
 
   factory AlbumPhoto.fromJson(Map<String, dynamic> json) =>
       _$AlbumPhotoFromJson(json);

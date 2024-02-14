@@ -278,6 +278,8 @@ class EventCard extends StatelessWidget {
   EventCard(this.event) : super(key: ObjectKey(event));
 
   void openEvent(BuildContext context) {
+    // TODO: because adminevent is also a BaseEvent we should implement it as well, and make it a switch expr
+
     if (event.parentEvent is PartnerEvent) {
       launchUrl(
         (event.parentEvent as PartnerEvent).url,
@@ -294,15 +296,12 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color color;
-    if (event.parentEvent is Event &&
-        (event.parentEvent as Event).isRegistered) {
-      color = Theme.of(context).colorScheme.primary;
-    } else if (event.parentEvent is PartnerEvent) {
-      color = Colors.black;
-    } else {
-      color = Colors.grey[800]!;
-    }
+    Color color = switch (event.parentEvent) {
+      Event(isRegistered: var isRegistered) when isRegistered =>
+        Theme.of(context).colorScheme.primary,
+      PartnerEvent _ => Colors.black,
+      _ => Colors.grey[800]!,
+    };
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),

@@ -181,8 +181,8 @@ class InheritedConfig extends InheritedWidget {
 
   const InheritedConfig({
     required this.config,
-    required Widget child,
-  }) : super(child: child);
+    required super.child,
+  });
 
   @override
   bool updateShouldNotify(covariant InheritedConfig oldWidget) =>

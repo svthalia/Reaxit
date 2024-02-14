@@ -185,10 +185,10 @@ class MemberListScrollView extends StatelessWidget {
   final MemberListState listState;
 
   const MemberListScrollView({
-    Key? key,
+    super.key,
     required this.controller,
     required this.listState,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

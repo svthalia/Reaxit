@@ -194,8 +194,7 @@ class _OrderButtons extends StatelessWidget {
     required this.user,
     required this.products,
     required this.orders,
-    Key? key,
-  }) : super(key: key);
+  });
 
   final TostiShift shift;
   final TostiUser user;
@@ -267,10 +266,9 @@ class _OrderButtons extends StatelessWidget {
 
 class _OrderTile extends StatelessWidget {
   const _OrderTile({
-    Key? key,
     required this.index,
     required this.order,
-  }) : super(key: key);
+  });
 
   final int index;
   final TostiOrder order;

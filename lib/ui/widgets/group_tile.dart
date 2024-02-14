@@ -7,7 +7,7 @@ import 'cached_image.dart';
 class GroupTile extends StatelessWidget {
   final ListGroup group;
 
-  const GroupTile({Key? key, required this.group}) : super(key: key);
+  const GroupTile({super.key, required this.group});
 
   @override
   Widget build(BuildContext context) {

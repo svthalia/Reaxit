@@ -33,7 +33,7 @@ class TPayButton extends StatefulWidget {
   final String? amount;
 
   const TPayButton({
-    Key? key,
+    super.key,
     required this.onPay,
     required this.confirmationMessage,
     required this.failureMessage,
@@ -42,8 +42,7 @@ class TPayButton extends StatefulWidget {
   })  : assert(amount != null || onPay == null),
         assert(confirmationMessage != null || onPay == null),
         assert(failureMessage != null || onPay == null),
-        assert(successMessage != null || onPay == null),
-        super(key: key);
+        assert(successMessage != null || onPay == null);
 
   const TPayButton.disabled({String? amount})
       : this(

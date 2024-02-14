@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class ErrorScrollView extends StatelessWidget {
   final String message;
 
-  const ErrorScrollView(this.message, {Key? key}) : super(key: key);
+  const ErrorScrollView(this.message, {super.key});
 
   @override
   Widget build(BuildContext context) {

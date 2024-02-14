@@ -36,30 +36,28 @@ class _SalesOrderDialogState extends State<SalesOrderDialog> {
     return BlocBuilder<SalesOrderCubit, SalesOrderState>(
       bloc: _salesOrderCubit,
       builder: (context, orderState) {
-        late final Widget content;
-        late final Widget payButton;
-
-        if (orderState is ResultState) {
-          final order = orderState.result!;
-
-          if (order.numItems == 0) {
-            content = Text(
+        final Widget content = switch (orderState) {
+          ErrorState(message: var messsage) => Text(
+              messsage,
+              style: textTheme.bodyMedium,
+            ),
+          LoadingState _ => const Center(child: CircularProgressIndicator()),
+          ResultState(result: var order) when order.numItems == 0 => Text(
               'The order is empty.',
               style: textTheme.bodyMedium,
-            );
-          } else {
-            content = Text(
+            ),
+          ResultState(result: var order) => Text(
               order.orderDescription,
               style: textTheme.bodyMedium,
-            );
-          }
-
-          if (order.totalAmount == '0.00') {
-            payButton = const SizedBox.shrink();
-          } else if (!order.tpayAllowed) {
-            payButton = const SizedBox.shrink();
-          } else {
-            payButton = TPayButton(
+            ),
+        };
+        late final Widget payButton = switch (orderState) {
+          ErrorState _ => const SizedBox.shrink(),
+          LoadingState _ => const SizedBox.shrink(),
+          ResultState(result: var order)
+              when order.totalAmount == '0.00' || !order.tpayAllowed =>
+            const SizedBox.shrink(),
+          ResultState(result: var order) => TPayButton(
               onPay: _paySalesOrder,
               confirmationMessage: 'Are you sure you want '
                   'to pay €${order.totalAmount} for your '
@@ -67,18 +65,8 @@ class _SalesOrderDialogState extends State<SalesOrderDialog> {
               failureMessage: 'Could not pay your order.',
               successMessage: 'Paid your order with Thalia Pay.',
               amount: order.totalAmount,
-            );
-          }
-        } else if (orderState is ErrorState) {
-          content = Text(
-            orderState.message!,
-            style: textTheme.bodyMedium,
-          );
-          payButton = const SizedBox.shrink();
-        } else {
-          content = const Center(child: CircularProgressIndicator());
-          payButton = const SizedBox.shrink();
-        }
+            ),
+        };
 
         return AlertDialog(
           title: const Text('Your order'),

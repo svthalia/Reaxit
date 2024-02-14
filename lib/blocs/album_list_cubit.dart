@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs/list_cubit.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
@@ -8,7 +7,7 @@ import 'package:reaxit/models.dart';
 typedef AlbumListState = ListState<ListAlbum>;
 
 class AlbumListCubit extends SingleListCubit<ListAlbum> {
-  AlbumListCubit(ApiRepository api) : super(api);
+  AlbumListCubit(super.api);
 
   static const int firstPageSize = 30;
 

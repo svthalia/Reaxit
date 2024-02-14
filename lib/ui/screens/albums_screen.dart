@@ -194,10 +194,10 @@ class AlbumListScrollView extends StatelessWidget {
   final AlbumListState listState;
 
   const AlbumListScrollView({
-    Key? key,
+    super.key,
     required this.controller,
     required this.listState,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
