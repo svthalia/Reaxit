@@ -23,6 +23,7 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
+
       - name: Flutter version
         run: flutter --version
 
@@ -30,7 +31,7 @@ jobs:
         run: dart format --set-exit-if-changed .
 
       - name: Flutter analyze
-        run: flutter analyze -v
+        run: flutter analyze
 
   testing:
     name: Testing
@@ -44,19 +45,6 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
-      - name: Cache build files
-        uses: actions/cache@v3
-        with:
-          path: |
-            **/build
-            **/.packages
-            **/.flutter-plugins
-            **/.flutter-plugin-dependencies
-            **/.dart_tool/package_config.json
-          key: build-pubspec-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
-          restore-keys: |
-            build-pubspec-
-
       - name: Flutter version
         run: flutter --version
 
@@ -96,9 +84,9 @@ jobs:
             **/.flutter-plugin-dependencies
             **/.dart_tool/package_config.json
             **/ios/*
-          key: build2-pubspec-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
+          key: build-pubspec-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
-            build-pubspec-
+            build-pubspec-${{ runner.os }}
       - name: Install Flutter dependencies
         run: flutter pub get
       - name: Run integration tests
@@ -140,9 +128,10 @@ jobs:
             **/.flutter-plugins
             **/.flutter-plugin-dependencies
             **/.dart_tool/package_config.json
+            **/ios/*
           key: build-pubspec-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
-            build-pubspec-
+            build-pubspec-${{ runner.os }}
       - name: Flutter version
         run: flutter --version
 
