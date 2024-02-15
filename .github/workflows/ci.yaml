@@ -45,6 +45,7 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
+
       - name: Flutter version
         run: flutter --version
 
@@ -75,17 +76,11 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
       - name: Cache build files
-        uses: actions/cache@v3
+        uses: irgaly/xcode-cache@v1
         with:
-          path: |
-            **/build
-            **/.packages
-            **/.flutter-plugins
-            **/.dart_tool/package_config.json
-            **/ios/Pods
-          key: build-pubspec5-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
+          key: build-pubspec6-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
-            build-pubspec5-${{ runner.os }}
+            build-pubspec6-${{ runner.os }}
       - name: Install Flutter dependencies
         run: flutter pub get
       - name: Run integration tests
