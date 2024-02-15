@@ -81,12 +81,11 @@ jobs:
             **/build
             **/.packages
             **/.flutter-plugins
-            **/.flutter-plugin-dependencies
             **/.dart_tool/package_config.json
             **/ios/Pods
-          key: build-pubspec4-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
+          key: build-pubspec5-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
-            build-pubspec4-${{ runner.os }}
+            build-pubspec5-${{ runner.os }}
       - name: Install Flutter dependencies
         run: flutter pub get
       - name: Run integration tests
