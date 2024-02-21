@@ -84,15 +84,7 @@ jobs:
       - name: Install Flutter dependencies
         run: flutter pub get
       - name: Run integration tests
-        run: |
-          ls -la ios
-          flutter build ios --simulator --verbose --target=integration_test/main.dart
-          ls -la ios
-      - name: list
-        if: always()
-        run: |
-          ls -la ios
-
+        run: flutter test integration_test/main.dart -r expanded
   deploy-ios:
     name: Deploy - iOS
     needs: [linting, testing]
@@ -114,18 +106,11 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
       - name: Cache build files
-        uses: actions/cache@v3
+        uses: irgaly/xcode-cache@v1
         with:
-          path: |
-            **/build
-            **/.packages
-            **/.flutter-plugins
-            **/.flutter-plugin-dependencies
-            **/.dart_tool/package_config.json
-            **/ios/*
-          key: build-pubspec-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
+          key: build-pubspec6-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
-            build-pubspec-${{ runner.os }}
+            build-pubspec6-${{ runner.os }}
       - name: Flutter version
         run: flutter --version
 
