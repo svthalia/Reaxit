@@ -85,7 +85,7 @@ jobs:
         run: flutter pub get
       - name: Run integration tests
         run: |
-          flutter build ios --simulator --verbose --target=integration_test/main.dart
+          flutter build ios --simulator --target=integration_test/main.dart
           flutter test integration_test/main.dart -r expanded
 
   deploy-ios:
