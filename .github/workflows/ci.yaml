@@ -80,7 +80,7 @@ jobs:
         with:
           key: build-pubspec-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
-            build-pubspec-1-${{ runner.os }}
+            build-pubspec-${{ runner.os }}
       - name: Install Flutter dependencies
         run: flutter pub get
       - name: Run integration tests
