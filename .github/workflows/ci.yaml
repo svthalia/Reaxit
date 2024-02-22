@@ -78,7 +78,7 @@ jobs:
       - name: Cache build files
         uses: irgaly/xcode-cache@v1
         with:
-          key: build-pubspec-1-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
+          key: build-pubspec-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
             build-pubspec-1-${{ runner.os }}
       - name: Install Flutter dependencies
