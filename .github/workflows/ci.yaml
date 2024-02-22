@@ -84,8 +84,7 @@ jobs:
       - name: Install Flutter dependencies
         run: flutter pub get
       - name: Run integration tests
-        run: |
-          flutter build ios --simulator --target=integration_test/main.dart
+        run: flutter test integration_test/main.dart -r expanded
 
   deploy-ios:
     name: Deploy - iOS
