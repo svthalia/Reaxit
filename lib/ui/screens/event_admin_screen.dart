@@ -48,7 +48,7 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
 
   bool paymentsHidden = true;
   Filter<AdminEventRegistration> _filter = _defaultFilter(true);
-  _SortOrder _sortOrder = _SortOrder.none;
+  _SortOrder _sortOrder = _SortOrder.nameDown;
 
   void _resetfilter(bool hidePayed) {
     setState(() {
@@ -291,7 +291,7 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                             .map((e) => e.asSortItem())
                             .toList(),
                         (p0) => setState(() {
-                          _sortOrder = p0 ?? _SortOrder.none;
+                          _sortOrder = p0 ?? _SortOrder.nameDown;
                         }),
                       ),
                       IconAppbarAction(
@@ -687,7 +687,8 @@ enum _SortOrder {
       -cmpPresent(e1, e2);
 
   static int cmpName(AdminEventRegistration e1, AdminEventRegistration e2) =>
-      e1.displayName.compareTo(e2.displayName);
+      (e2.member?.fullName ?? e2.name!)
+          .compareTo(e1.member?.fullName ?? e1.name!);
 
   static int cmpName_2(AdminEventRegistration e1, AdminEventRegistration e2) =>
       -cmpName(e1, e2);

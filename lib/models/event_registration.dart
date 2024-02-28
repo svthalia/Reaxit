@@ -82,7 +82,7 @@ class AdminEventRegistration implements EventRegistration {
   bool get isInQueue => queuePosition != null;
   bool get isInvited => queuePosition == null;
   bool get isPaid => payment != null;
-  String get displayName => member?.displayName ?? name!;
+
   AdminEventRegistration(
     this.pk,
     this.member,
