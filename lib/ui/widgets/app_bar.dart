@@ -85,7 +85,7 @@ class ThaliaAppBar extends AppBar {
             .toList(),
         child: IconButton(
           onPressed: controller.open,
-          icon: const Icon(Icons.more_vert, color: Colors.white),
+          icon: const Icon(Icons.more_vert),
         ),
       )
     ];

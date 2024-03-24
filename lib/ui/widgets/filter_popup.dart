@@ -64,6 +64,7 @@ class _FilterWidgetState extends State<FilterWidget> {
     return SingleChildScrollView(
       child: ListBody(
         children: types
+            .whereNot((element) => element.hidden)
             .map(
               (type) =>
                   [Text(type.title), const Divider()].followedBy(type.items.map(
@@ -115,24 +116,28 @@ class MapFilter<K, E> implements Filter<E> {
   final Map<K, bool> map;
   final String Function(K) asString;
   final K Function(E) toKey;
+  final bool disabled;
 
   const MapFilter(
       {required this.map,
       required this.title,
       required this.asString,
-      required this.toKey});
+      required this.toKey,
+      this.disabled = false});
 
   @override
   List<FilterType> getFilters() {
     return [
       FilterType(
-          title: title,
-          items: map.keys
-              .map((item) => FilterItem(
-                  title: asString(item),
-                  value: map[item]!,
-                  onChanged: (isChecked) => map[item] = isChecked!))
-              .toList()),
+        title: title,
+        items: map.keys
+            .map((item) => FilterItem(
+                title: asString(item),
+                value: map[item]!,
+                onChanged: (isChecked) => map[item] = isChecked!))
+            .toList(),
+        hidden: disabled,
+      ),
     ];
   }
 
@@ -144,7 +149,12 @@ class MapFilter<K, E> implements Filter<E> {
   @override
   MapFilter<K, E> clone() {
     return MapFilter(
-        map: Map.from(map), title: title, asString: asString, toKey: toKey);
+      map: Map.from(map),
+      title: title,
+      asString: asString,
+      toKey: toKey,
+      disabled: disabled,
+    );
   }
 }
 
@@ -158,7 +168,9 @@ class FilterItem {
 }
 
 class FilterType {
+  final bool hidden;
   final String title;
   final List<FilterItem> items;
-  const FilterType({required this.items, required this.title});
+  const FilterType(
+      {required this.items, required this.title, this.hidden = false});
 }
