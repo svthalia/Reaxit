@@ -58,7 +58,7 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
       builder: (BuildContext context) {
         return MultiSelectPopup(
           filter: _filter.clone(),
-          title: 'Filter registrations',
+          title: 'FILTER REGISTRATIONS',
         );
       },
     );

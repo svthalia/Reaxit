@@ -63,7 +63,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
 
           return Scaffold(
             appBar: ThaliaAppBar(
-              title: Text(state.result?.title.toUpperCase() ?? title),
+              title: Text((state.result?.title ?? title).toUpperCase()),
               collapsingActions: [
                 IconAppbarAction(
                   'SHARE',
