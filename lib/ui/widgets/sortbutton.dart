@@ -17,7 +17,6 @@ class SortButton<T> extends StatelessWidget implements AppbarAction {
   const SortButton(this.items, this.callback);
 
   Widget _build(BuildContext context, bool issub) {
-    ThemeData theme = Theme.of(context);
     MenuController controller = MenuController();
 
     // IconButton
