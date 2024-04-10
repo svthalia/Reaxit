@@ -65,7 +65,7 @@ class EventDetailCard extends StatelessWidget {
       child: InkWell(
         onTap: () => _onTap(context),
         // Prevent painting ink outside of the card.
-        borderRadius: const BorderRadius.all(Radius.circular(4)),
+        borderRadius: const BorderRadius.all(Radius.circular(12)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
