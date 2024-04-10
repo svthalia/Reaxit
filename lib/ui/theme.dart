@@ -33,6 +33,10 @@ ColorScheme darkColorScheme = const ColorScheme(
   brightness: Brightness.dark,
 );
 
+DividerThemeData dividerTheme = const DividerThemeData(
+  thickness: 0,
+);
+
 /// TextTheme mostly following material design guidelines.
 ///
 /// Generated and modified from:
@@ -131,6 +135,7 @@ ThemeData lightTheme = lightBaseTheme.copyWith(
   floatingActionButtonTheme: lightBaseTheme.floatingActionButtonTheme.copyWith(
     foregroundColor: Colors.white,
   ),
+  dividerTheme: dividerTheme,
 );
 
 ThemeData darkTheme = ThemeData.from(
@@ -195,4 +200,5 @@ ThemeData darkTheme = ThemeData.from(
       return null;
     }),
   ),
+  dividerTheme: dividerTheme,
 );
