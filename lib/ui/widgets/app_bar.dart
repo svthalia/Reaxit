@@ -31,6 +31,7 @@ class IconAppbarAction extends AppbarAction {
 
   @override
   Widget asMenuItem(BuildContext context, Function() callback) {
+    ThemeData theme = Theme.of(context);
     return MenuItemButton(
       style: ButtonStyle(
           textStyle: MaterialStateTextStyle.resolveWith(
@@ -40,7 +41,7 @@ class IconAppbarAction extends AppbarAction {
         callback();
       },
       leadingIcon: Icon(icon),
-      child: Text(text),
+      child: Text(text.toUpperCase()),
     );
   }
 }
