@@ -35,6 +35,7 @@ class EventDetailCard extends StatelessWidget {
         _hasFoodEvent = event is Event ? event.hasFoodEvent : false;
 
   void _onTap(BuildContext context) {
+    // TODO: because adminevent is also a BaseEvent we should implement it as well, and make it a switch expr
     if (event is Event) {
       context.pushNamed(
         'event',
@@ -64,7 +65,7 @@ class EventDetailCard extends StatelessWidget {
       child: InkWell(
         onTap: () => _onTap(context),
         // Prevent painting ink outside of the card.
-        borderRadius: const BorderRadius.all(Radius.circular(4)),
+        borderRadius: const BorderRadius.all(Radius.circular(12)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,

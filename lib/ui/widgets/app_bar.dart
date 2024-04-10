@@ -85,21 +85,19 @@ class ThaliaAppBar extends AppBar {
             .toList(),
         child: IconButton(
           onPressed: controller.open,
-          icon: const Icon(Icons.more_vert, color: Colors.white),
+          icon: const Icon(Icons.more_vert),
         ),
       )
     ];
   }
 
   ThaliaAppBar({
-    Widget? title,
+    super.title,
     List<AppbarAction> collapsingActions = const [],
-    Widget? leading,
+    super.leading,
     PreferredSizeWidget? bottom,
   }) : super(
-          title: title,
           actions: collapse(collapsingActions),
-          leading: leading,
           systemOverlayStyle: SystemUiOverlayStyle.light,
           // The bottom decoration only needs to be shown
           // in dark mode, but is invisible in light mode,

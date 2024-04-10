@@ -75,7 +75,7 @@ class _BlackGradient extends StatelessWidget {
 class DefaultMemberTile extends StatelessWidget {
   final String name;
 
-  const DefaultMemberTile({Key? key, required this.name}) : super(key: key);
+  const DefaultMemberTile({super.key, required this.name});
 
   @override
   Widget build(BuildContext context) {

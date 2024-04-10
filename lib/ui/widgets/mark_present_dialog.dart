@@ -38,23 +38,20 @@ class _MarkPresentDialogState extends State<MarkPresentDialog> {
     return BlocBuilder<MarkPresentCubit, MarkPresentState>(
       bloc: _markPresentCubit,
       builder: (context, state) {
-        late final Widget content;
-        if (state is LoadingMarkPresentState) {
-          content = const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [CircularProgressIndicator()],
-          );
-        } else if (state is SuccessMarkPresentState) {
-          content = Text(
-            state.message,
-            style: Theme.of(context).textTheme.bodyMedium,
-          );
-        } else {
-          content = Text(
-            (state as FailureMarkPresentState).message,
-            style: Theme.of(context).textTheme.bodyMedium,
-          );
-        }
+        late final Widget content = switch (state) {
+          FailureMarkPresentState(message: var message) => Text(
+              message,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          LoadingMarkPresentState _ => const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [CircularProgressIndicator()],
+            ),
+          SuccessMarkPresentState(message: var message) => Text(
+              message,
+              style: Theme.of(context).textTheme.bodyMedium,
+            )
+        };
 
         return AlertDialog(
           title: const Text('Presence'),

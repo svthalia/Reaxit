@@ -55,14 +55,11 @@ class _AlbumScreenState extends State<AlbumScreen> {
       value: _cubit,
       child: BlocBuilder<AlbumCubit, AlbumState>(
         builder: (context, state) {
-          late final Widget body;
-          if (state is ResultState) {
-            body = _PhotoGrid(state.result!.photos);
-          } else if (state is ErrorState) {
-            body = ErrorScrollView(state.message!);
-          } else {
-            body = const Center(child: CircularProgressIndicator());
-          }
+          final Widget body = switch (state) {
+            ErrorState(message: var message) => ErrorScrollView(message),
+            LoadingState _ => const Center(child: CircularProgressIndicator()),
+            ResultState(result: var result) => _PhotoGrid(result.photos),
+          };
 
           return Scaffold(
             appBar: ThaliaAppBar(

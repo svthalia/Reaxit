@@ -6,28 +6,23 @@ import 'package:reaxit/utilities/cache_manager.dart' as cache;
 /// Wrapper for [CachedNetworkImage] with sensible defaults.
 class CachedImage extends CachedNetworkImage {
   CachedImage({
-    required String imageUrl,
-    BoxFit fit = BoxFit.cover,
-    Duration fadeOutDuration = const Duration(milliseconds: 200),
-    Duration fadeInDuration = const Duration(milliseconds: 200),
+    required super.imageUrl,
+    BoxFit super.fit = BoxFit.cover,
+    Duration super.fadeOutDuration = const Duration(milliseconds: 200),
+    super.fadeInDuration = const Duration(milliseconds: 200),
     required String placeholder,
   }) : super(
           key: ValueKey(imageUrl),
-          imageUrl: imageUrl,
           cacheManager: cache.ThaliaCacheManager(),
           cacheKey: _getCacheKey(imageUrl),
-          fit: fit,
-          fadeOutDuration: fadeOutDuration,
-          fadeInDuration: fadeInDuration,
           placeholder: (_, __) => Image.asset(placeholder, fit: fit),
         );
 }
 
 /// Wrapper for [CachedNetworkImageProvider] with sensible defaults.
 class CachedImageProvider extends CachedNetworkImageProvider {
-  CachedImageProvider(String imageUrl)
+  CachedImageProvider(super.imageUrl)
       : super(
-          imageUrl,
           cacheManager: cache.ThaliaCacheManager(),
           cacheKey: _getCacheKey(imageUrl),
         );

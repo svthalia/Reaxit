@@ -239,7 +239,7 @@ class CalendarScrollView extends StatelessWidget {
   final DateTime now;
 
   CalendarScrollView({
-    Key? key,
+    super.key,
     required this.controller,
     required this.calendarState,
     required this.loadMoreUp,
@@ -258,8 +258,7 @@ class CalendarScrollView extends StatelessWidget {
             : ensureMonthsContainsToday(
                 groupByMonth(calendarState.resultsDown)
                     .sortedBy((element) => element.month),
-                now),
-        super(key: key);
+                now);
 
   @override
   Widget build(BuildContext context) {
