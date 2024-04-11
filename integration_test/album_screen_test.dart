@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
@@ -54,7 +56,8 @@ const albumphoto2 = AlbumPhoto(
   0,
 );
 
-WidgetTesterCallback getTestMethod(Album album) {
+WidgetTesterCallback getTestMethod(
+    IntegrationTestWidgetsFlutterBinding binding, Album album) {
   return (tester) async {
     // Setup mock.
     final api = MockApiRepository();
@@ -86,7 +89,15 @@ WidgetTesterCallback getTestMethod(Album album) {
     await tester.pumpAndSettle();
     await Future.delayed(const Duration(seconds: 1));
     await tester.pumpAndSettle();
+    await Future.delayed(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
 
+    // todo: https://github.com/flutter/flutter/issues/51890
+    if (Platform.isAndroid) {
+      await binding.convertFlutterSurfaceToImage();
+      await tester.pumpAndSettle();
+    }
+    await binding.takeScreenshot('screenshot-${album.title}');
     for (AlbumPhoto photo in album.photos) {
       //TODO: wait for https://github.com/flutter/flutter/issues/115479 to be fixed
       expect(
@@ -96,15 +107,17 @@ WidgetTesterCallback getTestMethod(Album album) {
         findsWidgets,
       );
     }
+
     expect(find.text(album.title.toUpperCase()), findsOneWidget);
   };
 }
 
-void testAlbum() {
+void testAlbum(IntegrationTestWidgetsFlutterBinding binding) {
   group('AlbumScreen', () {
     testWidgets(
       'can load an album with 1 photo',
       getTestMethod(
+        binding,
         const Album.fromlist(
           '1',
           'mock',
@@ -119,6 +132,7 @@ void testAlbum() {
     testWidgets(
       'can load an album with 2 photos',
       getTestMethod(
+        binding,
         const Album.fromlist(
           '1',
           'MOcK2',
