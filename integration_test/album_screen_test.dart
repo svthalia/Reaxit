@@ -101,14 +101,13 @@ WidgetTesterCallback getTestMethod(
     for (AlbumPhoto photo in album.photos) {
       //TODO: wait for https://github.com/flutter/flutter/issues/115479 to be fixed
       expect(
-        find.image(
-          NetworkImage(photo.small),
-        ),
+        find.image(NetworkImage(photo.small), skipOffstage: false),
         findsWidgets,
       );
     }
 
-    expect(find.text(album.title.toUpperCase()), findsOneWidget);
+    expect(find.text(album.title.toUpperCase(), skipOffstage: false),
+        findsOneWidget);
   };
 }
 
@@ -189,25 +188,29 @@ void testAlbum(IntegrationTestWidgetsFlutterBinding binding) {
 
         // Open gallery.
         await tester.tap(
-          find.image(NetworkImage(album.photos[0].small)).first,
+          find
+              .image(NetworkImage(album.photos[0].small), skipOffstage: false)
+              .first,
           warnIfMissed: false,
         );
         await tester.pumpAndSettle();
-        expect(find.text('1 / 2'), findsOneWidget);
+        expect(find.text('1 / 2', skipOffstage: false), findsOneWidget);
 
         // Swipe to next photo.
         await tester.fling(find.byType(PageView), const Offset(-300, 0), 800.0);
         await tester.pumpAndSettle();
-        expect(find.text('2 / 2'), findsOneWidget);
+        expect(find.text('2 / 2', skipOffstage: false), findsOneWidget);
 
         // Use back button to close gallery.
-        final widgetsAppState = tester.state(find.byType(WidgetsApp));
+        final widgetsAppState =
+            tester.state(find.byType(WidgetsApp, skipOffstage: false));
         await (widgetsAppState as WidgetsBindingObserver).didPopRoute();
         await tester.pumpAndSettle();
 
-        await tester.tap(find.byType(BackButton)); // TODO: fix
+        await tester
+            .tap(find.byType(BackButton, skipOffstage: false)); // TODO: fix
         await tester.pumpAndSettle();
-        expect(find.text('2 / 2'), findsNothing);
+        expect(find.text('2 / 2', skipOffstage: false), findsNothing);
       },
     );
   });
