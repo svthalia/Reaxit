@@ -105,7 +105,6 @@ WidgetTesterCallback getTestMethod(
         findsWidgets,
       );
     }
-
     expect(find.text(album.title.toUpperCase()), findsOneWidget);
   };
 }
@@ -199,8 +198,7 @@ void testAlbum(IntegrationTestWidgetsFlutterBinding binding) {
         expect(find.text('2 / 2'), findsOneWidget);
 
         // Use back button to close gallery.
-        final widgetsAppState =
-            tester.state(find.byType(WidgetsApp, skipOffstage: false));
+        final widgetsAppState = tester.state(find.byType(WidgetsApp));
         await (widgetsAppState as WidgetsBindingObserver).didPopRoute();
         await tester.pumpAndSettle();
 
