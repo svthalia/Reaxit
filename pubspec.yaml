@@ -130,6 +130,9 @@ dev_dependencies:
   integration_test:
     sdk: flutter
 
+  flutter_driver:
+    sdk: flutter
+
   # JSON parsing.
   build_runner: ^2.4.7
 
