@@ -94,74 +94,6 @@ final List<RouteBase> routes = [
         );
       },
     ),
-    routes: [
-      GoRoute(
-        path: ':eventPk',
-        name: 'event',
-        pageBuilder: (context, state) {
-          int? pk;
-          String? slug;
-
-          try {
-            pk = int.parse(state.pathParameters['eventPk']!);
-          } on FormatException catch (_) {
-            slug = state.pathParameters['eventPk']!;
-          }
-
-          return MaterialPage(
-            key: state.pageKey,
-            child: EventScreen(
-              pk: pk,
-              slug: slug,
-              event: state.extra as Event?,
-            ),
-          );
-        },
-        routes: [
-          GoRoute(
-            path: 'mark-present/:token',
-            name: 'mark-present',
-            pageBuilder: (context, state) {
-              return CustomTransitionPage(
-                barrierColor: Colors.black54,
-                opaque: false,
-                transitionDuration: const Duration(milliseconds: 150),
-                transitionsBuilder: (
-                  context,
-                  animation,
-                  secondaryAnimation,
-                  child,
-                ) {
-                  return FadeTransition(
-                    opacity: CurvedAnimation(
-                      parent: animation,
-                      curve: Curves.easeOut,
-                    ),
-                    child: child,
-                  );
-                },
-                child: MarkPresentDialog(
-                  pk: int.parse(state.pathParameters['eventPk']!),
-                  token: state.pathParameters['token']!,
-                ),
-              );
-            },
-          ),
-          GoRoute(
-            path: 'registration/:registrationPk',
-            name: 'event-registration',
-            pageBuilder: (context, state) => MaterialPage(
-              key: state.pageKey,
-              child: RegistrationScreen(
-                eventPk: int.parse(state.pathParameters['eventPk']!),
-                registrationPk:
-                    int.parse(state.pathParameters['registrationPk']!),
-              ),
-            ),
-          ),
-        ],
-      ),
-    ],
   ),
   GoRoute(
     path: '/members/photos/liked',
@@ -194,19 +126,6 @@ final List<RouteBase> routes = [
         );
       },
     ),
-    routes: [
-      GoRoute(
-        path: 'profile/:memberPk',
-        name: 'member',
-        pageBuilder: (context, state) => MaterialPage(
-          key: state.pageKey,
-          child: ProfileScreen(
-            pk: int.parse(state.pathParameters['memberPk']!),
-            member: state.extra as ListMember?,
-          ),
-        ),
-      ),
-    ],
   ),
   GoRoute(
     path: '/albums',

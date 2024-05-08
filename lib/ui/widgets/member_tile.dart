@@ -44,7 +44,7 @@ class MemberTile extends StatelessWidget {
           ],
         );
       },
-      openBuilder: (_, __) => ProfileScreen(pk: member.pk, member: member),
+      openBuilder: (_, __) => Container(),
     );
   }
 }
