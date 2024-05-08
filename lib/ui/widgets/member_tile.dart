@@ -1,7 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:reaxit/models.dart';
-import 'package:reaxit/ui/screens.dart';
 import 'package:reaxit/ui/widgets.dart';
 
 class MemberTile extends StatelessWidget {

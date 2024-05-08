@@ -330,27 +330,8 @@ class _ThaliAppState extends State<ThaliApp> {
                             ),
                             BlocProvider(
                               create: (_) =>
-                                  MemberListCubit(apiRepository)..load(),
-                              lazy: false,
-                            ),
-                            BlocProvider(
-                              create: (_) =>
                                   AlbumListCubit(apiRepository)..load(),
                               lazy: false,
-                            ),
-                            BlocProvider(
-                              create: (_) => BoardsCubit(apiRepository)..load(),
-                              lazy: true,
-                            ),
-                            BlocProvider(
-                              create: (_) =>
-                                  CommitteesCubit(apiRepository)..load(),
-                              lazy: true,
-                            ),
-                            BlocProvider(
-                              create: (_) =>
-                                  SocietiesCubit(apiRepository)..load(),
-                              lazy: true,
                             ),
                           ],
                           child: navigator!,

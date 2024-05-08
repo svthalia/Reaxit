@@ -11,6 +11,5 @@ export 'widgets/push_notification_dialog.dart';
 export 'widgets/push_notification_overlay.dart';
 export 'widgets/sales_order_dialog.dart';
 export 'widgets/tpay_button.dart';
-export 'widgets/group_tile.dart';
 export 'widgets/sortbutton.dart';
 export 'widgets/filter_popup.dart';
