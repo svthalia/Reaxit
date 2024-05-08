@@ -91,13 +91,16 @@ WidgetTesterCallback getTestMethod(
     await tester.pumpAndSettle();
     await Future.delayed(const Duration(seconds: 2));
     await tester.pumpAndSettle();
+    print("wheyy0");
 
     // todo: https://github.com/flutter/flutter/issues/51890
     if (Platform.isAndroid) {
       await binding.convertFlutterSurfaceToImage();
       await tester.pumpAndSettle();
     }
+    print("wheyy");
     await binding.takeScreenshot('screenshot-${album.title}');
+    print("wheyy1");
     for (AlbumPhoto photo in album.photos) {
       //TODO: wait for https://github.com/flutter/flutter/issues/115479 to be fixed
       expect(
@@ -105,6 +108,7 @@ WidgetTesterCallback getTestMethod(
         findsWidgets,
       );
     }
+    print("wheyy2");
     expect(find.text(album.title.toUpperCase()), findsOneWidget);
   };
 }
