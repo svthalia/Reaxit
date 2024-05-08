@@ -148,16 +148,6 @@ final List<RouteBase> routes = [
             },
           ),
           GoRoute(
-            path: 'admin',
-            name: 'event-admin',
-            pageBuilder: (context, state) => MaterialPage(
-              key: state.pageKey,
-              child: EventAdminScreen(
-                pk: int.parse(state.pathParameters['eventPk']!),
-              ),
-            ),
-          ),
-          GoRoute(
             path: 'registration/:registrationPk',
             name: 'event-registration',
             pageBuilder: (context, state) => MaterialPage(
@@ -403,21 +393,6 @@ final List<RouteBase> routes = [
     ],
   ),
   GoRoute(
-    path: '/settings',
-    name: 'settings',
-    pageBuilder: (context, state) => CustomTransitionPage(
-      key: state.pageKey,
-      child: SettingsScreen(),
-      transitionDuration: const Duration(milliseconds: 200),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(
-          opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
-          child: child,
-        );
-      },
-    ),
-  ),
-  GoRoute(
     path: '/pizzas',
     name: 'food',
     pageBuilder: (context, state) {
@@ -429,18 +404,6 @@ final List<RouteBase> routes = [
         ),
       );
     },
-    routes: [
-      GoRoute(
-        path: 'admin',
-        name: 'food-admin',
-        pageBuilder: (context, state) => MaterialPage(
-          key: state.pageKey,
-          child: FoodAdminScreen(
-            pk: state.extra as int,
-          ),
-        ),
-      ),
-    ],
   ),
   GoRoute(
     path: '/login',

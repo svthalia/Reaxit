@@ -339,13 +339,6 @@ class _ThaliAppState extends State<ThaliApp> {
                               lazy: false,
                             ),
                             BlocProvider(
-                              // The SettingsCubit must not be lazy, since
-                              // it handles setting up push notifications.
-                              create: (_) =>
-                                  SettingsCubit(apiRepository)..load(),
-                              lazy: false,
-                            ),
-                            BlocProvider(
                               create: (_) => BoardsCubit(apiRepository)..load(),
                               lazy: true,
                             ),
