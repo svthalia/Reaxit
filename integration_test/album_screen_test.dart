@@ -98,6 +98,8 @@ WidgetTesterCallback getTestMethod(
       await binding.convertFlutterSurfaceToImage();
       await tester.pumpAndSettle();
     }
+    binding.scheduleFrame();
+
     print("wheyy");
     await binding.takeScreenshot('screenshot-${album.title}');
     print("wheyy1");
