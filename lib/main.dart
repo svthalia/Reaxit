@@ -13,7 +13,6 @@ import 'package:reaxit/blocs.dart';
 import 'package:reaxit/config.dart';
 import 'package:reaxit/firebase_options.dart';
 import 'package:reaxit/routes.dart';
-import 'package:reaxit/tosti/blocs/auth_cubit.dart';
 import 'package:reaxit/ui/theme.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -345,10 +344,6 @@ class _ThaliAppState extends State<ThaliApp> {
                               create: (_) =>
                                   SettingsCubit(apiRepository)..load(),
                               lazy: false,
-                            ),
-                            BlocProvider(
-                              create: (_) => TostiAuthCubit()..load(),
-                              lazy: true,
                             ),
                             BlocProvider(
                               create: (_) => BoardsCubit(apiRepository)..load(),

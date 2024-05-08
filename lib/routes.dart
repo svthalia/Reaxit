@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/models.dart';
-import 'package:reaxit/tosti/tosti_api_repository.dart';
-import 'package:reaxit/tosti/tosti_screen.dart';
-import 'package:reaxit/tosti/tosti_shift_screen.dart';
 import 'package:reaxit/ui/screens.dart';
 import 'package:reaxit/ui/screens/liked_photos_screen.dart';
 import 'package:reaxit/ui/widgets.dart';
@@ -454,34 +450,6 @@ final List<RouteBase> routes = [
       child: const LoginScreen(),
     ),
   ),
-  if (config.tostiEnabled) // Otherwise, all T.O.S.T.I. stuff is removed.
-    GoRoute(
-      path: '/tosti',
-      name: 'tosti',
-      pageBuilder: (context, state) => MaterialPage(
-        key: state.pageKey,
-        child: const TostiScreen(),
-      ),
-      routes: [
-        GoRoute(
-          path: 'shift/:shiftId',
-          name: 'tosti-shift',
-          redirect: (context, state) {
-            // Redirect to TostiScreen if not authenticated.
-            // TODO: Is there a nicer way to pass tosti api to other pages?
-            if (state.extra is! TostiApiRepository) return '/tosti';
-            return null;
-          },
-          pageBuilder: (context, state) => MaterialPage(
-            key: state.pageKey,
-            child: TostiShiftScreen(
-              id: int.parse(state.pathParameters['shiftId']!),
-              api: state.extra as TostiApiRepository,
-            ),
-          ),
-        )
-      ],
-    ),
   GoRoute(
       path: '/pay',
       name: 'pay',
