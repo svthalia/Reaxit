@@ -1,6 +1,5 @@
 export 'screens/album_screen.dart';
 export 'screens/albums_screen.dart';
-export 'screens/calendar_screen.dart';
 export 'screens/food_screen.dart';
 export 'screens/login_screen.dart';
 export 'screens/registration_screen.dart';

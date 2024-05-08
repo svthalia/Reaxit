@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/screens.dart';
-import 'package:reaxit/ui/screens/liked_photos_screen.dart';
 import 'package:reaxit/ui/widgets.dart';
 
 /// Returns true if [uri] is a deep link that can be handled by the app.
@@ -38,54 +37,11 @@ final List<RegExp> _deepLinkRegExps = <RegExp>[
 
 final List<RouteBase> routes = [
   GoRoute(
-      path: '/',
-      name: 'welcome',
-      pageBuilder: (context, state) => CustomTransitionPage(
-            key: state.pageKey,
-            child: WelcomeScreen(),
-            transitionDuration: const Duration(milliseconds: 200),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
-                child: child,
-              );
-            },
-          ),
-      routes: [
-        GoRoute(
-          path: 'sales/order/:pk/pay',
-          name: 'sales-order-pay',
-          pageBuilder: (context, state) {
-            return CustomTransitionPage(
-              barrierColor: Colors.black54,
-              opaque: false,
-              transitionDuration: const Duration(milliseconds: 150),
-              transitionsBuilder: (
-                context,
-                animation,
-                secondaryAnimation,
-                child,
-              ) {
-                return FadeTransition(
-                  opacity: CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.easeOut,
-                  ),
-                  child: child,
-                );
-              },
-              child: SalesOrderDialog(pk: state.pathParameters['pk']!),
-            );
-          },
-        ),
-      ]),
-  GoRoute(
-    path: '/events',
-    name: 'calendar',
+    path: '/',
+    name: 'welcome',
     pageBuilder: (context, state) => CustomTransitionPage(
       key: state.pageKey,
-      child: CalendarScreen(),
+      child: WelcomeScreen(),
       transitionDuration: const Duration(milliseconds: 200),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
@@ -127,14 +83,6 @@ final List<RouteBase> routes = [
       },
     ),
     routes: [
-      GoRoute(
-        path: 'liked-photos',
-        name: 'liked-photos',
-        pageBuilder: (context, state) => MaterialPage(
-          key: state.pageKey,
-          child: const LikedPhotosScreen(),
-        ),
-      ),
       GoRoute(
         path: ':albumSlug',
         name: 'album',

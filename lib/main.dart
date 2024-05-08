@@ -325,11 +325,6 @@ class _ThaliAppState extends State<ThaliApp> {
                             ),
                             BlocProvider(
                               create: (_) =>
-                                  CalendarCubit(apiRepository)..cachedLoad(),
-                              lazy: false,
-                            ),
-                            BlocProvider(
-                              create: (_) =>
                                   AlbumListCubit(apiRepository)..load(),
                               lazy: false,
                             ),
