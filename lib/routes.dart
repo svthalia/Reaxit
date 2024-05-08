@@ -97,46 +97,6 @@ final List<RouteBase> routes = [
     ],
   ),
   GoRoute(
-    path: '/association/committees/:groupSlug',
-    redirect: (context, state) =>
-        '/groups/committees/${state.pathParameters['groupSlug']}',
-  ),
-  GoRoute(
-    path: '/association/societies/:groupSlug',
-    redirect: (context, state) =>
-        '/groups/societies/${state.pathParameters['groupSlug']}',
-  ),
-  GoRoute(
-    path: '/association/boards/:groupSlug',
-    redirect: (context, state) =>
-        '/groups/boards/${state.pathParameters['groupSlug']}',
-  ),
-  GoRoute(
-    path: '/association/committees',
-    redirect: (context, state) => '/groups/committees',
-  ),
-  GoRoute(
-    path: '/association/societies',
-    redirect: (context, state) => '/groups/societies',
-  ),
-  GoRoute(
-    path: '/association/boards',
-    redirect: (context, state) => '/groups/boards',
-  ),
-  GoRoute(
-    path: '/pizzas',
-    name: 'food',
-    pageBuilder: (context, state) {
-      return MaterialPage(
-        key: state.pageKey,
-        child: FoodScreen(
-          pk: (state.extra as Event?)?.foodEvent,
-          event: state.extra as Event?,
-        ),
-      );
-    },
-  ),
-  GoRoute(
     path: '/login',
     name: 'login',
     pageBuilder: (context, state) => MaterialPage(
@@ -144,9 +104,4 @@ final List<RouteBase> routes = [
       child: const LoginScreen(),
     ),
   ),
-  GoRoute(
-      path: '/pay',
-      name: 'pay',
-      pageBuilder: (context, state) =>
-          MaterialPage(key: state.pageKey, child: PayScreen())),
 ];

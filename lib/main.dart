@@ -310,11 +310,6 @@ class _ThaliAppState extends State<ThaliApp> {
                           providers: [
                             BlocProvider(
                               create: (_) =>
-                                  PaymentUserCubit(apiRepository)..load(),
-                              lazy: false,
-                            ),
-                            BlocProvider(
-                              create: (_) =>
                                   FullMemberCubit(apiRepository)..load(),
                               lazy: false,
                             ),
