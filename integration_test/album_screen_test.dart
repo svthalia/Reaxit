@@ -110,6 +110,7 @@ WidgetTesterCallback getTestMethod(
     }
     print("wheyy2");
     expect(find.text(album.title.toUpperCase()), findsOneWidget);
+    print("wheyy3");
   };
 }
 
