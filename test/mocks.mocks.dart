@@ -9,7 +9,6 @@ import 'package:flutter_bloc/flutter_bloc.dart' as _i9;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:reaxit/api/api_repository.dart' as _i5;
 import 'package:reaxit/blocs/auth_cubit.dart' as _i2;
-import 'package:reaxit/blocs/welcome_cubit.dart' as _i7;
 import 'package:reaxit/config.dart' as _i3;
 import 'package:reaxit/models.dart' as _i4;
 
@@ -199,16 +198,6 @@ class _FakeGroup_16 extends _i1.SmartFake implements _i4.Group {
 
 class _FakeApiRepository_17 extends _i1.SmartFake implements _i5.ApiRepository {
   _FakeApiRepository_17(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeWelcomeState_19 extends _i1.SmartFake implements _i7.WelcomeState {
-  _FakeWelcomeState_19(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -1571,104 +1560,4 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
           ),
         )),
       ) as _i8.Future<_i4.ListResponse<_i4.Payment>>);
-}
-
-/// A class which mocks [WelcomeCubit].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockWelcomeCubit extends _i1.Mock implements _i7.WelcomeCubit {
-  MockWelcomeCubit() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  _i5.ApiRepository get api => (super.noSuchMethod(
-        Invocation.getter(#api),
-        returnValue: _FakeApiRepository_17(
-          this,
-          Invocation.getter(#api),
-        ),
-      ) as _i5.ApiRepository);
-  @override
-  _i7.WelcomeState get state => (super.noSuchMethod(
-        Invocation.getter(#state),
-        returnValue: _FakeWelcomeState_19(
-          this,
-          Invocation.getter(#state),
-        ),
-      ) as _i7.WelcomeState);
-  @override
-  _i8.Stream<_i7.WelcomeState> get stream => (super.noSuchMethod(
-        Invocation.getter(#stream),
-        returnValue: _i8.Stream<_i7.WelcomeState>.empty(),
-      ) as _i8.Stream<_i7.WelcomeState>);
-  @override
-  bool get isClosed => (super.noSuchMethod(
-        Invocation.getter(#isClosed),
-        returnValue: false,
-      ) as bool);
-  @override
-  _i8.Future<void> load() => (super.noSuchMethod(
-        Invocation.method(
-          #load,
-          [],
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
-  @override
-  void emit(_i7.WelcomeState? state) => super.noSuchMethod(
-        Invocation.method(
-          #emit,
-          [state],
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  void onChange(_i9.Change<_i7.WelcomeState>? change) => super.noSuchMethod(
-        Invocation.method(
-          #onChange,
-          [change],
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  void addError(
-    Object? error, [
-    StackTrace? stackTrace,
-  ]) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #addError,
-          [
-            error,
-            stackTrace,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  void onError(
-    Object? error,
-    StackTrace? stackTrace,
-  ) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #onError,
-          [
-            error,
-            stackTrace,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  _i8.Future<void> close() => (super.noSuchMethod(
-        Invocation.method(
-          #close,
-          [],
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
 }

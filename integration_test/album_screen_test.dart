@@ -128,7 +128,6 @@ void testAlbum(IntegrationTestWidgetsFlutterBinding binding) {
           'mock',
           false,
           false,
-          coverphoto1,
           [albumphoto1],
         ),
       ),
@@ -143,7 +142,6 @@ void testAlbum(IntegrationTestWidgetsFlutterBinding binding) {
           'MOcK2',
           false,
           false,
-          coverphoto1,
           [albumphoto1, albumphoto2],
         ),
       ),
@@ -157,7 +155,6 @@ void testAlbum(IntegrationTestWidgetsFlutterBinding binding) {
           'MOcK2',
           false,
           false,
-          coverphoto1,
           [albumphoto1, albumphoto2],
         );
 

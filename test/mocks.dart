@@ -5,6 +5,5 @@ import 'package:reaxit/blocs.dart';
 @GenerateMocks([
   AuthCubit,
   ApiRepository,
-  WelcomeCubit,
 ])
 void main() {}

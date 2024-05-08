@@ -9,10 +9,8 @@ class ListAlbum {
   final String title;
   final bool accessible;
   final bool shareable;
-  final CoverPhoto? cover;
 
-  const ListAlbum(
-      this.slug, this.title, this.accessible, this.shareable, this.cover);
+  const ListAlbum(this.slug, this.title, this.accessible, this.shareable);
 
   factory ListAlbum.fromJson(Map<String, dynamic> json) =>
       _$ListAlbumFromJson(json);
@@ -35,15 +33,14 @@ class Album extends ListAlbum {
         title ?? this.title,
         accessible ?? this.accessible,
         shareable ?? this.shareable,
-        cover ?? this.cover,
         photos ?? this.photos,
       );
 
-  const Album.fromlist(super.slug, super.title, super.accessible,
-      super.shareable, CoverPhoto super.cover, this.photos);
+  const Album.fromlist(
+      super.slug, super.title, super.accessible, super.shareable, this.photos);
 
-  const Album(super.slug, super.title, super.accessible, super.shareable,
-      super.cover, this.photos);
+  const Album(
+      super.slug, super.title, super.accessible, super.shareable, this.photos);
 
   factory Album.fromJson(Map<String, dynamic> json) => _$AlbumFromJson(json);
 }
