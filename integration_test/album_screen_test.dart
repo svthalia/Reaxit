@@ -102,7 +102,7 @@ WidgetTesterCallback getTestMethod(
     binding.drawFrame();
 
     print("wheyy");
-    await binding.takeScreenshot('screenshot-${album.title}');
+    // await binding.takeScreenshot('screenshot-${album.title}');
     print("wheyy1");
     for (AlbumPhoto photo in album.photos) {
       //TODO: wait for https://github.com/flutter/flutter/issues/115479 to be fixed
