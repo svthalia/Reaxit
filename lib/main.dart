@@ -14,40 +14,6 @@ import 'package:reaxit/routes.dart';
 import 'package:reaxit/ui/theme.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Google Fonts doesn't need to download fonts as they are bundled.
-  GoogleFonts.config.allowRuntimeFetching = false;
-
-  // Add licenses for the used fonts.
-  LicenseRegistry.addLicense(() async* {
-    final openSansLicense = await rootBundle.loadString(
-      'assets/google_fonts/OpenSans-OFL.txt',
-    );
-    final oswaldLicense = await rootBundle.loadString(
-      'assets/google_fonts/Oswald-OFL.txt',
-    );
-    yield LicenseEntryWithLineBreaks(['google_fonts'], openSansLicense);
-    yield LicenseEntryWithLineBreaks(['google_fonts'], oswaldLicense);
-  });
-
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  await SentryFlutter.init(
-    (options) {
-      options.dsn = sentryDSN;
-    },
-    appRunner: () async {
-      runApp(
-        BlocProvider(
-          create: (context) => AuthCubit()..load(),
-          child: const ThaliApp(),
-        ),
-      );
-    },
-  );
-}
-
 /// A copy of [main] that allows inserting an [AuthCubit] for integration tests.
 Future<void> testingMain(AuthCubit? authCubit, String? initialroute) async {
   WidgetsFlutterBinding.ensureInitialized();
