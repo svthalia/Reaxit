@@ -64,16 +64,6 @@ class _FakeAlbum_13 extends _i1.SmartFake implements _i4.Album {
         );
 }
 
-class _FakeApiRepository_17 extends _i1.SmartFake implements _i5.ApiRepository {
-  _FakeApiRepository_17(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
 /// A class which mocks [AuthCubit].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -333,60 +323,4 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
           ),
         )),
       ) as _i8.Future<_i4.ListResponse<_i4.ListAlbum>>);
-
-  @override
-  _i8.Future<_i4.ListResponse<_i4.FrontpageArticle>> getFrontpageArticles({
-    int? limit,
-    int? offset,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getFrontpageArticles,
-          [],
-          {
-            #limit: limit,
-            #offset: offset,
-          },
-        ),
-        returnValue: _i8.Future<_i4.ListResponse<_i4.FrontpageArticle>>.value(
-            _FakeListResponse_3<_i4.FrontpageArticle>(
-          this,
-          Invocation.method(
-            #getFrontpageArticles,
-            [],
-            {
-              #limit: limit,
-              #offset: offset,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.ListResponse<_i4.FrontpageArticle>>);
-
-  @override
-  _i8.Future<_i4.ListResponse<_i4.AlbumPhoto>> getLikedPhotos({
-    int? limit,
-    int? offset,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getLikedPhotos,
-          [],
-          {
-            #limit: limit,
-            #offset: offset,
-          },
-        ),
-        returnValue: _i8.Future<_i4.ListResponse<_i4.AlbumPhoto>>.value(
-            _FakeListResponse_3<_i4.AlbumPhoto>(
-          this,
-          Invocation.method(
-            #getLikedPhotos,
-            [],
-            {
-              #limit: limit,
-              #offset: offset,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.ListResponse<_i4.AlbumPhoto>>);
 }

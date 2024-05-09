@@ -65,18 +65,4 @@ abstract class ApiRepository {
     int? limit,
     int? offset,
   });
-
-  /// Get a list of [FrontpageArticle]s.
-  ///
-  /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
-  /// total number of [FrontpageArticle]s that can be returned.
-  Future<ListResponse<FrontpageArticle>> getFrontpageArticles({
-    int? limit,
-    int? offset,
-  });
-
-  Future<ListResponse<AlbumPhoto>> getLikedPhotos({
-    int? limit,
-    int? offset,
-  });
 }

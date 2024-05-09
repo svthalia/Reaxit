@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:reaxit/models.dart';
 
 class AlbumTile extends StatelessWidget {
@@ -13,7 +12,6 @@ class AlbumTile extends StatelessWidget {
       fit: StackFit.expand,
       children: [
         Image.asset('assets/img/photo_placeholder_0.png'),
-        const _BlackGradient(),
         Align(
           alignment: Alignment.bottomLeft,
           child: Padding(
@@ -24,41 +22,7 @@ class AlbumTile extends StatelessWidget {
             ),
           ),
         ),
-        Positioned.fill(
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () => context.pushNamed(
-                'album',
-                pathParameters: {'albumSlug': album.slug},
-                extra: album,
-              ),
-            ),
-          ),
-        ),
       ],
-    );
-  }
-}
-
-class _BlackGradient extends StatelessWidget {
-  static const _black00 = Color(0x00000000);
-  static const _black50 = Color(0x80000000);
-
-  const _BlackGradient();
-
-  @override
-  Widget build(BuildContext context) {
-    return const DecoratedBox(
-      decoration: BoxDecoration(
-        color: Colors.black,
-        gradient: LinearGradient(
-          begin: FractionalOffset.topCenter,
-          end: FractionalOffset.bottomCenter,
-          colors: [_black00, _black50],
-          stops: [0.4, 1.0],
-        ),
-      ),
     );
   }
 }

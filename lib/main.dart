@@ -191,15 +191,7 @@ class _ThaliAppState extends State<ThaliApp> {
                 config: apiRepository.config,
                 child: RepositoryProvider.value(
                   value: apiRepository,
-                  child: MultiBlocProvider(
-                    providers: [
-                      BlocProvider(
-                        create: (_) => AlbumListCubit(apiRepository)..load(),
-                        lazy: false,
-                      ),
-                    ],
-                    child: navigator!,
-                  ),
+                  child: navigator!,
                 ),
               );
             } else {
