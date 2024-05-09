@@ -281,7 +281,6 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> logOut() async {
     final state = this.state;
     if (state is LoggedInAuthState) {
-      await _cleanUpPushNotifications(state.apiRepository);
       state.apiRepository.close();
     }
 
@@ -335,101 +334,9 @@ class AuthCubit extends Cubit<AuthState> {
         sound: true,
       );
 
-      final token = await FirebaseMessaging.instance.getToken();
-      final prefs = await SharedPreferences.getInstance();
-      final devicePk = prefs.getInt(_devicePkPreferenceKey);
-
-      if (devicePk == null) {
-        // There is no device in the backend yet.
-        try {
-          await _registerNewDevice(prefs: prefs, api: api, token: token);
-        } on ApiException {
-          return false;
-        }
-      } else {
-        // There already is a device in the backend.
-        try {
-          // Update the existing device.
-          final device = await api.updateDeviceToken(
-            pk: devicePk,
-            token: token!,
-          );
-
-          // Handle refreshing of tokens.
-          _fmTokenSubscription =
-              FirebaseMessaging.instance.onTokenRefresh.listen(
-            (token) => api.updateDeviceToken(pk: device.pk, token: token),
-          );
-        } on ApiException catch (exception) {
-          if (exception == ApiException.notFound) {
-            // The device was deleted from the backend.
-            // Delete the device from the local storage.
-            prefs.remove(_devicePkPreferenceKey);
-
-            try {
-              await _registerNewDevice(prefs: prefs, api: api, token: token);
-            } on ApiException {
-              return false;
-            }
-          }
-        }
-      }
-
       return true;
     } catch (_) {
       return false;
     }
-  }
-
-  /// Register a new [Device] in the backend. May throw an [ApiException].
-  Future<void> _registerNewDevice({
-    required SharedPreferences prefs,
-    required ApiRepository api,
-    required String? token,
-  }) async {
-    final device = await api.registerDevice(
-      type: Platform.isIOS ? 'ios' : 'android',
-      token: token!,
-    );
-
-    // Store the pk of the new device.
-    prefs.setInt(_devicePkPreferenceKey, device.pk);
-
-    // Handle refreshing of tokens.
-    _fmTokenSubscription = FirebaseMessaging.instance.onTokenRefresh.listen(
-      (token) => api.updateDeviceToken(pk: device.pk, token: token),
-    );
-  }
-
-  /// Clean up the setup of push notifications.
-  ///
-  /// Removes the subscription that listens to token changes, disables
-  /// the current token, and inactivates the device in the backend.
-  ///
-  /// Returns whether the device on the backend was successfully disabled.
-  Future<bool> _cleanUpPushNotifications(ApiRepository api) async {
-    // Stop notifying the backend of token changes.
-    _fmTokenSubscription?.cancel();
-
-    // Disable the existing token. This makes sure that the backend can no
-    // longer send push notifications to this phone even if deleting the
-    // device from the backend fails.
-    FirebaseMessaging.instance.deleteToken();
-
-    // Delete the device from the backend.
-    final prefs = await SharedPreferences.getInstance();
-    final devicePk = prefs.getInt(_devicePkPreferenceKey);
-    if (devicePk != null) {
-      // Remove the device pk from storage.
-      prefs.remove(_devicePkPreferenceKey);
-
-      try {
-        await api.disableDevice(pk: devicePk);
-      } on ApiException {
-        return false;
-      }
-    }
-
-    return true;
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reaxit/models.dart';
-import 'package:reaxit/ui/screens.dart';
 import 'package:reaxit/ui/screens/album_screen.dart';
 
 final List<RouteBase> routes = [
@@ -13,17 +12,11 @@ final List<RouteBase> routes = [
         '/albums/${state.pathParameters['albumSlug']}',
   ),
   GoRoute(
-    // This redirect is above the members route because
-    // the members path is a prefix of this albums path.
-    path: '/members/photos',
-    redirect: (context, state) => '/albums',
-  ),
-  GoRoute(
     path: '/albums',
     name: 'albums',
     pageBuilder: (context, state) => CustomTransitionPage(
       key: state.pageKey,
-      child: AlbumsScreen(),
+      child: Container(),
       transitionDuration: const Duration(milliseconds: 200),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
