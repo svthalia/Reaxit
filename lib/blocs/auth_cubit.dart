@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -11,10 +9,8 @@ import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/concrexit_api_repository.dart';
-import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/config.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 final _redirectUrl = Uri.parse(
   'nu.thalia://callback',
@@ -87,9 +83,6 @@ class FailureAuthState extends AuthState {
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(LoadingAuthState());
 
-  /// A listener for refreshing push notification tokens.
-  StreamSubscription? _fmTokenSubscription;
-
   /// Restore the authentication state from storage.
   ///
   /// Looks for existing credentials and, if available,
@@ -153,12 +146,6 @@ class AuthCubit extends Cubit<AuthState> {
             config: apiConfig,
             onLogOut: logOut,
           );
-
-          try {
-            _setupPushNotifications(apiRepository);
-          } on FirebaseException {
-            // Ignore.
-          }
 
           emit(LoggedInAuthState(apiRepository: apiRepository));
         } else {
@@ -254,8 +241,6 @@ class AuthCubit extends Cubit<AuthState> {
         onLogOut: logOut,
       );
 
-      await _setupPushNotifications(apiRepository);
-
       emit(LoggedInAuthState(apiRepository: apiRepository));
     } on PlatformException catch (exception) {
       // Forward exceptions from the authentication flow.
@@ -308,35 +293,6 @@ class AuthCubit extends Cubit<AuthState> {
         selectedEnvironment: environment,
         apiRepository: state.apiRepository,
       ));
-    }
-  }
-
-  /// Set up push notifications.
-  ///
-  /// Requests permission to display notifications, and registers
-  /// or updates a [Device] for push notifications on the backend.
-  ///
-  /// Returns whether push notifications have been set up successfully or not.
-  Future<bool> _setupPushNotifications(ApiRepository api) async {
-    try {
-      // Request permissions for push notifications.
-      // We set up push notifications regardless of whether the user gives
-      // permission, so we don't need to keep track of the permission state,
-      // and the user can simply get push notifications working by enabling
-      // the permissions in the phone's settings.
-      FirebaseMessaging.instance.requestPermission(
-        alert: true,
-        announcement: true,
-        badge: true,
-        carPlay: false,
-        criticalAlert: false,
-        provisional: false,
-        sound: true,
-      );
-
-      return true;
-    } catch (_) {
-      return false;
     }
   }
 }
