@@ -1,26 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:reaxit/models/photo.dart';
 
 class PhotoTile extends StatelessWidget {
-  final AlbumPhoto photo;
-  final void Function() openGallery;
-
-  PhotoTile({
-    required this.photo,
-    required this.openGallery,
-  }) : super(key: ValueKey(photo.pk));
+  const PhotoTile() : super();
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-        onTap: openGallery,
-        child: RotatedBox(
-            quarterTurns: photo.rotation ~/ 90,
-            child: FadeInImage.assetNetwork(
-              placeholder:
-                  'assets/img/photo_placeholder_${(360 - photo.rotation) % 360}.png',
-              image: photo.small,
-              fit: BoxFit.cover,
-            )));
+    return FadeInImage.assetNetwork(
+      placeholder: 'assets/img/photo_placeholder_0.png',
+      image:
+          'https://raw.githubusercontent.com/svthalia/Reaxit/3e3a74364f10cd8de14ac1f74de8a05aa6d00b28/assets/img/default-avatar.jpg',
+      fit: BoxFit.cover,
+    );
   }
 }

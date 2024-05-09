@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/screens/album_screen.dart';
 
 final List<RouteBase> routes = [
@@ -31,10 +30,7 @@ final List<RouteBase> routes = [
         name: 'album',
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
-          child: AlbumScreen(
-            slug: state.pathParameters['albumSlug']!,
-            album: state.extra as ListAlbum?,
-          ),
+          child: const AlbumScreen(),
         ),
       ),
     ],

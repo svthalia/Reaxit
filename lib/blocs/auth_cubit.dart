@@ -18,8 +18,6 @@ final _redirectUrl = Uri.parse(
 
 const _credentialsStorageKey = 'ThaliApp OAuth2 credentials';
 
-const _devicePkPreferenceKey = 'deviceRegistrationId';
-
 enum Environment {
   staging,
   production,
