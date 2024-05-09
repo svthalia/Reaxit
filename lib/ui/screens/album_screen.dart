@@ -10,6 +10,12 @@ import 'package:reaxit/ui/widgets/gallery.dart';
 import 'package:reaxit/ui/widgets/photo_tile.dart';
 import 'package:share_plus/share_plus.dart';
 
+const imagelink1 =
+    'https://raw.githubusercontent.com/svthalia/Reaxit/3e3a74364f10cd8de14ac1f74de8a05aa6d00b28/assets/img/album_placeholder.png';
+
+const imagelink2 =
+    'https://raw.githubusercontent.com/svthalia/Reaxit/3e3a74364f10cd8de14ac1f74de8a05aa6d00b28/assets/img/default-avatar.jpg';
+
 /// Screen that loads and shows the Album with `slug`.
 class AlbumScreen extends StatefulWidget {
   final String slug;
@@ -52,32 +58,46 @@ class _AlbumScreenState extends State<AlbumScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _cubit,
-      child: BlocBuilder<AlbumCubit, AlbumState>(
-        builder: (context, state) {
-          final Widget body = switch (state) {
-            ErrorState(message: var message) => ErrorScrollView(message),
-            LoadingState _ => const Center(child: CircularProgressIndicator()),
-            ResultState(result: var result) => _PhotoGrid(result.photos),
-          };
-
-          return Scaffold(
-            appBar: ThaliaAppBar(
-              title: Text((state.result?.title.toUpperCase() ?? title)),
-              collapsingActions: [
-                IconAppbarAction(
-                  'SHARE',
-                  Icons.adaptive.share,
-                  () => _shareAlbum(context),
-                  tooltip: 'share album',
-                )
-              ],
-            ),
-            body: body,
-          );
-        },
+    const Widget body = _PhotoGrid([
+      AlbumPhoto(
+        0,
+        0,
+        Photo(
+          imagelink1,
+          imagelink1,
+          imagelink1,
+          imagelink1,
+        ),
+        false,
+        0,
       ),
+      AlbumPhoto(
+        0,
+        0,
+        Photo(
+          imagelink2,
+          imagelink2,
+          imagelink2,
+          imagelink2,
+        ),
+        false,
+        0,
+      )
+    ]);
+
+    return Scaffold(
+      appBar: ThaliaAppBar(
+        title: const Text('wheyyy'),
+        collapsingActions: [
+          IconAppbarAction(
+            'SHARE',
+            Icons.adaptive.share,
+            () => _shareAlbum(context),
+            tooltip: 'share album',
+          )
+        ],
+      ),
+      body: body,
     );
   }
 }
