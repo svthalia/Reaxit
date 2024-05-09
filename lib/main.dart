@@ -10,11 +10,9 @@ import 'package:overlay_support/overlay_support.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/config.dart';
-import 'package:reaxit/firebase_options.dart';
 import 'package:reaxit/routes.dart';
 import 'package:reaxit/ui/theme.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,7 +33,6 @@ Future<void> main() async {
   });
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await SentryFlutter.init(
     (options) {
       options.dsn = sentryDSN;
