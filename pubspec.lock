@@ -744,7 +744,7 @@ packages:
     source: hosted
     version: "0.5.0"
   meta:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: meta
       sha256: a6e590c838b18133bb482a2745ad77c5bb7715fb0451209e1a7567d416678b8e
@@ -752,7 +752,7 @@ packages:
     source: hosted
     version: "1.10.0"
   mime:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: mime
       sha256: "2e123074287cc9fd6c09de8336dae606d1ddb88d9ac47358826db698c176a1f2"
@@ -791,14 +791,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
-  overlay_support:
-    dependency: "direct main"
-    description:
-      name: overlay_support
-      sha256: fc39389bfd94e6985e1e13b2a88a125fc4027608485d2d4e2847afe1b2bb339c
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.0"
   package_config:
     dependency: transitive
     description:
@@ -1213,7 +1205,7 @@ packages:
     source: hosted
     version: "2.2.2"
   url_launcher:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: url_launcher
       sha256: c512655380d241a337521703af62d2c122bf7b77a46ff7dd750092aa9433499c

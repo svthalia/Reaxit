@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:overlay_support/overlay_support.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/config.dart';
@@ -128,89 +127,87 @@ class _ThaliAppState extends State<ThaliApp> {
 
   @override
   Widget build(BuildContext context) {
-    return OverlaySupport.global(
-      child: MaterialApp.router(
-        title: 'ThaliApp',
-        theme: lightTheme,
-        darkTheme: darkTheme,
-        themeMode: ThemeMode.dark,
-        routerDelegate: _router.routerDelegate,
-        routeInformationParser: _router.routeInformationParser,
-        routeInformationProvider: _router.routeInformationProvider,
+    return MaterialApp.router(
+      title: 'ThaliApp',
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: ThemeMode.dark,
+      routerDelegate: _router.routerDelegate,
+      routeInformationParser: _router.routeInformationParser,
+      routeInformationProvider: _router.routeInformationProvider,
 
-        // This adds listeners for authentication status snackbars and setting up
-        // push notifications. This surrounds the navigator with providers when
-        // logged in, and replaces it with a [LoginScreen] when not logged in.
-        builder: (context, navigator) {
-          return BlocConsumer<AuthCubit, AuthState>(
-            listenWhen: (previous, current) {
-              if (previous is LoggedInAuthState &&
-                  current is LoggedOutAuthState) {
-                return true;
-              } else if (current is FailureAuthState) {
-                return true;
-              }
-              return false;
-            },
+      // This adds listeners for authentication status snackbars and setting up
+      // push notifications. This surrounds the navigator with providers when
+      // logged in, and replaces it with a [LoginScreen] when not logged in.
+      builder: (context, navigator) {
+        return BlocConsumer<AuthCubit, AuthState>(
+          listenWhen: (previous, current) {
+            if (previous is LoggedInAuthState &&
+                current is LoggedOutAuthState) {
+              return true;
+            } else if (current is FailureAuthState) {
+              return true;
+            }
+            return false;
+          },
 
-            // Listen to display login status snackbars and set up notifications.
-            listener: (context, state) async {
-              // Show a snackbar when the user logs out or logging in fails.
-              switch (state) {
-                case LoggedOutAuthState _:
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    behavior: SnackBarBehavior.floating,
-                    content: Text('Logged out.'),
-                  ));
-                case FailureAuthState(message: var message):
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    behavior: SnackBarBehavior.floating,
-                    content: Text(message ?? 'Logging in failed.'),
-                  ));
-                case _:
-              }
-            },
-            buildWhen: (previous, current) => current is! FailureAuthState,
-            builder: (context, authState) {
-              // Build with ApiRepository and cubits provided when an
-              // ApiRepository is available. This is the case when logged
-              // in, but also when just logged out (after having been logged
-              // in), with a closed ApiRepository.
-              // The latter allows us to keep the cubits alive
-              // while animating towards the login screen.
-              if (authState is LoggedInAuthState ||
-                  (authState is LoggedOutAuthState &&
-                      authState.apiRepository != null)) {
-                final ApiRepository apiRepository;
-                if (authState is LoggedInAuthState) {
-                  apiRepository = authState.apiRepository;
-                } else {
-                  apiRepository =
-                      (authState as LoggedOutAuthState).apiRepository!;
-                }
-
-                return InheritedConfig(
-                  config: apiRepository.config,
-                  child: RepositoryProvider.value(
-                    value: apiRepository,
-                    child: MultiBlocProvider(
-                      providers: [
-                        BlocProvider(
-                          create: (_) => AlbumListCubit(apiRepository)..load(),
-                          lazy: false,
-                        ),
-                      ],
-                      child: navigator!,
-                    ),
-                  ),
-                );
+          // Listen to display login status snackbars and set up notifications.
+          listener: (context, state) async {
+            // Show a snackbar when the user logs out or logging in fails.
+            switch (state) {
+              case LoggedOutAuthState _:
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text('Logged out.'),
+                ));
+              case FailureAuthState(message: var message):
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text(message ?? 'Logging in failed.'),
+                ));
+              case _:
+            }
+          },
+          buildWhen: (previous, current) => current is! FailureAuthState,
+          builder: (context, authState) {
+            // Build with ApiRepository and cubits provided when an
+            // ApiRepository is available. This is the case when logged
+            // in, but also when just logged out (after having been logged
+            // in), with a closed ApiRepository.
+            // The latter allows us to keep the cubits alive
+            // while animating towards the login screen.
+            if (authState is LoggedInAuthState ||
+                (authState is LoggedOutAuthState &&
+                    authState.apiRepository != null)) {
+              final ApiRepository apiRepository;
+              if (authState is LoggedInAuthState) {
+                apiRepository = authState.apiRepository;
               } else {
-                return navigator!;
+                apiRepository =
+                    (authState as LoggedOutAuthState).apiRepository!;
               }
-            },
-          );
-        },
-      ),
+
+              return InheritedConfig(
+                config: apiRepository.config,
+                child: RepositoryProvider.value(
+                  value: apiRepository,
+                  child: MultiBlocProvider(
+                    providers: [
+                      BlocProvider(
+                        create: (_) => AlbumListCubit(apiRepository)..load(),
+                        lazy: false,
+                      ),
+                    ],
+                    child: navigator!,
+                  ),
+                ),
+              );
+            } else {
+              return navigator!;
+            }
+          },
+        );
+      },
     );
   }
 }

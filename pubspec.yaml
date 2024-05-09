@@ -22,9 +22,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # Annotations.
-  meta: ^1.10.0
-
   # Nice functions for collections.
   collection: ^1.17.1
 
@@ -54,9 +51,6 @@ dependencies:
   # Persistent storage.
   shared_preferences: ^2.2.1
 
-  # Opening urls.
-  url_launcher: ^6.2.2
-
   # Authenticating in browser.
   flutter_web_auth_2: ^3.1.0
 
@@ -71,9 +65,6 @@ dependencies:
 
   # Share menu.
   share_plus: ^7.1.0
-
-  # Get mime type from file extension.
-  mime: ^1.0.4
 
   # Path for temporary files.
   path_provider: ^2.1.1
@@ -90,9 +81,6 @@ dependencies:
 
   # Firebase for push notifications.
   firebase_core: ^2.16.0
-
-  # Push notifications in app. 
-  overlay_support: ^2.1.0
 
   # Predefined animations.
   animations: ^2.0.8
