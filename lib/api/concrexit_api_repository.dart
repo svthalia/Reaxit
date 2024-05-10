@@ -43,22 +43,8 @@ class LoggingClient extends oauth2.Client {
 /// In case credentials cannot be refreshed, this calls `logOut`, which should
 /// close the client and indicates that the user is no longer logged in.
 class ConcrexitApiRepository implements ApiRepository {
-  /// The authenticated client used to access the API.
-  LoggingClient? _innerClient;
-
   ConcrexitApiRepository({
-    /// The authenticated client used to access the API.
-    required LoggingClient client,
-
     /// Called when the client can no longer authenticate.
     required Function() onLogOut,
-  }) : _innerClient = client;
-
-  @override
-  void close() {
-    if (_innerClient != null) {
-      _innerClient!.close();
-      _innerClient = null;
-    }
-  }
+  });
 }

@@ -121,26 +121,26 @@ class AuthCubit extends Cubit<AuthState> {
         final scopes = credentials.scopes?.toSet() ?? <String>{};
         if (scopes.containsAll(Config.oauthScopes)) {
           // Create the API repository.
+          final client = LoggingClient(
+            credentials,
+            identifier: apiConfig.identifier,
+            secret: apiConfig.secret,
+            onCredentialsRefreshed: (credentials) async {
+              const storage = FlutterSecureStorage();
+              await storage.write(
+                key: _credentialsStorageKey,
+                value: credentials.toJson(),
+                iOptions: const IOSOptions(
+                  accessibility: KeychainAccessibility.first_unlock,
+                ),
+              );
+            },
+            httpClient: SentryHttpClient(failedRequestStatusCodes: [
+              SentryStatusCode(400),
+              SentryStatusCode.range(405, 499),
+            ]),
+          );
           final apiRepository = ConcrexitApiRepository(
-            client: LoggingClient(
-              credentials,
-              identifier: apiConfig.identifier,
-              secret: apiConfig.secret,
-              onCredentialsRefreshed: (credentials) async {
-                const storage = FlutterSecureStorage();
-                await storage.write(
-                  key: _credentialsStorageKey,
-                  value: credentials.toJson(),
-                  iOptions: const IOSOptions(
-                    accessibility: KeychainAccessibility.first_unlock,
-                  ),
-                );
-              },
-              httpClient: SentryHttpClient(failedRequestStatusCodes: [
-                SentryStatusCode(400),
-                SentryStatusCode.range(405, 499),
-              ]),
-            ),
             onLogOut: logOut,
           );
 
@@ -233,7 +233,6 @@ class AuthCubit extends Cubit<AuthState> {
       );
 
       final apiRepository = ConcrexitApiRepository(
-        client: LoggingClient.fromClient(client),
         onLogOut: logOut,
       );
 
@@ -261,9 +260,6 @@ class AuthCubit extends Cubit<AuthState> {
   /// such as disabling push notifications.
   Future<void> logOut() async {
     final state = this.state;
-    if (state is LoggedInAuthState) {
-      state.apiRepository.close();
-    }
 
     // Remove the credentials from secure storage.
     const storage = FlutterSecureStorage();

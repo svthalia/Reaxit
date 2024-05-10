@@ -123,7 +123,7 @@ void testAlbum(IntegrationTestWidgetsFlutterBinding binding) {
           'mock',
           false,
           false,
-          [albumphoto1],
+          [albumphoto2],
         ),
       ),
     );
