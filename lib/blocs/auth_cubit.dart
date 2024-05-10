@@ -141,7 +141,6 @@ class AuthCubit extends Cubit<AuthState> {
                 SentryStatusCode.range(405, 499),
               ]),
             ),
-            config: apiConfig,
             onLogOut: logOut,
           );
 
@@ -235,7 +234,6 @@ class AuthCubit extends Cubit<AuthState> {
 
       final apiRepository = ConcrexitApiRepository(
         client: LoggingClient.fromClient(client),
-        config: apiConfig,
         onLogOut: logOut,
       );
 

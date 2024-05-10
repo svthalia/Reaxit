@@ -187,12 +187,9 @@ class _ThaliAppState extends State<ThaliApp> {
                     (authState as LoggedOutAuthState).apiRepository!;
               }
 
-              return InheritedConfig(
-                config: apiRepository.config,
-                child: RepositoryProvider.value(
-                  value: apiRepository,
-                  child: navigator!,
-                ),
+              return RepositoryProvider.value(
+                value: apiRepository,
+                child: navigator!,
               );
             } else {
               return navigator!;

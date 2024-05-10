@@ -9,8 +9,6 @@ import 'package:flutter_bloc/flutter_bloc.dart' as _i9;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:reaxit/api/api_repository.dart' as _i5;
 import 'package:reaxit/blocs/auth_cubit.dart' as _i2;
-import 'package:reaxit/config.dart' as _i3;
-import 'package:reaxit/models.dart' as _i4;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -25,37 +23,6 @@ import 'package:reaxit/models.dart' as _i4;
 
 class _FakeAuthState_0 extends _i1.SmartFake implements _i2.AuthState {
   _FakeAuthState_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeConfig_1 extends _i1.SmartFake implements _i3.Config {
-  _FakeConfig_1(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeListResponse_3<T> extends _i1.SmartFake
-    implements _i4.ListResponse<T> {
-  _FakeListResponse_3(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeAlbum_13 extends _i1.SmartFake implements _i4.Album {
-  _FakeAlbum_13(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -189,138 +156,4 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
   MockApiRepository() {
     _i1.throwOnMissingStub(this);
   }
-
-  @override
-  _i3.Config get config => (super.noSuchMethod(
-        Invocation.getter(#config),
-        returnValue: _FakeConfig_1(
-          this,
-          Invocation.getter(#config),
-        ),
-      ) as _i3.Config);
-  @override
-  void close() => super.noSuchMethod(
-        Invocation.method(
-          #close,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  _i8.Future<void> cancelRegistration({
-    required int? eventPk,
-    required int? registrationPk,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #cancelRegistration,
-          [],
-          {
-            #eventPk: eventPk,
-            #registrationPk: registrationPk,
-          },
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
-
-  @override
-  _i8.Future<String> markPresentEventRegistration({
-    required int? eventPk,
-    required String? token,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #markPresentEventRegistration,
-          [],
-          {
-            #eventPk: eventPk,
-            #token: token,
-          },
-        ),
-        returnValue: _i8.Future<String>.value(''),
-      ) as _i8.Future<String>);
-
-  @override
-  _i8.Future<void> updateAvatar(String? file) => (super.noSuchMethod(
-        Invocation.method(
-          #updateAvatar,
-          [file],
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
-  @override
-  _i8.Future<void> updateDescription(String? description) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #updateDescription,
-          [description],
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
-  @override
-  _i8.Future<_i4.Album> getAlbum({required String? slug}) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getAlbum,
-          [],
-          {#slug: slug},
-        ),
-        returnValue: _i8.Future<_i4.Album>.value(_FakeAlbum_13(
-          this,
-          Invocation.method(
-            #getAlbum,
-            [],
-            {#slug: slug},
-          ),
-        )),
-      ) as _i8.Future<_i4.Album>);
-  @override
-  _i8.Future<void> updateLiked(
-    int? id,
-    bool? liked,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #updateLiked,
-          [
-            id,
-            liked,
-          ],
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
-  @override
-  _i8.Future<_i4.ListResponse<_i4.ListAlbum>> getAlbums({
-    String? search,
-    int? limit,
-    int? offset,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getAlbums,
-          [],
-          {
-            #search: search,
-            #limit: limit,
-            #offset: offset,
-          },
-        ),
-        returnValue: _i8.Future<_i4.ListResponse<_i4.ListAlbum>>.value(
-            _FakeListResponse_3<_i4.ListAlbum>(
-          this,
-          Invocation.method(
-            #getAlbums,
-            [],
-            {
-              #search: search,
-              #limit: limit,
-              #offset: offset,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.ListResponse<_i4.ListAlbum>>);
 }
