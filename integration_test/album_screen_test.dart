@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:mockito/mockito.dart';
@@ -100,6 +101,11 @@ WidgetTesterCallback getTestMethod(
     print("wheyy1");
     for (AlbumPhoto photo in album.photos) {
       //TODO: wait for https://github.com/flutter/flutter/issues/115479 to be fixed
+      expect(
+        find.image(NetworkImage(photo.small)),
+        findsWidgets,
+      );
+      expect(find.text('wheyyy'), findsOneWidget);
     }
     print("wheyy2");
     print("wheyy3");

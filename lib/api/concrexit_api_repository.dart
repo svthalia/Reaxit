@@ -3,7 +3,6 @@ import 'package:http/http.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 class LoggingClient extends oauth2.Client {
   LoggingClient(
@@ -60,27 +59,6 @@ class ConcrexitApiRepository implements ApiRepository {
     if (_innerClient != null) {
       _innerClient!.close();
       _innerClient = null;
-    }
-  }
-
-  /// Handler to surround all public methods as follows:
-  ///
-  /// ```dart
-  /// return sandbox(() async {
-  ///  // Method content ...
-  /// });
-  /// ```
-  ///
-  /// This prevents the ApiRepository from throwing any exceptions other than
-  /// ApiExceptions.
-  static Future<T> sandbox<T>(Future<T> Function() f) async {
-    try {
-      return await f();
-    } on ApiException {
-      rethrow;
-    } catch (e) {
-      Sentry.captureException(e);
-      throw ApiException.unknownError;
     }
   }
 }
