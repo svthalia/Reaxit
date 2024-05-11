@@ -3,15 +3,12 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:reaxit/blocs.dart';
 import 'package:reaxit/routes.dart';
 import 'package:reaxit/ui/theme.dart';
 
-/// A copy of [main] that allows inserting an [AuthCubit] for integration tests.
-Future<void> testingMain(AuthCubit? authCubit, String? initialroute) async {
+Future<void> testingMain(String? initialroute) async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Google Fonts doesn't need to download fonts as they are bundled.
@@ -31,34 +28,10 @@ Future<void> testingMain(AuthCubit? authCubit, String? initialroute) async {
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(
-    authCubit == null
-        ? BlocProvider(
-            create: (context) => AuthCubit()..load(),
-            child: ThaliApp(
-              initialRoute: initialroute,
-            ),
-          )
-        : BlocProvider.value(
-            value: authCubit..load(),
-            child: ThaliApp(
-              initialRoute: initialroute,
-            )),
+    ThaliApp(
+      initialRoute: initialroute,
+    ),
   );
-}
-
-class GoRouterRefreshStream extends ChangeNotifier {
-  GoRouterRefreshStream(Stream<dynamic> stream) {
-    notifyListeners();
-    _subscription = stream.asBroadcastStream().listen((_) => notifyListeners());
-  }
-
-  late final StreamSubscription<dynamic> _subscription;
-
-  @override
-  void dispose() {
-    _subscription.cancel();
-    super.dispose();
-  }
 }
 
 class ThaliApp extends StatefulWidget {

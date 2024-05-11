@@ -4,11 +4,8 @@ import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:reaxit/main.dart' as app;
 import 'package:reaxit/models.dart';
-
-import '../test/mocks.mocks.dart';
 
 const imagelink1 =
     'https://raw.githubusercontent.com/svthalia/Reaxit/3e3a74364f10cd8de14ac1f74de8a05aa6d00b28/assets/img/album_placeholder.png';
@@ -56,13 +53,8 @@ const albumphoto2 = AlbumPhoto(
 WidgetTesterCallback getTestMethod(
     IntegrationTestWidgetsFlutterBinding binding, Album album) {
   return (tester) async {
-    // Setup mock.
-    final authCubit = MockAuthCubit();
-
-    when(authCubit.load()).thenAnswer((_) => Future.value(null));
-
     // Start app
-    app.testingMain(authCubit, '/albums/${album.slug}');
+    app.testingMain('/albums/${album.slug}');
     await tester.pumpAndSettle();
     await Future.delayed(const Duration(seconds: 2));
     await tester.pumpAndSettle();
