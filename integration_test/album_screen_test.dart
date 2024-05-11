@@ -5,8 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:reaxit/api/exceptions.dart';
-import 'package:reaxit/blocs.dart';
 import 'package:reaxit/main.dart' as app;
 import 'package:reaxit/models.dart';
 
@@ -59,25 +57,9 @@ WidgetTesterCallback getTestMethod(
     IntegrationTestWidgetsFlutterBinding binding, Album album) {
   return (tester) async {
     // Setup mock.
-    final api = MockApiRepository();
     final authCubit = MockAuthCubit();
 
-    throwOnMissingStub(
-      api,
-      exceptionBuilder: (_) {
-        throw ApiException.unknownError;
-      },
-    );
-
-    final streamController = StreamController<AuthState>.broadcast()
-      ..stream.listen((state) {
-        when(authCubit.state).thenReturn(state);
-      })
-      ..add(LoadingAuthState())
-      ..add(const LoggedInAuthState());
-
     when(authCubit.load()).thenAnswer((_) => Future.value(null));
-    when(authCubit.stream).thenAnswer((_) => streamController.stream);
 
     // Start app
     app.testingMain(authCubit, '/albums/${album.slug}');
