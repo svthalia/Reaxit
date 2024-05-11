@@ -127,5 +127,31 @@ void testAlbum(IntegrationTestWidgetsFlutterBinding binding) {
         ),
       ),
     );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+        const Album.fromlist(
+          '1',
+          'mock',
+          false,
+          false,
+          [albumphoto2],
+        ),
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+        const Album.fromlist(
+          '1',
+          'mock',
+          false,
+          false,
+          [albumphoto2],
+        ),
+      ),
+    );
   });
 }
