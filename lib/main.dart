@@ -141,33 +141,8 @@ class _ThaliAppState extends State<ThaliApp> {
       // logged in, and replaces it with a [LoginScreen] when not logged in.
       builder: (context, navigator) {
         return BlocConsumer<AuthCubit, AuthState>(
-          listenWhen: (previous, current) {
-            if (previous is LoggedInAuthState &&
-                current is LoggedOutAuthState) {
-              return true;
-            } else if (current is FailureAuthState) {
-              return true;
-            }
-            return false;
-          },
-
-          // Listen to display login status snackbars and set up notifications.
-          listener: (context, state) async {
-            // Show a snackbar when the user logs out or logging in fails.
-            switch (state) {
-              case LoggedOutAuthState _:
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  behavior: SnackBarBehavior.floating,
-                  content: Text('Logged out.'),
-                ));
-              case FailureAuthState(message: var message):
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  behavior: SnackBarBehavior.floating,
-                  content: Text(message ?? 'Logging in failed.'),
-                ));
-              case _:
-            }
-          },
+          listenWhen: (previous, current) => false,
+          listener: (context, state) async {},
           buildWhen: (previous, current) => current is! FailureAuthState,
           builder: (context, authState) {
             // Build with ApiRepository and cubits provided when an
@@ -187,10 +162,7 @@ class _ThaliAppState extends State<ThaliApp> {
                     (authState as LoggedOutAuthState).apiRepository!;
               }
 
-              return RepositoryProvider.value(
-                value: apiRepository,
-                child: navigator!,
-              );
+              return navigator!;
             } else {
               return navigator!;
             }
