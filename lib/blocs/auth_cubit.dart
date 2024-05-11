@@ -103,43 +103,12 @@ class AuthCubit extends Cubit<AuthState> {
         // Restore credentials from the storage.
         final credentials = Credentials.fromJson(stored);
 
-        final Config apiConfig;
-        if (Config.production != null &&
-            credentials.tokenEndpoint == Config.production!.tokenEndpoint) {
-          apiConfig = Config.production!;
-        } else if (Config.local != null &&
-            credentials.tokenEndpoint == Config.local!.tokenEndpoint) {
-          apiConfig = Config.local!;
-        } else {
-          apiConfig = Config.staging;
-        }
-
         // Log out if not all required scopes are available. After an update that
         // introduces a new scope, this will cause the app to log out and get new
         // credentials with the required scopes, instead of just getting 403's
         // until you manually log out.
         final scopes = credentials.scopes?.toSet() ?? <String>{};
         if (scopes.containsAll(Config.oauthScopes)) {
-          // Create the API repository.
-          final client = LoggingClient(
-            credentials,
-            identifier: apiConfig.identifier,
-            secret: apiConfig.secret,
-            onCredentialsRefreshed: (credentials) async {
-              const storage = FlutterSecureStorage();
-              await storage.write(
-                key: _credentialsStorageKey,
-                value: credentials.toJson(),
-                iOptions: const IOSOptions(
-                  accessibility: KeychainAccessibility.first_unlock,
-                ),
-              );
-            },
-            httpClient: SentryHttpClient(failedRequestStatusCodes: [
-              SentryStatusCode(400),
-              SentryStatusCode.range(405, 499),
-            ]),
-          );
           final apiRepository = ConcrexitApiRepository(
             onLogOut: logOut,
           );
