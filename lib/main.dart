@@ -85,9 +85,6 @@ class _ThaliAppState extends State<ThaliApp> {
       // file to keep the code readable and clean.
       routes: routes,
 
-      // Provide navigation breadcrumbs to Sentry.
-      observers: [SentryNavigatorObserver()],
-
       // Redirect to `/login?from=<original-path>` if the user is not
       // logged in. If the user is logged in, and there is an original
       // path in the query parameters, redirect to that original path.
@@ -145,27 +142,7 @@ class _ThaliAppState extends State<ThaliApp> {
           listener: (context, state) async {},
           buildWhen: (previous, current) => current is! FailureAuthState,
           builder: (context, authState) {
-            // Build with ApiRepository and cubits provided when an
-            // ApiRepository is available. This is the case when logged
-            // in, but also when just logged out (after having been logged
-            // in), with a closed ApiRepository.
-            // The latter allows us to keep the cubits alive
-            // while animating towards the login screen.
-            if (authState is LoggedInAuthState ||
-                (authState is LoggedOutAuthState &&
-                    authState.apiRepository != null)) {
-              final ApiRepository apiRepository;
-              if (authState is LoggedInAuthState) {
-                apiRepository = authState.apiRepository;
-              } else {
-                apiRepository =
-                    (authState as LoggedOutAuthState).apiRepository!;
-              }
-
-              return navigator!;
-            } else {
-              return navigator!;
-            }
+            return navigator!;
           },
         );
       },
