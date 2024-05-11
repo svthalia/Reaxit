@@ -8,7 +8,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:reaxit/api/api_repository.dart';
-import 'package:reaxit/api/concrexit_api_repository.dart';
 import 'package:reaxit/config.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -41,27 +40,17 @@ class LoadingAuthState extends AuthState {}
 class LoggedOutAuthState extends AuthState {
   final Environment selectedEnvironment;
 
-  /// A closed [ApiRepository] left over after logging out, that allows
-  /// keeping cubits alive while animating towards the login screen.
-  final ApiRepository? apiRepository;
-
   const LoggedOutAuthState({
     this.selectedEnvironment = Environment.defaultEnvironment,
-    this.apiRepository,
   });
 
   @override
-  List<Object?> get props => [selectedEnvironment, apiRepository];
+  List<Object?> get props => [selectedEnvironment];
 }
 
 /// Logged in.
 class LoggedInAuthState extends AuthState {
-  final ApiRepository apiRepository;
-
-  const LoggedInAuthState({required this.apiRepository});
-
-  @override
-  List<Object?> get props => [apiRepository];
+  const LoggedInAuthState();
 }
 
 /// Something went wrong.
@@ -109,11 +98,7 @@ class AuthCubit extends Cubit<AuthState> {
         // until you manually log out.
         final scopes = credentials.scopes?.toSet() ?? <String>{};
         if (scopes.containsAll(Config.oauthScopes)) {
-          final apiRepository = ConcrexitApiRepository(
-            onLogOut: logOut,
-          );
-
-          emit(LoggedInAuthState(apiRepository: apiRepository));
+          emit(const LoggedInAuthState());
         } else {
           logOut();
         }
@@ -201,11 +186,7 @@ class AuthCubit extends Cubit<AuthState> {
             const IOSOptions(accessibility: KeychainAccessibility.first_unlock),
       );
 
-      final apiRepository = ConcrexitApiRepository(
-        onLogOut: logOut,
-      );
-
-      emit(LoggedInAuthState(apiRepository: apiRepository));
+      emit(const LoggedInAuthState());
     } on PlatformException catch (exception) {
       // Forward exceptions from the authentication flow.
       emit(FailureAuthState(message: exception.message));
@@ -242,7 +223,7 @@ class AuthCubit extends Cubit<AuthState> {
     Sentry.configureScope((scope) => scope.setUser(null));
 
     if (state is LoggedInAuthState) {
-      emit(LoggedOutAuthState(apiRepository: state.apiRepository));
+      emit(const LoggedOutAuthState());
     }
   }
 
@@ -252,7 +233,6 @@ class AuthCubit extends Cubit<AuthState> {
     if (state is LoggedOutAuthState) {
       emit(LoggedOutAuthState(
         selectedEnvironment: environment,
-        apiRepository: state.apiRepository,
       ));
     }
   }

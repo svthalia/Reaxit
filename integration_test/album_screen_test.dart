@@ -74,7 +74,7 @@ WidgetTesterCallback getTestMethod(
         when(authCubit.state).thenReturn(state);
       })
       ..add(LoadingAuthState())
-      ..add(LoggedInAuthState(apiRepository: api));
+      ..add(const LoggedInAuthState());
 
     when(authCubit.load()).thenAnswer((_) => Future.value(null));
     when(authCubit.stream).thenAnswer((_) => streamController.stream);

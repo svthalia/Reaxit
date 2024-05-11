@@ -81,37 +81,8 @@ class _ThaliAppState extends State<ThaliApp> {
     super.initState();
     _authCubit = BlocProvider.of<AuthCubit>(context);
     _router = GoRouter(
-      // The list of routes is kept in a separate
-      // file to keep the code readable and clean.
       routes: routes,
-
-      // Redirect to `/login?from=<original-path>` if the user is not
-      // logged in. If the user is logged in, and there is an original
-      // path in the query parameters, redirect to that original path.
-      redirect: (context, state) {
-        final authState = _authCubit.state;
-        final loggedIn = authState is LoggedInAuthState;
-        final justLoggedOut =
-            authState is LoggedOutAuthState && authState.apiRepository != null;
-        final goingToLogin = state.uri.toString().startsWith('/login');
-
-        if (!loggedIn && !goingToLogin) {
-          // Drop original location if you just logged out.
-          if (justLoggedOut) return '/login';
-
-          return Uri(path: '/login', queryParameters: {
-            'from': state.uri.toString(),
-          }).toString();
-        } else if (loggedIn && goingToLogin) {
-          return Uri.parse(state.uri.toString()).queryParameters['from'] ?? '/';
-        } else {
-          return null;
-        }
-      },
-
-      // Refresh to look for redirects whenever auth state changes.
       refreshListenable: GoRouterRefreshStream(_authCubit.stream),
-
       initialLocation: widget.initialRoute,
     );
   }
