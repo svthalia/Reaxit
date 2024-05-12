@@ -17,7 +17,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
       appBar: ThaliaAppBar(
         title: const Text('wheyyy'),
       ),
-      body: _PhotoGrid(),
+      body: const _PhotoGrid(),
     );
   }
 }
@@ -27,19 +27,8 @@ class _PhotoGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scrollbar(
-      child: GridView.builder(
-        key: const PageStorageKey('album'),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
-          crossAxisCount: 3,
-        ),
-        itemCount: 2,
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(8),
-        itemBuilder: (context, index) => const PhotoTile(),
-      ),
+    return const Scrollbar(
+      child: PhotoTile(),
     );
   }
 }
