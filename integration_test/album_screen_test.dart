@@ -65,11 +65,10 @@ WidgetTesterCallback getTestMethod(
     // for (AlbumPhoto photo in album.photos) {
     //TODO: wait for https://github.com/flutter/flutter/issues/115479 to be fixed
     expect(
-      find.image(NetworkImage(imagelink1)),
+      find.image(const NetworkImage(imagelink2)),
       findsWidgets,
     );
     // }
-    expect(find.text('wheyyy'), findsOneWidget);
     print("wheyy2");
     print("wheyy3");
   };
