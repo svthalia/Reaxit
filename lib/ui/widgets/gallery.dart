@@ -1,17 +1,11 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:reaxit/models/photo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http;
-import 'package:mime/mime.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/theme.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:gal/gal.dart';
 
 abstract class GalleryCubit<T> extends StateStreamableSource<T> {
   Future<void> updateLike({required bool liked, required int index});
@@ -70,77 +64,6 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
     );
   }
 
-  Future<void> _downloadImage(Uri url) async {
-    final messenger = ScaffoldMessenger.of(context);
-    try {
-      final response = await http.get(url);
-      if (response.statusCode != 200) throw Exception();
-      final baseTempDir = await getTemporaryDirectory();
-      final tempDir = await baseTempDir.createTemp();
-      final tempFile = File(
-        '${tempDir.path}/${url.pathSegments.last}',
-      );
-      await tempFile.writeAsBytes(response.bodyBytes);
-      await Gal.putImage(tempFile.path);
-
-      messenger.showSnackBar(
-        const SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Text('Succesfully saved the image.'),
-        ),
-      );
-    } catch (_) {
-      messenger.showSnackBar(
-        const SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Text('Could not download the image.'),
-        ),
-      );
-    }
-  }
-
-  Future<void> _shareImage(Uri url) async {
-    final messenger = ScaffoldMessenger.of(context);
-    try {
-      final response = await http.get(url);
-      if (response.statusCode != 200) throw Exception();
-      final file = XFile.fromData(
-        response.bodyBytes,
-        mimeType: lookupMimeType(url.path, headerBytes: response.bodyBytes),
-        name: url.pathSegments.last,
-      );
-      await Share.shareXFiles([file]);
-    } catch (_) {
-      messenger.showSnackBar(
-        const SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Text('Could not share the image.'),
-        ),
-      );
-    }
-  }
-
-  Future<void> _likePhoto(List<AlbumPhoto> photos, int index) async {
-    final messenger = ScaffoldMessenger.of(context);
-    if (photos[index].liked) {
-      unlikeController.forward();
-    } else {
-      likeController.forward();
-    }
-    try {
-      await BlocProvider.of<C>(context).updateLike(
-        liked: !photos[index].liked,
-        index: index,
-      );
-    } on ApiException {
-      messenger.showSnackBar(
-        const SnackBar(
-          content: Text('Something went wrong while liking the photo.'),
-        ),
-      );
-    }
-  }
-
   Future<void> _loadMorePhotos() async {
     final messenger = ScaffoldMessenger.of(context);
     try {
@@ -167,7 +90,6 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
 
         if (i < photos.length) {
           child = GestureDetector(
-            onDoubleTap: () => _likePhoto(photos, i),
             child: RotatedBox(
               quarterTurns: photos[i].rotation ~/ 90,
               child: Image.network(photos[i].full),
@@ -189,25 +111,11 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
   }
 
   Widget _downloadButton(List<AlbumPhoto> photos) {
-    return IconButton(
-      padding: const EdgeInsets.all(16),
-      color: Theme.of(context).primaryIconTheme.color,
-      icon: const Icon(Icons.download),
-      onPressed: () => _downloadImage(
-        Uri.parse(photos[controller.page!.round()].full),
-      ),
-    );
+    return const Icon(Icons.download);
   }
 
   Widget _shareButton(List<AlbumPhoto> photos) {
-    return IconButton(
-      padding: const EdgeInsets.all(16),
-      color: Theme.of(context).primaryIconTheme.color,
-      icon: Icon(Icons.adaptive.share),
-      onPressed: () => _shareImage(
-        Uri.parse(photos[controller.page!.floor()].full),
-      ),
-    );
+    return Icon(Icons.adaptive.share);
   }
 
   @override
@@ -238,7 +146,6 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
                 widget.initialPage,
                 widget.photos,
                 widget.photoAmount,
-                _likePhoto,
                 _loadMorePhotos,
               ),
             ),
@@ -295,7 +202,6 @@ class _PageCounter extends StatefulWidget {
   final int initialPage;
   final List<AlbumPhoto> photos;
   final int photoAmount;
-  final void Function(List<AlbumPhoto> photos, int index) likePhoto;
   final void Function() loadMorePhotos;
 
   const _PageCounter(
@@ -303,7 +209,6 @@ class _PageCounter extends StatefulWidget {
     this.initialPage,
     this.photos,
     this.photoAmount,
-    this.likePhoto,
     this.loadMorePhotos,
   );
 
@@ -356,20 +261,10 @@ class __PageCounterState extends State<_PageCounter> {
       children.addAll([
         Tooltip(
           message: photo.liked ? 'unlike photo' : 'like photo',
-          child: IconButton(
-              iconSize: 24,
-              icon: Icon(
-                color: photo.liked ? magenta : Colors.white,
-                photo.liked ? Icons.favorite : Icons.favorite_outline,
-              ),
-              onPressed: () {
-                widget.likePhoto(
-                  widget.photos,
-                  currentIndex,
-                );
-                // Force update to set liked icon and count correctly
-                setState(() {});
-              }),
+          child: Icon(
+            color: photo.liked ? magenta : Colors.white,
+            photo.liked ? Icons.favorite : Icons.favorite_outline,
+          ),
         ),
         Text(
           '${photo.numLikes}',
