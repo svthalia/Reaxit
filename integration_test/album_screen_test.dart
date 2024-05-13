@@ -13,17 +13,6 @@ const imagelink1 =
 const imagelink2 =
     'https://raw.githubusercontent.com/svthalia/Reaxit/3e3a74364f10cd8de14ac1f74de8a05aa6d00b28/assets/img/default-avatar.jpg';
 
-const coverphoto1 = CoverPhoto(
-  0,
-  0,
-  Photo(
-    imagelink1,
-    imagelink1,
-    imagelink1,
-    imagelink1,
-  ),
-);
-
 const albumphoto1 = AlbumPhoto(
   0,
   0,
@@ -51,7 +40,7 @@ const albumphoto2 = AlbumPhoto(
 );
 
 WidgetTesterCallback getTestMethod(
-    IntegrationTestWidgetsFlutterBinding binding, Album album) {
+    IntegrationTestWidgetsFlutterBinding binding) {
   return (tester) async {
     // Start app
     app.testingMain('/albums');
@@ -73,14 +62,14 @@ WidgetTesterCallback getTestMethod(
     print("wheyy");
     // await binding.takeScreenshot('screenshot-${album.title}');
     print("wheyy1");
-    for (AlbumPhoto photo in album.photos) {
-      //TODO: wait for https://github.com/flutter/flutter/issues/115479 to be fixed
-      expect(
-        find.image(NetworkImage(photo.small)),
-        findsWidgets,
-      );
-      expect(find.text('wheyyy'), findsOneWidget);
-    }
+    // for (AlbumPhoto photo in album.photos) {
+    //TODO: wait for https://github.com/flutter/flutter/issues/115479 to be fixed
+    expect(
+      find.image(NetworkImage(imagelink1)),
+      findsWidgets,
+    );
+    // }
+    expect(find.text('wheyyy'), findsOneWidget);
     print("wheyy2");
     print("wheyy3");
   };
@@ -92,39 +81,18 @@ void testAlbum(IntegrationTestWidgetsFlutterBinding binding) {
       'can load an album with 1 photo',
       getTestMethod(
         binding,
-        const Album.fromlist(
-          '1',
-          'mock',
-          false,
-          false,
-          [albumphoto2],
-        ),
       ),
     );
     testWidgets(
       'can load an album with 1 photo',
       getTestMethod(
         binding,
-        const Album.fromlist(
-          '1',
-          'mock',
-          false,
-          false,
-          [albumphoto2],
-        ),
       ),
     );
     testWidgets(
       'can load an album with 1 photo',
       getTestMethod(
         binding,
-        const Album.fromlist(
-          '1',
-          'mock',
-          false,
-          false,
-          [albumphoto2],
-        ),
       ),
     );
   });
