@@ -6,9 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reaxit/routes.dart';
-import 'package:reaxit/ui/theme.dart';
 
-Future<void> testingMain(String? initialroute) async {
+Future<void> testingMain() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Google Fonts doesn't need to download fonts as they are bundled.
@@ -28,15 +27,12 @@ Future<void> testingMain(String? initialroute) async {
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(
-    ThaliApp(
-      initialRoute: initialroute,
-    ),
+    const ThaliApp(),
   );
 }
 
 class ThaliApp extends StatefulWidget {
-  final String? initialRoute;
-  const ThaliApp({this.initialRoute});
+  const ThaliApp();
 
   @override
   State<ThaliApp> createState() => _ThaliAppState();
@@ -50,7 +46,7 @@ class _ThaliAppState extends State<ThaliApp> {
     super.initState();
     _router = GoRouter(
       routes: routes,
-      initialLocation: widget.initialRoute,
+      initialLocation: '/albums',
     );
   }
 
@@ -64,8 +60,6 @@ class _ThaliAppState extends State<ThaliApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'ThaliApp',
-      theme: lightTheme,
-      darkTheme: darkTheme,
       themeMode: ThemeMode.dark,
       routerDelegate: _router.routerDelegate,
       routeInformationParser: _router.routeInformationParser,

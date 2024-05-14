@@ -16,7 +16,7 @@ WidgetTesterCallback getTestMethod(
     IntegrationTestWidgetsFlutterBinding binding) {
   return (tester) async {
     // Start app
-    app.testingMain('/albums');
+    app.testingMain();
     await tester.pumpAndSettle();
     await Future.delayed(const Duration(seconds: 2));
     await tester.pumpAndSettle();
