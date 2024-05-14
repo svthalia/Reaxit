@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:reaxit/routes.dart';
 
 Future<void> testingMain() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,23 +37,6 @@ class ThaliApp extends StatefulWidget {
 }
 
 class _ThaliAppState extends State<ThaliApp> {
-  late final GoRouter _router;
-
-  @override
-  void initState() {
-    super.initState();
-    _router = GoRouter(
-      routes: routes,
-      initialLocation: '/albums',
-    );
-  }
-
-  @override
-  void dispose() {
-    _router.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -66,14 +47,5 @@ class _ThaliAppState extends State<ThaliApp> {
         fit: BoxFit.cover,
       ),
     );
-    // return MaterialApp.router(
-    //   title: 'ThaliApp',
-    //   routerDelegate: _router.routerDelegate,
-    //   routeInformationParser: _router.routeInformationParser,
-    //   routeInformationProvider: _router.routeInformationProvider,
-    //   builder: (context, navigator) {
-    //     return navigator!;
-    //   },
-    // );
   }
 }
