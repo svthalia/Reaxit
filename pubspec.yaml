@@ -31,9 +31,6 @@ dependencies:
   # JSON parsing.
   json_annotation: ^4.8.1
 
-  # Persistent storage.
-  shared_preferences: ^2.2.1
-
   # Authenticating in browser.
   flutter_web_auth_2: ^3.1.0
 
@@ -42,9 +39,6 @@ dependencies:
 
   # HTML widget.
   flutter_widget_from_html_core: ^0.14.9
-
-  # Sentry error reporting.
-  sentry_flutter: ^7.10.1
 
   # Share menu.
   share_plus: ^7.1.0
