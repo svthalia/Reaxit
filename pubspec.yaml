@@ -22,7 +22,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # Nice functions for collections.
   collection: ^1.17.1
 
   # Networking basics.
@@ -65,7 +64,6 @@ dependencies:
   
   # Access camera and gallery.
   image_picker: ^1.0.4
-  gal: ^2.1.1
 
   # Resize images.
   image_cropper: ^5.0.0
@@ -73,14 +71,6 @@ dependencies:
   # Carousel.
   carousel_slider: ^4.2.1
 
-  # Firebase for push notifications.
-  firebase_core: ^2.16.0
-
-  # Predefined animations.
-  animations: ^2.0.8
-
-  # Export event to calendar.
-  add_2_calendar: ^3.0.1
 
   # Cached images.
   cached_network_image: ^3.3.0
