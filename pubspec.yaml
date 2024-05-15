@@ -28,12 +28,6 @@ dependencies:
   http: ^1.1.0
   http_parser: ^4.0.2
 
-  # OAuth2 authorized http Client.
-  oauth2: ^2.0.2
-
-  # Secure storage for OAuth2 credentials.
-  flutter_secure_storage: ^9.0.0
-
   # JSON parsing.
   json_annotation: ^4.8.1
 
@@ -65,11 +59,6 @@ dependencies:
   # Access camera and gallery.
   image_picker: ^1.0.4
 
-  # Resize images.
-  image_cropper: ^5.0.0
-
-  # Carousel.
-  carousel_slider: ^4.2.1
 
 dev_dependencies:
   flutter_test:
