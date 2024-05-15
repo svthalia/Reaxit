@@ -42,7 +42,7 @@ class SortButton<T> extends StatelessWidget implements AppbarAction {
                       (states) => Theme.of(context).textTheme.labelLarge!)),
               onPressed: controller.open,
               leadingIcon: const Icon(Icons.sort),
-              child: Text('Sort'.toUpperCase()),
+              child: const Text('SORT'),
             )
           : IconButton(
               onPressed: controller.open, icon: const Icon(Icons.sort)),

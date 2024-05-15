@@ -89,21 +89,14 @@ WidgetTesterCallback getTestMethod(
     await tester.pumpAndSettle();
     await Future.delayed(const Duration(seconds: 2));
     await tester.pumpAndSettle();
-    await Future.delayed(const Duration(seconds: 2));
-    await tester.pumpAndSettle();
-    await Future.delayed(const Duration(seconds: 2));
-    print("wheyy0");
+    await Future.delayed(const Duration(seconds: 1));
 
     // todo: https://github.com/flutter/flutter/issues/51890
     if (Platform.isAndroid) {
       await binding.convertFlutterSurfaceToImage();
       await tester.pumpAndSettle();
     }
-    binding.drawFrame();
-
-    print("wheyy");
-    // await binding.takeScreenshot('screenshot-${album.title}');
-    print("wheyy1");
+    await binding.takeScreenshot('screenshot-${album.title}');
     for (AlbumPhoto photo in album.photos) {
       //TODO: wait for https://github.com/flutter/flutter/issues/115479 to be fixed
       expect(
@@ -111,9 +104,7 @@ WidgetTesterCallback getTestMethod(
         findsWidgets,
       );
     }
-    print("wheyy2");
     expect(find.text(album.title.toUpperCase()), findsOneWidget);
-    print("wheyy3");
   };
 }
 
