@@ -91,6 +91,7 @@ WidgetTesterCallback getTestMethod(
     await tester.pumpAndSettle();
     await Future.delayed(const Duration(seconds: 1));
     await tester.pumpAndSettle();
+
     // todo: https://github.com/flutter/flutter/issues/51890
     if (Platform.isAndroid) {
       await binding.convertFlutterSurfaceToImage();
