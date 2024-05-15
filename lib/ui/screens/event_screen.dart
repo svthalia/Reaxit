@@ -270,8 +270,6 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  bool forceRegisterButton = false;
-
   // Create the info for events with required registration.
   Widget _makeRequiredRegistrationInfo(Event event) {
     assert(event.registrationIsRequired);
@@ -286,7 +284,9 @@ class _EventScreenState extends State<EventScreen> {
     Widget registrationButton = const SizedBox.shrink();
     Widget updateButton = const SizedBox.shrink();
 
-    if (event.canCreateRegistration || forceRegisterButton) {
+    if (event.canCreateRegistration ||
+        (event.createRegistrationWhenOpen &&
+            !event.registrationStart!.isAfter(DateTime.now()))) {
       if (event.reachedMaxParticipants) {
         registrationButton = _makeJoinQueueButton(event);
       } else {
@@ -325,10 +325,7 @@ class _EventScreenState extends State<EventScreen> {
         Future.delayed(
           event.registrationStart!.difference(DateTime.now()),
           () => setState(
-            () {
-              forceRegisterButton = true;
-              _eventCubit.load();
-            },
+            () {},
           ),
         );
       } else if (event.registrationIsOpen()) {
@@ -930,7 +927,6 @@ class _EventScreenState extends State<EventScreen> {
             ),
             body: RefreshIndicator(
               onRefresh: () async {
-                forceRegisterButton = false;
                 await _eventCubit.load();
               },
               child: ErrorScrollView(state.message!),
@@ -994,7 +990,6 @@ class _EventScreenState extends State<EventScreen> {
             ),
             body: RefreshIndicator(
               onRefresh: () async {
-                forceRegisterButton = false;
                 await _eventCubit.load();
               },
               child: Scrollbar(

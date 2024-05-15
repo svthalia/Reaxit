@@ -97,6 +97,8 @@ class Event implements BaseEvent {
   bool hasStarted() => start.isBefore(DateTime.now());
   bool hasEnded() => end.isBefore(DateTime.now());
 
+  bool get createRegistrationWhenOpen =>
+      userPermissions.createRegistrationWhenOpen;
   bool get canCreateRegistration => userPermissions.createRegistration;
   bool get canUpdateRegistration => userPermissions.updateRegistration;
   bool get canCancelRegistration => userPermissions.cancelRegistration;
@@ -136,12 +138,14 @@ class Event implements BaseEvent {
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class EventPermissions {
+  final bool createRegistrationWhenOpen;
   final bool createRegistration;
   final bool cancelRegistration;
   final bool updateRegistration;
   final bool manageEvent;
 
   const EventPermissions(
+    this.createRegistrationWhenOpen,
     this.createRegistration,
     this.cancelRegistration,
     this.updateRegistration,
