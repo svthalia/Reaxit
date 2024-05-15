@@ -25,12 +25,6 @@ dependencies:
   # Nice functions for collections.
   collection: ^1.17.1
 
-  # Fonts.
-  google_fonts: ^6.1.0
-
-  # DateTime formatting.
-  intl: ^0.19.0
-
   # Networking basics.
   http: ^1.1.0
   http_parser: ^4.0.2
