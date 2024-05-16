@@ -614,7 +614,7 @@ class EventAdminSearchDelegate extends SearchDelegate {
 }
 
 enum _SortOrder {
-  none(text: 'None', icon: Icons.cancel, compare: equal),
+  none(text: 'None', icon: Icons.close, compare: equal),
   payedUp(text: 'Paid', icon: Icons.keyboard_arrow_up, compare: cmpPaid),
   payedDown(text: 'Paid', icon: Icons.keyboard_arrow_down, compare: cmpPaid_2),
   presentUp(

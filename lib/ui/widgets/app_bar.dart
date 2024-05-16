@@ -40,7 +40,7 @@ class IconAppbarAction extends AppbarAction {
         callback();
       },
       leadingIcon: Icon(icon),
-      child: Text(text),
+      child: Text(text.toUpperCase()),
     );
   }
 }

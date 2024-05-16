@@ -9,7 +9,6 @@ Future<void> main() async {
   } catch (e) {
     throw ('Error occured: $e');
   }
-  integrationDriver();
 }
 
 Future<bool> saveScreenshot(String screenshotName, List<int> screenshotBytes,

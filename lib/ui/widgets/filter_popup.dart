@@ -22,18 +22,18 @@ class MultiSelectPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(title),
+      title: Text(title.toUpperCase()),
       content: FilterWidget(
         filter: filter,
       ),
       actions: [
         TextButton(
           onPressed: () => _cancel(context),
-          child: const Text('Cancel'),
+          child: const Text('CANCEL'),
         ),
         ElevatedButton(
           onPressed: () => _submit(context),
-          child: const Text('Submit'),
+          child: const Text('SUBMIT'),
         ),
       ],
     );

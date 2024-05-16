@@ -18,8 +18,8 @@ class SortButton<T> extends StatelessWidget implements AppbarAction {
 
   Widget _build(BuildContext context, bool issub) {
     MenuController controller = MenuController();
-    // IconButton
 
+    // IconButton
     return MenuAnchor(
       alignmentOffset: const Offset(0, -1),
       controller: controller,
@@ -27,8 +27,8 @@ class SortButton<T> extends StatelessWidget implements AppbarAction {
           .map((item) => MenuItemButton(
                 child: Row(
                   children: [
-                    Text(item.text),
-                    if (item.icon != null) Icon(item.icon!)
+                    if (item.icon != null) Icon(item.icon!),
+                    Text(item.text.toUpperCase()),
                   ],
                 ),
                 onPressed: () => callback(item.value),
@@ -42,7 +42,7 @@ class SortButton<T> extends StatelessWidget implements AppbarAction {
                       (states) => Theme.of(context).textTheme.labelLarge!)),
               onPressed: controller.open,
               leadingIcon: const Icon(Icons.sort),
-              child: const Text('Sort'),
+              child: const Text('SORT'),
             )
           : IconButton(
               onPressed: controller.open, icon: const Icon(Icons.sort)),

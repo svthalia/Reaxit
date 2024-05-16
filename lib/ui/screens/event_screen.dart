@@ -399,7 +399,7 @@ class _EventScreenState extends State<EventScreen> {
         confirmationMessage: 'Are you sure you want to pay €${event.price} for '
             'your registration to "${event.title}"?',
         failureMessage: 'Could not pay your registration.',
-        successMessage: 'Paid our registration with Thalia Pay.',
+        successMessage: 'Paid your registration with Thalia Pay.',
         amount: event.price,
       );
     } else {
