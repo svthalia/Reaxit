@@ -31,17 +31,8 @@ dependencies:
   # JSON parsing.
   json_annotation: ^4.8.1
 
-  # Authenticating in browser.
-  flutter_web_auth_2: ^3.1.0
-
   # Modal photo views.
   photo_view: ^0.14.0
-
-  # HTML widget.
-  flutter_widget_from_html_core: ^0.14.9
-
-  # Share menu.
-  share_plus: ^7.1.0
 
   # Path for temporary files.
   path_provider: ^2.1.1

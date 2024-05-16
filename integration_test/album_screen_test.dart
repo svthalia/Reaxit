@@ -157,5 +157,545 @@ void testAlbum(IntegrationTestWidgetsFlutterBinding binding) {
         binding,
       ),
     );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
+    testWidgets(
+      'can load an album with 1 photo',
+      getTestMethod(
+        binding,
+      ),
+    );
   });
 }
