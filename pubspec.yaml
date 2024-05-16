@@ -31,21 +31,3 @@ dev_dependencies:
 
   flutter_driver:
     sdk: flutter
-
-  build_runner: ^2.4.7
-
-  # Linting.
-  flutter_lints: ^3.0.1
-
-# The following section is specific to Flutter.
-flutter:
-
-  # Include Material Icons font.
-  uses-material-design: true
-
-  assets:
-    - assets/img/
-    - assets/google_fonts/
-
-  # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/assets-and-images/#resolution-aware.
