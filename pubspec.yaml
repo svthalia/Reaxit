@@ -22,15 +22,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-  collection: ^1.17.1
-
-  # Networking basics.
-  http: ^1.1.0
-  http_parser: ^4.0.2
-
-  # JSON parsing.
-  json_annotation: ^4.8.1
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -41,19 +32,10 @@ dev_dependencies:
   flutter_driver:
     sdk: flutter
 
-  # JSON parsing.
   build_runner: ^2.4.7
-
-  # JSON parsing.
-  json_serializable: ^6.7.1
 
   # Linting.
   flutter_lints: ^3.0.1
-
-  # Generating splash screens.
-  flutter_native_splash: ^2.3.8
-
-  mockito: ^5.4.3
 
 # The following section is specific to Flutter.
 flutter:
