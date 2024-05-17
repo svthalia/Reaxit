@@ -31,3 +31,9 @@ dev_dependencies:
 
   flutter_driver:
     sdk: flutter
+
+# The following section is specific to Flutter.
+flutter:
+
+  assets:
+    - assets/img/
