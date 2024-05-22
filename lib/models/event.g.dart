@@ -90,6 +90,7 @@ const _$EventCategoryEnumMap = {
 EventPermissions _$EventPermissionsFromJson(Map<String, dynamic> json) =>
     EventPermissions(
       json['create_registration'] as bool,
+      json['create_registration_when_open'] as bool,
       json['cancel_registration'] as bool,
       json['update_registration'] as bool,
       json['manage_event'] as bool,

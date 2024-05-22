@@ -138,15 +138,15 @@ class Event implements BaseEvent {
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class EventPermissions {
-  final bool createRegistrationWhenOpen;
   final bool createRegistration;
+  final bool createRegistrationWhenOpen;
   final bool cancelRegistration;
   final bool updateRegistration;
   final bool manageEvent;
 
   const EventPermissions(
-    this.createRegistrationWhenOpen,
     this.createRegistration,
+    this.createRegistrationWhenOpen,
     this.cancelRegistration,
     this.updateRegistration,
     this.manageEvent,
