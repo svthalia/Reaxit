@@ -7,7 +7,7 @@ part of 'device.dart';
 // **************************************************************************
 
 Device _$DeviceFromJson(Map<String, dynamic> json) => Device(
-      json['pk'] as int,
+      (json['pk'] as num).toInt(),
       json['registration_id'] as String,
       json['active'] as bool,
       json['date_created'] as String,

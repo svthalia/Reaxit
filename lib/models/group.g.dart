@@ -7,7 +7,7 @@ part of 'group.dart';
 // **************************************************************************
 
 SmallGroup _$SmallGroupFromJson(Map<String, dynamic> json) => SmallGroup(
-      json['pk'] as int,
+      (json['pk'] as num).toInt(),
       json['name'] as String,
       $enumDecode(_$MemberGroupTypeEnumMap, json['type']),
       json['since'] == null ? null : DateTime.parse(json['since'] as String),
@@ -32,7 +32,7 @@ const _$MemberGroupTypeEnumMap = {
 };
 
 ListGroup _$ListGroupFromJson(Map<String, dynamic> json) => ListGroup(
-      json['pk'] as int,
+      (json['pk'] as num).toInt(),
       json['name'] as String,
       $enumDecode(_$MemberGroupTypeEnumMap, json['type']),
       json['since'] == null ? null : DateTime.parse(json['since'] as String),
@@ -54,7 +54,7 @@ Map<String, dynamic> _$ListGroupToJson(ListGroup instance) => <String, dynamic>{
     };
 
 Group _$GroupFromJson(Map<String, dynamic> json) => Group(
-      json['pk'] as int,
+      (json['pk'] as num).toInt(),
       json['name'] as String,
       $enumDecode(_$MemberGroupTypeEnumMap, json['type']),
       json['description'] as String,

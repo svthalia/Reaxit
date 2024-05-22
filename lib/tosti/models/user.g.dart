@@ -7,12 +7,12 @@ part of 'user.dart';
 // **************************************************************************
 
 TostiUser _$TostiUserFromJson(Map<String, dynamic> json) => TostiUser(
-      json['id'] as int,
+      (json['id'] as num).toInt(),
       json['first_name'] as String,
       json['last_name'] as String,
       json['full_name'] as String,
       json['display_name'] as String,
-      json['association'] as int?,
+      (json['association'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$TostiUserToJson(TostiUser instance) => <String, dynamic>{

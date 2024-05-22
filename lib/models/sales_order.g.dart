@@ -8,7 +8,7 @@ part of 'sales_order.dart';
 
 SalesOrder _$SalesOrderFromJson(Map<String, dynamic> json) => SalesOrder(
       json['pk'] as String,
-      json['shift'] as int,
+      (json['shift'] as num).toInt(),
       DateTime.parse(json['created_at'] as String),
       (json['order_items'] as List<dynamic>)
           .map((e) => SalesOrderItem.fromJson(e as Map<String, dynamic>))
@@ -18,7 +18,7 @@ SalesOrder _$SalesOrderFromJson(Map<String, dynamic> json) => SalesOrder(
       json['subtotal'] as String,
       json['discount'] as String?,
       json['total_amount'] as String,
-      json['num_items'] as int,
+      (json['num_items'] as num).toInt(),
       json['payer'] == null
           ? null
           : ListMember.fromJson(json['payer'] as Map<String, dynamic>),
@@ -48,7 +48,7 @@ Map<String, dynamic> _$SalesOrderToJson(SalesOrder instance) =>
 SalesOrderItem _$SalesOrderItemFromJson(Map<String, dynamic> json) =>
     SalesOrderItem(
       json['product'] as String,
-      json['amount'] as int,
+      (json['amount'] as num).toInt(),
       json['total'] as String,
     );
 

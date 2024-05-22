@@ -7,10 +7,10 @@ part of 'slide.dart';
 // **************************************************************************
 
 Slide _$SlideFromJson(Map<String, dynamic> json) => Slide(
-      json['pk'] as int,
+      (json['pk'] as num).toInt(),
       json['title'] as String,
       Photo.fromJson(json['content'] as Map<String, dynamic>),
-      json['order'] as int,
+      (json['order'] as num).toInt(),
       json['url'] == null ? null : Uri.parse(json['url'] as String),
     );
 

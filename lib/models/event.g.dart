@@ -7,7 +7,7 @@ part of 'event.dart';
 // **************************************************************************
 
 Event _$EventFromJson(Map<String, dynamic> json) => Event(
-      json['pk'] as int,
+      (json['pk'] as num).toInt(),
       json['title'] as String,
       json['url'] as String,
       json['caption'] as String,
@@ -27,11 +27,11 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       json['location'] as String,
       json['price'] as String,
       json['fine'] as String,
-      json['num_participants'] as int,
-      json['max_participants'] as int?,
+      (json['num_participants'] as num).toInt(),
+      (json['max_participants'] as num?)?.toInt(),
       json['no_registration_message'] as String?,
       json['has_fields'] as bool,
-      json['food_event'] as int?,
+      (json['food_event'] as num?)?.toInt(),
       json['maps_url'] as String,
       EventPermissions.fromJson(
           json['user_permissions'] as Map<String, dynamic>),
@@ -104,7 +104,7 @@ Map<String, dynamic> _$EventPermissionsToJson(EventPermissions instance) =>
     };
 
 PartnerEvent _$PartnerEventFromJson(Map<String, dynamic> json) => PartnerEvent(
-      json['pk'] as int,
+      (json['pk'] as num).toInt(),
       json['title'] as String,
       json['description'] as String,
       DateTime.parse(json['start'] as String),
@@ -125,7 +125,7 @@ Map<String, dynamic> _$PartnerEventToJson(PartnerEvent instance) =>
     };
 
 AdminEvent _$AdminEventFromJson(Map<String, dynamic> json) => AdminEvent(
-      json['id'] as int,
+      (json['id'] as num).toInt(),
       json['title'] as String,
       json['caption'] as String,
       DateTime.parse(json['start'] as String),

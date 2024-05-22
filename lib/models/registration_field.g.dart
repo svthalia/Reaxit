@@ -12,7 +12,7 @@ IntegerRegistrationField _$IntegerRegistrationFieldFromJson(
       json['label'] as String,
       json['description'] as String,
       json['required'] as bool,
-      json['value'] as int?,
+      (json['value'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$IntegerRegistrationFieldToJson(

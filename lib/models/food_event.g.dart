@@ -7,7 +7,7 @@ part of 'food_event.dart';
 // **************************************************************************
 
 FoodEvent _$FoodEventFromJson(Map<String, dynamic> json) => FoodEvent(
-      json['pk'] as int,
+      (json['pk'] as num).toInt(),
       Event.fromJson(json['event'] as Map<String, dynamic>),
       DateTime.parse(json['start'] as String),
       DateTime.parse(json['end'] as String),

@@ -8,7 +8,7 @@ part of 'frontpage_article.dart';
 
 FrontpageArticle _$FrontpageArticleFromJson(Map<String, dynamic> json) =>
     FrontpageArticle(
-      json['pk'] as int,
+      (json['pk'] as num).toInt(),
       json['title'] as String,
       json['content'] as String,
     );
