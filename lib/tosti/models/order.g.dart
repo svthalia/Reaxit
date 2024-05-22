@@ -7,7 +7,7 @@ part of 'order.dart';
 // **************************************************************************
 
 TostiOrder _$TostiOrderFromJson(Map<String, dynamic> json) => TostiOrder(
-      json['id'] as int,
+      (json['id'] as num).toInt(),
       DateTime.parse(json['created'] as String),
       json['user'] == null
           ? null

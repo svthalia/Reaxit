@@ -8,7 +8,7 @@ part of 'event_registration.dart';
 
 EventRegistration _$EventRegistrationFromJson(Map<String, dynamic> json) =>
     EventRegistration(
-      json['pk'] as int,
+      (json['pk'] as num).toInt(),
       json['member'] == null
           ? null
           : ListMember.fromJson(json['member'] as Map<String, dynamic>),
@@ -25,9 +25,9 @@ Map<String, dynamic> _$EventRegistrationToJson(EventRegistration instance) =>
 UserEventRegistration _$UserEventRegistrationFromJson(
         Map<String, dynamic> json) =>
     UserEventRegistration(
-      json['pk'] as int,
+      (json['pk'] as num).toInt(),
       json['present'] as bool?,
-      json['queue_position'] as int?,
+      (json['queue_position'] as num?)?.toInt(),
       DateTime.parse(json['date'] as String),
       json['payment'] == null
           ? null
@@ -51,13 +51,13 @@ Map<String, dynamic> _$UserEventRegistrationToJson(
 AdminEventRegistration _$AdminEventRegistrationFromJson(
         Map<String, dynamic> json) =>
     AdminEventRegistration(
-      json['pk'] as int,
+      (json['pk'] as num).toInt(),
       json['member'] == null
           ? null
           : AdminListMember.fromJson(json['member'] as Map<String, dynamic>),
       json['name'] as String?,
       json['present'] as bool,
-      json['queue_position'] as int?,
+      (json['queue_position'] as num?)?.toInt(),
       DateTime.parse(json['date'] as String),
       json['date_cancelled'] == null
           ? null

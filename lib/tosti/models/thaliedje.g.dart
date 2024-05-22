@@ -8,10 +8,10 @@ part of 'thaliedje.dart';
 
 ThaliedjePlayer _$ThaliedjePlayerFromJson(Map<String, dynamic> json) =>
     ThaliedjePlayer(
-      json['id'] as int,
+      (json['id'] as num).toInt(),
       json['slug'] as String,
       json['display_name'] as String,
-      json['venue'] as int?,
+      (json['venue'] as num?)?.toInt(),
       json['track'] == null
           ? null
           : ThaliedjeCurrentTrack.fromJson(
@@ -20,9 +20,9 @@ ThaliedjePlayer _$ThaliedjePlayerFromJson(Map<String, dynamic> json) =>
       (json['current_volume'] as num?)?.toDouble(),
       json['shuffle'] as bool?,
       json['repeat'] as String?,
-      json['timestamp'] as int?,
-      json['duration_ms'] as int?,
-      json['progress_ms'] as int?,
+      (json['timestamp'] as num?)?.toInt(),
+      (json['duration_ms'] as num?)?.toInt(),
+      (json['progress_ms'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$ThaliedjePlayerToJson(ThaliedjePlayer instance) =>

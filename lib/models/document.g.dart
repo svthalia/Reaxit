@@ -7,7 +7,7 @@ part of 'document.dart';
 // **************************************************************************
 
 Document _$DocumentFromJson(Map<String, dynamic> json) => Document(
-      json['pk'] as int,
+      (json['pk'] as num).toInt(),
       json['name'] as String,
       json['url'] as String,
       $enumDecode(_$DocumentCategoryEnumMap, json['category']),

@@ -11,7 +11,7 @@ ListResponse<T> _$ListResponseFromJson<T>(
   T Function(Object? json) fromJsonT,
 ) =>
     ListResponse<T>(
-      json['count'] as int,
+      (json['count'] as num).toInt(),
       (json['results'] as List<dynamic>).map(fromJsonT).toList(),
     );
 

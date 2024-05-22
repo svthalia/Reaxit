@@ -7,16 +7,16 @@ part of 'shift.dart';
 // **************************************************************************
 
 TostiShift _$TostiShiftFromJson(Map<String, dynamic> json) => TostiShift(
-      json['id'] as int,
+      (json['id'] as num).toInt(),
       TostiOrderVenue.fromJson(json['venue'] as Map<String, dynamic>),
       DateTime.parse(json['start'] as String),
       DateTime.parse(json['end'] as String),
       json['can_order'] as bool,
       json['is_active'] as bool,
       json['finalized'] as bool,
-      json['amount_of_orders'] as int,
-      json['max_orders_per_user'] as int,
-      json['max_orders_total'] as int,
+      (json['amount_of_orders'] as num).toInt(),
+      (json['max_orders_per_user'] as num).toInt(),
+      (json['max_orders_total'] as num).toInt(),
       (json['assignees'] as List<dynamic>)
           .map((e) => TostiUser.fromJson(e as Map<String, dynamic>))
           .toList(),
