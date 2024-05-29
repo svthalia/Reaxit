@@ -1,5 +1,6 @@
 import 'package:reaxit/config.dart';
 import 'package:reaxit/models.dart';
+import 'package:reaxit/models/thabliod.dart';
 import 'package:reaxit/api/exceptions.dart';
 
 /// Provides an interface to the api.
@@ -274,6 +275,17 @@ abstract class ApiRepository {
   /// total number of [ListAlbum]s that can be returned.
   /// Use `search` to filter on name or date.
   Future<ListResponse<ListAlbum>> getAlbums({
+    String? search,
+    int? limit,
+    int? offset,
+  });
+
+  /// Get a list of [Thabloid]s.
+  ///
+  /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
+  /// total number of [Thabloid]s that can be returned.
+  /// Use `search` to filter on name or date.
+  Future<ListResponse<Thabloid>> getThabloids({
     String? search,
     int? limit,
     int? offset,

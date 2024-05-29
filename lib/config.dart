@@ -114,6 +114,7 @@ class Config {
     'partners:read',
     'sales:read',
     'sales:order',
+    'thabloid:read'
   ];
 
   static const Duration searchDebounceTime = Duration(milliseconds: 200);

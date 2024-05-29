@@ -21,15 +21,29 @@ abstract class ListCubit<T, S> extends Cubit<S> {
   int _nextOffsetUp = 0;
   int _nextOffsetDown = 0;
 
-  //// A timer used to debounce calls to `this.load()` from `this.search()`.
+  //// A timer used to debounce calls to from `this.search()`.
   Timer? _searchDebounceTimer;
 
+  /// Debouncetimer to fix things like load
+  Timer? _debounceTimer;
+
   ListCubit(this.api, S state) : super(state);
+
+  // Initial load the the data, but only fetches new data if the debounce timer
+  // is done.
+  Future<void> cachedLoad() async {
+    if (_debounceTimer == null || !_debounceTimer!.isActive) {
+      await load();
+    }
+  }
 
   /// Initial load of the data, resets all the state and loads data in both ways.
   /// This follows a couple steps
   Future<void> load() async {
     final query = searchQuery;
+
+    _debounceTimer = Timer(const Duration(minutes: 10), () => {});
+
     _nextOffsetUp = 0;
     _nextOffsetDown = 0;
     ListResponse<T> upResponse;

@@ -10,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs.dart';
+import 'package:reaxit/blocs/thabloid_list_cubit.dart';
 import 'package:reaxit/config.dart';
 import 'package:reaxit/firebase_options.dart';
 import 'package:reaxit/routes.dart';
@@ -327,6 +328,11 @@ class _ThaliAppState extends State<ThaliApp> {
                             BlocProvider(
                               create: (_) =>
                                   CalendarCubit(apiRepository)..cachedLoad(),
+                              lazy: false,
+                            ),
+                            BlocProvider(
+                              create: (_) =>
+                                  ThabloidCubit(apiRepository)..cachedLoad(),
                               lazy: false,
                             ),
                             BlocProvider(

@@ -14,6 +14,7 @@ import 'package:reaxit/blocs/payment_user_cubit.dart' as _i6;
 import 'package:reaxit/blocs/welcome_cubit.dart' as _i7;
 import 'package:reaxit/config.dart' as _i3;
 import 'package:reaxit/models.dart' as _i4;
+import 'package:reaxit/models/thabliod.dart' as _i11;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -1297,6 +1298,37 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
           ),
         )),
       ) as _i8.Future<_i4.ListResponse<_i4.ListAlbum>>);
+
+  @override
+  _i8.Future<_i4.ListResponse<_i11.Thabloid>> getThabloids({
+    String? search,
+    int? limit,
+    int? offset,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getThabloids,
+          [],
+          {
+            #search: search,
+            #limit: limit,
+            #offset: offset,
+          },
+        ),
+        returnValue: _i8.Future<_i4.ListResponse<_i11.Thabloid>>.value(
+            _FakeListResponse_3<_i11.Thabloid>(
+          this,
+          Invocation.method(
+            #getThabloids,
+            [],
+            {
+              #search: search,
+              #limit: limit,
+              #offset: offset,
+            },
+          ),
+        )),
+      ) as _i8.Future<_i4.ListResponse<_i11.Thabloid>>);
 
   @override
   _i8.Future<_i4.ListResponse<_i4.Slide>> getSlides({
