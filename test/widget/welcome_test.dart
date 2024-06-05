@@ -36,7 +36,7 @@ void main() {
         false,
         null,
         '',
-        const EventPermissions(false, false, false, false),
+        const EventPermissions(false, true, false, false, false),
         null,
         [],
         '',
