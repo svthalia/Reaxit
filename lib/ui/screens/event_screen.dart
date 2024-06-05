@@ -35,6 +35,8 @@ class _EventScreenState extends State<EventScreen> {
 
   late final EventCubit _eventCubit;
 
+  final MaterialStatesController _buttonControler = MaterialStatesController();
+
   @override
   void initState() {
     final api = RepositoryProvider.of<ApiRepository>(context);
@@ -284,9 +286,19 @@ class _EventScreenState extends State<EventScreen> {
     Widget registrationButton = const SizedBox.shrink();
     Widget updateButton = const SizedBox.shrink();
 
-    if (event.canCreateRegistration ||
-        (event.createRegistrationWhenOpen &&
-            !event.registrationStart!.isAfter(DateTime.now()))) {
+    if (event.canCreateRegistration || event.createRegistrationWhenOpen) {
+      if (event.registrationStart!.isAfter(DateTime.now())) {
+        _buttonControler.update(MaterialState.disabled, true);
+        Future.delayed(
+          event.registrationStart!.difference(DateTime.now()),
+          () {
+            setState(
+              () {},
+            );
+            _buttonControler.update(MaterialState.disabled, false);
+          },
+        );
+      }
       if (event.reachedMaxParticipants) {
         registrationButton = _makeJoinQueueButton(event);
       } else {
@@ -322,12 +334,6 @@ class _EventScreenState extends State<EventScreen> {
         textSpans.add(TextSpan(
           text: 'Registration will open $registrationStart. ',
         ));
-        Future.delayed(
-          event.registrationStart!.difference(DateTime.now()),
-          () => setState(
-            () {},
-          ),
-        );
       } else if (event.registrationIsOpen()) {
         // Terms and conditions, register button.
         textSpans.add(_makeTermsAndConditions(event));
@@ -630,6 +636,7 @@ class _EventScreenState extends State<EventScreen> {
 
   Widget _makeCreateRegistrationButton(Event event) {
     return ElevatedButton.icon(
+      statesController: _buttonControler,
       onPressed: () async {
         final messenger = ScaffoldMessenger.of(context);
         final calendarCubit = BlocProvider.of<CalendarCubit>(context);
@@ -699,6 +706,7 @@ class _EventScreenState extends State<EventScreen> {
 
   Widget _makeJoinQueueButton(Event event) {
     return ElevatedButton.icon(
+      statesController: _buttonControler,
       onPressed: () async {
         final messenger = ScaffoldMessenger.of(context);
         final calendarCubit = BlocProvider.of<CalendarCubit>(context);
