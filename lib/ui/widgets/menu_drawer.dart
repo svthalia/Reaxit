@@ -218,6 +218,20 @@ class MenuDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+            title: const Text('Thabloids'),
+            leading: const Icon(Icons.photo),
+            selected: GoRouterState.of(context).uri.toString() ==
+                'thabloid/thabloids',
+            onTap: () {
+              if (GoRouterState.of(context).uri.toString() ==
+                  'thabloid/thabloids') {
+                Navigator.of(context).pop();
+              } else {
+                _goTo(context, 'thabloids');
+              }
+            },
+          ),
+          ListTile(
             title: const Text('Payments'),
             leading: const Icon(Icons.euro),
             selected: GoRouterState.of(context).uri.toString() == '/pay',

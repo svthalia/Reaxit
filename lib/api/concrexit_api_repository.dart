@@ -9,6 +9,7 @@ import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/config.dart';
 import 'package:reaxit/models.dart';
+import 'package:reaxit/models/thabliod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class LoggingClient extends oauth2.Client {
@@ -1040,6 +1041,34 @@ class ConcrexitApiRepository implements ApiRepository {
     return ListResponse<ListAlbum>.fromJson(
       _jsonDecode(response),
       (json) => ListAlbum.fromJson(json as Map<String, dynamic>),
+    );
+  }
+
+  @override
+  Future<ListResponse<Thabloid>> getThabloids({
+    String? search,
+    int? limit,
+    int? offset,
+  }) async {
+    return sandbox(() async {
+      final uri = _uri(
+        path: '/thabloid/thabloids/',
+        query: {
+          if (search != null) 'search': search,
+          if (limit != null) 'limit': limit.toString(),
+          if (offset != null) 'offset': offset.toString(),
+        },
+      );
+
+      final response = await _handleExceptions(() => _client.get(uri));
+      return await compute(_parseThabloids, response);
+    });
+  }
+
+  static ListResponse<Thabloid> _parseThabloids(Response response) {
+    return ListResponse<Thabloid>.fromJson(
+      _jsonDecode(response),
+      (json) => Thabloid.fromJson(json as Map<String, dynamic>),
     );
   }
 
