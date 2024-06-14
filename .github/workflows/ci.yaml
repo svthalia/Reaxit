@@ -42,6 +42,10 @@ jobs:
             build-pubspec-${{ runner.os }}
       - name: Install Flutter dependencies
         run: flutter pub get
+      - name: log
+        run: |
+          ls /Users/runner/hostedtoolcache/flutter
+          which flutter
       - name: Run integration tests
         run: |
           flutter drive -v --driver=test_driver/integration_test.dart --target=integration_test/main.dart 
