@@ -40,7 +40,7 @@ jobs:
         run: |
           ls /Users/runner/hostedtoolcache/flutter/stable-3.22.2-x64
           which flutter
-          cat /Users/runner/hostedtoolcache/flutter/stable-3.22.2-x64/packages/flutter/lib/src/rendering/layer.dart
+          sed -i.bak 's/_lastEffectiveTransform = transform;/_lastEffectiveTransform = transform;print(transform);print(offset);/' /Users/runner/hostedtoolcache/flutter/stable-3.22.2-x64/packages/flutter/lib/src/rendering/layer.dart
       - name: Run integration tests
         run: |
-          flutter drive -v --driver=test_driver/integration_test.dart --target=integration_test/main.dart 
+          flutter drive --driver=test_driver/integration_test.dart --target=integration_test/main.dart 
