@@ -34,18 +34,13 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
-      - name: Cache build files
-        uses: irgaly/xcode-cache@v1
-        with:
-          key: build-pubspec-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
-          restore-keys: |
-            build-pubspec-${{ runner.os }}
       - name: Install Flutter dependencies
         run: flutter pub get
       - name: log
         run: |
-          ls /Users/runner/hostedtoolcache/flutter
+          ls /Users/runner/hostedtoolcache/flutter/stable-3.22.2-x64
           which flutter
+          cat /Users/runner/hostedtoolcache/flutter/stable-3.22.2-x64/packages/flutter/lib/src/rendering/layer.dart
       - name: Run integration tests
         run: |
           flutter drive -v --driver=test_driver/integration_test.dart --target=integration_test/main.dart 
