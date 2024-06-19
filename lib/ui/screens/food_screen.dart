@@ -53,10 +53,31 @@ class _FoodScreenState extends State<FoodScreen> {
 
     Text subtitle;
     if (!foodEvent.hasStarted()) {
+      Future.delayed(
+        foodEvent.start.difference(DateTime.now()),
+        () {
+          if (mounted) {
+            setState(
+              () {},
+            );
+          }
+        },
+      );
+
       subtitle = Text('It will be possible to order from $start.');
     } else if (foodEvent.hasEnded()) {
       subtitle = Text('It was possible to order until $end.');
     } else {
+      Future.delayed(
+        foodEvent.end.difference(DateTime.now()),
+        () {
+          if (mounted) {
+            setState(
+              () {},
+            );
+          }
+        },
+      );
       subtitle = Text('You can order until $end.');
     }
 
