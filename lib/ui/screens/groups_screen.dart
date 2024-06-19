@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/blocs/groups_cubit.dart';
 import 'package:reaxit/models/group.dart';
 import 'package:reaxit/ui/widgets.dart';
@@ -92,36 +91,45 @@ class _GroupsScreenState extends State<GroupsScreen>
         controller: _tabController,
         children: [
           BlocBuilder<CommitteesCubit, GroupsState>(
-            builder: (context, state) => switch (state) {
-              ErrorState(message: var message) => ErrorScrollView(message),
-              LoadingState _ => const Padding(
+            builder: (context, state) {
+              if (state.message != null) {
+                return ErrorScrollView(state.message!);
+              } else if (state.isLoading) {
+                return const Padding(
                   padding: EdgeInsets.all(16),
                   child: Center(child: CircularProgressIndicator()),
-                ),
-              ResultState(result: var result) =>
-                GroupListScrollView(groups: result),
+                );
+              } else {
+                return GroupListScrollView(groups: state.results);
+              }
             },
           ),
           BlocBuilder<SocietiesCubit, GroupsState>(
-            builder: (context, state) => switch (state) {
-              ErrorState(message: var message) => ErrorScrollView(message),
-              LoadingState _ => const Padding(
+            builder: (context, state) {
+              if (state.message != null) {
+                return ErrorScrollView(state.message!);
+              } else if (state.isLoading) {
+                return const Padding(
                   padding: EdgeInsets.all(16),
                   child: Center(child: CircularProgressIndicator()),
-                ),
-              ResultState(result: var result) =>
-                GroupListScrollView(groups: result),
+                );
+              } else {
+                return GroupListScrollView(groups: state.results);
+              }
             },
           ),
           BlocBuilder<BoardsCubit, GroupsState>(
-            builder: (context, state) => switch (state) {
-              ErrorState(message: var message) => ErrorScrollView(message),
-              LoadingState _ => const Padding(
+            builder: (context, state) {
+              if (state.message != null) {
+                return ErrorScrollView(state.message!);
+              } else if (state.isLoading) {
+                return const Padding(
                   padding: EdgeInsets.all(16),
                   child: Center(child: CircularProgressIndicator()),
-                ),
-              ResultState(result: var result) =>
-                GroupListScrollView(groups: result),
+                );
+              } else {
+                return GroupListScrollView(groups: state.results);
+              }
             },
           )
         ],
@@ -223,19 +231,22 @@ class GroupSearchDelegate extends SearchDelegate {
   @override
   Widget buildResults(BuildContext context) {
     return BlocBuilder<AllGroupsCubit, GroupsState>(
-      bloc: _cubit..search(query),
-      builder: (context, state) => switch (state) {
-        ErrorState(message: var message) => ErrorScrollView(message),
-        LoadingState _ => GroupListScrollView(
-            key: const PageStorageKey('groups-search'),
-            groups: const [],
-          ),
-        ResultState(result: var result) => GroupListScrollView(
-            key: const PageStorageKey('groups-search'),
-            groups: result,
-          ),
-      },
-    );
+        bloc: _cubit..search(query),
+        builder: (context, state) {
+          if (state.message != null) {
+            return ErrorScrollView(state.message!);
+          } else if (state.isLoading) {
+            return GroupListScrollView(
+              key: const PageStorageKey('groups-search'),
+              groups: const [],
+            );
+          } else {
+            return GroupListScrollView(
+              key: const PageStorageKey('groups-search'),
+              groups: state.results,
+            );
+          }
+        });
   }
 
   @override

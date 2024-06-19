@@ -11,7 +11,7 @@ import 'package:reaxit/models.dart';
 /// If a class implements all the methods of `ListCubit`, it is a Cubit.
 /// Since there are a lot of methods to implement, and most `ListCubit`s will be
 /// one-way only, users should probably implement `SingleListCubit` instead.
-abstract class ListCubit<T, S> extends Cubit<S> {
+abstract class ListCubit<F, T, S> extends Cubit<S> {
   final ApiRepository api;
 
   //// The last used search query. Can be set through `this.search(query)`.
@@ -46,12 +46,12 @@ abstract class ListCubit<T, S> extends Cubit<S> {
 
     _nextOffsetUp = 0;
     _nextOffsetDown = 0;
-    ListResponse<T> upResponse;
-    ListResponse<T> downResponse;
+    ListResponse<F> upResponse;
+    ListResponse<F> downResponse;
     // Get the data in both directions
     try {
-      Future<ListResponse<T>> upResultsFuture = getUp(_nextOffsetUp);
-      Future<ListResponse<T>> downResultsFuture = getDown(_nextOffsetDown);
+      Future<ListResponse<F>> upResultsFuture = getUp(_nextOffsetUp);
+      Future<ListResponse<F>> downResultsFuture = getDown(_nextOffsetDown);
       cleanupOldState();
       upResponse = await upResultsFuture;
       downResponse = await downResultsFuture;
@@ -107,9 +107,9 @@ abstract class ListCubit<T, S> extends Cubit<S> {
 
     _emit(loadingDown(oldState));
 
-    ListResponse<T> downResponse;
+    ListResponse<F> downResponse;
     try {
-      Future<ListResponse<T>> downResultsFuture = getDown(_nextOffsetDown);
+      Future<ListResponse<F>> downResultsFuture = getDown(_nextOffsetDown);
       downResponse = await downResultsFuture;
     } on ApiException catch (exception) {
       _emit(failure(exception.message));
@@ -139,15 +139,15 @@ abstract class ListCubit<T, S> extends Cubit<S> {
     final query = searchQuery;
 
     // Ignore calls to `more()` if there is no data, or already more coming.
-    if (!canLoadMoreDown(oldState)) {
+    if (!canLoadMoreUp(oldState)) {
       return;
     }
 
     _emit(loadingUp(oldState));
 
-    ListResponse<T> upResponse;
+    ListResponse<F> upResponse;
     try {
-      Future<ListResponse<T>> downResultsFuture = getUp(_nextOffsetUp);
+      Future<ListResponse<F>> downResultsFuture = getUp(_nextOffsetUp);
       upResponse = await downResultsFuture;
     } on ApiException catch (exception) {
       _emit(failure(exception.message));
@@ -197,22 +197,22 @@ abstract class ListCubit<T, S> extends Cubit<S> {
 
   /// getUp returns a future with more data in the up direction.
   /// This is where you would want to do an http request for example.
-  Future<ListResponse<T>> getUp(int offset);
+  Future<ListResponse<F>> getUp(int offset);
 
   /// getDown returns a future with more data in the down direction
   /// This is where you would want to do an http request for example.
-  Future<ListResponse<T>> getDown(int offset);
+  Future<ListResponse<F>> getDown(int offset);
 
   /// This is called when a new load is triggered (after the API is called)
   void cleanupOldState() => {};
 
   /// processUp is called after getUp, and is used to process the data.
   /// For example, this can split daturned calendar events into multiple events.
-  List<T> processUp(List<T> upResults) => upResults;
+  List<T> processUp(List<F> upResults);
 
   /// processDown is called after getDown, and is used to process the data.
   /// For example, this can split daturned calendar events into multiple events.
-  List<T> processDown(List<T> downResults) => downResults;
+  List<T> processDown(List<F> downResults);
 
   /// This is supposed to resolve issues around the up/down boundry.
   /// For example, when some results from up should be moved to down,
@@ -283,7 +283,7 @@ abstract class ListCubit<T, S> extends Cubit<S> {
 /// needing to show data on one side (usually down). The methods you need to
 /// overwrite are `getDown`, `combineDown`, and `empty`. This should makes it
 /// trivial to implement a single ended ListCubit.
-abstract class SingleListCubit<T> extends ListCubit<T, ListState<T>> {
+abstract class SingleListCubit<T> extends ListCubit<T, T, ListState<T>> {
   SingleListCubit(ApiRepository api)
       : super(api, const ListState.loading(results: []));
 
@@ -294,11 +294,17 @@ abstract class SingleListCubit<T> extends ListCubit<T, ListState<T>> {
   List<T> combineUp(List<T> upResults, ListState oldstate) => upResults;
 
   @override
-  bool canLoadMoreDown(ListState oldstate) => false;
+  List<T> processDown(List<T> downResults) => downResults;
 
   @override
-  bool canLoadMoreUp(ListState oldstate) =>
+  List<T> processUp(List<T> upResults) => upResults;
+
+  @override
+  bool canLoadMoreDown(ListState oldstate) =>
       !oldstate.isDone && !oldstate.isLoading && !oldstate.isLoadingMore;
+
+  @override
+  bool canLoadMoreUp(ListState oldstate) => false;
 
   @override
   ListState<T> loading() => const ListState.loading(results: []);
