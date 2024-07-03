@@ -7,6 +7,51 @@ import 'package:reaxit/config.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 
+abstract class ListCubitSource<T, D> {
+  bool isDoneUp = false;
+  bool isDoneDown = false;
+
+  //// The offset to be used for the next paginated request.
+  int _nextOffsetUp = 0;
+  int _nextOffsetDown = 0;
+
+  /// getUp wraps getUpi
+  Future<List<D>> moreUp() {
+    Future<ListResponse<T>> res = getUpi(_nextOffsetUp);
+    return res.then((response) {
+      _nextOffsetUp += response.results.length;
+      isDoneUp = _nextOffsetUp == response.count;
+      return processUp(response.results);
+    });
+  }
+
+  /// getDown wraps getDowni
+  Future<List<D>> moreDown() {
+    Future<ListResponse<T>> res = getDowni(_nextOffsetDown);
+    return res.then((response) {
+      _nextOffsetDown += response.results.length;
+      isDoneDown = _nextOffsetDown == response.count;
+      return processDown(response.results);
+    });
+  }
+
+  /// getUpi returns a future with more data in the up direction.
+  /// This is where you would want to do an http request for example.
+  Future<ListResponse<T>> getUpi(int offset);
+
+  /// getDowni returns a future with more data in the down direction
+  /// This is where you would want to do an http request for example.
+  Future<ListResponse<T>> getDowni(int offset);
+
+  /// processUp processes the data in the up direction. May also filter
+  /// out data
+  List<D> processUp(List<T> results);
+
+  /// processDown processes the data in the up direction. May also filter
+  /// out data
+  List<D> processDown(List<T> results);
+}
+
 /// This is an abstract `Cubit`, which needs to be implemented by other classes.
 /// If a class implements all the methods of `ListCubit`, it is a Cubit.
 /// Since there are a lot of methods to implement, and most `ListCubit`s will be
@@ -14,12 +59,10 @@ import 'package:reaxit/models.dart';
 abstract class ListCubit<F, T, S> extends Cubit<S> {
   final ApiRepository api;
 
+  late List<ListCubitSource<dynamic, T>> sources = [];
+
   //// The last used search query. Can be set through `this.search(query)`.
   String? searchQuery;
-
-  //// The offset to be used for the next paginated request.
-  int _nextOffsetUp = 0;
-  int _nextOffsetDown = 0;
 
   //// A timer used to debounce calls to from `this.search()`.
   Timer? _searchDebounceTimer;
@@ -44,17 +87,21 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
 
     _debounceTimer = Timer(const Duration(minutes: 10), () => {});
 
-    _nextOffsetUp = 0;
-    _nextOffsetDown = 0;
-    ListResponse<F> upResponse;
-    ListResponse<F> downResponse;
     // Get the data in both directions
+    List<Future<List<T>>> futuresUp = [];
+    List<Future<List<T>>> futuresDown = [];
+    for (final source in sources) {
+      source._nextOffsetDown = 0;
+      source._nextOffsetUp = 0;
+      futuresUp.add(source.moreUp());
+      futuresDown.add(source.moreDown());
+    }
+    cleanupOldState();
+    List<List<T>> resultsUp = [];
+    List<List<T>> resultsDown = [];
     try {
-      Future<ListResponse<F>> upResultsFuture = getUp(_nextOffsetUp);
-      Future<ListResponse<F>> downResultsFuture = getDown(_nextOffsetDown);
-      cleanupOldState();
-      upResponse = await upResultsFuture;
-      downResponse = await downResultsFuture;
+      resultsUp = await Future.wait(futuresUp);
+      resultsDown = await Future.wait(futuresDown);
     } on ApiException catch (exception) {
       _emit(failure(exception.message));
       return;
@@ -64,23 +111,24 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
     // changed since the request was made.
     if (query != searchQuery) return;
 
-    _nextOffsetUp = upResponse.results.length;
-    _nextOffsetDown = downResponse.results.length;
-
-    final isDoneUp = _nextOffsetUp == upResponse.count;
-    final isDoneDown = _nextOffsetDown == downResponse.count;
+    final isDoneUp = !sources.map((e) => e.isDoneUp).contains(false);
+    final isDoneDown = !sources.map((e) => e.isDoneDown).contains(false);
 
     // Do any processing that needs to be done on the data
-    List<T> upResults = processUp(upResponse.results);
-    List<T> downResults = processDown(downResponse.results);
+    List<T> upResults = mergeUp(resultsUp);
+    List<T> downResults = mergeDown(resultsDown);
 
     // Allow the cubit to move data between up and down
     (upResults: upResults, downResults: downResults) =
         shuffleData(upResults, downResults);
 
     // Some cubits need to filter out certain results
-    upResults = filterUp(upResults);
-    downResults = filterDown(downResults);
+    if (!isDoneUp) {
+      upResults = filterUp(upResults);
+    }
+    if (!isDoneDown) {
+      downResults = filterDown(downResults);
+    }
 
     if (upResults.isEmpty && downResults.isEmpty) {
       _emit(empty(query ?? ''));
@@ -101,16 +149,17 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
     final query = searchQuery;
 
     // Ignore calls to `more()` if there is no data, or already more coming.
-    if (!canLoadMoreUp(oldState)) {
+    if (!canLoadMoreDown(oldState)) {
       return;
     }
 
     _emit(loadingDown(oldState));
 
-    ListResponse<F> downResponse;
+    // Get the data in the down direction
+    List<List<T>> resultsDown = [];
     try {
-      Future<ListResponse<F>> downResultsFuture = getDown(_nextOffsetDown);
-      downResponse = await downResultsFuture;
+      resultsDown = await Future.wait(
+          sources.map((source) => source.moreDown()).toList());
     } on ApiException catch (exception) {
       _emit(failure(exception.message));
       return;
@@ -120,12 +169,12 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
     // changed since the request was made.
     if (query != searchQuery) return;
 
-    _nextOffsetDown += downResponse.results.length;
-    final isDoneDown = _nextOffsetDown == downResponse.count;
+    final isDoneDown = !sources.map((e) => e.isDoneDown).contains(false);
 
-    List<T> downResults = processDown(downResponse.results);
-    downResults = filterDown(downResults);
-
+    List<T> downResults = mergeDown(resultsDown);
+    if (!isDoneDown) {
+      downResults = filterDown(downResults);
+    }
     final totalDownResults = combineDown(downResults, oldState);
 
     _emit(updateDown(oldState, totalDownResults, isDoneDown));
@@ -145,10 +194,11 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
 
     _emit(loadingUp(oldState));
 
-    ListResponse<F> upResponse;
+    // Get the data in the down direction
+    List<List<T>> resultsUp = [];
     try {
-      Future<ListResponse<F>> downResultsFuture = getUp(_nextOffsetUp);
-      upResponse = await downResultsFuture;
+      resultsUp =
+          await Future.wait(sources.map((source) => source.moreUp()).toList());
     } on ApiException catch (exception) {
       _emit(failure(exception.message));
       return;
@@ -158,13 +208,14 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
     // changed since the request was made.
     if (query != searchQuery) return;
 
-    _nextOffsetUp += upResponse.results.length;
-    final isDoneUp = _nextOffsetUp == upResponse.count;
+    final isDoneUp = !sources.map((e) => e.isDoneUp).contains(false);
 
-    List<T> downResults = processUp(upResponse.results);
-    downResults = filterUp(downResults);
+    List<T> upResults = mergeUp(resultsUp);
+    if (!isDoneUp) {
+      upResults = filterUp(upResults);
+    }
 
-    final totalUpResults = combineUp(downResults, oldState);
+    final totalUpResults = combineUp(upResults, oldState);
 
     _emit(updateUp(oldState, totalUpResults, isDoneUp));
   }
@@ -195,24 +246,22 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
     emit(state);
   }
 
-  /// getUp returns a future with more data in the up direction.
-  /// This is where you would want to do an http request for example.
-  Future<ListResponse<F>> getUp(int offset);
-
-  /// getDown returns a future with more data in the down direction
-  /// This is where you would want to do an http request for example.
-  Future<ListResponse<F>> getDown(int offset);
-
   /// This is called when a new load is triggered (after the API is called)
   void cleanupOldState() => {};
 
-  /// processUp is called after getUp, and is used to process the data.
+  /// processUp is called after getUp, and is used to processUp the data.
   /// For example, this can split daturned calendar events into multiple events.
   List<T> processUp(List<F> upResults);
 
-  /// processDown is called after getDown, and is used to process the data.
+  /// processDown is called after getDown, and is used to processUp the data.
   /// For example, this can split daturned calendar events into multiple events.
   List<T> processDown(List<F> downResults);
+
+  /// mergeUp combines the results from multiple data sources in one direction.
+  List<T> mergeUp(List<List<T>> results);
+
+  /// mergeDown combines the results from multiple data sources in one direction.
+  List<T> mergeDown(List<List<T>> results);
 
   /// This is supposed to resolve issues around the up/down boundry.
   /// For example, when some results from up should be moved to down,
@@ -279,16 +328,39 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
   S updateDown(S oldstate, List<T> downResults, bool isDoneDown);
 }
 
+class SingleListCubitSource<T> extends ListCubitSource<T, T> {
+  SingleListCubit<T> cubit;
+  SingleListCubitSource(this.cubit);
+
+  @override
+  Future<ListResponse<T>> getDowni(int offset) => this.cubit.getDown(offset);
+
+  @override
+  Future<ListResponse<T>> getUpi(int offset) async => ListResponse<T>(0, []);
+
+  @override
+  List<T> processUp(List<T> results) => results;
+
+  @override
+  List<T> processDown(List<T> results) => results;
+}
+
 /// This class should be implemented when implementing a listcubit when only
 /// needing to show data on one side (usually down). The methods you need to
 /// overwrite are `getDown`, `combineDown`, and `empty`. This should makes it
 /// trivial to implement a single ended ListCubit.
 abstract class SingleListCubit<T> extends ListCubit<T, T, ListState<T>> {
+  late final List<ListCubitSource<dynamic, T>> _sources = [
+    SingleListCubitSource(this)
+  ];
+
+  @override
+  List<ListCubitSource<dynamic, T>> get sources => _sources;
+
   SingleListCubit(ApiRepository api)
       : super(api, const ListState.loading(results: []));
 
-  @override
-  Future<ListResponse<T>> getUp(int offset) async => ListResponse<T>(0, []);
+  Future<ListResponse<T>> getDown(int offset);
 
   @override
   List<T> combineUp(List<T> upResults, ListState oldstate) => upResults;
@@ -339,4 +411,10 @@ abstract class SingleListCubit<T> extends ListCubit<T, T, ListState<T>> {
       oldstate.copyWith(results: downResults, isDone: isDoneDown);
 
   Future<void> more() => moreDown();
+
+  @override
+  List<T> mergeUp(List<List<T>> results) => results[0];
+
+  @override
+  List<T> mergeDown(List<List<T>> results) => results[0];
 }

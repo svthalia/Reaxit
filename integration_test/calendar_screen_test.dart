@@ -67,7 +67,7 @@ WidgetTesterCallback getTestMethod(List<Event> events, DateTime now) {
       start: split,
       search: null,
       ordering: 'start',
-      limit: CalendarCubit.firstPageSize,
+      limit: EventsSource.firstPageSize,
       offset: 0,
       end: null,
     )).thenAnswer(
@@ -79,7 +79,7 @@ WidgetTesterCallback getTestMethod(List<Event> events, DateTime now) {
             end: split,
             search: null,
             ordering: '-end',
-            limit: CalendarCubit.firstPageSize,
+            limit: EventsSource.firstPageSize,
             offset: 0))
         .thenAnswer(
       (realInvocation) async {
@@ -310,7 +310,7 @@ void testCallender() {
         start: split,
         search: null,
         ordering: 'start',
-        limit: CalendarCubit.firstPageSize,
+        limit: EventsSource.firstPageSize,
         offset: 0,
         end: null,
       )).thenAnswer(
@@ -322,7 +322,7 @@ void testCallender() {
         start: split,
         search: null,
         ordering: 'start',
-        limit: CalendarCubit.pageSize,
+        limit: EventsSource.pageSize,
         offset: 3,
         end: null,
       )).thenAnswer(
@@ -334,7 +334,7 @@ void testCallender() {
               end: split,
               search: null,
               ordering: '-end',
-              limit: CalendarCubit.firstPageSize,
+              limit: EventsSource.firstPageSize,
               offset: 0))
           .thenAnswer(
         (realInvocation) async {
