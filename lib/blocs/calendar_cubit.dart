@@ -167,7 +167,7 @@ class EventsSource extends ListCubitSource<Event, CalendarEvent> {
   EventsSource(this.cubit);
 
   @override
-  Future<ListResponse<Event>> getDowni(int offset) => cubit.api.getEvents(
+  Future<ListResponse<Event>> getDown(int offset) => cubit.api.getEvents(
         start: cubit._splitTime,
         search: cubit.searchQuery,
         ordering: 'start',
@@ -176,7 +176,7 @@ class EventsSource extends ListCubitSource<Event, CalendarEvent> {
       );
 
   @override
-  Future<ListResponse<Event>> getUpi(int offset) => cubit.api.getEvents(
+  Future<ListResponse<Event>> getUp(int offset) => cubit.api.getEvents(
         end: cubit._splitTime,
         search: cubit.searchQuery,
         ordering: '-end',
@@ -205,7 +205,7 @@ class PartnerEventSource extends ListCubitSource<PartnerEvent, CalendarEvent> {
   PartnerEventSource(this.cubit);
 
   @override
-  Future<ListResponse<PartnerEvent>> getDowni(int offset) =>
+  Future<ListResponse<PartnerEvent>> getDown(int offset) =>
       cubit._remainingFutureEvents
               .none((element) => element.parentEvent is PartnerEvent)
           ? cubit.api.getPartnerEvents(
@@ -217,7 +217,7 @@ class PartnerEventSource extends ListCubitSource<PartnerEvent, CalendarEvent> {
           : Future.value(const ListResponse(0, []));
 
   @override
-  Future<ListResponse<PartnerEvent>> getUpi(int offset) =>
+  Future<ListResponse<PartnerEvent>> getUp(int offset) =>
       cubit._remainingPastEvents
               .none((element) => element.parentEvent is PartnerEvent)
           ? cubit.api.getPartnerEvents(
@@ -351,6 +351,11 @@ class CalendarCubit extends ListCubit<Event, CalendarEvent, CalendarState> {
       ];
 
   @override
+  void cleanupOldState() {
+    _truthTime = DateTime.now();
+  }
+
+  @override
   CalendarState empty(String query) => CalendarState(_truthTime,
       const DoubleListState.failure(message: 'There are no events.'));
 
@@ -359,10 +364,8 @@ class CalendarCubit extends ListCubit<Event, CalendarEvent, CalendarState> {
       CalendarState(_truthTime, DoubleListState.failure(message: message));
 
   @override
-  CalendarState loading() {
-    _truthTime = DateTime.now(); // TODO: cleanupoldstate
-    return CalendarState(_truthTime, const DoubleListState.loading());
-  }
+  CalendarState loading() =>
+      CalendarState(_truthTime, const DoubleListState.loading());
 
   @override
   CalendarState loadingDown(CalendarState oldstate) => CalendarState(

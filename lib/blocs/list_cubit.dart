@@ -15,9 +15,13 @@ abstract class ListCubitSource<T, D> {
   int _nextOffsetUp = 0;
   int _nextOffsetDown = 0;
 
-  /// getUp wraps getUpi
+  /// getUp wraps getUp
   Future<List<D>> moreUp() {
-    Future<ListResponse<T>> res = getUpi(_nextOffsetUp);
+    if (isDoneUp) {
+      return Future.value([]);
+    }
+
+    Future<ListResponse<T>> res = getUp(_nextOffsetUp);
     return res.then((response) {
       _nextOffsetUp += response.results.length;
       isDoneUp = _nextOffsetUp == response.count;
@@ -25,9 +29,13 @@ abstract class ListCubitSource<T, D> {
     });
   }
 
-  /// getDown wraps getDowni
+  /// getDown wraps getDown
   Future<List<D>> moreDown() {
-    Future<ListResponse<T>> res = getDowni(_nextOffsetDown);
+    if (isDoneDown) {
+      return Future.value([]);
+    }
+
+    Future<ListResponse<T>> res = getDown(_nextOffsetDown);
     return res.then((response) {
       _nextOffsetDown += response.results.length;
       isDoneDown = _nextOffsetDown == response.count;
@@ -35,13 +43,13 @@ abstract class ListCubitSource<T, D> {
     });
   }
 
-  /// getUpi returns a future with more data in the up direction.
+  /// getUp returns a future with more data in the up direction.
   /// This is where you would want to do an http request for example.
-  Future<ListResponse<T>> getUpi(int offset);
+  Future<ListResponse<T>> getUp(int offset);
 
-  /// getDowni returns a future with more data in the down direction
+  /// getDown returns a future with more data in the down direction
   /// This is where you would want to do an http request for example.
-  Future<ListResponse<T>> getDowni(int offset);
+  Future<ListResponse<T>> getDown(int offset);
 
   /// processUp processes the data in the up direction. May also filter
   /// out data
@@ -94,12 +102,8 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
       try {
         source._nextOffsetDown = 0;
         source._nextOffsetUp = 0;
-        if (!source.isDoneUp) {
-          futuresUp.add(source.moreUp());
-        }
-        if (!source.isDoneDown) {
-          futuresDown.add(source.moreDown());
-        }
+        futuresUp.add(source.moreUp());
+        futuresDown.add(source.moreDown());
       } on ApiException catch (exception) {
         _emit(failure(exception.message));
         return;
@@ -162,10 +166,8 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
     // Get the data in the down direction
     List<List<T>> resultsDown = [];
     try {
-      resultsDown = await Future.wait(sources
-          .map((source) =>
-              source.isDoneDown ? Future<List<T>>.value([]) : source.moreDown())
-          .toList());
+      resultsDown =
+          await Future.wait(sources.map((source) => source.moreDown()));
     } on ApiException catch (exception) {
       _emit(failure(exception.message));
       return;
@@ -203,10 +205,7 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
     // Get the data in the down direction
     List<List<T>> resultsUp = [];
     try {
-      resultsUp = await Future.wait(sources
-          .map((source) =>
-              source.isDoneUp ? Future<List<T>>.value([]) : source.moreUp())
-          .toList());
+      resultsUp = await Future.wait(sources.map((source) => source.moreUp()));
     } on ApiException catch (exception) {
       _emit(failure(exception.message));
       return;
@@ -341,10 +340,10 @@ class SingleListCubitSource<T> extends ListCubitSource<T, T> {
   SingleListCubitSource(this.cubit);
 
   @override
-  Future<ListResponse<T>> getDowni(int offset) => this.cubit.getDown(offset);
+  Future<ListResponse<T>> getDown(int offset) => this.cubit.getDown(offset);
 
   @override
-  Future<ListResponse<T>> getUpi(int offset) async => ListResponse<T>(0, []);
+  Future<ListResponse<T>> getUp(int offset) async => ListResponse<T>(0, []);
 
   @override
   List<T> processUp(List<T> results) => results;
