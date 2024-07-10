@@ -71,9 +71,7 @@ WidgetTesterCallback getTestMethod(List<Event> events, DateTime now) {
       offset: 0,
       end: null,
     )).thenAnswer(
-      (realInvocation) async {
-        return ListResponse(events.length, events);
-      },
+      (realInvocation) async => ListResponse(events.length, events),
     );
     when(api.getEvents(
             end: split,
@@ -86,9 +84,11 @@ WidgetTesterCallback getTestMethod(List<Event> events, DateTime now) {
         return ListResponse(events.length, events);
       },
     );
-    when(api.getPartnerEvents(start: split, search: null, ordering: 'start'))
+    when(api.getPartnerEvents(
+            start: split, search: null, ordering: 'start', offset: 0))
         .thenAnswer((realInvocation) async => const ListResponse(0, []));
-    when(api.getPartnerEvents(start: split, search: null, ordering: '-end'))
+    when(api.getPartnerEvents(
+            start: split, search: null, ordering: '-end', offset: 0))
         .thenAnswer((realInvocation) async => const ListResponse(0, []));
     final authCubit = MockAuthCubit();
 
@@ -341,10 +341,12 @@ void testCallender() {
           return const ListResponse(0, []);
         },
       );
-      when(api.getPartnerEvents(start: split, search: null, ordering: 'start'))
+      when(api.getPartnerEvents(
+              start: split, search: null, ordering: 'start', offset: 0))
           .thenAnswer(
               (realInvocation) async => ListResponse(pevents.length, pevents));
-      when(api.getPartnerEvents(start: split, search: null, ordering: '-end'))
+      when(api.getPartnerEvents(
+              start: split, search: null, ordering: '-end', offset: 0))
           .thenAnswer((realInvocation) async => const ListResponse(0, []));
       final authCubit = MockAuthCubit();
 

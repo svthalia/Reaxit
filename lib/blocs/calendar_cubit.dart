@@ -212,6 +212,7 @@ class PartnerEventSource extends ListCubitSource<PartnerEvent, CalendarEvent> {
               start: cubit._splitTime,
               search: cubit.searchQuery,
               ordering: 'start',
+              offset: offset,
             )
           : Future.value(const ListResponse(0, []));
 

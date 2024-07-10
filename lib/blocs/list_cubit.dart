@@ -76,7 +76,7 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
   // is done.
   Future<void> cachedLoad() async {
     if (_debounceTimer == null || !_debounceTimer!.isActive) {
-      await load();
+      return load();
     }
   }
 
@@ -91,21 +91,25 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
     List<Future<List<T>>> futuresUp = [];
     List<Future<List<T>>> futuresDown = [];
     for (final source in sources) {
-      source._nextOffsetDown = 0;
-      source._nextOffsetUp = 0;
-      futuresUp.add(source.moreUp());
-      futuresDown.add(source.moreDown());
+      try {
+        source._nextOffsetDown = 0;
+        source._nextOffsetUp = 0;
+        if (!source.isDoneUp) {
+          futuresUp.add(source.moreUp());
+        }
+        if (!source.isDoneDown) {
+          futuresDown.add(source.moreDown());
+        }
+      } on ApiException catch (exception) {
+        _emit(failure(exception.message));
+        return;
+      }
     }
     cleanupOldState();
     List<List<T>> resultsUp = [];
     List<List<T>> resultsDown = [];
-    try {
-      resultsUp = await Future.wait(futuresUp);
-      resultsDown = await Future.wait(futuresDown);
-    } on ApiException catch (exception) {
-      _emit(failure(exception.message));
-      return;
-    }
+    resultsUp = await Future.wait(futuresUp);
+    resultsDown = await Future.wait(futuresDown);
 
     // Discard result if _searchQuery has
     // changed since the request was made.
@@ -158,8 +162,10 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
     // Get the data in the down direction
     List<List<T>> resultsDown = [];
     try {
-      resultsDown = await Future.wait(
-          sources.map((source) => source.moreDown()).toList());
+      resultsDown = await Future.wait(sources
+          .map((source) =>
+              source.isDoneDown ? Future<List<T>>.value([]) : source.moreDown())
+          .toList());
     } on ApiException catch (exception) {
       _emit(failure(exception.message));
       return;
@@ -197,8 +203,10 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
     // Get the data in the down direction
     List<List<T>> resultsUp = [];
     try {
-      resultsUp =
-          await Future.wait(sources.map((source) => source.moreUp()).toList());
+      resultsUp = await Future.wait(sources
+          .map((source) =>
+              source.isDoneUp ? Future<List<T>>.value([]) : source.moreUp())
+          .toList());
     } on ApiException catch (exception) {
       _emit(failure(exception.message));
       return;
