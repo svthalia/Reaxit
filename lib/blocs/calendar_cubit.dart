@@ -193,7 +193,7 @@ class EventsSource extends ListCubitSource<Event, CalendarEvent> {
   @override
   List<CalendarEvent> processDown(List<Event> results) => results
       .expand(CalendarEvent.splitEventIntoCalendarEvents)
-      .where((element) => !element.start.isBefore(cubit._splitTime))
+      .whereNot((element) => element.start.isBefore(cubit._splitTime))
       .toList();
 }
 
@@ -237,7 +237,7 @@ class PartnerEventSource extends ListCubitSource<PartnerEvent, CalendarEvent> {
   @override
   List<CalendarEvent> processDown(List<PartnerEvent> results) => results
       .expand(CalendarEvent.splitEventIntoCalendarEvents)
-      .where((element) => !element.start.isBefore(cubit._splitTime))
+      .whereNot((element) => element.start.isBefore(cubit._splitTime))
       .toList();
 }
 
@@ -288,7 +288,7 @@ class CalendarCubit extends ListCubit<Event, CalendarEvent, CalendarState> {
       ...results.flattened
     ];
     _remainingPastEvents.clear();
-    newEvents.sort((a, b) => a.start.compareTo(b.start));
+    newEvents.sortBy((element) => element.start);
     return newEvents;
   }
 
@@ -299,7 +299,7 @@ class CalendarCubit extends ListCubit<Event, CalendarEvent, CalendarState> {
       ...results.flattened
     ];
     _remainingPastEvents.clear();
-    newEvents.sort((a, b) => a.start.compareTo(b.start));
+    newEvents.sortBy((e) => e.start);
     return newEvents;
   }
 
@@ -356,8 +356,13 @@ class CalendarCubit extends ListCubit<Event, CalendarEvent, CalendarState> {
   }
 
   @override
-  CalendarState empty(String query) => CalendarState(_truthTime,
-      const DoubleListState.failure(message: 'There are no events.'));
+  CalendarState empty(String query) => query.isEmpty
+      ? CalendarState(_truthTime,
+          const DoubleListState.failure(message: 'There are no events.'))
+      : CalendarState(
+          _truthTime,
+          DoubleListState.failure(
+              message: 'There are no events found for "$query"'));
 
   @override
   CalendarState failure(String message) =>
@@ -395,7 +400,7 @@ class CalendarCubit extends ListCubit<Event, CalendarEvent, CalendarState> {
       .expand(
         CalendarEvent.splitEventIntoCalendarEvents,
       )
-      .where((element) => !element.start.isBefore(_splitTime))
+      .whereNot((element) => element.start.isBefore(_splitTime))
       .toList();
 
   @override

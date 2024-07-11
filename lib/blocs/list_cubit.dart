@@ -82,10 +82,11 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
 
   // Initial load the the data, but only fetches new data if the debounce timer
   // is done.
-  Future<void> cachedLoad() async {
+  Future<void> cachedLoad() {
     if (_debounceTimer == null || !_debounceTimer!.isActive) {
       return load();
     }
+    return Future.value();
   }
 
   /// Initial load of the data, resets all the state and loads data in both ways.
