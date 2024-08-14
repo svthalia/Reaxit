@@ -292,10 +292,12 @@ class _EventScreenState extends State<EventScreen> {
         Future.delayed(
           event.registrationStart!.difference(DateTime.now()),
           () {
-            setState(
-              () {},
-            );
-            _buttonControler.update(MaterialState.disabled, false);
+            if (mounted) {
+              _buttonControler.update(MaterialState.disabled, false);
+              setState(
+                () {},
+              );
+            }
           },
         );
       }
