@@ -621,7 +621,11 @@ class _AvatarViewDialogState extends State<AvatarViewDialog> {
       // want to allow the user to update multiple
       // fields. As long as that isn't the case, we
       // also need to reload the MemberCubit below.
-      await widget.memberCubit.load(widget.member.pk);
+      if (!widget.memberCubit.isClosed) {
+        // It is possible the widget has been disposed, closing the memberCubit.
+        // Hence we only do this if it is not already closed.
+        await widget.memberCubit.load(widget.member.pk);
+      }
       messenger.hideCurrentSnackBar();
     } on ApiException {
       messenger.hideCurrentSnackBar();
@@ -668,7 +672,11 @@ class _AvatarViewDialogState extends State<AvatarViewDialog> {
       // want to allow the user to update multiple
       // fields. As long as that isn't the case, we
       // also need to reload the MemberCubit below.
-      await widget.memberCubit.load(widget.member.pk);
+      if (!widget.memberCubit.isClosed) {
+        // It is possible the widget has been disposed, closing the memberCubit.
+        // Hence we only do this if it is not already closed.
+        await widget.memberCubit.load(widget.member.pk);
+      }
       messenger.hideCurrentSnackBar();
     } on ApiException {
       messenger.hideCurrentSnackBar();
