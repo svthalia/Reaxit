@@ -18,14 +18,12 @@ class GroupsCubit extends SingleListCubit<ListGroup> {
       oldstate.results + downResults;
 
   @override
-  ListState<ListGroup> empty(String query) {
-    if (query.isEmpty) {
-      return const ListState.failure(message: 'No groups found.');
-    } else {
-      return ListState.failure(
-          message: "No groups found found for query '$query'");
-    }
-  }
+  ListState<ListGroup> empty(String? query) => switch (query) {
+        null => const ListState.failure(message: 'No groups found.'),
+        '' => const ListState.failure(message: 'Start searching for groups'),
+        var q =>
+          ListState.failure(message: 'No groups found found for query "$q"'),
+      };
 
   @override
   Future<ListResponse<ListGroup>> getDown(int offset) => api.getGroups(

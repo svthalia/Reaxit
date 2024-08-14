@@ -316,7 +316,7 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
   S loadingDown(S oldstate);
 
   /// empty returns a state to be used when showing there is no data
-  S empty(String query);
+  S empty(String? query);
 
   /// failure returns a state to be used when showing there was a failure
   S failure(String message);

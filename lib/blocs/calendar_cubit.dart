@@ -356,13 +356,18 @@ class CalendarCubit extends ListCubit<Event, CalendarEvent, CalendarState> {
   }
 
   @override
-  CalendarState empty(String query) => query.isEmpty
-      ? CalendarState(_truthTime,
-          const DoubleListState.failure(message: 'There are no events.'))
-      : CalendarState(
-          _truthTime,
-          DoubleListState.failure(
-              message: 'There are no events found for "$query"'));
+  CalendarState empty(String? query) => switch (query) {
+        null => CalendarState(_truthTime,
+            const DoubleListState.failure(message: 'No events found.')),
+        '' => CalendarState(
+            _truthTime,
+            const DoubleListState.failure(
+                message: 'Start searching for events')),
+        var q => CalendarState(
+            _truthTime,
+            DoubleListState.failure(
+                message: 'No events found found for query "$q"')),
+      };
 
   @override
   CalendarState failure(String message) =>

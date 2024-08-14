@@ -25,7 +25,7 @@ class ThabloidCubit extends SingleListCubit<Thabloid> {
       oldstate.results + downResults;
 
   @override
-  ListState<Thabloid> empty(String query) {
+  ListState<Thabloid> empty(String? query) {
     return const ListState.failure(message: 'No thabloids found.');
   }
 }
