@@ -30,7 +30,7 @@ class _ThabloidScreenState extends State<ThabloidScreen> {
   void _scrollListener() {
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
-      _cubit.more();
+      _cubit.moreDown();
     }
   }
 

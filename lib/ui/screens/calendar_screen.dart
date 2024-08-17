@@ -47,7 +47,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void _scrollListener() {
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
-      _cubit.more();
+      _cubit.moreDown();
     }
   }
 
@@ -154,7 +154,7 @@ class CalendarSearchDelegate extends SearchDelegate {
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
       if (!_cubit.state.isLoadingMoreDown) {
-        _cubit.more();
+        _cubit.moreDown();
       }
     }
   }

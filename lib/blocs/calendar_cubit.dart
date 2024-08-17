@@ -2,12 +2,10 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/api/api_repository.dart';
-import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
-import 'package:reaxit/config.dart';
+import 'package:reaxit/blocs/list_cubit.dart';
 import 'package:reaxit/models.dart';
 
 /// Wrapper around a [BaseEvent] to be shown in the calendar.
@@ -160,31 +158,100 @@ class CalendarState extends Equatable {
   List<Object?> get props => [now, events];
 }
 
-class CalendarCubit extends Cubit<CalendarState> {
+class EventsSource extends ListCubitSource<Event, CalendarEvent> {
+  CalendarCubit cubit;
+
   static const int firstPageSize = 20;
   static const int pageSize = 5;
 
-  final ApiRepository api;
+  EventsSource(this.cubit);
 
-  /// The last used search query. Can be set through `this.search(query)`.
-  String? _searchQuery;
+  @override
+  Future<ListResponse<Event>> getDown(int offset) => cubit.api.getEvents(
+        start: cubit._splitTime,
+        search: cubit.searchQuery,
+        ordering: 'start',
+        limit: offset == 0 ? firstPageSize : pageSize,
+        offset: offset,
+      );
 
-  /// The last used search query. Can be set through `this.search(query)`.
-  String? get searchQuery => _searchQuery;
+  @override
+  Future<ListResponse<Event>> getUp(int offset) => cubit.api.getEvents(
+        end: cubit._splitTime,
+        search: cubit.searchQuery,
+        ordering: '-end',
+        limit: offset == 0 ? firstPageSize : pageSize,
+        offset: offset,
+      );
 
-  /// A timer used to debounce calls to `this.load()` from `this.search()`.
-  Timer? _searchDebounceTimer;
+  @override
+  List<CalendarEvent> processUp(List<Event> results) => results
+      .expand(CalendarEvent.splitEventIntoCalendarEvents)
+      .where((element) => element.start.isBefore(cubit._splitTime))
+      .toList();
 
-  /// The offset to be used for the next paginated request.
-  int _nextOffset = 0;
-  int _nextPastOffset = 0;
+  @override
+  List<CalendarEvent> processDown(List<Event> results) => results
+      .expand(CalendarEvent.splitEventIntoCalendarEvents)
+      .whereNot((element) => element.start.isBefore(cubit._splitTime))
+      .toList();
+}
 
-  /// The time rounded down to the month used to split the events in "past" and
-  /// "future". Also used in the query. This is a final to avoid race conditions
-  DateTime get _splitTime => DateTime(_truthTime.year, _truthTime.month);
+class PartnerEventSource extends ListCubitSource<PartnerEvent, CalendarEvent> {
+  CalendarCubit cubit;
 
-  // _truthTime is the time that we base "now" on for the calendar.
-  DateTime _truthTime = DateTime.now();
+  static const int pageSize = 5;
+
+  PartnerEventSource(this.cubit);
+
+  @override
+  Future<ListResponse<PartnerEvent>> getDown(int offset) =>
+      cubit._remainingFutureEvents
+              .none((element) => element.parentEvent is PartnerEvent)
+          ? cubit.api.getPartnerEvents(
+              start: cubit._splitTime,
+              search: cubit.searchQuery,
+              ordering: 'start',
+              offset: offset,
+            )
+          : Future.value(const ListResponse(0, []));
+
+  @override
+  Future<ListResponse<PartnerEvent>> getUp(int offset) =>
+      cubit._remainingPastEvents
+              .none((element) => element.parentEvent is PartnerEvent)
+          ? cubit.api.getPartnerEvents(
+              start: cubit._splitTime,
+              search: cubit.searchQuery,
+              ordering: '-end',
+              offset: offset,
+            )
+          : Future.value(const ListResponse(0, []));
+
+  @override
+  List<CalendarEvent> processUp(List<PartnerEvent> results) => results
+      .expand(CalendarEvent.splitEventIntoCalendarEvents)
+      .where((element) => element.start.isBefore(cubit._splitTime))
+      .toList();
+
+  @override
+  List<CalendarEvent> processDown(List<PartnerEvent> results) => results
+      .expand(CalendarEvent.splitEventIntoCalendarEvents)
+      .whereNot((element) => element.start.isBefore(cubit._splitTime))
+      .toList();
+}
+
+class CalendarCubit extends ListCubit<Event, CalendarEvent, CalendarState> {
+  CalendarCubit(ApiRepository api)
+      : super(api,
+            CalendarState(DateTime.now(), const DoubleListState.loading()));
+  late final List<ListCubitSource<dynamic, CalendarEvent>> _sources = [
+    EventsSource(this),
+    PartnerEventSource(this)
+  ];
+
+  @override
+  List<ListCubitSource<dynamic, CalendarEvent>> get sources => _sources;
 
   /// A list of events that have been removed from the previous results
   /// in order to prevent them filling up the calendar before today.
@@ -197,316 +264,169 @@ class CalendarCubit extends Cubit<CalendarState> {
   /// later calls to [more()].
   List<CalendarEvent> _remainingFutureEvents = [];
 
-  /// Debouncetimer to fix things like load
-  Timer? _debounce;
+  /// The time rounded down to the month used to split the events in "past" and
+  /// "future". Also used in the query. This is a final to avoid race conditions
+  DateTime get _splitTime => DateTime(_truthTime.year, _truthTime.month);
 
-  CalendarCubit(this.api)
-      : super(CalendarState(DateTime.now(), const DoubleListState.loading()));
+  // _truthTime is the time that we base "now" on for the calendar.
+  DateTime _truthTime = DateTime.now();
 
-  Future<void> cachedLoad() async {
-    if (_debounce == null || !_debounce!.isActive) {
-      await load();
-    }
+  @override
+  bool canLoadMoreDown(CalendarState oldstate) =>
+      !oldstate.isDoneDown &&
+      !oldstate.isLoading &&
+      !oldstate.isLoadingMoreDown;
+
+  @override
+  bool canLoadMoreUp(CalendarState oldstate) =>
+      !oldstate.isDoneUp && !oldstate.isLoading && !oldstate.isLoadingMoreUp;
+
+  @override
+  List<CalendarEvent> mergeUp(List<List<CalendarEvent>> results) {
+    List<CalendarEvent> newEvents = [
+      ..._remainingPastEvents,
+      ...results.flattened
+    ];
+    _remainingPastEvents.clear();
+    newEvents.sortBy((element) => element.start);
+    return newEvents;
   }
 
-  List<CalendarEvent> filterDown(Iterable<CalendarEvent> events) {
-    // Get the last non-parter event that will be shown on the calendar.
-    CalendarEvent lastIncludedEvent = events.lastWhere(
-        (event) => event.parentEvent is! PartnerEvent && event.isFirstPart,
-        orElse: () => events.last);
-    // Remove anything before
-    _remainingFutureEvents = events
-        .where((element) => lastIncludedEvent.start.isBefore(element.start))
-        .toList();
-    return events
-        .where((element) => !lastIncludedEvent.start.isBefore(element.start))
-        .toList();
+  @override
+  List<CalendarEvent> mergeDown(List<List<CalendarEvent>> results) {
+    List<CalendarEvent> newEvents = [
+      ..._remainingFutureEvents,
+      ...results.flattened
+    ];
+    _remainingPastEvents.clear();
+    newEvents.sortBy((e) => e.start);
+    return newEvents;
   }
 
-  List<CalendarEvent> filterUp(Iterable<CalendarEvent> events) {
+  @override
+  List<CalendarEvent> filterUp(List<CalendarEvent> upResults) {
     // Get the first non-parter event that will be shown on the calendar.
-    CalendarEvent lastIncludedEvent = events.firstWhere(
+    CalendarEvent lastIncludedEvent = upResults.firstWhere(
       (event) => event.parentEvent is! PartnerEvent && event.isLasttPart,
-      orElse: () => events.first,
+      orElse: () => upResults.first,
     );
     // Remove anything before
-    _remainingPastEvents = events
+    _remainingPastEvents = upResults
+        .where((element) => element.start.isBefore(lastIncludedEvent.start))
+        .toList();
+    return upResults
         .whereNot((element) => element.start.isBefore(lastIncludedEvent.start))
         .toList();
-    return events
-        .where((element) => !element.start.isBefore(lastIncludedEvent.start))
+  }
+
+  @override
+  List<CalendarEvent> filterDown(List<CalendarEvent> downResults) {
+    // Get the last non-parter event that will be shown on the calendar.
+    CalendarEvent lastIncludedEvent = downResults.lastWhere(
+        (event) => event.parentEvent is! PartnerEvent && event.isFirstPart,
+        orElse: () => downResults.last);
+    // Remove anything before
+    _remainingFutureEvents = downResults
+        .where((element) => lastIncludedEvent.start.isBefore(element.start))
+        .toList();
+    return downResults
+        .whereNot((element) => lastIncludedEvent.start.isBefore(element.start))
         .toList();
   }
 
-  Future<void> load() async {
-    emit(CalendarState(DateTime.now(), const DoubleListState.loading()));
+  @override
+  List<CalendarEvent> combineDown(
+          List<CalendarEvent> downResults, CalendarState oldstate) =>
+      [
+        ...oldstate.resultsDown,
+        ...downResults,
+      ];
 
-    _debounce = Timer(const Duration(minutes: 10), () => {});
+  @override
+  List<CalendarEvent> combineUp(
+          List<CalendarEvent> upResults, CalendarState oldstate) =>
+      [
+        ...upResults,
+        ...oldstate.resultsUp,
+      ];
+
+  @override
+  void cleanupOldState() {
     _truthTime = DateTime.now();
+  }
 
-    try {
-      final query = _searchQuery;
-
-      // Get first page of events.
-      final futureEventsResponseFuture = api.getEvents(
-        start: _splitTime,
-        search: query,
-        ordering: 'start',
-        limit: firstPageSize,
-        offset: 0,
-      );
-      // get -1st page
-      final pastEventsResponseFuture = api.getEvents(
-        end: _splitTime,
-        search: query,
-        ordering: '-end',
-        limit: firstPageSize,
-        offset: 0,
-      );
-
-      // Get all partner events.
-      final futurePartnerEventsResponseFuture = api.getPartnerEvents(
-        start: _splitTime,
-        search: query,
-        ordering: 'start',
-      );
-      // Get all partner events.
-      final pastPartnerEventsResponseFuture = api.getPartnerEvents(
-        start: _splitTime,
-        search: query,
-        ordering: '-end',
-      );
-
-      // Wait for all the events to come in
-      final futureEventsResponse = await futureEventsResponseFuture;
-      final futurePartnerEventsResponse =
-          await futurePartnerEventsResponseFuture;
-      final pastEventsResponse = await pastEventsResponseFuture;
-      final pastPartnerEventsResponse = await pastPartnerEventsResponseFuture;
-
-      // Discard result if _searchQuery has
-      // changed since the request was made.
-      if (query != _searchQuery) return;
-
-      _remainingFutureEvents.clear();
-      _remainingPastEvents.clear();
-
-      _nextOffset = futureEventsResponse.results.length;
-      _nextPastOffset = pastEventsResponse.results.length;
-
-      final isDoneDown =
-          futureEventsResponse.results.length == futureEventsResponse.count;
-      final isDoneUp =
-          pastEventsResponse.results.length == pastEventsResponse.count;
-
-      // Split multi-day events and merge the lists
-      List<CalendarEvent> futureEvents = [
-        ...futurePartnerEventsResponse.results
-            .expand(CalendarEvent.splitEventIntoCalendarEvents)
-            .where((element) => !element.start.isBefore(_splitTime)),
-        ...futureEventsResponse.results
-            .expand(CalendarEvent.splitEventIntoCalendarEvents)
-            .where((element) => !element.start.isBefore(_splitTime)),
-      ];
-
-      futureEvents.sort((a, b) => a.start.compareTo(b.start));
-
-      if (!isDoneDown) {
-        // Filter events that we don't want to show just yet
-        futureEvents = filterDown(futureEvents);
-      }
-
-      // Split multi-day events and merge the lists
-      List<CalendarEvent> pastEvents = [
-        ...pastPartnerEventsResponse.results
-            .expand(CalendarEvent.splitEventIntoCalendarEvents)
-            .where((element) => element.start.isBefore(_splitTime)),
-        ...pastEventsResponse.results
-            .expand(CalendarEvent.splitEventIntoCalendarEvents)
-            .where((element) => element.start.isBefore(_splitTime)),
-      ];
-
-      // Move any events that started before _splitTime but ended after to the
-      // future events
-      pastEvents.sort((a, b) => a.start.compareTo(b.start));
-      while (
-          pastEvents.isNotEmpty && !pastEvents.last.end.isBefore(_splitTime)) {
-        futureEvents.add(pastEvents.removeLast());
-      }
-
-      // Remove the first partner events and day parts of events that could fill
-      // up the calendar further then where the first not-loaded event will go
-      // later.
-      if (!isDoneUp) {
-        pastEvents = filterUp(pastEvents);
-      }
-
-      if (pastEvents.isEmpty && futureEvents.isEmpty) {
-        if (query?.isEmpty ?? true) {
-          emit(CalendarState(_truthTime,
-              const DoubleListState.failure(message: 'There are no events.')));
-        } else {
-          emit(CalendarState(
-              _truthTime,
-              DoubleListState.failure(
-                message: 'There are no events found for "$query".',
-              )));
-        }
-      } else {
-        emit(CalendarState(
+  @override
+  CalendarState empty(String? query) => switch (query) {
+        null => CalendarState(_truthTime,
+            const DoubleListState.failure(message: 'No events found.')),
+        '' => CalendarState(
             _truthTime,
-            DoubleListState.success(
-                resultsUp: pastEvents,
-                resultsDown: futureEvents,
-                isDoneUp: isDoneUp,
-                isDoneDown: isDoneDown)));
-      }
-    } on ApiException catch (exception) {
-      emit(CalendarState(
-          _truthTime, DoubleListState.failure(message: exception.message)));
-    }
-  }
+            const DoubleListState.failure(
+                message: 'Start searching for events')),
+        var q => CalendarState(
+            _truthTime,
+            DoubleListState.failure(
+                message: 'No events found found for query "$q"')),
+      };
 
-  Future<void> more() async {
-    final oldState = state;
+  @override
+  CalendarState failure(String message) =>
+      CalendarState(_truthTime, DoubleListState.failure(message: message));
 
-    // Ignore calls to `more()` if there is no data, or already more coming.
-    if (oldState.isDoneDown ||
-        oldState.isLoading ||
-        oldState.isLoadingMoreDown) {
-      return;
-    }
+  @override
+  CalendarState loading() =>
+      CalendarState(_truthTime, const DoubleListState.loading());
 
-    emit(CalendarState(
-        _truthTime, oldState.events.copyWith(isLoadingMoreDown: true)));
-    try {
-      final query = _searchQuery;
-      final start = _splitTime;
+  @override
+  CalendarState loadingDown(CalendarState oldstate) => CalendarState(
+      _truthTime, oldstate.events.copyWith(isLoadingMoreDown: true));
 
-      // Get next page of events.
-      final eventsResponse = await api.getEvents(
-        start: start,
-        search: query,
-        ordering: 'start',
-        limit: pageSize,
-        offset: _nextOffset,
+  @override
+  CalendarState loadingUp(CalendarState oldstate) => CalendarState(
+      _truthTime, oldstate.events.copyWith(isLoadingMoreUp: true));
+
+  @override
+  CalendarState newState(
+          {List<CalendarEvent> resultsUp = const [],
+          List<CalendarEvent> resultsDown = const [],
+          required bool isDoneUp,
+          required bool isDoneDown}) =>
+      CalendarState(
+        _truthTime,
+        DoubleListState.success(
+            resultsUp: resultsUp,
+            resultsDown: resultsDown,
+            isDoneUp: isDoneUp,
+            isDoneDown: isDoneDown),
       );
 
-      // Discard result if _searchQuery has
-      // changed since the request was made.
-      if (query != _searchQuery) return;
+  @override
+  List<CalendarEvent> processDown(List<Event> downResults) => downResults
+      .expand(
+        CalendarEvent.splitEventIntoCalendarEvents,
+      )
+      .whereNot((element) => element.start.isBefore(_splitTime))
+      .toList();
 
-      _nextOffset += eventsResponse.results.length;
+  @override
+  List<CalendarEvent> processUp(List<Event> upResults) => upResults
+      .expand(
+        CalendarEvent.splitEventIntoCalendarEvents,
+      )
+      .where((element) => element.start.isBefore(_splitTime))
+      .toList();
 
-      List<CalendarEvent> newEvents = [
-        ..._remainingFutureEvents,
-        ...eventsResponse.results
-            .expand(
-              CalendarEvent.splitEventIntoCalendarEvents,
-            )
-            .where((element) => !element.start.isBefore(_splitTime)),
-      ];
-      _remainingFutureEvents.clear();
+  @override
+  CalendarState updateDown(CalendarState oldstate,
+          List<CalendarEvent> downResults, bool isDoneDown) =>
+      CalendarState(
+          _truthTime,
+          oldstate.events
+              .copyWith(resultsDown: downResults, isDoneDown: isDoneDown));
 
-      // Sort only the new events, because the old events in
-      // `_state.result` are known to be complete and sorted.
-      newEvents.sort((a, b) => a.start.compareTo(b.start));
-
-      // Remove events we don't want to see yet, because we have not loaded up
-      // to there yet
-      final isDone = _nextOffset == eventsResponse.count;
-      if (!isDone) {
-        newEvents = filterDown(newEvents);
-      }
-
-      final events = [
-        ...oldState.resultsDown,
-        ...newEvents,
-      ];
-
-      emit(CalendarState(
-          _truthTime, oldState.events.copySuccessDown(events, isDone)));
-    } on ApiException catch (exception) {
-      emit(CalendarState(
-          _truthTime, DoubleListState.failure(message: exception.message)));
-    }
-  }
-
-  Future<void> moreUp() async {
-    final oldState = state;
-    // Ignore calls to `moreUp()` if there is no data, or already more coming.
-    if (oldState.isDoneUp || oldState.isLoading || oldState.isLoadingMoreUp) {
-      return;
-    }
-
-    emit(CalendarState(
-        _truthTime, oldState.events.copyWith(isLoadingMoreUp: true)));
-    try {
-      final query = _searchQuery;
-
-      // Get next page of events.
-      final eventsResponse = await api.getEvents(
-        end: _splitTime,
-        search: query,
-        ordering: '-end',
-        limit: pageSize,
-        offset: _nextPastOffset,
-      );
-
-      // Discard result if _searchQuery has
-      // changed since the request was made.
-      if (query != _searchQuery) return;
-
-      _nextPastOffset += eventsResponse.results.length;
-
-      List<CalendarEvent> newEvents = [
-        ..._remainingPastEvents,
-        ...eventsResponse.results
-            .expand(
-              CalendarEvent.splitEventIntoCalendarEvents,
-            )
-            .where((element) => element.start.isBefore(_splitTime)),
-      ];
-      _remainingPastEvents.clear();
-
-      // Sort only the new events, because the old events in
-      // `_state.result` are known to be complete and sorted.
-      newEvents.sort((a, b) => a.start.compareTo(b.start));
-
-      final isDoneUp = _nextPastOffset == eventsResponse.count;
-      if (!isDoneUp) {
-        newEvents = filterUp(newEvents);
-      }
-
-      final events = [
-        ...newEvents,
-        ...oldState.resultsUp,
-      ];
-
-      emit(CalendarState(
-          _truthTime, oldState.events.copySuccessUp(events, isDoneUp)));
-    } on ApiException catch (exception) {
-      emit(CalendarState(
-          _truthTime, DoubleListState.failure(message: exception.message)));
-    }
-  }
-
-  /// Set this cubit's `searchQuery` and load the events for that query.
-  ///
-  /// Use `null` as argument to remove the search query.
-  void search(String? query) {
-    if (query != _searchQuery) {
-      _remainingFutureEvents = [];
-      _remainingPastEvents = [];
-      _searchQuery = query;
-      _searchDebounceTimer?.cancel();
-      if (query?.isEmpty ?? false) {
-        /// Don't get results when the query is empty.
-        emit(CalendarState(_truthTime,
-            const DoubleListState.success(isDoneUp: true, isDoneDown: true)));
-      } else {
-        _searchDebounceTimer = Timer(Config.searchDebounceTime, load);
-      }
-    }
-  }
+  @override
+  CalendarState updateUp(CalendarState oldstate, List<CalendarEvent> upResults,
+          bool isDoneUp) =>
+      CalendarState(_truthTime,
+          oldstate.events.copyWith(resultsUp: upResults, isDoneUp: isDoneUp));
 }

@@ -24,11 +24,10 @@ class AlbumListCubit extends SingleListCubit<ListAlbum> {
       oldstate.results + downResults;
 
   @override
-  ListState<ListAlbum> empty(String query) {
-    if (query.isEmpty) {
-      return const ListState.failure(message: 'No albums found.');
-    } else {
-      return ListState.failure(message: 'No albums found for query $query.');
-    }
-  }
+  ListState<ListAlbum> empty(String? query) => switch (query) {
+        null => const ListState.failure(message: 'No albums found.'),
+        '' => const ListState.failure(message: 'Start searching for albums'),
+        var q =>
+          ListState.failure(message: 'No albums found found for query "$q"'),
+      };
 }
