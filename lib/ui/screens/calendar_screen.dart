@@ -301,12 +301,12 @@ class CalendarScrollView extends StatelessWidget {
                           ? Icon(
                               Icons.more_horiz,
                               size: 50,
-                              color: theme.colorScheme.secondary,
+                              color: theme.colorScheme.primary,
                             )
                           : Text(
                               'SCROLL TO LOAD MORE',
                               style: theme.textTheme.bodyLarge!.copyWith(
-                                color: theme.colorScheme.secondary,
+                                color: theme.colorScheme.primary,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
