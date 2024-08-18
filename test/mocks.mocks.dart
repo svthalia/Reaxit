@@ -1169,6 +1169,7 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     int? limit,
     int? offset,
     String? ordering,
+    int? year,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1179,6 +1180,7 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
             #limit: limit,
             #offset: offset,
             #ordering: ordering,
+            #year: year,
           },
         ),
         returnValue: _i8.Future<_i4.ListResponse<_i4.ListMember>>.value(
@@ -1192,6 +1194,7 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
               #limit: limit,
               #offset: offset,
               #ordering: ordering,
+              #year: year,
             },
           ),
         )),

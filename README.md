@@ -24,7 +24,7 @@ The latest ThaliApp built on Flutter.
 ### Other commands
 
 - To run in release mode (without debugging capabilities, so the app does not feel slow), use `flutter run --release`.
-- If you've modified anything in `lib/models/*` (that uses `json_serializable`) or something that is mocked in tests, renew the generated files with `flutter pub run build_runner build --delete-conflicting-outputs`.
+- If you've modified anything in `lib/models/*` (that uses `json_serializable`) or something that is mocked in tests, renew the generated files with `dart run build_runner build --delete-conflicting-outputs`.
 - If anything does not work, run `flutter clean` and try again or run `flutter doctor -v` to check whether everything is installed correctly.
 - You can run unit and widget tests with `flutter test`. For integration tests (on a real device or simulator) use `flutter test integration_test`.
 - Check out the options that can be passed with `--dart-define` in `lib/config.dart` to run the app using tha API of a local server, to enable TOSTI or run the app with the production API. 

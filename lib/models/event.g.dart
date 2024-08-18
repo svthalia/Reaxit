@@ -99,6 +99,7 @@ EventPermissions _$EventPermissionsFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$EventPermissionsToJson(EventPermissions instance) =>
     <String, dynamic>{
       'create_registration': instance.createRegistration,
+      'create_registration_when_open': instance.createRegistrationWhenOpen,
       'cancel_registration': instance.cancelRegistration,
       'update_registration': instance.updateRegistration,
       'manage_event': instance.manageEvent,

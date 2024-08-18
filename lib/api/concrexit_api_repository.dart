@@ -917,6 +917,7 @@ class ConcrexitApiRepository implements ApiRepository {
     int? limit,
     int? offset,
     String? ordering,
+    int? year,
   }) async {
     assert(
       ordering == null ||
@@ -938,6 +939,7 @@ class ConcrexitApiRepository implements ApiRepository {
           if (limit != null) 'limit': limit.toString(),
           if (offset != null) 'offset': offset.toString(),
           if (ordering != null) 'ordering': ordering,
+          if (year != null) 'starting_year': year.toString(),
         },
       );
 

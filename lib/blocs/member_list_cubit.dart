@@ -12,11 +12,14 @@ class MemberListCubit extends SingleListCubit<ListMember> {
   static const int firstPageSize = 60;
   static const int pageSize = 30;
 
+  int? year;
+
   @override
   Future<ListResponse<ListMember>> getDown(int offset) => api.getMembers(
         search: searchQuery,
         limit: offset == 0 ? firstPageSize : pageSize,
         offset: offset,
+        year: year,
       );
 
   @override
@@ -31,4 +34,14 @@ class MemberListCubit extends SingleListCubit<ListMember> {
         var q =>
           ListState.failure(message: 'No members found found for query "$q"'),
       };
+
+  /// Set this cubit's `searchQuery` and load the albums for that query.
+  ///
+  /// Use `null` as argument to remove the search query.
+  void filterYear(int? year) {
+    if (year != this.year) {
+      this.year = year;
+      load();
+    }
+  }
 }
