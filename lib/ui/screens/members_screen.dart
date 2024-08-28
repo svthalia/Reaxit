@@ -75,6 +75,8 @@ class _MembersScreenState extends State<MembersScreen> {
                 key: const PageStorageKey('members'),
                 controller: _controller,
                 listState: listState,
+                currentYear: _cubit.year,
+                setYear: _cubit.filterYear,
               );
             }
           },
@@ -151,6 +153,8 @@ class MembersSearchDelegate extends SearchDelegate {
             key: const PageStorageKey('members-search'),
             controller: _controller,
             listState: listState,
+            currentYear: _cubit.year,
+            setYear: _cubit.filterYear,
           );
         }
       },
@@ -159,20 +163,64 @@ class MembersSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return BlocBuilder<MemberListCubit, MemberListState>(
-      bloc: _cubit..search(query),
-      builder: (context, listState) {
-        if (listState.hasException) {
-          return ErrorScrollView(listState.message!);
-        } else {
-          return MemberListScrollView(
-            key: const PageStorageKey('members-search'),
-            controller: _controller,
-            listState: listState,
-          );
-        }
-      },
+    return buildResults(context);
+  }
+}
+
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  final int? currentYear;
+  final void Function(int?) setYear;
+
+  _SliverAppBarDelegate(this.currentYear, this.setYear);
+
+  final double height = 50;
+  final List<int> list =
+      List.generate(DateTime.now().year - 2014 + 1, (i) => 2014 + i)
+          .reversed
+          .toList();
+
+  @override
+  double get minExtent => height;
+
+  @override
+  double get maxExtent => height;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return ListView(
+      scrollDirection: Axis.horizontal,
+      primary: false,
+      children: [
+        Wrap(
+          children: [
+            const Padding(padding: EdgeInsets.all(2.5), child: Stack()),
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: FilterChip(
+                selected: null == currentYear,
+                label: const Text('ALL'),
+                onSelected: (_) => setYear(null),
+              ),
+            ),
+            ...list.map((year) => Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: FilterChip(
+                    selected: year == currentYear,
+                    label: Text(year.toString()),
+                    onSelected: (_) => setYear(year),
+                  ),
+                )),
+            const Padding(padding: EdgeInsets.all(2.5), child: Stack()),
+          ],
+        ),
+      ],
     );
+  }
+
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    return oldDelegate.currentYear != currentYear;
   }
 }
 
@@ -183,11 +231,15 @@ class MembersSearchDelegate extends SearchDelegate {
 class MemberListScrollView extends StatelessWidget {
   final ScrollController controller;
   final MemberListState listState;
+  final int? currentYear;
+  final void Function(int?) setYear;
 
   const MemberListScrollView({
     super.key,
     required this.controller,
     required this.listState,
+    required this.currentYear,
+    required this.setYear,
   });
 
   @override
@@ -200,6 +252,9 @@ class MemberListScrollView extends StatelessWidget {
             parent: AlwaysScrollableScrollPhysics(),
           ),
           slivers: [
+            SliverPersistentHeader(
+              delegate: _SliverAppBarDelegate(currentYear, setYear),
+            ),
             SliverPadding(
               padding: const EdgeInsets.all(8),
               sliver: SliverGrid(

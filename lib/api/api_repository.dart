@@ -250,6 +250,7 @@ abstract class ApiRepository {
     int? limit,
     int? offset,
     String? ordering,
+    int? year,
   });
 
   /// Get the logged in [FullMember].

@@ -3,12 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 
 const Color magenta = Color(0xFFE62272);
 
-ColorScheme lightColorScheme = const ColorScheme(
+ColorScheme lightColorScheme = ColorScheme(
   primary: magenta,
   onPrimary: Colors.white,
-  secondary: magenta,
+  secondary: magenta.withOpacity(0.8),
   onSecondary: Colors.white,
-  surface: Colors.white,
+  surface: const Color.fromRGBO(255, 255, 255, 1),
   surfaceTint: Colors.transparent,
   onSurface: Colors.black,
   error: Colors.red,
@@ -16,14 +16,14 @@ ColorScheme lightColorScheme = const ColorScheme(
   brightness: Brightness.light,
 );
 
-ColorScheme darkColorScheme = const ColorScheme(
+ColorScheme darkColorScheme = ColorScheme(
   primary: magenta,
   onPrimary: Colors.white,
-  secondary: magenta,
+  secondary: magenta.withOpacity(0.5),
   onSecondary: Colors.white,
-  surface: Color(0xFF111111),
-  surfaceContainerLow: Color(0xFF212121),
+  surface: const Color(0xFF111111),
   surfaceTint: Colors.transparent,
+  surfaceContainerLow: const Color(0xFF212121),
   onSurface: Colors.white,
   error: Colors.red,
   onError: Colors.white,
@@ -139,7 +139,7 @@ ThemeData darkTheme = ThemeData.from(
   colorScheme: darkColorScheme,
   textTheme: generatedTextTheme,
 ).copyWith(
-  applyElevationOverlayColor: false,
+  // applyElevationOverlayColor: false,
   // TODO: Make text less white.
   primaryTextTheme: ThemeData.dark().primaryTextTheme.merge(generatedTextTheme),
   elevatedButtonTheme: ElevatedButtonThemeData(style: darkElevatedButtonStyle),

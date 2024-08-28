@@ -108,7 +108,7 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
         futuresUp.add(source.moreUp());
         futuresDown.add(source.moreDown());
       } on ApiException catch (exception) {
-        _emit(failure(exception.message));
+        safeEmit(failure(exception.message));
         return;
       }
     }
@@ -142,9 +142,9 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
     }
 
     if (upResults.isEmpty && downResults.isEmpty) {
-      _emit(empty(query ?? ''));
+      safeEmit(empty(query ?? ''));
     } else {
-      _emit(newState(
+      safeEmit(newState(
           resultsUp: upResults,
           resultsDown: downResults,
           isDoneUp: isDoneUp,
@@ -164,7 +164,7 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
       return;
     }
 
-    _emit(loadingDown(oldState));
+    safeEmit(loadingDown(oldState));
 
     // Get the data in the down direction
     List<List<T>> resultsDown = [];
@@ -172,7 +172,7 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
       resultsDown =
           await Future.wait(sources.map((source) => source.moreDown()));
     } on ApiException catch (exception) {
-      _emit(failure(exception.message));
+      safeEmit(failure(exception.message));
       return;
     }
 
@@ -188,7 +188,7 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
     }
     final totalDownResults = combineDown(downResults, oldState);
 
-    _emit(updateDown(oldState, totalDownResults, isDoneDown));
+    safeEmit(updateDown(oldState, totalDownResults, isDoneDown));
   }
 
   /// moreUp loads more data in the up direction. For example when hitting
@@ -203,14 +203,14 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
       return;
     }
 
-    _emit(loadingUp(oldState));
+    safeEmit(loadingUp(oldState));
 
     // Get the data in the down direction
     List<List<T>> resultsUp = [];
     try {
       resultsUp = await Future.wait(sources.map((source) => source.moreUp()));
     } on ApiException catch (exception) {
-      _emit(failure(exception.message));
+      safeEmit(failure(exception.message));
       return;
     }
 
@@ -227,7 +227,7 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
 
     final totalUpResults = combineUp(upResults, oldState);
 
-    _emit(updateUp(oldState, totalUpResults, isDoneUp));
+    safeEmit(updateUp(oldState, totalUpResults, isDoneUp));
   }
 
   /// Set this cubit's `searchQuery` and load the albums for that query.
@@ -239,14 +239,14 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
       _searchDebounceTimer?.cancel();
       if (query?.isEmpty ?? false) {
         /// Don't get results when the query is empty.
-        _emit(empty(query ?? ''));
+        safeEmit(empty(query ?? ''));
       } else {
         _searchDebounceTimer = Timer(Config.searchDebounceTime, load);
       }
     }
   }
 
-  void _emit(S state) {
+  void safeEmit(S state) {
     // Since functions cannot be interupted in dart(without await), and isolates
     // dont share memory. Thus we know there is no interuption between this check
     // and emiting the state
