@@ -21,7 +21,8 @@ ColorScheme darkColorScheme = const ColorScheme(
   onPrimary: Colors.white,
   secondary: magenta,
   onSecondary: Colors.white,
-  surface: Color(0xFF212121),
+  surface: Color(0xFF111111),
+  surfaceContainerLow: Color(0xFF212121),
   surfaceTint: Colors.transparent,
   onSurface: Colors.white,
   error: Colors.red,
@@ -142,7 +143,6 @@ ThemeData darkTheme = ThemeData.from(
   // TODO: Make text less white.
   primaryTextTheme: ThemeData.dark().primaryTextTheme.merge(generatedTextTheme),
   elevatedButtonTheme: ElevatedButtonThemeData(style: darkElevatedButtonStyle),
-  appBarTheme: lightTheme.appBarTheme.copyWith(),
   dialogBackgroundColor: darkColorScheme.surface,
   dividerColor: Colors.white60,
   checkboxTheme: CheckboxThemeData(
@@ -189,10 +189,11 @@ ThemeData darkTheme = ThemeData.from(
         return null;
       }
       if (states.contains(WidgetState.selected)) {
-        return darkColorScheme.primary;
+        return darkColorScheme.primary.withOpacity(0.2);
       }
       return null;
     }),
+    trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
   ),
   dividerTheme: dividerTheme,
 );

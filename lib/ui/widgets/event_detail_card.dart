@@ -50,11 +50,9 @@ class EventDetailCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color color = switch (event) {
-      Event(isRegistered: var isRegistered) when isRegistered =>
-        Theme.of(context).colorScheme.primary,
+    Color? color = switch (event) {
       PartnerEvent _ => Colors.black,
-      _ => Theme.of(context).colorScheme.surface,
+      _ => null,
     };
     final start = timeFormatter.format(event.start.toLocal());
     final end = timeFormatter.format(event.end.toLocal());
