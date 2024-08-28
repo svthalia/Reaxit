@@ -38,7 +38,7 @@ class SortButton<T> extends StatelessWidget implements AppbarAction {
           ? MenuItemButton(
               closeOnActivate: false,
               style: ButtonStyle(
-                  textStyle: MaterialStateTextStyle.resolveWith(
+                  textStyle: WidgetStateTextStyle.resolveWith(
                       (states) => Theme.of(context).textTheme.labelLarge!)),
               onPressed: controller.open,
               leadingIcon: const Icon(Icons.sort),

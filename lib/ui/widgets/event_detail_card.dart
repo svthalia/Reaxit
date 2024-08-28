@@ -11,7 +11,6 @@ class EventDetailCard extends StatelessWidget {
   final BaseEvent event;
   final Color _indicatorColor;
   final bool _hasFoodEvent;
-  final Color? _color;
   final Color? _textColor;
 
   static Color _getIndicatorColor(Event event) {
@@ -28,8 +27,7 @@ class EventDetailCard extends StatelessWidget {
 
   EventDetailCard({
     required this.event,
-  })  : _color = event is PartnerEvent ? Colors.black : null,
-        _textColor = event is PartnerEvent ? Colors.white : null,
+  })  : _textColor = event is PartnerEvent ? Colors.white : null,
         _indicatorColor =
             event is Event ? _getIndicatorColor(event) : Colors.transparent,
         _hasFoodEvent = event is Event ? event.hasFoodEvent : false;
@@ -52,6 +50,10 @@ class EventDetailCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color? color = switch (event) {
+      PartnerEvent _ => Colors.black,
+      _ => null,
+    };
     final start = timeFormatter.format(event.start.toLocal());
     final end = timeFormatter.format(event.end.toLocal());
 
@@ -60,7 +62,7 @@ class EventDetailCard extends StatelessWidget {
 
     final textTheme = Theme.of(context).textTheme;
     return Card(
-      color: _color,
+      color: color,
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: InkWell(
         onTap: () => _onTap(context),

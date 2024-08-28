@@ -8,7 +8,7 @@ on:
       - master
 
 env:
-  FLUTTER_VERSION: 3.16.4
+  FLUTTER_VERSION: 3.24.0
 
 jobs:
   linting:
@@ -126,7 +126,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-          ruby-version: 2.7.0
+          ruby-version: 3.3.4
 
       - name: Decode secrets
         env:
@@ -202,7 +202,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-          ruby-version: 2.7.0
+          ruby-version: 3.3.4
 
       - name: Gradle cache
         uses: actions/cache@v3

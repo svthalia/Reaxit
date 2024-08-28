@@ -33,7 +33,7 @@ class IconAppbarAction extends AppbarAction {
   Widget asMenuItem(BuildContext context, Function() callback) {
     return MenuItemButton(
       style: ButtonStyle(
-          textStyle: MaterialStateTextStyle.resolveWith(
+          textStyle: WidgetStateTextStyle.resolveWith(
               (states) => Theme.of(context).textTheme.labelLarge!)),
       onPressed: () {
         onpressed();
@@ -99,6 +99,7 @@ class ThaliaAppBar extends AppBar {
   }) : super(
           actions: collapse(collapsingActions),
           systemOverlayStyle: SystemUiOverlayStyle.light,
+          // surfaceTintColor: Colors.transparent,
           // The bottom decoration only needs to be shown
           // in dark mode, but is invisible in light mode,
           // so we can just leave it there.
@@ -108,7 +109,7 @@ class ThaliaAppBar extends AppBar {
                 child: Container(
                   decoration: const BoxDecoration(
                     border: Border(
-                      bottom: BorderSide(color: magenta),
+                      bottom: BorderSide(color: magenta, width: 2.0),
                     ),
                   ),
                 ),

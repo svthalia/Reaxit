@@ -51,9 +51,7 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
   _SortOrder _sortOrder = _SortOrder.nameDown;
 
   void _resetfilter(bool hidePayed) {
-    setState(() {
-      _filter = _defaultFilter(hidePayed);
-    });
+    _filter = _defaultFilter(hidePayed);
   }
 
   void _showPaymentFilter() async {
@@ -160,7 +158,9 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
       const Text('No results that match the filter',
           textAlign: TextAlign.center),
       TextButton(
-          onPressed: () => _resetfilter(paymentsHidden),
+          onPressed: () => setState(() {
+                _resetfilter(paymentsHidden);
+              }),
           child: const Text('Reset filter'))
     ]);
   }
@@ -187,10 +187,8 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                 } else {
                   // If payment is required, but they are also hidden (or vise-versa)
                   if (paymentsHidden == state.event!.paymentIsRequired) {
-                    setState(() {
-                      paymentsHidden = !state.event!.paymentIsRequired;
-                      _resetfilter(paymentsHidden);
-                    });
+                    paymentsHidden = !state.event!.paymentIsRequired;
+                    _resetfilter(paymentsHidden);
                   }
                   List<AdminEventRegistration> filteredRegistrations = state
                       .registrations
