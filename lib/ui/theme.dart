@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 const Color magenta = Color(0xFFE62272);
 
-ColorScheme lightColorScheme = ColorScheme(
+ColorScheme lightColorScheme = const ColorScheme(
   primary: magenta,
   onPrimary: Colors.white,
   secondary: magenta,
@@ -11,8 +11,6 @@ ColorScheme lightColorScheme = ColorScheme(
   surface: Colors.white,
   surfaceTint: Colors.transparent,
   onSurface: Colors.black,
-  background: Colors.grey[50]!,
-  onBackground: Colors.black,
   error: Colors.red,
   onError: Colors.white,
   brightness: Brightness.light,
@@ -26,8 +24,6 @@ ColorScheme darkColorScheme = const ColorScheme(
   surface: Color(0xFF212121),
   surfaceTint: Colors.transparent,
   onSurface: Colors.white,
-  background: Color(0xFF111111),
-  onBackground: Colors.white,
   error: Colors.red,
   onError: Colors.white,
   brightness: Brightness.dark,
@@ -109,15 +105,15 @@ TextTheme generatedTextTheme = TextTheme(
 
 ButtonStyle darkElevatedButtonStyle = ButtonStyle(
   backgroundColor:
-      MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
-    if (states.contains(MaterialState.disabled)) {
+      WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+    if (states.contains(WidgetState.disabled)) {
       return darkColorScheme.onSurface.withOpacity(0.12);
     }
     return darkColorScheme.primary;
   }),
   foregroundColor:
-      MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
-    if (states.contains(MaterialState.disabled)) {
+      WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+    if (states.contains(WidgetState.disabled)) {
       return darkColorScheme.onSurface.withOpacity(0.38);
     }
     return darkColorScheme.onPrimary;
@@ -146,18 +142,16 @@ ThemeData darkTheme = ThemeData.from(
   // TODO: Make text less white.
   primaryTextTheme: ThemeData.dark().primaryTextTheme.merge(generatedTextTheme),
   elevatedButtonTheme: ElevatedButtonThemeData(style: darkElevatedButtonStyle),
-  appBarTheme: lightTheme.appBarTheme.copyWith(
-    color: darkColorScheme.background,
-  ),
+  appBarTheme: lightTheme.appBarTheme.copyWith(),
   dialogBackgroundColor: darkColorScheme.surface,
   dividerColor: Colors.white60,
   checkboxTheme: CheckboxThemeData(
     fillColor:
-        MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
-      if (states.contains(MaterialState.disabled)) {
+        WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
         return null;
       }
-      if (states.contains(MaterialState.selected)) {
+      if (states.contains(WidgetState.selected)) {
         return darkColorScheme.primary;
       }
       return null;
@@ -168,11 +162,11 @@ ThemeData darkTheme = ThemeData.from(
   ),
   radioTheme: RadioThemeData(
     fillColor:
-        MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
-      if (states.contains(MaterialState.disabled)) {
+        WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
         return null;
       }
-      if (states.contains(MaterialState.selected)) {
+      if (states.contains(WidgetState.selected)) {
         return darkColorScheme.primary;
       }
       return null;
@@ -180,21 +174,21 @@ ThemeData darkTheme = ThemeData.from(
   ),
   switchTheme: SwitchThemeData(
     thumbColor:
-        MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
-      if (states.contains(MaterialState.disabled)) {
+        WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
         return null;
       }
-      if (states.contains(MaterialState.selected)) {
+      if (states.contains(WidgetState.selected)) {
         return darkColorScheme.primary;
       }
       return null;
     }),
     trackColor:
-        MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
-      if (states.contains(MaterialState.disabled)) {
+        WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
         return null;
       }
-      if (states.contains(MaterialState.selected)) {
+      if (states.contains(WidgetState.selected)) {
         return darkColorScheme.primary;
       }
       return null;

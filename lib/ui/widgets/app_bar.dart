@@ -33,7 +33,7 @@ class IconAppbarAction extends AppbarAction {
   Widget asMenuItem(BuildContext context, Function() callback) {
     return MenuItemButton(
       style: ButtonStyle(
-          textStyle: MaterialStateTextStyle.resolveWith(
+          textStyle: WidgetStateTextStyle.resolveWith(
               (states) => Theme.of(context).textTheme.labelLarge!)),
       onPressed: () {
         onpressed();

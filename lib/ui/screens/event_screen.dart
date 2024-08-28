@@ -35,7 +35,7 @@ class _EventScreenState extends State<EventScreen> {
 
   late final EventCubit _eventCubit;
 
-  final MaterialStatesController _buttonControler = MaterialStatesController();
+  final WidgetStatesController _buttonControler = WidgetStatesController();
 
   @override
   void initState() {
@@ -288,12 +288,12 @@ class _EventScreenState extends State<EventScreen> {
 
     if (event.canCreateRegistration || event.createRegistrationWhenOpen) {
       if (event.registrationStart!.isAfter(DateTime.now())) {
-        _buttonControler.update(MaterialState.disabled, true);
+        _buttonControler.update(WidgetState.disabled, true);
         Future.delayed(
           event.registrationStart!.difference(DateTime.now()),
           () {
             if (mounted) {
-              _buttonControler.update(MaterialState.disabled, false);
+              _buttonControler.update(WidgetState.disabled, false);
               setState(
                 () {},
               );
