@@ -40,6 +40,7 @@ class MemberListCubit extends SingleListCubit<ListMember> {
   /// Use `null` as argument to remove the search query.
   void filterYear(int? year) {
     if (year != this.year) {
+      safeEmit(ListState.loading(results: state.results));
       this.year = year;
       load();
     }
