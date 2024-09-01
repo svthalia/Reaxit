@@ -219,9 +219,9 @@ class MenuDrawer extends StatelessWidget {
           ),
           ListTile(
             title: const Text('Thabloids'),
-            leading: const Icon(Icons.photo),
+            leading: const Icon(Icons.article_outlined),
             selected: GoRouterState.of(context).uri.toString() ==
-                'thabloid/thabloids',
+                '/thabloid/thabloids',
             onTap: () {
               if (GoRouterState.of(context).uri.toString() ==
                   'thabloid/thabloids') {
