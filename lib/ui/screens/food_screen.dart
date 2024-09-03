@@ -419,7 +419,10 @@ class __ProductTileState extends State<_ProductTile> {
       title: Text.rich(
         TextSpan(
           children: [
-            TextSpan(text: '${widget.product.name} '),
+            TextSpan(
+              text: '${widget.product.name} ',
+              style: Theme.of(context).textTheme.titleMedium!,
+            ),
             TextSpan(
               text: '€${widget.product.price}',
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
