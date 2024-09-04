@@ -298,6 +298,8 @@ class AuthCubit extends Cubit<AuthState> {
 
     if (state is LoggedInAuthState) {
       emit(LoggedOutAuthState(apiRepository: state.apiRepository));
+    } else {
+      emit(const LoggedOutAuthState());
     }
   }
 
