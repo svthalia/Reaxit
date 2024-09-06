@@ -639,68 +639,70 @@ class _EventScreenState extends State<EventScreen> {
   Widget _makeCreateRegistrationButton(Event event) {
     return ElevatedButton.icon(
       statesController: _buttonControler,
-      onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        final calendarCubit = BlocProvider.of<CalendarCubit>(context);
-        final router = GoRouter.of(context);
-        var confirmed = !event.cancelDeadlinePassed();
-        if (!confirmed) {
-          confirmed = await showDialog<bool>(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text('Register'),
-                    content: Text(
-                      'Are you sure you want to register? The '
-                      'cancellation deadline has already passed.',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    actions: [
-                      TextButton.icon(
-                        onPressed: () => Navigator.of(
-                          context,
-                          rootNavigator: true,
-                        ).pop(false),
-                        icon: const Icon(Icons.clear),
-                        label: const Text('NO'),
-                      ),
-                      ElevatedButton.icon(
-                        onPressed: () => Navigator.of(
-                          context,
-                          rootNavigator: true,
-                        ).pop(true),
-                        icon: const Icon(Icons.check),
-                        label: const Text('YES'),
-                      ),
-                    ],
-                  );
-                },
-              ) ??
-              false;
-        }
+      onPressed: !_buttonControler.value.contains(WidgetState.disabled)
+          ? () async {
+              final messenger = ScaffoldMessenger.of(context);
+              final calendarCubit = BlocProvider.of<CalendarCubit>(context);
+              final router = GoRouter.of(context);
+              var confirmed = !event.cancelDeadlinePassed();
+              if (!confirmed) {
+                confirmed = await showDialog<bool>(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Register'),
+                          content: Text(
+                            'Are you sure you want to register? The '
+                            'cancellation deadline has already passed.',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          actions: [
+                            TextButton.icon(
+                              onPressed: () => Navigator.of(
+                                context,
+                                rootNavigator: true,
+                              ).pop(false),
+                              icon: const Icon(Icons.clear),
+                              label: const Text('NO'),
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: () => Navigator.of(
+                                context,
+                                rootNavigator: true,
+                              ).pop(true),
+                              icon: const Icon(Icons.check),
+                              label: const Text('YES'),
+                            ),
+                          ],
+                        );
+                      },
+                    ) ??
+                    false;
+              }
 
-        if (confirmed) {
-          try {
-            final registration = await _eventCubit.register();
-            if (event.hasFields) {
-              router.pushNamed(
-                'event-registration',
-                pathParameters: {
-                  'eventPk': event.pk.toString(),
-                  'registrationPk': registration.pk.toString(),
-                },
-              );
+              if (confirmed) {
+                try {
+                  final registration = await _eventCubit.register();
+                  if (event.hasFields) {
+                    router.pushNamed(
+                      'event-registration',
+                      pathParameters: {
+                        'eventPk': event.pk.toString(),
+                        'registrationPk': registration.pk.toString(),
+                      },
+                    );
+                  }
+                  calendarCubit.load();
+                } on ApiException {
+                  messenger.showSnackBar(const SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    content: Text('Could not register for the event.'),
+                  ));
+                }
+                await _eventCubit.load();
+              }
             }
-            calendarCubit.load();
-          } on ApiException {
-            messenger.showSnackBar(const SnackBar(
-              behavior: SnackBarBehavior.floating,
-              content: Text('Could not register for the event.'),
-            ));
-          }
-          await _eventCubit.load();
-        }
-      },
+          : null,
       icon: const Icon(Icons.create_outlined),
       label: const Text('REGISTER'),
     );
@@ -709,30 +711,33 @@ class _EventScreenState extends State<EventScreen> {
   Widget _makeJoinQueueButton(Event event) {
     return ElevatedButton.icon(
       statesController: _buttonControler,
-      onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        final calendarCubit = BlocProvider.of<CalendarCubit>(context);
-        final router = GoRouter.of(context);
-        try {
-          final registration = await _eventCubit.register();
-          if (event.hasFields) {
-            router.pushNamed(
-              'event-registration',
-              pathParameters: {
-                'eventPk': event.pk.toString(),
-                'registrationPk': registration.pk.toString(),
-              },
-            );
-          }
-          calendarCubit.load();
-        } on ApiException {
-          messenger.showSnackBar(const SnackBar(
-            behavior: SnackBarBehavior.floating,
-            content: Text('Could not join the waiting list for the event.'),
-          ));
-        }
-        await _eventCubit.load();
-      },
+      onPressed: !_buttonControler.value.contains(WidgetState.disabled)
+          ? () async {
+              final messenger = ScaffoldMessenger.of(context);
+              final calendarCubit = BlocProvider.of<CalendarCubit>(context);
+              final router = GoRouter.of(context);
+              try {
+                final registration = await _eventCubit.register();
+                if (event.hasFields) {
+                  router.pushNamed(
+                    'event-registration',
+                    pathParameters: {
+                      'eventPk': event.pk.toString(),
+                      'registrationPk': registration.pk.toString(),
+                    },
+                  );
+                }
+                calendarCubit.load();
+              } on ApiException {
+                messenger.showSnackBar(const SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content:
+                      Text('Could not join the waiting list for the event.'),
+                ));
+              }
+              await _eventCubit.load();
+            }
+          : null,
       icon: const Icon(Icons.create_outlined),
       label: const Text('JOIN QUEUE'),
     );
