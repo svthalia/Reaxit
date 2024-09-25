@@ -1,10 +1,11 @@
+import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:reaxit/models.dart';
 
 part 'food_event.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class FoodEvent {
+class FoodEvent extends Equatable {
   final int pk;
   final String title;
   final Event event;
@@ -12,6 +13,9 @@ class FoodEvent {
   final DateTime end;
   final bool canManage;
   final FoodOrder? order;
+
+  @override
+  List<Object?> get props => [pk, title, event, start, end, canManage, order];
 
   bool get hasOrder => order != null;
 

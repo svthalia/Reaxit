@@ -1,70 +1,52 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/models.dart';
 
-class FoodState extends Equatable {
-  /// This can only be null when [isLoading] or [hasException] is true.
-  final FoodEvent? foodEvent;
-
-  /// This can only be null when [isLoading] or [hasException] is true.
-  final List<Product>? products;
-
-  /// A message describing why there are no foodEvents.
-  final String? message;
-
-  /// A foodEvent is being loaded. If there
-  /// already is a foodEvent, it is outdated.
-  final bool isLoading;
-
-  bool get hasException => message != null;
-
-  @protected
-  const FoodState({
-    required this.foodEvent,
-    required this.products,
-    required this.isLoading,
-    required this.message,
-  }) : assert(
-          (foodEvent != null && products != null) ||
-              isLoading ||
-              message != null,
-          'foodEvent and products can only be null '
-          'when isLoading or hasException is true.',
-        );
+sealed class FoodState extends Equatable {
+  const FoodState();
 
   @override
-  List<Object?> get props => [foodEvent, products, message, isLoading];
+  List<Object?> get props => [];
+}
 
-  FoodState copyWith({
-    FoodEvent? foodEvent,
-    List<Product>? products,
-    bool? isLoading,
-    String? message,
-  }) =>
-      FoodState(
-        foodEvent: foodEvent ?? this.foodEvent,
-        products: products ?? this.products,
-        isLoading: isLoading ?? this.isLoading,
-        message: message ?? this.message,
-      );
+/// FoodEvent is loading.
+class LoadingFoodState extends FoodState {
+  final LoadedFoodState? oldState;
 
-  const FoodState.result({
-    required FoodEvent this.foodEvent,
-    required List<Product> this.products,
-  })  : message = null,
-        isLoading = false;
+  @override
+  List<Object?> get props => [oldState];
 
-  const FoodState.loading({this.foodEvent, this.products})
-      : message = null,
-        isLoading = true;
+  LoadingFoodState({FoodState? oldState})
+      : oldState = switch (oldState) {
+          LoadedFoodState state => state,
+          _ => null,
+        };
+}
 
-  const FoodState.failure({required String this.message})
-      : foodEvent = null,
-        products = null,
-        isLoading = false;
+/// FoodEvent was unable to load.
+class ErrorFoodState extends FoodState {
+  final String message;
+
+  @override
+  List<Object?> get props => [message];
+
+  const ErrorFoodState(this.message);
+}
+
+/// FoodEvent has been loaded.
+class LoadedFoodState extends FoodState {
+  /// This can only be null when [isLoading] or [hasException] is true.
+  final FoodEvent foodEvent;
+
+  /// This can only be null when [isLoading] or [hasException] is true.
+  final List<Product> products;
+
+  @override
+  List<Object?> get props => [foodEvent, products];
+
+  const LoadedFoodState(this.foodEvent, this.products);
 }
 
 class FoodCubit extends Cubit<FoodState> {
@@ -74,10 +56,10 @@ class FoodCubit extends Cubit<FoodState> {
 
   FoodCubit(this.api, {int? foodEventPk})
       : _foodEventPk = foodEventPk,
-        super(const FoodState.loading());
+        super(LoadingFoodState());
 
   Future<void> load() async {
-    emit(state.copyWith(isLoading: true));
+    emit(LoadingFoodState(oldState: state));
     try {
       late final FoodEvent event;
       if (_foodEventPk == null) {
@@ -88,10 +70,10 @@ class FoodCubit extends Cubit<FoodState> {
       }
 
       final products = await api.getFoodEventProducts(_foodEventPk!);
-      emit(FoodState.result(foodEvent: event, products: products.results));
+      emit(LoadedFoodState(event, products.results));
     } on ApiException catch (exception) {
-      emit(FoodState.failure(
-        message: exception.getMessage(
+      emit(ErrorFoodState(
+        exception.getMessage(
           notFound: 'The food event does not exist.',
         ),
       ));
