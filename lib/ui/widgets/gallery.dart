@@ -53,18 +53,19 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
       vsync: this,
       upperBound: 0.8,
     )..addStatusListener(
-      (status) =>
-          status == AnimationStatus.completed ? likeController.reset() : null,
-    );
+        (status) =>
+            status == AnimationStatus.completed ? likeController.reset() : null,
+      );
 
     unlikeController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
       upperBound: 0.8,
     )..addStatusListener(
-      (status) =>
-          status == AnimationStatus.completed ? unlikeController.reset() : null,
-    );
+        (status) => status == AnimationStatus.completed
+            ? unlikeController.reset()
+            : null,
+      );
 
     unlikeAnimation = CurvedAnimation(
       parent: unlikeController,
@@ -162,8 +163,8 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
       backgroundDecoration: const BoxDecoration(color: Colors.transparent),
       pageController: controller,
       itemCount: widget.photoAmount,
-      loadingBuilder:
-          (_, __) => const Center(child: CircularProgressIndicator()),
+      loadingBuilder: (_, __) =>
+          const Center(child: CircularProgressIndicator()),
       builder: (context, i) {
         final Widget child;
 
@@ -193,9 +194,8 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
       padding: const EdgeInsets.all(16),
       color: Theme.of(context).primaryIconTheme.color,
       icon: const Icon(Icons.download),
-      onPressed:
-          () =>
-              _downloadImage(Uri.parse(photos[controller.page!.round()].full)),
+      onPressed: () =>
+          _downloadImage(Uri.parse(photos[controller.page!.round()].full)),
     );
   }
 
@@ -204,8 +204,8 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
       padding: const EdgeInsets.all(16),
       color: Theme.of(context).primaryIconTheme.color,
       icon: Icon(Icons.adaptive.share),
-      onPressed:
-          () => _shareImage(Uri.parse(photos[controller.page!.floor()].full)),
+      onPressed: () =>
+          _shareImage(Uri.parse(photos[controller.page!.floor()].full)),
     );
   }
 
