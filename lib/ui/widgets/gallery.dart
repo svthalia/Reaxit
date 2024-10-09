@@ -12,6 +12,7 @@ import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/theme.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:gal/gal.dart';
+import 'package:reaxit/ui/widgets/cached_image.dart';
 
 abstract class GalleryCubit<T> extends StateStreamableSource<T> {
   Future<void> updateLike({required bool liked, required int index});
@@ -169,9 +170,13 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
           child = GestureDetector(
             onDoubleTap: () => _likePhoto(photos, i),
             child: RotatedBox(
-              quarterTurns: photos[i].rotation ~/ 90,
-              child: Image.network(photos[i].full),
-            ),
+                quarterTurns: photos[i].rotation ~/ 90,
+                child: CachedImage(
+                  imageUrl: photos[i].full,
+                  fit: BoxFit.contain,
+                  // placeholder:
+                  //     'assets/img/photo_placeholder_${(360 - photos[i].rotation) % 360}.png'),
+                )),
           );
         } else {
           child = const Center(
@@ -181,7 +186,7 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
 
         return PhotoViewGalleryPageOptions.customChild(
           child: child,
-          minScale: PhotoViewComputedScale.contained * 0.8,
+          minScale: PhotoViewComputedScale.contained * 1,
           maxScale: PhotoViewComputedScale.covered * 2,
         );
       },
