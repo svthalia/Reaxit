@@ -127,6 +127,10 @@ class EventCubit extends Cubit<EventState> {
       final listResponse = await api.getEventRegistrations(
           pk: _eventPk!, limit: firstPageSize, offset: 0);
 
+      if (isClosed) {
+        return;
+      }
+
       final isDone = listResponse.results.length == listResponse.count;
 
       _nextOffset = firstPageSize;
@@ -137,6 +141,11 @@ class EventCubit extends Cubit<EventState> {
         isDone: isDone,
       ));
     } on ApiException catch (exception) {
+      if (isClosed) {
+        // If the cubit is closed, the error does not matter at all
+        return;
+      }
+
       emit(EventState.failure(
           message: exception.getMessage(
         notFound: 'The event does not exist.',
