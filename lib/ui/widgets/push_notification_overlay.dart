@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:reaxit/routes.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PushNotificationOverlay extends StatelessWidget {
@@ -16,6 +17,9 @@ class PushNotificationOverlay extends StatelessWidget {
       uri = Uri.tryParse(message.data['url'] as String);
       if (uri?.scheme.isEmpty ?? false) uri = uri!.replace(scheme: 'https');
     }
+
+    // This is just to figure out whats wrong with notifications
+    Sentry.addBreadcrumb(Breadcrumb(message: 'Message: $message'));
 
     return SafeArea(
       child: Card(
