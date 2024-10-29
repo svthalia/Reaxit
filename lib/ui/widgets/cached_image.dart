@@ -10,12 +10,14 @@ class CachedImage extends CachedNetworkImage {
     BoxFit super.fit = BoxFit.cover,
     Duration super.fadeOutDuration = const Duration(milliseconds: 200),
     super.fadeInDuration = const Duration(milliseconds: 200),
-    required String placeholder,
+    String? placeholder,
   }) : super(
           key: ValueKey(imageUrl),
           cacheManager: cache.ThaliaCacheManager(),
           cacheKey: _getCacheKey(imageUrl),
-          placeholder: (_, __) => Image.asset(placeholder, fit: fit),
+          placeholder: placeholder == null
+              ? null
+              : (_, __) => Image.asset(placeholder, fit: fit),
         );
 }
 
