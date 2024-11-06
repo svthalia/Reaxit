@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs/thabloid_cubit.dart';
-import 'package:reaxit/blocs/thabloid_list_cubit.dart';
 import 'package:reaxit/models/thabliod.dart';
 import 'package:reaxit/ui/widgets/cached_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ThabloidDetailCard extends StatelessWidget {
-  final Thabloid thabloid;
   final ThabloidCubit cubit;
-  ThabloidDetailCard(this.thabloid, ApiRepository api)
+  ThabloidDetailCard(Thabloid thabloid, ApiRepository api)
       : cubit = ThabloidCubit(api, thabloid);
 
   void _openThabloid() async {
@@ -21,8 +19,10 @@ class ThabloidDetailCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return BlocBuilder<ThabloidListCubit, ThabloidListState>(
-      builder: (context, thabloidsState) => Stack(
+    return BlocBuilder<ThabloidCubit, Thabloid>(
+        builder: (context, thabloidsState) {
+      Thabloid thabloid = thabloidsState;
+      return Stack(
         children: [
           CachedImage(
             placeholder: 'assets/img/thabloid_placeholder.png',
@@ -55,7 +55,7 @@ class ThabloidDetailCard extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
+      );
+    });
   }
 }
