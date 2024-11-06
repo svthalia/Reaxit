@@ -1075,6 +1075,20 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
+  Future<Thabloid> getThabloid({
+    required int pk,
+  }) async {
+    return sandbox(() async {
+      final uri = _uri(
+        path: '/thabloid/thabloids/$pk',
+      );
+
+      final response = await _handleExceptions(() => _client.get(uri));
+      return Thabloid.fromJson(_jsonDecode(response));
+    });
+  }
+
+  @override
   Future<ListResponse<Slide>> getSlides({
     int? limit,
     int? offset,
