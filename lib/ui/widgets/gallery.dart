@@ -174,8 +174,6 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
                 child: CachedImage(
                   imageUrl: photos[i].full,
                   fit: BoxFit.contain,
-                  // placeholder:
-                  //     'assets/img/photo_placeholder_${(360 - photos[i].rotation) % 360}.png'),
                 )),
           );
         } else {
