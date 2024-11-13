@@ -30,6 +30,52 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
+  Widget _makeAnnouncement() {
+    return BlocBuilder<FullMemberCubit, FullMemberState>(
+        builder: (context, state) {
+      if (state.result != null) {
+        final me = state.result!;
+        return InkWell(
+          child: Container(
+            color: Theme.of(context).colorScheme.primary,
+            padding: EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Icon(Icons.campaign),
+                Expanded(
+                    child: Padding(
+                        padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                        child: Text(
+                            'You don\'t have a profile picture yet! Upload one on your profile page by clicking this banner, so that the other members know who you are. :)'))),
+              ],
+            ),
+          ),
+          onTap: () => context.pushNamed(
+            'member',
+            pathParameters: {'memberPk': me.pk.toString()},
+            extra: me,
+          ),
+        );
+      } else {
+        return InkWell(
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Icon(Icons.campaign),
+                  Expanded(
+                      child: Padding(
+                          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                          child: Text(
+                              'You don\'t have a profile picture yet! Upload one on your profile page by clicking this banner, so that the other members know who you are. :)'))),
+                ],
+              ),
+            ),
+            onTap: () => {});
+      }
+    });
+  }
+
   Widget _makeSlides(List<Slide> slides) {
     return AnimatedSize(
       curve: Curves.ease,
@@ -179,6 +225,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 key: const PageStorageKey('welcome'),
                 physics: const AlwaysScrollableScrollPhysics(),
                 children: [
+                  _makeAnnouncement(),
                   _makeSlides(state.slides!),
                   if (state.slides!.isNotEmpty) const Divider(height: 0),
                   _makeArticles(state.articles!),
