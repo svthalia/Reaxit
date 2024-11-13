@@ -7,8 +7,8 @@ import 'package:reaxit/models/thabliod.dart';
 
 typedef ThabloidListState = ListState<Thabloid>;
 
-class ThabloidCubit extends SingleListCubit<Thabloid> {
-  ThabloidCubit(super.api);
+class ThabloidListCubit extends SingleListCubit<Thabloid> {
+  ThabloidListCubit(super.api);
 
   static const int firstPageSize = 30;
 

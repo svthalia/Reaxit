@@ -292,6 +292,11 @@ abstract class ApiRepository {
     int? offset,
   });
 
+  /// Get a [Thabloid].
+  Future<Thabloid> getThabloid({
+    required int pk,
+  });
+
   /// Get a list of [Slide]s.
   ///
   /// Use `limit` and `offset` for pagination. [ListResponse.count] is the

@@ -331,8 +331,8 @@ class _ThaliAppState extends State<ThaliApp> {
                               lazy: false,
                             ),
                             BlocProvider(
-                              create: (_) =>
-                                  ThabloidCubit(apiRepository)..cachedLoad(),
+                              create: (_) => ThabloidListCubit(apiRepository)
+                                ..cachedLoad(),
                               lazy: false,
                             ),
                             BlocProvider(

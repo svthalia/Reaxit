@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/blocs/thabloid_list_cubit.dart';
 import 'package:reaxit/models/thabliod.dart';
@@ -17,8 +18,6 @@ class ThabloidScreen extends StatefulWidget {
 class _ThabloidScreenState extends State<ThabloidScreen> {
   late ScrollController _controller;
   late CalendarCubit _cubit;
-  GlobalKey todayKey = GlobalKey();
-  GlobalKey thisMonthKey = GlobalKey();
 
   @override
   void initState() {
@@ -47,22 +46,18 @@ class _ThabloidScreenState extends State<ThabloidScreen> {
         title: const Text('THABLOIDS'),
       ),
       drawer: MenuDrawer(),
-      body: BlocBuilder<ThabloidCubit, ThabloidListState>(
-        builder: (context, calendarState) {
-          if (calendarState.hasException) {
-            return ErrorScrollView(calendarState.message!);
-          } else if (calendarState.isLoading) {
+      body: BlocBuilder<ThabloidListCubit, ThabloidListState>(
+        builder: (context, thabloidsState) {
+          if (thabloidsState.hasException) {
+            return ErrorScrollView(thabloidsState.message!);
+          } else if (thabloidsState.isLoading) {
             return const Center(child: CircularProgressIndicator());
           } else {
-            todayKey = GlobalKey();
-            thisMonthKey = GlobalKey();
             return ThabloidsScrollView(
               key: const PageStorageKey('thabloids'),
               controller: _controller,
-              thabloidState: calendarState,
-              todayKey: todayKey,
-              thisMonthKey: thisMonthKey,
-              thabloids: calendarState.results,
+              thabloidState: thabloidsState,
+              thabloids: thabloidsState.results,
             );
           }
         },
@@ -81,9 +76,6 @@ class ThabloidsScrollView extends StatelessWidget {
   static final monthFormatter = DateFormat('MMMM');
   static final monthYearFormatter = DateFormat('MMMM yyyy');
 
-  final GlobalKey? todayKey;
-  final GlobalKey? thisMonthKey;
-
   final Key centerkey = UniqueKey();
   final ScrollController controller;
   final ThabloidListState thabloidState;
@@ -93,12 +85,11 @@ class ThabloidsScrollView extends StatelessWidget {
       {super.key,
       required this.controller,
       required this.thabloidState,
-      this.todayKey,
-      this.thisMonthKey,
       required this.thabloids});
 
   @override
   Widget build(BuildContext context) {
+    ApiRepository api = context.read();
     return Column(
       children: [
         Expanded(
@@ -119,7 +110,7 @@ class ThabloidsScrollView extends StatelessWidget {
                     childAspectRatio: 1 / sqrt(2),
                   ),
                   delegate: SliverChildBuilderDelegate(
-                    (_, index) => ThabloidDetailCard(thabloids[index]),
+                    (_, index) => ThabloidDetailCard(thabloids[index], api),
                     childCount: thabloids.length,
                   ),
                 ),
