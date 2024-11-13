@@ -26,6 +26,19 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
+  Widget _makeAnnouncement() {
+    return Column(
+      children: [
+        Announcement(
+          'You don\'t have a profile picture yet! Upload one on your profile page by clicking this banner, so that the other members know who you are. :)',
+          false,
+          'member',
+        ),
+        Announcement('This is the second announcement', true, 'calendar'),
+      ],
+    );
+  }
+
   Widget _makeSlides(List<Slide> slides) {
     return AnimatedSize(
       curve: Curves.ease,
@@ -261,6 +274,81 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class Announcement extends StatefulWidget {
+  String announcement = '';
+  bool closable = false;
+  String location = '';
+  Announcement(this.announcement, this.closable, this.location);
+
+  @override
+  State<Announcement> createState() => _AnnouncementState();
+}
+
+class _AnnouncementState extends State<Announcement> {
+  void navigate(BuildContext context, String location, FullMember me) {
+    if (location == 'member') {
+      if (me != null) {
+        context.pushNamed(
+          'member',
+          pathParameters: {'memberPk': me.pk.toString()},
+          extra: me,
+        );
+      }
+    } else {
+      context.goNamed(location);
+      // Pop the menu drawer
+      Navigator.of(context).pop();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FullMemberCubit, FullMemberState>(
+      builder: (context, state) {
+        if (state.result != null) {
+          final me = state.result!;
+          return InkWell(
+            child: Container(
+              color: Theme.of(context).colorScheme.primary,
+              padding: EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Icon(Icons.campaign),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                      child: Text(this.widget.announcement),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            onTap: () => this.navigate(context, this.widget.location, me),
+          );
+        } else {
+          return InkWell(
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Icon(Icons.campaign),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                      child: Text(this.widget.announcement),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            onTap: () => {},
+          );
+        }
+      },
     );
   }
 }
