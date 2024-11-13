@@ -100,23 +100,23 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
     List<Future<List<T>>> futuresUp = [];
     List<Future<List<T>>> futuresDown = [];
     for (final source in sources) {
-      try {
-        source._nextOffsetUp = 0;
-        source._nextOffsetDown = 0;
-        source.isDoneUp = false;
-        source.isDoneDown = false;
-        futuresUp.add(source.moreUp());
-        futuresDown.add(source.moreDown());
-      } on ApiException catch (exception) {
-        safeEmit(failure(exception.message));
-        return;
-      }
+      source._nextOffsetUp = 0;
+      source._nextOffsetDown = 0;
+      source.isDoneUp = false;
+      source.isDoneDown = false;
+      futuresUp.add(source.moreUp());
+      futuresDown.add(source.moreDown());
     }
     cleanupOldState();
     List<List<T>> resultsUp = [];
     List<List<T>> resultsDown = [];
-    resultsUp = await Future.wait(futuresUp);
-    resultsDown = await Future.wait(futuresDown);
+    try {
+      resultsUp = await Future.wait(futuresUp);
+      resultsDown = await Future.wait(futuresDown);
+    } on ApiException catch (exception) {
+      safeEmit(failure(exception.message));
+      return;
+    }
 
     // Discard result if _searchQuery has
     // changed since the request was made.
