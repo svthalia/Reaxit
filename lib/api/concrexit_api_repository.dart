@@ -37,7 +37,15 @@ class LoggingClient extends oauth2.Client {
 
   @override
   Future<StreamedResponse> send(BaseRequest request) async {
-    final response = await super.send(request);
+    StreamedResponse response;
+    try {
+      response = await super.send(request);
+    } catch (e) {
+      if (kDebugMode) {
+        print('url: ${request.url}, failed: $e');
+      }
+      rethrow;
+    }
     if (kDebugMode) {
       print('url: ${request.url}, response code: ${response.statusCode}');
     }

@@ -145,10 +145,13 @@ class AuthCubit extends Cubit<AuthState> {
                   ),
                 );
               },
-              httpClient: SentryHttpClient(failedRequestStatusCodes: [
-                SentryStatusCode(400),
-                SentryStatusCode.range(405, 499),
-              ]),
+              httpClient: SentryHttpClient(
+                failedRequestStatusCodes: [
+                  SentryStatusCode(400),
+                  SentryStatusCode.range(405, 499),
+                ],
+                captureFailedRequests: false,
+              ),
             ),
             config: apiConfig,
             onLogOut: logOut,
