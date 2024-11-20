@@ -123,6 +123,23 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
 
   Future<void> _likePhoto(List<AlbumPhoto> photos, int index) async {
     final messenger = ScaffoldMessenger.of(context);
+    likeController.forward();
+    try {
+      await BlocProvider.of<C>(context).updateLike(
+        liked: true,
+        index: index,
+      );
+    } on ApiException {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('Something went wrong while liking the photo.'),
+        ),
+      );
+    }
+  }
+
+  Future<void> _toggleLikePhoto(List<AlbumPhoto> photos, int index) async {
+    final messenger = ScaffoldMessenger.of(context);
     if (photos[index].liked) {
       unlikeController.forward();
     } else {
@@ -241,7 +258,7 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
                 widget.initialPage,
                 widget.photos,
                 widget.photoAmount,
-                _likePhoto,
+                _toggleLikePhoto,
                 _loadMorePhotos,
               ),
             ),
@@ -298,7 +315,7 @@ class _PageCounter extends StatefulWidget {
   final int initialPage;
   final List<AlbumPhoto> photos;
   final int photoAmount;
-  final void Function(List<AlbumPhoto> photos, int index) likePhoto;
+  final void Function(List<AlbumPhoto> photos, int index) toggleLikePhoto;
   final void Function() loadMorePhotos;
 
   const _PageCounter(
@@ -306,7 +323,7 @@ class _PageCounter extends StatefulWidget {
     this.initialPage,
     this.photos,
     this.photoAmount,
-    this.likePhoto,
+    this.toggleLikePhoto,
     this.loadMorePhotos,
   );
 
@@ -366,7 +383,7 @@ class __PageCounterState extends State<_PageCounter> {
                 photo.liked ? Icons.favorite : Icons.favorite_outline,
               ),
               onPressed: () {
-                widget.likePhoto(
+                widget.toggleLikePhoto(
                   widget.photos,
                   currentIndex,
                 );
