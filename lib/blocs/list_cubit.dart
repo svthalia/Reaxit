@@ -104,8 +104,13 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
       source._nextOffsetDown = 0;
       source.isDoneUp = false;
       source.isDoneDown = false;
-      futuresUp.add(source.moreUp());
-      futuresDown.add(source.moreDown());
+      try {
+        futuresUp.add(source.moreUp());
+        futuresDown.add(source.moreDown());
+      } on ApiException catch (exception) {
+        safeEmit(failure(exception.message));
+        return;
+      }
     }
     cleanupOldState();
     List<List<T>> resultsUp = [];
