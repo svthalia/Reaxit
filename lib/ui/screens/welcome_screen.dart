@@ -10,6 +10,7 @@ import 'package:reaxit/routes.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:collection/collection.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:reaxit/models/announcement.dart';
 
 class WelcomeScreen extends StatefulWidget {
   @override
@@ -26,16 +27,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
-  Widget _makeAnnouncement() {
-    return Column(
-      children: [
-        Announcement(
-          'You don\'t have a profile picture yet! Upload one on your profile page by clicking this banner, so that the other members know who you are. :)',
-          false,
-          'member',
-        ),
-        Announcement('This is the second announcement', true, 'calendar'),
-      ],
+  Widget _makeAnnouncements(List<Announcement> announcements) {
+    return AnimatedSize(
+      curve: Curves.ease,
+      duration: const Duration(milliseconds: 300),
+      child:
+          announcements.isNotEmpty
+              ? Announcements(announcements)
+              : const SizedBox.shrink(),
     );
   }
 
@@ -186,6 +185,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   key: const PageStorageKey('welcome'),
                   physics: const AlwaysScrollableScrollPhysics(),
                   children: [
+                    _makeAnnouncements(state.announcements!),
+                    if (state.announcements!.isNotEmpty)
+                      const Divider(height: 0),
                     _makeSlides(state.slides!),
                     if (state.slides!.isNotEmpty) const Divider(height: 0),
                     _makeArticles(state.articles!),
@@ -278,77 +280,50 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
   }
 }
 
-class Announcement extends StatefulWidget {
-  String announcement = '';
-  bool closable = false;
-  String location = '';
-  Announcement(this.announcement, this.closable, this.location);
+class Announcements extends StatefulWidget {
+  List<Announcement> announcements;
+  Announcements(this.announcements);
 
   @override
-  State<Announcement> createState() => _AnnouncementState();
+  State<Announcements> createState() => _AnnouncementState();
 }
 
-class _AnnouncementState extends State<Announcement> {
-  void navigate(BuildContext context, String location, FullMember me) {
-    if (location == 'member') {
-      if (me != null) {
-        context.pushNamed(
-          'member',
-          pathParameters: {'memberPk': me.pk.toString()},
-          extra: me,
-        );
-      }
-    } else {
-      context.goNamed(location);
-      // Pop the menu drawer
-      Navigator.of(context).pop();
-    }
+class _AnnouncementState extends State<Announcements> {
+  Widget _makeAnnouncement(Announcement announcement) {
+    return Container(
+      color: Theme.of(context).colorScheme.primary,
+      padding: EdgeInsets.all(20),
+      child: Row(
+        children: [
+          Icon(Icons.campaign),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+              child: Text(announcement.content),
+            ),
+          ),
+          if (announcement.closeable)
+            CloseButton(
+              onPressed:
+                  () => setState(
+                    () => this.widget.announcements.remove(announcement),
+                  ),
+            ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FullMemberCubit, FullMemberState>(
-      builder: (context, state) {
-        if (state.result != null) {
-          final me = state.result!;
-          return InkWell(
-            child: Container(
-              color: Theme.of(context).colorScheme.primary,
-              padding: EdgeInsets.all(20),
-              child: Row(
-                children: [
-                  Icon(Icons.campaign),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                      child: Text(this.widget.announcement),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            onTap: () => this.navigate(context, this.widget.location, me),
-          );
-        } else {
-          return InkWell(
-            child: Padding(
-              padding: EdgeInsets.all(20),
-              child: Row(
-                children: [
-                  Icon(Icons.campaign),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                      child: Text(this.widget.announcement),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            onTap: () => {},
-          );
-        }
-      },
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (final article in widget.announcements) ...[
+          const Divider(height: 8),
+          this._makeAnnouncement(article),
+        ],
+      ],
     );
   }
 }
