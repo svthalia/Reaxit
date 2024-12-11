@@ -10,6 +10,7 @@ import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/config.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/models/thabliod.dart';
+import 'package:reaxit/models/announcement.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class LoggingClient extends oauth2.Client {
@@ -115,6 +116,10 @@ class ConcrexitApiRepository implements ApiRepository {
   /// Wrapper that utf-8 decodes the body of a response to json.
   static Map<String, dynamic> _jsonDecode(Response response) =>
       jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+
+  /// Wrapper that utf-8 decodes the body of a response to json.
+  static List<dynamic> _jsonDecodeList(Response response) =>
+      jsonDecode(utf8.decode(response.bodyBytes)) as List<dynamic>;
 
   /// A wrapper for requests that throws only [ApiException]s.
   ///
@@ -1126,6 +1131,26 @@ class ConcrexitApiRepository implements ApiRepository {
       _jsonDecode(response),
       (json) => FrontpageArticle.fromJson(json as Map<String, dynamic>),
     );
+  }
+
+  @override
+  Future<List<Announcement>> getAnnouncements() async {
+    return sandbox(() async {
+      final uri = _uri(
+        path: '/announcements/announcements/',
+      );
+
+      final response = await _handleExceptions(() => _client.get(uri));
+      return await compute(_parseAnnouncements, response);
+    });
+  }
+
+  static List<Announcement> _parseAnnouncements(
+    Response response,
+  ) {
+    return (_jsonDecodeList(response))
+        .map((json) => Announcement.fromJson(json as Map<String, dynamic>))
+        .toList();
   }
 
   @override

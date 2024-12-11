@@ -1,5 +1,6 @@
 import 'package:reaxit/config.dart';
 import 'package:reaxit/models.dart';
+import 'package:reaxit/models/announcement.dart';
 import 'package:reaxit/models/thabliod.dart';
 import 'package:reaxit/api/exceptions.dart';
 
@@ -300,6 +301,8 @@ abstract class ApiRepository {
     int? limit,
     int? offset,
   });
+
+  Future<List<Announcement>> getAnnouncements();
 
   /// Get a list of [FrontpageArticle]s.
   ///

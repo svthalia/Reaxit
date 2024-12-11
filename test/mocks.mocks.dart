@@ -14,6 +14,7 @@ import 'package:reaxit/blocs/payment_user_cubit.dart' as _i6;
 import 'package:reaxit/blocs/welcome_cubit.dart' as _i7;
 import 'package:reaxit/config.dart' as _i3;
 import 'package:reaxit/models.dart' as _i4;
+import 'package:reaxit/models/announcement.dart' as _i12;
 import 'package:reaxit/models/thabliod.dart' as _i11;
 
 // ignore_for_file: type=lint
@@ -1360,6 +1361,16 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
           ),
         )),
       ) as _i8.Future<_i4.ListResponse<_i4.Slide>>);
+
+  @override
+  _i8.Future<List<_i12.Announcement>> getAnnouncements() => (super.noSuchMethod(
+        Invocation.method(
+          #getAnnouncements,
+          [],
+        ),
+        returnValue:
+            _i8.Future<List<_i12.Announcement>>.value(<_i12.Announcement>[]),
+      ) as _i8.Future<List<_i12.Announcement>>);
 
   @override
   _i8.Future<_i4.ListResponse<_i4.FrontpageArticle>> getFrontpageArticles({

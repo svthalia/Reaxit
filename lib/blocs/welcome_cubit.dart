@@ -5,6 +5,7 @@ import 'package:meta/meta.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/models.dart';
+import 'package:reaxit/models/announcement.dart';
 
 class WelcomeState extends Equatable {
   /// This can only be null when [isLoading] or [hasException] is true.
@@ -16,6 +17,9 @@ class WelcomeState extends Equatable {
   /// This can only be null when [isLoading] or [hasException] is true.
   final List<BaseEvent>? upcomingEvents;
 
+  /// This can only be null when [isLoading] or [hasException] is true.
+  final List<Announcement>? announcements;
+
   /// A message describing why there are no results.
   final String? message;
 
@@ -24,25 +28,30 @@ class WelcomeState extends Equatable {
 
   bool get hasException => message != null;
   bool get hasResults =>
-      slides != null && articles != null && upcomingEvents != null;
+      slides != null &&
+      articles != null &&
+      upcomingEvents != null &&
+      announcements != null;
 
   @protected
   const WelcomeState({
     required this.slides,
     required this.articles,
     required this.upcomingEvents,
+    required this.announcements,
     required this.isLoading,
     required this.message,
   });
 
   @override
   List<Object?> get props =>
-      [slides, articles, upcomingEvents, message, isLoading];
+      [slides, articles, upcomingEvents, announcements, message, isLoading];
 
   WelcomeState copyWith({
     List<Slide>? slides,
     List<FrontpageArticle>? articles,
     List<BaseEvent>? upcomingEvents,
+    List<Announcement>? announcements,
     bool? isLoading,
     String? message,
   }) =>
@@ -50,6 +59,7 @@ class WelcomeState extends Equatable {
         slides: slides ?? this.slides,
         articles: articles ?? this.articles,
         upcomingEvents: upcomingEvents ?? this.upcomingEvents,
+        announcements: announcements ?? this.announcements,
         isLoading: isLoading ?? this.isLoading,
         message: message ?? this.message,
       );
@@ -58,10 +68,12 @@ class WelcomeState extends Equatable {
     required List<Slide> this.slides,
     required List<FrontpageArticle> this.articles,
     required List<BaseEvent> this.upcomingEvents,
+    required List<Announcement> this.announcements,
   })  : message = null,
         isLoading = false;
 
-  const WelcomeState.loading({this.slides, this.articles, this.upcomingEvents})
+  const WelcomeState.loading(
+      {this.slides, this.articles, this.upcomingEvents, this.announcements})
       : message = null,
         isLoading = true;
 
@@ -69,6 +81,7 @@ class WelcomeState extends Equatable {
       : slides = null,
         articles = null,
         upcomingEvents = null,
+        announcements = null,
         isLoading = false;
 }
 
@@ -92,6 +105,7 @@ class WelcomeCubit extends Cubit<WelcomeState> {
         ordering: 'start',
         limit: 3,
       );
+      final announcementsResponse = await api.getAnnouncements();
 
       List<BaseEvent> events = eventsResponse.results
           .map<BaseEvent>((e) => e)
@@ -109,6 +123,7 @@ class WelcomeCubit extends Cubit<WelcomeState> {
         slides: slides,
         articles: articlesResponse.results,
         upcomingEvents: events,
+        announcements: announcementsResponse,
       ));
     } on ApiException catch (exception) {
       emit(WelcomeState.failure(message: exception.message));
