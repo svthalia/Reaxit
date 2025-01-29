@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reaxit/blocs.dart';
+import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:reaxit/config.dart' as config;
 
@@ -80,7 +81,11 @@ class MenuDrawer extends StatelessWidget {
                               () => context.pushNamed(
                                 'member',
                                 pathParameters: {'memberPk': me.pk.toString()},
-                                extra: me,
+                                extra: ListMember(
+                                  me.pk,
+                                  me.membershipType,
+                                  me.profile,
+                                ),
                               ),
                         ),
                       ),
@@ -223,6 +228,18 @@ class MenuDrawer extends StatelessWidget {
                 Navigator.of(context).pop();
               } else {
                 _goTo(context, 'thabloids');
+              }
+            },
+          ),
+          ListTile(
+            title: const Text('Vacancies'),
+            leading: const Icon(Icons.work),
+            selected: GoRouterState.of(context).uri.toString() == '/vacancies',
+            onTap: () {
+              if (GoRouterState.of(context).uri.toString() == '/vacancies') {
+                Navigator.of(context).pop();
+              } else {
+                _goTo(context, 'vacancies');
               }
             },
           ),

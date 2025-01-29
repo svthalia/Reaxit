@@ -8,6 +8,7 @@ import 'package:reaxit/tosti/tosti_shift_screen.dart';
 import 'package:reaxit/ui/screens.dart';
 import 'package:reaxit/ui/screens/liked_photos_screen.dart';
 import 'package:reaxit/ui/screens/thabloids_screen.dart';
+import 'package:reaxit/ui/screens/vacancies_screen.dart';
 import 'package:reaxit/ui/widgets.dart';
 
 /// Returns true if [uri] is a deep link that can be handled by the app.
@@ -284,6 +285,34 @@ final List<RouteBase> routes = [
             ),
       ),
     ],
+  ),
+  GoRoute(
+    path: '/vacancies',
+    name: 'vacancies',
+    pageBuilder: (context, state) => CustomTransitionPage(
+      key: state.pageKey,
+      child: VacanciesScreen(),
+      transitionDuration: const Duration(milliseconds: 200),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
+          child: child,
+        );
+      },
+    ),
+    // routes: [
+    // GoRoute(
+    //   path: ':vacancypk',
+    //   name: 'vacancy',
+    //   pageBuilder: (context, state) => MaterialPage(
+    //     key: state.pageKey,
+    //     child: VacancyScreen(
+    //       slug: state.pathParameters['vacancypk']!,
+    //       album: state.extra as Vacancie?,
+    //     ),
+    //   ),
+    // ),
+    // ],
   ),
   GoRoute(
     path: '/association/committees/:groupSlug',
