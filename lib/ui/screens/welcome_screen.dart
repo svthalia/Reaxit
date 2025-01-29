@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/routes.dart';
@@ -281,8 +282,9 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
 }
 
 class Announcements extends StatefulWidget {
-  List<Announcement> announcements;
-  Announcements(this.announcements);
+  final List<Announcement> announcements;
+
+  const Announcements(this.announcements);
 
   @override
   State<Announcements> createState() => _AnnouncementState();
@@ -295,11 +297,50 @@ class _AnnouncementState extends State<Announcements> {
       padding: EdgeInsets.all(20),
       child: Row(
         children: [
-          Icon(Icons.campaign),
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 0, 20, 0),
+            child: Container(child: Icon(Icons.campaign)),
+          ),
           Expanded(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-              child: Text(announcement.content),
+            child: HtmlWidget(
+              announcement.content,
+              customStylesBuilder: (element) {
+                if (element.localName == 'a') {
+                  return {
+                    'color': 'white', // Change link color to red
+                    'text-decoration': 'none', // Remove default underline
+                    'font-weight': 'bold',
+                    'border-bottom': '2px solid white',
+                  };
+                }
+                return null;
+              },
+              onTapUrl: (String url) async {
+                Uri uri = Uri(path: url);
+                String host =
+                    RepositoryProvider.of<ApiRepository>(context).config.host;
+                if (uri.scheme.isEmpty) uri = uri.replace(scheme: 'https');
+                if (uri.host.isEmpty) uri = uri.replace(host: host);
+                if (isDeepLink(uri)) {
+                  context.push(
+                    Uri(path: uri.path, query: uri.query).toString(),
+                  );
+                  return true;
+                } else {
+                  final messenger = ScaffoldMessenger.of(context);
+                  try {
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  } catch (_) {
+                    messenger.showSnackBar(
+                      SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: Text('Could not open "$url".'),
+                      ),
+                    );
+                  }
+                  return true;
+                }
+              },
             ),
           ),
           if (announcement.closeable)
@@ -319,9 +360,8 @@ class _AnnouncementState extends State<Announcements> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (final article in widget.announcements) ...[
-          const Divider(height: 8),
-          this._makeAnnouncement(article),
+        for (final announcement in widget.announcements) ...[
+          _makeAnnouncement(announcement),
         ],
       ],
     );
