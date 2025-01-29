@@ -2,6 +2,7 @@ import 'package:reaxit/config.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/models/thabliod.dart';
 import 'package:reaxit/api/exceptions.dart';
+import 'package:reaxit/models/vacancie.dart';
 
 /// Provides an interface to the api.
 ///
@@ -373,5 +374,17 @@ abstract class ApiRepository {
     DateTime? end,
     List<PaymentType>? type,
     bool? settled,
+  });
+
+  /// Get a list of [Vacancy]s.
+  ///
+  /// Use `limit` and `offset` for pagination, and `start` and `end`
+  /// for filtering. [ListResponse.count] is the total number of
+  /// [ListGroup]s that can be returned.
+  Future<ListResponse<Vacancy>> getVacancies({
+    int? limit,
+    int? offset,
+    DateTime? start,
+    DateTime? end,
   });
 }
