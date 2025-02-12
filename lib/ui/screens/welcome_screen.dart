@@ -294,12 +294,12 @@ class _AnnouncementState extends State<Announcements> {
   Widget _makeAnnouncement(Announcement announcement) {
     return Container(
       color: Theme.of(context).colorScheme.primary,
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       child: Row(
         children: [
-          Padding(
+          const Padding(
             padding: EdgeInsets.fromLTRB(0, 0, 20, 0),
-            child: Container(child: Icon(Icons.campaign)),
+            child: Icon(Icons.campaign),
           ),
           Expanded(
             child: HtmlWidget(
@@ -346,9 +346,8 @@ class _AnnouncementState extends State<Announcements> {
           if (announcement.closeable)
             CloseButton(
               onPressed:
-                  () => setState(
-                    () => this.widget.announcements.remove(announcement),
-                  ),
+                  () =>
+                      setState(() => widget.announcements.remove(announcement)),
             ),
         ],
       ),
