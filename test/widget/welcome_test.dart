@@ -59,6 +59,7 @@ void main() {
         slides: const [],
         articles: const [],
         upcomingEvents: [normalEvent, partnerEvent],
+        announcements: const [],
       );
 
       final cubit = MockWelcomeCubit();
