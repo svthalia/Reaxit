@@ -1,6 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:reaxit/api/api_repository.dart';
-import 'package:reaxit/api/exceptions.dart';
 
 part 'announcement.g.dart';
 
