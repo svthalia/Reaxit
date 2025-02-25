@@ -23,74 +23,74 @@ dependencies:
     sdk: flutter
 
   # Annotations.
-  meta: ^1.15.0
+  meta: ^1.16.0
 
   # Nice functions for collections.
-  collection: ^1.18.0
+  collection: ^1.19.1
 
   # Fonts.
   google_fonts: 6.2.1
 
   # DateTime formatting.
-  intl: ^0.19.0
+  intl: ^0.20.2
 
   # Networking basics.
-  http: ^1.2.2
-  http_parser: ^4.0.2
+  http: ^1.3.0
+  http_parser: ^4.1.2
 
   # OAuth2 authorized http Client.
   oauth2: ^2.0.3
 
   # Secure storage for OAuth2 credentials.
-  flutter_secure_storage: ^9.2.2
+  flutter_secure_storage: ^9.2.4
 
   # JSON parsing.
-  json_annotation: ^4.8.1
+  json_annotation: ^4.9.0
 
   # BLoC state management.
-  flutter_bloc: ^8.1.6
-  equatable: ^2.0.5
+  flutter_bloc: ^9.0.0
+  equatable: ^2.0.7
 
   # Persistent storage.
-  shared_preferences: ^2.3.2
+  shared_preferences: ^2.5.2
 
   # Opening urls.
-  url_launcher: ^6.3.0
+  url_launcher: ^6.3.1
 
   # Authenticating in browser.
-  flutter_web_auth_2: ^3.1.2
+  flutter_web_auth_2: ^4.1.0
 
   # Modal photo views.
   photo_view: ^0.15.0
 
   # HTML widget.
-  flutter_widget_from_html_core: ^0.15.2
+  flutter_widget_from_html_core: ^0.16.0
 
   # Sentry error reporting.
-  sentry_flutter: ^8.8.0
+  sentry_flutter: ^8.13.2
 
   # Share menu.
-  share_plus: ^10.0.2
+  share_plus: ^10.1.4
 
   # Get mime type from file extension.
-  mime: ^1.0.6
+  mime: ^2.0.0
 
   # Path for temporary files.
-  path_provider: ^2.1.4
+  path_provider: ^2.1.5
   
   # Access camera and gallery.
   image_picker: ^1.1.2
-  gal: ^2.3.0
+  gal: ^2.3.1
 
   # Resize images.
-  image_cropper: ^8.0.2
+  image_cropper: ^9.0.0
 
   # Carousel.
   carousel_slider: ^5.0.0
 
   # Firebase for push notifications.
-  firebase_core: ^2.24.0
-  firebase_messaging: ^14.7.10
+  firebase_core: ^3.12.0
+  firebase_messaging: ^15.2.3
 
   # Push notifications in app. 
   overlay_support: ^2.1.0
@@ -115,13 +115,16 @@ dependencies:
   flutter_cache_manager: ^3.4.1
 
   # Navigation.
-  go_router: ^14.2.7
+  go_router: ^14.8.0
 
   # Displaying QR codes.
   qr_flutter: ^4.1.0
 
   # Open files.
-  open_file_plus: ^3.4.1
+  open_file_plus:
+    git:
+      url: https://github.com/postflow/open_file_plus.git
+      ref: b29351d11174869ebe0d7a5401ecad0a2300a63b
 
 dev_dependencies:
   flutter_test:
@@ -134,18 +137,18 @@ dev_dependencies:
     sdk: flutter
 
   # JSON parsing.
-  build_runner: ^2.4.12
+  build_runner: ^2.4.15
 
   # JSON parsing.
-  json_serializable: ^6.8.0
+  json_serializable: ^6.9.4
 
   # Linting.
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
 
   # Generating splash screens.
-  flutter_native_splash: ^2.4.1
+  flutter_native_splash: ^2.4.5
 
-  mockito: ^5.4.4
+  mockito: ^5.4.5
 
 # The following section is specific to Flutter.
 flutter:
