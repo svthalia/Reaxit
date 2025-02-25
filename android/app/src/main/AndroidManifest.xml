@@ -52,9 +52,9 @@
                 <category
                     android:name="android.intent.category.BROWSABLE"/>
                 <data
-                    android:scheme="https"/>
+                    android:scheme="http"/>
                 <data
-                    android:scheme="thaliapp"/>
+                    android:scheme="https"/>
                 <data
                     android:host="thalia.nu"/>
                 <data
@@ -103,14 +103,10 @@
             android:name="com.linusu.flutter_web_auth_2.CallbackActivity"
             android:exported="true">
             <intent-filter>
-                <action
-                    android:name="android.intent.action.VIEW"/>
-                <category
-                    android:name="android.intent.category.DEFAULT"/>
-                <category
-                    android:name="android.intent.category.BROWSABLE"/>
-                <data
-                    android:scheme="nu.thalia"/>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="nu.thalia" />
             </intent-filter>
         </activity>
         <!-- Image Cropper -->

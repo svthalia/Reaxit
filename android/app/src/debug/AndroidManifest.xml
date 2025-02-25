@@ -24,8 +24,6 @@
                 <data
                     android:scheme="https"/>
                 <data
-                    android:scheme="thaliapp"/>
-                <data
                     android:host="staging.thalia.nu"/>
                 <data
                     android:path="/pizzas/"/>
