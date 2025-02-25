@@ -17,9 +17,9 @@ class SalesOrderCubit extends Cubit<SalesOrderState> {
       final order = await api.claimSalesOrder(pk: pk);
       emit(ResultState(order));
     } on ApiException catch (exception) {
-      emit(ErrorState(
-        exception.getMessage(notFound: 'The order does not exist.'),
-      ));
+      emit(
+        ErrorState(exception.getMessage(notFound: 'The order does not exist.')),
+      );
     }
   }
 

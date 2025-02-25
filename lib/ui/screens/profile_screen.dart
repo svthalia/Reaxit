@@ -54,9 +54,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void initState() {
-    _memberCubit = MemberCubit(
-      RepositoryProvider.of<ApiRepository>(context),
-    )..load(widget.pk);
+    _memberCubit = MemberCubit(RepositoryProvider.of<ApiRepository>(context))
+      ..load(widget.pk);
 
     _scrollController.addListener(() {
       _appBarTitlePaddingNotifier.value = _horizontalTitlePadding;
@@ -76,7 +75,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showDialog(
       context: context,
       useSafeArea: false,
-      barrierColor: Colors.black.withOpacity(0.92),
+      barrierColor: Colors.black.withValues(alpha: 0.92),
       builder: (context) {
         return AvatarViewDialog(member: member, memberCubit: _memberCubit);
       },
@@ -93,26 +92,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
         centerTitle: !isAndroid,
-        title: isAndroid
-            // Rebuilds whenever the listenable is changed
-            // by the scroll controller listener.
-            ? ValueListenableBuilder<double>(
-                valueListenable: _appBarTitlePaddingNotifier,
-                builder: (context, value, child) {
-                  return Padding(
-                    padding: EdgeInsets.only(left: value),
-                    child: Text(
-                      member?.displayName ?? 'PROFILE',
-                      textAlign: TextAlign.left,
-                    ),
-                  );
-                },
-              )
-            // Just centered text on iOS.
-            : Text(
-                member?.displayName ?? 'PROFILE',
-                textAlign: TextAlign.center,
-              ),
+        title:
+            isAndroid
+                // Rebuilds whenever the listenable is changed
+                // by the scroll controller listener.
+                ? ValueListenableBuilder<double>(
+                  valueListenable: _appBarTitlePaddingNotifier,
+                  builder: (context, value, child) {
+                    return Padding(
+                      padding: EdgeInsets.only(left: value),
+                      child: Text(
+                        member?.displayName ?? 'PROFILE',
+                        textAlign: TextAlign.left,
+                      ),
+                    );
+                  },
+                )
+                // Just centered text on iOS.
+                : Text(
+                  member?.displayName ?? 'PROFILE',
+                  textAlign: TextAlign.center,
+                ),
         // Bottom padding of only 14 instead of 16 because by default (16) there
         // is a misalignment of the baseline compared to the standard AppBar.
         titlePadding: const EdgeInsets.only(bottom: 14),
@@ -126,23 +126,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 member != null
                     ? FadeInImage.assetNetwork(
-                        placeholder: 'assets/img/default-avatar.jpg',
-                        image: member.photo.medium,
-                        fit: BoxFit.cover,
-                        fadeInDuration: const Duration(milliseconds: 300),
-                      )
+                      placeholder: 'assets/img/default-avatar.jpg',
+                      image: member.photo.medium,
+                      fit: BoxFit.cover,
+                      fadeInDuration: const Duration(milliseconds: 300),
+                    )
                     : Image.asset(
-                        'assets/img/default-avatar.jpg',
-                        fit: BoxFit.cover,
-                      ),
+                      'assets/img/default-avatar.jpg',
+                      fit: BoxFit.cover,
+                    ),
                 const _BlackGradient(),
                 Positioned.fill(
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      onTap: member != null
-                          ? () => _showAvatarView(context, member)
-                          : null,
+                      onTap:
+                          member != null
+                              ? () => _showAvatarView(context, member)
+                              : null,
                     ),
                   ),
                 ),
@@ -151,116 +152,118 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
         ),
       ),
-      actions: isMe
-          ? [
-              IconButton(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 16,
-                  horizontal: 12,
-                ),
-                color: Theme.of(context).primaryIconTheme.color,
-                icon: const Icon(Icons.photo_camera_outlined),
-                onPressed: () async {
-                  final messenger = ScaffoldMessenger.of(context);
+      actions:
+          isMe
+              ? [
+                IconButton(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                    horizontal: 12,
+                  ),
+                  color: Theme.of(context).primaryIconTheme.color,
+                  icon: const Icon(Icons.photo_camera_outlined),
+                  onPressed: () async {
+                    final messenger = ScaffoldMessenger.of(context);
 
-                  final picker = ImagePicker();
-                  final pickedFile = await picker.pickImage(
-                    source: ImageSource.camera,
-                    preferredCameraDevice: CameraDevice.front,
-                  );
-                  final imagePath = pickedFile?.path;
-                  if (imagePath == null) return;
-                  final croppedFile = await ImageCropper().cropImage(
+                    final picker = ImagePicker();
+                    final pickedFile = await picker.pickImage(
+                      source: ImageSource.camera,
+                      preferredCameraDevice: CameraDevice.front,
+                    );
+                    final imagePath = pickedFile?.path;
+                    if (imagePath == null) return;
+                    final croppedFile = await ImageCropper().cropImage(
                       sourcePath: imagePath,
                       uiSettings: [IOSUiSettings(title: 'Crop')],
-                      compressFormat: ImageCompressFormat.jpg);
-                  if (croppedFile == null) return;
+                      compressFormat: ImageCompressFormat.jpg,
+                    );
+                    if (croppedFile == null) return;
 
-                  messenger.showSnackBar(const SnackBar(
-                    behavior: SnackBarBehavior.floating,
-                    content: Text(
-                      'Uploading your new profile picture...',
-                    ),
-                  ));
-
-                  try {
-                    await fullMemberCubit.updateAvatar(croppedFile);
-                    // The member that is displayed is currently
-                    // taken from the MemberCubit. If needed, we
-                    // could make the ProfileScreen listen to the
-                    // FullMemberCubit instead in case the member is
-                    // the current user. That would be nicer if we
-                    // want to allow the user to update multiple
-                    // fields. As long as that isn't the case, we
-                    // also need to reload the MemberCubit below.
-                    await _memberCubit.load(member!.pk);
-                    messenger.hideCurrentSnackBar();
-                  } on ApiException {
-                    messenger.hideCurrentSnackBar();
-                    messenger.showSnackBar(const SnackBar(
-                      behavior: SnackBarBehavior.floating,
-                      content: Text(
-                        'Uploading your avatar failed.',
+                    messenger.showSnackBar(
+                      const SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: Text('Uploading your new profile picture...'),
                       ),
-                    ));
-                  }
-                },
-              ),
-              IconButton(
-                padding: const EdgeInsets.only(
-                  top: 16,
-                  right: 16,
-                  bottom: 16,
-                  left: 12,
+                    );
+
+                    try {
+                      await fullMemberCubit.updateAvatar(croppedFile);
+                      // The member that is displayed is currently
+                      // taken from the MemberCubit. If needed, we
+                      // could make the ProfileScreen listen to the
+                      // FullMemberCubit instead in case the member is
+                      // the current user. That would be nicer if we
+                      // want to allow the user to update multiple
+                      // fields. As long as that isn't the case, we
+                      // also need to reload the MemberCubit below.
+                      await _memberCubit.load(member!.pk);
+                      messenger.hideCurrentSnackBar();
+                    } on ApiException {
+                      messenger.hideCurrentSnackBar();
+                      messenger.showSnackBar(
+                        const SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          content: Text('Uploading your avatar failed.'),
+                        ),
+                      );
+                    }
+                  },
                 ),
-                color: Theme.of(context).primaryIconTheme.color,
-                icon: const Icon(Icons.photo_outlined),
-                onPressed: () async {
-                  final messenger = ScaffoldMessenger.of(context);
+                IconButton(
+                  padding: const EdgeInsets.only(
+                    top: 16,
+                    right: 16,
+                    bottom: 16,
+                    left: 12,
+                  ),
+                  color: Theme.of(context).primaryIconTheme.color,
+                  icon: const Icon(Icons.photo_outlined),
+                  onPressed: () async {
+                    final messenger = ScaffoldMessenger.of(context);
 
-                  final picker = ImagePicker();
-                  final pickedFile = await picker.pickImage(
-                    source: ImageSource.gallery,
-                  );
-                  final imagePath = pickedFile?.path;
-                  if (imagePath == null) return;
-                  final croppedFile = await ImageCropper().cropImage(
-                    sourcePath: imagePath,
-                    uiSettings: [IOSUiSettings(title: 'Crop')],
-                  );
-                  if (croppedFile == null) return;
-                  messenger.showSnackBar(const SnackBar(
-                    behavior: SnackBarBehavior.floating,
-                    content: Text(
-                      'Uploading your new profile picture...',
-                    ),
-                  ));
-
-                  try {
-                    await fullMemberCubit.updateAvatar(croppedFile);
-                    // The member that is displayed is currently
-                    // taken from the MemberCubit. If needed, we
-                    // could make the ProfileScreen listen to the
-                    // FullMemberCubit instead in case the member is
-                    // the current user. That would be nicer if we
-                    // want to allow the user to update multiple
-                    // fields. As long as that isn't the case, we
-                    // also need to reload the MemberCubit below.
-                    await _memberCubit.load(member!.pk);
-                    messenger.hideCurrentSnackBar();
-                  } on ApiException {
-                    messenger.hideCurrentSnackBar();
-                    messenger.showSnackBar(const SnackBar(
-                      behavior: SnackBarBehavior.floating,
-                      content: Text(
-                        'Uploading your avatar failed.',
+                    final picker = ImagePicker();
+                    final pickedFile = await picker.pickImage(
+                      source: ImageSource.gallery,
+                    );
+                    final imagePath = pickedFile?.path;
+                    if (imagePath == null) return;
+                    final croppedFile = await ImageCropper().cropImage(
+                      sourcePath: imagePath,
+                      uiSettings: [IOSUiSettings(title: 'Crop')],
+                    );
+                    if (croppedFile == null) return;
+                    messenger.showSnackBar(
+                      const SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: Text('Uploading your new profile picture...'),
                       ),
-                    ));
-                  }
-                },
-              ),
-            ]
-          : null,
+                    );
+
+                    try {
+                      await fullMemberCubit.updateAvatar(croppedFile);
+                      // The member that is displayed is currently
+                      // taken from the MemberCubit. If needed, we
+                      // could make the ProfileScreen listen to the
+                      // FullMemberCubit instead in case the member is
+                      // the current user. That would be nicer if we
+                      // want to allow the user to update multiple
+                      // fields. As long as that isn't the case, we
+                      // also need to reload the MemberCubit below.
+                      await _memberCubit.load(member!.pk);
+                      messenger.hideCurrentSnackBar();
+                    } on ApiException {
+                      messenger.hideCurrentSnackBar();
+                      messenger.showSnackBar(
+                        const SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          content: Text('Uploading your avatar failed.'),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ]
+              : null,
     );
   }
 
@@ -329,14 +332,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _fieldLabel('WEBSITE'),
         const SizedBox(height: 4),
         GestureDetector(
-          onTap: member.website != null
-              ? () async {
-                  await launchUrl(
-                    member.website!,
-                    mode: LaunchMode.externalApplication,
-                  );
-                }
-              : null,
+          onTap:
+              member.website != null
+                  ? () async {
+                    await launchUrl(
+                      member.website!,
+                      mode: LaunchMode.externalApplication,
+                    );
+                  }
+                  : null,
           child: Text(
             member.website!.toString(),
             style: Theme.of(context).textTheme.titleSmall,
@@ -350,30 +354,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
-        child: Column(children: [
-          if (member.membershipType == MembershipType.honorary) ...[
-            _makeHonoraryFact(),
-            const Divider(),
+        child: Column(
+          children: [
+            if (member.membershipType == MembershipType.honorary) ...[
+              _makeHonoraryFact(),
+              const Divider(),
+            ],
+            _DescriptionFact(member: member, cubit: _memberCubit),
+            const Divider(height: 24),
+            if (member.programme != null) ...[_makeStudiesFact(member)],
+            if (member.startingYear != null) ...[
+              const SizedBox(height: 12),
+              _makeCohortFact(member),
+            ],
+            if (member.birthday != null) ...[
+              const SizedBox(height: 12),
+              _makeBirthdayFact(member),
+            ],
+            if (member.website != null) ...[
+              const SizedBox(height: 12),
+              _makeWebsiteFact(member),
+            ],
+            const Divider(height: 24),
           ],
-          _DescriptionFact(member: member, cubit: _memberCubit),
-          const Divider(height: 24),
-          if (member.programme != null) ...[
-            _makeStudiesFact(member),
-          ],
-          if (member.startingYear != null) ...[
-            const SizedBox(height: 12),
-            _makeCohortFact(member),
-          ],
-          if (member.birthday != null) ...[
-            const SizedBox(height: 12),
-            _makeBirthdayFact(member),
-          ],
-          if (member.website != null) ...[
-            const SizedBox(height: 12),
-            _makeWebsiteFact(member),
-          ],
-          const Divider(height: 24),
-        ]),
+        ),
       ),
     );
   }
@@ -383,20 +387,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (achievement.periods != null) {
       periodColumn = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: achievement.periods!.map((Period period) {
-          final since = dateFormatter.format(period.since);
-          final until = (period.until != null)
-              ? dateFormatter.format(period.until!)
-              : 'Present';
-          final dates = '$since - $until';
-          var leading = '';
-          if (period.chair) {
-            leading = 'Chair: ';
-          } else if (period.role != null) {
-            leading = '${period.role}: ';
-          }
-          return Text(leading + dates);
-        }).toList(),
+        children:
+            achievement.periods!.map((Period period) {
+              final since = dateFormatter.format(period.since);
+              final until =
+                  (period.until != null)
+                      ? dateFormatter.format(period.until!)
+                      : 'Present';
+              final dates = '$since - $until';
+              var leading = '';
+              if (period.chair) {
+                leading = 'Chair: ';
+              } else if (period.role != null) {
+                leading = '${period.role}: ';
+              }
+              return Text(leading + dates);
+            }).toList(),
       );
     }
 
@@ -409,13 +415,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       dense: true,
       onTap: () {
         if (achievement.pk != null) {
-          context.pushNamed('committee',
-              pathParameters: {'groupPk': '${achievement.pk!}'});
-        } else if (achievement.url != null) {
-          launchUrl(
-            achievement.url!,
-            mode: LaunchMode.externalApplication,
+          context.pushNamed(
+            'committee',
+            pathParameters: {'groupPk': '${achievement.pk!}'},
           );
+        } else if (achievement.url != null) {
+          launchUrl(achievement.url!, mode: LaunchMode.externalApplication);
         }
       },
     );
@@ -425,21 +430,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _fieldLabel('ACHIEVEMENTS FOR THALIA'),
-          Card(
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            child: Column(
-              children: [
-                ...ListTile.divideTiles(
-                  context: context,
-                  tiles: member.achievements.map(_makeAchievementTile),
-                )
-              ],
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _fieldLabel('ACHIEVEMENTS FOR THALIA'),
+            Card(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              child: Column(
+                children: [
+                  ...ListTile.divideTiles(
+                    context: context,
+                    tiles: member.achievements.map(_makeAchievementTile),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-        ]),
+            const SizedBox(height: 8),
+          ],
+        ),
       ),
     );
   }
@@ -448,21 +456,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _fieldLabel('SOCIETIES'),
-          Card(
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            child: Column(
-              children: [
-                ...ListTile.divideTiles(
-                  context: context,
-                  tiles: member.societies.map(_makeAchievementTile),
-                )
-              ],
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _fieldLabel('SOCIETIES'),
+            Card(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              child: Column(
+                children: [
+                  ...ListTile.divideTiles(
+                    context: context,
+                    tiles: member.societies.map(_makeAchievementTile),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-        ]),
+            const SizedBox(height: 8),
+          ],
+        ),
       ),
     );
   }
@@ -475,36 +486,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
         builder: (context, state) {
           List<Widget> slivers = switch (state) {
             ErrorState(message: var message) => [
-                _makeAppBar(),
-                SliverFillRemaining(
-                  child: ErrorCenter.fromMessage(message),
-                ),
-              ],
+              _makeAppBar(),
+              SliverFillRemaining(child: ErrorCenter.fromMessage(message)),
+            ],
             LoadingState _ when widget.member == null => [
-                _makeAppBar(),
-                const SliverFillRemaining(
+              _makeAppBar(),
+              const SliverFillRemaining(
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            ],
+            LoadingState _ => [
+              _makeAppBar(widget.member),
+              _makeFactsSliver(widget.member!),
+              const SliverPadding(
+                padding: EdgeInsets.all(16),
+                sliver: SliverToBoxAdapter(
                   child: Center(child: CircularProgressIndicator()),
                 ),
-              ],
-            LoadingState _ => [
-                _makeAppBar(widget.member),
-                _makeFactsSliver(widget.member!),
-                const SliverPadding(
-                  padding: EdgeInsets.all(16),
-                  sliver: SliverToBoxAdapter(
-                    child: Center(child: CircularProgressIndicator()),
-                  ),
-                ),
-                const SliverToBoxAdapter(child: SizedBox(height: 32))
-              ],
+              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 32)),
+            ],
             ResultState(result: var result) => [
-                _makeAppBar(result),
-                _makeFactsSliver(result),
-                if (result.achievements.isNotEmpty)
-                  _makeAchievementsSliver(result),
-                if (result.societies.isNotEmpty) _makeSocietiesSliver(result),
-                const SliverToBoxAdapter(child: SizedBox(height: 32))
-              ],
+              _makeAppBar(result),
+              _makeFactsSliver(result),
+              if (result.achievements.isNotEmpty)
+                _makeAchievementsSliver(result),
+              if (result.societies.isNotEmpty) _makeSocietiesSliver(result),
+              const SliverToBoxAdapter(child: SizedBox(height: 32)),
+            ],
           };
           return CustomScrollView(
             controller: _scrollController,
@@ -542,44 +551,40 @@ class _AvatarViewDialogState extends State<AvatarViewDialog> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         shadowColor: Colors.transparent,
-        leading: CloseButton(
-          color: Theme.of(context).primaryIconTheme.color,
-        ),
-        actions: isMe
-            ? [
-                IconButton(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                    horizontal: 12,
+        leading: CloseButton(color: Theme.of(context).primaryIconTheme.color),
+        actions:
+            isMe
+                ? [
+                  IconButton(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 12,
+                    ),
+                    color: Theme.of(context).primaryIconTheme.color,
+                    icon: const Icon(Icons.photo_camera_outlined),
+                    onPressed: _takePicture,
                   ),
-                  color: Theme.of(context).primaryIconTheme.color,
-                  icon: const Icon(Icons.photo_camera_outlined),
-                  onPressed: _takePicture,
-                ),
-                IconButton(
-                  padding: const EdgeInsets.only(
-                    top: 16,
-                    right: 16,
-                    bottom: 16,
-                    left: 12,
+                  IconButton(
+                    padding: const EdgeInsets.only(
+                      top: 16,
+                      right: 16,
+                      bottom: 16,
+                      left: 12,
+                    ),
+                    color: Theme.of(context).primaryIconTheme.color,
+                    icon: const Icon(Icons.photo_outlined),
+                    onPressed: _choosePicture,
                   ),
-                  color: Theme.of(context).primaryIconTheme.color,
-                  icon: const Icon(Icons.photo_outlined),
-                  onPressed: _choosePicture,
-                ),
-              ]
-            : null,
+                ]
+                : null,
       ),
       body: PhotoView(
         imageProvider: NetworkImage(widget.member.photo.full),
         minScale: PhotoViewComputedScale.contained * 0.8,
         maxScale: PhotoViewComputedScale.covered * 1.2,
-        loadingBuilder: (_, __) => const Center(
-          child: CircularProgressIndicator(),
-        ),
-        backgroundDecoration: const BoxDecoration(
-          color: Colors.transparent,
-        ),
+        loadingBuilder:
+            (_, __) => const Center(child: CircularProgressIndicator()),
+        backgroundDecoration: const BoxDecoration(color: Colors.transparent),
       ),
     );
   }
@@ -604,12 +609,12 @@ class _AvatarViewDialogState extends State<AvatarViewDialog> {
 
     if (mounted) Navigator.of(context).pop();
 
-    messenger.showSnackBar(const SnackBar(
-      behavior: SnackBarBehavior.floating,
-      content: Text(
-        'Uploading your new profile picture...',
+    messenger.showSnackBar(
+      const SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text('Uploading your new profile picture...'),
       ),
-    ));
+    );
 
     try {
       await fullMemberCubit.updateAvatar(croppedFile);
@@ -629,12 +634,12 @@ class _AvatarViewDialogState extends State<AvatarViewDialog> {
       messenger.hideCurrentSnackBar();
     } on ApiException {
       messenger.hideCurrentSnackBar();
-      messenger.showSnackBar(const SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(
-          'Uploading your avatar failed.',
+      messenger.showSnackBar(
+        const SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('Uploading your avatar failed.'),
         ),
-      ));
+      );
     }
   }
 
@@ -643,9 +648,7 @@ class _AvatarViewDialogState extends State<AvatarViewDialog> {
     final fullMemberCubit = BlocProvider.of<FullMemberCubit>(context);
 
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(
-      source: ImageSource.gallery,
-    );
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     final imagePath = pickedFile?.path;
     if (imagePath == null) return;
     final croppedFile = await ImageCropper().cropImage(
@@ -656,12 +659,12 @@ class _AvatarViewDialogState extends State<AvatarViewDialog> {
 
     if (mounted) Navigator.of(context).pop();
 
-    messenger.showSnackBar(const SnackBar(
-      behavior: SnackBarBehavior.floating,
-      content: Text(
-        'Uploading your new profile picture...',
+    messenger.showSnackBar(
+      const SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text('Uploading your new profile picture...'),
       ),
-    ));
+    );
     try {
       await fullMemberCubit.updateAvatar(croppedFile);
       // The member that is displayed is currently
@@ -680,12 +683,12 @@ class _AvatarViewDialogState extends State<AvatarViewDialog> {
       messenger.hideCurrentSnackBar();
     } on ApiException {
       messenger.hideCurrentSnackBar();
-      messenger.showSnackBar(const SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(
-          'Uploading your avatar failed.',
+      messenger.showSnackBar(
+        const SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('Uploading your avatar failed.'),
         ),
-      ));
+      );
     }
   }
 }
@@ -715,10 +718,7 @@ class _BlackGradient extends StatelessWidget {
 class _DescriptionFact extends StatefulWidget {
   final ListMember member;
   final MemberCubit cubit;
-  const _DescriptionFact({
-    required this.member,
-    required this.cubit,
-  });
+  const _DescriptionFact({required this.member, required this.cubit});
 
   @override
   __DescriptionFactState createState() => __DescriptionFactState();
@@ -762,80 +762,74 @@ class __DescriptionFactState extends State<_DescriptionFact> {
           duration: const Duration(milliseconds: 200),
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
-            child: isEditting
-                ? Row(
-                    key: const ValueKey(true),
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _controller,
-                          maxLines: null,
-                          style: Theme.of(context).textTheme.bodyMedium,
+            child:
+                isEditting
+                    ? Row(
+                      key: const ValueKey(true),
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _controller,
+                            maxLines: null,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
                         ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.check),
-                        tooltip: 'Edit your avatar',
-                        onPressed: () async {
-                          final messenger = ScaffoldMessenger.of(context);
-                          try {
-                            await _fullMemberCubit.updateDescription(
-                              _controller.text,
-                            );
-                            await widget.cubit.load(widget.member.pk);
-                          } on ApiException {
-                            messenger.showSnackBar(
-                              const SnackBar(
-                                behavior: SnackBarBehavior.floating,
-                                content: Text(
-                                  'Updating your description failed.',
-                                ),
-                              ),
-                            );
-                          }
-                          setState(() => isEditting = false);
-                        },
-                      ),
-                    ],
-                  )
-                : Row(
-                    key: const ValueKey(false),
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          (widget.member.profileDescription?.isEmpty ?? true)
-                              ? "This member hasn't created a description yet."
-                              : widget.member.profileDescription!,
-                          style: (widget.member.profileDescription?.isEmpty ??
-                                  true)
-                              ? Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium!
-                                  .copyWith(
-                                    fontStyle: FontStyle.italic,
-                                  )
-                              : Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium!
-                                  .copyWith(
-                                    fontStyle: FontStyle.normal,
-                                  ),
-                        ),
-                      ),
-                      if (isMe)
                         IconButton(
-                          tooltip: 'Edit your description',
-                          icon: const Icon(Icons.edit_outlined),
-                          onPressed: () {
-                            setState(() => isEditting = true);
+                          icon: const Icon(Icons.check),
+                          tooltip: 'Edit your avatar',
+                          onPressed: () async {
+                            final messenger = ScaffoldMessenger.of(context);
+                            try {
+                              await _fullMemberCubit.updateDescription(
+                                _controller.text,
+                              );
+                              await widget.cubit.load(widget.member.pk);
+                            } on ApiException {
+                              messenger.showSnackBar(
+                                const SnackBar(
+                                  behavior: SnackBarBehavior.floating,
+                                  content: Text(
+                                    'Updating your description failed.',
+                                  ),
+                                ),
+                              );
+                            }
+                            setState(() => isEditting = false);
                           },
                         ),
-                    ],
-                  ),
+                      ],
+                    )
+                    : Row(
+                      key: const ValueKey(false),
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            (widget.member.profileDescription?.isEmpty ?? true)
+                                ? "This member hasn't created a description yet."
+                                : widget.member.profileDescription!,
+                            style:
+                                (widget.member.profileDescription?.isEmpty ??
+                                        true)
+                                    ? Theme.of(context).textTheme.bodyMedium!
+                                        .copyWith(fontStyle: FontStyle.italic)
+                                    : Theme.of(context).textTheme.bodyMedium!
+                                        .copyWith(fontStyle: FontStyle.normal),
+                          ),
+                        ),
+                        if (isMe)
+                          IconButton(
+                            tooltip: 'Edit your description',
+                            icon: const Icon(Icons.edit_outlined),
+                            onPressed: () {
+                              setState(() => isEditting = true);
+                            },
+                          ),
+                      ],
+                    ),
           ),
         ),
       ],

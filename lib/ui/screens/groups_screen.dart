@@ -70,20 +70,17 @@ class _GroupsScreenState extends State<GroupsScreen>
           indicatorColor: Theme.of(context).colorScheme.primary,
         ),
         collapsingActions: [
-          IconAppbarAction(
-            'SEARCH',
-            Icons.search,
-            () async {
-              final searchCubit =
-                  AllGroupsCubit(RepositoryProvider.of<ApiRepository>(context));
+          IconAppbarAction('SEARCH', Icons.search, () async {
+            final searchCubit = AllGroupsCubit(
+              RepositoryProvider.of<ApiRepository>(context),
+            );
 
-              await showSearch(
-                context: context,
-                delegate: GroupSearchDelegate(searchCubit),
-              );
-              searchCubit.close();
-            },
-          )
+            await showSearch(
+              context: context,
+              delegate: GroupSearchDelegate(searchCubit),
+            );
+            searchCubit.close();
+          }),
         ],
       ),
       drawer: MenuDrawer(),
@@ -131,7 +128,7 @@ class _GroupsScreenState extends State<GroupsScreen>
                 return GroupListScrollView(groups: state.results);
               }
             },
-          )
+          ),
         ],
       ),
     );
@@ -143,10 +140,10 @@ class GroupListScrollView extends StatelessWidget {
   final ListGroup? activeBoard;
 
   GroupListScrollView({super.key, required List<ListGroup> groups})
-      : activeBoard = groups.firstWhereOrNull(
-          (element) => element.isActiveBoard(),
-        ),
-        groups = groups.where((element) => !element.isActiveBoard()).toList();
+    : activeBoard = groups.firstWhereOrNull(
+        (element) => element.isActiveBoard(),
+      ),
+      groups = groups.where((element) => !element.isActiveBoard()).toList();
 
   @override
   Widget build(BuildContext context) {
@@ -214,7 +211,7 @@ class GroupSearchDelegate extends SearchDelegate {
           onPressed: () {
             query = '';
           },
-        )
+        ),
       ];
     } else {
       return [];
@@ -223,30 +220,29 @@ class GroupSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildLeading(BuildContext context) {
-    return BackButton(
-      onPressed: () => close(context, null),
-    );
+    return BackButton(onPressed: () => close(context, null));
   }
 
   @override
   Widget buildResults(BuildContext context) {
     return BlocBuilder<AllGroupsCubit, GroupsState>(
-        bloc: _cubit..search(query),
-        builder: (context, state) {
-          if (state.message != null) {
-            return ErrorScrollView(state.message!);
-          } else if (state.isLoading) {
-            return GroupListScrollView(
-              key: const PageStorageKey('groups-search'),
-              groups: const [],
-            );
-          } else {
-            return GroupListScrollView(
-              key: const PageStorageKey('groups-search'),
-              groups: state.results,
-            );
-          }
-        });
+      bloc: _cubit..search(query),
+      builder: (context, state) {
+        if (state.message != null) {
+          return ErrorScrollView(state.message!);
+        } else if (state.isLoading) {
+          return GroupListScrollView(
+            key: const PageStorageKey('groups-search'),
+            groups: const [],
+          );
+        } else {
+          return GroupListScrollView(
+            key: const PageStorageKey('groups-search'),
+            groups: state.results,
+          );
+        }
+      },
+    );
   }
 
   @override

@@ -7,22 +7,18 @@ part of 'order.dart';
 // **************************************************************************
 
 TostiOrder _$TostiOrderFromJson(Map<String, dynamic> json) => TostiOrder(
-      (json['id'] as num).toInt(),
-      DateTime.parse(json['created'] as String),
-      json['user'] == null
-          ? null
-          : TostiUser.fromJson(json['user'] as Map<String, dynamic>),
-      TostiProduct.fromJson(json['product'] as Map<String, dynamic>),
-      json['order_price'] as String,
-      json['ready'] as bool,
-      json['ready_at'] == null
-          ? null
-          : DateTime.parse(json['ready_at'] as String),
-      json['paid'] as bool,
-      json['paid_at'] == null
-          ? null
-          : DateTime.parse(json['paid_at'] as String),
-    );
+  (json['id'] as num).toInt(),
+  DateTime.parse(json['created'] as String),
+  json['user'] == null
+      ? null
+      : TostiUser.fromJson(json['user'] as Map<String, dynamic>),
+  TostiProduct.fromJson(json['product'] as Map<String, dynamic>),
+  json['order_price'] as String,
+  json['ready'] as bool,
+  json['ready_at'] == null ? null : DateTime.parse(json['ready_at'] as String),
+  json['paid'] as bool,
+  json['paid_at'] == null ? null : DateTime.parse(json['paid_at'] as String),
+);
 
 Map<String, dynamic> _$TostiOrderToJson(TostiOrder instance) =>
     <String, dynamic>{

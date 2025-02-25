@@ -23,11 +23,11 @@ class LoggingClient extends oauth2.Client {
   });
 
   LoggingClient.fromClient(oauth2.Client client)
-      : super(
-          client.credentials,
-          identifier: client.identifier,
-          secret: client.secret,
-        );
+    : super(
+        client.credentials,
+        identifier: client.identifier,
+        secret: client.secret,
+      );
 
   static void logResponse(Uri url, int statusCode) {
     if (kDebugMode) {
@@ -76,13 +76,13 @@ class ConcrexitApiRepository implements ApiRepository {
 
     /// Called when the client can no longer authenticate.
     required Function() onLogOut,
-  })  : _innerClient = client,
-        _onLogOut = onLogOut,
-        _baseUri = Uri(
-          scheme: config.scheme,
-          host: config.host,
-          port: config.port,
-        );
+  }) : _innerClient = client,
+       _onLogOut = onLogOut,
+       _baseUri = Uri(
+         scheme: config.scheme,
+         host: config.host,
+         port: config.port,
+       );
 
   @override
   void close() {
@@ -612,9 +612,7 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
-  Future<void> markNotPaidAdminFoodOrder({
-    required int orderPk,
-  }) async {
+  Future<void> markNotPaidAdminFoodOrder({required int orderPk}) async {
     return sandbox(() async {
       final uri = _uri(
         path: '/admin/payments/payables/pizzas/foodorder/$orderPk/',
@@ -690,10 +688,11 @@ class ConcrexitApiRepository implements ApiRepository {
         },
       );
       final response = await _handleExceptions(() => _client.get(uri));
-      final events = ListResponse<FoodEvent>.fromJson(
-        _jsonDecode(response),
-        (json) => FoodEvent.fromJson(json as Map<String, dynamic>),
-      ).results;
+      final events =
+          ListResponse<FoodEvent>.fromJson(
+            _jsonDecode(response),
+            (json) => FoodEvent.fromJson(json as Map<String, dynamic>),
+          ).results;
 
       if (events.isEmpty) {
         throw ApiException.notFound;
@@ -844,7 +843,8 @@ class ConcrexitApiRepository implements ApiRepository {
   }) async {
     return sandbox(() async {
       final uri = _uri(
-        path: '/payments/payables/$appLabel/'
+        path:
+            '/payments/payables/$appLabel/'
             '$modelName/${Uri.encodeComponent(payablePk)}/',
       );
 
@@ -935,7 +935,7 @@ class ConcrexitApiRepository implements ApiRepository {
             'username',
             '-last_name',
             '-first_name',
-            '-username'
+            '-username',
           ].contains(ordering),
       'Invalid ordering parameter: $ordering',
     );
@@ -997,7 +997,7 @@ class ConcrexitApiRepository implements ApiRepository {
     return sandbox(() async {
       final uri = _uri(path: '/members/me/');
       final body = jsonEncode({
-        'profile': {'profile_description': description}
+        'profile': {'profile_description': description},
       });
       await _handleExceptions(
         () => _client.patch(uri, body: body, headers: _jsonHeader),
@@ -1019,9 +1019,10 @@ class ConcrexitApiRepository implements ApiRepository {
     return sandbox(() async {
       final uri = _uri(path: '/photos/photos/$pk/like/');
       await _handleExceptions(
-        () => liked
-            ? _client.post(uri, headers: _jsonHeader)
-            : _client.delete(uri, headers: _jsonHeader),
+        () =>
+            liked
+                ? _client.post(uri, headers: _jsonHeader)
+                : _client.delete(uri, headers: _jsonHeader),
       );
     });
   }
@@ -1083,13 +1084,9 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
-  Future<Thabloid> getThabloid({
-    required int pk,
-  }) async {
+  Future<Thabloid> getThabloid({required int pk}) async {
     return sandbox(() async {
-      final uri = _uri(
-        path: '/thabloid/thabloids/$pk',
-      );
+      final uri = _uri(path: '/thabloid/thabloids/$pk');
 
       final response = await _handleExceptions(() => _client.get(uri));
       return Thabloid.fromJson(_jsonDecode(response));
@@ -1097,10 +1094,7 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
-  Future<ListResponse<Slide>> getSlides({
-    int? limit,
-    int? offset,
-  }) async {
+  Future<ListResponse<Slide>> getSlides({int? limit, int? offset}) async {
     return sandbox(() async {
       final uri = _uri(
         path: '/announcements/slides/',
@@ -1235,9 +1229,7 @@ class ConcrexitApiRepository implements ApiRepository {
   ) {
     return ListResponse<PushNotificationCategory>.fromJson(
       _jsonDecode(response),
-      (json) => PushNotificationCategory.fromJson(
-        json as Map<String, dynamic>,
-      ),
+      (json) => PushNotificationCategory.fromJson(json as Map<String, dynamic>),
     );
   }
 
@@ -1288,7 +1280,7 @@ class ConcrexitApiRepository implements ApiRepository {
         if (type != null) 'type': memberGroupTypeMap[type],
         if (start != null) 'start': start.toIso8601String(),
         if (end != null) 'end': end.toIso8601String(),
-        if (search != null) 'search': search
+        if (search != null) 'search': search,
       },
     );
 
@@ -1307,19 +1299,23 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
-  Future<Group> getGroupBySlug(
-      {required MemberGroupType type, required String slug}) async {
+  Future<Group> getGroupBySlug({
+    required MemberGroupType type,
+    required String slug,
+  }) async {
     // Only boards have slug support right now
     assert(type == MemberGroupType.board);
 
     if (type == MemberGroupType.board) {
-      final uri =
-          _baseUri.replace(path: '$_basePath/activemembers/boards/$slug/');
+      final uri = _baseUri.replace(
+        path: '$_basePath/activemembers/boards/$slug/',
+      );
       final response = await _handleExceptions(() => _client.get(uri));
       return Group.fromJson(_jsonDecode(response));
     } else {
       throw ApiException.message(
-          'Slugs are unsupported for groups of this type.');
+        'Slugs are unsupported for groups of this type.',
+      );
     }
   }
 
@@ -1344,18 +1340,17 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
-  Future<ListResponse<Payment>> getPayments(
-      {int? limit,
-      int? offset,
-      String? ordering,
-      DateTime? start,
-      DateTime? end,
-      List<PaymentType>? type,
-      bool? settled}) {
+  Future<ListResponse<Payment>> getPayments({
+    int? limit,
+    int? offset,
+    String? ordering,
+    DateTime? start,
+    DateTime? end,
+    List<PaymentType>? type,
+    bool? settled,
+  }) {
     return sandbox(() async {
-      const paymentTypeMap = {
-        PaymentType.tpayPayment: 'tpay_payment',
-      };
+      const paymentTypeMap = {PaymentType.tpayPayment: 'tpay_payment'};
 
       final uri = _baseUri.replace(
         path: '$_basePath/payments/',
@@ -1372,8 +1367,10 @@ class ConcrexitApiRepository implements ApiRepository {
       );
 
       final response = await _handleExceptions(() => _client.get(uri));
-      return ListResponse<Payment>.fromJson(_jsonDecode(response),
-          (json) => Payment.fromJson(json as Map<String, dynamic>));
+      return ListResponse<Payment>.fromJson(
+        _jsonDecode(response),
+        (json) => Payment.fromJson(json as Map<String, dynamic>),
+      );
     });
   }
 }

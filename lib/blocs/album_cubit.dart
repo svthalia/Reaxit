@@ -26,9 +26,7 @@ class AlbumCubit extends Cubit<AlbumState> implements GalleryCubit<AlbumState> {
     );
     List<AlbumPhoto> newphotos = [...oldState.result.photos];
     newphotos[index] = newphoto;
-    emit(ResultState(
-      oldState.result.copyWith(photos: newphotos),
-    ));
+    emit(ResultState(oldState.result.copyWith(photos: newphotos)));
 
     try {
       await api.updateLiked(newphoto.pk, liked);
@@ -48,9 +46,9 @@ class AlbumCubit extends Cubit<AlbumState> implements GalleryCubit<AlbumState> {
       final album = await api.getAlbum(slug: slug);
       emit(ResultState(album));
     } on ApiException catch (exception) {
-      emit(ErrorState(
-        exception.getMessage(notFound: 'The album does not exist.'),
-      ));
+      emit(
+        ErrorState(exception.getMessage(notFound: 'The album does not exist.')),
+      );
     }
   }
 }

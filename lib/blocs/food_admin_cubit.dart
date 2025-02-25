@@ -23,7 +23,7 @@ class FoodAdminCubit extends Cubit<FoodAdminState> {
   Timer? _searchDebounceTimer;
 
   FoodAdminCubit(this.api, {required this.foodEventPk})
-      : super(const LoadingState());
+    : super(const LoadingState());
 
   Future<void> load() async {
     emit(LoadingState.from(state));
@@ -49,9 +49,11 @@ class FoodAdminCubit extends Cubit<FoodAdminState> {
         emit(ResultState(orders.results));
       }
     } on ApiException catch (exception) {
-      emit(ErrorState(exception.getMessage(
-        notFound: 'The food event does not exist.',
-      )));
+      emit(
+        ErrorState(
+          exception.getMessage(notFound: 'The food event does not exist.'),
+        ),
+      );
     }
   }
 
@@ -83,32 +85,26 @@ class FoodAdminCubit extends Cubit<FoodAdminState> {
       );
       emit(
         ResultState(
-          state.result!.map(
-            (order) {
-              if (order.pk == orderPk) {
-                return order.copyWithPayment(payable.payment);
-              } else {
-                return order;
-              }
-            },
-          ).toList(),
+          state.result!.map((order) {
+            if (order.pk == orderPk) {
+              return order.copyWithPayment(payable.payment);
+            } else {
+              return order;
+            }
+          }).toList(),
         ),
       );
     } else {
-      await api.markNotPaidAdminFoodOrder(
-        orderPk: orderPk,
-      );
+      await api.markNotPaidAdminFoodOrder(orderPk: orderPk);
       emit(
         ResultState(
-          state.result!.map(
-            (order) {
-              if (order.pk == orderPk) {
-                return order.copyWithPayment(null);
-              } else {
-                return order;
-              }
-            },
-          ).toList(),
+          state.result!.map((order) {
+            if (order.pk == orderPk) {
+              return order.copyWithPayment(null);
+            } else {
+              return order;
+            }
+          }).toList(),
         ),
       );
     }

@@ -23,8 +23,14 @@ class Device {
 
   Map<String, dynamic> toJson() => _$DeviceToJson(this);
 
-  const Device(this.pk, this.token, this.active, this.dateCreated, this.type,
-      this.receiveCategory);
+  const Device(
+    this.pk,
+    this.token,
+    this.active,
+    this.dateCreated,
+    this.type,
+    this.receiveCategory,
+  );
 
   Device copyWithReceiveCategory(List<String> newReceiveCategory) =>
       Device(pk, token, active, dateCreated, type, newReceiveCategory);

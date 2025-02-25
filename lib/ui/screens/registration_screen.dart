@@ -12,7 +12,7 @@ class RegistrationScreen extends StatefulWidget {
   final int registrationPk;
 
   RegistrationScreen({required this.eventPk, required this.registrationPk})
-      : super(key: ValueKey(registrationPk));
+    : super(key: ValueKey(registrationPk));
 
   @override
   State<RegistrationScreen> createState() => _RegistrationScreenState();
@@ -27,10 +27,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   void initState() {
     _registrationFieldsCubit = RegistrationFieldsCubit(
       RepositoryProvider.of<ApiRepository>(context),
-    )..load(
-        eventPk: widget.eventPk,
-        registrationPk: widget.registrationPk,
-      );
+    )..load(eventPk: widget.eventPk, registrationPk: widget.registrationPk);
     super.initState();
   }
 
@@ -58,18 +55,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         messenger.showSnackBar(
           const SnackBar(
             behavior: SnackBarBehavior.floating,
-            content: Text(
-              'Your registration has been updated.',
-            ),
+            content: Text('Your registration has been updated.'),
           ),
         );
       } on ApiException {
         messenger.showSnackBar(
           const SnackBar(
             behavior: SnackBarBehavior.floating,
-            content: Text(
-              'Could not update your registration.',
-            ),
+            content: Text('Could not update your registration.'),
           ),
         );
       }
@@ -79,86 +72,73 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   // TODO: it seems much better to allow the registrationfields to convert to widgets
   // themselves.
   Widget _registrationfieldToWidget(RegistrationField field) => switch (field) {
-        TextRegistrationField _ => Column(
-            children: [
-              ListTile(
-                title: Text(field.label),
-                subtitle: field.description.isNotEmpty
-                    ? Text(field.description)
-                    : null,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 16,
-                  bottom: 16,
-                  right: 16,
-                ),
-                child: TextFormField(
-                  initialValue: field.value,
-                  minLines: 1,
-                  maxLines: 5,
-                  decoration: InputDecoration(
-                    labelText:
-                        field.isRequired ? '${field.label} *' : field.label,
-                    hintText: 'Lorem ipsum...',
-                  ),
-                  validator: (value) {
-                    if (field.isRequired && (value == null || value.isEmpty)) {
-                      return 'Please fill in this field.';
-                    }
-                    return null;
-                  },
-                  onSaved: (newValue) => field.value = newValue,
-                ),
-              ),
-            ],
-          ),
-        IntegerRegistrationField _ => Column(
-            children: [
-              ListTile(
-                dense: field.description.isEmpty,
-                title: Text(field.label),
-                subtitle: field.description.isNotEmpty
-                    ? Text(field.description)
-                    : null,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  bottom: 16,
-                ),
-                child: TextFormField(
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: InputDecoration(
-                    labelText:
-                        field.isRequired ? '${field.label} *' : field.label,
-                    hintText: '123...',
-                  ),
-                  initialValue: field.value?.toString(),
-                  validator: (value) {
-                    if (field.isRequired && (value == null || value.isEmpty)) {
-                      return 'Please fill in this field.';
-                    }
-                    return null;
-                  },
-                  onSaved: (newValue) => field.value = int.tryParse(newValue!),
-                ),
-              ),
-            ],
-          ),
-        CheckboxRegistrationField _ => Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: _CheckboxFormField(
-              initialValue: field.value ?? false,
-              onSaved: (newValue) => field.value = newValue,
-              title: Text(field.label),
-              subtitle:
-                  field.description.isNotEmpty ? Text(field.description) : null,
+    TextRegistrationField _ => Column(
+      children: [
+        ListTile(
+          title: Text(field.label),
+          subtitle:
+              field.description.isNotEmpty ? Text(field.description) : null,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 16, bottom: 16, right: 16),
+          child: TextFormField(
+            initialValue: field.value,
+            minLines: 1,
+            maxLines: 5,
+            decoration: InputDecoration(
+              labelText: field.isRequired ? '${field.label} *' : field.label,
+              hintText: 'Lorem ipsum...',
             ),
+            validator: (value) {
+              if (field.isRequired && (value == null || value.isEmpty)) {
+                return 'Please fill in this field.';
+              }
+              return null;
+            },
+            onSaved: (newValue) => field.value = newValue,
           ),
-      };
+        ),
+      ],
+    ),
+    IntegerRegistrationField _ => Column(
+      children: [
+        ListTile(
+          dense: field.description.isEmpty,
+          title: Text(field.label),
+          subtitle:
+              field.description.isNotEmpty ? Text(field.description) : null,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+          child: TextFormField(
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            decoration: InputDecoration(
+              labelText: field.isRequired ? '${field.label} *' : field.label,
+              hintText: '123...',
+            ),
+            initialValue: field.value?.toString(),
+            validator: (value) {
+              if (field.isRequired && (value == null || value.isEmpty)) {
+                return 'Please fill in this field.';
+              }
+              return null;
+            },
+            onSaved: (newValue) => field.value = int.tryParse(newValue!),
+          ),
+        ),
+      ],
+    ),
+    CheckboxRegistrationField _ => Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: _CheckboxFormField(
+        initialValue: field.value ?? false,
+        onSaved: (newValue) => field.value = newValue,
+        title: Text(field.label),
+        subtitle: field.description.isNotEmpty ? Text(field.description) : null,
+      ),
+    ),
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -169,37 +149,38 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ErrorState(message: var message) => ErrorCenter.fromMessage(message),
           LoadingState _ => const Center(child: CircularProgressIndicator()),
           ResultState(result: var result) => SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    ...result.entries.map(
-                        (entry) => _registrationfieldToWidget(entry.value)),
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton.icon(
-                            onPressed: () {
-                              _formKey.currentState!.reset();
-                            },
-                            icon: const Icon(Icons.restore_page_outlined),
-                            label: const Text('RESTORE'),
-                          ),
-                          const SizedBox(width: 16),
-                          ElevatedButton.icon(
-                            onPressed: () async => await _submit(result),
-                            icon: const Icon(Icons.check),
-                            label: const Text('SUBMIT'),
-                          ),
-                        ],
-                      ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  ...result.entries.map(
+                    (entry) => _registrationfieldToWidget(entry.value),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton.icon(
+                          onPressed: () {
+                            _formKey.currentState!.reset();
+                          },
+                          icon: const Icon(Icons.restore_page_outlined),
+                          label: const Text('RESTORE'),
+                        ),
+                        const SizedBox(width: 16),
+                        ElevatedButton.icon(
+                          onPressed: () async => await _submit(result),
+                          icon: const Icon(Icons.check),
+                          label: const Text('SUBMIT'),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            )
+            ),
+          ),
         };
         return Scaffold(
           appBar: ThaliaAppBar(
@@ -220,15 +201,15 @@ class _CheckboxFormField extends FormField<bool> {
     super.onSaved,
     super.initialValue = false,
   }) : super(
-          builder: (FormFieldState<bool> state) {
-            return CheckboxListTile(
-              dense: state.hasError,
-              title: title,
-              value: state.value,
-              onChanged: state.didChange,
-              subtitle: subtitle,
-              controlAffinity: ListTileControlAffinity.leading,
-            );
-          },
-        );
+         builder: (FormFieldState<bool> state) {
+           return CheckboxListTile(
+             dense: state.hasError,
+             title: title,
+             value: state.value,
+             onChanged: state.didChange,
+             subtitle: subtitle,
+             controlAffinity: ListTileControlAffinity.leading,
+           );
+         },
+       );
 }

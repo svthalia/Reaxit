@@ -15,7 +15,8 @@ ThaliedjePlayer _$ThaliedjePlayerFromJson(Map<String, dynamic> json) =>
       json['track'] == null
           ? null
           : ThaliedjeCurrentTrack.fromJson(
-              json['track'] as Map<String, dynamic>),
+            json['track'] as Map<String, dynamic>,
+          ),
       json['is_playing'] as bool,
       (json['current_volume'] as num?)?.toDouble(),
       json['shuffle'] as bool?,
@@ -42,17 +43,17 @@ Map<String, dynamic> _$ThaliedjePlayerToJson(ThaliedjePlayer instance) =>
     };
 
 ThaliedjeCurrentTrack _$ThaliedjeCurrentTrackFromJson(
-        Map<String, dynamic> json) =>
-    ThaliedjeCurrentTrack(
-      json['image'] == null ? null : Uri.parse(json['image'] as String),
-      json['name'] as String?,
-      (json['artists'] as List<dynamic>).map((e) => e as String).toList(),
-    );
+  Map<String, dynamic> json,
+) => ThaliedjeCurrentTrack(
+  json['image'] == null ? null : Uri.parse(json['image'] as String),
+  json['name'] as String?,
+  (json['artists'] as List<dynamic>).map((e) => e as String).toList(),
+);
 
 Map<String, dynamic> _$ThaliedjeCurrentTrackToJson(
-        ThaliedjeCurrentTrack instance) =>
-    <String, dynamic>{
-      'image': instance.image?.toString(),
-      'name': instance.name,
-      'artists': instance.artists,
-    };
+  ThaliedjeCurrentTrack instance,
+) => <String, dynamic>{
+  'image': instance.image?.toString(),
+  'name': instance.name,
+  'artists': instance.artists,
+};

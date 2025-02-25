@@ -34,12 +34,12 @@ class SettingsState extends Equatable {
     required this.message,
     required this.hasPermissions,
   }) : assert(
-          (device != null && categories != null && hasPermissions != null) ||
-              isLoading ||
-              message != null,
-          'device and categories can only be null '
-          'when isLoading or hasException is true.',
-        );
+         (device != null && categories != null && hasPermissions != null) ||
+             isLoading ||
+             message != null,
+         'device and categories can only be null '
+         'when isLoading or hasException is true.',
+       );
 
   @override
   List<Object?> get props => [device, categories, message, isLoading];
@@ -50,34 +50,33 @@ class SettingsState extends Equatable {
     bool? isLoading,
     String? message,
     bool? hasPermissions,
-  }) =>
-      SettingsState(
-        device: device ?? this.device,
-        categories: categories ?? this.categories,
-        isLoading: isLoading ?? this.isLoading,
-        message: message ?? this.message,
-        hasPermissions: hasPermissions ?? this.hasPermissions,
-      );
+  }) => SettingsState(
+    device: device ?? this.device,
+    categories: categories ?? this.categories,
+    isLoading: isLoading ?? this.isLoading,
+    message: message ?? this.message,
+    hasPermissions: hasPermissions ?? this.hasPermissions,
+  );
 
   const SettingsState.result({
     required Device this.device,
     required List<PushNotificationCategory> this.categories,
     required this.hasPermissions,
-  })  : message = null,
-        isLoading = false;
+  }) : message = null,
+       isLoading = false;
 
   const SettingsState.loading({
     this.device,
     this.categories,
     this.hasPermissions,
-  })  : message = null,
-        isLoading = true;
+  }) : message = null,
+       isLoading = true;
 
   const SettingsState.failure({required String this.message})
-      : device = null,
-        categories = null,
-        hasPermissions = null,
-        isLoading = false;
+    : device = null,
+      categories = null,
+      hasPermissions = null,
+      isLoading = false;
 }
 
 class SettingsCubit extends Cubit<SettingsState> {
@@ -120,24 +119,28 @@ class SettingsCubit extends Cubit<SettingsState> {
           settings.authorizationStatus == AuthorizationStatus.authorized;
 
       if (devicePk == null) {
-        emit(const SettingsState.failure(
-          message: 'Failed to register device for push notifications.',
-        ));
+        emit(
+          const SettingsState.failure(
+            message: 'Failed to register device for push notifications.',
+          ),
+        );
       } else {
         final device = await api.getDevice(pk: devicePk);
         final categories = await api.getCategories();
-        emit(SettingsState.result(
-          device: device,
-          categories: categories.results,
-          hasPermissions: hasPermissions,
-        ));
+        emit(
+          SettingsState.result(
+            device: device,
+            categories: categories.results,
+            hasPermissions: hasPermissions,
+          ),
+        );
       }
     } on ApiException catch (exception) {
       emit(SettingsState.failure(message: exception.message));
     } catch (_) {
-      emit(const SettingsState.failure(
-        message: 'An unknown exception occurred',
-      ));
+      emit(
+        const SettingsState.failure(message: 'An unknown exception occurred'),
+      );
     }
   }
 }

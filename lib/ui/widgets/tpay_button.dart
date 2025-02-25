@@ -39,19 +39,19 @@ class TPayButton extends StatefulWidget {
     required this.failureMessage,
     required this.successMessage,
     required this.amount,
-  })  : assert(amount != null || onPay == null),
-        assert(confirmationMessage != null || onPay == null),
-        assert(failureMessage != null || onPay == null),
-        assert(successMessage != null || onPay == null);
+  }) : assert(amount != null || onPay == null),
+       assert(confirmationMessage != null || onPay == null),
+       assert(failureMessage != null || onPay == null),
+       assert(successMessage != null || onPay == null);
 
   const TPayButton.disabled({String? amount})
-      : this(
-          onPay: null,
-          confirmationMessage: null,
-          failureMessage: null,
-          successMessage: null,
-          amount: amount,
-        );
+    : this(
+        onPay: null,
+        confirmationMessage: null,
+        failureMessage: null,
+        successMessage: null,
+        amount: amount,
+      );
 
   @override
   State<TPayButton> createState() => _TPayButtonState();
@@ -72,18 +72,14 @@ class _TPayButtonState extends State<TPayButton> {
           ),
           actions: [
             TextButton.icon(
-              onPressed: () => Navigator.of(
-                context,
-                rootNavigator: true,
-              ).pop(false),
+              onPressed:
+                  () => Navigator.of(context, rootNavigator: true).pop(false),
               icon: const Icon(Icons.clear),
               label: const Text('CANCEL'),
             ),
             ElevatedButton.icon(
-              onPressed: () => Navigator.of(
-                context,
-                rootNavigator: true,
-              ).pop(true),
+              onPressed:
+                  () => Navigator.of(context, rootNavigator: true).pop(true),
               icon: const Icon(Icons.check),
               label: const Text('YES'),
             ),
@@ -146,30 +142,32 @@ class _TPayButtonState extends State<TPayButton> {
             final message = TextSpan(
               children: [
                 const TextSpan(
-                  text: 'To start using Thalia Pay, '
+                  text:
+                      'To start using Thalia Pay, '
                       'sign a direct debit mandate on ',
                 ),
                 TextSpan(
                   text: 'the website',
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () async {
-                      final messenger = ScaffoldMessenger.of(context);
-                      try {
-                        await launchUrl(
-                          url,
-                          mode: LaunchMode.externalApplication,
-                        );
-                      } catch (_) {
-                        messenger.showSnackBar(
-                          SnackBar(
-                            behavior: SnackBarBehavior.floating,
-                            content: Text(
-                              'Could not open "${url.toString()}".',
-                            ),
-                          ),
-                        );
-                      }
-                    },
+                  recognizer:
+                      TapGestureRecognizer()
+                        ..onTap = () async {
+                          final messenger = ScaffoldMessenger.of(context);
+                          try {
+                            await launchUrl(
+                              url,
+                              mode: LaunchMode.externalApplication,
+                            );
+                          } catch (_) {
+                            messenger.showSnackBar(
+                              SnackBar(
+                                behavior: SnackBarBehavior.floating,
+                                content: Text(
+                                  'Could not open "${url.toString()}".',
+                                ),
+                              ),
+                            );
+                          }
+                        },
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                   ),
@@ -201,15 +199,19 @@ class _TPayButtonState extends State<TPayButton> {
                   });
                   try {
                     await onPay();
-                    messenger.showSnackBar(SnackBar(
-                      behavior: SnackBarBehavior.floating,
-                      content: Text(successMessage),
-                    ));
+                    messenger.showSnackBar(
+                      SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: Text(successMessage),
+                      ),
+                    );
                   } on ApiException {
-                    messenger.showSnackBar(SnackBar(
-                      behavior: SnackBarBehavior.floating,
-                      content: Text(failureMessage),
-                    ));
+                    messenger.showSnackBar(
+                      SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: Text(failureMessage),
+                      ),
+                    );
                   }
                   setState(() {
                     tmpDisabled = false;

@@ -7,18 +7,18 @@ part of 'document.dart';
 // **************************************************************************
 
 Document _$DocumentFromJson(Map<String, dynamic> json) => Document(
-      (json['pk'] as num).toInt(),
-      json['name'] as String,
-      json['url'] as String,
-      $enumDecode(_$DocumentCategoryEnumMap, json['category']),
-    );
+  (json['pk'] as num).toInt(),
+  json['name'] as String,
+  json['url'] as String,
+  $enumDecode(_$DocumentCategoryEnumMap, json['category']),
+);
 
 Map<String, dynamic> _$DocumentToJson(Document instance) => <String, dynamic>{
-      'pk': instance.pk,
-      'name': instance.name,
-      'url': instance.url,
-      'category': _$DocumentCategoryEnumMap[instance.category]!,
-    };
+  'pk': instance.pk,
+  'name': instance.name,
+  'url': instance.url,
+  'category': _$DocumentCategoryEnumMap[instance.category]!,
+};
 
 const _$DocumentCategoryEnumMap = {
   DocumentCategory.annual: 'annual',

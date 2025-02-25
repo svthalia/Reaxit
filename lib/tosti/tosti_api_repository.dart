@@ -22,8 +22,8 @@ class TostiApiRepository {
 
     /// Called when the client can no longer authenticate.
     required Function() onLogOut,
-  })  : _client = client,
-        _onLogOut = onLogOut;
+  }) : _client = client,
+       _onLogOut = onLogOut;
 
   void close() {
     _client.close();

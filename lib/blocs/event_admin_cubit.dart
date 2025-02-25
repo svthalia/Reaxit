@@ -37,21 +37,21 @@ class EventAdminState extends Equatable {
     required this.cancelledMessage,
     required this.queuedMessage,
   }) : assert(
-          event != null || isLoading || message != null,
-          'event can only be null when isLoading or hasException is true.',
-        );
+         event != null || isLoading || message != null,
+         'event can only be null when isLoading or hasException is true.',
+       );
 
   @override
   List<Object?> get props => [
-        event,
-        registrations,
-        cancelledRegistrations,
-        queuedRegistrations,
-        message,
-        cancelledMessage,
-        queuedMessage,
-        isLoading
-      ];
+    event,
+    registrations,
+    cancelledRegistrations,
+    queuedRegistrations,
+    message,
+    cancelledMessage,
+    queuedMessage,
+    isLoading,
+  ];
 
   EventAdminState copyWith({
     AdminEvent? event,
@@ -63,19 +63,18 @@ class EventAdminState extends Equatable {
     String? message,
     String? cancelledMessage,
     String? queuedMessage,
-  }) =>
-      EventAdminState(
-        event: event ?? this.event,
-        registrations: registrations ?? this.registrations,
-        cancelledRegistrations:
-            cancelledRegistrations ?? this.cancelledRegistrations,
-        queuedRegistrations: queuedRegistrations ?? this.queuedRegistrations,
-        isLoading: isLoading ?? this.isLoading,
-        exception: exception ?? this.exception,
-        message: message ?? this.message,
-        cancelledMessage: cancelledMessage ?? this.cancelledMessage,
-        queuedMessage: queuedMessage ?? this.queuedMessage,
-      );
+  }) => EventAdminState(
+    event: event ?? this.event,
+    registrations: registrations ?? this.registrations,
+    cancelledRegistrations:
+        cancelledRegistrations ?? this.cancelledRegistrations,
+    queuedRegistrations: queuedRegistrations ?? this.queuedRegistrations,
+    isLoading: isLoading ?? this.isLoading,
+    exception: exception ?? this.exception,
+    message: message ?? this.message,
+    cancelledMessage: cancelledMessage ?? this.cancelledMessage,
+    queuedMessage: queuedMessage ?? this.queuedMessage,
+  );
 
   const EventAdminState.result({
     required AdminEvent this.event,
@@ -88,25 +87,25 @@ class EventAdminState extends Equatable {
     this.queuedMessage,
   }) : isLoading = false;
 
-  const EventAdminState.loading(
-      {this.event,
-      required this.registrations,
-      required this.cancelledRegistrations,
-      required this.queuedRegistrations})
-      : exception = null,
-        message = null,
-        cancelledMessage = null,
-        queuedMessage = null,
-        isLoading = true;
+  const EventAdminState.loading({
+    this.event,
+    required this.registrations,
+    required this.cancelledRegistrations,
+    required this.queuedRegistrations,
+  }) : exception = null,
+       message = null,
+       cancelledMessage = null,
+       queuedMessage = null,
+       isLoading = true;
 
   const EventAdminState.failure({required String this.exception, this.event})
-      : registrations = const [],
-        cancelledRegistrations = const [],
-        queuedRegistrations = const [],
-        isLoading = false,
-        message = null,
-        cancelledMessage = null,
-        queuedMessage = null;
+    : registrations = const [],
+      cancelledRegistrations = const [],
+      queuedRegistrations = const [],
+      isLoading = false,
+      message = null,
+      cancelledMessage = null,
+      queuedMessage = null;
 }
 
 class EventAdminCubit extends Cubit<EventAdminState> {
@@ -122,13 +121,14 @@ class EventAdminCubit extends Cubit<EventAdminState> {
   /// A timer used to debounce calls to `loadRegistrations()` from `search()`.
   Timer? _searchDebounceTimer;
 
-  EventAdminCubit(
-    this.api, {
-    required this.eventPk,
-  }) : super(const EventAdminState.loading(
-            registrations: [],
-            cancelledRegistrations: [],
-            queuedRegistrations: []));
+  EventAdminCubit(this.api, {required this.eventPk})
+    : super(
+        const EventAdminState.loading(
+          registrations: [],
+          cancelledRegistrations: [],
+          queuedRegistrations: [],
+        ),
+      );
 
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
@@ -163,36 +163,45 @@ class EventAdminCubit extends Cubit<EventAdminState> {
 
       String? message;
       if (registrations.results.isEmpty) {
-        message = (query?.isEmpty ?? true)
-            ? 'There are no registrations.'
-            : 'There are no registrations matching "$query".';
+        message =
+            (query?.isEmpty ?? true)
+                ? 'There are no registrations.'
+                : 'There are no registrations matching "$query".';
       }
       String? cancelledMessage;
       if (cancelledRegistrations.results.isEmpty) {
-        cancelledMessage = (query?.isEmpty ?? true)
-            ? 'There are no cancelled registrations.'
-            : 'There are no cancelled registrations matching "$query".';
+        cancelledMessage =
+            (query?.isEmpty ?? true)
+                ? 'There are no cancelled registrations.'
+                : 'There are no cancelled registrations matching "$query".';
       }
       String? queuedMessage;
       if (queuedRegistrations.results.isEmpty) {
-        queuedMessage = (query?.isEmpty ?? true)
-            ? 'There are no queued registrations.'
-            : 'There are no queued registrations matching "$query".';
+        queuedMessage =
+            (query?.isEmpty ?? true)
+                ? 'There are no queued registrations.'
+                : 'There are no queued registrations matching "$query".';
       }
 
-      emit(EventAdminState.result(
-        event: event,
-        registrations: registrations.results,
-        cancelledRegistrations: cancelledRegistrations.results,
-        queuedRegistrations: queuedRegistrations.results,
-        message: message,
-        cancelledMessage: cancelledMessage,
-        queuedMessage: queuedMessage,
-      ));
+      emit(
+        EventAdminState.result(
+          event: event,
+          registrations: registrations.results,
+          cancelledRegistrations: cancelledRegistrations.results,
+          queuedRegistrations: queuedRegistrations.results,
+          message: message,
+          cancelledMessage: cancelledMessage,
+          queuedMessage: queuedMessage,
+        ),
+      );
     } on ApiException catch (exception) {
-      emit(EventAdminState.failure(
-        exception: exception.getMessage(notFound: 'The event does not exist.'),
-      ));
+      emit(
+        EventAdminState.failure(
+          exception: exception.getMessage(
+            notFound: 'The event does not exist.',
+          ),
+        ),
+      );
     }
   }
 
@@ -230,37 +239,45 @@ class EventAdminCubit extends Cubit<EventAdminState> {
 
         String? message;
         if (registrations.results.isEmpty) {
-          message = (query?.isEmpty ?? true)
-              ? 'There are no registrations.'
-              : 'There are no registrations matching "$query".';
+          message =
+              (query?.isEmpty ?? true)
+                  ? 'There are no registrations.'
+                  : 'There are no registrations matching "$query".';
         }
         String? cancelledMessage;
         if (cancelledRegistrations.results.isEmpty) {
-          cancelledMessage = (query?.isEmpty ?? true)
-              ? 'There are no cancelled registrations.'
-              : 'There are no cancelled registrations matching "$query".';
+          cancelledMessage =
+              (query?.isEmpty ?? true)
+                  ? 'There are no cancelled registrations.'
+                  : 'There are no cancelled registrations matching "$query".';
         }
         String? queuedMessage;
         if (queuedRegistrations.results.isEmpty) {
-          queuedMessage = (query?.isEmpty ?? true)
-              ? 'There are no queued registrations.'
-              : 'There are no queued registrations matching "$query".';
+          queuedMessage =
+              (query?.isEmpty ?? true)
+                  ? 'There are no queued registrations.'
+                  : 'There are no queued registrations matching "$query".';
         }
 
-        emit(EventAdminState.result(
-          event: event,
-          registrations: registrations.results,
-          cancelledRegistrations: cancelledRegistrations.results,
-          queuedRegistrations: queuedRegistrations.results,
-          message: message,
-          cancelledMessage: cancelledMessage,
-          queuedMessage: queuedMessage,
-        ));
+        emit(
+          EventAdminState.result(
+            event: event,
+            registrations: registrations.results,
+            cancelledRegistrations: cancelledRegistrations.results,
+            queuedRegistrations: queuedRegistrations.results,
+            message: message,
+            cancelledMessage: cancelledMessage,
+            queuedMessage: queuedMessage,
+          ),
+        );
       } on ApiException catch (exception) {
-        emit(EventAdminState.failure(
-          exception:
-              exception.getMessage(notFound: 'The event does not exist.'),
-        ));
+        emit(
+          EventAdminState.failure(
+            exception: exception.getMessage(
+              notFound: 'The event does not exist.',
+            ),
+          ),
+        );
       }
     } else {
       load();
@@ -276,12 +293,14 @@ class EventAdminCubit extends Cubit<EventAdminState> {
       _searchDebounceTimer?.cancel();
       if (query?.isEmpty ?? false) {
         /// Don't get results when the query is empty.
-        emit(EventAdminState.loading(
-          event: state.event,
-          registrations: const [],
-          cancelledRegistrations: const [],
-          queuedRegistrations: const [],
-        ));
+        emit(
+          EventAdminState.loading(
+            event: state.event,
+            registrations: const [],
+            cancelledRegistrations: const [],
+            queuedRegistrations: const [],
+          ),
+        );
       } else {
         _searchDebounceTimer = Timer(
           Config.searchDebounceTime,
@@ -301,17 +320,18 @@ class EventAdminCubit extends Cubit<EventAdminState> {
       present: present,
     );
     if (state.registrations.isNotEmpty) {
-      emit(state.copyWith(
-        registrations: state.registrations.map(
-          (registration) {
-            if (registration.pk == registrationPk) {
-              return registration.copyWithPresent(present);
-            } else {
-              return registration;
-            }
-          },
-        ).toList(),
-      ));
+      emit(
+        state.copyWith(
+          registrations:
+              state.registrations.map((registration) {
+                if (registration.pk == registrationPk) {
+                  return registration.copyWithPresent(present);
+                } else {
+                  return registration;
+                }
+              }).toList(),
+        ),
+      );
     } else {
       await load();
     }
@@ -329,15 +349,14 @@ class EventAdminCubit extends Cubit<EventAdminState> {
       if (state.registrations.isNotEmpty) {
         emit(
           state.copyWith(
-            registrations: state.registrations.map(
-              (registration) {
-                if (registration.pk == registrationPk) {
-                  return registration.copyWithPayment(payable.payment);
-                } else {
-                  return registration;
-                }
-              },
-            ).toList(),
+            registrations:
+                state.registrations.map((registration) {
+                  if (registration.pk == registrationPk) {
+                    return registration.copyWithPayment(payable.payment);
+                  } else {
+                    return registration;
+                  }
+                }).toList(),
           ),
         );
       } else {
@@ -350,15 +369,14 @@ class EventAdminCubit extends Cubit<EventAdminState> {
       if (state.registrations.isNotEmpty) {
         emit(
           state.copyWith(
-            registrations: state.registrations.map(
-              (registration) {
-                if (registration.pk == registrationPk) {
-                  return registration.copyWithPayment(null);
-                } else {
-                  return registration;
-                }
-              },
-            ).toList(),
+            registrations:
+                state.registrations.map((registration) {
+                  if (registration.pk == registrationPk) {
+                    return registration.copyWithPayment(null);
+                  } else {
+                    return registration;
+                  }
+                }).toList(),
           ),
         );
       } else {

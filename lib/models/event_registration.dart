@@ -13,10 +13,10 @@ class EventRegistration {
       _$EventRegistrationFromJson(json);
 
   const EventRegistration(this.pk, this.member, this.name)
-      : assert(
-          member != null || name != null,
-          'Either a member or name must be given. $member, $name',
-        );
+    : assert(
+        member != null || name != null,
+        'Either a member or name must be given. $member, $name',
+      );
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
@@ -93,9 +93,9 @@ class AdminEventRegistration implements EventRegistration {
     this.dateCancelled,
     this.payment,
   ) : assert(
-          member != null || name != null,
-          'Either a member or name must be given.',
-        );
+        member != null || name != null,
+        'Either a member or name must be given.',
+      );
 
   AdminEventRegistration copyWithPresent(bool newPresent) =>
       AdminEventRegistration(

@@ -43,25 +43,24 @@ class EventState extends Equatable {
     bool? isLoading,
     bool? isLoadingMore,
     bool? isDone,
-  }) =>
-      EventState(
-        event: event ?? this.event,
-        registrations: registrations ?? this.registrations,
-        message: message ?? this.message,
-        isLoading: isLoading ?? this.isLoading,
-        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-        isDone: isDone ?? this.isDone,
-      );
+  }) => EventState(
+    event: event ?? this.event,
+    registrations: registrations ?? this.registrations,
+    message: message ?? this.message,
+    isLoading: isLoading ?? this.isLoading,
+    isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+    isDone: isDone ?? this.isDone,
+  );
 
   @override
   List<Object?> get props => [
-        event,
-        registrations,
-        message,
-        isLoading,
-        isLoadingMore,
-        isDone,
-      ];
+    event,
+    registrations,
+    message,
+    isLoading,
+    isLoadingMore,
+    isDone,
+  ];
 
   @override
   String toString() {
@@ -70,31 +69,31 @@ class EventState extends Equatable {
   }
 
   const EventState.loading({this.event, required this.registrations})
-      : message = null,
-        isLoading = true,
-        isLoadingMore = false,
-        isDone = true;
+    : message = null,
+      isLoading = true,
+      isLoadingMore = false,
+      isDone = true;
 
   const EventState.loadingMore({this.event, required this.registrations})
-      : message = null,
-        isLoading = false,
-        isLoadingMore = true,
-        isDone = true;
+    : message = null,
+      isLoading = false,
+      isLoadingMore = true,
+      isDone = true;
 
   const EventState.success({
     this.event,
     required this.registrations,
     required this.isDone,
-  })  : message = null,
-        isLoading = false,
-        isLoadingMore = false;
+  }) : message = null,
+       isLoading = false,
+       isLoadingMore = false;
 
   const EventState.failure({required String this.message})
-      : event = null,
-        registrations = const [],
-        isLoading = false,
-        isLoadingMore = false,
-        isDone = true;
+    : event = null,
+      registrations = const [],
+      isLoading = false,
+      isLoadingMore = false,
+      isDone = true;
 }
 
 class EventCubit extends Cubit<EventState> {
@@ -109,23 +108,27 @@ class EventCubit extends Cubit<EventState> {
   int _nextOffset = 0;
 
   EventCubit(this.api, {int? eventPk, String? eventSlug})
-      : assert(!(eventPk == null && eventSlug == null)),
-        _eventSlug = eventSlug,
-        _eventPk = eventPk,
-        super(const EventState.loading(registrations: []));
+    : assert(!(eventPk == null && eventSlug == null)),
+      _eventSlug = eventSlug,
+      _eventPk = eventPk,
+      super(const EventState.loading(registrations: []));
 
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
 
     try {
-      Event event = _eventPk == null
-          ? await api.getEventBySlug(slug: _eventSlug!)
-          : await api.getEventByPk(pk: _eventPk!);
+      Event event =
+          _eventPk == null
+              ? await api.getEventBySlug(slug: _eventSlug!)
+              : await api.getEventByPk(pk: _eventPk!);
 
       _eventPk = event.pk;
 
       final listResponse = await api.getEventRegistrations(
-          pk: _eventPk!, limit: firstPageSize, offset: 0);
+        pk: _eventPk!,
+        limit: firstPageSize,
+        offset: 0,
+      );
 
       if (isClosed) {
         return;
@@ -135,21 +138,24 @@ class EventCubit extends Cubit<EventState> {
 
       _nextOffset = firstPageSize;
 
-      emit(EventState.success(
-        event: event,
-        registrations: listResponse.results,
-        isDone: isDone,
-      ));
+      emit(
+        EventState.success(
+          event: event,
+          registrations: listResponse.results,
+          isDone: isDone,
+        ),
+      );
     } on ApiException catch (exception) {
       if (isClosed) {
         // If the cubit is closed, the error does not matter at all
         return;
       }
 
-      emit(EventState.failure(
-          message: exception.getMessage(
-        notFound: 'The event does not exist.',
-      )));
+      emit(
+        EventState.failure(
+          message: exception.getMessage(notFound: 'The event does not exist.'),
+        ),
+      );
     }
   }
 
@@ -167,9 +173,7 @@ class EventCubit extends Cubit<EventState> {
   /// for the [Event] with `eventPk`.
   ///
   /// This throws an [ApiException] if deregistering fails.
-  Future<void> cancelRegistration({
-    required int registrationPk,
-  }) async {
+  Future<void> cancelRegistration({required int registrationPk}) async {
     await api.cancelRegistration(
       eventPk: _eventPk!,
       registrationPk: registrationPk,
@@ -179,9 +183,7 @@ class EventCubit extends Cubit<EventState> {
   }
 
   /// Pay your registration for the event using Thalia Pay.
-  Future<void> thaliaPayRegistration({
-    required int registrationPk,
-  }) async {
+  Future<void> thaliaPayRegistration({required int registrationPk}) async {
     await api.thaliaPayRegistration(registrationPk: registrationPk);
     await load();
   }
@@ -205,15 +207,19 @@ class EventCubit extends Cubit<EventState> {
 
       _nextOffset += pageSize;
 
-      emit(EventState.success(
-        event: oldState.event,
-        registrations: registrations,
-        isDone: isDone,
-      ));
+      emit(
+        EventState.success(
+          event: oldState.event,
+          registrations: registrations,
+          isDone: isDone,
+        ),
+      );
     } on ApiException catch (exception) {
-      emit(EventState.failure(
-        message: exception.getMessage(notFound: 'The event does not exist.'),
-      ));
+      emit(
+        EventState.failure(
+          message: exception.getMessage(notFound: 'The event does not exist.'),
+        ),
+      );
     }
   }
 }

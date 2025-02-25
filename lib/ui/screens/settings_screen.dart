@@ -92,18 +92,19 @@ class SettingsScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: ListTile.divideTiles(
-                      context: context,
-                      tiles: [
-                        for (final category in state.categories!)
-                          _NotificationSettingTile(
-                            category: category,
-                            enabled: state.device!.receiveCategory.contains(
-                              category.key,
-                            ),
-                          ),
-                      ],
-                    ).toList(),
+                    children:
+                        ListTile.divideTiles(
+                          context: context,
+                          tiles: [
+                            for (final category in state.categories!)
+                              _NotificationSettingTile(
+                                category: category,
+                                enabled: state.device!.receiveCategory.contains(
+                                  category.key,
+                                ),
+                              ),
+                          ],
+                        ).toList(),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -124,10 +125,8 @@ class _NotificationSettingTile extends StatefulWidget {
   final PushNotificationCategory category;
   final bool enabled;
 
-  _NotificationSettingTile({
-    required this.category,
-    required this.enabled,
-  }) : super(key: ValueKey(category.key));
+  _NotificationSettingTile({required this.category, required this.enabled})
+    : super(key: ValueKey(category.key));
 
   @override
   __NotificationSettingTileState createState() =>
@@ -154,10 +153,7 @@ class __NotificationSettingTileState extends State<_NotificationSettingTile> {
     if (widget.category.description.isNotEmpty) {
       subtitle = Padding(
         padding: const EdgeInsets.only(bottom: 2),
-        child: Text(
-          widget.category.description,
-          maxLines: 2,
-        ),
+        child: Text(widget.category.description, maxLines: 2),
       );
     }
 
@@ -177,16 +173,17 @@ class __NotificationSettingTileState extends State<_NotificationSettingTile> {
         final messenger = ScaffoldMessenger.of(context);
         try {
           setState(() => enabled = value);
-          await BlocProvider.of<SettingsCubit>(context).setSetting(
-            widget.category.key,
-            value,
-          );
+          await BlocProvider.of<SettingsCubit>(
+            context,
+          ).setSetting(widget.category.key, value);
         } on ApiException {
           setState(() => enabled = oldValue);
-          messenger.showSnackBar(const SnackBar(
-            behavior: SnackBarBehavior.floating,
-            content: Text('Could not change your notification settings.'),
-          ));
+          messenger.showSnackBar(
+            const SnackBar(
+              behavior: SnackBarBehavior.floating,
+              content: Text('Could not change your notification settings.'),
+            ),
+          );
         }
       },
       title: Text(widget.category.name.toUpperCase()),
@@ -222,7 +219,7 @@ class _ThemeModeCard extends StatelessWidget {
                     children: [
                       Icon(Icons.wb_sunny_outlined),
                       SizedBox(width: 16),
-                      Text('Light')
+                      Text('Light'),
                     ],
                   ),
                 ),
@@ -232,7 +229,7 @@ class _ThemeModeCard extends StatelessWidget {
                     children: [
                       Icon(Icons.settings),
                       SizedBox(width: 16),
-                      Text('System default')
+                      Text('System default'),
                     ],
                   ),
                 ),
@@ -242,7 +239,7 @@ class _ThemeModeCard extends StatelessWidget {
                     children: [
                       Icon(Icons.brightness_2_outlined),
                       SizedBox(width: 16),
-                      Text('Dark')
+                      Text('Dark'),
                     ],
                   ),
                 ),
@@ -323,21 +320,24 @@ class _AboutCard extends StatelessWidget {
               label: const Text('FEEDBACK'),
             ),
             OutlinedButton.icon(
-              onPressed: () => showLicensePage(
-                context: context,
-                applicationVersion: Config.versionNumber,
-                applicationIcon: Builder(builder: (context) {
-                  return Image.asset(
-                    Theme.of(context).brightness == Brightness.light
-                        ? 'assets/img/logo-black.png'
-                        : 'assets/img/logo-white.png',
-                    width: 80,
-                  );
-                }),
-              ),
+              onPressed:
+                  () => showLicensePage(
+                    context: context,
+                    applicationVersion: Config.versionNumber,
+                    applicationIcon: Builder(
+                      builder: (context) {
+                        return Image.asset(
+                          Theme.of(context).brightness == Brightness.light
+                              ? 'assets/img/logo-black.png'
+                              : 'assets/img/logo-white.png',
+                          width: 80,
+                        );
+                      },
+                    ),
+                  ),
               label: const Text('VIEW LICENSES'),
               icon: const Icon(Icons.info_outline),
-            )
+            ),
           ],
         ),
       ),

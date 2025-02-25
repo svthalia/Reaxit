@@ -24,10 +24,11 @@ class Gallery<C extends GalleryCubit> extends StatefulWidget {
   final int initialPage;
   final int photoAmount;
 
-  const Gallery(
-      {required this.photos,
-      required this.initialPage,
-      required this.photoAmount});
+  const Gallery({
+    required this.photos,
+    required this.initialPage,
+    required this.photoAmount,
+  });
 
   @override
   State<Gallery> createState() => _GalleryState<C>();
@@ -51,15 +52,19 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
       duration: const Duration(milliseconds: 500),
       vsync: this,
       upperBound: 0.8,
-    )..addStatusListener((status) =>
-        status == AnimationStatus.completed ? likeController.reset() : null);
+    )..addStatusListener(
+      (status) =>
+          status == AnimationStatus.completed ? likeController.reset() : null,
+    );
 
     unlikeController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
       upperBound: 0.8,
-    )..addStatusListener((status) =>
-        status == AnimationStatus.completed ? unlikeController.reset() : null);
+    )..addStatusListener(
+      (status) =>
+          status == AnimationStatus.completed ? unlikeController.reset() : null,
+    );
 
     unlikeAnimation = CurvedAnimation(
       parent: unlikeController,
@@ -78,9 +83,7 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
       if (response.statusCode != 200) throw Exception();
       final baseTempDir = await getTemporaryDirectory();
       final tempDir = await baseTempDir.createTemp();
-      final tempFile = File(
-        '${tempDir.path}/${url.pathSegments.last}',
-      );
+      final tempFile = File('${tempDir.path}/${url.pathSegments.last}');
       await tempFile.writeAsBytes(response.bodyBytes);
       await Gal.putImage(tempFile.path);
 
@@ -129,10 +132,9 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
       likeController.forward();
     }
     try {
-      await BlocProvider.of<C>(context).updateLike(
-        liked: !photos[index].liked,
-        index: index,
-      );
+      await BlocProvider.of<C>(
+        context,
+      ).updateLike(liked: !photos[index].liked, index: index);
     } on ApiException {
       messenger.showSnackBar(
         const SnackBar(
@@ -160,9 +162,8 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
       backgroundDecoration: const BoxDecoration(color: Colors.transparent),
       pageController: controller,
       itemCount: widget.photoAmount,
-      loadingBuilder: (_, __) => const Center(
-        child: CircularProgressIndicator(),
-      ),
+      loadingBuilder:
+          (_, __) => const Center(child: CircularProgressIndicator()),
       builder: (context, i) {
         final Widget child;
 
@@ -170,16 +171,12 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
           child = GestureDetector(
             onDoubleTap: () => _likePhoto(photos, i),
             child: RotatedBox(
-                quarterTurns: photos[i].rotation ~/ 90,
-                child: CachedImage(
-                  imageUrl: photos[i].full,
-                  fit: BoxFit.contain,
-                )),
+              quarterTurns: photos[i].rotation ~/ 90,
+              child: CachedImage(imageUrl: photos[i].full, fit: BoxFit.contain),
+            ),
           );
         } else {
-          child = const Center(
-            child: CircularProgressIndicator(),
-          );
+          child = const Center(child: CircularProgressIndicator());
         }
 
         return PhotoViewGalleryPageOptions.customChild(
@@ -196,9 +193,9 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
       padding: const EdgeInsets.all(16),
       color: Theme.of(context).primaryIconTheme.color,
       icon: const Icon(Icons.download),
-      onPressed: () => _downloadImage(
-        Uri.parse(photos[controller.page!.round()].full),
-      ),
+      onPressed:
+          () =>
+              _downloadImage(Uri.parse(photos[controller.page!.round()].full)),
     );
   }
 
@@ -207,9 +204,8 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
       padding: const EdgeInsets.all(16),
       color: Theme.of(context).primaryIconTheme.color,
       icon: Icon(Icons.adaptive.share),
-      onPressed: () => _shareImage(
-        Uri.parse(photos[controller.page!.floor()].full),
-      ),
+      onPressed:
+          () => _shareImage(Uri.parse(photos[controller.page!.floor()].full)),
     );
   }
 
@@ -225,10 +221,7 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
           color: Theme.of(context).primaryIconTheme.color,
           onPressed: () => Navigator.of(context).pop(),
         ),
-        actions: [
-          _downloadButton(widget.photos),
-          _shareButton(widget.photos),
-        ],
+        actions: [_downloadButton(widget.photos), _shareButton(widget.photos)],
       ),
       body: Stack(
         children: [
@@ -255,18 +248,14 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
       children: [
         overlayScaffold,
         HeartPopup(animation: unlikeAnimation, color: Colors.white),
-        HeartPopup(animation: likeAnimation, color: magenta)
+        HeartPopup(animation: likeAnimation, color: magenta),
       ],
     );
   }
 }
 
 class HeartPopup extends StatelessWidget {
-  const HeartPopup({
-    super.key,
-    required this.animation,
-    required this.color,
-  });
+  const HeartPopup({super.key, required this.animation, required this.color});
 
   final Animation<double> animation;
   final Color color;
@@ -281,11 +270,7 @@ class HeartPopup extends StatelessWidget {
           size: 70,
           color: color,
           shadows: const [
-            BoxShadow(
-              color: Colors.black54,
-              spreadRadius: 20,
-              blurRadius: 20,
-            ),
+            BoxShadow(color: Colors.black54, spreadRadius: 20, blurRadius: 20),
           ],
         ),
       ),
@@ -360,19 +345,17 @@ class __PageCounterState extends State<_PageCounter> {
         Tooltip(
           message: photo.liked ? 'unlike photo' : 'like photo',
           child: IconButton(
-              iconSize: 24,
-              icon: Icon(
-                color: photo.liked ? magenta : Colors.white,
-                photo.liked ? Icons.favorite : Icons.favorite_outline,
-              ),
-              onPressed: () {
-                widget.likePhoto(
-                  widget.photos,
-                  currentIndex,
-                );
-                // Force update to set liked icon and count correctly
-                setState(() {});
-              }),
+            iconSize: 24,
+            icon: Icon(
+              color: photo.liked ? magenta : Colors.white,
+              photo.liked ? Icons.favorite : Icons.favorite_outline,
+            ),
+            onPressed: () {
+              widget.likePhoto(widget.photos, currentIndex);
+              // Force update to set liked icon and count correctly
+              setState(() {});
+            },
+          ),
         ),
         Text(
           '${photo.numLikes}',
@@ -384,9 +367,6 @@ class __PageCounterState extends State<_PageCounter> {
       ]);
     }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: children,
-    );
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: children);
   }
 }

@@ -13,7 +13,7 @@ enum DisplayNamePreference {
   firstname,
   initials,
   fullnick,
-  nicklast
+  nicklast,
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
@@ -31,11 +31,7 @@ class ListMember {
   Uri? get website => profile.website;
   String? get profileDescription => profile.profileDescription;
 
-  const ListMember(
-    this.pk,
-    this.membershipType,
-    this.profile,
-  );
+  const ListMember(this.pk, this.membershipType, this.profile);
 
   factory ListMember.fromJson(Map<String, dynamic> json) =>
       _$ListMemberFromJson(json);
@@ -90,13 +86,7 @@ class FullMember extends Member {
     this.profile,
     List<Achievement> achievements,
     List<Achievement> societies,
-  ) : super(
-          pk,
-          membershipType,
-          profile,
-          achievements,
-          societies,
-        );
+  ) : super(pk, membershipType, profile, achievements, societies);
 
   factory FullMember.fromJson(Map<String, dynamic> json) =>
       _$FullMemberFromJson(json);
@@ -195,8 +185,15 @@ class Achievement {
   final int? pk;
   final Uri? url;
 
-  const Achievement(this.name, this.periods, this.pk, this.active, this.url,
-      this.earliest, this.latest);
+  const Achievement(
+    this.name,
+    this.periods,
+    this.pk,
+    this.active,
+    this.url,
+    this.earliest,
+    this.latest,
+  );
   factory Achievement.fromJson(Map<String, dynamic> json) =>
       _$AchievementFromJson(json);
 }

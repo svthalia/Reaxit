@@ -82,7 +82,12 @@ class GroupMembership {
   final DateTime? until;
   final String? role;
   const GroupMembership(
-      this.member, this.chair, this.since, this.until, this.role);
+    this.member,
+    this.chair,
+    this.since,
+    this.until,
+    this.role,
+  );
   factory GroupMembership.fromJson(Map<String, dynamic> json) =>
       _$GroupMembershipFromJson(json);
 }

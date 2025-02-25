@@ -7,10 +7,10 @@ part of 'member.dart';
 // **************************************************************************
 
 ListMember _$ListMemberFromJson(Map<String, dynamic> json) => ListMember(
-      (json['pk'] as num).toInt(),
-      $enumDecodeNullable(_$MembershipTypeEnumMap, json['membership_type']),
-      Profile.fromJson(json['profile'] as Map<String, dynamic>),
-    );
+  (json['pk'] as num).toInt(),
+  $enumDecodeNullable(_$MembershipTypeEnumMap, json['membership_type']),
+  Profile.fromJson(json['profile'] as Map<String, dynamic>),
+);
 
 Map<String, dynamic> _$ListMemberToJson(ListMember instance) =>
     <String, dynamic>{
@@ -44,36 +44,36 @@ Map<String, dynamic> _$AdminListMemberToJson(AdminListMember instance) =>
     };
 
 Member _$MemberFromJson(Map<String, dynamic> json) => Member(
-      (json['pk'] as num).toInt(),
-      $enumDecodeNullable(_$MembershipTypeEnumMap, json['membership_type']),
-      Profile.fromJson(json['profile'] as Map<String, dynamic>),
-      (json['achievements'] as List<dynamic>)
-          .map((e) => Achievement.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      (json['societies'] as List<dynamic>)
-          .map((e) => Achievement.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
+  (json['pk'] as num).toInt(),
+  $enumDecodeNullable(_$MembershipTypeEnumMap, json['membership_type']),
+  Profile.fromJson(json['profile'] as Map<String, dynamic>),
+  (json['achievements'] as List<dynamic>)
+      .map((e) => Achievement.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  (json['societies'] as List<dynamic>)
+      .map((e) => Achievement.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
 
 Map<String, dynamic> _$MemberToJson(Member instance) => <String, dynamic>{
-      'pk': instance.pk,
-      'membership_type': _$MembershipTypeEnumMap[instance.membershipType],
-      'profile': instance.profile,
-      'achievements': instance.achievements,
-      'societies': instance.societies,
-    };
+  'pk': instance.pk,
+  'membership_type': _$MembershipTypeEnumMap[instance.membershipType],
+  'profile': instance.profile,
+  'achievements': instance.achievements,
+  'societies': instance.societies,
+};
 
 FullMember _$FullMemberFromJson(Map<String, dynamic> json) => FullMember(
-      (json['pk'] as num).toInt(),
-      $enumDecodeNullable(_$MembershipTypeEnumMap, json['membership_type']),
-      FullProfile.fromJson(json['profile'] as Map<String, dynamic>),
-      (json['achievements'] as List<dynamic>)
-          .map((e) => Achievement.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      (json['societies'] as List<dynamic>)
-          .map((e) => Achievement.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
+  (json['pk'] as num).toInt(),
+  $enumDecodeNullable(_$MembershipTypeEnumMap, json['membership_type']),
+  FullProfile.fromJson(json['profile'] as Map<String, dynamic>),
+  (json['achievements'] as List<dynamic>)
+      .map((e) => Achievement.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  (json['societies'] as List<dynamic>)
+      .map((e) => Achievement.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
 
 Map<String, dynamic> _$FullMemberToJson(FullMember instance) =>
     <String, dynamic>{
@@ -85,28 +85,26 @@ Map<String, dynamic> _$FullMemberToJson(FullMember instance) =>
     };
 
 Profile _$ProfileFromJson(Map<String, dynamic> json) => Profile(
-      json['display_name'] as String,
-      json['short_display_name'] as String,
-      json['birthday'] == null
-          ? null
-          : DateTime.parse(json['birthday'] as String),
-      Photo.fromJson(json['photo'] as Map<String, dynamic>),
-      $enumDecodeNullable(_$ProgrammeEnumMap, json['programme']),
-      (json['starting_year'] as num?)?.toInt(),
-      _nonEmptyUriFromJson(json['website'] as String?),
-      json['profile_description'] as String?,
-    );
+  json['display_name'] as String,
+  json['short_display_name'] as String,
+  json['birthday'] == null ? null : DateTime.parse(json['birthday'] as String),
+  Photo.fromJson(json['photo'] as Map<String, dynamic>),
+  $enumDecodeNullable(_$ProgrammeEnumMap, json['programme']),
+  (json['starting_year'] as num?)?.toInt(),
+  _nonEmptyUriFromJson(json['website'] as String?),
+  json['profile_description'] as String?,
+);
 
 Map<String, dynamic> _$ProfileToJson(Profile instance) => <String, dynamic>{
-      'display_name': instance.displayName,
-      'short_display_name': instance.shortDisplayName,
-      'birthday': instance.birthday?.toIso8601String(),
-      'photo': instance.photo,
-      'programme': _$ProgrammeEnumMap[instance.programme],
-      'starting_year': instance.startingYear,
-      'website': instance.website?.toString(),
-      'profile_description': instance.profileDescription,
-    };
+  'display_name': instance.displayName,
+  'short_display_name': instance.shortDisplayName,
+  'birthday': instance.birthday?.toIso8601String(),
+  'photo': instance.photo,
+  'programme': _$ProgrammeEnumMap[instance.programme],
+  'starting_year': instance.startingYear,
+  'website': instance.website?.toString(),
+  'profile_description': instance.profileDescription,
+};
 
 const _$ProgrammeEnumMap = {
   Programme.computingscience: 'computingscience',
@@ -114,30 +112,27 @@ const _$ProgrammeEnumMap = {
 };
 
 FullProfile _$FullProfileFromJson(Map<String, dynamic> json) => FullProfile(
-      json['display_name'] as String,
-      json['short_display_name'] as String,
-      json['birthday'] == null
-          ? null
-          : DateTime.parse(json['birthday'] as String),
-      Photo.fromJson(json['photo'] as Map<String, dynamic>),
-      $enumDecodeNullable(_$ProgrammeEnumMap, json['programme']),
-      (json['starting_year'] as num?)?.toInt(),
-      _nonEmptyUriFromJson(json['website'] as String?),
-      json['profile_description'] as String?,
-      json['address_street'] as String?,
-      json['address_street2'] as String?,
-      json['address_postal_code'] as String?,
-      json['address_city'] as String?,
-      json['address_country'] as String?,
-      json['phone_number'] as String?,
-      json['emergency_contact'] as String?,
-      json['emergency_contact_phone_number'] as String?,
-      json['show_birthday'] as bool,
-      json['initials'] as String?,
-      json['nickname'] as String?,
-      $enumDecode(
-          _$DisplayNamePreferenceEnumMap, json['display_name_preference']),
-    );
+  json['display_name'] as String,
+  json['short_display_name'] as String,
+  json['birthday'] == null ? null : DateTime.parse(json['birthday'] as String),
+  Photo.fromJson(json['photo'] as Map<String, dynamic>),
+  $enumDecodeNullable(_$ProgrammeEnumMap, json['programme']),
+  (json['starting_year'] as num?)?.toInt(),
+  _nonEmptyUriFromJson(json['website'] as String?),
+  json['profile_description'] as String?,
+  json['address_street'] as String?,
+  json['address_street2'] as String?,
+  json['address_postal_code'] as String?,
+  json['address_city'] as String?,
+  json['address_country'] as String?,
+  json['phone_number'] as String?,
+  json['emergency_contact'] as String?,
+  json['emergency_contact_phone_number'] as String?,
+  json['show_birthday'] as bool,
+  json['initials'] as String?,
+  json['nickname'] as String?,
+  $enumDecode(_$DisplayNamePreferenceEnumMap, json['display_name_preference']),
+);
 
 Map<String, dynamic> _$FullProfileToJson(FullProfile instance) =>
     <String, dynamic>{
@@ -174,30 +169,30 @@ const _$DisplayNamePreferenceEnumMap = {
 };
 
 Period _$PeriodFromJson(Map<String, dynamic> json) => Period(
-      DateTime.parse(json['since'] as String),
-      json['until'] == null ? null : DateTime.parse(json['until'] as String),
-      json['chair'] as bool,
-      json['role'] as String?,
-    );
+  DateTime.parse(json['since'] as String),
+  json['until'] == null ? null : DateTime.parse(json['until'] as String),
+  json['chair'] as bool,
+  json['role'] as String?,
+);
 
 Map<String, dynamic> _$PeriodToJson(Period instance) => <String, dynamic>{
-      'since': instance.since.toIso8601String(),
-      'until': instance.until?.toIso8601String(),
-      'chair': instance.chair,
-      'role': instance.role,
-    };
+  'since': instance.since.toIso8601String(),
+  'until': instance.until?.toIso8601String(),
+  'chair': instance.chair,
+  'role': instance.role,
+};
 
 Achievement _$AchievementFromJson(Map<String, dynamic> json) => Achievement(
-      json['name'] as String,
-      (json['periods'] as List<dynamic>?)
-          ?.map((e) => Period.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      (json['pk'] as num?)?.toInt(),
-      json['active'] as bool?,
-      json['url'] == null ? null : Uri.parse(json['url'] as String),
-      DateTime.parse(json['earliest'] as String),
-      json['latest'] == null ? null : DateTime.parse(json['latest'] as String),
-    );
+  json['name'] as String,
+  (json['periods'] as List<dynamic>?)
+      ?.map((e) => Period.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  (json['pk'] as num?)?.toInt(),
+  json['active'] as bool?,
+  json['url'] == null ? null : Uri.parse(json['url'] as String),
+  DateTime.parse(json['earliest'] as String),
+  json['latest'] == null ? null : DateTime.parse(json['latest'] as String),
+);
 
 Map<String, dynamic> _$AchievementToJson(Achievement instance) =>
     <String, dynamic>{

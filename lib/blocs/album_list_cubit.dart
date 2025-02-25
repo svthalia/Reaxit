@@ -12,22 +12,19 @@ class AlbumListCubit extends SingleListCubit<ListAlbum> {
   static const int firstPageSize = 30;
 
   @override
-  Future<ListResponse<ListAlbum>> getDown(int offset) => api.getAlbums(
-        search: searchQuery,
-        limit: firstPageSize,
-        offset: offset,
-      );
+  Future<ListResponse<ListAlbum>> getDown(int offset) =>
+      api.getAlbums(search: searchQuery, limit: firstPageSize, offset: offset);
 
   @override
   List<ListAlbum> combineDown(
-          List<ListAlbum> downResults, ListState<ListAlbum> oldstate) =>
-      oldstate.results + downResults;
+    List<ListAlbum> downResults,
+    ListState<ListAlbum> oldstate,
+  ) => oldstate.results + downResults;
 
   @override
   ListState<ListAlbum> empty(String? query) => switch (query) {
-        null => const ListState.failure(message: 'No albums found.'),
-        '' => const ListState.failure(message: 'Start searching for albums'),
-        var q =>
-          ListState.failure(message: 'No albums found found for query "$q"'),
-      };
+    null => const ListState.failure(message: 'No albums found.'),
+    '' => const ListState.failure(message: 'Start searching for albums'),
+    var q => ListState.failure(message: 'No albums found found for query "$q"'),
+  };
 }

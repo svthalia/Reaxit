@@ -17,9 +17,11 @@ class MemberCubit extends Cubit<MemberState> {
       final member = await api.getMember(pk: pk);
       emit(ResultState(member));
     } on ApiException catch (exception) {
-      emit(ErrorState(exception.getMessage(
-        notFound: 'The member does not exist.',
-      )));
+      emit(
+        ErrorState(
+          exception.getMessage(notFound: 'The member does not exist.'),
+        ),
+      );
     }
   }
 }

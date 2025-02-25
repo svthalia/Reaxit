@@ -19,10 +19,10 @@ class LoadingFoodState extends FoodState {
   List<Object?> get props => [oldState];
 
   LoadingFoodState({FoodState? oldState})
-      : oldState = switch (oldState) {
-          LoadedFoodState state => state,
-          _ => null,
-        };
+    : oldState = switch (oldState) {
+        LoadedFoodState state => state,
+        _ => null,
+      };
 }
 
 /// FoodEvent was unable to load.
@@ -55,8 +55,8 @@ class FoodCubit extends Cubit<FoodState> {
   int? _foodEventPk;
 
   FoodCubit(this.api, {int? foodEventPk})
-      : _foodEventPk = foodEventPk,
-        super(LoadingFoodState());
+    : _foodEventPk = foodEventPk,
+      super(LoadingFoodState());
 
   Future<void> load() async {
     emit(LoadingFoodState(oldState: state));
@@ -72,17 +72,15 @@ class FoodCubit extends Cubit<FoodState> {
       final products = await api.getFoodEventProducts(_foodEventPk!);
       emit(LoadedFoodState(event, products.results));
     } on ApiException catch (exception) {
-      emit(ErrorFoodState(
-        exception.getMessage(
-          notFound: 'The food event does not exist.',
+      emit(
+        ErrorFoodState(
+          exception.getMessage(notFound: 'The food event does not exist.'),
         ),
-      ));
+      );
     }
   }
 
-  Future<FoodOrder> placeOrder({
-    required int productPk,
-  }) async {
+  Future<FoodOrder> placeOrder({required int productPk}) async {
     if (_foodEventPk == null) {
       final event = await api.getCurrentFoodEvent();
       _foodEventPk = event.pk;
@@ -96,9 +94,7 @@ class FoodCubit extends Cubit<FoodState> {
     return order;
   }
 
-  Future<FoodOrder> changeOrder({
-    required int productPk,
-  }) async {
+  Future<FoodOrder> changeOrder({required int productPk}) async {
     if (_foodEventPk == null) {
       final event = await api.getCurrentFoodEvent();
       _foodEventPk = event.pk;
@@ -123,9 +119,7 @@ class FoodCubit extends Cubit<FoodState> {
   }
 
   /// Pay your order `orderPk` using Thalia Pay.
-  Future<void> thaliaPayOrder({
-    required int orderPk,
-  }) async {
+  Future<void> thaliaPayOrder({required int orderPk}) async {
     await api.thaliaPayFoodOrder(foodOrderPk: orderPk);
     await load();
   }

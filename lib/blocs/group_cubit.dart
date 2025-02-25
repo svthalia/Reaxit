@@ -18,14 +18,14 @@ class GroupCubit extends Cubit<GroupState> {
 
   // Default: init by PK
   GroupCubit(this.api, {required this.pk})
-      : groupType = null,
-        slug = null,
-        super(const LoadingState());
+    : groupType = null,
+      slug = null,
+      super(const LoadingState());
 
   // Alternative: init by slug
   GroupCubit.bySlug(this.api, {required this.groupType, required this.slug})
-      : pk = null,
-        super(const LoadingState());
+    : pk = null,
+      super(const LoadingState());
 
   Future<void> load() async {
     emit(LoadingState.from(state));
@@ -38,9 +38,9 @@ class GroupCubit extends Cubit<GroupState> {
       }
       emit(ResultState(group));
     } on ApiException catch (exception) {
-      emit(ErrorState(exception.getMessage(
-        notFound: 'The group does not exist.',
-      )));
+      emit(
+        ErrorState(exception.getMessage(notFound: 'The group does not exist.')),
+      );
     }
   }
 }

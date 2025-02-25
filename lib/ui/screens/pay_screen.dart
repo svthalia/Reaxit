@@ -11,24 +11,21 @@ class PayScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ThaliaAppBar(
-        title: const Text('THALIA PAY'),
-      ),
+      appBar: ThaliaAppBar(title: const Text('THALIA PAY')),
       drawer: MenuDrawer(),
       body: RefreshIndicator(
         onRefresh: () => BlocProvider.of<PaymentUserCubit>(context).load(),
         child: BlocBuilder<PaymentUserCubit, PaymentUserState>(
-            builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (state.hasException) {
-            return ErrorScrollView(state.message!);
-          } else {
-            return _Body(payments: state.payments!);
-          }
-        }),
+          builder: (context, state) {
+            if (state.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state.hasException) {
+              return ErrorScrollView(state.message!);
+            } else {
+              return _Body(payments: state.payments!);
+            }
+          },
+        ),
       ),
     );
   }
@@ -37,9 +34,7 @@ class PayScreen extends StatelessWidget {
 class _Body extends StatelessWidget {
   final List<Payment> payments;
 
-  const _Body({
-    required this.payments,
-  });
+  const _Body({required this.payments});
 
   @override
   Widget build(BuildContext context) {
@@ -82,11 +77,11 @@ class _Header extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('CURRENT BALANCE: $balance',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    )),
+                Text(
+                  'CURRENT BALANCE: $balance',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
               ],
             ),
           ),

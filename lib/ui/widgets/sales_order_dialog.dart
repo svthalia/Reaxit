@@ -38,18 +38,18 @@ class _SalesOrderDialogState extends State<SalesOrderDialog> {
       builder: (context, orderState) {
         final Widget content = switch (orderState) {
           ErrorState(message: var messsage) => Text(
-              messsage,
-              style: textTheme.bodyMedium,
-            ),
+            messsage,
+            style: textTheme.bodyMedium,
+          ),
           LoadingState _ => const Center(child: CircularProgressIndicator()),
           ResultState(result: var order) when order.numItems == 0 => Text(
-              'The order is empty.',
-              style: textTheme.bodyMedium,
-            ),
+            'The order is empty.',
+            style: textTheme.bodyMedium,
+          ),
           ResultState(result: var order) => Text(
-              order.orderDescription,
-              style: textTheme.bodyMedium,
-            ),
+            order.orderDescription,
+            style: textTheme.bodyMedium,
+          ),
         };
         late final Widget payButton = switch (orderState) {
           ErrorState _ => const SizedBox.shrink(),
@@ -58,14 +58,15 @@ class _SalesOrderDialogState extends State<SalesOrderDialog> {
               when order.totalAmount == '0.00' || !order.tpayAllowed =>
             const SizedBox.shrink(),
           ResultState(result: var order) => TPayButton(
-              onPay: _paySalesOrder,
-              confirmationMessage: 'Are you sure you want '
-                  'to pay €${order.totalAmount} for your '
-                  'order of ${order.orderDescription}?',
-              failureMessage: 'Could not pay your order.',
-              successMessage: 'Paid your order with Thalia Pay.',
-              amount: order.totalAmount,
-            ),
+            onPay: _paySalesOrder,
+            confirmationMessage:
+                'Are you sure you want '
+                'to pay €${order.totalAmount} for your '
+                'order of ${order.orderDescription}?',
+            failureMessage: 'Could not pay your order.',
+            successMessage: 'Paid your order with Thalia Pay.',
+            amount: order.totalAmount,
+          ),
         };
 
         return AlertDialog(
@@ -80,10 +81,7 @@ class _SalesOrderDialogState extends State<SalesOrderDialog> {
           ),
           actions: [
             TextButton.icon(
-              onPressed: () => Navigator.of(
-                context,
-                rootNavigator: true,
-              ).pop(),
+              onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
               icon: const Icon(Icons.clear),
               label: const Text('CLOSE'),
             ),

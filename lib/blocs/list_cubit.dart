@@ -135,8 +135,10 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
     List<T> downResults = mergeDown(resultsDown);
 
     // Allow the cubit to move data between up and down
-    (upResults: upResults, downResults: downResults) =
-        shuffleData(upResults, downResults);
+    (upResults: upResults, downResults: downResults) = shuffleData(
+      upResults,
+      downResults,
+    );
 
     // Some cubits need to filter out certain results
     if (!isDoneUp) {
@@ -149,11 +151,14 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
     if (upResults.isEmpty && downResults.isEmpty) {
       safeEmit(empty(query ?? ''));
     } else {
-      safeEmit(newState(
+      safeEmit(
+        newState(
           resultsUp: upResults,
           resultsDown: downResults,
           isDoneUp: isDoneUp,
-          isDoneDown: isDoneDown));
+          isDoneDown: isDoneDown,
+        ),
+      );
     }
   }
 
@@ -174,8 +179,9 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
     // Get the data in the down direction
     List<List<T>> resultsDown = [];
     try {
-      resultsDown =
-          await Future.wait(sources.map((source) => source.moreDown()));
+      resultsDown = await Future.wait(
+        sources.map((source) => source.moreDown()),
+      );
     } on ApiException catch (exception) {
       safeEmit(failure(exception.message));
       return;
@@ -282,8 +288,9 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
   /// For example, when some results from up should be moved to down,
   /// this can be overwritten.
   ({List<T> upResults, List<T> downResults}) shuffleData(
-          List<T> upResults, List<T> downResults) =>
-      (upResults: upResults, downResults: downResults);
+    List<T> upResults,
+    List<T> downResults,
+  ) => (upResults: upResults, downResults: downResults);
 
   /// filterUp filters results in the up direction.
   /// This can be used to remove data that should not (yet) be shown to
@@ -366,14 +373,14 @@ class SingleListCubitSource<T> extends ListCubitSource<T, T> {
 /// trivial to implement a single ended ListCubit.
 abstract class SingleListCubit<T> extends ListCubit<T, T, ListState<T>> {
   late final List<ListCubitSource<dynamic, T>> _sources = [
-    SingleListCubitSource(this)
+    SingleListCubitSource(this),
   ];
 
   @override
   List<ListCubitSource<dynamic, T>> get sources => _sources;
 
   SingleListCubit(ApiRepository api)
-      : super(api, const ListState.loading(results: []));
+    : super(api, const ListState.loading(results: []));
 
   Future<ListResponse<T>> getDown(int offset);
 
@@ -412,18 +419,21 @@ abstract class SingleListCubit<T> extends ListCubit<T, T, ListState<T>> {
     List<T> resultsDown = const [],
     required bool isDoneUp,
     required bool isDoneDown,
-  }) =>
-      ListState.success(results: resultsDown, isDone: isDoneDown);
+  }) => ListState.success(results: resultsDown, isDone: isDoneDown);
 
   @override
   ListState<T> updateUp(
-          ListState<T> oldstate, List<T> upResults, bool isDoneUp) =>
-      oldstate;
+    ListState<T> oldstate,
+    List<T> upResults,
+    bool isDoneUp,
+  ) => oldstate;
 
   @override
   ListState<T> updateDown(
-          ListState<T> oldstate, List<T> downResults, bool isDoneDown) =>
-      oldstate.copyWith(results: downResults, isDone: isDoneDown);
+    ListState<T> oldstate,
+    List<T> downResults,
+    bool isDoneDown,
+  ) => oldstate.copyWith(results: downResults, isDone: isDoneDown);
 
   Future<void> more() => moreDown();
 

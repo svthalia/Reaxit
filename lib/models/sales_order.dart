@@ -53,20 +53,20 @@ class SalesOrder {
   );
 
   SalesOrder copyWithPayment(Payment? newPayment) => SalesOrder(
-        pk,
-        shift,
-        createdAt,
-        orderItems,
-        orderDescription,
-        ageRestricted,
-        subtotal,
-        discount,
-        totalAmount,
-        numItems,
-        payer,
-        newPayment,
-        paymentUrl,
-      );
+    pk,
+    shift,
+    createdAt,
+    orderItems,
+    orderDescription,
+    ageRestricted,
+    subtotal,
+    discount,
+    totalAmount,
+    numItems,
+    payer,
+    newPayment,
+    paymentUrl,
+  );
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)

@@ -22,10 +22,14 @@ const String tostiApiSecret = String.fromEnvironment('TOSTI_OAUTH_APP_SECRET');
 
 const bool tostiEnabled =
     tostiApiHost != '' && tostiApiIdentifier != '' && tostiApiSecret != '';
-const String tostiApiScheme =
-    String.fromEnvironment('TOSTI_API_SCHEME', defaultValue: 'https');
-const int tostiApiPort =
-    int.fromEnvironment('TOSTI_API_PORT', defaultValue: 443);
+const String tostiApiScheme = String.fromEnvironment(
+  'TOSTI_API_SCHEME',
+  defaultValue: 'https',
+);
+const int tostiApiPort = int.fromEnvironment(
+  'TOSTI_API_PORT',
+  defaultValue: 443,
+);
 
 const List<String> tostiOauthScopes = [
   'read',
@@ -62,18 +66,14 @@ class Config {
 
   String get cdn => 'cdn.$host';
   Uri get authorizationEndpoint => Uri(
-        scheme: scheme,
-        host: host,
-        port: port,
-        path: 'user/oauth/authorize/',
-      );
+    scheme: scheme,
+    host: host,
+    port: port,
+    path: 'user/oauth/authorize/',
+  );
 
-  Uri get tokenEndpoint => Uri(
-        scheme: scheme,
-        host: host,
-        port: port,
-        path: 'user/oauth/token/',
-      );
+  Uri get tokenEndpoint =>
+      Uri(scheme: scheme, host: host, port: port, path: 'user/oauth/token/');
 
   static Uri feedbackUri = Uri.parse(
     'https://github.com/svthalia/Reaxit/issues',
@@ -83,13 +83,11 @@ class Config {
     'https://github.com/svthalia/Reaxit/releases',
   );
 
-  Uri get termsAndConditionsUrl => Uri.parse(
-        'https://$host/event-registration-terms/',
-      );
+  Uri get termsAndConditionsUrl =>
+      Uri.parse('https://$host/event-registration-terms/');
 
-  Uri get tpaySignDirectDebitMandateUrl => Uri.parse(
-        'https://$host/user/finance/accounts/add/',
-      );
+  Uri get tpaySignDirectDebitMandateUrl =>
+      Uri.parse('https://$host/user/finance/accounts/add/');
 
   static const List<String> oauthScopes = [
     'read',
@@ -114,7 +112,7 @@ class Config {
     'partners:read',
     'sales:read',
     'sales:order',
-    'thabloid:read'
+    'thabloid:read',
   ];
 
   static const Duration searchDebounceTime = Duration(milliseconds: 200);
@@ -125,7 +123,8 @@ class Config {
 
   static const Config staging = Config(
     host: 'staging.thalia.nu',
-    secret: 'Chwh1BE3MgfU1OZZmYRV3LU3e3GzpZJ6tiWrqzFY3dPhMlS7VYD3qMm1RC1pPBvg'
+    secret:
+        'Chwh1BE3MgfU1OZZmYRV3LU3e3GzpZJ6tiWrqzFY3dPhMlS7VYD3qMm1RC1pPBvg'
         '3WaWmJxfRq8bv5ElVOpjRZwabAGOZ0DbuHhW3chAMaNlOmwXixNfUJIKIBzlnr7I',
     identifier: '3zlt7pqGVMiUCGxOnKTZEpytDUN7haeFBP2kVkig',
     scheme: 'https',
@@ -144,33 +143,33 @@ class Config {
       (bool.hasEnvironment('THALIA_OAUTH_APP_SECRET') &&
               bool.hasEnvironment('THALIA_OAUTH_APP_ID'))
           ? Config(
-              host: 'thalia.nu',
-              secret: String.fromEnvironment('THALIA_OAUTH_APP_SECRET'),
-              identifier: String.fromEnvironment('THALIA_OAUTH_APP_ID'),
-              scheme: 'https',
-              port: 443,
-            )
+            host: 'thalia.nu',
+            secret: String.fromEnvironment('THALIA_OAUTH_APP_SECRET'),
+            identifier: String.fromEnvironment('THALIA_OAUTH_APP_ID'),
+            scheme: 'https',
+            port: 443,
+          )
           : null;
 
   static const Config? local =
       (bool.hasEnvironment('LOCAL_THALIA_OAUTH_APP_SECRET') &&
               bool.hasEnvironment('LOCAL_THALIA_OAUTH_APP_ID'))
           ? Config(
-              host: String.fromEnvironment(
-                'LOCAL_THALIA_API_HOST',
-                defaultValue: '127.0.0.1',
-              ),
-              secret: String.fromEnvironment('LOCAL_THALIA_OAUTH_APP_SECRET'),
-              identifier: String.fromEnvironment('LOCAL_THALIA_OAUTH_APP_ID'),
-              scheme: String.fromEnvironment(
-                'LOCAL_THALIA_API_SCHEME',
-                defaultValue: 'http',
-              ),
-              port: int.fromEnvironment(
-                'LOCAL_THALIA_API_PORT',
-                defaultValue: 8000,
-              ),
-            )
+            host: String.fromEnvironment(
+              'LOCAL_THALIA_API_HOST',
+              defaultValue: '127.0.0.1',
+            ),
+            secret: String.fromEnvironment('LOCAL_THALIA_OAUTH_APP_SECRET'),
+            identifier: String.fromEnvironment('LOCAL_THALIA_OAUTH_APP_ID'),
+            scheme: String.fromEnvironment(
+              'LOCAL_THALIA_API_SCHEME',
+              defaultValue: 'http',
+            ),
+            port: int.fromEnvironment(
+              'LOCAL_THALIA_API_PORT',
+              defaultValue: 8000,
+            ),
+          )
           : null;
 
   static Config of(BuildContext context) =>
@@ -180,10 +179,7 @@ class Config {
 class InheritedConfig extends InheritedWidget {
   final Config config;
 
-  const InheritedConfig({
-    required this.config,
-    required super.child,
-  });
+  const InheritedConfig({required this.config, required super.child});
 
   @override
   bool updateShouldNotify(covariant InheritedConfig oldWidget) =>

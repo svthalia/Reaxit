@@ -36,15 +36,15 @@ class TostiShiftState extends Equatable {
     required this.isLoading,
     required this.message,
   }) : assert(
-          (shift != null &&
-                  user != null &&
-                  products != null &&
-                  orders != null) ||
-              isLoading ||
-              message != null,
-          'shift, user, products and orders can only be '
-          'null when isLoading or hasException is true.',
-        );
+         (shift != null &&
+                 user != null &&
+                 products != null &&
+                 orders != null) ||
+             isLoading ||
+             message != null,
+         'shift, user, products and orders can only be '
+         'null when isLoading or hasException is true.',
+       );
 
   @override
   List<Object?> get props => [message, isLoading];
@@ -56,38 +56,37 @@ class TostiShiftState extends Equatable {
     List<TostiOrder>? orders,
     bool? isLoading,
     String? message,
-  }) =>
-      TostiShiftState(
-        shift: shift ?? this.shift,
-        user: user ?? this.user,
-        products: products ?? this.products,
-        orders: orders ?? this.orders,
-        isLoading: isLoading ?? this.isLoading,
-        message: message ?? this.message,
-      );
+  }) => TostiShiftState(
+    shift: shift ?? this.shift,
+    user: user ?? this.user,
+    products: products ?? this.products,
+    orders: orders ?? this.orders,
+    isLoading: isLoading ?? this.isLoading,
+    message: message ?? this.message,
+  );
 
   const TostiShiftState.result({
     required TostiShift this.shift,
     required TostiUser this.user,
     required List<TostiProduct> this.products,
     required List<TostiOrder> this.orders,
-  })  : message = null,
-        isLoading = false;
+  }) : message = null,
+       isLoading = false;
 
   const TostiShiftState.loading({
     this.shift,
     this.user,
     this.products,
     this.orders,
-  })  : message = null,
-        isLoading = true;
+  }) : message = null,
+       isLoading = true;
 
   const TostiShiftState.failure({required String this.message})
-      : shift = null,
-        user = null,
-        products = null,
-        orders = null,
-        isLoading = false;
+    : shift = null,
+      user = null,
+      products = null,
+      orders = null,
+      isLoading = false;
 }
 
 class TostiShiftCubit extends Cubit<TostiShiftState> {
@@ -112,12 +111,14 @@ class TostiShiftCubit extends Cubit<TostiShiftState> {
       final products = await productsFuture;
       final orders = await ordersFuture;
 
-      emit(TostiShiftState.result(
-        shift: shift,
-        user: user,
-        products: products.results,
-        orders: orders.results,
-      ));
+      emit(
+        TostiShiftState.result(
+          shift: shift,
+          user: user,
+          products: products.results,
+          orders: orders.results,
+        ),
+      );
     } on ApiException catch (exception) {
       emit(TostiShiftState.failure(message: exception.message));
     }

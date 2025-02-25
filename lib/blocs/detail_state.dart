@@ -59,11 +59,11 @@ class LoadingState<T> extends DetailState<T> {
   const LoadingState();
 
   factory LoadingState.from(DetailState<T> state) => switch (state) {
-        ErrorState<T>(message: var message) =>
-          LoadingErrorState(message) as LoadingState<T>,
-        LoadingState<T> _ => const LoadingState(),
-        ResultState<T>(result: var result) => LoadingResultState(result),
-      };
+    ErrorState<T>(message: var message) =>
+      LoadingErrorState(message) as LoadingState<T>,
+    LoadingState<T> _ => const LoadingState(),
+    ResultState<T>(result: var result) => LoadingResultState(result),
+  };
 
   @override
   List<Object?> get props => [];

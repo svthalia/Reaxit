@@ -18,6 +18,5 @@ class ListResponse<T> {
   factory ListResponse.fromJson(
     Map<String, dynamic> json,
     T Function(Object? json) fromJsonT,
-  ) =>
-      _$ListResponseFromJson<T>(json, fromJsonT);
+  ) => _$ListResponseFromJson<T>(json, fromJsonT);
 }

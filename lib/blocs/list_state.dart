@@ -37,24 +37,23 @@ class ListState<T> extends Equatable {
     bool? isLoadingMore,
     bool? isDone,
     int? count,
-  }) =>
-      ListState<T>(
-        results: results ?? this.results,
-        message: message ?? this.message,
-        isLoading: isLoading ?? this.isLoading,
-        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-        isDone: isDone ?? this.isDone,
-        count: count ?? this.count,
-      );
+  }) => ListState<T>(
+    results: results ?? this.results,
+    message: message ?? this.message,
+    isLoading: isLoading ?? this.isLoading,
+    isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+    isDone: isDone ?? this.isDone,
+    count: count ?? this.count,
+  );
 
   @override
   List<Object?> get props => [
-        results,
-        message,
-        isLoading,
-        isLoadingMore,
-        isDone,
-      ];
+    results,
+    message,
+    isLoading,
+    isLoadingMore,
+    isDone,
+  ];
 
   @override
   String toString() {
@@ -63,30 +62,32 @@ class ListState<T> extends Equatable {
   }
 
   const ListState.loading({required this.results})
-      : message = null,
-        isLoading = true,
-        isLoadingMore = false,
-        isDone = true,
-        count = 0;
+    : message = null,
+      isLoading = true,
+      isLoadingMore = false,
+      isDone = true,
+      count = 0;
 
   const ListState.loadingMore({this.count, required this.results})
-      : message = null,
-        isLoading = false,
-        isLoadingMore = true,
-        isDone = true;
+    : message = null,
+      isLoading = false,
+      isLoadingMore = true,
+      isDone = true;
 
-  const ListState.success(
-      {required this.results, required this.isDone, this.count})
-      : message = null,
-        isLoading = false,
-        isLoadingMore = false;
+  const ListState.success({
+    required this.results,
+    required this.isDone,
+    this.count,
+  }) : message = null,
+       isLoading = false,
+       isLoadingMore = false;
 
   const ListState.failure({required String this.message})
-      : results = const [],
-        isLoading = false,
-        isLoadingMore = false,
-        isDone = true,
-        count = 0;
+    : results = const [],
+      isLoading = false,
+      isLoadingMore = false,
+      isDone = true,
+      count = 0;
 }
 
 class DoubleListState<T> extends Equatable {
@@ -142,29 +143,28 @@ class DoubleListState<T> extends Equatable {
     bool? isLoadingMoreDown,
     bool? isDoneUp,
     bool? isDoneDown,
-  }) =>
-      DoubleListState<T>(
-        resultsUp: resultsUp ?? this.resultsUp,
-        resultsDown: resultsDown ?? this.resultsDown,
-        message: message ?? this.message,
-        isLoading: isLoading ?? this.isLoading,
-        isLoadingMoreUp: isLoadingMoreUp ?? this.isLoadingMoreUp,
-        isLoadingMoreDown: isLoadingMoreDown ?? this.isLoadingMoreDown,
-        isDoneUp: isDoneUp ?? this.isDoneUp,
-        isDoneDown: isDoneDown ?? this.isDoneDown,
-      );
+  }) => DoubleListState<T>(
+    resultsUp: resultsUp ?? this.resultsUp,
+    resultsDown: resultsDown ?? this.resultsDown,
+    message: message ?? this.message,
+    isLoading: isLoading ?? this.isLoading,
+    isLoadingMoreUp: isLoadingMoreUp ?? this.isLoadingMoreUp,
+    isLoadingMoreDown: isLoadingMoreDown ?? this.isLoadingMoreDown,
+    isDoneUp: isDoneUp ?? this.isDoneUp,
+    isDoneDown: isDoneDown ?? this.isDoneDown,
+  );
 
   @override
   List<Object?> get props => [
-        resultsUp,
-        resultsDown,
-        message,
-        isLoading,
-        isLoadingMoreUp,
-        isLoadingMoreDown,
-        isDoneUp,
-        isDoneDown,
-      ];
+    resultsUp,
+    resultsDown,
+    message,
+    isLoading,
+    isLoadingMoreUp,
+    isLoadingMoreDown,
+    isDoneUp,
+    isDoneDown,
+  ];
 
   @override
   String toString() {
@@ -174,39 +174,45 @@ class DoubleListState<T> extends Equatable {
   }
 
   const DoubleListState.loading()
-      : resultsUp = const [],
-        resultsDown = const [],
-        message = null,
-        isLoading = true,
-        isLoadingMoreUp = false,
-        isLoadingMoreDown = false,
-        isDoneUp = false,
-        isDoneDown = false;
+    : resultsUp = const [],
+      resultsDown = const [],
+      message = null,
+      isLoading = true,
+      isLoadingMoreUp = false,
+      isLoadingMoreDown = false,
+      isDoneUp = false,
+      isDoneDown = false;
 
   const DoubleListState.success({
     this.resultsUp = const [],
     this.resultsDown = const [],
     required this.isDoneUp,
     required this.isDoneDown,
-  })  : message = null,
-        isLoading = false,
-        isLoadingMoreUp = false,
-        isLoadingMoreDown = false;
+  }) : message = null,
+       isLoading = false,
+       isLoadingMoreUp = false,
+       isLoadingMoreDown = false;
 
   const DoubleListState.failure({required String this.message})
-      : resultsUp = const [],
-        resultsDown = const [],
-        isLoading = false,
-        isLoadingMoreUp = false,
-        isLoadingMoreDown = false,
-        isDoneUp = true,
-        isDoneDown = true;
+    : resultsUp = const [],
+      resultsDown = const [],
+      isLoading = false,
+      isLoadingMoreUp = false,
+      isLoadingMoreDown = false,
+      isDoneUp = true,
+      isDoneDown = true;
 
   DoubleListState<T> copyLoadingMoreUp() => copyWith(
-      isLoading: false, isLoadingMoreDown: false, isLoadingMoreUp: true);
+    isLoading: false,
+    isLoadingMoreDown: false,
+    isLoadingMoreUp: true,
+  );
 
   DoubleListState<T> copyLoadingMoreDown() => copyWith(
-      isLoading: false, isLoadingMoreDown: true, isLoadingMoreUp: false);
+    isLoading: false,
+    isLoadingMoreDown: true,
+    isLoadingMoreUp: false,
+  );
 
   DoubleListState<T> copySuccessUp(List<T> results, bool isDone) =>
       copyWith(isLoading: false, resultsUp: results, isDoneUp: isDone);

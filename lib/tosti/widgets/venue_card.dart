@@ -119,10 +119,7 @@ class _PlayerSegment extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'CURRENTLY PLAYING:',
-              style: textTheme.bodySmall,
-            ),
+            Text('CURRENTLY PLAYING:', style: textTheme.bodySmall),
             const SizedBox(height: 4),
             Text(
               track.name!,
@@ -131,10 +128,7 @@ class _PlayerSegment extends StatelessWidget {
               style: textTheme.titleSmall,
             ),
             const SizedBox(height: 12),
-            Text(
-              'BY:',
-              style: textTheme.bodySmall,
-            ),
+            Text('BY:', style: textTheme.bodySmall),
             const SizedBox(height: 4),
             Text(
               track.artists.join(', '),

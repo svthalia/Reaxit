@@ -26,10 +26,10 @@ class PaymentUserState extends Equatable {
     required this.isLoading,
     required this.message,
   }) : assert(
-          (user != null && payments != null) || isLoading || message != null,
-          'user and payments can only be null '
-          'when isLoading or hasException is true.',
-        );
+         (user != null && payments != null) || isLoading || message != null,
+         'user and payments can only be null '
+         'when isLoading or hasException is true.',
+       );
 
   @override
   List<Object?> get props => [user, payments, message, isLoading];
@@ -39,28 +39,27 @@ class PaymentUserState extends Equatable {
     List<Payment>? payments,
     bool? isLoading,
     String? message,
-  }) =>
-      PaymentUserState(
-        user: user ?? this.user,
-        payments: payments ?? this.payments,
-        isLoading: isLoading ?? this.isLoading,
-        message: message ?? this.message,
-      );
+  }) => PaymentUserState(
+    user: user ?? this.user,
+    payments: payments ?? this.payments,
+    isLoading: isLoading ?? this.isLoading,
+    message: message ?? this.message,
+  );
 
   const PaymentUserState.result({
     required PaymentUser this.user,
     required List<Payment> this.payments,
-  })  : message = null,
-        isLoading = false;
+  }) : message = null,
+       isLoading = false;
 
   const PaymentUserState.loading({this.user, this.payments})
-      : message = null,
-        isLoading = true;
+    : message = null,
+      isLoading = true;
 
   const PaymentUserState.failure({required String this.message})
-      : user = null,
-        payments = null,
-        isLoading = false;
+    : user = null,
+      payments = null,
+      isLoading = false;
 }
 
 class PaymentUserCubit extends Cubit<PaymentUserState> {
@@ -72,11 +71,14 @@ class PaymentUserCubit extends Cubit<PaymentUserState> {
     emit(state.copyWith(isLoading: true));
     try {
       final paymentUser = await api.getPaymentUser();
-      final payments = await api
-          .getPayments(type: [PaymentType.tpayPayment], settled: false);
+      final payments = await api.getPayments(
+        type: [PaymentType.tpayPayment],
+        settled: false,
+      );
 
-      emit(PaymentUserState.result(
-          user: paymentUser, payments: payments.results));
+      emit(
+        PaymentUserState.result(user: paymentUser, payments: payments.results),
+      );
     } on ApiException catch (exception) {
       emit(PaymentUserState.failure(message: exception.message));
     }

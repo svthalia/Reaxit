@@ -44,9 +44,7 @@ class _LikedPhotosScreenState extends State<LikedPhotosScreen> {
     return BlocProvider.value(
       value: _cubit,
       child: Scaffold(
-        appBar: ThaliaAppBar(
-          title: const Text('LIKED PHOTOS'),
-        ),
+        appBar: ThaliaAppBar(title: const Text('LIKED PHOTOS')),
         body: RefreshIndicator(
           onRefresh: () async {
             await _cubit.load();
@@ -83,13 +81,14 @@ class _PhotoGridScrollView extends StatelessWidget {
     showDialog(
       context: context,
       useSafeArea: false,
-      barrierColor: Colors.black.withOpacity(0.92),
+      barrierColor: Colors.black.withValues(alpha: 0.92),
       builder: (context) {
         return BlocProvider.value(
           value: cubit,
           child: BlocBuilder<LikedPhotosCubit, LikedPhotosState>(
-            buildWhen: (previous, current) =>
-                !current.isLoading && !current.isLoadingMore,
+            buildWhen:
+                (previous, current) =>
+                    !current.isLoading && !current.isLoadingMore,
             builder: (context, state) {
               return Gallery<LikedPhotosCubit>(
                 photos: state.results,
@@ -134,9 +133,9 @@ class _PhotoGridScrollView extends StatelessWidget {
             const SliverPadding(
               padding: EdgeInsets.all(8),
               sliver: SliverList(
-                delegate: SliverChildListDelegate.fixed(
-                  [Center(child: CircularProgressIndicator())],
-                ),
+                delegate: SliverChildListDelegate.fixed([
+                  Center(child: CircularProgressIndicator()),
+                ]),
               ),
             ),
         ],

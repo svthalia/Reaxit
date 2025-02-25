@@ -20,23 +20,13 @@ const imagelink2 =
 const coverphoto1 = CoverPhoto(
   0,
   0,
-  Photo(
-    imagelink1,
-    imagelink1,
-    imagelink1,
-    imagelink1,
-  ),
+  Photo(imagelink1, imagelink1, imagelink1, imagelink1),
 );
 
 const albumphoto1 = AlbumPhoto(
   0,
   0,
-  Photo(
-    imagelink1,
-    imagelink1,
-    imagelink1,
-    imagelink1,
-  ),
+  Photo(imagelink1, imagelink1, imagelink1, imagelink1),
   false,
   0,
 );
@@ -44,12 +34,7 @@ const albumphoto1 = AlbumPhoto(
 const albumphoto2 = AlbumPhoto(
   0,
   0,
-  Photo(
-    imagelink2,
-    imagelink2,
-    imagelink2,
-    imagelink2,
-  ),
+  Photo(imagelink2, imagelink2, imagelink2, imagelink2),
   false,
   0,
 );
@@ -63,33 +48,43 @@ WidgetTesterCallback getTestMethod(List<Event> events, DateTime now) {
     // Setup mock.
     final api = MockApiRepository();
     when(api.config).thenReturn(Config.testing);
-    when(api.getEvents(
-      start: split,
-      search: null,
-      ordering: 'start',
-      limit: EventsSource.firstPageSize,
-      offset: 0,
-      end: null,
-    )).thenAnswer(
-      (realInvocation) async => ListResponse(events.length, events),
-    );
-    when(api.getEvents(
-            end: split,
-            search: null,
-            ordering: '-end',
-            limit: EventsSource.firstPageSize,
-            offset: 0))
-        .thenAnswer(
-      (realInvocation) async {
-        return ListResponse(events.length, events);
-      },
-    );
-    when(api.getPartnerEvents(
-            start: split, search: null, ordering: 'start', offset: 0))
-        .thenAnswer((realInvocation) async => const ListResponse(0, []));
-    when(api.getPartnerEvents(
-            start: split, search: null, ordering: '-end', offset: 0))
-        .thenAnswer((realInvocation) async => const ListResponse(0, []));
+    when(
+      api.getEvents(
+        start: split,
+        search: null,
+        ordering: 'start',
+        limit: EventsSource.firstPageSize,
+        offset: 0,
+        end: null,
+      ),
+    ).thenAnswer((realInvocation) async => ListResponse(events.length, events));
+    when(
+      api.getEvents(
+        end: split,
+        search: null,
+        ordering: '-end',
+        limit: EventsSource.firstPageSize,
+        offset: 0,
+      ),
+    ).thenAnswer((realInvocation) async {
+      return ListResponse(events.length, events);
+    });
+    when(
+      api.getPartnerEvents(
+        start: split,
+        search: null,
+        ordering: 'start',
+        offset: 0,
+      ),
+    ).thenAnswer((realInvocation) async => const ListResponse(0, []));
+    when(
+      api.getPartnerEvents(
+        start: split,
+        search: null,
+        ordering: '-end',
+        offset: 0,
+      ),
+    ).thenAnswer((realInvocation) async => const ListResponse(0, []));
     final authCubit = MockAuthCubit();
 
     throwOnMissingStub(
@@ -99,12 +94,13 @@ WidgetTesterCallback getTestMethod(List<Event> events, DateTime now) {
       },
     );
 
-    final streamController = StreamController<AuthState>.broadcast()
-      ..stream.listen((state) {
-        when(authCubit.state).thenReturn(state);
-      })
-      ..add(LoadingAuthState())
-      ..add(LoggedInAuthState(apiRepository: api));
+    final streamController =
+        StreamController<AuthState>.broadcast()
+          ..stream.listen((state) {
+            when(authCubit.state).thenReturn(state);
+          })
+          ..add(LoadingAuthState())
+          ..add(LoggedInAuthState(apiRepository: api));
 
     when(authCubit.load()).thenAnswer((_) => Future.value(null));
     when(authCubit.stream).thenAnswer((_) => streamController.stream);
@@ -115,16 +111,19 @@ WidgetTesterCallback getTestMethod(List<Event> events, DateTime now) {
     await Future.delayed(const Duration(seconds: 1));
     await tester.pumpAndSettle();
 
-    final calendarEvents =
-        events.expand(CalendarEvent.splitEventIntoCalendarEvents);
+    final calendarEvents = events.expand(
+      CalendarEvent.splitEventIntoCalendarEvents,
+    );
 
     for (CalendarEvent event in calendarEvents) {
       expect(find.text(event.title), findsOneWidget);
       expect(find.text(event.label), findsOneWidget);
     }
 
-    if (events.any((element) =>
-        element.start.isAfter(today) && element.end.isBefore(tomorrow))) {
+    if (events.any(
+      (element) =>
+          element.start.isAfter(today) && element.end.isBefore(tomorrow),
+    )) {
       expect(find.text('There are no events this day'), findsOneWidget);
     }
   };
@@ -165,14 +164,11 @@ void testCallender() {
           'sucks2bu',
           true,
           [],
-        )
+        ),
       ], DateTime.now()),
     );
 
-    testWidgets(
-      'showsToday',
-      getTestMethod(const [], DateTime.now()),
-    );
+    testWidgets('showsToday', getTestMethod(const [], DateTime.now()));
     testWidgets('eventuallyAdd', (tester) async {
       List<Event> events = [
         Event(
@@ -298,7 +294,7 @@ void testCallender() {
           today.add(const Duration(hours: 10)),
           'heaven2',
           Uri.https('thalia.nu'),
-        )
+        ),
       ];
 
       final split = DateTime(now.year, now.month);
@@ -306,48 +302,59 @@ void testCallender() {
       // Setup mock.
       final api = MockApiRepository();
       when(api.config).thenReturn(Config.testing);
-      when(api.getEvents(
-        start: split,
-        search: null,
-        ordering: 'start',
-        limit: EventsSource.firstPageSize,
-        offset: 0,
-        end: null,
-      )).thenAnswer(
-        (realInvocation) async {
-          return ListResponse(4, events.take(3).toList());
-        },
+      when(
+        api.getEvents(
+          start: split,
+          search: null,
+          ordering: 'start',
+          limit: EventsSource.firstPageSize,
+          offset: 0,
+          end: null,
+        ),
+      ).thenAnswer((realInvocation) async {
+        return ListResponse(4, events.take(3).toList());
+      });
+      when(
+        api.getEvents(
+          start: split,
+          search: null,
+          ordering: 'start',
+          limit: EventsSource.pageSize,
+          offset: 3,
+          end: null,
+        ),
+      ).thenAnswer((realInvocation) async {
+        return ListResponse(4, [events.last]);
+      });
+      when(
+        api.getEvents(
+          end: split,
+          search: null,
+          ordering: '-end',
+          limit: EventsSource.firstPageSize,
+          offset: 0,
+        ),
+      ).thenAnswer((realInvocation) async {
+        return const ListResponse(0, []);
+      });
+      when(
+        api.getPartnerEvents(
+          start: split,
+          search: null,
+          ordering: 'start',
+          offset: 0,
+        ),
+      ).thenAnswer(
+        (realInvocation) async => ListResponse(pevents.length, pevents),
       );
-      when(api.getEvents(
-        start: split,
-        search: null,
-        ordering: 'start',
-        limit: EventsSource.pageSize,
-        offset: 3,
-        end: null,
-      )).thenAnswer(
-        (realInvocation) async {
-          return ListResponse(4, [events.last]);
-        },
-      );
-      when(api.getEvents(
-              end: split,
-              search: null,
-              ordering: '-end',
-              limit: EventsSource.firstPageSize,
-              offset: 0))
-          .thenAnswer(
-        (realInvocation) async {
-          return const ListResponse(0, []);
-        },
-      );
-      when(api.getPartnerEvents(
-              start: split, search: null, ordering: 'start', offset: 0))
-          .thenAnswer(
-              (realInvocation) async => ListResponse(pevents.length, pevents));
-      when(api.getPartnerEvents(
-              start: split, search: null, ordering: '-end', offset: 0))
-          .thenAnswer((realInvocation) async => const ListResponse(0, []));
+      when(
+        api.getPartnerEvents(
+          start: split,
+          search: null,
+          ordering: '-end',
+          offset: 0,
+        ),
+      ).thenAnswer((realInvocation) async => const ListResponse(0, []));
       final authCubit = MockAuthCubit();
 
       throwOnMissingStub(
@@ -357,12 +364,13 @@ void testCallender() {
         },
       );
 
-      final streamController = StreamController<AuthState>.broadcast()
-        ..stream.listen((state) {
-          when(authCubit.state).thenReturn(state);
-        })
-        ..add(LoadingAuthState())
-        ..add(LoggedInAuthState(apiRepository: api));
+      final streamController =
+          StreamController<AuthState>.broadcast()
+            ..stream.listen((state) {
+              when(authCubit.state).thenReturn(state);
+            })
+            ..add(LoadingAuthState())
+            ..add(LoggedInAuthState(apiRepository: api));
 
       when(authCubit.load()).thenAnswer((_) => Future.value(null));
       when(authCubit.stream).thenAnswer((_) => streamController.stream);
@@ -373,26 +381,30 @@ void testCallender() {
       await Future.delayed(const Duration(seconds: 1));
       await tester.pumpAndSettle();
       // Load more events
-      CalendarScrollView screen = find
-          .byType(CalendarScrollView)
-          .first
-          .evaluate()
-          .first
-          .widget as CalendarScrollView;
+      CalendarScrollView screen =
+          find.byType(CalendarScrollView).first.evaluate().first.widget
+              as CalendarScrollView;
       screen.controller.notifyListeners();
       await Future.delayed(const Duration(seconds: 1));
       await tester.pumpAndSettle();
 
-      final calendarEvents =
-          events.expand(CalendarEvent.splitEventIntoCalendarEvents);
+      final calendarEvents = events.expand(
+        CalendarEvent.splitEventIntoCalendarEvents,
+      );
 
       Map<String, int> calendarTitleCounts = {};
       Map<String, int> calendarLableCounts = {};
       for (CalendarEvent event in calendarEvents) {
-        calendarTitleCounts.update(event.title, (c) => c + 1,
-            ifAbsent: () => 1);
-        calendarLableCounts.update(event.label, (c) => c + 1,
-            ifAbsent: () => 1);
+        calendarTitleCounts.update(
+          event.title,
+          (c) => c + 1,
+          ifAbsent: () => 1,
+        );
+        calendarLableCounts.update(
+          event.label,
+          (c) => c + 1,
+          ifAbsent: () => 1,
+        );
       }
       for (MapEntry title in calendarTitleCounts.entries) {
         // sleep(Duration(seconds: 10));
@@ -402,9 +414,11 @@ void testCallender() {
         expect(find.text(label.key), findsNWidgets(label.value));
       }
 
-      if (events.any((element) =>
-          element.end.isBefore(today) &&
-          element.start.isAfter(now.add(const Duration(days: 1))))) {
+      if (events.any(
+        (element) =>
+            element.end.isBefore(today) &&
+            element.start.isAfter(now.add(const Duration(days: 1))),
+      )) {
         expect(find.text('There are no events this day'), findsOneWidget);
       }
     });

@@ -17,25 +17,24 @@ class LikedPhotosCubit extends Cubit<LikedPhotosState>
   int _nextOffset = 0;
 
   LikedPhotosCubit(this.api)
-      : super(const LikedPhotosState.loading(results: []));
+    : super(const LikedPhotosState.loading(results: []));
 
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
     try {
-      final photos = await api.getLikedPhotos(
-        limit: firstPageSize,
-        offset: 0,
-      );
+      final photos = await api.getLikedPhotos(limit: firstPageSize, offset: 0);
 
       final isDone = photos.results.length == photos.count;
 
       _nextOffset = firstPageSize;
 
-      emit(LikedPhotosState.success(
-        results: photos.results,
-        isDone: isDone,
-        count: photos.count,
-      ));
+      emit(
+        LikedPhotosState.success(
+          results: photos.results,
+          isDone: isDone,
+          count: photos.count,
+        ),
+      );
     } on ApiException catch (exception) {
       emit(LikedPhotosState.failure(message: exception.message));
     }
@@ -60,11 +59,13 @@ class LikedPhotosCubit extends Cubit<LikedPhotosState>
 
       _nextOffset += pageSize;
 
-      emit(LikedPhotosState.success(
-        results: photos,
-        isDone: isDone,
-        count: photosResponse.count,
-      ));
+      emit(
+        LikedPhotosState.success(
+          results: photos,
+          isDone: isDone,
+          count: photosResponse.count,
+        ),
+      );
     } on ApiException catch (exception) {
       emit(LikedPhotosState.failure(message: exception.message));
     }

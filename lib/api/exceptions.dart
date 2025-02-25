@@ -41,16 +41,15 @@ class ApiException implements Exception {
     String? notLoggedIn,
     String? noInternet,
     String? serverError,
-  }) =>
-      switch (runtimeType) {
-        _UnknownException _ => unknown ?? message,
-        _NotFoundException _ => notFound ?? message,
-        _NotAllowedException _ => notAllowed ?? message,
-        _NotLoggedInException _ => notLoggedIn ?? message,
-        _NoInternetException _ => notAllowed ?? message,
-        _InternalServerException _ => serverError ?? message,
-        _ => message,
-      };
+  }) => switch (runtimeType) {
+    _UnknownException _ => unknown ?? message,
+    _NotFoundException _ => notFound ?? message,
+    _NotAllowedException _ => notAllowed ?? message,
+    _NotLoggedInException _ => notLoggedIn ?? message,
+    _NoInternetException _ => notAllowed ?? message,
+    _InternalServerException _ => serverError ?? message,
+    _ => message,
+  };
 }
 
 class _UnknownException extends ApiException {

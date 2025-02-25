@@ -14,15 +14,16 @@ class ThabloidListCubit extends SingleListCubit<Thabloid> {
 
   @override
   Future<ListResponse<Thabloid>> getDown(int offset) => api.getThabloids(
-        search: searchQuery,
-        limit: firstPageSize,
-        offset: offset,
-      );
+    search: searchQuery,
+    limit: firstPageSize,
+    offset: offset,
+  );
 
   @override
   List<Thabloid> combineDown(
-          List<Thabloid> downResults, ListState<Thabloid> oldstate) =>
-      oldstate.results + downResults;
+    List<Thabloid> downResults,
+    ListState<Thabloid> oldstate,
+  ) => oldstate.results + downResults;
 
   @override
   ListState<Thabloid> empty(String? query) {

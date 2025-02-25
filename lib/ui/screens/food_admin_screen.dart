@@ -18,18 +18,17 @@ class FoodAdminScreen extends StatefulWidget {
 }
 
 class _FoodAdminScreenState extends State<FoodAdminScreen> {
-  Filter<AdminFoodOrder> _filter = MultipleFilter(
-    [
-      MapFilter<PaymentType?, AdminFoodOrder>(
-          map: {
-            for (PaymentType value in PaymentType.values) value: true,
-            null: true,
-          },
-          title: 'Payment type',
-          asString: (item) => item?.toString() ?? 'Not paid',
-          toKey: (item) => item.payment?.type),
-    ],
-  );
+  Filter<AdminFoodOrder> _filter = MultipleFilter([
+    MapFilter<PaymentType?, AdminFoodOrder>(
+      map: {
+        for (PaymentType value in PaymentType.values) value: true,
+        null: true,
+      },
+      title: 'Payment type',
+      asString: (item) => item?.toString() ?? 'Not paid',
+      toKey: (item) => item.payment?.type,
+    ),
+  ]);
 
   _SortOrder _sortOrder = _SortOrder.none;
 
@@ -80,10 +79,11 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => FoodAdminCubit(
-        RepositoryProvider.of<ApiRepository>(context),
-        foodEventPk: widget.pk,
-      )..load(),
+      create:
+          (context) => FoodAdminCubit(
+            RepositoryProvider.of<ApiRepository>(context),
+            foodEventPk: widget.pk,
+          )..load(),
       child: Builder(
         builder: (context) {
           return Scaffold(
@@ -118,17 +118,18 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
                     case LoadingState _:
                       return const Center(child: CircularProgressIndicator());
                     case ResultState<List<AdminFoodOrder>>(result: var result):
-                      List<AdminFoodOrder> filtered = result
-                          .where(_filter.passes)
-                          .sorted(_sortOrder.compare)
-                          .toList();
+                      List<AdminFoodOrder> filtered =
+                          result
+                              .where(_filter.passes)
+                              .sorted(_sortOrder.compare)
+                              .toList();
 
                       return Scrollbar(
                         child: ListView.separated(
                           key: const PageStorageKey('food-admin'),
-                          itemBuilder: (context, index) => _OrderTile(
-                            order: filtered[index],
-                          ),
+                          itemBuilder:
+                              (context, index) =>
+                                  _OrderTile(order: filtered[index]),
                           separatorBuilder: (_, __) => const Divider(),
                           itemCount: filtered.length,
                         ),
@@ -180,10 +181,7 @@ class __OderTileState extends State<_OrderTile> {
             value: PaymentType.wirePayment,
             child: Text('Wire payment'),
           ),
-          DropdownMenuItem(
-            value: null,
-            child: Text('Not paid'),
-          ),
+          DropdownMenuItem(value: null, child: Text('Not paid')),
         ],
         value: order.payment!.type,
         onChanged: null,
@@ -204,28 +202,26 @@ class __OderTileState extends State<_OrderTile> {
             value: PaymentType.wirePayment,
             child: Text('Wire payment'),
           ),
-          DropdownMenuItem(
-            value: null,
-            child: Text('Not paid'),
-          ),
+          DropdownMenuItem(value: null, child: Text('Not paid')),
         ],
         value: order.payment?.type,
         onChanged: (value) async {
           final messenger = ScaffoldMessenger.of(context);
           try {
-            await BlocProvider.of<FoodAdminCubit>(context).setPayment(
-              orderPk: order.pk,
-              paymentType: value,
-            );
+            await BlocProvider.of<FoodAdminCubit>(
+              context,
+            ).setPayment(orderPk: order.pk, paymentType: value);
           } on ApiException {
-            messenger.showSnackBar(SnackBar(
-              behavior: SnackBarBehavior.floating,
-              content: Text(
-                value != null
-                    ? "Could not mark $name's order as paid."
-                    : "Could not mark $name's order as not paid.",
+            messenger.showSnackBar(
+              SnackBar(
+                behavior: SnackBarBehavior.floating,
+                content: Text(
+                  value != null
+                      ? "Could not mark $name's order as paid."
+                      : "Could not mark $name's order as not paid.",
+                ),
               ),
-            ));
+            );
           }
         },
       );
@@ -233,11 +229,7 @@ class __OderTileState extends State<_OrderTile> {
 
     return ListTile(
       horizontalTitleGap: 8,
-      title: Text(
-        name,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
+      title: Text(name, maxLines: 1, overflow: TextOverflow.ellipsis),
       subtitle: Text(
         order.product.name,
         maxLines: 1,
@@ -286,7 +278,7 @@ class FoodAdminSearchDelegate extends SearchDelegate {
           onPressed: () {
             query = '';
           },
-        )
+        ),
       ];
     } else {
       return [];
@@ -295,9 +287,7 @@ class FoodAdminSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildLeading(BuildContext context) {
-    return BackButton(
-      onPressed: () => close(context, null),
-    );
+    return BackButton(onPressed: () => close(context, null));
   }
 
   @override
@@ -314,9 +304,8 @@ class FoodAdminSearchDelegate extends SearchDelegate {
             case (ResultState<List<AdminFoodOrder>> rstate):
               return ListView.separated(
                 key: const PageStorageKey('food-admin-search'),
-                itemBuilder: (context, index) => _OrderTile(
-                  order: rstate.result[index],
-                ),
+                itemBuilder:
+                    (context, index) => _OrderTile(order: rstate.result[index]),
                 separatorBuilder: (_, __) => const Divider(),
                 itemCount: rstate.result.length,
               );
@@ -331,18 +320,18 @@ class FoodAdminSearchDelegate extends SearchDelegate {
     return BlocProvider.value(
       value: _adminCubit..search(query),
       child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
-        builder: (context, state) => switch (state) {
-          ErrorState(message: var message) => ErrorScrollView(message),
-          LoadingState _ => const SizedBox.shrink(),
-          ResultState(result: var result) => ListView.separated(
-              key: const PageStorageKey('food-admin-search'),
-              itemBuilder: (context, index) => _OrderTile(
-                order: result[index],
+        builder:
+            (context, state) => switch (state) {
+              ErrorState(message: var message) => ErrorScrollView(message),
+              LoadingState _ => const SizedBox.shrink(),
+              ResultState(result: var result) => ListView.separated(
+                key: const PageStorageKey('food-admin-search'),
+                itemBuilder:
+                    (context, index) => _OrderTile(order: result[index]),
+                separatorBuilder: (_, __) => const Divider(),
+                itemCount: result.length,
               ),
-              separatorBuilder: (_, __) => const Divider(),
-              itemCount: result.length,
-            ),
-        },
+            },
       ),
     );
   }
@@ -355,9 +344,15 @@ enum _SortOrder {
   nameUp(text: 'Name', icon: Icons.keyboard_arrow_up, compare: cmpName),
   nameDown(text: 'Name', icon: Icons.keyboard_arrow_down, compare: cmpName_2),
   productUp(
-      text: 'Product', icon: Icons.keyboard_arrow_up, compare: cmpProduct),
+    text: 'Product',
+    icon: Icons.keyboard_arrow_up,
+    compare: cmpProduct,
+  ),
   productDown(
-      text: 'Product', icon: Icons.keyboard_arrow_down, compare: cmpProduct_2);
+    text: 'Product',
+    icon: Icons.keyboard_arrow_down,
+    compare: cmpProduct_2,
+  );
 
   final String text;
   final IconData? icon;

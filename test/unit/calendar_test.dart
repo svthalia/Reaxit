@@ -121,8 +121,9 @@ void main() {
 
       final calendarEvents = CalendarEvent.splitEventIntoCalendarEvents(event);
       final monthGroupedEventsDown = ensureMonthsContainsToday(
-          groupByMonth(calendarEvents).sortedBy((element) => element.month),
-          now);
+        groupByMonth(calendarEvents).sortedBy((element) => element.month),
+        now,
+      );
 
       expect(monthGroupedEventsDown.length, 2);
       expect(monthGroupedEventsDown[1].days.length, 1);
@@ -141,8 +142,9 @@ void main() {
 
       final calendarEvents = CalendarEvent.splitEventIntoCalendarEvents(event);
       final monthGroupedEventsDown = ensureMonthsContainsToday(
-          groupByMonth(calendarEvents).sortedBy((element) => element.month),
-          now);
+        groupByMonth(calendarEvents).sortedBy((element) => element.month),
+        now,
+      );
 
       expect(monthGroupedEventsDown.length, 2);
       expect(monthGroupedEventsDown[1].days.length, 1);

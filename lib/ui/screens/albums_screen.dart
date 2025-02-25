@@ -49,22 +49,18 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
             Icons.favorite_border,
             () => context.pushNamed('liked-photos'),
           ),
-          IconAppbarAction(
-            'SEARCH',
-            Icons.search,
-            () async {
-              final searchCubit = AlbumListCubit(
-                RepositoryProvider.of<ApiRepository>(context),
-              );
+          IconAppbarAction('SEARCH', Icons.search, () async {
+            final searchCubit = AlbumListCubit(
+              RepositoryProvider.of<ApiRepository>(context),
+            );
 
-              await showSearch(
-                context: context,
-                delegate: AlbumsSearchDelegate(searchCubit),
-              );
+            await showSearch(
+              context: context,
+              delegate: AlbumsSearchDelegate(searchCubit),
+            );
 
-              searchCubit.close();
-            },
-          ),
+            searchCubit.close();
+          }),
         ],
       ),
       drawer: MenuDrawer(),
@@ -134,7 +130,7 @@ class AlbumsSearchDelegate extends SearchDelegate {
           onPressed: () {
             query = '';
           },
-        )
+        ),
       ];
     } else {
       return [];
@@ -143,9 +139,7 @@ class AlbumsSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildLeading(BuildContext context) {
-    return BackButton(
-      onPressed: () => close(context, null),
-    );
+    return BackButton(onPressed: () => close(context, null));
   }
 
   @override
@@ -202,41 +196,38 @@ class AlbumListScrollView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scrollbar(
+      controller: controller,
+      child: CustomScrollView(
         controller: controller,
-        child: CustomScrollView(
-          controller: controller,
-          physics: const RangeMaintainingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics(),
-          ),
-          slivers: [
-            SliverPadding(
-              padding: const EdgeInsets.all(8),
-              sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
-                ),
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) => AlbumTile(
-                    album: listState.results[index],
-                  ),
-                  childCount: listState.results.length,
-                ),
+        physics: const RangeMaintainingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.all(8),
+            sliver: SliverGrid(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => AlbumTile(album: listState.results[index]),
+                childCount: listState.results.length,
               ),
             ),
-            if (listState.isLoadingMore)
-              const SliverPadding(
-                padding: EdgeInsets.all(8),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate.fixed([
-                    Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  ]),
-                ),
+          ),
+          if (listState.isLoadingMore)
+            const SliverPadding(
+              padding: EdgeInsets.all(8),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate.fixed([
+                  Center(child: CircularProgressIndicator()),
+                ]),
               ),
-          ],
-        ));
+            ),
+        ],
+      ),
+    );
   }
 }

@@ -16,9 +16,7 @@ import 'package:reaxit/config.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final _redirectUrl = Uri.parse(
-  'nu.thalia://callback',
-);
+final _redirectUrl = Uri.parse('nu.thalia://callback');
 
 const _credentialsStorageKey = 'ThaliApp OAuth2 credentials';
 
@@ -247,8 +245,9 @@ class AuthCubit extends Cubit<AuthState> {
       await storage.write(
         key: _credentialsStorageKey,
         value: client.credentials.toJson(),
-        iOptions:
-            const IOSOptions(accessibility: KeychainAccessibility.first_unlock),
+        iOptions: const IOSOptions(
+          accessibility: KeychainAccessibility.first_unlock,
+        ),
       );
 
       final apiRepository = ConcrexitApiRepository(
@@ -292,8 +291,9 @@ class AuthCubit extends Cubit<AuthState> {
     const storage = FlutterSecureStorage();
     await storage.delete(
       key: _credentialsStorageKey,
-      iOptions:
-          const IOSOptions(accessibility: KeychainAccessibility.first_unlock),
+      iOptions: const IOSOptions(
+        accessibility: KeychainAccessibility.first_unlock,
+      ),
     );
 
     // Clear username for sentry.
@@ -310,10 +310,12 @@ class AuthCubit extends Cubit<AuthState> {
   void selectEnvironment(Environment environment) {
     final state = this.state;
     if (state is LoggedOutAuthState) {
-      emit(LoggedOutAuthState(
-        selectedEnvironment: environment,
-        apiRepository: state.apiRepository,
-      ));
+      emit(
+        LoggedOutAuthState(
+          selectedEnvironment: environment,
+          apiRepository: state.apiRepository,
+        ),
+      );
     }
   }
 
@@ -361,10 +363,10 @@ class AuthCubit extends Cubit<AuthState> {
           );
 
           // Handle refreshing of tokens.
-          _fmTokenSubscription =
-              FirebaseMessaging.instance.onTokenRefresh.listen(
-            (token) => api.updateDeviceToken(pk: device.pk, token: token),
-          );
+          _fmTokenSubscription = FirebaseMessaging.instance.onTokenRefresh
+              .listen(
+                (token) => api.updateDeviceToken(pk: device.pk, token: token),
+              );
         } on ApiException catch (exception) {
           if (exception == ApiException.notFound) {
             // The device was deleted from the backend.

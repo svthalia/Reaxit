@@ -17,9 +17,7 @@ class LoadingMarkPresentState extends MarkPresentState {
 class SuccessMarkPresentState extends MarkPresentState {
   final String message;
 
-  const SuccessMarkPresentState({
-    required this.message,
-  });
+  const SuccessMarkPresentState({required this.message});
 
   @override
   List<Object?> get props => [message];
@@ -47,9 +45,11 @@ class MarkPresentCubit extends Cubit<MarkPresentState> {
       );
       emit(SuccessMarkPresentState(message: detail));
     } on ApiException catch (exception) {
-      emit(FailureMarkPresentState(exception.getMessage(
-        notFound: 'This event does not exist.',
-      )));
+      emit(
+        FailureMarkPresentState(
+          exception.getMessage(notFound: 'This event does not exist.'),
+        ),
+      );
     }
   }
 }

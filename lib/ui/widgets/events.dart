@@ -14,20 +14,15 @@ class CalendarViewDay {
   final List<CalendarEvent> events;
 
   CalendarViewDay({required this.day, required List<CalendarEvent> events})
-      : events = events.sortedBy((element) => element.start);
+    : events = events.sortedBy((element) => element.start);
 }
 
 List<CalendarViewMonth> ensureMonthsContainsToday(
-    List<CalendarViewMonth> events, DateTime now) {
-  DateTime today = DateTime(
-    now.year,
-    now.month,
-    now.day,
-  );
-  DateTime thisMonth = DateTime(
-    now.year,
-    now.month,
-  );
+  List<CalendarViewMonth> events,
+  DateTime now,
+) {
+  DateTime today = DateTime(now.year, now.month, now.day);
+  DateTime thisMonth = DateTime(now.year, now.month);
   CalendarViewDay emptyDay = CalendarViewDay(day: today, events: []);
   for (var i = 0; i < events.length; i++) {
     if (events[i].month.isAfter(thisMonth)) {
@@ -52,11 +47,7 @@ List<CalendarViewMonth> ensureMonthsContainsToday(
 
 CalendarViewMonth ensureMonthContainsDay(CalendarViewMonth month, int day) {
   DateTime thisMonth = month.month;
-  DateTime today = DateTime(
-    thisMonth.year,
-    thisMonth.month,
-    day,
-  );
+  DateTime today = DateTime(thisMonth.year, thisMonth.month, day);
 
   CalendarViewDay emptyDay = CalendarViewDay(day: today, events: []);
   // Try to find the right day, or a day after
@@ -79,19 +70,14 @@ CalendarViewMonth ensureMonthContainsDay(CalendarViewMonth month, int day) {
   return month;
 }
 
-List<CalendarViewMonth> groupByMonth(
-  List<CalendarEvent> eventList,
-) =>
+List<CalendarViewMonth> groupByMonth(List<CalendarEvent> eventList) =>
     groupBy<CalendarEvent, DateTime>(
-      eventList,
-      (event) => DateTime(
-        event.start.year,
-        event.start.month,
-      ),
-    )
-        .entries
+          eventList,
+          (event) => DateTime(event.start.year, event.start.month),
+        ).entries
         .map(
-            (entry) => CalendarViewMonth(month: entry.key, events: entry.value))
+          (entry) => CalendarViewMonth(month: entry.key, events: entry.value),
+        )
         .toList();
 
 /// CalendarViewMonth holds events attached to a month
@@ -100,18 +86,13 @@ class CalendarViewMonth {
   final List<CalendarViewDay> days;
 
   CalendarViewMonth({required this.month, required List<CalendarEvent> events})
-      : days = groupBy<CalendarEvent, DateTime>(
-          events.sortedBy((element) => element.start),
-          (event) => DateTime(
-            event.start.year,
-            event.start.month,
-            event.start.day,
-          ),
-        )
-            .entries
-            .map(
-                (entry) => CalendarViewDay(day: entry.key, events: entry.value))
-            .sortedBy((element) => element.day);
+    : days = groupBy<CalendarEvent, DateTime>(
+            events.sortedBy((element) => element.start),
+            (event) =>
+                DateTime(event.start.year, event.start.month, event.start.day),
+          ).entries
+          .map((entry) => CalendarViewDay(day: entry.key, events: entry.value))
+          .sortedBy((element) => element.day);
 
   List<CalendarViewDay> byDay() => days;
 }
@@ -125,23 +106,17 @@ class CalendarMonth extends StatelessWidget {
   static final monthFormatter = DateFormat('MMMM');
   static final monthYearFormatter = DateFormat('MMMM yyyy');
 
-  const CalendarMonth(
-      {required this.events,
-      this.todayKey,
-      this.thisMonthKey,
-      required this.now});
+  const CalendarMonth({
+    required this.events,
+    this.todayKey,
+    this.thisMonthKey,
+    required this.now,
+  });
 
   @override
   Widget build(BuildContext context) {
-    DateTime today = DateTime(
-      now.year,
-      now.month,
-      now.day,
-    );
-    DateTime thisMonth = DateTime(
-      now.year,
-      now.month,
-    );
+    DateTime today = DateTime(now.year, now.month, now.day);
+    DateTime thisMonth = DateTime(now.year, now.month);
     return StickyHeader(
       header: Column(
         key: events.month == thisMonth ? thisMonthKey : null,
@@ -172,10 +147,11 @@ class CalendarMonth extends StatelessWidget {
         children: [
           for (final day in events.byDay())
             EventsDayCard(
-                day: day.day,
-                events: day.events,
-                now: now,
-                key: day.day == today ? todayKey : null),
+              day: day.day,
+              events: day.events,
+              now: now,
+              key: day.day == today ? todayKey : null,
+            ),
         ],
       ),
     );
@@ -189,22 +165,18 @@ class EventsDayCard extends StatelessWidget {
 
   static final dayFormatter = DateFormat(DateFormat.ABBR_WEEKDAY);
 
-  EventsDayCard(
-      {required DateTime day,
-      required List<CalendarEvent> events,
-      required this.now,
-      Key? key})
-      : eventWidgets = events.map((event) => EventCard(event)).toList(),
-        day = day.toLocal(),
-        super(key: key ?? ValueKey(day));
+  EventsDayCard({
+    required DateTime day,
+    required List<CalendarEvent> events,
+    required this.now,
+    Key? key,
+  }) : eventWidgets = events.map((event) => EventCard(event)).toList(),
+       day = day.toLocal(),
+       super(key: key ?? ValueKey(day));
 
   @override
   Widget build(BuildContext context) {
-    DateTime today = DateTime(
-      now.year,
-      now.month,
-      now.day,
-    );
+    DateTime today = DateTime(now.year, now.month, now.day);
 
     final textTheme = Theme.of(context).textTheme;
     return Row(
@@ -222,16 +194,24 @@ class EventsDayCard extends StatelessWidget {
                 Text(
                   dayFormatter.format(day).toUpperCase(),
                   style: textTheme.bodySmall!.apply(
-                      color: day == today
-                          ? magenta
-                          : textTheme.bodySmall!.color!.withOpacity(0.5)),
+                    color:
+                        day == today
+                            ? magenta
+                            : textTheme.bodySmall!.color!.withValues(
+                              alpha: 0.5,
+                            ),
+                  ),
                 ),
                 Text(
                   day.day.toString(),
                   style: textTheme.displaySmall!.apply(
-                      color: day == today
-                          ? magenta
-                          : textTheme.displaySmall!.color!.withOpacity(0.5)),
+                    color:
+                        day == today
+                            ? magenta
+                            : textTheme.displaySmall!.color!.withValues(
+                              alpha: 0.5,
+                            ),
+                  ),
                   strutStyle: const StrutStyle(
                     forceStrutHeight: true,
                     leading: 2.2,
@@ -246,25 +226,27 @@ class EventsDayCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: eventWidgets.isNotEmpty
-                ? eventWidgets
-                : [
-                    Center(
-                      child: Text(
-                        'There are no events this day',
-                        style: TextStyle(
-                          color:
-                              textTheme.displaySmall!.color!.withOpacity(0.5),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                        ),
-                        strutStyle: const StrutStyle(
-                          forceStrutHeight: true,
-                          leading: 4,
+            children:
+                eventWidgets.isNotEmpty
+                    ? eventWidgets
+                    : [
+                      Center(
+                        child: Text(
+                          'There are no events this day',
+                          style: TextStyle(
+                            color: textTheme.displaySmall!.color!.withValues(
+                              alpha: 0.5,
+                            ),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                          strutStyle: const StrutStyle(
+                            forceStrutHeight: true,
+                            leading: 4,
+                          ),
                         ),
                       ),
-                    )
-                  ],
+                    ],
           ),
         ),
       ],
@@ -334,8 +316,8 @@ class EventCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: Colors.white.withOpacity(0.8),
-                      ),
+                    color: Colors.white.withValues(alpha: 0.8),
+                  ),
                 ),
               ],
             ),

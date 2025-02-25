@@ -36,8 +36,13 @@ class WelcomeState extends Equatable {
   });
 
   @override
-  List<Object?> get props =>
-      [slides, articles, upcomingEvents, message, isLoading];
+  List<Object?> get props => [
+    slides,
+    articles,
+    upcomingEvents,
+    message,
+    isLoading,
+  ];
 
   WelcomeState copyWith({
     List<Slide>? slides,
@@ -45,31 +50,30 @@ class WelcomeState extends Equatable {
     List<BaseEvent>? upcomingEvents,
     bool? isLoading,
     String? message,
-  }) =>
-      WelcomeState(
-        slides: slides ?? this.slides,
-        articles: articles ?? this.articles,
-        upcomingEvents: upcomingEvents ?? this.upcomingEvents,
-        isLoading: isLoading ?? this.isLoading,
-        message: message ?? this.message,
-      );
+  }) => WelcomeState(
+    slides: slides ?? this.slides,
+    articles: articles ?? this.articles,
+    upcomingEvents: upcomingEvents ?? this.upcomingEvents,
+    isLoading: isLoading ?? this.isLoading,
+    message: message ?? this.message,
+  );
 
   const WelcomeState.result({
     required List<Slide> this.slides,
     required List<FrontpageArticle> this.articles,
     required List<BaseEvent> this.upcomingEvents,
-  })  : message = null,
-        isLoading = false;
+  }) : message = null,
+       isLoading = false;
 
   const WelcomeState.loading({this.slides, this.articles, this.upcomingEvents})
-      : message = null,
-        isLoading = true;
+    : message = null,
+      isLoading = true;
 
   const WelcomeState.failure({required String this.message})
-      : slides = null,
-        articles = null,
-        upcomingEvents = null,
-        isLoading = false;
+    : slides = null,
+      articles = null,
+      upcomingEvents = null,
+      isLoading = false;
 }
 
 class WelcomeCubit extends Cubit<WelcomeState> {
@@ -93,23 +97,31 @@ class WelcomeCubit extends Cubit<WelcomeState> {
         limit: 3,
       );
 
-      List<BaseEvent> events = eventsResponse.results
-          .map<BaseEvent>((e) => e)
-          .followedBy(partnerEventsResponse.results.map<BaseEvent>((e) => e))
-          .sortedBy((element) => element.start)
-          .take(3)
-          .toList();
+      List<BaseEvent> events =
+          eventsResponse.results
+              .map<BaseEvent>((e) => e)
+              .followedBy(
+                partnerEventsResponse.results.map<BaseEvent>((e) => e),
+              )
+              .sortedBy((element) => element.start)
+              .take(3)
+              .toList();
 
       // Filter out SVG slides, as long as concrexit does not offer an alternative.
-      final slides = slidesResponse.results
-          .where((slide) => !Uri.parse(slide.content.full).path.endsWith('svg'))
-          .toList();
+      final slides =
+          slidesResponse.results
+              .where(
+                (slide) => !Uri.parse(slide.content.full).path.endsWith('svg'),
+              )
+              .toList();
 
-      emit(WelcomeState.result(
-        slides: slides,
-        articles: articlesResponse.results,
-        upcomingEvents: events,
-      ));
+      emit(
+        WelcomeState.result(
+          slides: slides,
+          articles: articlesResponse.results,
+          upcomingEvents: events,
+        ),
+      );
     } on ApiException catch (exception) {
       emit(WelcomeState.failure(message: exception.message));
     }

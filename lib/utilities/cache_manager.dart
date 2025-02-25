@@ -10,9 +10,11 @@ class ThaliaCacheManager extends cache.CacheManager
   factory ThaliaCacheManager() => _instance;
 
   ThaliaCacheManager._()
-      : super(cache.Config(
+    : super(
+        cache.Config(
           key,
           stalePeriod: Config.cacheStalePeriod,
           maxNrOfCacheObjects: Config.cacheMaxObjects,
-        ));
+        ),
+      );
 }

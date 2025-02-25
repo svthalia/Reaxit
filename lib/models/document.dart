@@ -17,10 +17,5 @@ class Document {
       _$DocumentFromJson(json);
   Map<String, dynamic> toJson() => _$DocumentToJson(this);
 
-  const Document(
-    this.pk,
-    this.name,
-    this.url,
-    this.category,
-  );
+  const Document(this.pk, this.name, this.url, this.category);
 }

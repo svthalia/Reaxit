@@ -12,10 +12,5 @@ class Product {
   factory Product.fromJson(Map<String, dynamic> json) =>
       _$ProductFromJson(json);
 
-  const Product(
-    this.pk,
-    this.name,
-    this.description,
-    this.price,
-  );
+  const Product(this.pk, this.name, this.description, this.price);
 }

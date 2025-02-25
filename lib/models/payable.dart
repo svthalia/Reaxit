@@ -15,10 +15,5 @@ class Payable {
   factory Payable.fromJson(Map<String, dynamic> json) =>
       _$PayableFromJson(json);
 
-  const Payable(
-    this.amount,
-    this.topic,
-    this.notes,
-    this.payment,
-  );
+  const Payable(this.amount, this.topic, this.notes, this.payment);
 }

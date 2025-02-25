@@ -14,24 +14,24 @@ class GroupsCubit extends SingleListCubit<ListGroup> {
 
   @override
   List<ListGroup> combineDown(
-          List<ListGroup> downResults, ListState<ListGroup> oldstate) =>
-      oldstate.results + downResults;
+    List<ListGroup> downResults,
+    ListState<ListGroup> oldstate,
+  ) => oldstate.results + downResults;
 
   @override
   ListState<ListGroup> empty(String? query) => switch (query) {
-        null => const ListState.failure(message: 'No groups found.'),
-        '' => const ListState.failure(message: 'Start searching for groups'),
-        var q =>
-          ListState.failure(message: 'No groups found found for query "$q"'),
-      };
+    null => const ListState.failure(message: 'No groups found.'),
+    '' => const ListState.failure(message: 'Start searching for groups'),
+    var q => ListState.failure(message: 'No groups found found for query "$q"'),
+  };
 
   @override
   Future<ListResponse<ListGroup>> getDown(int offset) => api.getGroups(
-        limit: 1000,
-        offset: offset,
-        type: groupType,
-        search: searchQuery,
-      );
+    limit: 1000,
+    offset: offset,
+    type: groupType,
+    search: searchQuery,
+  );
 
   @override
   List<ListGroup> processDown(List<ListGroup> downResults) {
