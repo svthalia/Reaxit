@@ -2,7 +2,7 @@ plugins {
     id "com.android.application"
     id "kotlin-android"
     // START: FlutterFire Configuration
-    id "com.google.gms.google-services" version "4.4.1" apply false
+    id "com.google.gms.google-services" version "4.4.2" apply false
     // END: FlutterFire Configuration
     id "dev.flutter.flutter-gradle-plugin"
 }
@@ -45,15 +45,14 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     compileSdkVersion 35
-    ndkVersion flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = '17'
     }
 
     sourceSets {
@@ -63,7 +62,7 @@ android {
     defaultConfig {
         applicationId "com.thaliapp"
         resValue "string", "app_name", "ThaliApp"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 35
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

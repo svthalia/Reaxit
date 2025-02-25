@@ -1,2 +1,0 @@
-/home/jaap/Projects/forks/Reaxit/android/app/.cxx/Debug/7211r26k/armeabi-v7a/CMakeFiles/edit_cache.dir
-/home/jaap/Projects/forks/Reaxit/android/app/.cxx/Debug/7211r26k/armeabi-v7a/CMakeFiles/rebuild_cache.dir
