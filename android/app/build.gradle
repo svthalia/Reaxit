@@ -85,13 +85,13 @@ android {
         }
 
         release {
-            signingConfig signingConfigs.release
+            signingConfig = signingConfigs.release
         }
     }
 
-    namespace 'com.thaliapp'
+    namespace = 'com.thaliapp'
 }
 
 flutter {
-    source '../..'
+    source = '../..'
 }
