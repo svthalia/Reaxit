@@ -105,8 +105,6 @@ jobs:
       || (github.event_name == 'push' && github.ref == 'refs/heads/master')
       || (github.event_name == 'pull_request' && !github.event.pull_request.draft)
     runs-on: macos-14
-    env:
-      XCVERSION: "14.1.0"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
