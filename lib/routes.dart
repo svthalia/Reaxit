@@ -300,19 +300,6 @@ final List<RouteBase> routes = [
         );
       },
     ),
-    // routes: [
-    // GoRoute(
-    //   path: ':vacancypk',
-    //   name: 'vacancy',
-    //   pageBuilder: (context, state) => MaterialPage(
-    //     key: state.pageKey,
-    //     child: VacancyScreen(
-    //       slug: state.pathParameters['vacancypk']!,
-    //       album: state.extra as Vacancie?,
-    //     ),
-    //   ),
-    // ),
-    // ],
   ),
   GoRoute(
     path: '/association/committees/:groupSlug',
