@@ -135,6 +135,10 @@ jobs:
         run: |
           echo $APPLE_API_KEY | base64 --decode > $GITHUB_WORKSPACE/app-store.p8
 
+      - name: ls
+        run: |
+          ls /Applications/
+
       - name: Build app
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
