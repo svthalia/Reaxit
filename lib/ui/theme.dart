@@ -6,7 +6,7 @@ const Color magenta = Color(0xFFE62272);
 ColorScheme lightColorScheme = ColorScheme(
   primary: magenta,
   onPrimary: Colors.white,
-  secondary: magenta.withOpacity(0.8),
+  secondary: magenta.withValues(alpha: 0.8),
   onSecondary: Colors.white,
   surface: const Color.fromRGBO(255, 255, 255, 1),
   surfaceTint: Colors.transparent,
@@ -19,7 +19,7 @@ ColorScheme lightColorScheme = ColorScheme(
 ColorScheme darkColorScheme = ColorScheme(
   primary: magenta,
   onPrimary: Colors.white,
-  secondary: magenta.withOpacity(0.5),
+  secondary: magenta.withValues(alpha: 0.5),
   onSecondary: Colors.white,
   surface: const Color(0xFF111111),
   surfaceTint: Colors.transparent,
@@ -30,9 +30,7 @@ ColorScheme darkColorScheme = ColorScheme(
   brightness: Brightness.dark,
 );
 
-DividerThemeData dividerTheme = const DividerThemeData(
-  thickness: 0,
-);
+DividerThemeData dividerTheme = const DividerThemeData(thickness: 0);
 
 /// TextTheme mostly following material design guidelines.
 ///
@@ -44,14 +42,8 @@ TextTheme generatedTextTheme = TextTheme(
     fontWeight: FontWeight.w400,
     letterSpacing: -1,
   ),
-  displayMedium: GoogleFonts.oswald(
-    fontSize: 36,
-    fontWeight: FontWeight.w300,
-  ),
-  displaySmall: GoogleFonts.oswald(
-    fontSize: 28,
-    fontWeight: FontWeight.w400,
-  ),
+  displayMedium: GoogleFonts.oswald(fontSize: 36, fontWeight: FontWeight.w300),
+  displaySmall: GoogleFonts.oswald(fontSize: 28, fontWeight: FontWeight.w400),
   headlineMedium: GoogleFonts.oswald(
     fontSize: 22,
     fontWeight: FontWeight.w500,
@@ -105,17 +97,19 @@ TextTheme generatedTextTheme = TextTheme(
 );
 
 ButtonStyle darkElevatedButtonStyle = ButtonStyle(
-  backgroundColor:
-      WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+  backgroundColor: WidgetStateProperty.resolveWith<Color?>((
+    Set<WidgetState> states,
+  ) {
     if (states.contains(WidgetState.disabled)) {
-      return darkColorScheme.onSurface.withOpacity(0.12);
+      return darkColorScheme.onSurface.withValues(alpha: 0.12);
     }
     return darkColorScheme.primary;
   }),
-  foregroundColor:
-      WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+  foregroundColor: WidgetStateProperty.resolveWith<Color?>((
+    Set<WidgetState> states,
+  ) {
     if (states.contains(WidgetState.disabled)) {
-      return darkColorScheme.onSurface.withOpacity(0.38);
+      return darkColorScheme.onSurface.withValues(alpha: 0.38);
     }
     return darkColorScheme.onPrimary;
   }),
@@ -127,8 +121,9 @@ ThemeData lightBaseTheme = ThemeData.from(
 );
 
 ThemeData lightTheme = lightBaseTheme.copyWith(
-  primaryTextTheme:
-      ThemeData.light().primaryTextTheme.merge(generatedTextTheme),
+  primaryTextTheme: ThemeData.light().primaryTextTheme.merge(
+    generatedTextTheme,
+  ),
   floatingActionButtonTheme: lightBaseTheme.floatingActionButtonTheme.copyWith(
     foregroundColor: Colors.white,
   ),
@@ -143,11 +138,11 @@ ThemeData darkTheme = ThemeData.from(
   // TODO: Make text less white.
   primaryTextTheme: ThemeData.dark().primaryTextTheme.merge(generatedTextTheme),
   elevatedButtonTheme: ElevatedButtonThemeData(style: darkElevatedButtonStyle),
-  dialogBackgroundColor: darkColorScheme.surface,
   dividerColor: Colors.white60,
   checkboxTheme: CheckboxThemeData(
-    fillColor:
-        WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+    fillColor: WidgetStateProperty.resolveWith<Color?>((
+      Set<WidgetState> states,
+    ) {
       if (states.contains(WidgetState.disabled)) {
         return null;
       }
@@ -161,8 +156,9 @@ ThemeData darkTheme = ThemeData.from(
     extendedTextStyle: generatedTextTheme.labelLarge,
   ),
   radioTheme: RadioThemeData(
-    fillColor:
-        WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+    fillColor: WidgetStateProperty.resolveWith<Color?>((
+      Set<WidgetState> states,
+    ) {
       if (states.contains(WidgetState.disabled)) {
         return null;
       }
@@ -173,8 +169,9 @@ ThemeData darkTheme = ThemeData.from(
     }),
   ),
   switchTheme: SwitchThemeData(
-    thumbColor:
-        WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+    thumbColor: WidgetStateProperty.resolveWith<Color?>((
+      Set<WidgetState> states,
+    ) {
       if (states.contains(WidgetState.disabled)) {
         return null;
       }
@@ -183,17 +180,19 @@ ThemeData darkTheme = ThemeData.from(
       }
       return null;
     }),
-    trackColor:
-        WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+    trackColor: WidgetStateProperty.resolveWith<Color?>((
+      Set<WidgetState> states,
+    ) {
       if (states.contains(WidgetState.disabled)) {
         return null;
       }
       if (states.contains(WidgetState.selected)) {
-        return darkColorScheme.primary.withOpacity(0.2);
+        return darkColorScheme.primary.withValues(alpha: 0.2);
       }
       return null;
     }),
     trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
   ),
   dividerTheme: dividerTheme,
+  dialogTheme: DialogThemeData(backgroundColor: darkColorScheme.surface),
 );

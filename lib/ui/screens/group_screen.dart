@@ -21,24 +21,22 @@ class GroupScreen extends StatelessWidget {
   final String? slug;
 
   // Default: by PK
-  const GroupScreen({
-    super.key,
-    this.group,
-    required this.pk,
-  })  : groupType = null,
-        slug = null;
+  const GroupScreen({super.key, this.group, required this.pk})
+    : groupType = null,
+      slug = null;
 
   // Alternative: by Slug
-  const GroupScreen.bySlug(
-      {super.key, this.group, required this.groupType, required this.slug})
-      : pk = null;
+  const GroupScreen.bySlug({
+    super.key,
+    this.group,
+    required this.groupType,
+    required this.slug,
+  }) : pk = null;
 
   GroupCubit _selectCubit(BuildContext context) {
     if (pk != null) {
-      return GroupCubit(
-        RepositoryProvider.of<ApiRepository>(context),
-        pk: pk!,
-      )..load();
+      return GroupCubit(RepositoryProvider.of<ApiRepository>(context), pk: pk!)
+        ..load();
     } else {
       return GroupCubit.bySlug(
         RepositoryProvider.of<ApiRepository>(context),
@@ -53,22 +51,19 @@ class GroupScreen extends StatelessWidget {
     return BlocProvider<GroupCubit>(
       create: _selectCubit,
       child: BlocBuilder<GroupCubit, GroupState>(
-        builder: (context, state) => _Page(
-          state: state,
-          cubit: BlocProvider.of<GroupCubit>(context),
-          listGroup: group,
-        ),
+        builder:
+            (context, state) => _Page(
+              state: state,
+              cubit: BlocProvider.of<GroupCubit>(context),
+              listGroup: group,
+            ),
       ),
     );
   }
 }
 
 class _Page extends StatelessWidget {
-  const _Page({
-    required this.state,
-    required this.cubit,
-    this.listGroup,
-  });
+  const _Page({required this.state, required this.cubit, this.listGroup});
 
   final DetailState<Group> state;
   final GroupCubit cubit;
@@ -78,12 +73,34 @@ class _Page extends StatelessWidget {
   Widget build(BuildContext context) {
     final body = switch (state) {
       ErrorState(message: var message) => RefreshIndicator(
-          onRefresh: () => cubit.load(),
-          child: ErrorScrollView(message),
-        ),
-      LoadingState _ when listGroup == null =>
-        const Center(child: CircularProgressIndicator()),
+        onRefresh: () => cubit.load(),
+        child: ErrorScrollView(message),
+      ),
+      LoadingState _ when listGroup == null => const Center(
+        child: CircularProgressIndicator(),
+      ),
       LoadingState _ => Scrollbar(
+        child: CustomScrollView(
+          key: const PageStorageKey('group'),
+          slivers: [
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _GroupImage(group: listGroup!),
+                  const Divider(height: 0),
+                  _GroupInfo(group: listGroup!),
+                ],
+              ),
+            ),
+            _MembersHeader(group: listGroup!),
+            const _MembersGrid(members: null),
+          ],
+        ),
+      ),
+      ResultState(result: var result) => RefreshIndicator(
+        onRefresh: () => cubit.load(),
+        child: Scrollbar(
           child: CustomScrollView(
             key: const PageStorageKey('group'),
             slivers: [
@@ -91,39 +108,18 @@ class _Page extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _GroupImage(group: listGroup!),
+                    _GroupImage(group: result),
                     const Divider(height: 0),
-                    _GroupInfo(group: listGroup!),
+                    _GroupInfo(group: result),
                   ],
                 ),
               ),
-              _MembersHeader(group: listGroup!),
-              const _MembersGrid(members: null),
+              _MembersHeader(group: result),
+              _MembersGrid(members: result.members),
             ],
           ),
         ),
-      ResultState(result: var result) => RefreshIndicator(
-          onRefresh: () => cubit.load(),
-          child: Scrollbar(
-            child: CustomScrollView(
-              key: const PageStorageKey('group'),
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _GroupImage(group: result),
-                      const Divider(height: 0),
-                      _GroupInfo(group: result)
-                    ],
-                  ),
-                ),
-                _MembersHeader(group: result),
-                _MembersGrid(members: result.members),
-              ],
-            ),
-          ),
-        ),
+      ),
     };
     return Scaffold(
       appBar: ThaliaAppBar(
@@ -135,9 +131,7 @@ class _Page extends StatelessWidget {
 }
 
 class _MembersHeader extends StatelessWidget {
-  const _MembersHeader({
-    required this.group,
-  });
+  const _MembersHeader({required this.group});
 
   final ListGroup group;
 
@@ -146,19 +140,14 @@ class _MembersHeader extends StatelessWidget {
     return SliverPadding(
       padding: const EdgeInsets.only(left: 16),
       sliver: SliverToBoxAdapter(
-        child: Text(
-          'MEMBERS',
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
+        child: Text('MEMBERS', style: Theme.of(context).textTheme.bodySmall),
       ),
     );
   }
 }
 
 class _GroupImage extends StatelessWidget {
-  const _GroupImage({
-    required this.group,
-  });
+  const _GroupImage({required this.group});
 
   final ListGroup group;
 
@@ -170,16 +159,14 @@ class _GroupImage extends StatelessWidget {
         CachedImage(
           imageUrl: group.photo.large,
           placeholder: 'assets/img/default-avatar.jpg',
-        )
+        ),
       ],
     );
   }
 }
 
 class _MembersGrid extends StatelessWidget {
-  const _MembersGrid({
-    this.members,
-  });
+  const _MembersGrid({this.members});
 
   final List<GroupMembership>? members;
 
@@ -208,14 +195,9 @@ class _MembersGrid extends StatelessWidget {
             mainAxisSpacing: 8,
             crossAxisSpacing: 8,
           ),
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              return MemberTile(
-                member: members![index].member,
-              );
-            },
-            childCount: members!.length,
-          ),
+          delegate: SliverChildBuilderDelegate((context, index) {
+            return MemberTile(member: members![index].member);
+          }, childCount: members!.length),
         ),
       );
     }
@@ -223,9 +205,7 @@ class _MembersGrid extends StatelessWidget {
 }
 
 class _GroupInfo extends StatelessWidget {
-  const _GroupInfo({
-    required this.group,
-  });
+  const _GroupInfo({required this.group});
 
   final ListGroup group;
 
@@ -260,13 +240,18 @@ class _GroupInfo extends StatelessWidget {
                         SelectableText.rich(
                           TextSpan(
                             text: group.contactAddress,
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                launchUrl(Uri.parse(
-                                    'mailto:${group.contactAddress}'));
-                              },
+                            recognizer:
+                                TapGestureRecognizer()
+                                  ..onTap = () {
+                                    launchUrl(
+                                      Uri.parse(
+                                        'mailto:${group.contactAddress}',
+                                      ),
+                                    );
+                                  },
                             style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary),
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                           ),
                         ),
                       ],
@@ -286,9 +271,7 @@ class _GroupInfo extends StatelessWidget {
 }
 
 class _Description extends StatelessWidget {
-  const _Description({
-    required this.group,
-  });
+  const _Description({required this.group});
 
   final ListGroup group;
 
@@ -302,20 +285,19 @@ class _Description extends StatelessWidget {
           Uri uri = Uri.parse(url);
           if (uri.scheme.isEmpty) uri = uri.replace(scheme: 'https');
           if (isDeepLink(uri)) {
-            context.go(Uri(
-              path: uri.path,
-              query: uri.query,
-            ).toString());
+            context.go(Uri(path: uri.path, query: uri.query).toString());
             return true;
           } else {
             final messenger = ScaffoldMessenger.of(context);
             try {
               await launchUrl(uri, mode: LaunchMode.externalApplication);
             } catch (_) {
-              messenger.showSnackBar(SnackBar(
-                behavior: SnackBarBehavior.floating,
-                content: Text('Could not open "$url".'),
-              ));
+              messenger.showSnackBar(
+                SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text('Could not open "$url".'),
+                ),
+              );
             }
           }
           return true;

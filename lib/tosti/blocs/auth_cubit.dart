@@ -11,9 +11,7 @@ import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/tosti/tosti_api_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-final _redirectUrl = Uri.parse(
-  'nu.thalia://tosti-callback',
-);
+final _redirectUrl = Uri.parse('nu.thalia://tosti-callback');
 
 final Uri _authorizationEndpoint = Uri(
   scheme: config.tostiApiScheme,
@@ -81,8 +79,9 @@ class TostiAuthCubit extends Cubit<TostiAuthState> {
     const storage = FlutterSecureStorage();
     final stored = await storage.read(
       key: _credentialsStorageKey,
-      iOptions:
-          const IOSOptions(accessibility: KeychainAccessibility.first_unlock),
+      iOptions: const IOSOptions(
+        accessibility: KeychainAccessibility.first_unlock,
+      ),
     );
 
     if (stored != null) {
@@ -111,10 +110,12 @@ class TostiAuthCubit extends Cubit<TostiAuthState> {
                 ),
               );
             },
-            httpClient: SentryHttpClient(failedRequestStatusCodes: [
-              SentryStatusCode(400),
-              SentryStatusCode.range(405, 499),
-            ]),
+            httpClient: SentryHttpClient(
+              failedRequestStatusCodes: [
+                SentryStatusCode(400),
+                SentryStatusCode.range(405, 499),
+              ],
+            ),
           ),
           onLogOut: logOut,
         );
@@ -180,8 +181,9 @@ class TostiAuthCubit extends Cubit<TostiAuthState> {
       await storage.write(
         key: _credentialsStorageKey,
         value: client.credentials.toJson(),
-        iOptions:
-            const IOSOptions(accessibility: KeychainAccessibility.first_unlock),
+        iOptions: const IOSOptions(
+          accessibility: KeychainAccessibility.first_unlock,
+        ),
       );
 
       final apiRepository = TostiApiRepository(
@@ -216,8 +218,9 @@ class TostiAuthCubit extends Cubit<TostiAuthState> {
     const storage = FlutterSecureStorage();
     await storage.delete(
       key: _credentialsStorageKey,
-      iOptions:
-          const IOSOptions(accessibility: KeychainAccessibility.first_unlock),
+      iOptions: const IOSOptions(
+        accessibility: KeychainAccessibility.first_unlock,
+      ),
     );
 
     emit(LoggedOutTostiAuthState());

@@ -28,15 +28,16 @@ void main() {
       );
       DateTime now = DateTime.now();
       final state = CalendarState(
-          now,
-          DoubleListState.success(
-            resultsDown: [
-              ...CalendarEvent.splitEventIntoCalendarEvents(event1),
-              ...CalendarEvent.splitEventIntoCalendarEvents(event2),
-            ],
-            isDoneDown: true,
-            isDoneUp: true,
-          ));
+        now,
+        DoubleListState.success(
+          resultsDown: [
+            ...CalendarEvent.splitEventIntoCalendarEvents(event1),
+            ...CalendarEvent.splitEventIntoCalendarEvents(event2),
+          ],
+          isDoneDown: true,
+          isDoneUp: true,
+        ),
+      );
 
       await tester.pumpWidget(
         MaterialApp(
@@ -70,14 +71,13 @@ void main() {
         location: 'Dolor 1',
       );
       final state = CalendarState(
-          now,
-          DoubleListState.success(
-            resultsDown: [
-              ...CalendarEvent.splitEventIntoCalendarEvents(event1),
-            ],
-            isDoneDown: true,
-            isDoneUp: true,
-          ));
+        now,
+        DoubleListState.success(
+          resultsDown: [...CalendarEvent.splitEventIntoCalendarEvents(event1)],
+          isDoneDown: true,
+          isDoneUp: true,
+        ),
+      );
 
       await tester.pumpWidget(
         MaterialApp(

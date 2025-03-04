@@ -28,16 +28,11 @@ class FoodOrder {
   factory FoodOrder.fromJson(Map<String, dynamic> json) =>
       _$FoodOrderFromJson(json);
 
-  FoodOrder(
-    this.pk,
-    this.member,
-    this.name,
-    this.product,
-    this.payment,
-  ) : assert(
-          member != null || name != null,
-          'Either a member or name must be given. $member, $name',
-        );
+  FoodOrder(this.pk, this.member, this.name, this.product, this.payment)
+    : assert(
+        member != null || name != null,
+        'Either a member or name must be given. $member, $name',
+      );
 
   FoodOrder copyWithPayment(Payment? newPayment) =>
       FoodOrder(pk, member, name, product, newPayment);
@@ -78,16 +73,11 @@ class AdminFoodOrder implements FoodOrder {
   factory AdminFoodOrder.fromJson(Map<String, dynamic> json) =>
       _$AdminFoodOrderFromJson(json);
 
-  AdminFoodOrder(
-    this.pk,
-    this.member,
-    this.name,
-    this.product,
-    this.payment,
-  ) : assert(
-          member != null || name != null,
-          'Either a member or name must be given. $member, $name',
-        );
+  AdminFoodOrder(this.pk, this.member, this.name, this.product, this.payment)
+    : assert(
+        member != null || name != null,
+        'Either a member or name must be given. $member, $name',
+      );
 
   @override
   AdminFoodOrder copyWithPayment(Payment? newPayment) =>

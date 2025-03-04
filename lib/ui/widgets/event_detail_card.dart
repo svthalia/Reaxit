@@ -25,12 +25,11 @@ class EventDetailCard extends StatelessWidget {
     return Colors.transparent;
   }
 
-  EventDetailCard({
-    required this.event,
-  })  : _textColor = event is PartnerEvent ? Colors.white : null,
-        _indicatorColor =
-            event is Event ? _getIndicatorColor(event) : Colors.transparent,
-        _hasFoodEvent = event is Event ? event.hasFoodEvent : false;
+  EventDetailCard({required this.event})
+    : _textColor = event is PartnerEvent ? Colors.white : null,
+      _indicatorColor =
+          event is Event ? _getIndicatorColor(event) : Colors.transparent,
+      _hasFoodEvent = event is Event ? event.hasFoodEvent : false;
 
   void _onTap(BuildContext context) {
     // TODO: because adminevent is also a BaseEvent we should implement it as well, and make it a switch expr
@@ -92,16 +91,18 @@ class EventDetailCard extends StatelessWidget {
                           event.title.toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: textTheme.titleMedium!
-                              .copyWith(color: _textColor),
+                          style: textTheme.titleMedium!.copyWith(
+                            color: _textColor,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           '$start - $end | ${event.location}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style:
-                              textTheme.bodySmall!.copyWith(color: _textColor),
+                          style: textTheme.bodySmall!.copyWith(
+                            color: _textColor,
+                          ),
                         ),
                       ],
                     ),
@@ -123,9 +124,9 @@ class EventDetailCard extends StatelessWidget {
                 caption,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
-                style: DefaultTextStyle.of(context)
-                    .style
-                    .copyWith(color: _textColor),
+                style: DefaultTextStyle.of(
+                  context,
+                ).style.copyWith(color: _textColor),
               ),
             ),
             Padding(
@@ -148,10 +149,10 @@ class EventDetailCard extends StatelessWidget {
                       icon: const Icon(Icons.local_pizza),
                       onPressed: () => context.pushNamed('food', extra: event),
                     ),
-                  ]
+                  ],
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

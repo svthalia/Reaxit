@@ -30,207 +30,107 @@ import 'package:reaxit/models/thabliod.dart' as _i11;
 // ignore_for_file: subtype_of_sealed_class
 
 class _FakeAuthState_0 extends _i1.SmartFake implements _i2.AuthState {
-  _FakeAuthState_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeAuthState_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeConfig_1 extends _i1.SmartFake implements _i3.Config {
-  _FakeConfig_1(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeConfig_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeEvent_2 extends _i1.SmartFake implements _i4.Event {
-  _FakeEvent_2(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeEvent_2(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeListResponse_3<T> extends _i1.SmartFake
     implements _i4.ListResponse<T> {
-  _FakeListResponse_3(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeListResponse_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeEventRegistration_4 extends _i1.SmartFake
     implements _i4.EventRegistration {
-  _FakeEventRegistration_4(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeEventRegistration_4(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeAdminEvent_5 extends _i1.SmartFake implements _i4.AdminEvent {
-  _FakeAdminEvent_5(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeAdminEvent_5(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeAdminEventRegistration_6 extends _i1.SmartFake
     implements _i4.AdminEventRegistration {
-  _FakeAdminEventRegistration_6(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeAdminEventRegistration_6(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakePayable_7 extends _i1.SmartFake implements _i4.Payable {
-  _FakePayable_7(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakePayable_7(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeFoodEvent_8 extends _i1.SmartFake implements _i4.FoodEvent {
-  _FakeFoodEvent_8(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeFoodEvent_8(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeFoodOrder_9 extends _i1.SmartFake implements _i4.FoodOrder {
-  _FakeFoodOrder_9(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeFoodOrder_9(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakePaymentUser_10 extends _i1.SmartFake implements _i4.PaymentUser {
-  _FakePaymentUser_10(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakePaymentUser_10(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeMember_11 extends _i1.SmartFake implements _i4.Member {
-  _FakeMember_11(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeMember_11(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeFullMember_12 extends _i1.SmartFake implements _i4.FullMember {
-  _FakeFullMember_12(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeFullMember_12(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeAlbum_13 extends _i1.SmartFake implements _i4.Album {
-  _FakeAlbum_13(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeAlbum_13(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeDevice_14 extends _i1.SmartFake implements _i4.Device {
-  _FakeDevice_14(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeDevice_14(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeSalesOrder_15 extends _i1.SmartFake implements _i4.SalesOrder {
-  _FakeSalesOrder_15(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeSalesOrder_15(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeGroup_16 extends _i1.SmartFake implements _i4.Group {
-  _FakeGroup_16(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeGroup_16(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeApiRepository_17 extends _i1.SmartFake implements _i5.ApiRepository {
-  _FakeApiRepository_17(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeApiRepository_17(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakePaymentUserState_18 extends _i1.SmartFake
     implements _i6.PaymentUserState {
-  _FakePaymentUserState_18(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakePaymentUserState_18(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeWelcomeState_19 extends _i1.SmartFake implements _i7.WelcomeState {
-  _FakeWelcomeState_19(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeWelcomeState_19(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [AuthCubit].
@@ -242,124 +142,91 @@ class MockAuthCubit extends _i1.Mock implements _i2.AuthCubit {
   }
 
   @override
-  _i2.AuthState get state => (super.noSuchMethod(
-        Invocation.getter(#state),
-        returnValue: _FakeAuthState_0(
-          this,
-          Invocation.getter(#state),
-        ),
-      ) as _i2.AuthState);
+  _i2.AuthState get state =>
+      (super.noSuchMethod(
+            Invocation.getter(#state),
+            returnValue: _FakeAuthState_0(this, Invocation.getter(#state)),
+          )
+          as _i2.AuthState);
 
   @override
-  _i8.Stream<_i2.AuthState> get stream => (super.noSuchMethod(
-        Invocation.getter(#stream),
-        returnValue: _i8.Stream<_i2.AuthState>.empty(),
-      ) as _i8.Stream<_i2.AuthState>);
+  _i8.Stream<_i2.AuthState> get stream =>
+      (super.noSuchMethod(
+            Invocation.getter(#stream),
+            returnValue: _i8.Stream<_i2.AuthState>.empty(),
+          )
+          as _i8.Stream<_i2.AuthState>);
 
   @override
-  bool get isClosed => (super.noSuchMethod(
-        Invocation.getter(#isClosed),
-        returnValue: false,
-      ) as bool);
+  bool get isClosed =>
+      (super.noSuchMethod(Invocation.getter(#isClosed), returnValue: false)
+          as bool);
 
   @override
-  _i8.Future<void> load() => (super.noSuchMethod(
-        Invocation.method(
-          #load,
-          [],
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+  _i8.Future<void> load() =>
+      (super.noSuchMethod(
+            Invocation.method(#load, []),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
-  _i8.Future<void> logIn(_i2.Environment? environment) => (super.noSuchMethod(
-        Invocation.method(
-          #logIn,
-          [environment],
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+  _i8.Future<void> logIn(_i2.Environment? environment) =>
+      (super.noSuchMethod(
+            Invocation.method(#logIn, [environment]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
-  _i8.Future<void> logOut() => (super.noSuchMethod(
-        Invocation.method(
-          #logOut,
-          [],
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+  _i8.Future<void> logOut() =>
+      (super.noSuchMethod(
+            Invocation.method(#logOut, []),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
   void selectEnvironment(_i2.Environment? environment) => super.noSuchMethod(
-        Invocation.method(
-          #selectEnvironment,
-          [environment],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#selectEnvironment, [environment]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void emit(_i2.AuthState? state) => super.noSuchMethod(
-        Invocation.method(
-          #emit,
-          [state],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#emit, [state]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void onChange(_i9.Change<_i2.AuthState>? change) => super.noSuchMethod(
-        Invocation.method(
-          #onChange,
-          [change],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#onChange, [change]),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  void addError(
-    Object? error, [
-    StackTrace? stackTrace,
-  ]) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #addError,
-          [
-            error,
-            stackTrace,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      );
+  void addError(Object? error, [StackTrace? stackTrace]) => super.noSuchMethod(
+    Invocation.method(#addError, [error, stackTrace]),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  void onError(
-    Object? error,
-    StackTrace? stackTrace,
-  ) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #onError,
-          [
-            error,
-            stackTrace,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      );
+  void onError(Object? error, StackTrace? stackTrace) => super.noSuchMethod(
+    Invocation.method(#onError, [error, stackTrace]),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  _i8.Future<void> close() => (super.noSuchMethod(
-        Invocation.method(
-          #close,
-          [],
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+  _i8.Future<void> close() =>
+      (super.noSuchMethod(
+            Invocation.method(#close, []),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 }
 
 /// A class which mocks [ApiRepository].
@@ -371,57 +238,44 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
   }
 
   @override
-  _i3.Config get config => (super.noSuchMethod(
-        Invocation.getter(#config),
-        returnValue: _FakeConfig_1(
-          this,
-          Invocation.getter(#config),
-        ),
-      ) as _i3.Config);
+  _i3.Config get config =>
+      (super.noSuchMethod(
+            Invocation.getter(#config),
+            returnValue: _FakeConfig_1(this, Invocation.getter(#config)),
+          )
+          as _i3.Config);
 
   @override
   void close() => super.noSuchMethod(
-        Invocation.method(
-          #close,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#close, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  _i8.Future<_i4.Event> getEventByPk({required int? pk}) => (super.noSuchMethod(
-        Invocation.method(
-          #getEventByPk,
-          [],
-          {#pk: pk},
-        ),
-        returnValue: _i8.Future<_i4.Event>.value(_FakeEvent_2(
-          this,
-          Invocation.method(
-            #getEventByPk,
-            [],
-            {#pk: pk},
-          ),
-        )),
-      ) as _i8.Future<_i4.Event>);
+  _i8.Future<_i4.Event> getEventByPk({required int? pk}) =>
+      (super.noSuchMethod(
+            Invocation.method(#getEventByPk, [], {#pk: pk}),
+            returnValue: _i8.Future<_i4.Event>.value(
+              _FakeEvent_2(
+                this,
+                Invocation.method(#getEventByPk, [], {#pk: pk}),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.Event>);
 
   @override
   _i8.Future<_i4.Event> getEventBySlug({required String? slug}) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getEventBySlug,
-          [],
-          {#slug: slug},
-        ),
-        returnValue: _i8.Future<_i4.Event>.value(_FakeEvent_2(
-          this,
-          Invocation.method(
-            #getEventBySlug,
-            [],
-            {#slug: slug},
-          ),
-        )),
-      ) as _i8.Future<_i4.Event>);
+            Invocation.method(#getEventBySlug, [], {#slug: slug}),
+            returnValue: _i8.Future<_i4.Event>.value(
+              _FakeEvent_2(
+                this,
+                Invocation.method(#getEventBySlug, [], {#slug: slug}),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.Event>);
 
   @override
   _i8.Future<_i4.ListResponse<_i4.Event>> getEvents({
@@ -433,35 +287,29 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     DateTime? end,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getEvents,
-          [],
-          {
-            #search: search,
-            #limit: limit,
-            #offset: offset,
-            #ordering: ordering,
-            #start: start,
-            #end: end,
-          },
-        ),
-        returnValue: _i8.Future<_i4.ListResponse<_i4.Event>>.value(
-            _FakeListResponse_3<_i4.Event>(
-          this,
-          Invocation.method(
-            #getEvents,
-            [],
-            {
+            Invocation.method(#getEvents, [], {
               #search: search,
               #limit: limit,
               #offset: offset,
               #ordering: ordering,
               #start: start,
               #end: end,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.ListResponse<_i4.Event>>);
+            }),
+            returnValue: _i8.Future<_i4.ListResponse<_i4.Event>>.value(
+              _FakeListResponse_3<_i4.Event>(
+                this,
+                Invocation.method(#getEvents, [], {
+                  #search: search,
+                  #limit: limit,
+                  #offset: offset,
+                  #ordering: ordering,
+                  #start: start,
+                  #end: end,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.ListResponse<_i4.Event>>);
 
   @override
   _i8.Future<_i4.ListResponse<_i4.PartnerEvent>> getPartnerEvents({
@@ -473,35 +321,29 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     DateTime? end,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getPartnerEvents,
-          [],
-          {
-            #search: search,
-            #limit: limit,
-            #offset: offset,
-            #ordering: ordering,
-            #start: start,
-            #end: end,
-          },
-        ),
-        returnValue: _i8.Future<_i4.ListResponse<_i4.PartnerEvent>>.value(
-            _FakeListResponse_3<_i4.PartnerEvent>(
-          this,
-          Invocation.method(
-            #getPartnerEvents,
-            [],
-            {
+            Invocation.method(#getPartnerEvents, [], {
               #search: search,
               #limit: limit,
               #offset: offset,
               #ordering: ordering,
               #start: start,
               #end: end,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.ListResponse<_i4.PartnerEvent>>);
+            }),
+            returnValue: _i8.Future<_i4.ListResponse<_i4.PartnerEvent>>.value(
+              _FakeListResponse_3<_i4.PartnerEvent>(
+                this,
+                Invocation.method(#getPartnerEvents, [], {
+                  #search: search,
+                  #limit: limit,
+                  #offset: offset,
+                  #ordering: ordering,
+                  #start: start,
+                  #end: end,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.ListResponse<_i4.PartnerEvent>>);
 
   @override
   _i8.Future<_i4.ListResponse<_i4.EventRegistration>> getEventRegistrations({
@@ -510,46 +352,37 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     int? offset,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getEventRegistrations,
-          [],
-          {
-            #pk: pk,
-            #limit: limit,
-            #offset: offset,
-          },
-        ),
-        returnValue: _i8.Future<_i4.ListResponse<_i4.EventRegistration>>.value(
-            _FakeListResponse_3<_i4.EventRegistration>(
-          this,
-          Invocation.method(
-            #getEventRegistrations,
-            [],
-            {
+            Invocation.method(#getEventRegistrations, [], {
               #pk: pk,
               #limit: limit,
               #offset: offset,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.ListResponse<_i4.EventRegistration>>);
+            }),
+            returnValue:
+                _i8.Future<_i4.ListResponse<_i4.EventRegistration>>.value(
+                  _FakeListResponse_3<_i4.EventRegistration>(
+                    this,
+                    Invocation.method(#getEventRegistrations, [], {
+                      #pk: pk,
+                      #limit: limit,
+                      #offset: offset,
+                    }),
+                  ),
+                ),
+          )
+          as _i8.Future<_i4.ListResponse<_i4.EventRegistration>>);
 
   @override
   _i8.Future<_i4.EventRegistration> registerForEvent(int? pk) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #registerForEvent,
-          [pk],
-        ),
-        returnValue:
-            _i8.Future<_i4.EventRegistration>.value(_FakeEventRegistration_4(
-          this,
-          Invocation.method(
-            #registerForEvent,
-            [pk],
-          ),
-        )),
-      ) as _i8.Future<_i4.EventRegistration>);
+            Invocation.method(#registerForEvent, [pk]),
+            returnValue: _i8.Future<_i4.EventRegistration>.value(
+              _FakeEventRegistration_4(
+                this,
+                Invocation.method(#registerForEvent, [pk]),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.EventRegistration>);
 
   @override
   _i8.Future<void> cancelRegistration({
@@ -557,17 +390,14 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     required int? registrationPk,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #cancelRegistration,
-          [],
-          {
-            #eventPk: eventPk,
-            #registrationPk: registrationPk,
-          },
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+            Invocation.method(#cancelRegistration, [], {
+              #eventPk: eventPk,
+              #registrationPk: registrationPk,
+            }),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
   _i8.Future<Map<String, _i4.RegistrationField>> getRegistrationFields({
@@ -575,17 +405,15 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     required int? registrationPk,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getRegistrationFields,
-          [],
-          {
-            #eventPk: eventPk,
-            #registrationPk: registrationPk,
-          },
-        ),
-        returnValue: _i8.Future<Map<String, _i4.RegistrationField>>.value(
-            <String, _i4.RegistrationField>{}),
-      ) as _i8.Future<Map<String, _i4.RegistrationField>>);
+            Invocation.method(#getRegistrationFields, [], {
+              #eventPk: eventPk,
+              #registrationPk: registrationPk,
+            }),
+            returnValue: _i8.Future<Map<String, _i4.RegistrationField>>.value(
+              <String, _i4.RegistrationField>{},
+            ),
+          )
+          as _i8.Future<Map<String, _i4.RegistrationField>>);
 
   @override
   _i8.Future<void> updateRegistrationFields({
@@ -594,40 +422,32 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     required Map<String, _i4.RegistrationField>? fields,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #updateRegistrationFields,
-          [],
-          {
-            #eventPk: eventPk,
-            #registrationPk: registrationPk,
-            #fields: fields,
-          },
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+            Invocation.method(#updateRegistrationFields, [], {
+              #eventPk: eventPk,
+              #registrationPk: registrationPk,
+              #fields: fields,
+            }),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
   _i8.Future<_i4.AdminEvent> getAdminEvent({required int? pk}) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getAdminEvent,
-          [],
-          {#pk: pk},
-        ),
-        returnValue: _i8.Future<_i4.AdminEvent>.value(_FakeAdminEvent_5(
-          this,
-          Invocation.method(
-            #getAdminEvent,
-            [],
-            {#pk: pk},
-          ),
-        )),
-      ) as _i8.Future<_i4.AdminEvent>);
+            Invocation.method(#getAdminEvent, [], {#pk: pk}),
+            returnValue: _i8.Future<_i4.AdminEvent>.value(
+              _FakeAdminEvent_5(
+                this,
+                Invocation.method(#getAdminEvent, [], {#pk: pk}),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.AdminEvent>);
 
   @override
   _i8.Future<_i4.ListResponse<_i4.AdminEventRegistration>>
-      getAdminEventRegistrations({
+  getAdminEventRegistrations({
     required int? pk,
     int? limit,
     int? offset,
@@ -636,39 +456,33 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     bool? cancelled,
     bool? queued,
   }) =>
-          (super.noSuchMethod(
-            Invocation.method(
-              #getAdminEventRegistrations,
-              [],
-              {
-                #pk: pk,
-                #limit: limit,
-                #offset: offset,
-                #search: search,
-                #ordering: ordering,
-                #cancelled: cancelled,
-                #queued: queued,
-              },
-            ),
+      (super.noSuchMethod(
+            Invocation.method(#getAdminEventRegistrations, [], {
+              #pk: pk,
+              #limit: limit,
+              #offset: offset,
+              #search: search,
+              #ordering: ordering,
+              #cancelled: cancelled,
+              #queued: queued,
+            }),
             returnValue:
                 _i8.Future<_i4.ListResponse<_i4.AdminEventRegistration>>.value(
-                    _FakeListResponse_3<_i4.AdminEventRegistration>(
-              this,
-              Invocation.method(
-                #getAdminEventRegistrations,
-                [],
-                {
-                  #pk: pk,
-                  #limit: limit,
-                  #offset: offset,
-                  #search: search,
-                  #ordering: ordering,
-                  #cancelled: cancelled,
-                  #queued: queued,
-                },
-              ),
-            )),
-          ) as _i8.Future<_i4.ListResponse<_i4.AdminEventRegistration>>);
+                  _FakeListResponse_3<_i4.AdminEventRegistration>(
+                    this,
+                    Invocation.method(#getAdminEventRegistrations, [], {
+                      #pk: pk,
+                      #limit: limit,
+                      #offset: offset,
+                      #search: search,
+                      #ordering: ordering,
+                      #cancelled: cancelled,
+                      #queued: queued,
+                    }),
+                  ),
+                ),
+          )
+          as _i8.Future<_i4.ListResponse<_i4.AdminEventRegistration>>);
 
   @override
   _i8.Future<String> markPresentEventRegistration({
@@ -676,26 +490,21 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     required String? token,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #markPresentEventRegistration,
-          [],
-          {
-            #eventPk: eventPk,
-            #token: token,
-          },
-        ),
-        returnValue: _i8.Future<String>.value(_i10.dummyValue<String>(
-          this,
-          Invocation.method(
-            #markPresentEventRegistration,
-            [],
-            {
+            Invocation.method(#markPresentEventRegistration, [], {
               #eventPk: eventPk,
               #token: token,
-            },
-          ),
-        )),
-      ) as _i8.Future<String>);
+            }),
+            returnValue: _i8.Future<String>.value(
+              _i10.dummyValue<String>(
+                this,
+                Invocation.method(#markPresentEventRegistration, [], {
+                  #eventPk: eventPk,
+                  #token: token,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<String>);
 
   @override
   _i8.Future<_i4.AdminEventRegistration> markPresentAdminEventRegistration({
@@ -704,29 +513,23 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     required bool? present,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #markPresentAdminEventRegistration,
-          [],
-          {
-            #eventPk: eventPk,
-            #registrationPk: registrationPk,
-            #present: present,
-          },
-        ),
-        returnValue: _i8.Future<_i4.AdminEventRegistration>.value(
-            _FakeAdminEventRegistration_6(
-          this,
-          Invocation.method(
-            #markPresentAdminEventRegistration,
-            [],
-            {
+            Invocation.method(#markPresentAdminEventRegistration, [], {
               #eventPk: eventPk,
               #registrationPk: registrationPk,
               #present: present,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.AdminEventRegistration>);
+            }),
+            returnValue: _i8.Future<_i4.AdminEventRegistration>.value(
+              _FakeAdminEventRegistration_6(
+                this,
+                Invocation.method(#markPresentAdminEventRegistration, [], {
+                  #eventPk: eventPk,
+                  #registrationPk: registrationPk,
+                  #present: present,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.AdminEventRegistration>);
 
   @override
   _i8.Future<_i4.Payable> markPaidAdminEventRegistration({
@@ -734,39 +537,34 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     required _i4.PaymentType? paymentType,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #markPaidAdminEventRegistration,
-          [],
-          {
-            #registrationPk: registrationPk,
-            #paymentType: paymentType,
-          },
-        ),
-        returnValue: _i8.Future<_i4.Payable>.value(_FakePayable_7(
-          this,
-          Invocation.method(
-            #markPaidAdminEventRegistration,
-            [],
-            {
+            Invocation.method(#markPaidAdminEventRegistration, [], {
               #registrationPk: registrationPk,
               #paymentType: paymentType,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.Payable>);
+            }),
+            returnValue: _i8.Future<_i4.Payable>.value(
+              _FakePayable_7(
+                this,
+                Invocation.method(#markPaidAdminEventRegistration, [], {
+                  #registrationPk: registrationPk,
+                  #paymentType: paymentType,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.Payable>);
 
   @override
-  _i8.Future<void> markNotPaidAdminEventRegistration(
-          {required int? registrationPk}) =>
+  _i8.Future<void> markNotPaidAdminEventRegistration({
+    required int? registrationPk,
+  }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #markNotPaidAdminEventRegistration,
-          [],
-          {#registrationPk: registrationPk},
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+            Invocation.method(#markNotPaidAdminEventRegistration, [], {
+              #registrationPk: registrationPk,
+            }),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
   _i8.Future<_i4.ListResponse<_i4.AdminFoodOrder>> getAdminFoodOrders({
@@ -776,31 +574,25 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     String? search,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getAdminFoodOrders,
-          [],
-          {
-            #pk: pk,
-            #limit: limit,
-            #offset: offset,
-            #search: search,
-          },
-        ),
-        returnValue: _i8.Future<_i4.ListResponse<_i4.AdminFoodOrder>>.value(
-            _FakeListResponse_3<_i4.AdminFoodOrder>(
-          this,
-          Invocation.method(
-            #getAdminFoodOrders,
-            [],
-            {
+            Invocation.method(#getAdminFoodOrders, [], {
               #pk: pk,
               #limit: limit,
               #offset: offset,
               #search: search,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.ListResponse<_i4.AdminFoodOrder>>);
+            }),
+            returnValue: _i8.Future<_i4.ListResponse<_i4.AdminFoodOrder>>.value(
+              _FakeListResponse_3<_i4.AdminFoodOrder>(
+                this,
+                Invocation.method(#getAdminFoodOrders, [], {
+                  #pk: pk,
+                  #limit: limit,
+                  #offset: offset,
+                  #search: search,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.ListResponse<_i4.AdminFoodOrder>>);
 
   @override
   _i8.Future<_i4.Payable> markPaidAdminFoodOrder({
@@ -808,53 +600,42 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     required _i4.PaymentType? paymentType,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #markPaidAdminFoodOrder,
-          [],
-          {
-            #orderPk: orderPk,
-            #paymentType: paymentType,
-          },
-        ),
-        returnValue: _i8.Future<_i4.Payable>.value(_FakePayable_7(
-          this,
-          Invocation.method(
-            #markPaidAdminFoodOrder,
-            [],
-            {
+            Invocation.method(#markPaidAdminFoodOrder, [], {
               #orderPk: orderPk,
               #paymentType: paymentType,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.Payable>);
+            }),
+            returnValue: _i8.Future<_i4.Payable>.value(
+              _FakePayable_7(
+                this,
+                Invocation.method(#markPaidAdminFoodOrder, [], {
+                  #orderPk: orderPk,
+                  #paymentType: paymentType,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.Payable>);
 
   @override
   _i8.Future<void> markNotPaidAdminFoodOrder({required int? orderPk}) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #markNotPaidAdminFoodOrder,
-          [],
-          {#orderPk: orderPk},
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+            Invocation.method(#markNotPaidAdminFoodOrder, [], {
+              #orderPk: orderPk,
+            }),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
-  _i8.Future<_i4.FoodEvent> getFoodEvent(int? pk) => (super.noSuchMethod(
-        Invocation.method(
-          #getFoodEvent,
-          [pk],
-        ),
-        returnValue: _i8.Future<_i4.FoodEvent>.value(_FakeFoodEvent_8(
-          this,
-          Invocation.method(
-            #getFoodEvent,
-            [pk],
-          ),
-        )),
-      ) as _i8.Future<_i4.FoodEvent>);
+  _i8.Future<_i4.FoodEvent> getFoodEvent(int? pk) =>
+      (super.noSuchMethod(
+            Invocation.method(#getFoodEvent, [pk]),
+            returnValue: _i8.Future<_i4.FoodEvent>.value(
+              _FakeFoodEvent_8(this, Invocation.method(#getFoodEvent, [pk])),
+            ),
+          )
+          as _i8.Future<_i4.FoodEvent>);
 
   @override
   _i8.Future<_i4.ListResponse<_i4.FoodEvent>> getFoodEvents({
@@ -865,73 +646,59 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     DateTime? end,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getFoodEvents,
-          [],
-          {
-            #limit: limit,
-            #offset: offset,
-            #ordering: ordering,
-            #start: start,
-            #end: end,
-          },
-        ),
-        returnValue: _i8.Future<_i4.ListResponse<_i4.FoodEvent>>.value(
-            _FakeListResponse_3<_i4.FoodEvent>(
-          this,
-          Invocation.method(
-            #getFoodEvents,
-            [],
-            {
+            Invocation.method(#getFoodEvents, [], {
               #limit: limit,
               #offset: offset,
               #ordering: ordering,
               #start: start,
               #end: end,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.ListResponse<_i4.FoodEvent>>);
+            }),
+            returnValue: _i8.Future<_i4.ListResponse<_i4.FoodEvent>>.value(
+              _FakeListResponse_3<_i4.FoodEvent>(
+                this,
+                Invocation.method(#getFoodEvents, [], {
+                  #limit: limit,
+                  #offset: offset,
+                  #ordering: ordering,
+                  #start: start,
+                  #end: end,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.ListResponse<_i4.FoodEvent>>);
 
   @override
-  _i8.Future<_i4.FoodEvent> getCurrentFoodEvent() => (super.noSuchMethod(
-        Invocation.method(
-          #getCurrentFoodEvent,
-          [],
-        ),
-        returnValue: _i8.Future<_i4.FoodEvent>.value(_FakeFoodEvent_8(
-          this,
-          Invocation.method(
-            #getCurrentFoodEvent,
-            [],
-          ),
-        )),
-      ) as _i8.Future<_i4.FoodEvent>);
+  _i8.Future<_i4.FoodEvent> getCurrentFoodEvent() =>
+      (super.noSuchMethod(
+            Invocation.method(#getCurrentFoodEvent, []),
+            returnValue: _i8.Future<_i4.FoodEvent>.value(
+              _FakeFoodEvent_8(
+                this,
+                Invocation.method(#getCurrentFoodEvent, []),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.FoodEvent>);
 
   @override
-  _i8.Future<_i4.FoodOrder> getFoodOrder(int? pk) => (super.noSuchMethod(
-        Invocation.method(
-          #getFoodOrder,
-          [pk],
-        ),
-        returnValue: _i8.Future<_i4.FoodOrder>.value(_FakeFoodOrder_9(
-          this,
-          Invocation.method(
-            #getFoodOrder,
-            [pk],
-          ),
-        )),
-      ) as _i8.Future<_i4.FoodOrder>);
+  _i8.Future<_i4.FoodOrder> getFoodOrder(int? pk) =>
+      (super.noSuchMethod(
+            Invocation.method(#getFoodOrder, [pk]),
+            returnValue: _i8.Future<_i4.FoodOrder>.value(
+              _FakeFoodOrder_9(this, Invocation.method(#getFoodOrder, [pk])),
+            ),
+          )
+          as _i8.Future<_i4.FoodOrder>);
 
   @override
-  _i8.Future<void> cancelFoodOrder(int? pk) => (super.noSuchMethod(
-        Invocation.method(
-          #cancelFoodOrder,
-          [pk],
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+  _i8.Future<void> cancelFoodOrder(int? pk) =>
+      (super.noSuchMethod(
+            Invocation.method(#cancelFoodOrder, [pk]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
   _i8.Future<_i4.FoodOrder> placeFoodOrder({
@@ -939,26 +706,21 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     required int? productPk,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #placeFoodOrder,
-          [],
-          {
-            #eventPk: eventPk,
-            #productPk: productPk,
-          },
-        ),
-        returnValue: _i8.Future<_i4.FoodOrder>.value(_FakeFoodOrder_9(
-          this,
-          Invocation.method(
-            #placeFoodOrder,
-            [],
-            {
+            Invocation.method(#placeFoodOrder, [], {
               #eventPk: eventPk,
               #productPk: productPk,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.FoodOrder>);
+            }),
+            returnValue: _i8.Future<_i4.FoodOrder>.value(
+              _FakeFoodOrder_9(
+                this,
+                Invocation.method(#placeFoodOrder, [], {
+                  #eventPk: eventPk,
+                  #productPk: productPk,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.FoodOrder>);
 
   @override
   _i8.Future<_i4.FoodOrder> changeFoodOrder({
@@ -966,26 +728,21 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     required int? productPk,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #changeFoodOrder,
-          [],
-          {
-            #eventPk: eventPk,
-            #productPk: productPk,
-          },
-        ),
-        returnValue: _i8.Future<_i4.FoodOrder>.value(_FakeFoodOrder_9(
-          this,
-          Invocation.method(
-            #changeFoodOrder,
-            [],
-            {
+            Invocation.method(#changeFoodOrder, [], {
               #eventPk: eventPk,
               #productPk: productPk,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.FoodOrder>);
+            }),
+            returnValue: _i8.Future<_i4.FoodOrder>.value(
+              _FakeFoodOrder_9(
+                this,
+                Invocation.method(#changeFoodOrder, [], {
+                  #eventPk: eventPk,
+                  #productPk: productPk,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.FoodOrder>);
 
   @override
   _i8.Future<_i4.ListResponse<_i4.Product>> getFoodEventProducts(
@@ -995,173 +752,156 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     String? search,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getFoodEventProducts,
-          [pk],
-          {
-            #limit: limit,
-            #offset: offset,
-            #search: search,
-          },
-        ),
-        returnValue: _i8.Future<_i4.ListResponse<_i4.Product>>.value(
-            _FakeListResponse_3<_i4.Product>(
-          this,
-          Invocation.method(
-            #getFoodEventProducts,
-            [pk],
-            {
-              #limit: limit,
-              #offset: offset,
-              #search: search,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.ListResponse<_i4.Product>>);
+            Invocation.method(
+              #getFoodEventProducts,
+              [pk],
+              {#limit: limit, #offset: offset, #search: search},
+            ),
+            returnValue: _i8.Future<_i4.ListResponse<_i4.Product>>.value(
+              _FakeListResponse_3<_i4.Product>(
+                this,
+                Invocation.method(
+                  #getFoodEventProducts,
+                  [pk],
+                  {#limit: limit, #offset: offset, #search: search},
+                ),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.ListResponse<_i4.Product>>);
 
   @override
-  _i8.Future<_i4.PaymentUser> getPaymentUser() => (super.noSuchMethod(
-        Invocation.method(
-          #getPaymentUser,
-          [],
-        ),
-        returnValue: _i8.Future<_i4.PaymentUser>.value(_FakePaymentUser_10(
-          this,
-          Invocation.method(
-            #getPaymentUser,
-            [],
-          ),
-        )),
-      ) as _i8.Future<_i4.PaymentUser>);
+  _i8.Future<_i4.PaymentUser> getPaymentUser() =>
+      (super.noSuchMethod(
+            Invocation.method(#getPaymentUser, []),
+            returnValue: _i8.Future<_i4.PaymentUser>.value(
+              _FakePaymentUser_10(this, Invocation.method(#getPaymentUser, [])),
+            ),
+          )
+          as _i8.Future<_i4.PaymentUser>);
 
   @override
   _i8.Future<_i4.Payable> getFoodOrderPayable({required int? foodOrderPk}) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getFoodOrderPayable,
-          [],
-          {#foodOrderPk: foodOrderPk},
-        ),
-        returnValue: _i8.Future<_i4.Payable>.value(_FakePayable_7(
-          this,
-          Invocation.method(
-            #getFoodOrderPayable,
-            [],
-            {#foodOrderPk: foodOrderPk},
-          ),
-        )),
-      ) as _i8.Future<_i4.Payable>);
+            Invocation.method(#getFoodOrderPayable, [], {
+              #foodOrderPk: foodOrderPk,
+            }),
+            returnValue: _i8.Future<_i4.Payable>.value(
+              _FakePayable_7(
+                this,
+                Invocation.method(#getFoodOrderPayable, [], {
+                  #foodOrderPk: foodOrderPk,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.Payable>);
 
   @override
   _i8.Future<_i4.Payable> thaliaPayFoodOrder({required int? foodOrderPk}) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #thaliaPayFoodOrder,
-          [],
-          {#foodOrderPk: foodOrderPk},
-        ),
-        returnValue: _i8.Future<_i4.Payable>.value(_FakePayable_7(
-          this,
-          Invocation.method(
-            #thaliaPayFoodOrder,
-            [],
-            {#foodOrderPk: foodOrderPk},
-          ),
-        )),
-      ) as _i8.Future<_i4.Payable>);
+            Invocation.method(#thaliaPayFoodOrder, [], {
+              #foodOrderPk: foodOrderPk,
+            }),
+            returnValue: _i8.Future<_i4.Payable>.value(
+              _FakePayable_7(
+                this,
+                Invocation.method(#thaliaPayFoodOrder, [], {
+                  #foodOrderPk: foodOrderPk,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.Payable>);
 
   @override
-  _i8.Future<_i4.Payable> getEventRegistrationPayable(
-          {required int? registrationPk}) =>
+  _i8.Future<_i4.Payable> getEventRegistrationPayable({
+    required int? registrationPk,
+  }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getEventRegistrationPayable,
-          [],
-          {#registrationPk: registrationPk},
-        ),
-        returnValue: _i8.Future<_i4.Payable>.value(_FakePayable_7(
-          this,
-          Invocation.method(
-            #getEventRegistrationPayable,
-            [],
-            {#registrationPk: registrationPk},
-          ),
-        )),
-      ) as _i8.Future<_i4.Payable>);
+            Invocation.method(#getEventRegistrationPayable, [], {
+              #registrationPk: registrationPk,
+            }),
+            returnValue: _i8.Future<_i4.Payable>.value(
+              _FakePayable_7(
+                this,
+                Invocation.method(#getEventRegistrationPayable, [], {
+                  #registrationPk: registrationPk,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.Payable>);
 
   @override
-  _i8.Future<_i4.Payable> thaliaPayRegistration(
-          {required int? registrationPk}) =>
+  _i8.Future<_i4.Payable> thaliaPayRegistration({
+    required int? registrationPk,
+  }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #thaliaPayRegistration,
-          [],
-          {#registrationPk: registrationPk},
-        ),
-        returnValue: _i8.Future<_i4.Payable>.value(_FakePayable_7(
-          this,
-          Invocation.method(
-            #thaliaPayRegistration,
-            [],
-            {#registrationPk: registrationPk},
-          ),
-        )),
-      ) as _i8.Future<_i4.Payable>);
+            Invocation.method(#thaliaPayRegistration, [], {
+              #registrationPk: registrationPk,
+            }),
+            returnValue: _i8.Future<_i4.Payable>.value(
+              _FakePayable_7(
+                this,
+                Invocation.method(#thaliaPayRegistration, [], {
+                  #registrationPk: registrationPk,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.Payable>);
 
   @override
-  _i8.Future<_i4.Payable> getSalesOrderPayable(
-          {required String? salesOrderPk}) =>
+  _i8.Future<_i4.Payable> getSalesOrderPayable({
+    required String? salesOrderPk,
+  }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getSalesOrderPayable,
-          [],
-          {#salesOrderPk: salesOrderPk},
-        ),
-        returnValue: _i8.Future<_i4.Payable>.value(_FakePayable_7(
-          this,
-          Invocation.method(
-            #getSalesOrderPayable,
-            [],
-            {#salesOrderPk: salesOrderPk},
-          ),
-        )),
-      ) as _i8.Future<_i4.Payable>);
+            Invocation.method(#getSalesOrderPayable, [], {
+              #salesOrderPk: salesOrderPk,
+            }),
+            returnValue: _i8.Future<_i4.Payable>.value(
+              _FakePayable_7(
+                this,
+                Invocation.method(#getSalesOrderPayable, [], {
+                  #salesOrderPk: salesOrderPk,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.Payable>);
 
   @override
-  _i8.Future<_i4.Payable> thaliaPaySalesOrder(
-          {required String? salesOrderPk}) =>
+  _i8.Future<_i4.Payable> thaliaPaySalesOrder({
+    required String? salesOrderPk,
+  }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #thaliaPaySalesOrder,
-          [],
-          {#salesOrderPk: salesOrderPk},
-        ),
-        returnValue: _i8.Future<_i4.Payable>.value(_FakePayable_7(
-          this,
-          Invocation.method(
-            #thaliaPaySalesOrder,
-            [],
-            {#salesOrderPk: salesOrderPk},
-          ),
-        )),
-      ) as _i8.Future<_i4.Payable>);
+            Invocation.method(#thaliaPaySalesOrder, [], {
+              #salesOrderPk: salesOrderPk,
+            }),
+            returnValue: _i8.Future<_i4.Payable>.value(
+              _FakePayable_7(
+                this,
+                Invocation.method(#thaliaPaySalesOrder, [], {
+                  #salesOrderPk: salesOrderPk,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.Payable>);
 
   @override
-  _i8.Future<_i4.Member> getMember({required int? pk}) => (super.noSuchMethod(
-        Invocation.method(
-          #getMember,
-          [],
-          {#pk: pk},
-        ),
-        returnValue: _i8.Future<_i4.Member>.value(_FakeMember_11(
-          this,
-          Invocation.method(
-            #getMember,
-            [],
-            {#pk: pk},
-          ),
-        )),
-      ) as _i8.Future<_i4.Member>);
+  _i8.Future<_i4.Member> getMember({required int? pk}) =>
+      (super.noSuchMethod(
+            Invocation.method(#getMember, [], {#pk: pk}),
+            returnValue: _i8.Future<_i4.Member>.value(
+              _FakeMember_11(
+                this,
+                Invocation.method(#getMember, [], {#pk: pk}),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.Member>);
 
   @override
   _i8.Future<_i4.ListResponse<_i4.ListMember>> getMembers({
@@ -1172,104 +912,77 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     int? year,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getMembers,
-          [],
-          {
-            #search: search,
-            #limit: limit,
-            #offset: offset,
-            #ordering: ordering,
-            #year: year,
-          },
-        ),
-        returnValue: _i8.Future<_i4.ListResponse<_i4.ListMember>>.value(
-            _FakeListResponse_3<_i4.ListMember>(
-          this,
-          Invocation.method(
-            #getMembers,
-            [],
-            {
+            Invocation.method(#getMembers, [], {
               #search: search,
               #limit: limit,
               #offset: offset,
               #ordering: ordering,
               #year: year,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.ListResponse<_i4.ListMember>>);
+            }),
+            returnValue: _i8.Future<_i4.ListResponse<_i4.ListMember>>.value(
+              _FakeListResponse_3<_i4.ListMember>(
+                this,
+                Invocation.method(#getMembers, [], {
+                  #search: search,
+                  #limit: limit,
+                  #offset: offset,
+                  #ordering: ordering,
+                  #year: year,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.ListResponse<_i4.ListMember>>);
 
   @override
-  _i8.Future<_i4.FullMember> getMe() => (super.noSuchMethod(
-        Invocation.method(
-          #getMe,
-          [],
-        ),
-        returnValue: _i8.Future<_i4.FullMember>.value(_FakeFullMember_12(
-          this,
-          Invocation.method(
-            #getMe,
-            [],
-          ),
-        )),
-      ) as _i8.Future<_i4.FullMember>);
+  _i8.Future<_i4.FullMember> getMe() =>
+      (super.noSuchMethod(
+            Invocation.method(#getMe, []),
+            returnValue: _i8.Future<_i4.FullMember>.value(
+              _FakeFullMember_12(this, Invocation.method(#getMe, [])),
+            ),
+          )
+          as _i8.Future<_i4.FullMember>);
 
   @override
-  _i8.Future<void> updateAvatar(String? file) => (super.noSuchMethod(
-        Invocation.method(
-          #updateAvatar,
-          [file],
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+  _i8.Future<void> updateAvatar(String? file) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateAvatar, [file]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
   _i8.Future<void> updateDescription(String? description) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #updateDescription,
-          [description],
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+            Invocation.method(#updateDescription, [description]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
   _i8.Future<_i4.Album> getAlbum({required String? slug}) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getAlbum,
-          [],
-          {#slug: slug},
-        ),
-        returnValue: _i8.Future<_i4.Album>.value(_FakeAlbum_13(
-          this,
-          Invocation.method(
-            #getAlbum,
-            [],
-            {#slug: slug},
-          ),
-        )),
-      ) as _i8.Future<_i4.Album>);
+            Invocation.method(#getAlbum, [], {#slug: slug}),
+            returnValue: _i8.Future<_i4.Album>.value(
+              _FakeAlbum_13(
+                this,
+                Invocation.method(#getAlbum, [], {#slug: slug}),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.Album>);
 
   @override
-  _i8.Future<void> updateLiked(
-    int? id,
-    bool? liked,
-  ) =>
+  _i8.Future<void> updateLiked(int? id, bool? liked) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #updateLiked,
-          [
-            id,
-            liked,
-          ],
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+            Invocation.method(#updateLiked, [id, liked]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
   _i8.Future<_i4.ListResponse<_i4.ListAlbum>> getAlbums({
@@ -1278,29 +991,23 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     int? offset,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getAlbums,
-          [],
-          {
-            #search: search,
-            #limit: limit,
-            #offset: offset,
-          },
-        ),
-        returnValue: _i8.Future<_i4.ListResponse<_i4.ListAlbum>>.value(
-            _FakeListResponse_3<_i4.ListAlbum>(
-          this,
-          Invocation.method(
-            #getAlbums,
-            [],
-            {
+            Invocation.method(#getAlbums, [], {
               #search: search,
               #limit: limit,
               #offset: offset,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.ListResponse<_i4.ListAlbum>>);
+            }),
+            returnValue: _i8.Future<_i4.ListResponse<_i4.ListAlbum>>.value(
+              _FakeListResponse_3<_i4.ListAlbum>(
+                this,
+                Invocation.method(#getAlbums, [], {
+                  #search: search,
+                  #limit: limit,
+                  #offset: offset,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.ListResponse<_i4.ListAlbum>>);
 
   @override
   _i8.Future<_i4.ListResponse<_i11.Thabloid>> getThabloids({
@@ -1309,29 +1016,23 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     int? offset,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getThabloids,
-          [],
-          {
-            #search: search,
-            #limit: limit,
-            #offset: offset,
-          },
-        ),
-        returnValue: _i8.Future<_i4.ListResponse<_i11.Thabloid>>.value(
-            _FakeListResponse_3<_i11.Thabloid>(
-          this,
-          Invocation.method(
-            #getThabloids,
-            [],
-            {
+            Invocation.method(#getThabloids, [], {
               #search: search,
               #limit: limit,
               #offset: offset,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.ListResponse<_i11.Thabloid>>);
+            }),
+            returnValue: _i8.Future<_i4.ListResponse<_i11.Thabloid>>.value(
+              _FakeListResponse_3<_i11.Thabloid>(
+                this,
+                Invocation.method(#getThabloids, [], {
+                  #search: search,
+                  #limit: limit,
+                  #offset: offset,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.ListResponse<_i11.Thabloid>>);
 
   @override
   _i8.Future<_i4.ListResponse<_i4.Slide>> getSlides({
@@ -1339,27 +1040,18 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     int? offset,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getSlides,
-          [],
-          {
-            #limit: limit,
-            #offset: offset,
-          },
-        ),
-        returnValue: _i8.Future<_i4.ListResponse<_i4.Slide>>.value(
-            _FakeListResponse_3<_i4.Slide>(
-          this,
-          Invocation.method(
-            #getSlides,
-            [],
-            {
-              #limit: limit,
-              #offset: offset,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.ListResponse<_i4.Slide>>);
+            Invocation.method(#getSlides, [], {#limit: limit, #offset: offset}),
+            returnValue: _i8.Future<_i4.ListResponse<_i4.Slide>>.value(
+              _FakeListResponse_3<_i4.Slide>(
+                this,
+                Invocation.method(#getSlides, [], {
+                  #limit: limit,
+                  #offset: offset,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.ListResponse<_i4.Slide>>);
 
   @override
   _i8.Future<_i4.ListResponse<_i4.FrontpageArticle>> getFrontpageArticles({
@@ -1367,27 +1059,22 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     int? offset,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getFrontpageArticles,
-          [],
-          {
-            #limit: limit,
-            #offset: offset,
-          },
-        ),
-        returnValue: _i8.Future<_i4.ListResponse<_i4.FrontpageArticle>>.value(
-            _FakeListResponse_3<_i4.FrontpageArticle>(
-          this,
-          Invocation.method(
-            #getFrontpageArticles,
-            [],
-            {
+            Invocation.method(#getFrontpageArticles, [], {
               #limit: limit,
               #offset: offset,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.ListResponse<_i4.FrontpageArticle>>);
+            }),
+            returnValue:
+                _i8.Future<_i4.ListResponse<_i4.FrontpageArticle>>.value(
+                  _FakeListResponse_3<_i4.FrontpageArticle>(
+                    this,
+                    Invocation.method(#getFrontpageArticles, [], {
+                      #limit: limit,
+                      #offset: offset,
+                    }),
+                  ),
+                ),
+          )
+          as _i8.Future<_i4.ListResponse<_i4.FrontpageArticle>>);
 
   @override
   _i8.Future<_i4.Device> registerDevice({
@@ -1396,63 +1083,49 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     bool? active = true,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #registerDevice,
-          [],
-          {
-            #token: token,
-            #type: type,
-            #active: active,
-          },
-        ),
-        returnValue: _i8.Future<_i4.Device>.value(_FakeDevice_14(
-          this,
-          Invocation.method(
-            #registerDevice,
-            [],
-            {
+            Invocation.method(#registerDevice, [], {
               #token: token,
               #type: type,
               #active: active,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.Device>);
+            }),
+            returnValue: _i8.Future<_i4.Device>.value(
+              _FakeDevice_14(
+                this,
+                Invocation.method(#registerDevice, [], {
+                  #token: token,
+                  #type: type,
+                  #active: active,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.Device>);
 
   @override
-  _i8.Future<_i4.Device> getDevice({required int? pk}) => (super.noSuchMethod(
-        Invocation.method(
-          #getDevice,
-          [],
-          {#pk: pk},
-        ),
-        returnValue: _i8.Future<_i4.Device>.value(_FakeDevice_14(
-          this,
-          Invocation.method(
-            #getDevice,
-            [],
-            {#pk: pk},
-          ),
-        )),
-      ) as _i8.Future<_i4.Device>);
+  _i8.Future<_i4.Device> getDevice({required int? pk}) =>
+      (super.noSuchMethod(
+            Invocation.method(#getDevice, [], {#pk: pk}),
+            returnValue: _i8.Future<_i4.Device>.value(
+              _FakeDevice_14(
+                this,
+                Invocation.method(#getDevice, [], {#pk: pk}),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.Device>);
 
   @override
   _i8.Future<_i4.Device> disableDevice({required int? pk}) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #disableDevice,
-          [],
-          {#pk: pk},
-        ),
-        returnValue: _i8.Future<_i4.Device>.value(_FakeDevice_14(
-          this,
-          Invocation.method(
-            #disableDevice,
-            [],
-            {#pk: pk},
-          ),
-        )),
-      ) as _i8.Future<_i4.Device>);
+            Invocation.method(#disableDevice, [], {#pk: pk}),
+            returnValue: _i8.Future<_i4.Device>.value(
+              _FakeDevice_14(
+                this,
+                Invocation.method(#disableDevice, [], {#pk: pk}),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.Device>);
 
   @override
   _i8.Future<_i4.Device> updateDeviceToken({
@@ -1460,26 +1133,18 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     required String? token,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #updateDeviceToken,
-          [],
-          {
-            #pk: pk,
-            #token: token,
-          },
-        ),
-        returnValue: _i8.Future<_i4.Device>.value(_FakeDevice_14(
-          this,
-          Invocation.method(
-            #updateDeviceToken,
-            [],
-            {
-              #pk: pk,
-              #token: token,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.Device>);
+            Invocation.method(#updateDeviceToken, [], {#pk: pk, #token: token}),
+            returnValue: _i8.Future<_i4.Device>.value(
+              _FakeDevice_14(
+                this,
+                Invocation.method(#updateDeviceToken, [], {
+                  #pk: pk,
+                  #token: token,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.Device>);
 
   @override
   _i8.Future<_i4.Device> updateDeviceReceiveCategory({
@@ -1487,62 +1152,49 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     required List<String>? receiveCategory,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #updateDeviceReceiveCategory,
-          [],
-          {
-            #pk: pk,
-            #receiveCategory: receiveCategory,
-          },
-        ),
-        returnValue: _i8.Future<_i4.Device>.value(_FakeDevice_14(
-          this,
-          Invocation.method(
-            #updateDeviceReceiveCategory,
-            [],
-            {
+            Invocation.method(#updateDeviceReceiveCategory, [], {
               #pk: pk,
               #receiveCategory: receiveCategory,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.Device>);
+            }),
+            returnValue: _i8.Future<_i4.Device>.value(
+              _FakeDevice_14(
+                this,
+                Invocation.method(#updateDeviceReceiveCategory, [], {
+                  #pk: pk,
+                  #receiveCategory: receiveCategory,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.Device>);
 
   @override
   _i8.Future<_i4.ListResponse<_i4.PushNotificationCategory>> getCategories() =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getCategories,
-          [],
-        ),
-        returnValue:
-            _i8.Future<_i4.ListResponse<_i4.PushNotificationCategory>>.value(
-                _FakeListResponse_3<_i4.PushNotificationCategory>(
-          this,
-          Invocation.method(
-            #getCategories,
-            [],
-          ),
-        )),
-      ) as _i8.Future<_i4.ListResponse<_i4.PushNotificationCategory>>);
+            Invocation.method(#getCategories, []),
+            returnValue: _i8.Future<
+              _i4.ListResponse<_i4.PushNotificationCategory>
+            >.value(
+              _FakeListResponse_3<_i4.PushNotificationCategory>(
+                this,
+                Invocation.method(#getCategories, []),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.ListResponse<_i4.PushNotificationCategory>>);
 
   @override
   _i8.Future<_i4.SalesOrder> claimSalesOrder({required String? pk}) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #claimSalesOrder,
-          [],
-          {#pk: pk},
-        ),
-        returnValue: _i8.Future<_i4.SalesOrder>.value(_FakeSalesOrder_15(
-          this,
-          Invocation.method(
-            #claimSalesOrder,
-            [],
-            {#pk: pk},
-          ),
-        )),
-      ) as _i8.Future<_i4.SalesOrder>);
+            Invocation.method(#claimSalesOrder, [], {#pk: pk}),
+            returnValue: _i8.Future<_i4.SalesOrder>.value(
+              _FakeSalesOrder_15(
+                this,
+                Invocation.method(#claimSalesOrder, [], {#pk: pk}),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.SalesOrder>);
 
   @override
   _i8.Future<_i4.ListResponse<_i4.ListGroup>> getGroups({
@@ -1554,52 +1206,39 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     String? search,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getGroups,
-          [],
-          {
-            #limit: limit,
-            #offset: offset,
-            #type: type,
-            #start: start,
-            #end: end,
-            #search: search,
-          },
-        ),
-        returnValue: _i8.Future<_i4.ListResponse<_i4.ListGroup>>.value(
-            _FakeListResponse_3<_i4.ListGroup>(
-          this,
-          Invocation.method(
-            #getGroups,
-            [],
-            {
+            Invocation.method(#getGroups, [], {
               #limit: limit,
               #offset: offset,
               #type: type,
               #start: start,
               #end: end,
               #search: search,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.ListResponse<_i4.ListGroup>>);
+            }),
+            returnValue: _i8.Future<_i4.ListResponse<_i4.ListGroup>>.value(
+              _FakeListResponse_3<_i4.ListGroup>(
+                this,
+                Invocation.method(#getGroups, [], {
+                  #limit: limit,
+                  #offset: offset,
+                  #type: type,
+                  #start: start,
+                  #end: end,
+                  #search: search,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.ListResponse<_i4.ListGroup>>);
 
   @override
-  _i8.Future<_i4.Group> getGroup({required int? pk}) => (super.noSuchMethod(
-        Invocation.method(
-          #getGroup,
-          [],
-          {#pk: pk},
-        ),
-        returnValue: _i8.Future<_i4.Group>.value(_FakeGroup_16(
-          this,
-          Invocation.method(
-            #getGroup,
-            [],
-            {#pk: pk},
-          ),
-        )),
-      ) as _i8.Future<_i4.Group>);
+  _i8.Future<_i4.Group> getGroup({required int? pk}) =>
+      (super.noSuchMethod(
+            Invocation.method(#getGroup, [], {#pk: pk}),
+            returnValue: _i8.Future<_i4.Group>.value(
+              _FakeGroup_16(this, Invocation.method(#getGroup, [], {#pk: pk})),
+            ),
+          )
+          as _i8.Future<_i4.Group>);
 
   @override
   _i8.Future<_i4.Group> getGroupBySlug({
@@ -1607,26 +1246,18 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     required String? slug,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getGroupBySlug,
-          [],
-          {
-            #type: type,
-            #slug: slug,
-          },
-        ),
-        returnValue: _i8.Future<_i4.Group>.value(_FakeGroup_16(
-          this,
-          Invocation.method(
-            #getGroupBySlug,
-            [],
-            {
-              #type: type,
-              #slug: slug,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.Group>);
+            Invocation.method(#getGroupBySlug, [], {#type: type, #slug: slug}),
+            returnValue: _i8.Future<_i4.Group>.value(
+              _FakeGroup_16(
+                this,
+                Invocation.method(#getGroupBySlug, [], {
+                  #type: type,
+                  #slug: slug,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.Group>);
 
   @override
   _i8.Future<_i4.ListResponse<_i4.AlbumPhoto>> getLikedPhotos({
@@ -1634,27 +1265,21 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     int? offset,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getLikedPhotos,
-          [],
-          {
-            #limit: limit,
-            #offset: offset,
-          },
-        ),
-        returnValue: _i8.Future<_i4.ListResponse<_i4.AlbumPhoto>>.value(
-            _FakeListResponse_3<_i4.AlbumPhoto>(
-          this,
-          Invocation.method(
-            #getLikedPhotos,
-            [],
-            {
+            Invocation.method(#getLikedPhotos, [], {
               #limit: limit,
               #offset: offset,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.ListResponse<_i4.AlbumPhoto>>);
+            }),
+            returnValue: _i8.Future<_i4.ListResponse<_i4.AlbumPhoto>>.value(
+              _FakeListResponse_3<_i4.AlbumPhoto>(
+                this,
+                Invocation.method(#getLikedPhotos, [], {
+                  #limit: limit,
+                  #offset: offset,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.ListResponse<_i4.AlbumPhoto>>);
 
   @override
   _i8.Future<_i4.ListResponse<_i4.Payment>> getPayments({
@@ -1667,26 +1292,7 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
     bool? settled,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getPayments,
-          [],
-          {
-            #limit: limit,
-            #offset: offset,
-            #ordering: ordering,
-            #start: start,
-            #end: end,
-            #type: type,
-            #settled: settled,
-          },
-        ),
-        returnValue: _i8.Future<_i4.ListResponse<_i4.Payment>>.value(
-            _FakeListResponse_3<_i4.Payment>(
-          this,
-          Invocation.method(
-            #getPayments,
-            [],
-            {
+            Invocation.method(#getPayments, [], {
               #limit: limit,
               #offset: offset,
               #ordering: ordering,
@@ -1694,10 +1300,23 @@ class MockApiRepository extends _i1.Mock implements _i5.ApiRepository {
               #end: end,
               #type: type,
               #settled: settled,
-            },
-          ),
-        )),
-      ) as _i8.Future<_i4.ListResponse<_i4.Payment>>);
+            }),
+            returnValue: _i8.Future<_i4.ListResponse<_i4.Payment>>.value(
+              _FakeListResponse_3<_i4.Payment>(
+                this,
+                Invocation.method(#getPayments, [], {
+                  #limit: limit,
+                  #offset: offset,
+                  #ordering: ordering,
+                  #start: start,
+                  #end: end,
+                  #type: type,
+                  #settled: settled,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.ListResponse<_i4.Payment>>);
 }
 
 /// A class which mocks [PaymentUserCubit].
@@ -1709,104 +1328,78 @@ class MockPaymentUserCubit extends _i1.Mock implements _i6.PaymentUserCubit {
   }
 
   @override
-  _i5.ApiRepository get api => (super.noSuchMethod(
-        Invocation.getter(#api),
-        returnValue: _FakeApiRepository_17(
-          this,
-          Invocation.getter(#api),
-        ),
-      ) as _i5.ApiRepository);
+  _i5.ApiRepository get api =>
+      (super.noSuchMethod(
+            Invocation.getter(#api),
+            returnValue: _FakeApiRepository_17(this, Invocation.getter(#api)),
+          )
+          as _i5.ApiRepository);
 
   @override
-  _i6.PaymentUserState get state => (super.noSuchMethod(
-        Invocation.getter(#state),
-        returnValue: _FakePaymentUserState_18(
-          this,
-          Invocation.getter(#state),
-        ),
-      ) as _i6.PaymentUserState);
+  _i6.PaymentUserState get state =>
+      (super.noSuchMethod(
+            Invocation.getter(#state),
+            returnValue: _FakePaymentUserState_18(
+              this,
+              Invocation.getter(#state),
+            ),
+          )
+          as _i6.PaymentUserState);
 
   @override
-  _i8.Stream<_i6.PaymentUserState> get stream => (super.noSuchMethod(
-        Invocation.getter(#stream),
-        returnValue: _i8.Stream<_i6.PaymentUserState>.empty(),
-      ) as _i8.Stream<_i6.PaymentUserState>);
+  _i8.Stream<_i6.PaymentUserState> get stream =>
+      (super.noSuchMethod(
+            Invocation.getter(#stream),
+            returnValue: _i8.Stream<_i6.PaymentUserState>.empty(),
+          )
+          as _i8.Stream<_i6.PaymentUserState>);
 
   @override
-  bool get isClosed => (super.noSuchMethod(
-        Invocation.getter(#isClosed),
-        returnValue: false,
-      ) as bool);
+  bool get isClosed =>
+      (super.noSuchMethod(Invocation.getter(#isClosed), returnValue: false)
+          as bool);
 
   @override
-  _i8.Future<void> load() => (super.noSuchMethod(
-        Invocation.method(
-          #load,
-          [],
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+  _i8.Future<void> load() =>
+      (super.noSuchMethod(
+            Invocation.method(#load, []),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
   void emit(_i6.PaymentUserState? state) => super.noSuchMethod(
-        Invocation.method(
-          #emit,
-          [state],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#emit, [state]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void onChange(_i9.Change<_i6.PaymentUserState>? change) => super.noSuchMethod(
-        Invocation.method(
-          #onChange,
-          [change],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#onChange, [change]),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  void addError(
-    Object? error, [
-    StackTrace? stackTrace,
-  ]) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #addError,
-          [
-            error,
-            stackTrace,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      );
+  void addError(Object? error, [StackTrace? stackTrace]) => super.noSuchMethod(
+    Invocation.method(#addError, [error, stackTrace]),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  void onError(
-    Object? error,
-    StackTrace? stackTrace,
-  ) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #onError,
-          [
-            error,
-            stackTrace,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      );
+  void onError(Object? error, StackTrace? stackTrace) => super.noSuchMethod(
+    Invocation.method(#onError, [error, stackTrace]),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  _i8.Future<void> close() => (super.noSuchMethod(
-        Invocation.method(
-          #close,
-          [],
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+  _i8.Future<void> close() =>
+      (super.noSuchMethod(
+            Invocation.method(#close, []),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 }
 
 /// A class which mocks [WelcomeCubit].
@@ -1818,102 +1411,73 @@ class MockWelcomeCubit extends _i1.Mock implements _i7.WelcomeCubit {
   }
 
   @override
-  _i5.ApiRepository get api => (super.noSuchMethod(
-        Invocation.getter(#api),
-        returnValue: _FakeApiRepository_17(
-          this,
-          Invocation.getter(#api),
-        ),
-      ) as _i5.ApiRepository);
+  _i5.ApiRepository get api =>
+      (super.noSuchMethod(
+            Invocation.getter(#api),
+            returnValue: _FakeApiRepository_17(this, Invocation.getter(#api)),
+          )
+          as _i5.ApiRepository);
 
   @override
-  _i7.WelcomeState get state => (super.noSuchMethod(
-        Invocation.getter(#state),
-        returnValue: _FakeWelcomeState_19(
-          this,
-          Invocation.getter(#state),
-        ),
-      ) as _i7.WelcomeState);
+  _i7.WelcomeState get state =>
+      (super.noSuchMethod(
+            Invocation.getter(#state),
+            returnValue: _FakeWelcomeState_19(this, Invocation.getter(#state)),
+          )
+          as _i7.WelcomeState);
 
   @override
-  _i8.Stream<_i7.WelcomeState> get stream => (super.noSuchMethod(
-        Invocation.getter(#stream),
-        returnValue: _i8.Stream<_i7.WelcomeState>.empty(),
-      ) as _i8.Stream<_i7.WelcomeState>);
+  _i8.Stream<_i7.WelcomeState> get stream =>
+      (super.noSuchMethod(
+            Invocation.getter(#stream),
+            returnValue: _i8.Stream<_i7.WelcomeState>.empty(),
+          )
+          as _i8.Stream<_i7.WelcomeState>);
 
   @override
-  bool get isClosed => (super.noSuchMethod(
-        Invocation.getter(#isClosed),
-        returnValue: false,
-      ) as bool);
+  bool get isClosed =>
+      (super.noSuchMethod(Invocation.getter(#isClosed), returnValue: false)
+          as bool);
 
   @override
-  _i8.Future<void> load() => (super.noSuchMethod(
-        Invocation.method(
-          #load,
-          [],
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+  _i8.Future<void> load() =>
+      (super.noSuchMethod(
+            Invocation.method(#load, []),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
   void emit(_i7.WelcomeState? state) => super.noSuchMethod(
-        Invocation.method(
-          #emit,
-          [state],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#emit, [state]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void onChange(_i9.Change<_i7.WelcomeState>? change) => super.noSuchMethod(
-        Invocation.method(
-          #onChange,
-          [change],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#onChange, [change]),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  void addError(
-    Object? error, [
-    StackTrace? stackTrace,
-  ]) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #addError,
-          [
-            error,
-            stackTrace,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      );
+  void addError(Object? error, [StackTrace? stackTrace]) => super.noSuchMethod(
+    Invocation.method(#addError, [error, stackTrace]),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  void onError(
-    Object? error,
-    StackTrace? stackTrace,
-  ) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #onError,
-          [
-            error,
-            stackTrace,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      );
+  void onError(Object? error, StackTrace? stackTrace) => super.noSuchMethod(
+    Invocation.method(#onError, [error, stackTrace]),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  _i8.Future<void> close() => (super.noSuchMethod(
-        Invocation.method(
-          #close,
-          [],
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
+  _i8.Future<void> close() =>
+      (super.noSuchMethod(
+            Invocation.method(#close, []),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 }

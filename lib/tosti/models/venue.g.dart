@@ -7,12 +7,12 @@ part of 'venue.dart';
 // **************************************************************************
 
 TostiVenue _$TostiVenueFromJson(Map<String, dynamic> json) => TostiVenue(
-      (json['id'] as num).toInt(),
-      json['name'] as String,
-      json['slug'] as String,
-      json['color_in_calendar'] as String?,
-      json['can_be_reserved'] as bool,
-    );
+  (json['id'] as num).toInt(),
+  json['name'] as String,
+  json['slug'] as String,
+  json['color_in_calendar'] as String?,
+  json['can_be_reserved'] as bool,
+);
 
 Map<String, dynamic> _$TostiVenueToJson(TostiVenue instance) =>
     <String, dynamic>{
@@ -24,11 +24,7 @@ Map<String, dynamic> _$TostiVenueToJson(TostiVenue instance) =>
     };
 
 TostiOrderVenue _$TostiOrderVenueFromJson(Map<String, dynamic> json) =>
-    TostiOrderVenue(
-      TostiVenue.fromJson(json['venue'] as Map<String, dynamic>),
-    );
+    TostiOrderVenue(TostiVenue.fromJson(json['venue'] as Map<String, dynamic>));
 
 Map<String, dynamic> _$TostiOrderVenueToJson(TostiOrderVenue instance) =>
-    <String, dynamic>{
-      'venue': instance.venue,
-    };
+    <String, dynamic>{'venue': instance.venue};

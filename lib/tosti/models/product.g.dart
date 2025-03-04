@@ -7,16 +7,16 @@ part of 'product.dart';
 // **************************************************************************
 
 TostiProduct _$TostiProductFromJson(Map<String, dynamic> json) => TostiProduct(
-      (json['id'] as num).toInt(),
-      json['name'] as String,
-      json['icon'] as String?,
-      json['available'] as bool,
-      json['current_price'] as String,
-      json['orderable'] as bool,
-      json['ignore_shift_restrictions'] as bool,
-      (json['max_allowed_per_shift'] as num?)?.toInt(),
-      json['barcode'] as String?,
-    );
+  (json['id'] as num).toInt(),
+  json['name'] as String,
+  json['icon'] as String?,
+  json['available'] as bool,
+  json['current_price'] as String,
+  json['orderable'] as bool,
+  json['ignore_shift_restrictions'] as bool,
+  (json['max_allowed_per_shift'] as num?)?.toInt(),
+  json['barcode'] as String?,
+);
 
 Map<String, dynamic> _$TostiProductToJson(TostiProduct instance) =>
     <String, dynamic>{

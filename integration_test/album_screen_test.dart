@@ -22,23 +22,13 @@ const imagelink2 =
 const coverphoto1 = CoverPhoto(
   0,
   0,
-  Photo(
-    imagelink1,
-    imagelink1,
-    imagelink1,
-    imagelink1,
-  ),
+  Photo(imagelink1, imagelink1, imagelink1, imagelink1),
 );
 
 const albumphoto1 = AlbumPhoto(
   0,
   0,
-  Photo(
-    imagelink1,
-    imagelink1,
-    imagelink1,
-    imagelink1,
-  ),
+  Photo(imagelink1, imagelink1, imagelink1, imagelink1),
   false,
   0,
 );
@@ -46,25 +36,22 @@ const albumphoto1 = AlbumPhoto(
 const albumphoto2 = AlbumPhoto(
   0,
   0,
-  Photo(
-    imagelink2,
-    imagelink2,
-    imagelink2,
-    imagelink2,
-  ),
+  Photo(imagelink2, imagelink2, imagelink2, imagelink2),
   false,
   0,
 );
 
 WidgetTesterCallback getTestMethod(
-    IntegrationTestWidgetsFlutterBinding binding, Album album) {
+  IntegrationTestWidgetsFlutterBinding binding,
+  Album album,
+) {
   return (tester) async {
     // Setup mock.
     final api = MockApiRepository();
     when(api.config).thenReturn(Config.testing);
-    when(api.getAlbum(slug: album.slug)).thenAnswer(
-      (realInvocation) async => album,
-    );
+    when(
+      api.getAlbum(slug: album.slug),
+    ).thenAnswer((realInvocation) async => album);
     final authCubit = MockAuthCubit();
 
     throwOnMissingStub(
@@ -74,12 +61,13 @@ WidgetTesterCallback getTestMethod(
       },
     );
 
-    final streamController = StreamController<AuthState>.broadcast()
-      ..stream.listen((state) {
-        when(authCubit.state).thenReturn(state);
-      })
-      ..add(LoadingAuthState())
-      ..add(LoggedInAuthState(apiRepository: api));
+    final streamController =
+        StreamController<AuthState>.broadcast()
+          ..stream.listen((state) {
+            when(authCubit.state).thenReturn(state);
+          })
+          ..add(LoadingAuthState())
+          ..add(LoggedInAuthState(apiRepository: api));
 
     when(authCubit.load()).thenAnswer((_) => Future.value(null));
     when(authCubit.stream).thenAnswer((_) => streamController.stream);
@@ -100,10 +88,7 @@ WidgetTesterCallback getTestMethod(
     await binding.takeScreenshot('screenshot-${album.title}');
     for (AlbumPhoto photo in album.photos) {
       //TODO: wait for https://github.com/flutter/flutter/issues/115479 to be fixed
-      expect(
-        find.image(NetworkImage(photo.small)),
-        findsWidgets,
-      );
+      expect(find.image(NetworkImage(photo.small)), findsWidgets);
     }
     expect(find.text(album.title.toUpperCase()), findsOneWidget);
   };
@@ -115,14 +100,9 @@ void testAlbum(IntegrationTestWidgetsFlutterBinding binding) {
       'can load an album with 1 photo',
       getTestMethod(
         binding,
-        const Album.fromlist(
-          '1',
-          'mock',
-          false,
-          false,
-          coverphoto1,
-          [albumphoto1],
-        ),
+        const Album.fromlist('1', 'mock', false, false, coverphoto1, [
+          albumphoto1,
+        ]),
       ),
     );
 
@@ -130,35 +110,27 @@ void testAlbum(IntegrationTestWidgetsFlutterBinding binding) {
       'can load an album with 2 photos',
       getTestMethod(
         binding,
-        const Album.fromlist(
-          '1',
-          'MOcK2',
-          false,
-          false,
-          coverphoto1,
-          [albumphoto1, albumphoto2],
-        ),
+        const Album.fromlist('1', 'MOcK2', false, false, coverphoto1, [
+          albumphoto1,
+          albumphoto2,
+        ]),
       ),
     );
 
     testWidgets(
       'gallery can be opened, swiped, closed with Android back button',
       (tester) async {
-        const album = Album.fromlist(
-          '1',
-          'MOcK2',
-          false,
-          false,
-          coverphoto1,
-          [albumphoto1, albumphoto2],
-        );
+        const album = Album.fromlist('1', 'MOcK2', false, false, coverphoto1, [
+          albumphoto1,
+          albumphoto2,
+        ]);
 
         // Setup mock.
         final api = MockApiRepository();
         when(api.config).thenReturn(Config.testing);
-        when(api.getAlbum(slug: album.slug)).thenAnswer(
-          (realInvocation) async => album,
-        );
+        when(
+          api.getAlbum(slug: album.slug),
+        ).thenAnswer((realInvocation) async => album);
         final authCubit = MockAuthCubit();
 
         throwOnMissingStub(
@@ -168,12 +140,13 @@ void testAlbum(IntegrationTestWidgetsFlutterBinding binding) {
           },
         );
 
-        final streamController = StreamController<AuthState>.broadcast()
-          ..stream.listen((state) {
-            when(authCubit.state).thenReturn(state);
-          })
-          ..add(LoadingAuthState())
-          ..add(LoggedInAuthState(apiRepository: api));
+        final streamController =
+            StreamController<AuthState>.broadcast()
+              ..stream.listen((state) {
+                when(authCubit.state).thenReturn(state);
+              })
+              ..add(LoadingAuthState())
+              ..add(LoggedInAuthState(apiRepository: api));
 
         when(authCubit.load()).thenAnswer((_) => Future.value(null));
         when(authCubit.stream).thenAnswer((_) => streamController.stream);

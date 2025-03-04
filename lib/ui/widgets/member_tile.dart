@@ -99,10 +99,12 @@ class DefaultMemberTile extends StatelessWidget {
             color: Colors.transparent,
             child: InkWell(
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  behavior: SnackBarBehavior.floating,
-                  content: Text('$name is not a member.'),
-                ));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    content: Text('$name is not a member.'),
+                  ),
+                );
               },
             ),
           ),

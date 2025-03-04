@@ -22,7 +22,7 @@ class EventScreen extends StatefulWidget {
   final int? pk;
 
   const EventScreen({this.pk, this.slug, this.event})
-      : assert(!(pk == null && slug == null));
+    : assert(!(pk == null && slug == null));
 
   @override
   State<EventScreen> createState() => _EventScreenState();
@@ -78,17 +78,18 @@ class _EventScreenState extends State<EventScreen> {
             color: Colors.transparent,
             child: InkWell(
               onTap: () {
-                Uri url = Theme.of(context).platform == TargetPlatform.iOS
-                    ? Uri(
-                        scheme: 'maps',
-                        queryParameters: {'daddr': event.location},
-                      )
-                    : Uri(
-                        scheme: 'https',
-                        host: 'maps.google.com',
-                        path: 'maps',
-                        queryParameters: {'daddr': event.location},
-                      );
+                Uri url =
+                    Theme.of(context).platform == TargetPlatform.iOS
+                        ? Uri(
+                          scheme: 'maps',
+                          queryParameters: {'daddr': event.location},
+                        )
+                        : Uri(
+                          scheme: 'https',
+                          host: 'maps.google.com',
+                          path: 'maps',
+                          queryParameters: {'daddr': event.location},
+                        );
                 launchUrl(url, mode: LaunchMode.externalNonBrowserApplication);
               },
             ),
@@ -126,18 +127,25 @@ class _EventScreenState extends State<EventScreen> {
       text: TextSpan(
         children: [
           for (SmallGroup org in event.organisers)
-            TextSpan(children: [
-              if (org != event.organisers[0]) const TextSpan(text: ', '),
-              TextSpan(
-                text: org.name,
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () {
-                    context.pushNamed('group',
-                        pathParameters: {'groupPk': org.pk.toString()});
-                  },
-                style: TextStyle(color: Theme.of(context).colorScheme.primary),
-              ),
-            ]),
+            TextSpan(
+              children: [
+                if (org != event.organisers[0]) const TextSpan(text: ', '),
+                TextSpan(
+                  text: org.name,
+                  recognizer:
+                      TapGestureRecognizer()
+                        ..onTap = () {
+                          context.pushNamed(
+                            'group',
+                            pathParameters: {'groupPk': org.pk.toString()},
+                          );
+                        },
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ],
+            ),
         ],
         style: textTheme.bodyLarge,
       ),
@@ -152,10 +160,7 @@ class _EventScreenState extends State<EventScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const SizedBox(height: 8),
-        Text(
-          event.title.toUpperCase(),
-          style: textTheme.titleLarge,
-        ),
+        Text(event.title.toUpperCase(), style: textTheme.titleLarge),
         const Divider(height: 24),
         Row(
           mainAxisSize: MainAxisSize.max,
@@ -189,7 +194,7 @@ class _EventScreenState extends State<EventScreen> {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
         const SizedBox(height: 12),
@@ -203,10 +208,7 @@ class _EventScreenState extends State<EventScreen> {
                 children: [
                   Text('LOCATION', style: textTheme.bodySmall),
                   const SizedBox(height: 4),
-                  Text(
-                    event.location,
-                    style: textTheme.titleSmall,
-                  ),
+                  Text(event.location, style: textTheme.titleSmall),
                 ],
               ),
             ),
@@ -218,10 +220,7 @@ class _EventScreenState extends State<EventScreen> {
                 children: [
                   Text('PRICE', style: textTheme.bodySmall),
                   const SizedBox(height: 4),
-                  Text(
-                    '€${event.price}',
-                    style: textTheme.titleSmall,
-                  ),
+                  Text('€${event.price}', style: textTheme.titleSmall),
                 ],
               ),
             ),
@@ -243,9 +242,9 @@ class _EventScreenState extends State<EventScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         for (Document doc in event.documents)
-                          FileButton(url: doc.url, name: doc.name)
+                          FileButton(url: doc.url, name: doc.name),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -258,13 +257,14 @@ class _EventScreenState extends State<EventScreen> {
             Flexible(
               fit: FlexFit.tight,
               child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('ORGANISERS', style: textTheme.bodySmall),
-                    const SizedBox(height: 4),
-                    _makeOrganiserChildren(event),
-                  ]),
-            )
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('ORGANISERS', style: textTheme.bodySmall),
+                  const SizedBox(height: 4),
+                  _makeOrganiserChildren(event),
+                ],
+              ),
+            ),
           ],
         ),
         const Divider(height: 24),
@@ -289,17 +289,12 @@ class _EventScreenState extends State<EventScreen> {
     if (event.canCreateRegistration || event.createRegistrationWhenOpen) {
       if (event.registrationStart!.isAfter(DateTime.now())) {
         _buttonControler.update(WidgetState.disabled, true);
-        Future.delayed(
-          event.registrationStart!.difference(DateTime.now()),
-          () {
-            if (mounted) {
-              _buttonControler.update(WidgetState.disabled, false);
-              setState(
-                () {},
-              );
-            }
-          },
-        );
+        Future.delayed(event.registrationStart!.difference(DateTime.now()), () {
+          if (mounted) {
+            _buttonControler.update(WidgetState.disabled, false);
+            setState(() {});
+          }
+        });
       }
       if (event.reachedMaxParticipants) {
         registrationButton = _makeJoinQueueButton(event);
@@ -309,10 +304,9 @@ class _EventScreenState extends State<EventScreen> {
     } else if (event.canCancelRegistration) {
       if (event.cancelDeadlinePassed() && event.registration!.isInvited) {
         // Cancel too late message, cancel button with fine warning.
-        textSpans.add(TextSpan(
-          text: event.cancelTooLateMessage,
-        ));
-        final text = 'The deadline has passed, are you sure you want '
+        textSpans.add(TextSpan(text: event.cancelTooLateMessage));
+        final text =
+            'The deadline has passed, are you sure you want '
             'to cancel your registration and pay the estimated full costs of '
             '€${event.fine}? You will not be able to undo this!';
         registrationButton = _makeCancelRegistrationButton(event, text);
@@ -333,71 +327,61 @@ class _EventScreenState extends State<EventScreen> {
         final registrationStart = dateTimeFormatter.format(
           event.registrationStart!.toLocal(),
         );
-        textSpans.add(TextSpan(
-          text: 'Registration will open $registrationStart. ',
-        ));
+        textSpans.add(
+          TextSpan(text: 'Registration will open $registrationStart. '),
+        );
       } else if (event.registrationIsOpen()) {
         // Terms and conditions, register button.
         textSpans.add(_makeTermsAndConditions(event));
       } else if (event.registrationClosed()) {
         // Registration is no longer possible.
-        textSpans.add(const TextSpan(
-          text: 'Registration is not possible anymore. ',
-        ));
+        textSpans.add(
+          const TextSpan(text: 'Registration is not possible anymore. '),
+        );
       }
     } else {
       final registration = event.registration!;
       if (registration.isLateCancellation) {
         // Your registration is cancelled after the deadline.
-        textSpans.add(const TextSpan(
-          text: 'Your registration is cancelled after the deadline. ',
-        ));
+        textSpans.add(
+          const TextSpan(
+            text: 'Your registration is cancelled after the deadline. ',
+          ),
+        );
       } else if (registration.isCancelled) {
         // Your registration is cancelled.
-        textSpans.add(const TextSpan(
-          text: 'Your registration is cancelled. ',
-        ));
+        textSpans.add(const TextSpan(text: 'Your registration is cancelled. '));
       } else if (registration.isInQueue) {
         // Queue position.
-        textSpans.add(TextSpan(
-          text: 'Queue position ${registration.queuePosition}. ',
-        ));
+        textSpans.add(
+          TextSpan(text: 'Queue position ${registration.queuePosition}. '),
+        );
       } else if (registration.isInvited) {
         // You are registered.
-        textSpans.add(const TextSpan(
-          text: 'You are registered. ',
-        ));
+        textSpans.add(const TextSpan(text: 'You are registered. '));
         if (event.paymentIsRequired) {
           if (registration.isPaid) {
             if (registration.payment!.type == PaymentType.tpayPayment) {
               // You are paying with Thalia Pay.
-              textSpans.add(const TextSpan(
-                text: 'You are paying with Thalia Pay. ',
-              ));
+              textSpans.add(
+                const TextSpan(text: 'You are paying with Thalia Pay. '),
+              );
             } else {
               // You have paid.
-              textSpans.add(const TextSpan(
-                text: 'You have paid. ',
-              ));
+              textSpans.add(const TextSpan(text: 'You have paid. '));
             }
           } else {
             // You have not paid yet.
-            textSpans.add(const TextSpan(
-              text: 'You have not paid yet. ',
-            ));
+            textSpans.add(const TextSpan(text: 'You have not paid yet. '));
           }
         }
         if (event.hasEnded()) {
           if (registration.present ?? true) {
             // You were present.
-            textSpans.add(const TextSpan(
-              text: 'You were present. ',
-            ));
+            textSpans.add(const TextSpan(text: 'You were present. '));
           } else {
             // You were not present.
-            textSpans.add(const TextSpan(
-              text: 'You were not present. ',
-            ));
+            textSpans.add(const TextSpan(text: 'You were not present. '));
           }
         }
       }
@@ -409,10 +393,12 @@ class _EventScreenState extends State<EventScreen> {
         !event.registration!.isPaid &&
         event.registration!.tpayAllowed) {
       paymentButton = TPayButton(
-        onPay: () async => await _eventCubit.thaliaPayRegistration(
-          registrationPk: event.registration!.pk,
-        ),
-        confirmationMessage: 'Are you sure you want to pay €${event.price} for '
+        onPay:
+            () async => await _eventCubit.thaliaPayRegistration(
+              registrationPk: event.registration!.pk,
+            ),
+        confirmationMessage:
+            'Are you sure you want to pay €${event.price} for '
             'your registration to "${event.title}"?',
         failureMessage: 'Could not pay your registration.',
         successMessage: 'Paid your registration with Thalia Pay.',
@@ -502,10 +488,7 @@ class _EventScreenState extends State<EventScreen> {
           ],
         ),
         const Divider(height: 24),
-        Text.rich(
-          TextSpan(children: textSpans),
-          style: dataStyle,
-        ),
+        Text.rich(TextSpan(children: textSpans), style: dataStyle),
         const SizedBox(height: 4),
         registrationButton,
         updateButton,
@@ -527,16 +510,22 @@ class _EventScreenState extends State<EventScreen> {
     }
 
     if (event.isInvited) {
-      textSpans.add(const TextSpan(
+      textSpans.add(
+        const TextSpan(
           text:
               'You are registered. This is only an indication that you intend '
-              'to be present. Access to the event is not handled by Thalia.'));
+              'to be present. Access to the event is not handled by Thalia.',
+        ),
+      );
     } else if (event.canCreateRegistration) {
-      textSpans.add(const TextSpan(
-        text: 'Even though registration is not required for this event, you '
-            'can still register to give an indication of who will be there, as '
-            'well as mark the event as "registered" in your calendar. ',
-      ));
+      textSpans.add(
+        const TextSpan(
+          text:
+              'Even though registration is not required for this event, you '
+              'can still register to give an indication of who will be there, as '
+              'well as mark the event as "registered" in your calendar. ',
+        ),
+      );
       registrationButton = _makeIllBeThereButton(event);
     }
 
@@ -555,10 +544,7 @@ class _EventScreenState extends State<EventScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text.rich(
-          TextSpan(children: textSpans),
-          style: dataStyle,
-        ),
+        Text.rich(TextSpan(children: textSpans), style: dataStyle),
         const SizedBox(height: 4),
         registrationButton,
         updateButton,
@@ -583,10 +569,7 @@ class _EventScreenState extends State<EventScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text.rich(
-          TextSpan(children: textSpans),
-          style: dataStyle,
-        ),
+        Text.rich(TextSpan(children: textSpans), style: dataStyle),
         const SizedBox(height: 4),
       ],
     );
@@ -602,10 +585,12 @@ class _EventScreenState extends State<EventScreen> {
           await _eventCubit.load();
           calendarCubit.load();
         } on ApiException {
-          messenger.showSnackBar(const SnackBar(
-            behavior: SnackBarBehavior.floating,
-            content: Text('Could not register for the event.'),
-          ));
+          messenger.showSnackBar(
+            const SnackBar(
+              behavior: SnackBarBehavior.floating,
+              content: Text('Could not register for the event.'),
+            ),
+          );
         }
       },
       icon: const Icon(Icons.check),
@@ -625,10 +610,12 @@ class _EventScreenState extends State<EventScreen> {
           await _eventCubit.load();
           calendarCubit.load();
         } on ApiException {
-          messenger.showSnackBar(const SnackBar(
-            behavior: SnackBarBehavior.floating,
-            content: Text('Could not cancel your registration.'),
-          ));
+          messenger.showSnackBar(
+            const SnackBar(
+              behavior: SnackBarBehavior.floating,
+              content: Text('Could not cancel your registration.'),
+            ),
+          );
         }
       },
       icon: const Icon(Icons.clear),
@@ -639,48 +626,90 @@ class _EventScreenState extends State<EventScreen> {
   Widget _makeCreateRegistrationButton(Event event) {
     return ElevatedButton.icon(
       statesController: _buttonControler,
-      onPressed: !_buttonControler.value.contains(WidgetState.disabled)
-          ? () async {
-              final messenger = ScaffoldMessenger.of(context);
-              final calendarCubit = BlocProvider.of<CalendarCubit>(context);
-              final router = GoRouter.of(context);
-              var confirmed = !event.cancelDeadlinePassed();
-              if (!confirmed) {
-                confirmed = await showDialog<bool>(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: const Text('Register'),
-                          content: Text(
-                            'Are you sure you want to register? The '
-                            'cancellation deadline has already passed.',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          actions: [
-                            TextButton.icon(
-                              onPressed: () => Navigator.of(
-                                context,
-                                rootNavigator: true,
-                              ).pop(false),
-                              icon: const Icon(Icons.clear),
-                              label: const Text('NO'),
+      onPressed:
+          !_buttonControler.value.contains(WidgetState.disabled)
+              ? () async {
+                final messenger = ScaffoldMessenger.of(context);
+                final calendarCubit = BlocProvider.of<CalendarCubit>(context);
+                final router = GoRouter.of(context);
+                var confirmed = !event.cancelDeadlinePassed();
+                if (!confirmed) {
+                  confirmed =
+                      await showDialog<bool>(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text('Register'),
+                            content: Text(
+                              'Are you sure you want to register? The '
+                              'cancellation deadline has already passed.',
+                              style: Theme.of(context).textTheme.bodyMedium,
                             ),
-                            ElevatedButton.icon(
-                              onPressed: () => Navigator.of(
-                                context,
-                                rootNavigator: true,
-                              ).pop(true),
-                              icon: const Icon(Icons.check),
-                              label: const Text('YES'),
-                            ),
-                          ],
-                        );
-                      },
-                    ) ??
-                    false;
-              }
+                            actions: [
+                              TextButton.icon(
+                                onPressed:
+                                    () => Navigator.of(
+                                      context,
+                                      rootNavigator: true,
+                                    ).pop(false),
+                                icon: const Icon(Icons.clear),
+                                label: const Text('NO'),
+                              ),
+                              ElevatedButton.icon(
+                                onPressed:
+                                    () => Navigator.of(
+                                      context,
+                                      rootNavigator: true,
+                                    ).pop(true),
+                                icon: const Icon(Icons.check),
+                                label: const Text('YES'),
+                              ),
+                            ],
+                          );
+                        },
+                      ) ??
+                      false;
+                }
 
-              if (confirmed) {
+                if (confirmed) {
+                  try {
+                    final registration = await _eventCubit.register();
+                    if (event.hasFields) {
+                      router.pushNamed(
+                        'event-registration',
+                        pathParameters: {
+                          'eventPk': event.pk.toString(),
+                          'registrationPk': registration.pk.toString(),
+                        },
+                      );
+                    }
+                    calendarCubit.load();
+                  } on ApiException {
+                    messenger.showSnackBar(
+                      const SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: Text('Could not register for the event.'),
+                      ),
+                    );
+                  }
+                  await _eventCubit.load();
+                }
+              }
+              : null,
+      icon: const Icon(Icons.create_outlined),
+      label: const Text('REGISTER'),
+    );
+  }
+
+  Widget _makeJoinQueueButton(Event event) {
+    return ElevatedButton.icon(
+      statesController: _buttonControler,
+      onPressed:
+          !_buttonControler.value.contains(WidgetState.disabled)
+              ? () async {
+                final messenger = ScaffoldMessenger.of(context);
+                final calendarCubit = BlocProvider.of<CalendarCubit>(context);
+                final router = GoRouter.of(context);
                 try {
                   final registration = await _eventCubit.register();
                   if (event.hasFields) {
@@ -694,50 +723,18 @@ class _EventScreenState extends State<EventScreen> {
                   }
                   calendarCubit.load();
                 } on ApiException {
-                  messenger.showSnackBar(const SnackBar(
-                    behavior: SnackBarBehavior.floating,
-                    content: Text('Could not register for the event.'),
-                  ));
+                  messenger.showSnackBar(
+                    const SnackBar(
+                      behavior: SnackBarBehavior.floating,
+                      content: Text(
+                        'Could not join the waiting list for the event.',
+                      ),
+                    ),
+                  );
                 }
                 await _eventCubit.load();
               }
-            }
-          : null,
-      icon: const Icon(Icons.create_outlined),
-      label: const Text('REGISTER'),
-    );
-  }
-
-  Widget _makeJoinQueueButton(Event event) {
-    return ElevatedButton.icon(
-      statesController: _buttonControler,
-      onPressed: !_buttonControler.value.contains(WidgetState.disabled)
-          ? () async {
-              final messenger = ScaffoldMessenger.of(context);
-              final calendarCubit = BlocProvider.of<CalendarCubit>(context);
-              final router = GoRouter.of(context);
-              try {
-                final registration = await _eventCubit.register();
-                if (event.hasFields) {
-                  router.pushNamed(
-                    'event-registration',
-                    pathParameters: {
-                      'eventPk': event.pk.toString(),
-                      'registrationPk': registration.pk.toString(),
-                    },
-                  );
-                }
-                calendarCubit.load();
-              } on ApiException {
-                messenger.showSnackBar(const SnackBar(
-                  behavior: SnackBarBehavior.floating,
-                  content:
-                      Text('Could not join the waiting list for the event.'),
-                ));
-              }
-              await _eventCubit.load();
-            }
-          : null,
+              : null,
       icon: const Icon(Icons.create_outlined),
       label: const Text('JOIN QUEUE'),
     );
@@ -760,18 +757,16 @@ class _EventScreenState extends State<EventScreen> {
               ),
               actions: [
                 TextButton.icon(
-                  onPressed: () => Navigator.of(
-                    context,
-                    rootNavigator: true,
-                  ).pop(false),
+                  onPressed:
+                      () =>
+                          Navigator.of(context, rootNavigator: true).pop(false),
                   icon: const Icon(Icons.clear),
                   label: const Text('NO'),
                 ),
                 ElevatedButton.icon(
-                  onPressed: () => Navigator.of(
-                    context,
-                    rootNavigator: true,
-                  ).pop(true),
+                  onPressed:
+                      () =>
+                          Navigator.of(context, rootNavigator: true).pop(true),
                   icon: const Icon(Icons.check),
                   label: const Text('YES'),
                 ),
@@ -786,10 +781,12 @@ class _EventScreenState extends State<EventScreen> {
               registrationPk: event.registration!.pk,
             );
           } on ApiException {
-            messenger.showSnackBar(const SnackBar(
-              behavior: SnackBarBehavior.floating,
-              content: Text('Could not cancel your registration.'),
-            ));
+            messenger.showSnackBar(
+              const SnackBar(
+                behavior: SnackBarBehavior.floating,
+                content: Text('Could not cancel your registration.'),
+              ),
+            );
           }
         }
         await _eventCubit.load();
@@ -803,13 +800,14 @@ class _EventScreenState extends State<EventScreen> {
 
   Widget _makeUpdateButton(Event event) {
     return ElevatedButton.icon(
-      onPressed: () => context.pushNamed(
-        'event-registration',
-        pathParameters: {
-          'eventPk': event.pk.toString(),
-          'registrationPk': event.registration!.pk.toString(),
-        },
-      ),
+      onPressed:
+          () => context.pushNamed(
+            'event-registration',
+            pathParameters: {
+              'eventPk': event.pk.toString(),
+              'registrationPk': event.registration!.pk.toString(),
+            },
+          ),
       icon: const Icon(Icons.build),
       label: const Text('UPDATE REGISTRATION'),
     );
@@ -835,22 +833,26 @@ class _EventScreenState extends State<EventScreen> {
         ),
         TextSpan(
           text: 'terms and conditions',
-          recognizer: TapGestureRecognizer()
-            ..onTap = () async {
-              final messenger = ScaffoldMessenger.of(context);
-              try {
-                await launchUrl(url, mode: LaunchMode.externalApplication);
-              } catch (_) {
-                messenger.showSnackBar(SnackBar(
-                  behavior: SnackBarBehavior.floating,
-                  content: Text('Could not open "${url.toString()}".'),
-                ));
-              }
-            },
+          recognizer:
+              TapGestureRecognizer()
+                ..onTap = () async {
+                  final messenger = ScaffoldMessenger.of(context);
+                  try {
+                    await launchUrl(url, mode: LaunchMode.externalApplication);
+                  } catch (_) {
+                    messenger.showSnackBar(
+                      SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: Text('Could not open "${url.toString()}".'),
+                      ),
+                    );
+                  }
+                },
           style: TextStyle(color: Theme.of(context).colorScheme.primary),
         ),
         const TextSpan(
-          text: ', that you understand them and '
+          text:
+              ', that you understand them and '
               'that you agree to be bound by them.',
         ),
       ],
@@ -859,30 +861,26 @@ class _EventScreenState extends State<EventScreen> {
 
   Widget _makeDescription(Event event) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 4,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: HtmlWidget(
         event.description,
         onTapUrl: (String url) async {
           Uri uri = Uri.parse(url);
           if (uri.scheme.isEmpty) uri = uri.replace(scheme: 'https');
           if (isDeepLink(uri)) {
-            context.go(Uri(
-              path: uri.path,
-              query: uri.query,
-            ).toString());
+            context.go(Uri(path: uri.path, query: uri.query).toString());
             return true;
           } else {
             final messenger = ScaffoldMessenger.of(context);
             try {
               await launchUrl(uri, mode: LaunchMode.externalApplication);
             } catch (_) {
-              messenger.showSnackBar(SnackBar(
-                behavior: SnackBarBehavior.floating,
-                content: Text('Could not open "$url".'),
-              ));
+              messenger.showSnackBar(
+                SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text('Could not open "$url".'),
+                ),
+              );
             }
           }
           return true;
@@ -912,20 +910,13 @@ class _EventScreenState extends State<EventScreen> {
           mainAxisSpacing: 8,
           crossAxisSpacing: 8,
         ),
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            if (state.registrations[index].member != null) {
-              return MemberTile(
-                member: state.registrations[index].member!,
-              );
-            } else {
-              return DefaultMemberTile(
-                name: state.registrations[index].name!,
-              );
-            }
-          },
-          childCount: state.registrations.length,
-        ),
+        delegate: SliverChildBuilderDelegate((context, index) {
+          if (state.registrations[index].member != null) {
+            return MemberTile(member: state.registrations[index].member!);
+          } else {
+            return DefaultMemberTile(name: state.registrations[index].name!);
+          }
+        }, childCount: state.registrations.length),
       ),
     );
   }
@@ -949,9 +940,7 @@ class _EventScreenState extends State<EventScreen> {
           );
         } else if (state.isLoading && widget.event == null) {
           return Scaffold(
-            appBar: ThaliaAppBar(
-              title: const Text('EVENT'),
-            ),
+            appBar: ThaliaAppBar(title: const Text('EVENT')),
             body: const Center(child: CircularProgressIndicator()),
           );
         } else {
@@ -971,7 +960,8 @@ class _EventScreenState extends State<EventScreen> {
                       endDate: event.end,
                     );
                     await add2calendar.Add2Calendar.addEvent2Cal(
-                        exportableEvent);
+                      exportableEvent,
+                    );
                   },
                   tooltip: 'add event to calendar',
                 ),
@@ -985,10 +975,12 @@ class _EventScreenState extends State<EventScreen> {
                     try {
                       await Share.share(event.url);
                     } catch (_) {
-                      messenger.showSnackBar(const SnackBar(
-                        behavior: SnackBarBehavior.floating,
-                        content: Text('Could not share the event.'),
-                      ));
+                      messenger.showSnackBar(
+                        const SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          content: Text('Could not share the event.'),
+                        ),
+                      );
                     }
                   },
                 ),

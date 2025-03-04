@@ -24,18 +24,21 @@ class PushNotificationOverlay extends StatelessWidget {
     return SafeArea(
       child: Card(
         child: ListTile(
-          onTap: uri != null
-              ? () async {
-                  if (isDeepLink(uri!)) {
-                    context.go(Uri(
-                      path: uri.path,
-                      query: uri.query,
-                    ).toString());
-                  } else {
-                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+          onTap:
+              uri != null
+                  ? () async {
+                    if (isDeepLink(uri!)) {
+                      context.go(
+                        Uri(path: uri.path, query: uri.query).toString(),
+                      );
+                    } else {
+                      await launchUrl(
+                        uri,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    }
                   }
-                }
-              : null,
+                  : null,
           title: Text(message.notification!.title ?? '', maxLines: 1),
           subtitle: Text(message.notification!.body ?? '', maxLines: 2),
           trailing: IconButton(

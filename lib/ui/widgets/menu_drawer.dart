@@ -41,8 +41,8 @@ class MenuDrawer extends StatelessWidget {
                           begin: FractionalOffset.bottomCenter,
                           end: FractionalOffset.topCenter,
                           colors: [
-                            Colors.black.withOpacity(0.8),
-                            Colors.transparent
+                            Colors.black.withValues(alpha: 0.8),
+                            Colors.transparent,
                           ],
                         ),
                       ),
@@ -62,17 +62,12 @@ class MenuDrawer extends StatelessWidget {
                         height: 80,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: CachedImageProvider(
-                              me.photo.medium,
-                            ),
+                            image: CachedImageProvider(me.photo.medium),
                             fit: BoxFit.cover,
                           ),
                           borderRadius: BorderRadius.circular(40),
                           boxShadow: const [
-                            BoxShadow(
-                              offset: Offset(1, 2),
-                              blurRadius: 8,
-                            ),
+                            BoxShadow(offset: Offset(1, 2), blurRadius: 8),
                           ],
                         ),
                       ),
@@ -81,11 +76,12 @@ class MenuDrawer extends StatelessWidget {
                       child: Material(
                         color: Colors.transparent,
                         child: InkWell(
-                          onTap: () => context.pushNamed(
-                            'member',
-                            pathParameters: {'memberPk': me.pk.toString()},
-                            extra: me,
-                          ),
+                          onTap:
+                              () => context.pushNamed(
+                                'member',
+                                pathParameters: {'memberPk': me.pk.toString()},
+                                extra: me,
+                              ),
                         ),
                       ),
                     ),
@@ -110,8 +106,8 @@ class MenuDrawer extends StatelessWidget {
                           begin: FractionalOffset.bottomCenter,
                           end: FractionalOffset.topCenter,
                           colors: [
-                            Colors.black.withOpacity(0.8),
-                            Colors.transparent
+                            Colors.black.withValues(alpha: 0.8),
+                            Colors.transparent,
                           ],
                         ),
                       ),
@@ -136,10 +132,7 @@ class MenuDrawer extends StatelessWidget {
                           ),
                           borderRadius: BorderRadius.circular(40),
                           boxShadow: const [
-                            BoxShadow(
-                              offset: Offset(1, 2),
-                              blurRadius: 8,
-                            ),
+                            BoxShadow(offset: Offset(1, 2), blurRadius: 8),
                           ],
                         ),
                       ),
@@ -195,8 +188,9 @@ class MenuDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Groups'),
             leading: const Icon(Icons.groups),
-            selected:
-                GoRouterState.of(context).uri.toString().startsWith('/groups'),
+            selected: GoRouterState.of(
+              context,
+            ).uri.toString().startsWith('/groups'),
             onTap: () {
               if (GoRouterState.of(context).uri.toString() == '/groups') {
                 Navigator.of(context).pop();
@@ -220,7 +214,8 @@ class MenuDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Thabloids'),
             leading: const Icon(Icons.article_outlined),
-            selected: GoRouterState.of(context).uri.toString() ==
+            selected:
+                GoRouterState.of(context).uri.toString() ==
                 '/thabloid/thabloids',
             onTap: () {
               if (GoRouterState.of(context).uri.toString() ==
@@ -260,13 +255,13 @@ class MenuDrawer extends StatelessWidget {
             ListTile(
               title: const Text('T.O.S.T.I.'),
               leading: const Icon(Icons.breakfast_dining),
-              selected:
-                  GoRouterState.of(context).uri.toString().startsWith('/tosti'),
+              selected: GoRouterState.of(
+                context,
+              ).uri.toString().startsWith('/tosti'),
               onTap: () {
-                if (GoRouterState.of(context)
-                    .uri
-                    .toString()
-                    .startsWith('/tosti')) {
+                if (GoRouterState.of(
+                  context,
+                ).uri.toString().startsWith('/tosti')) {
                   Navigator.of(context).pop();
                 } else {
                   _goTo(context, 'tosti');

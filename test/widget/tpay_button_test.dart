@@ -18,13 +18,18 @@ void main() {
       final payCompleter = Completer<void>();
 
       final paymentUserCubit = MockPaymentUserCubit();
-      final streamController = StreamController<PaymentUserState>.broadcast()
-        ..stream.listen((state) {
-          when(paymentUserCubit.state).thenReturn(state);
-        })
-        ..add(const PaymentUserState.loading())
-        ..add(const PaymentUserState.result(
-            user: PaymentUser('0.00', true, true), payments: []));
+      final streamController =
+          StreamController<PaymentUserState>.broadcast()
+            ..stream.listen((state) {
+              when(paymentUserCubit.state).thenReturn(state);
+            })
+            ..add(const PaymentUserState.loading())
+            ..add(
+              const PaymentUserState.result(
+                user: PaymentUser('0.00', true, true),
+                payments: [],
+              ),
+            );
 
       when(paymentUserCubit.load()).thenAnswer((_) => Future.value(null));
       when(paymentUserCubit.stream).thenAnswer((_) => streamController.stream);
@@ -71,13 +76,18 @@ void main() {
       final payCompleter = Completer<void>();
 
       final paymentUserCubit = MockPaymentUserCubit();
-      final streamController = StreamController<PaymentUserState>.broadcast()
-        ..stream.listen((state) {
-          when(paymentUserCubit.state).thenReturn(state);
-        })
-        ..add(const PaymentUserState.loading())
-        ..add(const PaymentUserState.result(
-            user: PaymentUser('0.00', true, true), payments: []));
+      final streamController =
+          StreamController<PaymentUserState>.broadcast()
+            ..stream.listen((state) {
+              when(paymentUserCubit.state).thenReturn(state);
+            })
+            ..add(const PaymentUserState.loading())
+            ..add(
+              const PaymentUserState.result(
+                user: PaymentUser('0.00', true, true),
+                payments: [],
+              ),
+            );
 
       when(paymentUserCubit.load()).thenAnswer((_) => Future.value(null));
       when(paymentUserCubit.stream).thenAnswer((_) => streamController.stream);
@@ -121,13 +131,18 @@ void main() {
 
     testWidgets('displays snackbar on exception', (WidgetTester tester) async {
       final paymentUserCubit = MockPaymentUserCubit();
-      final streamController = StreamController<PaymentUserState>.broadcast()
-        ..stream.listen((state) {
-          when(paymentUserCubit.state).thenReturn(state);
-        })
-        ..add(const PaymentUserState.loading())
-        ..add(const PaymentUserState.result(
-            user: PaymentUser('0.00', true, true), payments: []));
+      final streamController =
+          StreamController<PaymentUserState>.broadcast()
+            ..stream.listen((state) {
+              when(paymentUserCubit.state).thenReturn(state);
+            })
+            ..add(const PaymentUserState.loading())
+            ..add(
+              const PaymentUserState.result(
+                user: PaymentUser('0.00', true, true),
+                payments: [],
+              ),
+            );
 
       when(paymentUserCubit.load()).thenAnswer((_) => Future.value(null));
       when(paymentUserCubit.stream).thenAnswer((_) => streamController.stream);
@@ -164,13 +179,18 @@ void main() {
 
     testWidgets('provides tooltips when disabled', (WidgetTester tester) async {
       final paymentUserCubit = MockPaymentUserCubit();
-      final streamController = StreamController<PaymentUserState>.broadcast()
-        ..stream.listen((state) {
-          when(paymentUserCubit.state).thenReturn(state);
-        })
-        ..add(const PaymentUserState.loading())
-        ..add(const PaymentUserState.result(
-            user: PaymentUser('0.00', false, false), payments: []));
+      final streamController =
+          StreamController<PaymentUserState>.broadcast()
+            ..stream.listen((state) {
+              when(paymentUserCubit.state).thenReturn(state);
+            })
+            ..add(const PaymentUserState.loading())
+            ..add(
+              const PaymentUserState.result(
+                user: PaymentUser('0.00', false, false),
+                payments: [],
+              ),
+            );
 
       when(paymentUserCubit.load()).thenAnswer((_) => Future.value(null));
       when(paymentUserCubit.stream).thenAnswer((_) => streamController.stream);
@@ -205,8 +225,12 @@ void main() {
         findsOneWidget,
       );
 
-      streamController.add(const PaymentUserState.result(
-          user: PaymentUser('0.00', true, false), payments: []));
+      streamController.add(
+        const PaymentUserState.result(
+          user: PaymentUser('0.00', true, false),
+          payments: [],
+        ),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('THALIA PAY: €13.37'));
@@ -222,8 +246,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Confirm payment'), findsNothing);
 
-      streamController.add(const PaymentUserState.failure(
-          message: 'An unknown error occurred.'));
+      streamController.add(
+        const PaymentUserState.failure(message: 'An unknown error occurred.'),
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.text('THALIA PAY: €13.37'));
       await tester.pumpAndSettle();

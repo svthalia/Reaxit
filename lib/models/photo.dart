@@ -16,16 +16,8 @@ class CoverPhoto {
   String get medium => file.medium;
   String get large => file.large;
 
-  CoverPhoto copyWith({
-    int? pk,
-    int? rotation,
-    Photo? file,
-  }) =>
-      CoverPhoto(
-        pk ?? this.pk,
-        rotation ?? this.rotation,
-        file ?? this.file,
-      );
+  CoverPhoto copyWith({int? pk, int? rotation, Photo? file}) =>
+      CoverPhoto(pk ?? this.pk, rotation ?? this.rotation, file ?? this.file);
 
   const CoverPhoto(this.pk, this.rotation, this.file);
 
@@ -45,17 +37,21 @@ class AlbumPhoto extends CoverPhoto {
     Photo? file,
     bool? liked,
     int? numLikes,
-  }) =>
-      AlbumPhoto(
-        pk ?? this.pk,
-        rotation ?? this.rotation,
-        file ?? this.file,
-        liked ?? this.liked,
-        numLikes ?? this.numLikes,
-      );
+  }) => AlbumPhoto(
+    pk ?? this.pk,
+    rotation ?? this.rotation,
+    file ?? this.file,
+    liked ?? this.liked,
+    numLikes ?? this.numLikes,
+  );
 
   const AlbumPhoto(
-      super.pk, super.rotation, super.file, this.liked, this.numLikes);
+    super.pk,
+    super.rotation,
+    super.file,
+    this.liked,
+    this.numLikes,
+  );
 
   factory AlbumPhoto.fromJson(Map<String, dynamic> json) =>
       _$AlbumPhotoFromJson(json);

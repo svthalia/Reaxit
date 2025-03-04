@@ -12,141 +12,137 @@ import '../test/mocks.mocks.dart';
 
 void testLogin() {
   group('LoginScreen', () {
-    testWidgets(
-      'lets you log in and logging in redirects to WelcomeScreen',
-      (tester) async {
-        // Setup mock.
-        final authCubit = MockAuthCubit();
-        final streamController = StreamController<AuthState>.broadcast()
-          ..stream.listen((state) {
-            when(authCubit.state).thenReturn(state);
-          })
-          ..add(LoadingAuthState())
-          ..add(const LoggedOutAuthState());
+    testWidgets('lets you log in and logging in redirects to WelcomeScreen', (
+      tester,
+    ) async {
+      // Setup mock.
+      final authCubit = MockAuthCubit();
+      final streamController =
+          StreamController<AuthState>.broadcast()
+            ..stream.listen((state) {
+              when(authCubit.state).thenReturn(state);
+            })
+            ..add(LoadingAuthState())
+            ..add(const LoggedOutAuthState());
 
-        when(authCubit.load()).thenAnswer((_) => Future.value(null));
-        when(authCubit.stream).thenAnswer((_) => streamController.stream);
+      when(authCubit.load()).thenAnswer((_) => Future.value(null));
+      when(authCubit.stream).thenAnswer((_) => streamController.stream);
 
-        // Start app.
-        app.testingMain(authCubit, null);
-        await tester.pumpAndSettle();
-        await Future.delayed(const Duration(seconds: 1));
-        await tester.pumpAndSettle();
+      // Start app.
+      app.testingMain(authCubit, null);
+      await tester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
 
-        expect(find.text('LOG IN - STAGING'), findsOneWidget);
-        await tester.tap(find.text('LOG IN - STAGING'));
+      expect(find.text('LOG IN - STAGING'), findsOneWidget);
+      await tester.tap(find.text('LOG IN - STAGING'));
 
-        streamController.add(LoadingAuthState());
+      streamController.add(LoadingAuthState());
 
-        await tester.pump();
-        expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      await tester.pump();
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
-        final api = MockApiRepository();
-        when(api.config).thenReturn(Config.testing);
-        throwOnMissingStub(
-          api,
-          exceptionBuilder: (_) {
-            throw ApiException.unknownError;
-          },
-        );
+      final api = MockApiRepository();
+      when(api.config).thenReturn(Config.testing);
+      throwOnMissingStub(
+        api,
+        exceptionBuilder: (_) {
+          throw ApiException.unknownError;
+        },
+      );
 
-        final loggedInState = LoggedInAuthState(apiRepository: api);
-        streamController.add(loggedInState);
+      final loggedInState = LoggedInAuthState(apiRepository: api);
+      streamController.add(loggedInState);
 
-        await tester.pumpAndSettle();
+      await tester.pumpAndSettle();
 
-        expect(find.text('WELCOME'), findsOneWidget);
-      },
-    );
+      expect(find.text('WELCOME'), findsOneWidget);
+    });
 
-    testWidgets(
-      'is not shown when already logged in',
-      (tester) async {
-        // Setup signed-in AuthCubit.
-        final authCubit = MockAuthCubit();
-        final api = MockApiRepository();
-        when(api.config).thenReturn(Config.testing);
-        throwOnMissingStub(
-          api,
-          exceptionBuilder: (_) {
-            throw ApiException.unknownError;
-          },
-        );
+    testWidgets('is not shown when already logged in', (tester) async {
+      // Setup signed-in AuthCubit.
+      final authCubit = MockAuthCubit();
+      final api = MockApiRepository();
+      when(api.config).thenReturn(Config.testing);
+      throwOnMissingStub(
+        api,
+        exceptionBuilder: (_) {
+          throw ApiException.unknownError;
+        },
+      );
 
-        final streamController = StreamController<AuthState>.broadcast()
-          ..stream.listen((state) {
-            when(authCubit.state).thenReturn(state);
-          })
-          ..add(LoadingAuthState())
-          ..add(LoggedInAuthState(apiRepository: api));
+      final streamController =
+          StreamController<AuthState>.broadcast()
+            ..stream.listen((state) {
+              when(authCubit.state).thenReturn(state);
+            })
+            ..add(LoadingAuthState())
+            ..add(LoggedInAuthState(apiRepository: api));
 
-        when(authCubit.load()).thenAnswer((_) => Future.value(null));
-        when(authCubit.stream).thenAnswer((_) => streamController.stream);
+      when(authCubit.load()).thenAnswer((_) => Future.value(null));
+      when(authCubit.stream).thenAnswer((_) => streamController.stream);
 
-        // Start app.
-        app.testingMain(authCubit, null);
-        await tester.pumpAndSettle();
-        await Future.delayed(const Duration(seconds: 1));
-        await tester.pumpAndSettle();
+      // Start app.
+      app.testingMain(authCubit, null);
+      await tester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
 
-        expect(find.text('WELCOME'), findsOneWidget);
-      },
-    );
+      expect(find.text('WELCOME'), findsOneWidget);
+    });
 
-    testWidgets(
-      'is shown again after logging out',
-      (tester) async {
-        // Setup signed-in AuthCubit.
-        final authCubit = MockAuthCubit();
-        final api = MockApiRepository();
-        when(api.config).thenReturn(Config.testing);
-        throwOnMissingStub(
-          api,
-          exceptionBuilder: (_) {
-            throw ApiException.unknownError;
-          },
-        );
+    testWidgets('is shown again after logging out', (tester) async {
+      // Setup signed-in AuthCubit.
+      final authCubit = MockAuthCubit();
+      final api = MockApiRepository();
+      when(api.config).thenReturn(Config.testing);
+      throwOnMissingStub(
+        api,
+        exceptionBuilder: (_) {
+          throw ApiException.unknownError;
+        },
+      );
 
-        final streamController = StreamController<AuthState>.broadcast()
-          ..stream.listen((state) {
-            when(authCubit.state).thenReturn(state);
-          })
-          ..add(LoadingAuthState())
-          ..add(LoggedInAuthState(apiRepository: api));
+      final streamController =
+          StreamController<AuthState>.broadcast()
+            ..stream.listen((state) {
+              when(authCubit.state).thenReturn(state);
+            })
+            ..add(LoadingAuthState())
+            ..add(LoggedInAuthState(apiRepository: api));
 
-        when(authCubit.load()).thenAnswer((_) => Future.value(null));
-        when(authCubit.stream).thenAnswer((_) => streamController.stream);
+      when(authCubit.load()).thenAnswer((_) => Future.value(null));
+      when(authCubit.stream).thenAnswer((_) => streamController.stream);
 
-        when(authCubit.logOut()).thenAnswer((_) => Future.value(null));
+      when(authCubit.logOut()).thenAnswer((_) => Future.value(null));
 
-        // Start app.
-        app.testingMain(authCubit, null);
-        await tester.pumpAndSettle();
-        await Future.delayed(const Duration(seconds: 1));
-        await tester.pumpAndSettle();
+      // Start app.
+      app.testingMain(authCubit, null);
+      await tester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
 
-        await tester.tap(find.byIcon(Icons.menu));
-        await tester.pumpAndSettle();
-        await tester.tap(find.byIcon(Icons.settings));
-        await tester.pumpAndSettle();
-        await Future.delayed(const Duration(seconds: 1));
-        await tester.pumpAndSettle();
-        await tester.flingFrom(
-          const Offset(100, 250),
-          const Offset(0, -100),
-          200,
-        );
-        await tester.pumpAndSettle();
-        await tester.tap(find.byIcon(Icons.logout));
-        await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.menu));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.settings));
+      await tester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
+      await tester.flingFrom(
+        const Offset(100, 250),
+        const Offset(0, -100),
+        200,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.logout));
+      await tester.pumpAndSettle();
 
-        verify(authCubit.logOut()).called(1);
+      verify(authCubit.logOut()).called(1);
 
-        streamController.add(LoggedOutAuthState(apiRepository: api));
-        await tester.pumpAndSettle();
+      streamController.add(LoggedOutAuthState(apiRepository: api));
+      await tester.pumpAndSettle();
 
-        expect(find.text('LOG IN - STAGING'), findsOneWidget);
-      },
-    );
+      expect(find.text('LOG IN - STAGING'), findsOneWidget);
+    });
   });
 }

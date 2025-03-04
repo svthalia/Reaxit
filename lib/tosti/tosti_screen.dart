@@ -19,7 +19,7 @@ class TostiScreen extends StatelessWidget {
             'logout',
             Icons.logout,
             () => BlocProvider.of<TostiAuthCubit>(context).logOut(),
-          )
+          ),
         ],
       ),
       drawer: MenuDrawer(),
@@ -37,15 +37,19 @@ class TostiScreen extends StatelessWidget {
           // Show a snackbar when the user logs out or logging in fails.
           switch (state) {
             case LoggedOutTostiAuthState _:
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                behavior: SnackBarBehavior.floating,
-                content: Text('Logged out.'),
-              ));
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text('Logged out.'),
+                ),
+              );
             case FailureTostiAuthState(message: var message):
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                behavior: SnackBarBehavior.floating,
-                content: Text(message ?? 'Logging in failed.'),
-              ));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text(message ?? 'Logging in failed.'),
+                ),
+              );
             case _:
           }
         },
@@ -56,9 +60,8 @@ class TostiScreen extends StatelessWidget {
             return RepositoryProvider.value(
               value: state.apiRepository,
               child: BlocProvider(
-                create: (context) => TostiHomeCubit(
-                  state.apiRepository,
-                )..load(),
+                create:
+                    (context) => TostiHomeCubit(state.apiRepository)..load(),
                 child: const _SignedInTostiHomeView(),
               ),
             );
@@ -83,9 +86,9 @@ class TostiScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                   Center(
                     child: ElevatedButton(
-                      onPressed: () => BlocProvider.of<TostiAuthCubit>(
-                        context,
-                      ).logIn(),
+                      onPressed:
+                          () =>
+                              BlocProvider.of<TostiAuthCubit>(context).logIn(),
                       child: const Text('LOGIN'),
                     ),
                   ),
@@ -119,7 +122,7 @@ class _SignedInTostiHomeView extends StatelessWidget {
                     padding: EdgeInsets.all(32),
                     child: CircularProgressIndicator(),
                   ),
-                )
+                ),
               ];
             case ResultState(result: var result) when result.isEmpty:
               return const ErrorScrollView('There are no venues.');

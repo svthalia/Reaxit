@@ -42,9 +42,7 @@ class _ThabloidScreenState extends State<ThabloidScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ThaliaAppBar(
-        title: const Text('THABLOIDS'),
-      ),
+      appBar: ThaliaAppBar(title: const Text('THABLOIDS')),
       drawer: MenuDrawer(),
       body: BlocBuilder<ThabloidListCubit, ThabloidListState>(
         builder: (context, thabloidsState) {
@@ -81,11 +79,12 @@ class ThabloidsScrollView extends StatelessWidget {
   final ThabloidListState thabloidState;
   final List<Thabloid> thabloids;
 
-  ThabloidsScrollView(
-      {super.key,
-      required this.controller,
-      required this.thabloidState,
-      required this.thabloids});
+  ThabloidsScrollView({
+    super.key,
+    required this.controller,
+    required this.thabloidState,
+    required this.thabloids,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -100,8 +99,10 @@ class ThabloidsScrollView extends StatelessWidget {
             ),
             slivers: [
               SliverPadding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 sliver: SliverGrid(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,

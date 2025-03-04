@@ -36,9 +36,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
     final messenger = ScaffoldMessenger.of(context);
     try {
       final host = Config.of(context).host;
-      await Share.share(
-        'https://$host/members/photos/${widget.slug}/',
-      );
+      await Share.share('https://$host/members/photos/${widget.slug}/');
     } catch (_) {
       messenger.showSnackBar(
         const SnackBar(
@@ -70,7 +68,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
                   Icons.adaptive.share,
                   () => _shareAlbum(context),
                   tooltip: 'share album',
-                )
+                ),
               ],
             ),
             body: body,
@@ -91,7 +89,7 @@ class _PhotoGrid extends StatelessWidget {
     showDialog(
       context: context,
       useSafeArea: false,
-      barrierColor: Colors.black.withOpacity(0.92),
+      barrierColor: Colors.black.withValues(alpha: 0.92),
       builder: (context) {
         return BlocProvider.value(
           value: cubit,
@@ -124,10 +122,11 @@ class _PhotoGrid extends StatelessWidget {
         itemCount: photos.length,
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(8),
-        itemBuilder: (context, index) => PhotoTile(
-          photo: photos[index],
-          openGallery: () => _openGallery(context, index),
-        ),
+        itemBuilder:
+            (context, index) => PhotoTile(
+              photo: photos[index],
+              openGallery: () => _openGallery(context, index),
+            ),
       ),
     );
   }

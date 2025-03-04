@@ -6,8 +6,11 @@ import 'package:flutter/material.dart';
 class MultiSelectPopup extends StatelessWidget {
   final Filter filter;
   final String title;
-  const MultiSelectPopup(
-      {super.key, required this.filter, required this.title});
+  const MultiSelectPopup({
+    super.key,
+    required this.filter,
+    required this.title,
+  });
 
   // this function is called when the Cancel button is pressed
   void _cancel(BuildContext context) {
@@ -23,9 +26,7 @@ class MultiSelectPopup extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(title.toUpperCase()),
-      content: FilterWidget(
-        filter: filter,
-      ),
+      content: FilterWidget(filter: filter),
       actions: [
         TextButton(
           onPressed: () => _cancel(context),
@@ -63,22 +64,25 @@ class _FilterWidgetState extends State<FilterWidget> {
     List<FilterType> types = filter.getFilters();
     return SingleChildScrollView(
       child: ListBody(
-        children: types
-            .whereNot((element) => element.hidden)
-            .map(
-              (type) =>
-                  [Text(type.title), const Divider()].followedBy(type.items.map(
-                // ignore: unnecessary_cast
-                (item) => CheckboxListTile(
-                  value: item.value,
-                  title: Text(item.title),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  onChanged: (isSet) => setState(() => item.onChanged(isSet)),
-                ),
-              )),
-            )
-            .flattened
-            .toList(),
+        children:
+            types
+                .whereNot((element) => element.hidden)
+                .map(
+                  (type) => [Text(type.title), const Divider()].followedBy(
+                    type.items.map(
+                      // ignore: unnecessary_cast
+                      (item) => CheckboxListTile(
+                        value: item.value,
+                        title: Text(item.title),
+                        controlAffinity: ListTileControlAffinity.leading,
+                        onChanged:
+                            (isSet) => setState(() => item.onChanged(isSet)),
+                      ),
+                    ),
+                  ),
+                )
+                .flattened
+                .toList(),
       ),
     );
   }
@@ -118,24 +122,29 @@ class MapFilter<K, E> implements Filter<E> {
   final K Function(E) toKey;
   final bool disabled;
 
-  const MapFilter(
-      {required this.map,
-      required this.title,
-      required this.asString,
-      required this.toKey,
-      this.disabled = false});
+  const MapFilter({
+    required this.map,
+    required this.title,
+    required this.asString,
+    required this.toKey,
+    this.disabled = false,
+  });
 
   @override
   List<FilterType> getFilters() {
     return [
       FilterType(
         title: title,
-        items: map.keys
-            .map((item) => FilterItem(
-                title: asString(item),
-                value: map[item]!,
-                onChanged: (isChecked) => map[item] = isChecked!))
-            .toList(),
+        items:
+            map.keys
+                .map(
+                  (item) => FilterItem(
+                    title: asString(item),
+                    value: map[item]!,
+                    onChanged: (isChecked) => map[item] = isChecked!,
+                  ),
+                )
+                .toList(),
         hidden: disabled,
       ),
     ];
@@ -163,14 +172,20 @@ class FilterItem {
   final bool value;
   final Function(bool?) onChanged;
 
-  const FilterItem(
-      {required this.title, required this.value, required this.onChanged});
+  const FilterItem({
+    required this.title,
+    required this.value,
+    required this.onChanged,
+  });
 }
 
 class FilterType {
   final bool hidden;
   final String title;
   final List<FilterItem> items;
-  const FilterType(
-      {required this.items, required this.title, this.hidden = false});
+  const FilterType({
+    required this.items,
+    required this.title,
+    this.hidden = false,
+  });
 }

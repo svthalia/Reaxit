@@ -15,9 +15,12 @@ class IconAppbarAction extends AppbarAction {
   final IconData icon;
   final void Function() onpressed;
 
-  const IconAppbarAction(this.text, this.icon, this.onpressed,
-      {String? tooltip})
-      : tooltip = tooltip ?? text;
+  const IconAppbarAction(
+    this.text,
+    this.icon,
+    this.onpressed, {
+    String? tooltip,
+  }) : tooltip = tooltip ?? text;
 
   @override
   Widget asIcon(BuildContext _) {
@@ -33,8 +36,10 @@ class IconAppbarAction extends AppbarAction {
   Widget asMenuItem(BuildContext context, Function() callback) {
     return MenuItemButton(
       style: ButtonStyle(
-          textStyle: WidgetStateTextStyle.resolveWith(
-              (states) => Theme.of(context).textTheme.labelLarge!)),
+        textStyle: WidgetStateTextStyle.resolveWith(
+          (states) => Theme.of(context).textTheme.labelLarge!,
+        ),
+      ),
       onPressed: () {
         onpressed();
         callback();
@@ -77,17 +82,16 @@ class ThaliaAppBar extends AppBar {
       MenuAnchor(
         alignmentOffset: const Offset(0, -1),
         controller: controller,
-        menuChildren: widgets
-            .skip(defaultIcons - 1)
-            .map(
-              (item) => _MenuAction(item, controller.close),
-            )
-            .toList(),
+        menuChildren:
+            widgets
+                .skip(defaultIcons - 1)
+                .map((item) => _MenuAction(item, controller.close))
+                .toList(),
         child: IconButton(
           onPressed: controller.open,
           icon: const Icon(Icons.more_vert),
         ),
-      )
+      ),
     ];
   }
 
@@ -97,22 +101,23 @@ class ThaliaAppBar extends AppBar {
     super.leading,
     PreferredSizeWidget? bottom,
   }) : super(
-          actions: collapse(collapsingActions),
-          systemOverlayStyle: SystemUiOverlayStyle.light,
-          // surfaceTintColor: Colors.transparent,
-          // The bottom decoration only needs to be shown
-          // in dark mode, but is invisible in light mode,
-          // so we can just leave it there.
-          bottom: bottom ??
-              PreferredSize(
-                preferredSize: const Size.fromHeight(0),
-                child: Container(
-                  decoration: const BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(color: magenta, width: 2.0),
-                    ),
-                  ),
-                ),
-              ),
-        );
+         actions: collapse(collapsingActions),
+         systemOverlayStyle: SystemUiOverlayStyle.light,
+         // surfaceTintColor: Colors.transparent,
+         // The bottom decoration only needs to be shown
+         // in dark mode, but is invisible in light mode,
+         // so we can just leave it there.
+         bottom:
+             bottom ??
+             PreferredSize(
+               preferredSize: const Size.fromHeight(0),
+               child: Container(
+                 decoration: const BoxDecoration(
+                   border: Border(
+                     bottom: BorderSide(color: magenta, width: 2.0),
+                   ),
+                 ),
+               ),
+             ),
+       );
 }

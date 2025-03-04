@@ -10,7 +10,7 @@ enum RegistrationStatus {
   registered,
   inQueue,
   cancelled,
-  lateCancelled
+  lateCancelled,
 }
 
 abstract class BaseEvent {

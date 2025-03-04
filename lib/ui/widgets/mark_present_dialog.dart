@@ -7,10 +7,8 @@ class MarkPresentDialog extends StatefulWidget {
   final int pk;
   final String token;
 
-  MarkPresentDialog({
-    required this.pk,
-    required this.token,
-  }) : super(key: ValueKey(pk));
+  MarkPresentDialog({required this.pk, required this.token})
+    : super(key: ValueKey(pk));
 
   @override
   State<MarkPresentDialog> createState() => _MarkPresentDialogState();
@@ -40,17 +38,17 @@ class _MarkPresentDialogState extends State<MarkPresentDialog> {
       builder: (context, state) {
         late final Widget content = switch (state) {
           FailureMarkPresentState(message: var message) => Text(
-              message,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+            message,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
           LoadingMarkPresentState _ => const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [CircularProgressIndicator()],
-            ),
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [CircularProgressIndicator()],
+          ),
           SuccessMarkPresentState(message: var message) => Text(
-              message,
-              style: Theme.of(context).textTheme.bodyMedium,
-            )
+            message,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
         };
 
         return AlertDialog(
@@ -61,10 +59,7 @@ class _MarkPresentDialogState extends State<MarkPresentDialog> {
           ),
           actions: [
             TextButton.icon(
-              onPressed: () => Navigator.of(
-                context,
-                rootNavigator: true,
-              ).pop(),
+              onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
               icon: const Icon(Icons.clear),
               label: const Text('CLOSE'),
             ),

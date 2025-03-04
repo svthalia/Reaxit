@@ -40,7 +40,8 @@ class TostiShiftScreen extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               } else {
                 final shift = state.shift!;
-                final time = '${timeFormatter.format(shift.start.toLocal())}'
+                final time =
+                    '${timeFormatter.format(shift.start.toLocal())}'
                     ' - ${timeFormatter.format(shift.end.toLocal())}';
 
                 final header = SliverToBoxAdapter(
@@ -71,8 +72,10 @@ class TostiShiftScreen extends StatelessWidget {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text('TIME',
-                                            style: textTheme.bodySmall),
+                                        Text(
+                                          'TIME',
+                                          style: textTheme.bodySmall,
+                                        ),
                                         const SizedBox(height: 4),
                                         Text(time, style: textTheme.titleSmall),
                                       ],
@@ -97,12 +100,14 @@ class TostiShiftScreen extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
                               const SizedBox(height: 12),
-                              Text('AT YOUR SERVICE',
-                                  style: textTheme.bodySmall),
+                              Text(
+                                'AT YOUR SERVICE',
+                                style: textTheme.bodySmall,
+                              ),
                               const SizedBox(height: 4),
                               Text(
                                 shift.assignees.isNotEmpty
@@ -156,28 +161,23 @@ class TostiShiftScreen extends StatelessWidget {
                   );
                 } else {
                   orderList = SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final int itemIndex = index ~/ 2;
-                        if (index.isEven) {
-                          return _OrderTile(
-                            index: itemIndex,
-                            order: state.orders![itemIndex],
-                          );
-                        } else {
-                          return const Divider(height: 0);
-                        }
-                      },
-                      childCount: state.orders!.length * 2,
-                    ),
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final int itemIndex = index ~/ 2;
+                      if (index.isEven) {
+                        return _OrderTile(
+                          index: itemIndex,
+                          order: state.orders![itemIndex],
+                        );
+                      } else {
+                        return const Divider(height: 0);
+                      }
+                    }, childCount: state.orders!.length * 2),
                   );
                 }
 
                 return RefreshIndicator(
                   onRefresh: () => cubit.load(id),
-                  child: CustomScrollView(
-                    slivers: [header, orderList],
-                  ),
+                  child: CustomScrollView(slivers: [header, orderList]),
                 );
               }
             },
@@ -208,67 +208,67 @@ class _OrderButtons extends StatelessWidget {
       (o) => !o.product.ignoreShiftRestrictions,
     );
 
-    final buttons = products.map<Widget>((product) {
-      String? tooltip;
-      if (shift.maxOrdersTotal == shift.amountOfOrders) {
-        tooltip = 'This shift is full.';
-      } else if (restrictedUserOrders.length >= shift.maxOrdersPerUser) {
-        tooltip = 'Max. orders in this shift reached.';
-      } else {
-        final userProductOrders = userOrders.where(
-          (o) => o.product.id == product.id,
-        );
-        if (product.maxAllowedPerShift != null &&
-            userProductOrders.length >= product.maxAllowedPerShift!) {
-          tooltip = 'Max. orders for this product reached.';
-        }
-      }
+    final buttons =
+        products.map<Widget>((product) {
+          String? tooltip;
+          if (shift.maxOrdersTotal == shift.amountOfOrders) {
+            tooltip = 'This shift is full.';
+          } else if (restrictedUserOrders.length >= shift.maxOrdersPerUser) {
+            tooltip = 'Max. orders in this shift reached.';
+          } else {
+            final userProductOrders = userOrders.where(
+              (o) => o.product.id == product.id,
+            );
+            if (product.maxAllowedPerShift != null &&
+                userProductOrders.length >= product.maxAllowedPerShift!) {
+              tooltip = 'Max. orders for this product reached.';
+            }
+          }
 
-      if (tooltip != null) {
-        return Padding(
-          key: ValueKey(product.id),
-          padding: const EdgeInsets.only(left: 16),
-          child: Tooltip(
-            message: tooltip,
-            child: ElevatedButton(
-              onPressed: null,
-              child: Text('${product.name} (€${product.currentPrice})'),
-            ),
-          ),
-        );
-      } else {
-        return Padding(
-          key: ValueKey(product.id),
-          padding: const EdgeInsets.only(left: 16),
-          child: ElevatedButton(
-            onPressed: () async {
-              final messenger = ScaffoldMessenger.of(context);
-              try {
-                await BlocProvider.of<TostiShiftCubit>(
-                  context,
-                ).order(shift.id, product);
-              } on ApiException catch (_) {
-                messenger.showSnackBar(const SnackBar(
-                  behavior: SnackBarBehavior.floating,
-                  content: Text('Could not place your order.'),
-                ));
-              }
-            },
-            child: Text('${product.name} (€${product.currentPrice})'),
-          ),
-        );
-      }
-    }).toList();
+          if (tooltip != null) {
+            return Padding(
+              key: ValueKey(product.id),
+              padding: const EdgeInsets.only(left: 16),
+              child: Tooltip(
+                message: tooltip,
+                child: ElevatedButton(
+                  onPressed: null,
+                  child: Text('${product.name} (€${product.currentPrice})'),
+                ),
+              ),
+            );
+          } else {
+            return Padding(
+              key: ValueKey(product.id),
+              padding: const EdgeInsets.only(left: 16),
+              child: ElevatedButton(
+                onPressed: () async {
+                  final messenger = ScaffoldMessenger.of(context);
+                  try {
+                    await BlocProvider.of<TostiShiftCubit>(
+                      context,
+                    ).order(shift.id, product);
+                  } on ApiException catch (_) {
+                    messenger.showSnackBar(
+                      const SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: Text('Could not place your order.'),
+                      ),
+                    );
+                  }
+                },
+                child: Text('${product.name} (€${product.currentPrice})'),
+              ),
+            );
+          }
+        }).toList();
 
     return Row(children: buttons + [const SizedBox(width: 16)]);
   }
 }
 
 class _OrderTile extends StatelessWidget {
-  const _OrderTile({
-    required this.index,
-    required this.order,
-  });
+  const _OrderTile({required this.index, required this.order});
 
   final int index;
   final TostiOrder order;
@@ -298,13 +298,14 @@ class _OrderTile extends StatelessWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
-      subtitle: order.user != null
-          ? Text(
-              order.user!.displayName,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            )
-          : null,
+      subtitle:
+          order.user != null
+              ? Text(
+                order.user!.displayName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              )
+              : null,
       leading: Text('${index + 1}.'),
       minLeadingWidth: 24,
       trailing: Row(

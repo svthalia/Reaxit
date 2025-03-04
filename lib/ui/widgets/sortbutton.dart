@@ -23,29 +23,37 @@ class SortButton<T> extends StatelessWidget implements AppbarAction {
     return MenuAnchor(
       alignmentOffset: const Offset(0, -1),
       controller: controller,
-      menuChildren: items
-          .map((item) => MenuItemButton(
-                child: Row(
-                  children: [
-                    if (item.icon != null) Icon(item.icon!),
-                    Text(item.text.toUpperCase()),
-                  ],
+      menuChildren:
+          items
+              .map(
+                (item) => MenuItemButton(
+                  child: Row(
+                    children: [
+                      if (item.icon != null) Icon(item.icon!),
+                      Text(item.text.toUpperCase()),
+                    ],
+                  ),
+                  onPressed: () => callback(item.value),
                 ),
-                onPressed: () => callback(item.value),
-              ))
-          .toList(),
-      child: issub
-          ? MenuItemButton(
-              closeOnActivate: false,
-              style: ButtonStyle(
+              )
+              .toList(),
+      child:
+          issub
+              ? MenuItemButton(
+                closeOnActivate: false,
+                style: ButtonStyle(
                   textStyle: WidgetStateTextStyle.resolveWith(
-                      (states) => Theme.of(context).textTheme.labelLarge!)),
-              onPressed: controller.open,
-              leadingIcon: const Icon(Icons.sort),
-              child: const Text('SORT'),
-            )
-          : IconButton(
-              onPressed: controller.open, icon: const Icon(Icons.sort)),
+                    (states) => Theme.of(context).textTheme.labelLarge!,
+                  ),
+                ),
+                onPressed: controller.open,
+                leadingIcon: const Icon(Icons.sort),
+                child: const Text('SORT'),
+              )
+              : IconButton(
+                onPressed: controller.open,
+                icon: const Icon(Icons.sort),
+              ),
     );
   }
 

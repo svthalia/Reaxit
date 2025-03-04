@@ -16,11 +16,5 @@ class Thabloid {
       _$ThabloidFromJson(json);
   Map<String, dynamic> toJson() => _$ThabloidToJson(this);
 
-  const Thabloid(
-    this.pk,
-    this.year,
-    this.issue,
-    this.cover,
-    this.file,
-  );
+  const Thabloid(this.pk, this.year, this.issue, this.cover, this.file);
 }

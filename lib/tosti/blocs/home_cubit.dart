@@ -27,19 +27,23 @@ class TostiHomeCubit extends Cubit<TostiHomeState> {
       final playersResponse = await playersFuture;
       final shiftsResponse = await shiftsFuture;
 
-      final venues = venuesResponse.results.map((final venue) {
-        final shift = shiftsResponse.results.firstWhereOrNull(
-          (final shift) => shift.venue.venue.id == venue.id,
-        );
+      final venues =
+          venuesResponse.results
+              .map((final venue) {
+                final shift = shiftsResponse.results.firstWhereOrNull(
+                  (final shift) => shift.venue.venue.id == venue.id,
+                );
 
-        return shift != null ? venue.copyWithShift(shift) : venue;
-      }).map((final venue) {
-        final player = playersResponse.results.firstWhereOrNull(
-          (final player) => player.venue == venue.id,
-        );
+                return shift != null ? venue.copyWithShift(shift) : venue;
+              })
+              .map((final venue) {
+                final player = playersResponse.results.firstWhereOrNull(
+                  (final player) => player.venue == venue.id,
+                );
 
-        return player != null ? venue.copyWithPlayer(player) : venue;
-      }).toList();
+                return player != null ? venue.copyWithPlayer(player) : venue;
+              })
+              .toList();
 
       emit(ResultState(venues));
     } on ApiException catch (exception) {

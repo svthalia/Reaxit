@@ -23,8 +23,9 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthCubit, AuthState>(
-      buildWhen: (previous, current) =>
-          current is LoggedOutAuthState || current is LoadingAuthState,
+      buildWhen:
+          (previous, current) =>
+              current is LoggedOutAuthState || current is LoadingAuthState,
       builder: (context, authState) {
         if (authState is LoggedOutAuthState) {
           return Scaffold(
@@ -61,8 +62,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             foregroundColor: Colors.white,
                           ),
                           onPressed: () {
-                            BlocProvider.of<AuthCubit>(context)
-                                .logIn(authState.selectedEnvironment);
+                            BlocProvider.of<AuthCubit>(
+                              context,
+                            ).logIn(authState.selectedEnvironment);
                           },
                           child: Text(switch (authState.selectedEnvironment) {
                             Environment.production => 'LOG IN',
@@ -113,55 +115,59 @@ class SelectEnvironmentDialog extends StatelessWidget {
       content: BlocBuilder<AuthCubit, AuthState>(
         buildWhen: (previous, current) => current is LoggedOutAuthState,
         builder: (context, state) {
-          final selectedEnvironment = state is LoggedOutAuthState
-              ? state.selectedEnvironment
-              : Environment.defaultEnvironment;
-          return Column(mainAxisSize: MainAxisSize.min, children: [
-            Text(
-              'Select an alternative server to log in to. '
-              'If you are not sure you need this, just use production.',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 12),
-            const Divider(height: 0),
-            if (Config.production != null)
+          final selectedEnvironment =
+              state is LoggedOutAuthState
+                  ? state.selectedEnvironment
+                  : Environment.defaultEnvironment;
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Select an alternative server to log in to. '
+                'If you are not sure you need this, just use production.',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 12),
+              const Divider(height: 0),
+              if (Config.production != null)
+                RadioListTile(
+                  title: const Text('PRODUCTION'),
+                  subtitle: const Text('Default: thalia.nu'),
+                  value: Environment.production,
+                  groupValue: selectedEnvironment,
+                  onChanged: (environment) {
+                    BlocProvider.of<AuthCubit>(
+                      context,
+                    ).selectEnvironment(Environment.production);
+                  },
+                ),
               RadioListTile(
-                title: const Text('PRODUCTION'),
-                subtitle: const Text('Default: thalia.nu'),
-                value: Environment.production,
+                title: const Text('STAGING'),
+                value: Environment.staging,
+                subtitle: const Text(
+                  'Used by the Technicie for testing: staging.thalia.nu',
+                ),
                 groupValue: selectedEnvironment,
                 onChanged: (environment) {
-                  BlocProvider.of<AuthCubit>(context).selectEnvironment(
-                    Environment.production,
-                  );
+                  BlocProvider.of<AuthCubit>(
+                    context,
+                  ).selectEnvironment(Environment.staging);
                 },
               ),
-            RadioListTile(
-              title: const Text('STAGING'),
-              value: Environment.staging,
-              subtitle: const Text(
-                'Used by the Technicie for testing: staging.thalia.nu',
-              ),
-              groupValue: selectedEnvironment,
-              onChanged: (environment) {
-                BlocProvider.of<AuthCubit>(context).selectEnvironment(
-                  Environment.staging,
-                );
-              },
-            ),
-            if (Config.local != null)
-              RadioListTile(
-                title: const Text('LOCAL'),
-                subtitle: const Text('You should know what you are doing.'),
-                value: Environment.local,
-                groupValue: selectedEnvironment,
-                onChanged: (environment) {
-                  BlocProvider.of<AuthCubit>(context).selectEnvironment(
-                    Environment.local,
-                  );
-                },
-              ),
-          ]);
+              if (Config.local != null)
+                RadioListTile(
+                  title: const Text('LOCAL'),
+                  subtitle: const Text('You should know what you are doing.'),
+                  value: Environment.local,
+                  groupValue: selectedEnvironment,
+                  onChanged: (environment) {
+                    BlocProvider.of<AuthCubit>(
+                      context,
+                    ).selectEnvironment(Environment.local);
+                  },
+                ),
+            ],
+          );
         },
       ),
       actions: [
@@ -170,7 +176,7 @@ class SelectEnvironmentDialog extends StatelessWidget {
             Navigator.of(context).pop();
           },
           child: const Text('CLOSE'),
-        )
+        ),
       ],
     );
   }

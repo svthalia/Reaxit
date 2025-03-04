@@ -13,8 +13,9 @@ import '../mocks.mocks.dart';
 
 void main() {
   group('WelcomeScreen', () {
-    testWidgets('Displays normal and partner events',
-        (WidgetTester tester) async {
+    testWidgets('Displays normal and partner events', (
+      WidgetTester tester,
+    ) async {
       final normalEvent = Event(
         1,
         'Lorem 1',
@@ -55,17 +56,19 @@ void main() {
       );
 
       final state = WelcomeState.result(
-          slides: const [],
-          articles: const [],
-          upcomingEvents: [normalEvent, partnerEvent]);
+        slides: const [],
+        articles: const [],
+        upcomingEvents: [normalEvent, partnerEvent],
+      );
 
       final cubit = MockWelcomeCubit();
-      final streamController = StreamController<WelcomeState>.broadcast()
-        ..stream.listen((state) {
-          when(cubit.state).thenReturn(state);
-        })
-        ..add(const WelcomeState.loading())
-        ..add(state);
+      final streamController =
+          StreamController<WelcomeState>.broadcast()
+            ..stream.listen((state) {
+              when(cubit.state).thenReturn(state);
+            })
+            ..add(const WelcomeState.loading())
+            ..add(state);
 
       when(cubit.load()).thenAnswer((_) => Future.value(null));
       when(cubit.stream).thenAnswer((_) => streamController.stream);
@@ -75,10 +78,11 @@ void main() {
           home: InheritedConfig(
             config: Config.defaultConfig,
             child: Scaffold(
-                body: BlocProvider<WelcomeCubit>.value(
-              value: cubit,
-              child: WelcomeScreen(),
-            )),
+              body: BlocProvider<WelcomeCubit>.value(
+                value: cubit,
+                child: WelcomeScreen(),
+              ),
+            ),
           ),
         ),
       );

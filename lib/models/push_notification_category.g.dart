@@ -7,17 +7,17 @@ part of 'push_notification_category.dart';
 // **************************************************************************
 
 PushNotificationCategory _$PushNotificationCategoryFromJson(
-        Map<String, dynamic> json) =>
-    PushNotificationCategory(
-      json['key'] as String,
-      json['name'] as String,
-      json['description'] as String,
-    );
+  Map<String, dynamic> json,
+) => PushNotificationCategory(
+  json['key'] as String,
+  json['name'] as String,
+  json['description'] as String,
+);
 
 Map<String, dynamic> _$PushNotificationCategoryToJson(
-        PushNotificationCategory instance) =>
-    <String, dynamic>{
-      'key': instance.key,
-      'name': instance.name,
-      'description': instance.description,
-    };
+  PushNotificationCategory instance,
+) => <String, dynamic>{
+  'key': instance.key,
+  'name': instance.name,
+  'description': instance.description,
+};

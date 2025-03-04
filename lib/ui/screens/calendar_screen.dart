@@ -25,9 +25,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void initState() {
     _cubit = BlocProvider.of<CalendarCubit>(context);
     _controller = ScrollController()..addListener(_scrollListener);
-    WidgetsBinding.instance.endOfFrame.then(
-      (_) => _scrollToToday(false),
-    );
+    WidgetsBinding.instance.endOfFrame.then((_) => _scrollToToday(false));
     super.initState();
   }
 
@@ -40,7 +38,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       RenderAbstractViewport viewport = RenderAbstractViewport.of(renderObject);
       _todayOffset =
           viewport.getOffsetToReveal(renderObject, 0, rect: null).offset -
-              offset;
+          offset;
     }
   }
 
@@ -91,11 +89,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       appBar: ThaliaAppBar(
         title: const Text('CALENDAR'),
         collapsingActions: [
-          IconAppbarAction(
-            'SEARCH',
-            Icons.search,
-            openSearch,
-          )
+          IconAppbarAction('SEARCH', Icons.search, openSearch),
         ],
       ),
       drawer: MenuDrawer(),
@@ -170,7 +164,7 @@ class CalendarSearchDelegate extends SearchDelegate {
           onPressed: () {
             query = '';
           },
-        )
+        ),
       ];
     } else {
       return [];
@@ -179,9 +173,7 @@ class CalendarSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildLeading(BuildContext context) {
-    return BackButton(
-      onPressed: () => close(context, null),
-    );
+    return BackButton(onPressed: () => close(context, null));
   }
 
   @override
@@ -246,29 +238,35 @@ class CalendarScrollView extends StatelessWidget {
     this.todayKey,
     this.thisMonthKey,
     required this.now,
-  })  : _monthGroupedEventsUp = groupByMonth(calendarState.resultsUp)
-            .sortedBy((element) => element.month)
-            .reversed
-            .toList(),
-        _enableLoadMore = !calendarState.isDoneUp &&
-            calendarState.resultsUp.isNotEmpty &&
-            calendarState.resultsDown.isNotEmpty,
-        _monthGroupedEventsDown = calendarState.resultsDown.isEmpty
-            ? List.empty()
-            : ensureMonthsContainsToday(
-                groupByMonth(calendarState.resultsDown)
-                    .sortedBy((element) => element.month),
-                now);
+  }) : _monthGroupedEventsUp =
+           groupByMonth(
+             calendarState.resultsUp,
+           ).sortedBy((element) => element.month).reversed.toList(),
+       _enableLoadMore =
+           !calendarState.isDoneUp &&
+           calendarState.resultsUp.isNotEmpty &&
+           calendarState.resultsDown.isNotEmpty,
+       _monthGroupedEventsDown =
+           calendarState.resultsDown.isEmpty
+               ? List.empty()
+               : ensureMonthsContainsToday(
+                 groupByMonth(
+                   calendarState.resultsDown,
+                 ).sortedBy((element) => element.month),
+                 now,
+               );
 
   @override
   Widget build(BuildContext context) {
-    final bool moveMonth = _monthGroupedEventsUp.isNotEmpty &&
+    final bool moveMonth =
+        _monthGroupedEventsUp.isNotEmpty &&
         _monthGroupedEventsDown.isEmpty &&
         calendarState.isDoneDown;
     // If there are no future events we should still display some events
-    final upEvents = moveMonth
-        ? _monthGroupedEventsUp.skip(1).toList()
-        : _monthGroupedEventsUp;
+    final upEvents =
+        moveMonth
+            ? _monthGroupedEventsUp.skip(1).toList()
+            : _monthGroupedEventsUp;
     final downEvents =
         moveMonth ? [_monthGroupedEventsUp.first] : _monthGroupedEventsDown;
 
@@ -280,15 +278,16 @@ class CalendarScrollView extends StatelessWidget {
         Expanded(
           child: CustomScrollView(
             controller: controller,
-            physics: _enableLoadMore
-                ? OnTopCallbackScrollPhysics(
-                    parent: BouncingScrollPhysics(
-                      decelerationRate: ScrollDecelerationRate.fast,
-                      parent: scrollPhysics,
-                    ),
-                    onhittop: loadMoreUp,
-                  )
-                : scrollPhysics,
+            physics:
+                _enableLoadMore
+                    ? OnTopCallbackScrollPhysics(
+                      parent: BouncingScrollPhysics(
+                        decelerationRate: ScrollDecelerationRate.fast,
+                        parent: scrollPhysics,
+                      ),
+                      onhittop: loadMoreUp,
+                    )
+                    : scrollPhysics,
             center: centerkey,
             anchor: 0.0,
             slivers: [
@@ -297,20 +296,21 @@ class CalendarScrollView extends StatelessWidget {
                   child: Center(
                     child: Padding(
                       padding: const EdgeInsets.only(top: 10),
-                      child: calendarState.isLoadingMoreUp
-                          ? Icon(
-                              Icons.more_horiz,
-                              size: 50,
-                              color: theme.colorScheme.primary,
-                            )
-                          : Text(
-                              'SCROLL TO LOAD MORE',
-                              style: theme.textTheme.bodyLarge!.copyWith(
+                      child:
+                          calendarState.isLoadingMoreUp
+                              ? Icon(
+                                Icons.more_horiz,
+                                size: 50,
                                 color: theme.colorScheme.primary,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                              )
+                              : Text(
+                                'SCROLL TO LOAD MORE',
+                                style: theme.textTheme.bodyLarge!.copyWith(
+                                  color: theme.colorScheme.primary,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
                     ),
                   ),
                 ),
@@ -329,9 +329,10 @@ class CalendarScrollView extends StatelessWidget {
                 ),
               ),
               SliverPadding(
-                padding: downEvents.isEmpty
-                    ? EdgeInsets.zero
-                    : const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                padding:
+                    downEvents.isEmpty
+                        ? EdgeInsets.zero
+                        : const EdgeInsets.fromLTRB(12, 0, 12, 12),
                 key: centerkey,
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
@@ -368,12 +369,16 @@ class OnTopCallbackScrollPhysics extends ScrollPhysics {
   @override
   OnTopCallbackScrollPhysics applyTo(ScrollPhysics? ancestor) {
     return OnTopCallbackScrollPhysics(
-        parent: buildParent(ancestor), onhittop: onhittop);
+      parent: buildParent(ancestor),
+      onhittop: onhittop,
+    );
   }
 
   @override
   Simulation? createBallisticSimulation(
-      ScrollMetrics position, double velocity) {
+    ScrollMetrics position,
+    double velocity,
+  ) {
     if (position.pixels < position.minScrollExtent) {
       onhittop();
     }

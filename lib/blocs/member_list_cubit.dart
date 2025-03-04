@@ -16,24 +16,26 @@ class MemberListCubit extends SingleListCubit<ListMember> {
 
   @override
   Future<ListResponse<ListMember>> getDown(int offset) => api.getMembers(
-        search: searchQuery,
-        limit: offset == 0 ? firstPageSize : pageSize,
-        offset: offset,
-        year: year,
-      );
+    search: searchQuery,
+    limit: offset == 0 ? firstPageSize : pageSize,
+    offset: offset,
+    year: year,
+  );
 
   @override
   List<ListMember> combineDown(
-          List<ListMember> downResults, ListState<ListMember> oldstate) =>
-      oldstate.results + downResults;
+    List<ListMember> downResults,
+    ListState<ListMember> oldstate,
+  ) => oldstate.results + downResults;
 
   @override
   ListState<ListMember> empty(String? query) => switch (query) {
-        null => const ListState.failure(message: 'No members found.'),
-        '' => const ListState.failure(message: 'Start searching for members'),
-        var q =>
-          ListState.failure(message: 'No members found found for query "$q"'),
-      };
+    null => const ListState.failure(message: 'No members found.'),
+    '' => const ListState.failure(message: 'Start searching for members'),
+    var q => ListState.failure(
+      message: 'No members found found for query "$q"',
+    ),
+  };
 
   /// Set this cubit's `searchQuery` and load the albums for that query.
   ///

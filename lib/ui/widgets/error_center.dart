@@ -5,7 +5,7 @@ class ErrorCenter extends StatelessWidget {
 
   const ErrorCenter(this.children, {super.key});
   ErrorCenter.fromMessage(String message, {super.key})
-      : children = [Text(message, textAlign: TextAlign.center)];
+    : children = [Text(message, textAlign: TextAlign.center)];
 
   @override
   Widget build(BuildContext context) {

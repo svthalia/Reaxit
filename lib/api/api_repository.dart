@@ -137,9 +137,7 @@ abstract class ApiRepository {
   });
 
   /// Delete the payment for registration `registrationPk`.
-  Future<void> markNotPaidAdminEventRegistration({
-    required int registrationPk,
-  });
+  Future<void> markNotPaidAdminEventRegistration({required int registrationPk});
 
   /// Get the [AdminFoodOrder]s of the [FoodEvent] with the `pk`.
   ///
@@ -159,9 +157,7 @@ abstract class ApiRepository {
   });
 
   /// Delete the payment for food order `orderPk`.
-  Future<void> markNotPaidAdminFoodOrder({
-    required int orderPk,
-  });
+  Future<void> markNotPaidAdminFoodOrder({required int orderPk});
 
   /// Get the [FoodEvent] with the `pk`.
   Future<FoodEvent> getFoodEvent(int pk);
@@ -293,18 +289,13 @@ abstract class ApiRepository {
   });
 
   /// Get a [Thabloid].
-  Future<Thabloid> getThabloid({
-    required int pk,
-  });
+  Future<Thabloid> getThabloid({required int pk});
 
   /// Get a list of [Slide]s.
   ///
   /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
   /// total number of [Slide]s that can be returned.
-  Future<ListResponse<Slide>> getSlides({
-    int? limit,
-    int? offset,
-  });
+  Future<ListResponse<Slide>> getSlides({int? limit, int? offset});
 
   /// Get a list of [FrontpageArticle]s.
   ///
@@ -366,13 +357,12 @@ abstract class ApiRepository {
   Future<Group> getGroup({required int pk});
 
   /// Get the [Group] of a certain [MemberGroupType] with the `slug`.
-  Future<Group> getGroupBySlug(
-      {required MemberGroupType type, required String slug});
-
-  Future<ListResponse<AlbumPhoto>> getLikedPhotos({
-    int? limit,
-    int? offset,
+  Future<Group> getGroupBySlug({
+    required MemberGroupType type,
+    required String slug,
   });
+
+  Future<ListResponse<AlbumPhoto>> getLikedPhotos({int? limit, int? offset});
 
   /// Get a list of [Payment]'s of the current user.
   Future<ListResponse<Payment>> getPayments({

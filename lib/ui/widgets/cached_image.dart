@@ -12,22 +12,23 @@ class CachedImage extends CachedNetworkImage {
     super.fadeInDuration = const Duration(milliseconds: 200),
     String? placeholder,
   }) : super(
-          key: ValueKey(imageUrl),
-          cacheManager: cache.ThaliaCacheManager(),
-          cacheKey: _getCacheKey(imageUrl),
-          placeholder: placeholder == null
-              ? null
-              : (_, __) => Image.asset(placeholder, fit: fit),
-        );
+         key: ValueKey(imageUrl),
+         cacheManager: cache.ThaliaCacheManager(),
+         cacheKey: _getCacheKey(imageUrl),
+         placeholder:
+             placeholder == null
+                 ? null
+                 : (_, __) => Image.asset(placeholder, fit: fit),
+       );
 }
 
 /// Wrapper for [CachedNetworkImageProvider] with sensible defaults.
 class CachedImageProvider extends CachedNetworkImageProvider {
   CachedImageProvider(super.imageUrl)
-      : super(
-          cacheManager: cache.ThaliaCacheManager(),
-          cacheKey: _getCacheKey(imageUrl),
-        );
+    : super(
+        cacheManager: cache.ThaliaCacheManager(),
+        cacheKey: _getCacheKey(imageUrl),
+      );
 }
 
 /// If the image is from thalia.nu, remove the query part of the url from its

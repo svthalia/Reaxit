@@ -43,22 +43,18 @@ class _MembersScreenState extends State<MembersScreen> {
       appBar: ThaliaAppBar(
         title: const Text('MEMBERS'),
         collapsingActions: [
-          IconAppbarAction(
-            'SEARCH',
-            Icons.search,
-            () async {
-              final searchCubit = MemberListCubit(
-                RepositoryProvider.of<ApiRepository>(context),
-              );
+          IconAppbarAction('SEARCH', Icons.search, () async {
+            final searchCubit = MemberListCubit(
+              RepositoryProvider.of<ApiRepository>(context),
+            );
 
-              await showSearch(
-                context: context,
-                delegate: MembersSearchDelegate(searchCubit),
-              );
+            await showSearch(
+              context: context,
+              delegate: MembersSearchDelegate(searchCubit),
+            );
 
-              searchCubit.close();
-            },
-          )
+            searchCubit.close();
+          }),
         ],
       ),
       drawer: MenuDrawer(),
@@ -127,7 +123,7 @@ class MembersSearchDelegate extends SearchDelegate {
           onPressed: () {
             query = '';
           },
-        )
+        ),
       ];
     } else {
       return [];
@@ -136,9 +132,7 @@ class MembersSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildLeading(BuildContext context) {
-    return BackButton(
-      onPressed: () => close(context, null),
-    );
+    return BackButton(onPressed: () => close(context, null));
   }
 
   @override
@@ -175,9 +169,10 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 
   final double height = 50;
   final List<int> list =
-      List.generate(DateTime.now().year - 2014 + 1, (i) => 2014 + i)
-          .reversed
-          .toList();
+      List.generate(
+        DateTime.now().year - 2014 + 1,
+        (i) => 2014 + i,
+      ).reversed.toList();
 
   @override
   double get minExtent => height;
@@ -187,7 +182,10 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return ListView(
       scrollDirection: Axis.horizontal,
       primary: false,
@@ -203,14 +201,16 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
                 onSelected: (_) => setYear(null),
               ),
             ),
-            ...list.map((year) => Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: FilterChip(
-                    selected: year == currentYear,
-                    label: Text(year.toString()),
-                    onSelected: (_) => setYear(year),
-                  ),
-                )),
+            ...list.map(
+              (year) => Padding(
+                padding: const EdgeInsets.all(5),
+                child: FilterChip(
+                  selected: year == currentYear,
+                  label: Text(year.toString()),
+                  onSelected: (_) => setYear(year),
+                ),
+              ),
+            ),
             const Padding(padding: EdgeInsets.all(2.5), child: Stack()),
           ],
         ),
@@ -245,44 +245,42 @@ class MemberListScrollView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scrollbar(
+      controller: controller,
+      child: CustomScrollView(
         controller: controller,
-        child: CustomScrollView(
-          controller: controller,
-          physics: const RangeMaintainingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics(),
+        physics: const RangeMaintainingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
+        slivers: [
+          SliverPersistentHeader(
+            delegate: _SliverAppBarDelegate(currentYear, setYear),
           ),
-          slivers: [
-            SliverPersistentHeader(
-              delegate: _SliverAppBarDelegate(currentYear, setYear),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.all(8),
-              sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
-                ),
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) => MemberTile(
-                    member: listState.results[index],
-                  ),
-                  childCount: listState.results.length,
-                ),
+          SliverPadding(
+            padding: const EdgeInsets.all(8),
+            sliver: SliverGrid(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) =>
+                    MemberTile(member: listState.results[index]),
+                childCount: listState.results.length,
               ),
             ),
-            if (listState.isLoadingMore)
-              const SliverPadding(
-                padding: EdgeInsets.all(8),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate.fixed([
-                    Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  ]),
-                ),
+          ),
+          if (listState.isLoadingMore)
+            const SliverPadding(
+              padding: EdgeInsets.all(8),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate.fixed([
+                  Center(child: CircularProgressIndicator()),
+                ]),
               ),
-          ],
-        ));
+            ),
+        ],
+      ),
+    );
   }
 }

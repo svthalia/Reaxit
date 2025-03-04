@@ -46,14 +46,16 @@ Future<void> main() async {
       options.dsn = sentryDSN;
     },
     appRunner: () async {
-      runApp(BlocProvider(
-        create: (_) => ThemeCubit()..load(),
-        lazy: false,
-        child: BlocProvider(
-          create: (context) => AuthCubit()..load(),
-          child: const ThaliApp(),
+      runApp(
+        BlocProvider(
+          create: (_) => ThemeCubit()..load(),
+          lazy: false,
+          child: BlocProvider(
+            create: (context) => AuthCubit()..load(),
+            child: const ThaliApp(),
+          ),
         ),
-      ));
+      );
     },
   );
 }
@@ -79,22 +81,22 @@ Future<void> testingMain(AuthCubit? authCubit, String? initialroute) async {
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(BlocProvider(
-    create: (_) => ThemeCubit()..load(),
-    lazy: false,
-    child: authCubit == null
-        ? BlocProvider(
-            create: (context) => AuthCubit()..load(),
-            child: ThaliApp(
-              initialRoute: initialroute,
-            ),
-          )
-        : BlocProvider.value(
-            value: authCubit..load(),
-            child: ThaliApp(
-              initialRoute: initialroute,
-            )),
-  ));
+  runApp(
+    BlocProvider(
+      create: (_) => ThemeCubit()..load(),
+      lazy: false,
+      child:
+          authCubit == null
+              ? BlocProvider(
+                create: (context) => AuthCubit()..load(),
+                child: ThaliApp(initialRoute: initialroute),
+              )
+              : BlocProvider.value(
+                value: authCubit..load(),
+                child: ThaliApp(initialRoute: initialroute),
+              ),
+    ),
+  );
 }
 
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -143,10 +145,7 @@ class _ThaliAppState extends State<ThaliApp> {
         if (uri != null) {
           if (uri.scheme.isEmpty) uri = uri.replace(scheme: 'https');
           if (isDeepLink(uri)) {
-            _router.go(Uri(
-              path: uri.path,
-              query: uri.query,
-            ).toString());
+            _router.go(Uri(path: uri.path, query: uri.query).toString());
           } else {
             await launchUrl(uri, mode: LaunchMode.externalApplication);
           }
@@ -171,10 +170,7 @@ class _ThaliAppState extends State<ThaliApp> {
         if (uri != null) {
           if (uri.scheme.isEmpty) uri = uri.replace(scheme: 'https');
           if (isDeepLink(uri)) {
-            _router.go(Uri(
-              path: uri.path,
-              query: uri.query,
-            ).toString());
+            _router.go(Uri(path: uri.path, query: uri.query).toString());
           } else {
             await launchUrl(uri, mode: LaunchMode.externalApplication);
           }
@@ -214,9 +210,10 @@ class _ThaliAppState extends State<ThaliApp> {
           // Drop original location if you just logged out.
           if (justLoggedOut) return '/login';
 
-          return Uri(path: '/login', queryParameters: {
-            'from': state.uri.toString(),
-          }).toString();
+          return Uri(
+            path: '/login',
+            queryParameters: {'from': state.uri.toString()},
+          ).toString();
         } else if (loggedIn && goingToLogin) {
           return Uri.parse(state.uri.toString()).queryParameters['from'] ?? '/';
         } else {
@@ -273,15 +270,19 @@ class _ThaliAppState extends State<ThaliApp> {
                   // Show a snackbar when the user logs out or logging in fails.
                   switch (state) {
                     case LoggedOutAuthState _:
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        behavior: SnackBarBehavior.floating,
-                        content: Text('Logged out.'),
-                      ));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          content: Text('Logged out.'),
+                        ),
+                      );
                     case FailureAuthState(message: var message):
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        behavior: SnackBarBehavior.floating,
-                        content: Text(message ?? 'Logging in failed.'),
-                      ));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          content: Text(message ?? 'Logging in failed.'),
+                        ),
+                      );
                     case _:
                   }
                 },
@@ -311,45 +312,50 @@ class _ThaliAppState extends State<ThaliApp> {
                         child: MultiBlocProvider(
                           providers: [
                             BlocProvider(
-                              create: (_) =>
-                                  PaymentUserCubit(apiRepository)..load(),
+                              create:
+                                  (_) =>
+                                      PaymentUserCubit(apiRepository)..load(),
                               lazy: false,
                             ),
                             BlocProvider(
-                              create: (_) =>
-                                  FullMemberCubit(apiRepository)..load(),
+                              create:
+                                  (_) => FullMemberCubit(apiRepository)..load(),
                               lazy: false,
                             ),
                             BlocProvider(
-                              create: (_) =>
-                                  WelcomeCubit(apiRepository)..load(),
+                              create:
+                                  (_) => WelcomeCubit(apiRepository)..load(),
                               lazy: false,
                             ),
                             BlocProvider(
-                              create: (_) =>
-                                  CalendarCubit(apiRepository)..cachedLoad(),
+                              create:
+                                  (_) =>
+                                      CalendarCubit(apiRepository)
+                                        ..cachedLoad(),
                               lazy: false,
                             ),
                             BlocProvider(
-                              create: (_) => ThabloidListCubit(apiRepository)
-                                ..cachedLoad(),
+                              create:
+                                  (_) =>
+                                      ThabloidListCubit(apiRepository)
+                                        ..cachedLoad(),
                               lazy: false,
                             ),
                             BlocProvider(
-                              create: (_) =>
-                                  MemberListCubit(apiRepository)..load(),
+                              create:
+                                  (_) => MemberListCubit(apiRepository)..load(),
                               lazy: false,
                             ),
                             BlocProvider(
-                              create: (_) =>
-                                  AlbumListCubit(apiRepository)..load(),
+                              create:
+                                  (_) => AlbumListCubit(apiRepository)..load(),
                               lazy: false,
                             ),
                             BlocProvider(
                               // The SettingsCubit must not be lazy, since
                               // it handles setting up push notifications.
-                              create: (_) =>
-                                  SettingsCubit(apiRepository)..load(),
+                              create:
+                                  (_) => SettingsCubit(apiRepository)..load(),
                               lazy: false,
                             ),
                             BlocProvider(
@@ -361,13 +367,13 @@ class _ThaliAppState extends State<ThaliApp> {
                               lazy: true,
                             ),
                             BlocProvider(
-                              create: (_) =>
-                                  CommitteesCubit(apiRepository)..load(),
+                              create:
+                                  (_) => CommitteesCubit(apiRepository)..load(),
                               lazy: true,
                             ),
                             BlocProvider(
-                              create: (_) =>
-                                  SocietiesCubit(apiRepository)..load(),
+                              create:
+                                  (_) => SocietiesCubit(apiRepository)..load(),
                               lazy: true,
                             ),
                           ],

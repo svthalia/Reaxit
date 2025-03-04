@@ -20,10 +20,15 @@ class RegistrationFieldsCubit extends Cubit<RegistrationFieldsState> {
       );
       emit(ResultState(fields));
     } on ApiException catch (exception) {
-      emit(ErrorState(exception.getMessage(
-        notFound: 'The registration does not '
-            'exist or does not have any fields.',
-      )));
+      emit(
+        ErrorState(
+          exception.getMessage(
+            notFound:
+                'The registration does not '
+                'exist or does not have any fields.',
+          ),
+        ),
+      );
     }
   }
 
