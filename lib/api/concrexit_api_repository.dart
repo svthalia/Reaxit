@@ -10,6 +10,7 @@ import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/config.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/models/thabliod.dart';
+import 'package:reaxit/models/vacancie.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class LoggingClient extends oauth2.Client {
@@ -1372,5 +1373,29 @@ class ConcrexitApiRepository implements ApiRepository {
         (json) => Payment.fromJson(json as Map<String, dynamic>),
       );
     });
+  }
+
+  @override
+  Future<ListResponse<Vacancy>> getVacancies({
+    int? limit,
+    int? offset,
+    DateTime? start,
+    DateTime? end,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/partners/vacancies/',
+      queryParameters: {
+        if (limit != null) 'limit': limit.toString(),
+        if (offset != null) 'offset': offset.toString(),
+        if (start != null) 'start': start.toIso8601String(),
+        if (end != null) 'end': end.toIso8601String(),
+      },
+    );
+
+    final response = await _handleExceptions(() => _client.get(uri));
+    return ListResponse<Vacancy>.fromJson(
+      _jsonDecode(response),
+      (json) => Vacancy.fromJson(json as Map<String, dynamic>),
+    );
   }
 }

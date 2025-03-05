@@ -11,6 +11,7 @@ import 'package:overlay_support/overlay_support.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/blocs/thabloid_list_cubit.dart';
+import 'package:reaxit/blocs/vacancies_cubit.dart';
 import 'package:reaxit/config.dart';
 import 'package:reaxit/firebase_options.dart';
 import 'package:reaxit/routes.dart';
@@ -374,6 +375,12 @@ class _ThaliAppState extends State<ThaliApp> {
                             BlocProvider(
                               create:
                                   (_) => SocietiesCubit(apiRepository)..load(),
+                              lazy: true,
+                            ),
+                            BlocProvider(
+                              create:
+                                  (_) =>
+                                      VacanciesListCubit(apiRepository)..load(),
                               lazy: true,
                             ),
                           ],
