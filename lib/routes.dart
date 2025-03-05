@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reaxit/config.dart' as config;
 import 'package:reaxit/models.dart';
@@ -10,6 +11,7 @@ import 'package:reaxit/ui/screens/liked_photos_screen.dart';
 import 'package:reaxit/ui/screens/thabloids_screen.dart';
 import 'package:reaxit/ui/screens/vacancies_screen.dart';
 import 'package:reaxit/ui/widgets.dart';
+import 'package:reaxit/blocs.dart';
 
 /// Returns true if [uri] is a deep link that can be handled by the app.
 bool isDeepLink(Uri uri) {
@@ -40,6 +42,7 @@ final List<RegExp> _deepLinkRegExps = <RegExp>[
   RegExp('^/association/societies(/[0-9]+)?/?\$'),
   RegExp('^/association/committees(/[0-9]+)?/?\$'),
   RegExp('^/association/boards/([0-9]{4}-[0-9]{4})/?\$'),
+  RegExp('^/user/edit-profile/'),
 ];
 
 final List<RouteBase> routes = [
@@ -554,5 +557,17 @@ final List<RouteBase> routes = [
     pageBuilder:
         (context, state) =>
             MaterialPage(key: state.pageKey, child: PayScreen()),
+  ),
+  GoRoute(
+    path: '/user/edit-profile',
+    name: 'profile',
+    pageBuilder:
+        (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: ProfileScreen(
+            pk: BlocProvider.of<FullMemberCubit>(context).state.result!.pk,
+            member: state.extra as ListMember?,
+          ),
+        ),
   ),
 ];

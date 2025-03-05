@@ -4,12 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/routes.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:collection/collection.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:reaxit/models/announcement.dart';
 
 class WelcomeScreen extends StatefulWidget {
   @override
@@ -23,6 +25,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     return groupBy<BaseEvent, DateTime>(
       events,
       (event) => DateTime(event.start.year, event.start.month, event.start.day),
+    );
+  }
+
+  Widget _makeAnnouncements(List<Announcement> announcements) {
+    return AnimatedSize(
+      curve: Curves.ease,
+      duration: const Duration(milliseconds: 300),
+      child:
+          announcements.isNotEmpty
+              ? Announcements(announcements)
+              : const SizedBox.shrink(),
     );
   }
 
@@ -173,6 +186,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   key: const PageStorageKey('welcome'),
                   physics: const AlwaysScrollableScrollPhysics(),
                   children: [
+                    _makeAnnouncements(state.announcements!),
+                    if (state.announcements!.isNotEmpty)
+                      const Divider(height: 0),
                     _makeSlides(state.slides!),
                     if (state.slides!.isNotEmpty) const Divider(height: 0),
                     _makeArticles(state.articles!),
@@ -260,6 +276,91 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
             ),
           ),
         ),
+      ],
+    );
+  }
+}
+
+class Announcements extends StatefulWidget {
+  final List<Announcement> announcements;
+
+  const Announcements(this.announcements);
+
+  @override
+  State<Announcements> createState() => _AnnouncementState();
+}
+
+class _AnnouncementState extends State<Announcements> {
+  Future<bool> handleClickUrl(String url) async {
+    Uri uri = Uri(path: url);
+    String host = RepositoryProvider.of<ApiRepository>(context).config.host;
+    if (uri.scheme.isEmpty) uri = uri.replace(scheme: 'https');
+    if (uri.host.isEmpty) uri = uri.replace(host: host);
+    if (isDeepLink(uri)) {
+      context.push(Uri(path: uri.path, query: uri.query).toString());
+      return true;
+    } else {
+      final messenger = ScaffoldMessenger.of(context);
+      try {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } catch (_) {
+        messenger.showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Could not open "$url".'),
+          ),
+        );
+      }
+      return true;
+    }
+  }
+
+  Widget _makeAnnouncement(Announcement announcement) {
+    return Container(
+      color: Theme.of(context).colorScheme.primary,
+      padding: const EdgeInsets.all(20),
+      child: Row(
+        children: [
+          const Padding(
+            padding: EdgeInsets.fromLTRB(0, 0, 20, 0),
+            child: Icon(Icons.campaign),
+          ),
+          Expanded(
+            child: HtmlWidget(
+              announcement.content,
+              customStylesBuilder: (element) {
+                if (element.localName == 'a') {
+                  return {
+                    'color': 'white', // Change link color to red
+                    'text-decoration': 'none', // Remove default underline
+                    'font-weight': 'bold',
+                    'border-bottom': '2px solid white',
+                  };
+                }
+                return null;
+              },
+              onTapUrl: handleClickUrl,
+            ),
+          ),
+          if (announcement.closeable)
+            CloseButton(
+              onPressed:
+                  () =>
+                      setState(() => widget.announcements.remove(announcement)),
+            ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (final announcement in widget.announcements) ...[
+          _makeAnnouncement(announcement),
+        ],
       ],
     );
   }
