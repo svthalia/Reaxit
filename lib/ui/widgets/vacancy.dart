@@ -44,9 +44,9 @@ class VacancieCardState extends State<VacancieCard> {
       widget.vacancie.companyname,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: Theme.of(
-        context,
-      ).textTheme.bodyMedium!.copyWith(color: Colors.white.withOpacity(0.8)),
+      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+        color: Colors.white.withValues(alpha: 0.8),
+      ),
     );
 
     final Widget expandedChild = Column(
