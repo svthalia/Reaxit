@@ -12,22 +12,22 @@ class VacanciesListCubit extends SingleListCubit<Vacancy> {
 
   @override
   List<Vacancy> combineDown(
-          List<Vacancy> downResults, ListState<Vacancy> oldstate) =>
-      oldstate.results + downResults;
+    List<Vacancy> downResults,
+    ListState<Vacancy> oldstate,
+  ) => oldstate.results + downResults;
 
   @override
   ListState<Vacancy> empty(String? query) => switch (query) {
-        null => const ListState.failure(message: 'No vacancies found.'),
-        '' => const ListState.failure(message: 'Start searching for vacancies'),
-        var q =>
-          ListState.failure(message: 'No vacancies found found for query "$q"'),
-      };
+    null => const ListState.failure(message: 'No vacancies found.'),
+    '' => const ListState.failure(message: 'Start searching for vacancies'),
+    var q => ListState.failure(
+      message: 'No vacancies found found for query "$q"',
+    ),
+  };
 
   @override
-  Future<ListResponse<Vacancy>> getDown(int offset) => api.getVacancies(
-        limit: 1000,
-        offset: offset,
-      );
+  Future<ListResponse<Vacancy>> getDown(int offset) =>
+      api.getVacancies(limit: 1000, offset: offset);
 
   @override
   List<Vacancy> processDown(List<Vacancy> downResults) {

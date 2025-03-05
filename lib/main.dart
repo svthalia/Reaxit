@@ -378,8 +378,9 @@ class _ThaliAppState extends State<ThaliApp> {
                               lazy: true,
                             ),
                             BlocProvider(
-                              create: (_) =>
-                                  VacanciesListCubit(apiRepository)..load(),
+                              create:
+                                  (_) =>
+                                      VacanciesListCubit(apiRepository)..load(),
                               lazy: true,
                             ),
                           ],

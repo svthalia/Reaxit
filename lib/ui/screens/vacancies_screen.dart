@@ -40,9 +40,7 @@ class _ThabloidScreenState extends State<VacanciesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ThaliaAppBar(
-        title: const Text('VACANCIES'),
-      ),
+      appBar: ThaliaAppBar(title: const Text('VACANCIES')),
       drawer: MenuDrawer(),
       body: BlocBuilder<VacanciesListCubit, VacanciesState>(
         builder: (context, thabloidsState) {
@@ -79,11 +77,12 @@ class VacanciesScrollView extends StatelessWidget {
   final VacanciesState thabloidState;
   final List<Vacancy> vacancies;
 
-  VacanciesScrollView(
-      {super.key,
-      required this.controller,
-      required this.thabloidState,
-      required this.vacancies});
+  VacanciesScrollView({
+    super.key,
+    required this.controller,
+    required this.thabloidState,
+    required this.vacancies,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -97,10 +96,14 @@ class VacanciesScrollView extends StatelessWidget {
               physics: const RangeMaintainingScrollPhysics(
                 parent: AlwaysScrollableScrollPhysics(),
               ),
-              slivers: vacancies
-                  .map((v) =>
-                      SliverToBoxAdapter(child: VacancieCard(vacancie: v)))
-                  .toList(),
+              slivers:
+                  vacancies
+                      .map(
+                        (v) => SliverToBoxAdapter(
+                          child: VacancieCard(vacancie: v),
+                        ),
+                      )
+                      .toList(),
             ),
           ),
         ],

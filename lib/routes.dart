@@ -289,17 +289,18 @@ final List<RouteBase> routes = [
   GoRoute(
     path: '/vacancies',
     name: 'vacancies',
-    pageBuilder: (context, state) => CustomTransitionPage(
-      key: state.pageKey,
-      child: VacanciesScreen(),
-      transitionDuration: const Duration(milliseconds: 200),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(
-          opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
-          child: child,
-        );
-      },
-    ),
+    pageBuilder:
+        (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: VacanciesScreen(),
+          transitionDuration: const Duration(milliseconds: 200),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
+              child: child,
+            );
+          },
+        ),
   ),
   GoRoute(
     path: '/association/committees/:groupSlug',

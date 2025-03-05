@@ -6,9 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 class VacancieCard extends StatefulWidget {
   final Vacancy vacancie;
 
-  const VacancieCard({
-    required this.vacancie,
-  });
+  const VacancieCard({required this.vacancie});
 
   @override
   VacancieCardState createState() => VacancieCardState();
@@ -40,18 +38,15 @@ class VacancieCardState extends State<VacancieCard> {
       widget.vacancie.title,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: const TextStyle(
-        color: Colors.white,
-        fontWeight: FontWeight.bold,
-      ),
+      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
     );
     final Widget companyName = Text(
       widget.vacancie.companyname,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-            color: Colors.white.withOpacity(0.8),
-          ),
+      style: Theme.of(
+        context,
+      ).textTheme.bodyMedium!.copyWith(color: Colors.white.withOpacity(0.8)),
     );
 
     final Widget expandedChild = Column(
@@ -70,7 +65,7 @@ class VacancieCardState extends State<VacancieCard> {
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Image.network(widget.vacancie.companylogo!.full),
                 ),
-              )
+              ),
           ],
         ),
         HtmlWidget(widget.vacancie.description),
@@ -91,9 +86,7 @@ class VacancieCardState extends State<VacancieCard> {
     );
 
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(1),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(1)),
       child: InkWell(
         onTap: () => toggleOpen(),
         // Prevent painting ink outside of the card.
@@ -105,9 +98,10 @@ class VacancieCardState extends State<VacancieCard> {
             duration: const Duration(milliseconds: 100),
             firstChild: expandedChild,
             secondChild: unexpandedChild,
-            crossFadeState: isExpanded
-                ? CrossFadeState.showFirst
-                : CrossFadeState.showSecond,
+            crossFadeState:
+                isExpanded
+                    ? CrossFadeState.showFirst
+                    : CrossFadeState.showSecond,
           ),
         ),
       ),
