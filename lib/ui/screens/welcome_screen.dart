@@ -291,6 +291,30 @@ class Announcements extends StatefulWidget {
 }
 
 class _AnnouncementState extends State<Announcements> {
+  Future<bool> handleClickUrl(String url) async {
+    Uri uri = Uri(path: url);
+    String host = RepositoryProvider.of<ApiRepository>(context).config.host;
+    if (uri.scheme.isEmpty) uri = uri.replace(scheme: 'https');
+    if (uri.host.isEmpty) uri = uri.replace(host: host);
+    if (isDeepLink(uri)) {
+      context.push(Uri(path: uri.path, query: uri.query).toString());
+      return true;
+    } else {
+      final messenger = ScaffoldMessenger.of(context);
+      try {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } catch (_) {
+        messenger.showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Could not open "$url".'),
+          ),
+        );
+      }
+      return true;
+    }
+  }
+
   Widget _makeAnnouncement(Announcement announcement) {
     return Container(
       color: Theme.of(context).colorScheme.primary,
@@ -315,32 +339,7 @@ class _AnnouncementState extends State<Announcements> {
                 }
                 return null;
               },
-              onTapUrl: (String url) async {
-                Uri uri = Uri(path: url);
-                String host =
-                    RepositoryProvider.of<ApiRepository>(context).config.host;
-                if (uri.scheme.isEmpty) uri = uri.replace(scheme: 'https');
-                if (uri.host.isEmpty) uri = uri.replace(host: host);
-                if (isDeepLink(uri)) {
-                  context.push(
-                    Uri(path: uri.path, query: uri.query).toString(),
-                  );
-                  return true;
-                } else {
-                  final messenger = ScaffoldMessenger.of(context);
-                  try {
-                    await launchUrl(uri, mode: LaunchMode.externalApplication);
-                  } catch (_) {
-                    messenger.showSnackBar(
-                      SnackBar(
-                        behavior: SnackBarBehavior.floating,
-                        content: Text('Could not open "$url".'),
-                      ),
-                    );
-                  }
-                  return true;
-                }
-              },
+              onTapUrl: handleClickUrl,
             ),
           ),
           if (announcement.closeable)
