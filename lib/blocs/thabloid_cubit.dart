@@ -11,6 +11,10 @@ class ThabloidCubit extends Cubit<Thabloid> {
 
   ThabloidCubit(this.api, this.thabloid) : super(thabloid);
 
+  Future<void> load() async {
+    emit(thabloid);
+  }
+
   Future<String> getTitle() async {
     if (!_debounceTimer.isActive) {
       Thabloid thabloid = await api.getThabloid(pk: this.thabloid.pk);
