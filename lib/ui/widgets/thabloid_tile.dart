@@ -13,7 +13,7 @@ class ThabloidDetailCard extends StatelessWidget {
 
   void _openThabloid() async {
     launchUrl(
-      Uri.parse(await cubit.getTitle()),
+      Uri.parse(await cubit.getFile()),
       mode: LaunchMode.externalApplication,
     );
   }

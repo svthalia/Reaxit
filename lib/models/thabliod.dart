@@ -11,10 +11,11 @@ class Thabloid {
   final int issue;
   final String cover;
   final String file;
+  final DateTime retreivedAt = DateTime.now();
 
   factory Thabloid.fromJson(Map<String, dynamic> json) =>
       _$ThabloidFromJson(json);
   Map<String, dynamic> toJson() => _$ThabloidToJson(this);
 
-  const Thabloid(this.pk, this.year, this.issue, this.cover, this.file);
+  Thabloid(this.pk, this.year, this.issue, this.cover, this.file);
 }

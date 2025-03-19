@@ -5,9 +5,10 @@ import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/models/thabliod.dart';
 
 class ThabloidCubit extends Cubit<Thabloid> {
+  static const Duration maxAge = Duration(hours: 1);
+
   final ApiRepository api;
   Thabloid thabloid;
-  Timer _debounceTimer = Timer(const Duration(hours: 1), () => {});
 
   ThabloidCubit(this.api, this.thabloid) : super(thabloid);
 
@@ -15,11 +16,10 @@ class ThabloidCubit extends Cubit<Thabloid> {
     emit(thabloid);
   }
 
-  Future<String> getTitle() async {
-    if (!_debounceTimer.isActive) {
+  Future<String> getFile() async {
+    if (DateTime.now().difference(thabloid.retreivedAt) > maxAge) {
       Thabloid thabloid = await api.getThabloid(pk: this.thabloid.pk);
       emit(thabloid);
-      _debounceTimer = Timer(const Duration(hours: 1), () => {});
     }
     return thabloid.file;
   }
