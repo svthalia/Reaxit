@@ -19,7 +19,12 @@ class PushNotificationOverlay extends StatelessWidget {
     }
 
     // This is just to figure out whats wrong with notifications
-    Sentry.addBreadcrumb(Breadcrumb(message: 'Message: $message'));
+    Sentry.addBreadcrumb(
+      Breadcrumb(
+        message:
+            'Message: $message (${message.messageType}, ${message.notification}, ${message.senderId} ${message.sentTime})',
+      ),
+    );
 
     return SafeArea(
       child: Card(
