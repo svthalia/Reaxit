@@ -141,10 +141,10 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
     );
 
     // Some cubits need to filter out certain results
-    if (!isDoneUp) {
+    if (!isDoneUp && upResults.isNotEmpty) {
       upResults = filterUp(upResults);
     }
-    if (!isDoneDown) {
+    if (!isDoneDown && downResults.isNotEmpty) {
       downResults = filterDown(downResults);
     }
 
