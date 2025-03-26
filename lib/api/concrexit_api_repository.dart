@@ -159,6 +159,8 @@ class ConcrexitApiRepository implements ApiRepository {
       if (allowedStatusCodes.contains(response.statusCode)) return response;
       switch (response.statusCode) {
         case 401:
+          Sentry.addBreadcrumb(Breadcrumb(message: '401 return'));
+
           _onLogOut();
           throw ApiException.notLoggedIn;
         case 403:
