@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cupertino_http/cupertino_http.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -144,6 +145,11 @@ class AuthCubit extends Cubit<AuthState> {
                 );
               },
               httpClient: SentryHttpClient(
+                client:
+                    Platform.isIOS
+                        ? CupertinoClient.defaultSessionConfiguration()
+                            as Client
+                        : HttpClient() as Client,
                 failedRequestStatusCodes: [
                   SentryStatusCode(400),
                   SentryStatusCode.range(405, 499),
