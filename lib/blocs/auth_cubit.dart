@@ -16,6 +16,7 @@ import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/config.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 final _redirectUrl = Uri.parse('nu.thalia://callback');
 
@@ -148,8 +149,8 @@ class AuthCubit extends Cubit<AuthState> {
                 client:
                     Platform.isIOS
                         ? CupertinoClient.defaultSessionConfiguration()
-                            as Client
-                        : HttpClient() as Client,
+                            as http.Client
+                        : HttpClient() as http.Client,
                 failedRequestStatusCodes: [
                   SentryStatusCode(400),
                   SentryStatusCode.range(405, 499),
