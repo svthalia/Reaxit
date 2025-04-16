@@ -368,7 +368,7 @@ class CalendarCubit extends ListCubit<Event, CalendarEvent, CalendarState> {
     ),
     var q => CalendarState(
       _truthTime,
-      DoubleListState.failure(message: 'No events found found for query "$q"'),
+      DoubleListState.failure(message: 'No events found for query "$q"'),
     ),
   };
 
