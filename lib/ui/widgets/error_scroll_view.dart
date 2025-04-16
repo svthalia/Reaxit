@@ -18,7 +18,8 @@ class ErrorScrollView extends StatelessWidget {
           child: Image.asset('assets/img/sad-cloud.png', fit: BoxFit.fitHeight),
         ),
         Text(message, textAlign: TextAlign.center),
-        if (retry != null) TextButton(onPressed: retry, child: Text('Retry')),
+        if (retry != null)
+          Center(child: TextButton(onPressed: retry, child: Text('Retry'))),
       ],
     );
   }
