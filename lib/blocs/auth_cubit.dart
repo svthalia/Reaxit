@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cupertino_http/cupertino_http.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -15,6 +16,7 @@ import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/config.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 final _redirectUrl = Uri.parse('nu.thalia://callback');
 
@@ -144,6 +146,11 @@ class AuthCubit extends Cubit<AuthState> {
                 );
               },
               httpClient: SentryHttpClient(
+                client:
+                    Platform.isIOS
+                        ? CupertinoClient.defaultSessionConfiguration()
+                            as http.Client
+                        : HttpClient() as http.Client,
                 failedRequestStatusCodes: [
                   SentryStatusCode(400),
                   SentryStatusCode.range(405, 499),
