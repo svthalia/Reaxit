@@ -96,7 +96,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       body: BlocBuilder<CalendarCubit, CalendarState>(
         builder: (context, calendarState) {
           if (calendarState.hasException) {
-            return ErrorScrollView(calendarState.message!);
+            return ErrorScrollView(calendarState.message!, retry: _cubit.load);
           } else if (calendarState.isLoading) {
             return const Center(child: CircularProgressIndicator());
           } else {
@@ -182,7 +182,10 @@ class CalendarSearchDelegate extends SearchDelegate {
       bloc: _cubit..search(query),
       builder: (context, calendarState) {
         if (calendarState.hasException) {
-          return ErrorScrollView(calendarState.message!);
+          return ErrorScrollView(
+            calendarState.message!,
+            retry: () => _cubit.search(query),
+          );
         } else if (calendarState.isLoading) {
           return const Center(child: CircularProgressIndicator());
         } else {

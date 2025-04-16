@@ -931,7 +931,7 @@ class _EventScreenState extends State<EventScreen> {
         if (state.hasException) {
           child = RefreshIndicator(
             onRefresh: _eventCubit.load,
-            child: ErrorScrollView(state.message!),
+            child: ErrorScrollView(state.message!, retry: _eventCubit.load),
           );
         } else if (state.isLoading && widget.event == null) {
           child = const Center(child: CircularProgressIndicator());

@@ -73,8 +73,8 @@ class _Page extends StatelessWidget {
   Widget build(BuildContext context) {
     final body = switch (state) {
       ErrorState(message: var message) => RefreshIndicator(
-        onRefresh: () => cubit.load(),
-        child: ErrorScrollView(message),
+        onRefresh: cubit.load,
+        child: ErrorScrollView(message, retry: cubit.load),
       ),
       LoadingState _ when listGroup == null => const Center(
         child: CircularProgressIndicator(),
