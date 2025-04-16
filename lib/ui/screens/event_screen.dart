@@ -970,6 +970,7 @@ class _EventScreenState extends State<EventScreen> {
                       ),
                     ),
                   ],
+                  SliverSafeArea(sliver: SliverToBoxAdapter()),
                 ],
               ),
             ),
@@ -1024,7 +1025,7 @@ class _EventScreenState extends State<EventScreen> {
             title: Text(widget.event?.title.toUpperCase() ?? 'EVENT'),
             collapsingActions: actions,
           ),
-          body: SafeArea(child: child),
+          body: child,
         );
       },
     );
