@@ -5,6 +5,7 @@ import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:reaxit/config.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -356,6 +357,8 @@ class _LogOutButton extends StatelessWidget {
         icon: const Icon(Icons.logout),
         label: const Text('Log out'),
         onPressed: () async {
+          Sentry.addBreadcrumb(Breadcrumb(message: 'logout button'));
+
           BlocProvider.of<AuthCubit>(context).logOut();
         },
       ),

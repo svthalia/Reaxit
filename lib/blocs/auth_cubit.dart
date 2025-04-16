@@ -163,6 +163,8 @@ class AuthCubit extends Cubit<AuthState> {
 
           emit(LoggedInAuthState(apiRepository: apiRepository));
         } else {
+          Sentry.addBreadcrumb(Breadcrumb(message: 'nothing stored'));
+
           logOut();
         }
       } else {
@@ -281,6 +283,8 @@ class AuthCubit extends Cubit<AuthState> {
   /// storage. This also handles whatever else needs to happen upon logging out,
   /// such as disabling push notifications.
   Future<void> logOut() async {
+    Sentry.addBreadcrumb(Breadcrumb(message: 'logout'));
+
     final state = this.state;
     if (state is LoggedInAuthState) {
       await _cleanUpPushNotifications(state.apiRepository);
