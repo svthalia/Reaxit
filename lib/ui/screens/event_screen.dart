@@ -932,10 +932,8 @@ class _EventScreenState extends State<EventScreen> {
               title: Text(widget.event?.title.toUpperCase() ?? 'EVENT'),
             ),
             body: RefreshIndicator(
-              onRefresh: () async {
-                await _eventCubit.load();
-              },
-              child: ErrorScrollView(state.message!),
+              onRefresh: _eventCubit.load,
+              child: ErrorScrollView(state.message!, retry: _eventCubit.load),
             ),
           );
         } else if (state.isLoading && widget.event == null) {
