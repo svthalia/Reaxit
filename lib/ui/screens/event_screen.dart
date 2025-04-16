@@ -926,116 +926,107 @@ class _EventScreenState extends State<EventScreen> {
     return BlocBuilder<EventCubit, EventState>(
       bloc: _eventCubit,
       builder: (context, state) {
+        Widget child;
+        List<AppbarAction> actions = [];
         if (state.hasException) {
-          return Scaffold(
-            appBar: ThaliaAppBar(
-              title: Text(widget.event?.title.toUpperCase() ?? 'EVENT'),
-            ),
-            body: RefreshIndicator(
-              onRefresh: () async {
-                await _eventCubit.load();
-              },
-              child: ErrorScrollView(state.message!),
-            ),
+          child = RefreshIndicator(
+            onRefresh: _eventCubit.load,
+            child: ErrorScrollView(state.message!),
           );
         } else if (state.isLoading && widget.event == null) {
-          return Scaffold(
-            appBar: ThaliaAppBar(title: const Text('EVENT')),
-            body: const Center(child: CircularProgressIndicator()),
-          );
+          child = const Center(child: CircularProgressIndicator());
         } else {
           final event = (state.event ?? widget.event)!;
-          return Scaffold(
-            appBar: ThaliaAppBar(
-              title: Text(event.title.toUpperCase()),
-              collapsingActions: [
-                IconAppbarAction(
-                  'EXPORT',
-                  Icons.edit_calendar_outlined,
-                  () async {
-                    final exportableEvent = add2calendar.Event(
-                      title: event.title,
-                      location: event.location,
-                      startDate: event.start,
-                      endDate: event.end,
-                    );
-                    await add2calendar.Add2Calendar.addEvent2Cal(
-                      exportableEvent,
-                    );
-                  },
-                  tooltip: 'add event to calendar',
-                ),
-                IconAppbarAction(
-                  'SHARE',
-                  Theme.of(context).platform == TargetPlatform.iOS
-                      ? Icons.ios_share
-                      : Icons.share,
-                  () async {
-                    final messenger = ScaffoldMessenger.of(context);
-                    try {
-                      await Share.share(event.url);
-                    } catch (_) {
-                      messenger.showSnackBar(
-                        const SnackBar(
-                          behavior: SnackBarBehavior.floating,
-                          content: Text('Could not share the event.'),
-                        ),
-                      );
-                    }
-                  },
-                ),
-                if (event.userPermissions.manageEvent)
-                  IconAppbarAction(
-                    'EDIT',
-                    Icons.settings,
-                    () => context.pushNamed(
-                      'event-admin',
-                      pathParameters: {'eventPk': event.pk.toString()},
+          child = RefreshIndicator(
+            onRefresh: _eventCubit.load,
+            child: Scrollbar(
+              controller: _controller,
+              child: CustomScrollView(
+                controller: _controller,
+                key: const PageStorageKey('event'),
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _makeMap(event),
+                        const Divider(height: 0),
+                        _makeEventInfo(event),
+                        const Divider(),
+                        _makeDescription(event),
+                      ],
                     ),
                   ),
-              ],
-            ),
-            body: RefreshIndicator(
-              onRefresh: () async {
-                await _eventCubit.load();
-              },
-              child: Scrollbar(
-                controller: _controller,
-                child: CustomScrollView(
-                  controller: _controller,
-                  key: const PageStorageKey('event'),
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          _makeMap(event),
-                          const Divider(height: 0),
-                          _makeEventInfo(event),
-                          const Divider(),
-                          _makeDescription(event),
-                        ],
+                  const SliverToBoxAdapter(child: Divider()),
+                  _makeRegistrationsHeader(),
+                  _makeRegistrations(state),
+                  if (state.isLoading || state.isLoadingMore) ...[
+                    const SliverPadding(
+                      padding: EdgeInsets.all(8),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate.fixed([
+                          Center(child: CircularProgressIndicator()),
+                        ]),
                       ),
                     ),
-                    const SliverToBoxAdapter(child: Divider()),
-                    _makeRegistrationsHeader(),
-                    _makeRegistrations(state),
-                    if (state.isLoading || state.isLoadingMore) ...[
-                      const SliverPadding(
-                        padding: EdgeInsets.all(8),
-                        sliver: SliverList(
-                          delegate: SliverChildListDelegate.fixed([
-                            Center(child: CircularProgressIndicator()),
-                          ]),
-                        ),
-                      ),
-                    ],
                   ],
-                ),
+                  SliverSafeArea(sliver: SliverToBoxAdapter()),
+                ],
               ),
             ),
           );
+          actions = [
+            IconAppbarAction(
+              'EXPORT',
+              Icons.edit_calendar_outlined,
+              () async {
+                final exportableEvent = add2calendar.Event(
+                  title: event.title,
+                  location: event.location,
+                  startDate: event.start,
+                  endDate: event.end,
+                );
+                await add2calendar.Add2Calendar.addEvent2Cal(exportableEvent);
+              },
+              tooltip: 'add event to calendar',
+            ),
+            IconAppbarAction(
+              'SHARE',
+              Theme.of(context).platform == TargetPlatform.iOS
+                  ? Icons.ios_share
+                  : Icons.share,
+              () async {
+                final messenger = ScaffoldMessenger.of(context);
+                try {
+                  await Share.share(event.url);
+                } catch (_) {
+                  messenger.showSnackBar(
+                    const SnackBar(
+                      behavior: SnackBarBehavior.floating,
+                      content: Text('Could not share the event.'),
+                    ),
+                  );
+                }
+              },
+            ),
+            if (event.userPermissions.manageEvent)
+              IconAppbarAction(
+                'EDIT',
+                Icons.settings,
+                () => context.pushNamed(
+                  'event-admin',
+                  pathParameters: {'eventPk': event.pk.toString()},
+                ),
+              ),
+          ];
         }
+        return Scaffold(
+          appBar: ThaliaAppBar(
+            title: Text(widget.event?.title.toUpperCase() ?? 'EVENT'),
+            collapsingActions: actions,
+          ),
+          body: child,
+        );
       },
     );
   }
