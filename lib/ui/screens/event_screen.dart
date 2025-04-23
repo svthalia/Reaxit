@@ -321,7 +321,7 @@ class _EventScreenState extends State<EventScreen> {
       updateButton = _makeUpdateButton(event);
     }
 
-    if (event.canCreateRegistration || !event.isRegistered) {
+    if (event.canCreateRegistration && !event.isRegistered) {
       if (!event.registrationStarted()) {
         // Registration will open ....
         final registrationStart = dateTimeFormatter.format(
@@ -343,11 +343,7 @@ class _EventScreenState extends State<EventScreen> {
       final registration = event.registration!;
       if (registration.isLateCancellation) {
         // Your registration is cancelled after the deadline.
-        textSpans.add(
-          const TextSpan(
-            text: 'Your registration is cancelled after the deadline. ',
-          ),
-        );
+        textSpans.add(TextSpan(text: event.registrationStatus));
       } else if (registration.isCancelled) {
         // Your registration is cancelled.
         textSpans.add(const TextSpan(text: 'Your registration is cancelled. '));
