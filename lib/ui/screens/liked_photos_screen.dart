@@ -46,13 +46,11 @@ class _LikedPhotosScreenState extends State<LikedPhotosScreen> {
       child: Scaffold(
         appBar: ThaliaAppBar(title: const Text('LIKED PHOTOS')),
         body: RefreshIndicator(
-          onRefresh: () async {
-            await _cubit.load();
-          },
+          onRefresh: _cubit.load,
           child: BlocBuilder<LikedPhotosCubit, LikedPhotosState>(
             builder: (context, state) {
               if (state.hasException) {
-                return ErrorScrollView(state.message!);
+                return ErrorScrollView(state.message!, retry: _cubit.load);
               } else {
                 return _PhotoGridScrollView(
                   controller: _controller,

@@ -177,7 +177,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         child: BlocBuilder<WelcomeCubit, WelcomeState>(
           builder: (context, state) {
             if (state.hasException) {
-              return ErrorScrollView(state.message!);
+              return ErrorScrollView(
+                state.message!,
+                retry: () => BlocProvider.of<WelcomeCubit>(context).load(),
+              );
             } else if (!state.hasResults) {
               return const Center(child: CircularProgressIndicator());
             } else {
