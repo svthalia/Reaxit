@@ -42,6 +42,7 @@ post_install do |installer|
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
       end
       config.build_settings['OTHER_SWIFT_FLAGS'] ||= ['$(inherited)']
+      config.build_settings['OTHER_SWIFT_FLAGS'] << '-enable-experimental-feature=AccessLevelOnImport'
       config.build_settings['OTHER_SWIFT_FLAGS'] << '-enable-experimental-feature'
       config.build_settings['OTHER_SWIFT_FLAGS'] << 'AccessLevelOnImport'
     end
