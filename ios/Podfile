@@ -41,6 +41,8 @@ post_install do |installer|
       if Gem::Version.new('13.0') > Gem::Version.new(config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'])
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
       end
+      config.build_settings['OTHER_SWIFT_FLAGS'] << '-enable-experimental-feature'
+      config.build_settings['OTHER_SWIFT_FLAGS'] << 'AccessLevelOnImport'
     end
   end
 end
