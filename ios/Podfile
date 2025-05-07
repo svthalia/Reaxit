@@ -40,9 +40,10 @@ post_install do |installer|
     target.build_configurations.each do |config|
       if Gem::Version.new('13.0') > Gem::Version.new(config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'])
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
-        config.build_settings['OTHER_SWIFT_FLAGS'] << '-enable-experimental-feature'
-        config.build_settings['OTHER_SWIFT_FLAGS'] << 'AccessLevelOnImport'
       end
+      config.build_settings['OTHER_SWIFT_FLAGS'] ||= ['$(inherited)']
+      config.build_settings['OTHER_SWIFT_FLAGS'] << '-enable-experimental-feature'
+      config.build_settings['OTHER_SWIFT_FLAGS'] << 'AccessLevelOnImport'
     end
   end
 end
