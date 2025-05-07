@@ -65,6 +65,7 @@ jobs:
         run: |
           UDID=$(xcrun xctrace list devices | grep "^$DEVICE (" | awk '{gsub(/[()]/,""); print $NF}')
           echo $UDID
+          ls /Applications/Xcode_*
           xcrun simctl boot "${UDID:?No Simulator with this name found}"
 
       - name: Checkout repository
