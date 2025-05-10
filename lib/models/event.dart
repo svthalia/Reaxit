@@ -59,6 +59,7 @@ class Event implements BaseEvent {
   final int numParticipants;
   final int? maxParticipants;
 
+  final String registrationStatus;
   final String cancelTooLateMessage;
   final String? noRegistrationMessage;
   final int? foodEvent;
@@ -130,6 +131,7 @@ class Event implements BaseEvent {
     this.userPermissions,
     this.registration,
     this.organisers,
+    this.registrationStatus,
     this.cancelTooLateMessage,
     this.optionalRegistrations,
     this.documents,

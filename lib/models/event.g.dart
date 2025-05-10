@@ -42,6 +42,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
   (json['organisers'] as List<dynamic>)
       .map((e) => SmallGroup.fromJson(e as Map<String, dynamic>))
       .toList(),
+  json['registration_status'] as String,
   json['cancel_too_late_message'] as String,
   json['optional_registrations'] as bool,
   (json['documents'] as List<dynamic>)
@@ -69,6 +70,7 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
   'fine': instance.fine,
   'num_participants': instance.numParticipants,
   'max_participants': instance.maxParticipants,
+  'registration_status': instance.registrationStatus,
   'cancel_too_late_message': instance.cancelTooLateMessage,
   'no_registration_message': instance.noRegistrationMessage,
   'food_event': instance.foodEvent,
