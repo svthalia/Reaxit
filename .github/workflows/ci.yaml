@@ -54,7 +54,7 @@ jobs:
 
   integration-ios:
     name: Integration Testing - iOS
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - name: "List all simulators"
         run: "xcrun xctrace list devices"
