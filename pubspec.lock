@@ -257,14 +257,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.2"
-  cupertino_http:
-    dependency: "direct main"
-    description:
-      name: cupertino_http
-      sha256: "5a043ec21fd7f56b24c549fd293a7fc60bba899509246cd0ffc2a91cb78c9be2"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.0"
   dart_style:
     dependency: transitive
     description:
@@ -618,14 +610,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.2"
-  http_profile:
-    dependency: transitive
-    description:
-      name: http_profile
-      sha256: "7e679e355b09aaee2ab5010915c932cce3f2d1c11c3b2dc177891687014ffa78"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.1.0"
   image:
     dependency: transitive
     description:
@@ -638,26 +622,26 @@ packages:
     dependency: "direct main"
     description:
       name: image_cropper
-      sha256: "4e9c96c029eb5a23798da1b6af39787f964da6ffc78fd8447c140542a9f7c6fc"
+      sha256: "0c6ea3f96ccdcbe855fc86e9de582fdd6a94d578be8d817a05d9ecef9f1a258b"
       url: "https://pub.dev"
     source: hosted
-    version: "9.1.0"
+    version: "9.0.0"
   image_cropper_for_web:
     dependency: transitive
     description:
       name: image_cropper_for_web
-      sha256: fd81ebe36f636576094377aab32673c4e5d1609b32dec16fad98d2b71f1250a9
+      sha256: "34256c8fb7fcb233251787c876bb37271744459b593a948a2db73caa323034d0"
       url: "https://pub.dev"
     source: hosted
-    version: "6.1.0"
+    version: "6.0.2"
   image_cropper_platform_interface:
     dependency: transitive
     description:
       name: image_cropper_platform_interface
-      sha256: "6ca6b81769abff9a4dcc3bbd3d75f5dfa9de6b870ae9613c8cd237333a4283af"
+      sha256: e8e9d2ca36360387aee39295ce49029362ae4df3071f23e8e71f2b81e40b7531
       url: "https://pub.dev"
     source: hosted
-    version: "7.1.0"
+    version: "7.0.0"
   image_picker:
     dependency: "direct main"
     description:
@@ -863,14 +847,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
-  objective_c:
-    dependency: transitive
-    description:
-      name: objective_c
-      sha256: "9f034ba1eeca53ddb339bc8f4813cb07336a849cd735559b60cdc068ecce2dc7"
-      url: "https://pub.dev"
-    source: hosted
-    version: "7.1.0"
   octo_image:
     dependency: transitive
     description:
