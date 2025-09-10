@@ -110,7 +110,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   Widget _makeUpcomingEvents(List<BaseEvent> events) {
-    final dayGroupedEvents = _groupByDay(events);
+    final now = DateTime.now();
+    List<BaseEvent> upcomingEvents =
+        events
+            .where(
+              (event) => !(event.start.isBefore(now) && event.end.isAfter(now)),
+            )
+            .toList();
+    final dayGroupedEvents = _groupByDay(upcomingEvents);
     return AnimatedSize(
       curve: Curves.ease,
       duration: const Duration(milliseconds: 300),
