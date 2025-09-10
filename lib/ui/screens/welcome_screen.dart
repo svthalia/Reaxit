@@ -109,6 +109,50 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
+  Widget _makeOngoingEvents(List<BaseEvent> events) {
+    final now = DateTime.now();
+    List<BaseEvent> ongoingEvents =
+        events
+            .where(
+              (event) => event.start.isBefore(now) && event.end.isAfter(now),
+            )
+            .toList();
+    final dayGroupedEvents = _groupByDay(ongoingEvents);
+    return AnimatedSize(
+      curve: Curves.ease,
+      duration: const Duration(milliseconds: 300),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'ONGOING EVENTS',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 8),
+                for (final event in ongoingEvents)
+                  EventDetailCard(event: event),
+              ],
+            ),
+            if (dayGroupedEvents.isEmpty)
+              const Padding(
+                padding: EdgeInsets.all(8),
+                child: Text(
+                  'There are no ongoing events.',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _makeUpcomingEvents(List<BaseEvent> events) {
     final now = DateTime.now();
     List<BaseEvent> upcomingEvents =
@@ -201,6 +245,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     _makeArticles(state.articles!),
                     if (state.articles!.isNotEmpty)
                       const Divider(indent: 16, endIndent: 16, height: 8),
+                    _makeOngoingEvents(state.upcomingEvents!),
                     _makeUpcomingEvents(state.upcomingEvents!),
                     TextButton(
                       onPressed: () => context.goNamed('calendar'),
