@@ -58,7 +58,7 @@ void main() {
       final state = WelcomeState.result(
         slides: const [],
         articles: const [],
-        upcomingEvents: [normalEvent, partnerEvent],
+        events: [normalEvent, partnerEvent],
         announcements: const [],
       );
 
