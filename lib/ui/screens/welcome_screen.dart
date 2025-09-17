@@ -109,15 +109,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
-  Widget _makeOngoingEvents(List<BaseEvent> events) {
-    final now = DateTime.now();
-    List<BaseEvent> ongoingEvents =
-        events
-            .where(
-              (event) => event.start.isBefore(now) && event.end.isAfter(now),
-            )
-            .toList();
-    final dayGroupedEvents = _groupByDay(ongoingEvents);
+  Widget _makeEventsSection(List<BaseEvent> events, bool isUpcoming) {
+    final dayGroupedEvents = _groupByDay(events);
     return AnimatedSize(
       curve: Curves.ease,
       duration: const Duration(milliseconds: 300),
@@ -127,51 +120,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'ONGOING EVENTS',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 8),
-                for (final event in ongoingEvents)
-                  EventDetailCard(event: event),
-              ],
-            ),
-            if (dayGroupedEvents.isEmpty)
-              const Padding(
-                padding: EdgeInsets.all(8),
-                child: Text(
-                  'There are no ongoing events.',
-                  textAlign: TextAlign.center,
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _makeUpcomingEvents(List<BaseEvent> events) {
-    final now = DateTime.now();
-    List<BaseEvent> upcomingEvents =
-        events
-            .where(
-              (event) => !(event.start.isBefore(now) && event.end.isAfter(now)),
-            )
-            .toList();
-    final dayGroupedEvents = _groupByDay(upcomingEvents);
-    return AnimatedSize(
-      curve: Curves.ease,
-      duration: const Duration(milliseconds: 300),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'UPCOMING EVENTS',
+              isUpcoming ? 'UPCOMING EVENTS' : 'ONGOING EVENTS',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleMedium,
             ),
@@ -196,7 +145,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 children: [
                   const SizedBox(height: 8),
                   Text(
-                    dayText,
+                    isUpcoming ? dayText : '',
+                    // dayText,
                     textAlign: TextAlign.left,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
@@ -205,7 +155,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               );
             }),
             if (events.isEmpty)
-              const Padding(
+              Padding(
                 padding: EdgeInsets.all(8),
                 child: Text(
                   'There are no upcoming events.',
@@ -215,6 +165,22 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _makeEvents(List<BaseEvent> events) {
+    final now = DateTime.now();
+
+    bool isOngoing(BaseEvent event) =>
+        event.start.isBefore(now) && event.end.isAfter(now);
+
+    final ongoingEvents = events.where((e) => isOngoing(e)).toList();
+    final upcomingEvents = events.where((e) => !isOngoing(e)).toList();
+    return Column(
+      children: [
+        if (ongoingEvents.isNotEmpty) _makeEventsSection(ongoingEvents, false),
+        _makeEventsSection(upcomingEvents, true),
+      ],
     );
   }
 
@@ -245,8 +211,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     _makeArticles(state.articles!),
                     if (state.articles!.isNotEmpty)
                       const Divider(indent: 16, endIndent: 16, height: 8),
-                    _makeOngoingEvents(state.upcomingEvents!),
-                    _makeUpcomingEvents(state.upcomingEvents!),
+                    _makeEvents(state.events!),
                     TextButton(
                       onPressed: () => context.goNamed('calendar'),
                       child: const Text('SHOW THE ENTIRE AGENDA'),
