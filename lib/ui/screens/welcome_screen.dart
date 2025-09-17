@@ -155,7 +155,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               );
             }),
             if (events.isEmpty)
-              Padding(
+              const Padding(
                 padding: EdgeInsets.all(8),
                 child: Text(
                   'There are no upcoming events.',
