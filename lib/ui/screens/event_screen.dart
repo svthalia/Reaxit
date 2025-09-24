@@ -321,7 +321,7 @@ class _EventScreenState extends State<EventScreen> {
       updateButton = _makeUpdateButton(event);
     }
 
-    if (event.canCreateRegistration || !event.isRegistered) {
+    if (event.canCreateRegistration && !event.isRegistered) {
       if (!event.registrationStarted()) {
         // Registration will open ....
         final registrationStart = dateTimeFormatter.format(
