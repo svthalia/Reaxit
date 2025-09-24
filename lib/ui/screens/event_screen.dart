@@ -321,42 +321,29 @@ class _EventScreenState extends State<EventScreen> {
       updateButton = _makeUpdateButton(event);
     }
 
-    if (event.canCreateRegistration && !event.isRegistered) {
+    if (event.canCreateRegistration || !event.isRegistered) {
       if (!event.registrationStarted()) {
         // Registration will open ....
         final registrationStart = dateTimeFormatter.format(
           event.registrationStart!.toLocal(),
         );
+        // API
         textSpans.add(
           TextSpan(text: 'Registration will open $registrationStart. '),
         );
       } else if (event.registrationIsOpen()) {
         // Terms and conditions, register button.
         textSpans.add(_makeTermsAndConditions(event));
-      } else if (event.registrationClosed()) {
-        // Registration is no longer possible.
-        textSpans.add(
-          const TextSpan(text: 'Registration is not possible anymore. '),
-        );
       }
-    } else {
-      final registration = event.registration!;
-      if (registration.isLateCancellation) {
-        // Your registration is cancelled after the deadline.
-        textSpans.add(TextSpan(text: event.registrationStatus));
-      } else if (registration.isCancelled) {
-        // Your registration is cancelled.
-        textSpans.add(const TextSpan(text: 'Your registration is cancelled. '));
-      } else if (registration.isInQueue) {
-        // Queue position.
-        textSpans.add(
-          TextSpan(text: 'Queue position ${registration.queuePosition}. '),
-        );
-      } else if (registration.isInvited) {
-        // You are registered.
-        textSpans.add(const TextSpan(text: 'You are registered. '));
+      final registration = event.registration;
+
+      //Registration Status from API
+      textSpans.add(TextSpan(text: event.registrationStatus));
+
+      if (registration != null) {
         if (event.paymentIsRequired) {
           if (registration.isPaid) {
+            textSpans.add(TextSpan(text: event.registrationStatus));
             if (registration.payment!.type == PaymentType.tpayPayment) {
               // You are paying with Thalia Pay.
               textSpans.add(
