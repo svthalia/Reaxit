@@ -109,7 +109,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
-  Widget _makeEventsSection(List<BaseEvent> events, bool isUpcoming) {
+  Widget _makeEventsSection(List<BaseEvent> events, String title) {
     final dayGroupedEvents = _groupByDay(events);
     return AnimatedSize(
       curve: Curves.ease,
@@ -120,7 +120,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              isUpcoming ? 'UPCOMING EVENTS' : 'ONGOING EVENTS',
+              title,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleMedium,
             ),
@@ -145,8 +145,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 children: [
                   const SizedBox(height: 8),
                   Text(
-                    isUpcoming ? dayText : '',
-                    // dayText,
+                    title == 'ONGOING EVENTS' ? dayText : '',
                     textAlign: TextAlign.left,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
@@ -158,7 +157,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               const Padding(
                 padding: EdgeInsets.all(8),
                 child: Text(
-                  'There are no upcoming events.',
+                  'There are no events here.',
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -178,8 +177,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     final upcomingEvents = events.where((e) => !isOngoing(e)).toList();
     return Column(
       children: [
-        if (ongoingEvents.isNotEmpty) _makeEventsSection(ongoingEvents, false),
-        _makeEventsSection(upcomingEvents, true),
+        if (ongoingEvents.isNotEmpty)
+          _makeEventsSection(ongoingEvents, 'ONGOING EVENTS'),
+        _makeEventsSection(upcomingEvents, 'UPCOMING EVENTS'),
       ],
     );
   }
