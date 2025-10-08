@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class ErrorScrollView extends StatelessWidget {
   final String message;
+  final void Function()? retry;
 
-  const ErrorScrollView(this.message, {super.key});
+  const ErrorScrollView(this.message, {super.key, this.retry});
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +18,8 @@ class ErrorScrollView extends StatelessWidget {
           child: Image.asset('assets/img/sad-cloud.png', fit: BoxFit.fitHeight),
         ),
         Text(message, textAlign: TextAlign.center),
+        if (retry != null)
+          Center(child: TextButton(onPressed: retry, child: Text('Retry'))),
       ],
     );
   }

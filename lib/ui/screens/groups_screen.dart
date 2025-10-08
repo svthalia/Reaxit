@@ -229,7 +229,10 @@ class GroupSearchDelegate extends SearchDelegate {
       bloc: _cubit..search(query),
       builder: (context, state) {
         if (state.message != null) {
-          return ErrorScrollView(state.message!);
+          return ErrorScrollView(
+            state.message!,
+            retry: () => _cubit.search(query),
+          );
         } else if (state.isLoading) {
           return GroupListScrollView(
             key: const PageStorageKey('groups-search'),

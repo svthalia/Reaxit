@@ -167,12 +167,12 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
 
   @override
   Widget build(BuildContext context) {
+    EventAdminCubit cubit = EventAdminCubit(
+      RepositoryProvider.of<ApiRepository>(context),
+      eventPk: widget.pk,
+    );
     return BlocProvider(
-      create:
-          (context) => EventAdminCubit(
-            RepositoryProvider.of<ApiRepository>(context),
-            eventPk: widget.pk,
-          )..load(),
+      create: (context) => cubit..load(),
       child: Builder(
         builder: (context) {
           return DefaultTabController(
@@ -182,7 +182,7 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
               builder: (context, state) {
                 late final Widget body;
                 if (state.hasException) {
-                  body = ErrorScrollView(state.exception!);
+                  body = ErrorScrollView(state.exception!, retry: cubit.load);
                 } else if (state.isLoading) {
                   body = const Center(child: CircularProgressIndicator());
                 } else {
@@ -552,7 +552,10 @@ class EventAdminSearchDelegate extends SearchDelegate {
       child: BlocBuilder<EventAdminCubit, EventAdminState>(
         builder: (context, state) {
           if (state.hasException) {
-            return ErrorScrollView(state.message!);
+            return ErrorScrollView(
+              state.message!,
+              retry: () => _adminCubit..search(query),
+            );
           } else {
             return ListView.separated(
               key: const PageStorageKey('event-admin-search'),
@@ -577,7 +580,10 @@ class EventAdminSearchDelegate extends SearchDelegate {
       child: BlocBuilder<EventAdminCubit, EventAdminState>(
         builder: (context, state) {
           if (state.hasException) {
-            return ErrorScrollView(state.message!);
+            return ErrorScrollView(
+              state.message!,
+              retry: () => _adminCubit..search(query),
+            );
           } else {
             return ListView.separated(
               key: const PageStorageKey('event-admin-search'),

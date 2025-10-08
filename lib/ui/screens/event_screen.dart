@@ -895,7 +895,7 @@ class _EventScreenState extends State<EventScreen> {
               onRefresh: () async {
                 await _eventCubit.load();
               },
-              child: ErrorScrollView(state.message!),
+              child: ErrorScrollView(state.message!, retry: _eventCubit.load),
             ),
           );
         } else if (state.isLoading && widget.event == null) {
