@@ -78,12 +78,12 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
 
   @override
   Widget build(BuildContext context) {
+    FoodAdminCubit cubit = FoodAdminCubit(
+      RepositoryProvider.of<ApiRepository>(context),
+      foodEventPk: widget.pk,
+    );
     return BlocProvider(
-      create:
-          (context) => FoodAdminCubit(
-            RepositoryProvider.of<ApiRepository>(context),
-            foodEventPk: widget.pk,
-          )..load(),
+      create: (context) => cubit..load(),
       child: Builder(
         builder: (context) {
           return Scaffold(
@@ -107,14 +107,12 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
               ],
             ),
             body: RefreshIndicator(
-              onRefresh: () async {
-                await BlocProvider.of<FoodAdminCubit>(context).load();
-              },
+              onRefresh: cubit.load,
               child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
                 builder: (context, state) {
                   switch (state) {
                     case ErrorState(message: var message):
-                      return ErrorScrollView(message);
+                      return ErrorScrollView(message, retry: cubit.load);
                     case LoadingState _:
                       return const Center(child: CircularProgressIndicator());
                     case ResultState<List<AdminFoodOrder>>(result: var result):
@@ -322,7 +320,10 @@ class FoodAdminSearchDelegate extends SearchDelegate {
       child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
         builder:
             (context, state) => switch (state) {
-              ErrorState(message: var message) => ErrorScrollView(message),
+              ErrorState(message: var message) => ErrorScrollView(
+                message,
+                retry: () => _adminCubit.search(query),
+              ),
               LoadingState _ => const SizedBox.shrink(),
               ResultState(result: var result) => ListView.separated(
                 key: const PageStorageKey('food-admin-search'),
