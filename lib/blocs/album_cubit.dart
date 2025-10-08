@@ -9,8 +9,9 @@ typedef AlbumState = DetailState<Album>;
 
 class AlbumCubit extends Cubit<AlbumState> implements GalleryCubit<AlbumState> {
   final ApiRepository api;
+  final String slug;
 
-  AlbumCubit(this.api) : super(const LoadingState());
+  AlbumCubit(this.api, this.slug) : super(const LoadingState());
 
   @override
   Future<void> updateLike({required bool liked, required int index}) async {
@@ -40,7 +41,7 @@ class AlbumCubit extends Cubit<AlbumState> implements GalleryCubit<AlbumState> {
   @override
   Future<void> more() async {}
 
-  Future<void> load(String slug) async {
+  Future<void> load() async {
     emit(LoadingState.from(state));
     try {
       final album = await api.getAlbum(slug: slug);

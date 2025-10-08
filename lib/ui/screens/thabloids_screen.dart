@@ -47,7 +47,7 @@ class _ThabloidScreenState extends State<ThabloidScreen> {
       body: BlocBuilder<ThabloidListCubit, ThabloidListState>(
         builder: (context, thabloidsState) {
           if (thabloidsState.hasException) {
-            return ErrorScrollView(thabloidsState.message!);
+            return ErrorScrollView(thabloidsState.message!, retry: _cubit.load);
           } else if (thabloidsState.isLoading) {
             return const Center(child: CircularProgressIndicator());
           } else {

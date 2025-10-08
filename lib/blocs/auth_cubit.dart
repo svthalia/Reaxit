@@ -150,7 +150,7 @@ class AuthCubit extends Cubit<AuthState> {
                     Platform.isIOS
                         ? CupertinoClient.defaultSessionConfiguration()
                             as http.Client
-                        : HttpClient() as http.Client,
+                        : http.Client(),
                 failedRequestStatusCodes: [
                   SentryStatusCode(400),
                   SentryStatusCode.range(405, 499),
