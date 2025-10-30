@@ -19,15 +19,6 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  static final dateFormatter = DateFormat('EEEE d MMMM');
-
-  static Map<DateTime, List<BaseEvent>> _groupByDay(List<BaseEvent> events) {
-    return groupBy<BaseEvent, DateTime>(
-      events,
-      (event) => DateTime(event.start.year, event.start.month, event.start.day),
-    );
-  }
-
   Widget _makeAnnouncements(List<Announcement> announcements) {
     return AnimatedSize(
       curve: Curves.ease,
@@ -109,81 +100,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
-  Widget _makeEventsSection(List<BaseEvent> events, String title) {
-    final dayGroupedEvents = _groupByDay(events);
-    return AnimatedSize(
-      curve: Curves.ease,
-      duration: const Duration(milliseconds: 300),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            ...dayGroupedEvents.entries.map<Widget>((entry) {
-              final now = DateTime.now();
-              final today = DateTime(now.year, now.month, now.day);
-              final day = entry.key;
-              final dayEvents = entry.value;
-              String dayText;
-              switch (day.difference(today).inDays) {
-                case 0:
-                  dayText = 'TODAY';
-                  break;
-                case 1:
-                  dayText = 'TOMORROW';
-                  break;
-                default:
-                  dayText = dateFormatter.format(day).toUpperCase();
-              }
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 8),
-                  Text(
-                    title == 'ONGOING EVENTS' ? dayText : '',
-                    textAlign: TextAlign.left,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  for (final event in dayEvents) EventDetailCard(event: event),
-                ],
-              );
-            }),
-            if (events.isEmpty)
-              const Padding(
-                padding: EdgeInsets.all(8),
-                child: Text(
-                  'There are no events here.',
-                  textAlign: TextAlign.center,
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _makeEvents(List<BaseEvent> events) {
-    final now = DateTime.now();
-
-    bool isOngoing(BaseEvent event) =>
-        event.start.isBefore(now) && event.end.isAfter(now);
-
-    final ongoingEvents = events.where((e) => isOngoing(e)).toList();
-    final upcomingEvents = events.where((e) => !isOngoing(e)).toList();
-    return Column(
-      children: [
-        if (ongoingEvents.isNotEmpty)
-          _makeEventsSection(ongoingEvents, 'ONGOING EVENTS'),
-        _makeEventsSection(upcomingEvents, 'UPCOMING EVENTS'),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -211,7 +127,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     _makeArticles(state.articles!),
                     if (state.articles!.isNotEmpty)
                       const Divider(indent: 16, endIndent: 16, height: 8),
-                    _makeEvents(state.events!),
+                    // _makeEvents(state.events!),
+                    Events(state.events!),
                     TextButton(
                       onPressed: () => context.goNamed('calendar'),
                       child: const Text('SHOW THE ENTIRE AGENDA'),
@@ -294,6 +211,101 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class Events extends StatelessWidget {
+  const Events(this.events);
+  final List<BaseEvent>? events;
+
+  static final dateFormatter = DateFormat('EEEE d MMMM');
+  static Map<DateTime, List<BaseEvent>> _groupByDay(List<BaseEvent> events) {
+    return groupBy<BaseEvent, DateTime>(
+      events,
+      (event) => DateTime(event.start.year, event.start.month, event.start.day),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+
+    bool isOngoing(BaseEvent event) =>
+        event.start.isBefore(now) && event.end.isAfter(now);
+
+    final ongoingEvents = events!.where((e) => isOngoing(e)).toList();
+    final upcomingEvents = events!.where((e) => !isOngoing(e)).toList();
+    return Column(
+      children: [
+        if (ongoingEvents.isNotEmpty)
+          _makeEventsSection(context, ongoingEvents, 'ONGOING EVENTS', false),
+        _makeEventsSection(context, upcomingEvents, 'UPCOMING EVENTS', true),
+      ],
+    );
+  }
+
+  Widget _makeEventsSection(
+    BuildContext context,
+    List<BaseEvent> events,
+    String title,
+    bool showDayText,
+  ) {
+    final dayGroupedEvents = _groupByDay(events);
+    return AnimatedSize(
+      curve: Curves.ease,
+      duration: const Duration(milliseconds: 300),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            ...dayGroupedEvents.entries.map<Widget>((entry) {
+              final now = DateTime.now();
+              final today = DateTime(now.year, now.month, now.day);
+              final day = entry.key;
+              final dayEvents = entry.value;
+              String dayText;
+              switch (day.difference(today).inDays) {
+                case 0:
+                  dayText = 'TODAY';
+                  break;
+                case 1:
+                  dayText = 'TOMORROW';
+                  break;
+                default:
+                  dayText = dateFormatter.format(day).toUpperCase();
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 8),
+                  Text(
+                    showDayText ? dayText : '',
+                    // dateFormatter.format(day).toUpperCase(),
+                    textAlign: TextAlign.left,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  for (final event in dayEvents) EventDetailCard(event: event),
+                ],
+              );
+            }),
+            if (events.isEmpty)
+              const Padding(
+                padding: EdgeInsets.all(8),
+                child: Text(
+                  'There are no events here.',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }
