@@ -283,6 +283,7 @@ class _EventScreenState extends State<EventScreen> {
     );
 
     final textSpans = <TextSpan>[];
+    final registrationStatusText = <TextSpan>[];
     Widget registrationButton = const SizedBox.shrink();
     Widget updateButton = const SizedBox.shrink();
 
@@ -321,6 +322,9 @@ class _EventScreenState extends State<EventScreen> {
       updateButton = _makeUpdateButton(event);
     }
 
+    //Registration Status from API
+    registrationStatusText.add(TextSpan(text: event.registrationStatus));
+
     if (event.canCreateRegistration && !event.isRegistered) {
       if (!event.registrationStarted()) {
         // Registration will open ....
@@ -337,13 +341,9 @@ class _EventScreenState extends State<EventScreen> {
       }
       final registration = event.registration;
 
-      //Registration Status from API
-      textSpans.add(TextSpan(text: event.registrationStatus));
-
       if (registration != null) {
         if (event.paymentIsRequired) {
           if (registration.isPaid) {
-            textSpans.add(TextSpan(text: event.registrationStatus));
             if (registration.payment!.type == PaymentType.tpayPayment) {
               // You are paying with Thalia Pay.
               textSpans.add(
@@ -471,7 +471,14 @@ class _EventScreenState extends State<EventScreen> {
           ],
         ),
         const Divider(height: 24),
-        Text.rich(TextSpan(children: textSpans), style: dataStyle),
+        if (textSpans.isNotEmpty) ...[
+          Text.rich(TextSpan(children: textSpans), style: dataStyle),
+          const SizedBox(height: 8),
+        ],
+        Text.rich(
+          TextSpan(children: registrationStatusText),
+          style: TextStyle(fontStyle: FontStyle.italic),
+        ),
         const SizedBox(height: 4),
         registrationButton,
         updateButton,
@@ -487,6 +494,7 @@ class _EventScreenState extends State<EventScreen> {
     final dataStyle = textTheme.bodyMedium!.apply(fontSizeDelta: -1);
 
     final textSpans = <TextSpan>[];
+    final registrationStatusText = <TextSpan>[];
     Widget registrationButton = const SizedBox.shrink();
     if (event.canCancelRegistration) {
       registrationButton = _makeIWontBeThereButton(event);
@@ -497,7 +505,7 @@ class _EventScreenState extends State<EventScreen> {
         const TextSpan(
           text:
               'You are registered. This is only an indication that you intend '
-              'to be present. Access to the event is not handled by Thalia.',
+              'to be present. Access to the event is not handled by Thalia. ',
         ),
       );
     } else if (event.canCreateRegistration) {
@@ -514,9 +522,9 @@ class _EventScreenState extends State<EventScreen> {
 
     if (event.noRegistrationMessage?.isNotEmpty ?? false) {
       final htmlStripped = Bidi.stripHtmlIfNeeded(event.noRegistrationMessage!);
-      textSpans.add(TextSpan(text: htmlStripped));
+      registrationStatusText.add(TextSpan(text: htmlStripped));
     } else {
-      textSpans.add(const TextSpan(text: 'No registration required.'));
+      registrationStatusText.add(TextSpan(text: event.registrationStatus));
     }
 
     Widget updateButton = const SizedBox.shrink();
@@ -528,6 +536,11 @@ class _EventScreenState extends State<EventScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text.rich(TextSpan(children: textSpans), style: dataStyle),
+        const SizedBox(height: 8),
+        Text.rich(
+          TextSpan(children: registrationStatusText),
+          style: TextStyle(fontStyle: FontStyle.italic),
+        ),
         const SizedBox(height: 4),
         registrationButton,
         updateButton,
