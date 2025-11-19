@@ -127,39 +127,29 @@ class _ThaliAppState extends State<ThaliApp> {
   late final GoRouter _router;
   late final AuthCubit _authCubit;
 
-  Uri? extractURL(RemoteMessage message) {
-    Uri? uri;
-    if (message.data.containsKey('url') && message.data['url'] is String) {
-      uri = Uri.tryParse(message.data['url'] as String);
-      if (uri?.scheme.isEmpty ?? false) uri = uri!.replace(scheme: 'https');
-    }
-    return uri;
-  }
-
   Future<void> _setupPushNotificationHandlers() async {
     // User got a push notification while the app is running.
     // Display a notification inside the app.
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      if (message.notification != null) {
-        Uri? uri = extractURL(message);
-        showOverlayNotification(
-          (context) => PushNotificationOverlay(message.notification!, uri),
-          duration: const Duration(milliseconds: 4000),
-        );
-      }
+      showOverlayNotification(
+        (context) => PushNotificationOverlay(message),
+        duration: const Duration(milliseconds: 4000),
+      );
     });
 
     // User clicked on push notification outside of the app and the
     // app was still in the background. Open the url or show a dialog.
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       final navigatorKey = _router.routerDelegate.navigatorKey;
-
-      Uri? uri = extractURL(message);
-      if (uri != null) {
-        if (isDeepLink(uri)) {
-          _router.go(Uri(path: uri.path, query: uri.query).toString());
-        } else {
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (message.data.containsKey('url') && message.data['url'] is String) {
+        Uri? uri = Uri.tryParse(message.data['url'] as String);
+        if (uri != null) {
+          if (uri.scheme.isEmpty) uri = uri.replace(scheme: 'https');
+          if (isDeepLink(uri)) {
+            _router.go(Uri(path: uri.path, query: uri.query).toString());
+          } else {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
         }
       } else if (navigatorKey.currentContext != null) {
         showDialog(
@@ -176,13 +166,15 @@ class _ThaliAppState extends State<ThaliApp> {
     if (initialMessage != null) {
       final navigatorKey = _router.routerDelegate.navigatorKey;
       final message = initialMessage;
-
-      Uri? uri = extractURL(message);
-      if (uri != null) {
-        if (isDeepLink(uri)) {
-          _router.go(Uri(path: uri.path, query: uri.query).toString());
-        } else {
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (message.data.containsKey('url') && message.data['url'] is String) {
+        Uri? uri = Uri.tryParse(message.data['url'] as String);
+        if (uri != null) {
+          if (uri.scheme.isEmpty) uri = uri.replace(scheme: 'https');
+          if (isDeepLink(uri)) {
+            _router.go(Uri(path: uri.path, query: uri.query).toString());
+          } else {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
         }
       } else if (navigatorKey.currentContext != null) {
         showDialog(
