@@ -1,7 +1,19 @@
 import 'dart:async';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+    
+        
+          
+    
+
+        
+        Expand All
+    
+    @@ -21,13 +20,10 @@ import 'package:reaxit/ui/widgets.dart';
+  
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -20,13 +32,27 @@ import 'package:reaxit/ui/widgets.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   // Google Fonts doesn't need to download fonts as they are bundled.
   GoogleFonts.config.allowRuntimeFetching = false;
+
   // Add licenses for the used fonts.
   LicenseRegistry.addLicense(() async* {
     final openSansLicense = await rootBundle.loadString(
+
+    
+        
+          
+    
+
+        
+        Expand All
+    
+    @@ -39,7 +35,6 @@ Future<void> main() async {
+  
       'assets/google_fonts/OpenSans-OFL.txt',
     );
     final oswaldLicense = await rootBundle.loadString(
@@ -35,9 +61,21 @@ Future<void> main() async {
     yield LicenseEntryWithLineBreaks(['google_fonts'], openSansLicense);
     yield LicenseEntryWithLineBreaks(['google_fonts'], oswaldLicense);
   });
+
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await SentryFlutter.init(
+
+    
+        
+          
+    
+
+        
+        Expand All
+    
+    @@ -60,14 +55,11 @@ Future<void> main() async {
+  
     (options) {
       options.dsn = sentryDSN;
     },
@@ -55,14 +93,28 @@ Future<void> main() async {
     },
   );
 }
+
 /// A copy of [main] that allows inserting an [AuthCubit] for integration tests.
 Future<void> testingMain(AuthCubit? authCubit, String? initialroute) async {
   WidgetsFlutterBinding.ensureInitialized();
+
   // Google Fonts doesn't need to download fonts as they are bundled.
   GoogleFonts.config.allowRuntimeFetching = false;
+
   // Add licenses for the used fonts.
   LicenseRegistry.addLicense(() async* {
     final openSansLicense = await rootBundle.loadString(
+
+    
+        
+          
+    
+
+        
+        Expand All
+    
+    @@ -79,7 +71,6 @@ Future<void> testingMain(AuthCubit? authCubit, String? initialroute) async {
+  
       'assets/google_fonts/OpenSans-OFL.txt',
     );
     final oswaldLicense = await rootBundle.loadString(
@@ -71,9 +123,21 @@ Future<void> testingMain(AuthCubit? authCubit, String? initialroute) async {
     yield LicenseEntryWithLineBreaks(['google_fonts'], openSansLicense);
     yield LicenseEntryWithLineBreaks(['google_fonts'], oswaldLicense);
   });
+
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
+
+    
+        
+          
+    
+
+        
+        Expand All
+    
+    @@ -99,30 +90,24 @@ Future<void> testingMain(AuthCubit? authCubit, String? initialroute) async {
+  
     BlocProvider(
       create: (_) => ThemeCubit()..load(),
       lazy: false,
@@ -90,28 +154,50 @@ Future<void> testingMain(AuthCubit? authCubit, String? initialroute) async {
     ),
   );
 }
+
 class GoRouterRefreshStream extends ChangeNotifier {
   GoRouterRefreshStream(Stream<dynamic> stream) {
     notifyListeners();
     _subscription = stream.asBroadcastStream().listen((_) => notifyListeners());
   }
+
   late final StreamSubscription<dynamic> _subscription;
+
   @override
   void dispose() {
     _subscription.cancel();
     super.dispose();
   }
 }
+
 class ThaliApp extends StatefulWidget {
   final String? initialRoute;
   const ThaliApp({this.initialRoute});
+
   @override
   State<ThaliApp> createState() => _ThaliAppState();
 }
+
 class _ThaliAppState extends State<ThaliApp> {
   late final GoRouter _router;
   late final AuthCubit _authCubit;
 
+    
+          
+            
+    
+
+          
+          Expand Down
+          
+            
+    
+
+          
+          Expand Up
+    
+    @@ -153,14 +138,23 @@ class _ThaliAppState extends State<ThaliApp> {
+  
   Future<void> _setupPushNotificationHandlers() async {
     // User got a push notification while the app is running.
     // Display a notification inside the app.
@@ -121,7 +207,6 @@ class _ThaliAppState extends State<ThaliApp> {
         duration: const Duration(milliseconds: 4000),
       );
     });
-
     // User clicked on push notification outside of the app and the
     // app was still in the background. Open the url or show a dialog.
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
@@ -138,6 +223,17 @@ class _ThaliAppState extends State<ThaliApp> {
         }
       } else if (navigatorKey.currentContext != null) {
         showDialog(
+          context: navigatorKey.currentContext!,
+          builder: (context) => PushNotificationDialog(message),
+        );
+      }
+    });
+
+    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+
+    // User got a push notification outside of the app while the app was not
+    // running in the background. Open the url or show a dialog.
+    if (initialMessage != null) {
 
     
         
@@ -147,17 +243,8 @@ class _ThaliAppState extends State<ThaliApp> {
         
         Expand All
     
-    @@ -166,15 +176,13 @@ class _ThaliAppState extends State<ThaliApp> {
+    @@ -178,13 +172,23 @@ class _ThaliAppState extends State<ThaliApp> {
   
-          context: navigatorKey.currentContext!,
-          builder: (context) => PushNotificationDialog(message),
-        );
-      }
-    });
-    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
-    // User got a push notification outside of the app while the app was not
-    // running in the background. Open the url or show a dialog.
-    if (initialMessage != null) {
       final navigatorKey = _router.routerDelegate.navigatorKey;
       final message = initialMessage;
       if (message.data.containsKey('url') && message.data['url'] is String) {
@@ -172,48 +259,75 @@ class _ThaliAppState extends State<ThaliApp> {
         }
       } else if (navigatorKey.currentContext != null) {
         showDialog(
-
-    
-          
-            
-    
-
-          
-          Expand Down
-    
-    
-  
           context: navigatorKey.currentContext!,
           builder: (context) => PushNotificationDialog(message),
         );
       }
     }
   }
+
   @override
   void initState() {
     super.initState();
+
+    
+        
+          
+    
+
+        
+        Expand All
+    
+    @@ -193,10 +197,8 @@ class _ThaliAppState extends State<ThaliApp> {
+  
     _authCubit = BlocProvider.of<AuthCubit>(context);
     _router = GoRouter(
       // The list of routes is kept in a separate
       // file to keep the code readable and clean.
       routes: routes,
+
       // Provide navigation breadcrumbs to Sentry.
       observers: [SentryNavigatorObserver()],
+
       // Redirect to `/login?from=<original-path>` if the user is not
       // logged in. If the user is logged in, and there is an original
       // path in the query parameters, redirect to that original path.
+
+    
+        
+          
+    
+
+        
+        Expand All
+    
+    @@ -206,11 +208,9 @@ class _ThaliAppState extends State<ThaliApp> {
+  
       redirect: (context, state) {
         final authState = _authCubit.state;
         final loggedIn = authState is LoggedInAuthState;
         final justLoggedOut =
             authState is LoggedOutAuthState && authState.apiRepository != null;
         final goingToLogin = state.uri.toString().startsWith('/login');
+
         if (!loggedIn && !goingToLogin) {
           // Drop original location if you just logged out.
           if (justLoggedOut) return '/login';
+
           return Uri(
             path: '/login',
             queryParameters: {'from': state.uri.toString()},
+
+    
+        
+          
+    
+
+        
+        Expand All
+    
+    @@ -221,22 +221,17 @@ class _ThaliAppState extends State<ThaliApp> {
+  
           ).toString();
         } else if (loggedIn && goingToLogin) {
           return Uri.parse(state.uri.toString()).queryParameters['from'] ?? '/';
@@ -221,20 +335,36 @@ class _ThaliAppState extends State<ThaliApp> {
           return null;
         }
       },
+
       // Refresh to look for redirects whenever auth state changes.
       refreshListenable: GoRouterRefreshStream(_authCubit.stream),
+
       initialLocation: widget.initialRoute,
     );
+
     _setupPushNotificationHandlers();
   }
+
   @override
   void dispose() {
     _router.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeCubit, ThemeMode>(
+
+    
+        
+          
+    
+
+        
+        Expand All
+    
+    @@ -250,7 +245,6 @@ class _ThaliAppState extends State<ThaliApp> {
+  
       builder: (context, themeMode) {
         return OverlaySupport.global(
           child: MaterialApp.router(
@@ -245,9 +375,21 @@ class _ThaliAppState extends State<ThaliApp> {
             routerDelegate: _router.routerDelegate,
             routeInformationParser: _router.routeInformationParser,
             routeInformationProvider: _router.routeInformationProvider,
+
             // This adds listeners for authentication status snackbars and setting up
             // push notifications. This surrounds the navigator with providers when
             // logged in, and replaces it with a [LoginScreen] when not logged in.
+
+    
+        
+          
+    
+
+        
+        Expand All
+    
+    @@ -265,7 +259,6 @@ class _ThaliAppState extends State<ThaliApp> {
+  
             builder: (context, navigator) {
               return BlocConsumer<AuthCubit, AuthState>(
                 listenWhen: (previous, current) {
@@ -259,9 +401,27 @@ class _ThaliAppState extends State<ThaliApp> {
                   }
                   return false;
                 },
+
                 // Listen to display login status snackbars and set up notifications.
                 listener: (context, state) async {
                   // Show a snackbar when the user logs out or logging in fails.
+
+    
+          
+            
+    
+
+          
+          Expand Down
+          
+            
+    
+
+          
+          Expand Up
+    
+    @@ -305,7 +298,6 @@ class _ThaliAppState extends State<ThaliApp> {
+  
                   switch (state) {
                     case LoggedOutAuthState _:
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -298,9 +458,27 @@ class _ThaliAppState extends State<ThaliApp> {
                       apiRepository =
                           (authState as LoggedOutAuthState).apiRepository!;
                     }
+
                     return InheritedConfig(
                       config: apiRepository.config,
                       child: RepositoryProvider.value(
+
+    
+          
+            
+    
+
+          
+          Expand Down
+          
+            
+    
+
+          
+          Expand Up
+    
+    @@ -399,4 +391,4 @@ class _ThaliAppState extends State<ThaliApp> {
+  
                         value: apiRepository,
                         child: MultiBlocProvider(
                           providers: [
