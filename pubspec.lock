@@ -271,23 +271,6 @@ packages:
       name: dart_style
       sha256: "27eb0ae77836989a3bc541ce55595e8ceee0992807f14511552a898ddd0d88ac"
       url: "https://pub.dev"
-
-    
-          
-            
-    
-
-          
-          Expand Down
-          
-            
-    
-
-          
-          Expand Up
-    
-    @@ -629,6 +646,17 @@ packages:
-  
     source: hosted
     version: "3.0.1"
   desktop_webview_window:
@@ -698,23 +681,6 @@ packages:
       name: image_picker
       sha256: "021834d9c0c3de46bf0fe40341fa07168407f694d9b2bb18d532dc1261867f7a"
       url: "https://pub.dev"
-
-    
-          
-            
-    
-
-          
-          Expand Down
-          
-            
-    
-
-          
-          Expand Up
-    
-    @@ -874,6 +919,17 @@ packages:
-  
     source: hosted
     version: "1.1.2"
   image_picker_android:
@@ -928,23 +894,6 @@ packages:
       name: octo_image
       sha256: "34faa6639a78c7e3cbe79be6f9f96535867e879748ade7d17c9b1ae7536293bd"
       url: "https://pub.dev"
-
-    
-          
-            
-    
-
-          
-          Expand Down
-          
-            
-    
-
-          
-          Expand Up
-    
-    @@ -1528,4 +1584,4 @@ packages:
-  
     source: hosted
     version: "2.1.0"
   open_file_plus:
