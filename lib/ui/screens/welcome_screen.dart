@@ -284,13 +284,14 @@ class Events extends StatelessWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 8),
-                  Text(
-                    showDayText ? dayText : '',
-                    // dateFormatter.format(day).toUpperCase(),
-                    textAlign: TextAlign.left,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
+                  if (showDayText) SizedBox(height: 8),
+                  if (showDayText)
+                    Text(
+                      dayText,
+                      // dateFormatter.format(day).toUpperCase(),
+                      textAlign: TextAlign.left,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
                   for (final event in dayEvents) EventDetailCard(event: event),
                 ],
               );
