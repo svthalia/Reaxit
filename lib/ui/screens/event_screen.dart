@@ -283,6 +283,7 @@ class _EventScreenState extends State<EventScreen> {
     );
 
     final textSpans = <TextSpan>[];
+    final registrationStatusText = <TextSpan>[];
     Widget registrationButton = const SizedBox.shrink();
     Widget updateButton = const SizedBox.shrink();
 
@@ -304,7 +305,6 @@ class _EventScreenState extends State<EventScreen> {
     } else if (event.canCancelRegistration) {
       if (event.cancelDeadlinePassed() && event.registration!.isInvited) {
         // Cancel too late message, cancel button with fine warning.
-        textSpans.add(TextSpan(text: event.cancelTooLateMessage));
         final text =
             'The deadline has passed, are you sure you want '
             'to cancel your registration and pay the estimated full costs of '
@@ -321,44 +321,26 @@ class _EventScreenState extends State<EventScreen> {
       updateButton = _makeUpdateButton(event);
     }
 
-    if (event.canCreateRegistration || !event.isRegistered) {
+    //Registration Status from API
+    registrationStatusText.add(TextSpan(text: event.registrationStatus));
+
+    if (event.canCreateRegistration && !event.isRegistered) {
       if (!event.registrationStarted()) {
         // Registration will open ....
         final registrationStart = dateTimeFormatter.format(
           event.registrationStart!.toLocal(),
         );
+        // API
         textSpans.add(
           TextSpan(text: 'Registration will open $registrationStart. '),
         );
       } else if (event.registrationIsOpen()) {
         // Terms and conditions, register button.
         textSpans.add(_makeTermsAndConditions(event));
-      } else if (event.registrationClosed()) {
-        // Registration is no longer possible.
-        textSpans.add(
-          const TextSpan(text: 'Registration is not possible anymore. '),
-        );
       }
-    } else {
-      final registration = event.registration!;
-      if (registration.isLateCancellation) {
-        // Your registration is cancelled after the deadline.
-        textSpans.add(
-          const TextSpan(
-            text: 'Your registration is cancelled after the deadline. ',
-          ),
-        );
-      } else if (registration.isCancelled) {
-        // Your registration is cancelled.
-        textSpans.add(const TextSpan(text: 'Your registration is cancelled. '));
-      } else if (registration.isInQueue) {
-        // Queue position.
-        textSpans.add(
-          TextSpan(text: 'Queue position ${registration.queuePosition}. '),
-        );
-      } else if (registration.isInvited) {
-        // You are registered.
-        textSpans.add(const TextSpan(text: 'You are registered. '));
+      final registration = event.registration;
+
+      if (registration != null) {
         if (event.paymentIsRequired) {
           if (registration.isPaid) {
             if (registration.payment!.type == PaymentType.tpayPayment) {
@@ -488,7 +470,14 @@ class _EventScreenState extends State<EventScreen> {
           ],
         ),
         const Divider(height: 24),
-        Text.rich(TextSpan(children: textSpans), style: dataStyle),
+        if (textSpans.isNotEmpty) ...[
+          Text.rich(TextSpan(children: textSpans), style: dataStyle),
+          const SizedBox(height: 8),
+        ],
+        Text.rich(
+          TextSpan(children: registrationStatusText),
+          style: TextStyle(fontStyle: FontStyle.italic),
+        ),
         const SizedBox(height: 4),
         registrationButton,
         updateButton,
@@ -504,6 +493,7 @@ class _EventScreenState extends State<EventScreen> {
     final dataStyle = textTheme.bodyMedium!.apply(fontSizeDelta: -1);
 
     final textSpans = <TextSpan>[];
+    final registrationStatusText = <TextSpan>[];
     Widget registrationButton = const SizedBox.shrink();
     if (event.canCancelRegistration) {
       registrationButton = _makeIWontBeThereButton(event);
@@ -514,7 +504,7 @@ class _EventScreenState extends State<EventScreen> {
         const TextSpan(
           text:
               'You are registered. This is only an indication that you intend '
-              'to be present. Access to the event is not handled by Thalia.',
+              'to be present. Access to the event is not handled by Thalia. ',
         ),
       );
     } else if (event.canCreateRegistration) {
@@ -531,9 +521,9 @@ class _EventScreenState extends State<EventScreen> {
 
     if (event.noRegistrationMessage?.isNotEmpty ?? false) {
       final htmlStripped = Bidi.stripHtmlIfNeeded(event.noRegistrationMessage!);
-      textSpans.add(TextSpan(text: htmlStripped));
+      registrationStatusText.add(TextSpan(text: htmlStripped));
     } else {
-      textSpans.add(const TextSpan(text: 'No registration required.'));
+      registrationStatusText.add(TextSpan(text: event.registrationStatus));
     }
 
     Widget updateButton = const SizedBox.shrink();
@@ -545,6 +535,11 @@ class _EventScreenState extends State<EventScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text.rich(TextSpan(children: textSpans), style: dataStyle),
+        const SizedBox(height: 8),
+        Text.rich(
+          TextSpan(children: registrationStatusText),
+          style: TextStyle(fontStyle: FontStyle.italic),
+        ),
         const SizedBox(height: 4),
         registrationButton,
         updateButton,
@@ -926,107 +921,116 @@ class _EventScreenState extends State<EventScreen> {
     return BlocBuilder<EventCubit, EventState>(
       bloc: _eventCubit,
       builder: (context, state) {
-        Widget child;
-        List<AppbarAction> actions = [];
         if (state.hasException) {
-          child = RefreshIndicator(
-            onRefresh: _eventCubit.load,
-            child: ErrorScrollView(state.message!),
+          return Scaffold(
+            appBar: ThaliaAppBar(
+              title: Text(widget.event?.title.toUpperCase() ?? 'EVENT'),
+            ),
+            body: RefreshIndicator(
+              onRefresh: () async {
+                await _eventCubit.load();
+              },
+              child: ErrorScrollView(state.message!),
+            ),
           );
         } else if (state.isLoading && widget.event == null) {
-          child = const Center(child: CircularProgressIndicator());
+          return Scaffold(
+            appBar: ThaliaAppBar(title: const Text('EVENT')),
+            body: const Center(child: CircularProgressIndicator()),
+          );
         } else {
           final event = (state.event ?? widget.event)!;
-          child = RefreshIndicator(
-            onRefresh: _eventCubit.load,
-            child: Scrollbar(
-              controller: _controller,
-              child: CustomScrollView(
-                controller: _controller,
-                key: const PageStorageKey('event'),
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _makeMap(event),
-                        const Divider(height: 0),
-                        _makeEventInfo(event),
-                        const Divider(),
-                        _makeDescription(event),
-                      ],
+          return Scaffold(
+            appBar: ThaliaAppBar(
+              title: Text(event.title.toUpperCase()),
+              collapsingActions: [
+                IconAppbarAction(
+                  'EXPORT',
+                  Icons.edit_calendar_outlined,
+                  () async {
+                    final exportableEvent = add2calendar.Event(
+                      title: event.title,
+                      location: event.location,
+                      startDate: event.start,
+                      endDate: event.end,
+                    );
+                    await add2calendar.Add2Calendar.addEvent2Cal(
+                      exportableEvent,
+                    );
+                  },
+                  tooltip: 'add event to calendar',
+                ),
+                IconAppbarAction(
+                  'SHARE',
+                  Theme.of(context).platform == TargetPlatform.iOS
+                      ? Icons.ios_share
+                      : Icons.share,
+                  () async {
+                    final messenger = ScaffoldMessenger.of(context);
+                    try {
+                      await Share.share(event.url);
+                    } catch (_) {
+                      messenger.showSnackBar(
+                        const SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          content: Text('Could not share the event.'),
+                        ),
+                      );
+                    }
+                  },
+                ),
+                if (event.userPermissions.manageEvent)
+                  IconAppbarAction(
+                    'EDIT',
+                    Icons.settings,
+                    () => context.pushNamed(
+                      'event-admin',
+                      pathParameters: {'eventPk': event.pk.toString()},
                     ),
                   ),
-                  const SliverToBoxAdapter(child: Divider()),
-                  _makeRegistrationsHeader(),
-                  _makeRegistrations(state),
-                  if (state.isLoading || state.isLoadingMore) ...[
-                    const SliverPadding(
-                      padding: EdgeInsets.all(8),
-                      sliver: SliverList(
-                        delegate: SliverChildListDelegate.fixed([
-                          Center(child: CircularProgressIndicator()),
-                        ]),
+              ],
+            ),
+            body: RefreshIndicator(
+              onRefresh: () async {
+                await _eventCubit.load();
+              },
+              child: Scrollbar(
+                controller: _controller,
+                child: CustomScrollView(
+                  controller: _controller,
+                  key: const PageStorageKey('event'),
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _makeMap(event),
+                          const Divider(height: 0),
+                          _makeEventInfo(event),
+                          const Divider(),
+                          _makeDescription(event),
+                        ],
                       ),
                     ),
+                    const SliverToBoxAdapter(child: Divider()),
+                    _makeRegistrationsHeader(),
+                    _makeRegistrations(state),
+                    if (state.isLoading || state.isLoadingMore) ...[
+                      const SliverPadding(
+                        padding: EdgeInsets.all(8),
+                        sliver: SliverList(
+                          delegate: SliverChildListDelegate.fixed([
+                            Center(child: CircularProgressIndicator()),
+                          ]),
+                        ),
+                      ),
+                    ],
                   ],
-                  SliverSafeArea(sliver: SliverToBoxAdapter()),
-                ],
+                ),
               ),
             ),
           );
-          actions = [
-            IconAppbarAction(
-              'EXPORT',
-              Icons.edit_calendar_outlined,
-              () async {
-                final exportableEvent = add2calendar.Event(
-                  title: event.title,
-                  location: event.location,
-                  startDate: event.start,
-                  endDate: event.end,
-                );
-                await add2calendar.Add2Calendar.addEvent2Cal(exportableEvent);
-              },
-              tooltip: 'add event to calendar',
-            ),
-            IconAppbarAction(
-              'SHARE',
-              Theme.of(context).platform == TargetPlatform.iOS
-                  ? Icons.ios_share
-                  : Icons.share,
-              () async {
-                final messenger = ScaffoldMessenger.of(context);
-                try {
-                  await Share.share(event.url);
-                } catch (_) {
-                  messenger.showSnackBar(
-                    const SnackBar(
-                      behavior: SnackBarBehavior.floating,
-                      content: Text('Could not share the event.'),
-                    ),
-                  );
-                }
-              },
-            ),
-            if (event.userPermissions.manageEvent)
-              IconAppbarAction(
-                'EDIT',
-                Icons.settings,
-                () => context.pushNamed(
-                  'event-admin',
-                  pathParameters: {'eventPk': event.pk.toString()},
-                ),
-              ),
-          ];
         }
-        return Scaffold(
-          appBar: ThaliaAppBar(
-            title: Text(widget.event?.title.toUpperCase() ?? 'EVENT'),
-            collapsingActions: actions,
-          ),
-          body: child,
-        );
       },
     );
   }
