@@ -268,6 +268,9 @@ packages:
   dart_style:
     dependency: transitive
     description:
+      name: dart_style
+      sha256: "27eb0ae77836989a3bc541ce55595e8ceee0992807f14511552a898ddd0d88ac"
+      url: "https://pub.dev"
 
     
           
@@ -283,11 +286,8 @@ packages:
           
           Expand Up
     
-    @@ -618,14 +610,6 @@ packages:
+    @@ -629,6 +646,17 @@ packages:
   
-      name: dart_style
-      sha256: "27eb0ae77836989a3bc541ce55595e8ceee0992807f14511552a898ddd0d88ac"
-      url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
   desktop_webview_window:
@@ -646,20 +646,26 @@ packages:
   image:
     dependency: transitive
     description:
-
-    
-        
-          
-    
-
-        
-        Expand All
-    
-    @@ -638,26 +622,26 @@ packages:
-  
       name: image
       sha256: "13d3349ace88f12f4a0d175eb5c12dcdd39d35c4c109a8a13dfeb6d0bd9e31c3"
       url: "https://pub.dev"
+
+    
+          
+            
+    
+
+          
+          Expand Down
+          
+            
+    
+
+          
+          Expand Up
+    
+    @@ -661,6 +689,23 @@ packages:
+  
     source: hosted
     version: "4.5.3"
   image_cropper:
@@ -689,6 +695,9 @@ packages:
   image_picker:
     dependency: "direct main"
     description:
+      name: image_picker
+      sha256: "021834d9c0c3de46bf0fe40341fa07168407f694d9b2bb18d532dc1261867f7a"
+      url: "https://pub.dev"
 
     
           
@@ -704,11 +713,8 @@ packages:
           
           Expand Up
     
-    @@ -863,14 +847,6 @@ packages:
+    @@ -874,6 +919,17 @@ packages:
   
-      name: image_picker
-      sha256: "021834d9c0c3de46bf0fe40341fa07168407f694d9b2bb18d532dc1261867f7a"
-      url: "https://pub.dev"
     source: hosted
     version: "1.1.2"
   image_picker_android:
@@ -919,6 +925,9 @@ packages:
   octo_image:
     dependency: transitive
     description:
+      name: octo_image
+      sha256: "34faa6639a78c7e3cbe79be6f9f96535867e879748ade7d17c9b1ae7536293bd"
+      url: "https://pub.dev"
 
     
           
@@ -927,12 +936,15 @@ packages:
 
           
           Expand Down
+          
+            
     
+
+          
+          Expand Up
     
+    @@ -1528,4 +1584,4 @@ packages:
   
-      name: octo_image
-      sha256: "34faa6639a78c7e3cbe79be6f9f96535867e879748ade7d17c9b1ae7536293bd"
-      url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
   open_file_plus:
