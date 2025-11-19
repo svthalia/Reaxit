@@ -61,7 +61,7 @@ class _FakeEventRegistration_4 extends _i1.SmartFake
 class _FakeAdminEvent_5 extends _i1.SmartFake implements _i4.AdminEvent {
   _FakeAdminEvent_5(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
-}package
+}
 
 class _FakeAdminEventRegistration_6 extends _i1.SmartFake
     implements _i4.AdminEventRegistration {
@@ -1347,6 +1347,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
             ),
           )
           as _i9.Future<_i4.ListResponse<_i4.Payment>>);
+}
 
 /// A class which mocks [PaymentUserCubit].
 ///
