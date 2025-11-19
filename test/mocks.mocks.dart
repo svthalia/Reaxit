@@ -16,7 +16,6 @@ import 'package:reaxit/config.dart' as _i3;
 import 'package:reaxit/models.dart' as _i4;
 import 'package:reaxit/models/announcement.dart' as _i12;
 import 'package:reaxit/models/thabliod.dart' as _i5;
-import 'package:reaxit/models/vacancie.dart' as _i13;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -62,7 +61,7 @@ class _FakeEventRegistration_4 extends _i1.SmartFake
 class _FakeAdminEvent_5 extends _i1.SmartFake implements _i4.AdminEvent {
   _FakeAdminEvent_5(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
-}
+}package
 
 class _FakeAdminEventRegistration_6 extends _i1.SmartFake
     implements _i4.AdminEventRegistration {
@@ -1348,35 +1347,6 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
             ),
           )
           as _i9.Future<_i4.ListResponse<_i4.Payment>>);
-
-  @override
-  _i9.Future<_i4.ListResponse<_i13.Vacancy>> getVacancies({
-    int? limit,
-    int? offset,
-    DateTime? start,
-    DateTime? end,
-  }) =>
-      (super.noSuchMethod(
-            Invocation.method(#getVacancies, [], {
-              #limit: limit,
-              #offset: offset,
-              #start: start,
-              #end: end,
-            }),
-            returnValue: _i9.Future<_i4.ListResponse<_i13.Vacancy>>.value(
-              _FakeListResponse_3<_i13.Vacancy>(
-                this,
-                Invocation.method(#getVacancies, [], {
-                  #limit: limit,
-                  #offset: offset,
-                  #start: start,
-                  #end: end,
-                }),
-              ),
-            ),
-          )
-          as _i9.Future<_i4.ListResponse<_i13.Vacancy>>);
-}
 
 /// A class which mocks [PaymentUserCubit].
 ///
