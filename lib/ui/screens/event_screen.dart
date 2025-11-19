@@ -305,7 +305,6 @@ class _EventScreenState extends State<EventScreen> {
     } else if (event.canCancelRegistration) {
       if (event.cancelDeadlinePassed() && event.registration!.isInvited) {
         // Cancel too late message, cancel button with fine warning.
-        textSpans.add(TextSpan(text: event.cancelTooLateMessage));
         final text =
             'The deadline has passed, are you sure you want '
             'to cancel your registration and pay the estimated full costs of '
