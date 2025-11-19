@@ -3,17 +3,6 @@ import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-    
-        
-          
-    
-
-        
-        Expand All
-    
-    @@ -21,13 +20,10 @@ import 'package:reaxit/ui/widgets.dart';
-  
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -42,17 +31,6 @@ Future<void> main() async {
   // Add licenses for the used fonts.
   LicenseRegistry.addLicense(() async* {
     final openSansLicense = await rootBundle.loadString(
-
-    
-        
-          
-    
-
-        
-        Expand All
-    
-    @@ -39,7 +35,6 @@ Future<void> main() async {
-  
       'assets/google_fonts/OpenSans-OFL.txt',
     );
     final oswaldLicense = await rootBundle.loadString(
@@ -65,17 +43,6 @@ Future<void> main() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await SentryFlutter.init(
-
-    
-        
-          
-    
-
-        
-        Expand All
-    
-    @@ -60,14 +55,11 @@ Future<void> main() async {
-  
     (options) {
       options.dsn = sentryDSN;
     },
@@ -104,17 +71,6 @@ Future<void> testingMain(AuthCubit? authCubit, String? initialroute) async {
   // Add licenses for the used fonts.
   LicenseRegistry.addLicense(() async* {
     final openSansLicense = await rootBundle.loadString(
-
-    
-        
-          
-    
-
-        
-        Expand All
-    
-    @@ -79,7 +71,6 @@ Future<void> testingMain(AuthCubit? authCubit, String? initialroute) async {
-  
       'assets/google_fonts/OpenSans-OFL.txt',
     );
     final oswaldLicense = await rootBundle.loadString(
@@ -127,17 +83,6 @@ Future<void> testingMain(AuthCubit? authCubit, String? initialroute) async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
-
-    
-        
-          
-    
-
-        
-        Expand All
-    
-    @@ -99,30 +90,24 @@ Future<void> testingMain(AuthCubit? authCubit, String? initialroute) async {
-  
     BlocProvider(
       create: (_) => ThemeCubit()..load(),
       lazy: false,
@@ -182,44 +127,39 @@ class _ThaliAppState extends State<ThaliApp> {
   late final GoRouter _router;
   late final AuthCubit _authCubit;
 
-    
-          
-            
-    
+  Uri? extractURL(RemoteMessage message) {
+    Uri? uri;
+    if (message.data.containsKey('url') && message.data['url'] is String) {
+      uri = Uri.tryParse(message.data['url'] as String);
+      if (uri?.scheme.isEmpty ?? false) uri = uri!.replace(scheme: 'https');
+    }
+    return uri;
+  }
 
-          
-          Expand Down
-          
-            
-    
-
-          
-          Expand Up
-    
-    @@ -153,14 +138,23 @@ class _ThaliAppState extends State<ThaliApp> {
-  
   Future<void> _setupPushNotificationHandlers() async {
     // User got a push notification while the app is running.
     // Display a notification inside the app.
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      showOverlayNotification(
-        (context) => PushNotificationOverlay(message),
-        duration: const Duration(milliseconds: 4000),
-      );
+      if (message.notification != null) {
+        Uri? uri = extractURL(message);
+        showOverlayNotification(
+          (context) => PushNotificationOverlay(message.notification!, uri),
+          duration: const Duration(milliseconds: 4000),
+        );
+      }
     });
+
     // User clicked on push notification outside of the app and the
     // app was still in the background. Open the url or show a dialog.
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       final navigatorKey = _router.routerDelegate.navigatorKey;
-      if (message.data.containsKey('url') && message.data['url'] is String) {
-        Uri? uri = Uri.tryParse(message.data['url'] as String);
-        if (uri != null) {
-          if (uri.scheme.isEmpty) uri = uri.replace(scheme: 'https');
-          if (isDeepLink(uri)) {
-            _router.go(Uri(path: uri.path, query: uri.query).toString());
-          } else {
-            await launchUrl(uri, mode: LaunchMode.externalApplication);
-          }
+
+      Uri? uri = extractURL(message);
+      if (uri != null) {
+        if (isDeepLink(uri)) {
+          _router.go(Uri(path: uri.path, query: uri.query).toString());
+        } else {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
         }
       } else if (navigatorKey.currentContext != null) {
         showDialog(
@@ -234,28 +174,15 @@ class _ThaliAppState extends State<ThaliApp> {
     // User got a push notification outside of the app while the app was not
     // running in the background. Open the url or show a dialog.
     if (initialMessage != null) {
-
-    
-        
-          
-    
-
-        
-        Expand All
-    
-    @@ -178,13 +172,23 @@ class _ThaliAppState extends State<ThaliApp> {
-  
       final navigatorKey = _router.routerDelegate.navigatorKey;
       final message = initialMessage;
-      if (message.data.containsKey('url') && message.data['url'] is String) {
-        Uri? uri = Uri.tryParse(message.data['url'] as String);
-        if (uri != null) {
-          if (uri.scheme.isEmpty) uri = uri.replace(scheme: 'https');
-          if (isDeepLink(uri)) {
-            _router.go(Uri(path: uri.path, query: uri.query).toString());
-          } else {
-            await launchUrl(uri, mode: LaunchMode.externalApplication);
-          }
+
+      Uri? uri = extractURL(message);
+      if (uri != null) {
+        if (isDeepLink(uri)) {
+          _router.go(Uri(path: uri.path, query: uri.query).toString());
+        } else {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
         }
       } else if (navigatorKey.currentContext != null) {
         showDialog(
@@ -269,17 +196,6 @@ class _ThaliAppState extends State<ThaliApp> {
   @override
   void initState() {
     super.initState();
-
-    
-        
-          
-    
-
-        
-        Expand All
-    
-    @@ -193,10 +197,8 @@ class _ThaliAppState extends State<ThaliApp> {
-  
     _authCubit = BlocProvider.of<AuthCubit>(context);
     _router = GoRouter(
       // The list of routes is kept in a separate
@@ -292,17 +208,6 @@ class _ThaliAppState extends State<ThaliApp> {
       // Redirect to `/login?from=<original-path>` if the user is not
       // logged in. If the user is logged in, and there is an original
       // path in the query parameters, redirect to that original path.
-
-    
-        
-          
-    
-
-        
-        Expand All
-    
-    @@ -206,11 +208,9 @@ class _ThaliAppState extends State<ThaliApp> {
-  
       redirect: (context, state) {
         final authState = _authCubit.state;
         final loggedIn = authState is LoggedInAuthState;
@@ -317,17 +222,6 @@ class _ThaliAppState extends State<ThaliApp> {
           return Uri(
             path: '/login',
             queryParameters: {'from': state.uri.toString()},
-
-    
-        
-          
-    
-
-        
-        Expand All
-    
-    @@ -221,22 +221,17 @@ class _ThaliAppState extends State<ThaliApp> {
-  
           ).toString();
         } else if (loggedIn && goingToLogin) {
           return Uri.parse(state.uri.toString()).queryParameters['from'] ?? '/';
@@ -354,17 +248,6 @@ class _ThaliAppState extends State<ThaliApp> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeCubit, ThemeMode>(
-
-    
-        
-          
-    
-
-        
-        Expand All
-    
-    @@ -250,7 +245,6 @@ class _ThaliAppState extends State<ThaliApp> {
-  
       builder: (context, themeMode) {
         return OverlaySupport.global(
           child: MaterialApp.router(
@@ -379,17 +262,6 @@ class _ThaliAppState extends State<ThaliApp> {
             // This adds listeners for authentication status snackbars and setting up
             // push notifications. This surrounds the navigator with providers when
             // logged in, and replaces it with a [LoginScreen] when not logged in.
-
-    
-        
-          
-    
-
-        
-        Expand All
-    
-    @@ -265,7 +259,6 @@ class _ThaliAppState extends State<ThaliApp> {
-  
             builder: (context, navigator) {
               return BlocConsumer<AuthCubit, AuthState>(
                 listenWhen: (previous, current) {
@@ -405,23 +277,6 @@ class _ThaliAppState extends State<ThaliApp> {
                 // Listen to display login status snackbars and set up notifications.
                 listener: (context, state) async {
                   // Show a snackbar when the user logs out or logging in fails.
-
-    
-          
-            
-    
-
-          
-          Expand Down
-          
-            
-    
-
-          
-          Expand Up
-    
-    @@ -305,7 +298,6 @@ class _ThaliAppState extends State<ThaliApp> {
-  
                   switch (state) {
                     case LoggedOutAuthState _:
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -462,23 +317,6 @@ class _ThaliAppState extends State<ThaliApp> {
                     return InheritedConfig(
                       config: apiRepository.config,
                       child: RepositoryProvider.value(
-
-    
-          
-            
-    
-
-          
-          Expand Down
-          
-            
-    
-
-          
-          Expand Up
-    
-    @@ -399,4 +391,4 @@ class _ThaliAppState extends State<ThaliApp> {
-  
                         value: apiRepository,
                         child: MultiBlocProvider(
                           providers: [
