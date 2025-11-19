@@ -15,7 +15,7 @@ class WelcomeState extends Equatable {
   final List<FrontpageArticle>? articles;
 
   /// This can only be null when [isLoading] or [hasException] is true.
-  final List<BaseEvent>? upcomingEvents;
+  final List<BaseEvent>? events;
 
   /// This can only be null when [isLoading] or [hasException] is true.
   final List<Announcement>? announcements;
@@ -30,14 +30,14 @@ class WelcomeState extends Equatable {
   bool get hasResults =>
       slides != null &&
       articles != null &&
-      upcomingEvents != null &&
+      events != null &&
       announcements != null;
 
   @protected
   const WelcomeState({
     required this.slides,
     required this.articles,
-    required this.upcomingEvents,
+    required this.events,
     required this.announcements,
     required this.isLoading,
     required this.message,
@@ -47,7 +47,7 @@ class WelcomeState extends Equatable {
   List<Object?> get props => [
     slides,
     articles,
-    upcomingEvents,
+    events,
     announcements,
     message,
     isLoading,
@@ -56,14 +56,14 @@ class WelcomeState extends Equatable {
   WelcomeState copyWith({
     List<Slide>? slides,
     List<FrontpageArticle>? articles,
-    List<BaseEvent>? upcomingEvents,
+    List<BaseEvent>? events,
     List<Announcement>? announcements,
     bool? isLoading,
     String? message,
   }) => WelcomeState(
     slides: slides ?? this.slides,
     articles: articles ?? this.articles,
-    upcomingEvents: upcomingEvents ?? this.upcomingEvents,
+    events: events ?? this.events,
     announcements: announcements ?? this.announcements,
     isLoading: isLoading ?? this.isLoading,
     message: message ?? this.message,
@@ -72,7 +72,7 @@ class WelcomeState extends Equatable {
   const WelcomeState.result({
     required List<Slide> this.slides,
     required List<FrontpageArticle> this.articles,
-    required List<BaseEvent> this.upcomingEvents,
+    required List<BaseEvent> this.events,
     required List<Announcement> this.announcements,
   }) : message = null,
        isLoading = false;
@@ -80,7 +80,7 @@ class WelcomeState extends Equatable {
   const WelcomeState.loading({
     this.slides,
     this.articles,
-    this.upcomingEvents,
+    this.events,
     this.announcements,
   }) : message = null,
        isLoading = true;
@@ -88,7 +88,7 @@ class WelcomeState extends Equatable {
   const WelcomeState.failure({required String this.message})
     : slides = null,
       articles = null,
-      upcomingEvents = null,
+      events = null,
       announcements = null,
       isLoading = false;
 }
@@ -137,7 +137,7 @@ class WelcomeCubit extends Cubit<WelcomeState> {
         WelcomeState.result(
           slides: slides,
           articles: articlesResponse.results,
-          upcomingEvents: events,
+          events: events,
           announcements: announcementsResponse,
         ),
       );

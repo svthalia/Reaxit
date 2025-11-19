@@ -8,6 +8,7 @@ import 'package:reaxit/ui/theme.dart';
 
 class EventDetailCard extends StatelessWidget {
   static final timeFormatter = DateFormat('HH:mm');
+  static final dateFormatter = DateFormat('dd/MM HH:mm');
   final BaseEvent event;
   final Color _indicatorColor;
   final bool _hasFoodEvent;
@@ -53,8 +54,19 @@ class EventDetailCard extends StatelessWidget {
       PartnerEvent _ => Colors.black,
       _ => null,
     };
-    final start = timeFormatter.format(event.start.toLocal());
-    final end = timeFormatter.format(event.end.toLocal());
+    String start = timeFormatter.format(event.start.toLocal());
+    String end = timeFormatter.format(event.end.toLocal());
+
+    final startDate = event.start.toLocal();
+    final endDate = event.end.toLocal();
+
+    if (startDate.day != endDate.day ||
+        startDate.month != endDate.month ||
+        startDate.year != endDate.year) {
+      // Event takes more than a day, show date as well
+      start = dateFormatter.format(startDate);
+      end = dateFormatter.format(endDate);
+    }
 
     // Remove HTML tags.
     final caption = event.caption.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), '');
