@@ -632,23 +632,6 @@ packages:
       name: image
       sha256: "13d3349ace88f12f4a0d175eb5c12dcdd39d35c4c109a8a13dfeb6d0bd9e31c3"
       url: "https://pub.dev"
-
-    
-          
-            
-    
-
-          
-          Expand Down
-          
-            
-    
-
-          
-          Expand Up
-    
-    @@ -661,6 +689,23 @@ packages:
-  
     source: hosted
     version: "4.5.3"
   image_cropper:
