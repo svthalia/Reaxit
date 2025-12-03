@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
-import 'package:reaxit/models/thabliod.dart';
+import 'package:reaxit/models/thabloid.dart';
 
 class ThabloidCubit extends Cubit<Thabloid> {
   static const Duration maxAge = Duration(hours: 1);

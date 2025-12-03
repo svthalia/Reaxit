@@ -89,8 +89,9 @@ class _GroupsScreenState extends State<GroupsScreen>
         children: [
           BlocBuilder<CommitteesCubit, GroupsState>(
             builder: (context, state) {
+              final cubit = context.read<CommitteesCubit>();
               if (state.message != null) {
-                return ErrorScrollView(state.message!);
+                return ErrorScrollView(state.message!, retry: cubit.load);
               } else if (state.isLoading) {
                 return const Padding(
                   padding: EdgeInsets.all(16),
@@ -103,8 +104,9 @@ class _GroupsScreenState extends State<GroupsScreen>
           ),
           BlocBuilder<SocietiesCubit, GroupsState>(
             builder: (context, state) {
+              final cubit = context.read<SocietiesCubit>();
               if (state.message != null) {
-                return ErrorScrollView(state.message!);
+                return ErrorScrollView(state.message!, retry: cubit.load);
               } else if (state.isLoading) {
                 return const Padding(
                   padding: EdgeInsets.all(16),
@@ -117,8 +119,9 @@ class _GroupsScreenState extends State<GroupsScreen>
           ),
           BlocBuilder<BoardsCubit, GroupsState>(
             builder: (context, state) {
+              final cubit = context.read<BoardsCubit>();
               if (state.message != null) {
-                return ErrorScrollView(state.message!);
+                return ErrorScrollView(state.message!, retry: cubit.load);
               } else if (state.isLoading) {
                 return const Padding(
                   padding: EdgeInsets.all(16),

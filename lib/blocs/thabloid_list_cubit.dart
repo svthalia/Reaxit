@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:reaxit/blocs/list_cubit.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
-import 'package:reaxit/models/thabliod.dart';
+import 'package:reaxit/models/thabloid.dart';
 
 typedef ThabloidListState = ListState<Thabloid>;
 

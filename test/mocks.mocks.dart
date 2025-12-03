@@ -15,7 +15,7 @@ import 'package:reaxit/blocs/welcome_cubit.dart' as _i8;
 import 'package:reaxit/config.dart' as _i3;
 import 'package:reaxit/models.dart' as _i4;
 import 'package:reaxit/models/announcement.dart' as _i12;
-import 'package:reaxit/models/thabliod.dart' as _i5;
+import 'package:reaxit/models/thabloid.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values

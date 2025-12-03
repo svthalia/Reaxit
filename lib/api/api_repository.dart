@@ -1,7 +1,7 @@
 import 'package:reaxit/config.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/models/announcement.dart';
-import 'package:reaxit/models/thabliod.dart';
+import 'package:reaxit/models/thabloid.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/models/vacancie.dart';
 
