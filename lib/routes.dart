@@ -256,7 +256,7 @@ final List<RouteBase> routes = [
     pageBuilder:
         (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: AlbumsScreen(),
+          child: FotoGroupsScreen(),
           transitionDuration: const Duration(milliseconds: 200),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(
