@@ -343,6 +343,11 @@ abstract class ApiRepository {
   /// Claim and get the [SalesOrder] with the `pk`.
   Future<SalesOrder> claimSalesOrder({required String pk});
 
+  Future<ListResponse<AlbumPhoto>> getFaceDetectionMatches({
+    int? limit,
+    int? offset,
+  });
+
   /// Get a list of [ListGroup]s.
   ///
   /// Use `limit` and `offset` for pagination, and `type`, `start`, `end` and

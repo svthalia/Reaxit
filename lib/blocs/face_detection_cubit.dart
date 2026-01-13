@@ -22,7 +22,10 @@ class FaceDetectionCubit extends Cubit<FaceDetectionState>
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
     try {
-      final photos = await api.getLikedPhotos(limit: firstPageSize, offset: 0);
+      final photos = await api.getFaceDetectionMatches(
+        limit: firstPageSize,
+        offset: 0,
+      );
 
       final isDone = photos.results.length == photos.count;
 

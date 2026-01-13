@@ -44,24 +44,21 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: _cubit,
-      child: Scaffold(
-        appBar: ThaliaAppBar(title: const Text('LIKED PHOTOS')),
-        body: RefreshIndicator(
-          onRefresh: () async {
-            await _cubit.load();
+      child: RefreshIndicator(
+        onRefresh: () async {
+          await _cubit.load();
+        },
+        child: BlocBuilder<FaceDetectionCubit, FaceDetectionState>(
+          builder: (context, state) {
+            if (state.hasException) {
+              return ErrorScrollView(state.message!);
+            } else {
+              return _PhotoGridScrollView(
+                controller: _controller,
+                listState: state,
+              );
+            }
           },
-          child: BlocBuilder<FaceDetectionCubit, FaceDetectionState>(
-            builder: (context, state) {
-              if (state.hasException) {
-                return ErrorScrollView(state.message!);
-              } else {
-                return _PhotoGridScrollView(
-                  controller: _controller,
-                  listState: state,
-                );
-              }
-            },
-          ),
         ),
       ),
     );
