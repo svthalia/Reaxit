@@ -4,7 +4,138 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/widgets.dart';
+
+class FotoGroupsScreen extends StatefulWidget {
+  final String? currentScreen;
+
+  const FotoGroupsScreen({super.key, this.currentScreen});
+
+  @override
+  State<StatefulWidget> createState() => _FotoGroupsScreenState();
+}
+
+class _FotoGroupsScreenState extends State<FotoGroupsScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  late ScrollController _controller;
+  late AlbumListCubit _cubit;
+
+  @override
+  void initState() {
+    _tabController = TabController(
+      length: 2,
+      initialIndex: _groupTypeToIndex(widget.currentScreen),
+      vsync: this,
+    );
+
+    _controller = ScrollController()..addListener(_scrollListener);
+
+    super.initState();
+  }
+
+  void _scrollListener() {
+    if (_controller.position.pixels >=
+        _controller.position.maxScrollExtent - 300) {
+      // Only request loading more if that's not already happening.
+      if (!_cubit.state.isLoadingMore) {
+        _cubit.more();
+      }
+    }
+  }
+
+  int _groupTypeToIndex(String? currentScreen) {
+    if (currentScreen == 'albums') {
+      return 0;
+    } else if (currentScreen == 'faceDetection') {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(FotoGroupsScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _tabController.index = _groupTypeToIndex(widget.currentScreen);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: ThaliaAppBar(
+        title: const Text('PHOTOS'),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [Tab(text: 'Albums'), Tab(text: 'Face Detection')],
+          indicatorColor: Theme.of(context).colorScheme.primary,
+        ),
+        collapsingActions: [
+          IconAppbarAction('SEARCH', Icons.search, () async {
+            final searchCubit = AlbumListCubit(
+              RepositoryProvider.of<ApiRepository>(context),
+            );
+
+            await showSearch(
+              context: context,
+              delegate: AlbumsSearchDelegate(searchCubit),
+            );
+            searchCubit.close();
+          }),
+        ],
+      ),
+      drawer: MenuDrawer(),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          BlocBuilder<AlbumListCubit, AlbumListState>(
+            builder: (context, listState) {
+              if (listState.message != null) {
+                return ErrorScrollView(listState.message!);
+              } else if (listState.isLoading) {
+                return const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              } else {
+                return AlbumListScrollView(
+                  key: const PageStorageKey('albums'),
+                  controller: _controller,
+                  listState: listState,
+                );
+              }
+            },
+          ),
+          BlocBuilder<AlbumListCubit, AlbumListState>(
+            builder: (context, listState) {
+              if (listState.message != null) {
+                return ErrorScrollView(listState.message!);
+              } else if (listState.isLoading) {
+                return const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              } else {
+                return AlbumListScrollView(
+                  key: const PageStorageKey('albums'),
+                  controller: _controller,
+                  listState: listState,
+                );
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class AlbumsScreen extends StatefulWidget {
   @override
