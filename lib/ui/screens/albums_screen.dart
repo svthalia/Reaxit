@@ -40,22 +40,52 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () async {
-        await _cubit.load();
-      },
-      child: BlocBuilder<AlbumListCubit, AlbumListState>(
-        builder: (context, listState) {
-          if (listState.hasException) {
-            return ErrorScrollView(listState.message!);
-          } else {
-            return AlbumListScrollView(
-              key: const PageStorageKey('albums'),
-              controller: _controller,
-              listState: listState,
+    return Scaffold(
+      appBar: ThaliaAppBar(
+        title: const Text('ALBUMS'),
+        collapsingActions: [
+          IconAppbarAction(
+            'FACE DETECTION',
+            Icons.emoji_emotions_outlined,
+            () => context.pushNamed('face-detection'),
+          ),
+          IconAppbarAction(
+            'LIKED PHOTOS',
+            Icons.favorite_border,
+            () => context.pushNamed('liked-photos'),
+          ),
+          IconAppbarAction('SEARCH', Icons.search, () async {
+            final searchCubit = AlbumListCubit(
+              RepositoryProvider.of<ApiRepository>(context),
             );
-          }
+
+            await showSearch(
+              context: context,
+              delegate: AlbumsSearchDelegate(searchCubit),
+            );
+
+            searchCubit.close();
+          }),
+        ],
+      ),
+      drawer: MenuDrawer(),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await _cubit.load();
         },
+        child: BlocBuilder<AlbumListCubit, AlbumListState>(
+          builder: (context, listState) {
+            if (listState.hasException) {
+              return ErrorScrollView(listState.message!);
+            } else {
+              return AlbumListScrollView(
+                key: const PageStorageKey('albums'),
+                controller: _controller,
+                listState: listState,
+              );
+            }
+          },
+        ),
       ),
     );
   }

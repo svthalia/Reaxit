@@ -9,7 +9,6 @@ import 'package:reaxit/tosti/tosti_shift_screen.dart';
 import 'package:reaxit/ui/screens.dart';
 import 'package:reaxit/ui/screens/face_detection_screen.dart';
 import 'package:reaxit/ui/screens/liked_photos_screen.dart';
-import 'package:reaxit/ui/screens/photos_screen.dart';
 import 'package:reaxit/ui/screens/thabloids_screen.dart';
 import 'package:reaxit/ui/screens/vacancies_screen.dart';
 import 'package:reaxit/ui/widgets.dart';
@@ -258,7 +257,7 @@ final List<RouteBase> routes = [
     pageBuilder:
         (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: PhotosScreen(),
+          child: AlbumsScreen(),
           transitionDuration: const Duration(milliseconds: 200),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(
