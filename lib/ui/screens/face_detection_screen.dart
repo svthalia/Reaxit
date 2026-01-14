@@ -45,23 +45,42 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
       value: _cubit,
       child: Scaffold(
         appBar: ThaliaAppBar(title: const Text("PHOTOS YOU'RE ON")),
-        body: RefreshIndicator(
-          onRefresh: () async {
-            await _cubit.load();
-          },
-          child:
-              BlocBuilder<FaceDetectionPhotosCubit, FaceDetectionPhotosState>(
-                builder: (context, state) {
-                  if (state.hasException) {
-                    return ErrorScrollView(state.message!);
-                  } else {
-                    return PhotoGridScrollView(
-                      controller: _controller,
-                      listState: state,
-                    );
-                  }
+        body: Column(
+          children: [
+            Column(children: [Text('Hallo'), const Divider()]),
+            // Container(
+            //   width: double.infinity,
+            //   color: Theme.of(context).colorScheme.primary,
+            //   padding: const EdgeInsets.all(20),
+            //   child: Text(
+            //     'Your face is detected based on references faces that you uploaded.',
+            //   ),
+            // ),
+
+            // 🔹 Scrollable content must be expanded
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await _cubit.load();
                 },
+                child: BlocBuilder<
+                  FaceDetectionPhotosCubit,
+                  FaceDetectionPhotosState
+                >(
+                  builder: (context, state) {
+                    if (state.hasException) {
+                      return ErrorScrollView(state.message!);
+                    } else {
+                      return PhotoGridScrollView(
+                        controller: _controller,
+                        listState: state,
+                      );
+                    }
+                  },
+                ),
               ),
+            ),
+          ],
         ),
       ),
     );
