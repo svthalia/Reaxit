@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/blocs/list_state.dart';
 import 'package:reaxit/blocs/photos_cubit.dart';
+import 'package:reaxit/models/photo.dart';
 import 'package:reaxit/ui/widgets.dart';
-import 'package:reaxit/ui/widgets/photo_grid.dart';
+import 'package:reaxit/ui/widgets/photo_grid_sliver.dart';
 
 class LikedPhotosScreen extends StatefulWidget {
   const LikedPhotosScreen();
@@ -53,7 +55,7 @@ class _LikedPhotosScreenState extends State<LikedPhotosScreen> {
               if (state.hasException) {
                 return ErrorScrollView(state.message!);
               } else {
-                return PhotoGridScrollView(
+                return LikedPhotosGridScrollView(
                   controller: _controller,
                   listState: state,
                 );
@@ -61,6 +63,42 @@ class _LikedPhotosScreenState extends State<LikedPhotosScreen> {
             },
           ),
         ),
+      ),
+    );
+  }
+}
+
+class LikedPhotosGridScrollView extends StatelessWidget {
+  final ScrollController controller;
+  final ListState<AlbumPhoto> listState;
+
+  const LikedPhotosGridScrollView({
+    required this.controller,
+    required this.listState,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scrollbar(
+      controller: controller,
+      child: CustomScrollView(
+        controller: controller,
+        physics: const RangeMaintainingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
+        slivers: [
+          PhotoGridSliver(listState: listState),
+          PhotoGridSliver(listState: listState),
+          if (listState.isLoadingMore)
+            const SliverPadding(
+              padding: EdgeInsets.all(8),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate.fixed([
+                  Center(child: CircularProgressIndicator()),
+                ]),
+              ),
+            ),
+        ],
       ),
     );
   }
