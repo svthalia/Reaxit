@@ -384,6 +384,12 @@ abstract class ApiRepository {
     bool? settled,
   });
 
+  /// Get a list of reference faces for face detection.
+  Future<ListResponse<AlbumPhoto>> getReferencePhotos({
+    int? limit,
+    int? offset,
+  });
+
   /// Get a list of [Vacancy]s.
   ///
   /// Use `limit` and `offset` for pagination, and `start` and `end`

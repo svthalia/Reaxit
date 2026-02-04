@@ -1419,6 +1419,36 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
+  Future<ListResponse<AlbumPhoto>> getReferencePhotos({
+    int? limit,
+    int? offset,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/photos/facedetection/reference-faces/',
+      queryParameters: {
+        if (limit != null) 'limit': limit.toString(),
+        if (offset != null) 'offset': offset.toString(),
+      },
+    );
+
+    final response = await _handleExceptions(() => _client.get(uri));
+
+    return ListResponse<AlbumPhoto>.fromJson(_jsonDecode(response), (json) {
+      // Inject liked = false into the JSON map
+      final jsonWithLiked = {
+        ...json as Map<String, dynamic>,
+        'liked': false, // force liked = false
+        'num_likes': 0,
+      };
+
+      // Now deserialize
+      final photo = AlbumPhoto.fromJson(jsonWithLiked);
+
+      return photo;
+    });
+  }
+
+  @override
   Future<ListResponse<Vacancy>> getVacancies({
     int? limit,
     int? offset,

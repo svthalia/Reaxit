@@ -17,11 +17,15 @@ class FaceDetectionScreen extends StatefulWidget {
 class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
   late ScrollController _controller;
   late final FaceDetectionPhotosCubit _cubit;
+  late final ReferencePhotosCubit _referenceCubit;
 
   @override
   void initState() {
     _controller = ScrollController()..addListener(_scrollListener);
     _cubit = FaceDetectionPhotosCubit(
+      RepositoryProvider.of<ApiRepository>(context),
+    )..load();
+    _referenceCubit = ReferencePhotosCubit(
       RepositoryProvider.of<ApiRepository>(context),
     )..load();
     super.initState();
@@ -31,6 +35,7 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 300) {
       _cubit.more();
+      _referenceCubit.more();
     }
   }
 
@@ -38,32 +43,44 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
   void dispose() {
     _controller.dispose();
     _cubit.close();
+    _referenceCubit.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _cubit,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: _cubit),
+        BlocProvider.value(value: _referenceCubit),
+      ],
       child: Scaffold(
         appBar: ThaliaAppBar(title: const Text("PHOTOS YOU'RE ON")),
         body: RefreshIndicator(
           onRefresh: () async {
             await _cubit.load();
+            await _referenceCubit.load();
           },
-          child:
-              BlocBuilder<FaceDetectionPhotosCubit, FaceDetectionPhotosState>(
-                builder: (context, state) {
+          child: BlocBuilder<
+            FaceDetectionPhotosCubit,
+            FaceDetectionPhotosState
+          >(
+            builder: (context, state) {
+              return BlocBuilder<ReferencePhotosCubit, ReferencePhotosState>(
+                builder: (referenceContext, referenceState) {
                   if (state.hasException) {
                     return ErrorScrollView(state.message!);
-                  } else {
-                    return FaceDetectionGridScrollView(
-                      controller: _controller,
-                      listState: state,
-                    );
                   }
+
+                  return FaceDetectionGridScrollView(
+                    controller: _controller,
+                    listState: state,
+                    referenceState: referenceState,
+                  );
                 },
-              ),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -73,10 +90,12 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
 class FaceDetectionGridScrollView extends StatelessWidget {
   final ScrollController controller;
   final ListState<AlbumPhoto> listState;
+  final ListState<AlbumPhoto> referenceState;
 
   const FaceDetectionGridScrollView({
     required this.controller,
     required this.listState,
+    required this.referenceState,
   });
 
   @override
@@ -89,7 +108,44 @@ class FaceDetectionGridScrollView extends StatelessWidget {
           parent: AlwaysScrollableScrollPhysics(),
         ),
         slivers: [
-          PhotoGridSliver(listState: listState),
+          if (referenceState.results.isEmpty)
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.all(8),
+                child: Text(
+                  'No reference photos found',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.all(8),
+              child: Text(
+                'Reference photos',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          PhotoGridSliver(listState: referenceState),
+          if (referenceState.isLoadingMore)
+            const SliverPadding(
+              padding: EdgeInsets.all(8),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate.fixed([
+                  Center(child: CircularProgressIndicator()),
+                ]),
+              ),
+            ),
+          const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.all(8),
+              child: Text(
+                'Photos you\'re on',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
           PhotoGridSliver(listState: listState),
           if (listState.isLoadingMore)
             const SliverPadding(

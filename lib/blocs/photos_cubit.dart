@@ -125,3 +125,17 @@ class FaceDetectionPhotosCubit extends PhotosCubit {
     return api.getFaceDetectionMatches(limit: limit, offset: offset);
   }
 }
+
+typedef ReferencePhotosState = ListState<AlbumPhoto>;
+
+class ReferencePhotosCubit extends PhotosCubit {
+  ReferencePhotosCubit(super.api);
+
+  @override
+  Future<ListResponse<AlbumPhoto>> fetchPhotos({
+    required int limit,
+    required int offset,
+  }) {
+    return api.getReferencePhotos(limit: limit, offset: offset);
+  }
+}
