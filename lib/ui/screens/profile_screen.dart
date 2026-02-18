@@ -836,3 +836,61 @@ class __DescriptionFactState extends State<_DescriptionFact> {
     );
   }
 }
+
+Future<void> uploadPhoto(
+  XFile? pickedFile,
+  FullMemberCubit fullMemberCubit,
+  ScaffoldMessengerState messenger,
+) async {
+  final imagePath = pickedFile?.path;
+  if (imagePath == null) return;
+  final croppedFile = await ImageCropper().cropImage(
+    sourcePath: imagePath,
+    uiSettings: [IOSUiSettings(title: 'Crop')],
+    compressFormat: ImageCompressFormat.jpg,
+  );
+
+  messenger.showSnackBar(
+    const SnackBar(
+      behavior: SnackBarBehavior.floating,
+      content: Text('Uploading your new profile picture...'),
+    ),
+  );
+
+  try {
+    await fullMemberCubit.updateAvatar(croppedFile!);
+    messenger.hideCurrentSnackBar();
+  } on ApiException {
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      const SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text('Uploading your avatar failed.'),
+      ),
+    );
+  }
+}
+
+Future<void> uploadPhotoMakePhoto(
+  BuildContext context,
+  FullMemberCubit fullMemberCubit,
+  ScaffoldMessengerState messenger,
+) async {
+  final picker = ImagePicker();
+  final pickedFile = await picker.pickImage(
+    source: ImageSource.camera,
+    preferredCameraDevice: CameraDevice.front,
+  );
+  await uploadPhoto(pickedFile, fullMemberCubit, messenger);
+}
+
+Future<void> uploadPhotoGallery(
+  BuildContext context,
+  FullMemberCubit fullMemberCubit,
+  ScaffoldMessengerState messenger,
+) async {
+  final picker = ImagePicker();
+  final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+  await uploadPhoto(pickedFile, fullMemberCubit, messenger);
+}

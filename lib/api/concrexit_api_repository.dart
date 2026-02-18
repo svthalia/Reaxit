@@ -1014,6 +1014,26 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
+  Future<void> updateReferencePhoto(String filePath) async {
+    return sandbox(() async {
+      final uri = _uri(path: '/photos/facedetection/reference-faces/');
+      // final body = jsonEncode({'photo': filePath.split('/').last});
+      final request = MultipartRequest('POST', uri);
+      request.files.add(
+        await MultipartFile.fromPath(
+          'file',
+          filePath,
+          contentType: MediaType('image', 'jpeg'),
+        ),
+      );
+      await _handleExceptions(() async {
+        final streamedResponse = await _client.send(request);
+        return Response.fromStream(streamedResponse);
+      });
+    });
+  }
+
+  @override
   Future<Album> getAlbum({required String slug}) async {
     return sandbox(() async {
       final uri = _uri(path: '/photos/albums/$slug/');

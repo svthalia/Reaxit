@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs/list_state.dart';
 import 'package:reaxit/blocs/photos_cubit.dart';
 import 'package:reaxit/models/photo.dart';
@@ -76,6 +79,7 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
                     controller: _controller,
                     listState: state,
                     referenceState: referenceState,
+                    referenceCubit: _referenceCubit,
                   );
                 },
               );
@@ -91,11 +95,13 @@ class FaceDetectionGridScrollView extends StatelessWidget {
   final ScrollController controller;
   final ListState<AlbumPhoto> listState;
   final ListState<AlbumPhoto> referenceState;
+  final ReferencePhotosCubit referenceCubit;
 
   const FaceDetectionGridScrollView({
     required this.controller,
     required this.listState,
     required this.referenceState,
+    required this.referenceCubit,
   });
 
   @override
@@ -137,6 +143,24 @@ class FaceDetectionGridScrollView extends StatelessWidget {
                 ]),
               ),
             ),
+          SliverToBoxAdapter(
+            child: ElevatedButton(
+              onPressed: () {
+                final messenger = ScaffoldMessenger.of(context);
+                uploadPhotoGallery(context, referenceCubit, messenger);
+              },
+              child: Text('Add reference photo from gallery'),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: ElevatedButton(
+              onPressed: () {
+                final messenger = ScaffoldMessenger.of(context);
+                uploadPhotoMakePhoto(context, referenceCubit, messenger);
+              },
+              child: Text('Add reference photo from camera'),
+            ),
+          ),
           const SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.all(8),
@@ -160,4 +184,62 @@ class FaceDetectionGridScrollView extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> uploadPhoto(
+  XFile? pickedFile,
+  ReferencePhotosCubit cubit,
+  ScaffoldMessengerState messenger,
+) async {
+  final imagePath = pickedFile?.path;
+  if (imagePath == null) return;
+  final croppedFile = await ImageCropper().cropImage(
+    sourcePath: imagePath,
+    uiSettings: [IOSUiSettings(title: 'Crop')],
+    compressFormat: ImageCompressFormat.jpg,
+  );
+
+  messenger.showSnackBar(
+    const SnackBar(
+      behavior: SnackBarBehavior.floating,
+      content: Text('Uploading your new profile picture...'),
+    ),
+  );
+
+  try {
+    await cubit.updateReferencePhoto(croppedFile!);
+    messenger.hideCurrentSnackBar();
+  } on ApiException {
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      const SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text('Uploading your avatar failed.'),
+      ),
+    );
+  }
+}
+
+Future<void> uploadPhotoMakePhoto(
+  BuildContext context,
+  ReferencePhotosCubit cubit,
+  ScaffoldMessengerState messenger,
+) async {
+  final picker = ImagePicker();
+  final pickedFile = await picker.pickImage(
+    source: ImageSource.camera,
+    preferredCameraDevice: CameraDevice.front,
+  );
+  await uploadPhoto(pickedFile, cubit, messenger);
+}
+
+Future<void> uploadPhotoGallery(
+  BuildContext context,
+  ReferencePhotosCubit cubit,
+  ScaffoldMessengerState messenger,
+) async {
+  final picker = ImagePicker();
+  final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+  await uploadPhoto(pickedFile, cubit, messenger);
 }

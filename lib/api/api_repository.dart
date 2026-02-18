@@ -268,6 +268,11 @@ abstract class ApiRepository {
   /// Create or delete a like on the photo with the `id`.
   Future<void> updateLiked(int id, bool liked);
 
+  /// Update the reference photo for face detection.
+  ///
+  /// `filePath` should be the path of a jpg image.
+  Future<void> updateReferencePhoto(String file);
+
   /// Get a list of [ListAlbum]s.
   ///
   /// Use `limit` and `offset` for pagination. [ListResponse.count] is the

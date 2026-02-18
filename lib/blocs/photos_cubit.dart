@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
@@ -137,5 +138,10 @@ class ReferencePhotosCubit extends PhotosCubit {
     required int offset,
   }) {
     return api.getReferencePhotos(limit: limit, offset: offset);
+  }
+
+  Future<void> updateReferencePhoto(CroppedFile file) async {
+    await api.updateReferencePhoto(file.path);
+    await load();
   }
 }
