@@ -8,8 +8,13 @@ import 'package:reaxit/ui/widgets/photo_tile.dart';
 
 class PhotoGridSliver extends StatelessWidget {
   final ListState<AlbumPhoto> listState;
+  final void Function(BuildContext context, int index)? customOpenGallery;
 
-  const PhotoGridSliver({super.key, required this.listState});
+  const PhotoGridSliver({
+    super.key,
+    required this.listState,
+    this.customOpenGallery,
+  });
 
   void _openGallery(BuildContext context, int index) {
     final cubit = BlocProvider.of<PhotosCubit>(context);
@@ -37,6 +42,14 @@ class PhotoGridSliver extends StatelessWidget {
     );
   }
 
+  void _handleOpen(BuildContext context, int index) {
+    if (customOpenGallery != null) {
+      customOpenGallery!(context, index);
+    } else {
+      _openGallery(context, index);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
@@ -50,7 +63,7 @@ class PhotoGridSliver extends StatelessWidget {
         delegate: SliverChildBuilderDelegate(
           (context, index) => PhotoTile(
             photo: listState.results[index],
-            openGallery: () => _openGallery(context, index),
+            openGallery: () => _handleOpen(context, index),
           ),
           childCount: listState.results.length,
         ),

@@ -273,6 +273,8 @@ abstract class ApiRepository {
   /// `filePath` should be the path of a jpg image.
   Future<void> updateReferencePhoto(String file);
 
+  Future<void> deleteReferencePhoto({required int photoPk});
+
   /// Get a list of [ListAlbum]s.
   ///
   /// Use `limit` and `offset` for pagination. [ListResponse.count] is the

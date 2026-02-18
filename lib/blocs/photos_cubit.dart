@@ -144,4 +144,9 @@ class ReferencePhotosCubit extends PhotosCubit {
     await api.updateReferencePhoto(file.path);
     await load();
   }
+
+  Future<void> deleteReferencePhoto(int photoPk) async {
+    await api.deleteReferencePhoto(photoPk:photoPk);
+    await load();
+  }
 }

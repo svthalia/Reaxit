@@ -8,6 +8,7 @@ import 'package:reaxit/blocs/list_state.dart';
 import 'package:reaxit/blocs/photos_cubit.dart';
 import 'package:reaxit/models/photo.dart';
 import 'package:reaxit/ui/widgets.dart';
+import 'package:reaxit/ui/widgets/gallery.dart';
 import 'package:reaxit/ui/widgets/photo_grid_sliver.dart';
 
 class FaceDetectionScreen extends StatefulWidget {
@@ -54,7 +55,7 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider.value(value: _cubit),
+        BlocProvider<PhotosCubit>.value(value: _cubit),
         BlocProvider.value(value: _referenceCubit),
       ],
       child: Scaffold(
@@ -65,7 +66,7 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
             await _referenceCubit.load();
           },
           child: BlocBuilder<
-            FaceDetectionPhotosCubit,
+            PhotosCubit,
             FaceDetectionPhotosState
           >(
             builder: (context, state) {
@@ -133,7 +134,10 @@ class FaceDetectionGridScrollView extends StatelessWidget {
               ),
             ),
           ),
-          PhotoGridSliver(listState: referenceState),
+          PhotoGridSliver(
+            listState: referenceState,
+            customOpenGallery: _openGallery,
+          ),
           if (referenceState.isLoadingMore)
             const SliverPadding(
               padding: EdgeInsets.all(8),
@@ -242,4 +246,31 @@ Future<void> uploadPhotoGallery(
   final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
   await uploadPhoto(pickedFile, cubit, messenger);
+}
+
+void _openGallery(BuildContext context, int index) {
+  final cubit = context.read<ReferencePhotosCubit>();
+
+  showDialog(
+    context: context,
+    useSafeArea: false,
+    barrierColor: Colors.black.withOpacity(0.92),
+    builder: (context) {
+      return BlocProvider.value(
+        value: cubit,
+        child: BlocBuilder<ReferencePhotosCubit, ListState<AlbumPhoto>>(
+          buildWhen:
+              (previous, current) =>
+                  !current.isLoading && !current.isLoadingMore,
+          builder: (context, state) {
+            return Gallery<PhotosCubit>(
+              photos: state.results,
+              initialPage: index,
+              photoAmount: state.count!,
+            );
+          },
+        ),
+      );
+    },
+  );
 }
