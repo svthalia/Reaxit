@@ -65,10 +65,7 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
             await _cubit.load();
             await _referenceCubit.load();
           },
-          child: BlocBuilder<
-            PhotosCubit,
-            FaceDetectionPhotosState
-          >(
+          child: BlocBuilder<PhotosCubit, FaceDetectionPhotosState>(
             builder: (context, state) {
               return BlocBuilder<ReferencePhotosCubit, ReferencePhotosState>(
                 builder: (referenceContext, referenceState) {
@@ -250,26 +247,40 @@ Future<void> uploadPhotoGallery(
 
 void _openGallery(BuildContext context, int index) {
   final cubit = context.read<ReferencePhotosCubit>();
+  final photoPk = cubit.state.results[index].pk;
+
+  // When this function is called, the reference photo needs to be deleted, so we need to make an api request
+  // to delete the reference photo at index index.
 
   showDialog(
     context: context,
-    useSafeArea: false,
-    barrierColor: Colors.black.withOpacity(0.92),
     builder: (context) {
-      return BlocProvider.value(
-        value: cubit,
-        child: BlocBuilder<ReferencePhotosCubit, ListState<AlbumPhoto>>(
-          buildWhen:
-              (previous, current) =>
-                  !current.isLoading && !current.isLoadingMore,
-          builder: (context, state) {
-            return Gallery<PhotosCubit>(
-              photos: state.results,
-              initialPage: index,
-              photoAmount: state.count!,
-            );
-          },
+      return AlertDialog(
+        title: const Text('Remove reference photo'),
+        content: const Text(
+          'We will store your reference face for 180 more days after you remove it. This allows us to monitor if you actually searched for photos of others. Are you sure you want to delete this reference photo?',
         ),
+        actions: <Widget>[
+          TextButton(
+            style: TextButton.styleFrom(
+              textStyle: Theme.of(context).textTheme.labelLarge,
+            ),
+            child: const Text('Cancel'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              textStyle: Theme.of(context).textTheme.labelLarge,
+            ),
+            child: const Text('Delete'),
+            onPressed: () {
+              cubit.deleteReferencePhoto(photoPk);
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
       );
     },
   );

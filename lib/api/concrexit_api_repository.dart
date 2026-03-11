@@ -1036,7 +1036,7 @@ class ConcrexitApiRepository implements ApiRepository {
   @override
   Future<void> deleteReferencePhoto({required int photoPk}) async {
     return sandbox(() async {
-      final uri = _uri(path: '/photos/facedetection/reference-faces/$photoPk');
+      final uri = _uri(path: '/photos/facedetection/reference-faces/$photoPk/');
       await _handleExceptions(() => _client.delete(uri));
     });
   }
