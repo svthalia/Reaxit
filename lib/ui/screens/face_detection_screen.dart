@@ -8,7 +8,6 @@ import 'package:reaxit/blocs/list_state.dart';
 import 'package:reaxit/blocs/photos_cubit.dart';
 import 'package:reaxit/models/photo.dart';
 import 'package:reaxit/ui/widgets.dart';
-import 'package:reaxit/ui/widgets/gallery.dart';
 import 'package:reaxit/ui/widgets/photo_grid_sliver.dart';
 
 class FaceDetectionScreen extends StatefulWidget {
@@ -59,7 +58,16 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
         BlocProvider.value(value: _referenceCubit),
       ],
       child: Scaffold(
-        appBar: ThaliaAppBar(title: const Text("PHOTOS YOU'RE ON")),
+        appBar: ThaliaAppBar(
+          title: const Text("PHOTOS YOU'RE ON"),
+          collapsingActions: [
+            IconAppbarAction(
+              'FACE DETECTION',
+              Icons.info,
+              () => showFaceDectionInfoDialog(context),
+            ),
+          ],
+        ),
         body: RefreshIndicator(
           onRefresh: () async {
             await _cubit.load();
@@ -104,6 +112,7 @@ class FaceDetectionGridScrollView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Scrollbar(
       controller: controller,
       child: CustomScrollView(
@@ -112,25 +121,24 @@ class FaceDetectionGridScrollView extends StatelessWidget {
           parent: AlwaysScrollableScrollPhysics(),
         ),
         slivers: [
+          SliverToBoxAdapter(child: SizedBox(height: 10)),
           if (referenceState.results.isEmpty)
-            const SliverToBoxAdapter(
+            SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.all(8),
                 child: Text(
-                  'No reference photos found',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  'NO REFERENCE PHOTOS FOUND',
+                  style: textTheme.titleLarge,
                 ),
               ),
             ),
-          const SliverToBoxAdapter(
+          SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.all(8),
-              child: Text(
-                'Reference photos',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+              child: Text('REFERENCE PHOTOS', style: textTheme.titleLarge),
             ),
           ),
+          SliverToBoxAdapter(child: Divider(height: 24)),
           PhotoGridSliver(
             listState: referenceState,
             customOpenGallery: _openGallery,
@@ -145,32 +153,36 @@ class FaceDetectionGridScrollView extends StatelessWidget {
               ),
             ),
           SliverToBoxAdapter(
-            child: ElevatedButton(
-              onPressed: () {
-                final messenger = ScaffoldMessenger.of(context);
-                uploadPhotoGallery(context, referenceCubit, messenger);
-              },
-              child: Text('Add reference photo from gallery'),
+            child: Row(
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(child: Text("Add reference photo")),
+                ElevatedButton(
+                  onPressed: () {
+                    final messenger = ScaffoldMessenger.of(context);
+                    uploadPhotoMakePhoto(context, referenceCubit, messenger);
+                  },
+                  child: const Icon(Icons.photo_camera_outlined),
+                ),
+                SizedBox(width: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    final messenger = ScaffoldMessenger.of(context);
+                    uploadPhotoGallery(context, referenceCubit, messenger);
+                  },
+                  child: const Icon(Icons.photo_outlined),
+                ),
+              ],
             ),
           ),
+          SliverToBoxAdapter(child: Divider(height: 24)),
           SliverToBoxAdapter(
-            child: ElevatedButton(
-              onPressed: () {
-                final messenger = ScaffoldMessenger.of(context);
-                uploadPhotoMakePhoto(context, referenceCubit, messenger);
-              },
-              child: Text('Add reference photo from camera'),
-            ),
-          ),
-          const SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.all(8),
-              child: Text(
-                'Photos you\'re on',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+              child: Text("PHOTOS YOU'RE ON", style: textTheme.titleLarge),
             ),
           ),
+          SliverToBoxAdapter(child: Divider(height: 24)),
           PhotoGridSliver(listState: listState),
           if (listState.isLoadingMore)
             const SliverPadding(
@@ -251,6 +263,7 @@ void _openGallery(BuildContext context, int index) {
 
   // When this function is called, the reference photo needs to be deleted, so we need to make an api request
   // to delete the reference photo at index index.
+  // TODO: probably rename this later
 
   showDialog(
     context: context,
@@ -277,6 +290,48 @@ void _openGallery(BuildContext context, int index) {
             child: const Text('Delete'),
             onPressed: () {
               cubit.deleteReferencePhoto(photoPk);
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void showFaceDectionInfoDialog(context) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('How does this work?'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              "Upload a reference photo of yourself and we'll look for other photos you appear on. Note that for the best result, this photo should contain only your face. A reference photo with multiple faces on it will be rejected. It may take some time until we have processed your reference photos. \n",
+            ),
+            const Text(
+              '\u2022 Face recognition is intended to be used for your own faces only.',
+            ),
+            const Text(
+              '\u2022 You can have a maximum of 5 reference faces uploaded.',
+            ),
+            const Text(
+              "\u2022 You can only search for faces for the period that you've been a member.",
+            ),
+            const Text(
+              '\u2022 After you have uploaded a reference face, you can not just delete it. We will store your reference faces for 180 more days after you delete them. This allows us to monitor if you actually searched for photos of others.',
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          TextButton(
+            style: TextButton.styleFrom(
+              textStyle: Theme.of(context).textTheme.labelLarge,
+            ),
+            child: const Text('OK'),
+            onPressed: () {
               Navigator.of(context).pop();
             },
           ),
