@@ -59,7 +59,7 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
       ],
       child: Scaffold(
         appBar: ThaliaAppBar(
-          title: const Text("PHOTOS YOU'RE ON"),
+          title: const Text('FACE DETECTION'),
           collapsingActions: [
             IconAppbarAction(
               'FACE DETECTION',
@@ -121,31 +121,53 @@ class FaceDetectionGridScrollView extends StatelessWidget {
           parent: AlwaysScrollableScrollPhysics(),
         ),
         slivers: [
-          SliverToBoxAdapter(child: SizedBox(height: 10)),
           if (referenceState.results.isEmpty)
             SliverToBoxAdapter(
               child: Padding(
-                padding: EdgeInsets.all(8),
-                child: Text(
-                  'NO REFERENCE PHOTOS FOUND',
-                  style: textTheme.titleLarge,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 16,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Text(
+                        'NO REFERENCE PHOTOS FOUND',
+                        style: textTheme.titleLarge,
+                      ),
+                    ),
+                    Divider(height: 0),
+                  ],
                 ),
               ),
             ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.all(8),
-              child: Text('REFERENCE PHOTOS', style: textTheme.titleLarge),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: Text(
+                      'REFERENCE PHOTOS',
+                      style: textTheme.titleLarge,
+                    ),
+                  ),
+                  Divider(height: 0),
+                ],
+              ),
             ),
           ),
-          SliverToBoxAdapter(child: Divider(height: 24)),
           PhotoGridSliver(
             listState: referenceState,
             customOpenGallery: _openGallery,
           ),
           if (referenceState.isLoadingMore)
             const SliverPadding(
-              padding: EdgeInsets.all(8),
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
               sliver: SliverList(
                 delegate: SliverChildListDelegate.fixed([
                   Center(child: CircularProgressIndicator()),
@@ -153,40 +175,89 @@ class FaceDetectionGridScrollView extends StatelessWidget {
               ),
             ),
           SliverToBoxAdapter(
-            child: Row(
-              // mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(child: Text("Add reference photo")),
-                ElevatedButton(
-                  onPressed: () {
-                    final messenger = ScaffoldMessenger.of(context);
-                    uploadPhotoMakePhoto(context, referenceCubit, messenger);
-                  },
-                  child: const Icon(Icons.photo_camera_outlined),
-                ),
-                SizedBox(width: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    final messenger = ScaffoldMessenger.of(context);
-                    uploadPhotoGallery(context, referenceCubit, messenger);
-                  },
-                  child: const Icon(Icons.photo_outlined),
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text('Add reference photo'),
+                            content: const Text(
+                              'How do you want to add a reference photo?',
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                child: const Text('Take a new photo'),
+                                onPressed: () {
+                                  final messenger = ScaffoldMessenger.of(
+                                    context,
+                                  );
+                                  uploadPhotoMakePhoto(
+                                    context,
+                                    referenceCubit,
+                                    messenger,
+                                  );
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              TextButton(
+                                child: const Text('Upload from gallery'),
+                                onPressed: () {
+                                  final messenger = ScaffoldMessenger.of(
+                                    context,
+                                  );
+                                  uploadPhotoGallery(
+                                    context,
+                                    referenceCubit,
+                                    messenger,
+                                  );
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    child: const Row(
+                      children: [
+                        Expanded(child: Text('Upload New Reference Photo')),
+                        Icon(Icons.file_upload_rounded),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          SliverToBoxAdapter(child: Divider(height: 24)),
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.all(8),
-              child: Text("PHOTOS YOU'RE ON", style: textTheme.titleLarge),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Divider(height: 0),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Text(
+                      "PHOTOS YOU'RE ON",
+                      style: textTheme.titleLarge,
+                    ),
+                  ),
+                  Divider(height: 0),
+                ],
+              ),
             ),
           ),
-          SliverToBoxAdapter(child: Divider(height: 24)),
           PhotoGridSliver(listState: listState),
           if (listState.isLoadingMore)
             const SliverPadding(
-              padding: EdgeInsets.all(8),
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
               sliver: SliverList(
                 delegate: SliverChildListDelegate.fixed([
                   Center(child: CircularProgressIndicator()),
