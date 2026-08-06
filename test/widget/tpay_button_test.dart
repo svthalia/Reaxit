@@ -23,11 +23,10 @@ void main() {
             ..stream.listen((state) {
               when(paymentUserCubit.state).thenReturn(state);
             })
-            ..add(const PaymentUserState.loading())
+            ..add(const LoadingState())
             ..add(
-              const PaymentUserState.result(
-                user: PaymentUser('0.00', true, true),
-                payments: [],
+              const ResultState(
+                UserPayments(PaymentUser('0.00', true, true), []),
               ),
             );
 
@@ -81,11 +80,10 @@ void main() {
             ..stream.listen((state) {
               when(paymentUserCubit.state).thenReturn(state);
             })
-            ..add(const PaymentUserState.loading())
+            ..add(const LoadingState())
             ..add(
-              const PaymentUserState.result(
-                user: PaymentUser('0.00', true, true),
-                payments: [],
+              const ResultState(
+                UserPayments(PaymentUser('0.00', true, true), []),
               ),
             );
 
@@ -136,11 +134,10 @@ void main() {
             ..stream.listen((state) {
               when(paymentUserCubit.state).thenReturn(state);
             })
-            ..add(const PaymentUserState.loading())
+            ..add(const LoadingState())
             ..add(
-              const PaymentUserState.result(
-                user: PaymentUser('0.00', true, true),
-                payments: [],
+              const ResultState(
+                UserPayments(PaymentUser('0.00', true, true), []),
               ),
             );
 
@@ -184,11 +181,10 @@ void main() {
             ..stream.listen((state) {
               when(paymentUserCubit.state).thenReturn(state);
             })
-            ..add(const PaymentUserState.loading())
+            ..add(const LoadingState())
             ..add(
-              const PaymentUserState.result(
-                user: PaymentUser('0.00', false, false),
-                payments: [],
+              const ResultState(
+                UserPayments(PaymentUser('0.00', true, true), []),
               ),
             );
 
@@ -226,10 +222,7 @@ void main() {
       );
 
       streamController.add(
-        const PaymentUserState.result(
-          user: PaymentUser('0.00', true, false),
-          payments: [],
-        ),
+        const ResultState(UserPayments(PaymentUser('0.00', true, true), [])),
       );
       await tester.pumpAndSettle();
 
@@ -240,15 +233,13 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.textContaining('direct debit mandate'), findsOneWidget);
 
-      streamController.add(const PaymentUserState.loading());
+      streamController.add(const LoadingState());
       await tester.pumpAndSettle();
       await tester.tap(find.text('THALIA PAY: €13.37'));
       await tester.pumpAndSettle();
       expect(find.text('Confirm payment'), findsNothing);
 
-      streamController.add(
-        const PaymentUserState.failure(message: 'An unknown error occurred.'),
-      );
+      streamController.add(const ErrorState('An unknown error occurred.'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('THALIA PAY: €13.37'));
       await tester.pumpAndSettle();

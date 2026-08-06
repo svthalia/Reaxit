@@ -3,19 +3,21 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i9;
+import 'dart:async' as _i8;
 
-import 'package:flutter_bloc/flutter_bloc.dart' as _i10;
+import 'package:flutter_bloc/flutter_bloc.dart' as _i9;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i11;
+import 'package:mockito/src/dummies.dart' as _i10;
 import 'package:reaxit/api/api_repository.dart' as _i6;
 import 'package:reaxit/blocs/auth_cubit.dart' as _i2;
-import 'package:reaxit/blocs/payment_user_cubit.dart' as _i7;
-import 'package:reaxit/blocs/welcome_cubit.dart' as _i8;
+import 'package:reaxit/blocs/detail_state.dart' as _i14;
+import 'package:reaxit/blocs/payment_user_cubit.dart' as _i13;
+import 'package:reaxit/blocs/welcome_cubit.dart' as _i7;
 import 'package:reaxit/config.dart' as _i3;
 import 'package:reaxit/models.dart' as _i4;
-import 'package:reaxit/models/announcement.dart' as _i12;
+import 'package:reaxit/models/announcement.dart' as _i11;
 import 'package:reaxit/models/thabliod.dart' as _i5;
+import 'package:reaxit/models/vacancie.dart' as _i12;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -129,14 +131,8 @@ class _FakeApiRepository_18 extends _i1.SmartFake implements _i6.ApiRepository {
     : super(parent, parentInvocation);
 }
 
-class _FakePaymentUserState_19 extends _i1.SmartFake
-    implements _i7.PaymentUserState {
-  _FakePaymentUserState_19(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeWelcomeState_20 extends _i1.SmartFake implements _i8.WelcomeState {
-  _FakeWelcomeState_20(Object parent, Invocation parentInvocation)
+class _FakeWelcomeState_19 extends _i1.SmartFake implements _i7.WelcomeState {
+  _FakeWelcomeState_19(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
@@ -157,12 +153,12 @@ class MockAuthCubit extends _i1.Mock implements _i2.AuthCubit {
           as _i2.AuthState);
 
   @override
-  _i9.Stream<_i2.AuthState> get stream =>
+  _i8.Stream<_i2.AuthState> get stream =>
       (super.noSuchMethod(
             Invocation.getter(#stream),
-            returnValue: _i9.Stream<_i2.AuthState>.empty(),
+            returnValue: _i8.Stream<_i2.AuthState>.empty(),
           )
-          as _i9.Stream<_i2.AuthState>);
+          as _i8.Stream<_i2.AuthState>);
 
   @override
   bool get isClosed =>
@@ -170,31 +166,31 @@ class MockAuthCubit extends _i1.Mock implements _i2.AuthCubit {
           as bool);
 
   @override
-  _i9.Future<void> load() =>
+  _i8.Future<void> load() =>
       (super.noSuchMethod(
             Invocation.method(#load, []),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i8.Future<void>);
 
   @override
-  _i9.Future<void> logIn(_i2.Environment? environment) =>
+  _i8.Future<void> logIn(_i2.Environment? environment) =>
       (super.noSuchMethod(
             Invocation.method(#logIn, [environment]),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i8.Future<void>);
 
   @override
-  _i9.Future<void> logOut() =>
+  _i8.Future<void> logOut() =>
       (super.noSuchMethod(
             Invocation.method(#logOut, []),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i8.Future<void>);
 
   @override
   void selectEnvironment(_i2.Environment? environment) => super.noSuchMethod(
@@ -209,7 +205,7 @@ class MockAuthCubit extends _i1.Mock implements _i2.AuthCubit {
   );
 
   @override
-  void onChange(_i10.Change<_i2.AuthState>? change) => super.noSuchMethod(
+  void onChange(_i9.Change<_i2.AuthState>? change) => super.noSuchMethod(
     Invocation.method(#onChange, [change]),
     returnValueForMissingStub: null,
   );
@@ -227,13 +223,13 @@ class MockAuthCubit extends _i1.Mock implements _i2.AuthCubit {
   );
 
   @override
-  _i9.Future<void> close() =>
+  _i8.Future<void> close() =>
       (super.noSuchMethod(
             Invocation.method(#close, []),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i8.Future<void>);
 }
 
 /// A class which mocks [ApiRepository].
@@ -259,33 +255,33 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
   );
 
   @override
-  _i9.Future<_i4.Event> getEventByPk({required int? pk}) =>
+  _i8.Future<_i4.Event> getEventByPk({required int? pk}) =>
       (super.noSuchMethod(
             Invocation.method(#getEventByPk, [], {#pk: pk}),
-            returnValue: _i9.Future<_i4.Event>.value(
+            returnValue: _i8.Future<_i4.Event>.value(
               _FakeEvent_2(
                 this,
                 Invocation.method(#getEventByPk, [], {#pk: pk}),
               ),
             ),
           )
-          as _i9.Future<_i4.Event>);
+          as _i8.Future<_i4.Event>);
 
   @override
-  _i9.Future<_i4.Event> getEventBySlug({required String? slug}) =>
+  _i8.Future<_i4.Event> getEventBySlug({required String? slug}) =>
       (super.noSuchMethod(
             Invocation.method(#getEventBySlug, [], {#slug: slug}),
-            returnValue: _i9.Future<_i4.Event>.value(
+            returnValue: _i8.Future<_i4.Event>.value(
               _FakeEvent_2(
                 this,
                 Invocation.method(#getEventBySlug, [], {#slug: slug}),
               ),
             ),
           )
-          as _i9.Future<_i4.Event>);
+          as _i8.Future<_i4.Event>);
 
   @override
-  _i9.Future<_i4.ListResponse<_i4.Event>> getEvents({
+  _i8.Future<_i4.ListResponse<_i4.Event>> getEvents({
     String? search,
     int? limit,
     int? offset,
@@ -302,7 +298,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #start: start,
               #end: end,
             }),
-            returnValue: _i9.Future<_i4.ListResponse<_i4.Event>>.value(
+            returnValue: _i8.Future<_i4.ListResponse<_i4.Event>>.value(
               _FakeListResponse_3<_i4.Event>(
                 this,
                 Invocation.method(#getEvents, [], {
@@ -316,10 +312,10 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.ListResponse<_i4.Event>>);
+          as _i8.Future<_i4.ListResponse<_i4.Event>>);
 
   @override
-  _i9.Future<_i4.ListResponse<_i4.PartnerEvent>> getPartnerEvents({
+  _i8.Future<_i4.ListResponse<_i4.PartnerEvent>> getPartnerEvents({
     String? search,
     int? limit,
     int? offset,
@@ -336,7 +332,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #start: start,
               #end: end,
             }),
-            returnValue: _i9.Future<_i4.ListResponse<_i4.PartnerEvent>>.value(
+            returnValue: _i8.Future<_i4.ListResponse<_i4.PartnerEvent>>.value(
               _FakeListResponse_3<_i4.PartnerEvent>(
                 this,
                 Invocation.method(#getPartnerEvents, [], {
@@ -350,10 +346,10 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.ListResponse<_i4.PartnerEvent>>);
+          as _i8.Future<_i4.ListResponse<_i4.PartnerEvent>>);
 
   @override
-  _i9.Future<_i4.ListResponse<_i4.EventRegistration>> getEventRegistrations({
+  _i8.Future<_i4.ListResponse<_i4.EventRegistration>> getEventRegistrations({
     required int? pk,
     int? limit,
     int? offset,
@@ -365,7 +361,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #offset: offset,
             }),
             returnValue:
-                _i9.Future<_i4.ListResponse<_i4.EventRegistration>>.value(
+                _i8.Future<_i4.ListResponse<_i4.EventRegistration>>.value(
                   _FakeListResponse_3<_i4.EventRegistration>(
                     this,
                     Invocation.method(#getEventRegistrations, [], {
@@ -376,23 +372,23 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
                   ),
                 ),
           )
-          as _i9.Future<_i4.ListResponse<_i4.EventRegistration>>);
+          as _i8.Future<_i4.ListResponse<_i4.EventRegistration>>);
 
   @override
-  _i9.Future<_i4.EventRegistration> registerForEvent(int? pk) =>
+  _i8.Future<_i4.EventRegistration> registerForEvent(int? pk) =>
       (super.noSuchMethod(
             Invocation.method(#registerForEvent, [pk]),
-            returnValue: _i9.Future<_i4.EventRegistration>.value(
+            returnValue: _i8.Future<_i4.EventRegistration>.value(
               _FakeEventRegistration_4(
                 this,
                 Invocation.method(#registerForEvent, [pk]),
               ),
             ),
           )
-          as _i9.Future<_i4.EventRegistration>);
+          as _i8.Future<_i4.EventRegistration>);
 
   @override
-  _i9.Future<void> cancelRegistration({
+  _i8.Future<void> cancelRegistration({
     required int? eventPk,
     required int? registrationPk,
   }) =>
@@ -401,13 +397,13 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #eventPk: eventPk,
               #registrationPk: registrationPk,
             }),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i8.Future<void>);
 
   @override
-  _i9.Future<Map<String, _i4.RegistrationField>> getRegistrationFields({
+  _i8.Future<Map<String, _i4.RegistrationField>> getRegistrationFields({
     required int? eventPk,
     required int? registrationPk,
   }) =>
@@ -416,14 +412,14 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #eventPk: eventPk,
               #registrationPk: registrationPk,
             }),
-            returnValue: _i9.Future<Map<String, _i4.RegistrationField>>.value(
+            returnValue: _i8.Future<Map<String, _i4.RegistrationField>>.value(
               <String, _i4.RegistrationField>{},
             ),
           )
-          as _i9.Future<Map<String, _i4.RegistrationField>>);
+          as _i8.Future<Map<String, _i4.RegistrationField>>);
 
   @override
-  _i9.Future<void> updateRegistrationFields({
+  _i8.Future<void> updateRegistrationFields({
     required int? eventPk,
     required int? registrationPk,
     required Map<String, _i4.RegistrationField>? fields,
@@ -434,26 +430,26 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #registrationPk: registrationPk,
               #fields: fields,
             }),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i8.Future<void>);
 
   @override
-  _i9.Future<_i4.AdminEvent> getAdminEvent({required int? pk}) =>
+  _i8.Future<_i4.AdminEvent> getAdminEvent({required int? pk}) =>
       (super.noSuchMethod(
             Invocation.method(#getAdminEvent, [], {#pk: pk}),
-            returnValue: _i9.Future<_i4.AdminEvent>.value(
+            returnValue: _i8.Future<_i4.AdminEvent>.value(
               _FakeAdminEvent_5(
                 this,
                 Invocation.method(#getAdminEvent, [], {#pk: pk}),
               ),
             ),
           )
-          as _i9.Future<_i4.AdminEvent>);
+          as _i8.Future<_i4.AdminEvent>);
 
   @override
-  _i9.Future<_i4.ListResponse<_i4.AdminEventRegistration>>
+  _i8.Future<_i4.ListResponse<_i4.AdminEventRegistration>>
   getAdminEventRegistrations({
     required int? pk,
     int? limit,
@@ -474,7 +470,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #queued: queued,
             }),
             returnValue:
-                _i9.Future<_i4.ListResponse<_i4.AdminEventRegistration>>.value(
+                _i8.Future<_i4.ListResponse<_i4.AdminEventRegistration>>.value(
                   _FakeListResponse_3<_i4.AdminEventRegistration>(
                     this,
                     Invocation.method(#getAdminEventRegistrations, [], {
@@ -489,10 +485,10 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
                   ),
                 ),
           )
-          as _i9.Future<_i4.ListResponse<_i4.AdminEventRegistration>>);
+          as _i8.Future<_i4.ListResponse<_i4.AdminEventRegistration>>);
 
   @override
-  _i9.Future<String> markPresentEventRegistration({
+  _i8.Future<String> markPresentEventRegistration({
     required int? eventPk,
     required String? token,
   }) =>
@@ -501,8 +497,8 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #eventPk: eventPk,
               #token: token,
             }),
-            returnValue: _i9.Future<String>.value(
-              _i11.dummyValue<String>(
+            returnValue: _i8.Future<String>.value(
+              _i10.dummyValue<String>(
                 this,
                 Invocation.method(#markPresentEventRegistration, [], {
                   #eventPk: eventPk,
@@ -511,10 +507,10 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<String>);
+          as _i8.Future<String>);
 
   @override
-  _i9.Future<_i4.AdminEventRegistration> markPresentAdminEventRegistration({
+  _i8.Future<_i4.AdminEventRegistration> markPresentAdminEventRegistration({
     required int? eventPk,
     required int? registrationPk,
     required bool? present,
@@ -525,7 +521,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #registrationPk: registrationPk,
               #present: present,
             }),
-            returnValue: _i9.Future<_i4.AdminEventRegistration>.value(
+            returnValue: _i8.Future<_i4.AdminEventRegistration>.value(
               _FakeAdminEventRegistration_6(
                 this,
                 Invocation.method(#markPresentAdminEventRegistration, [], {
@@ -536,10 +532,10 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.AdminEventRegistration>);
+          as _i8.Future<_i4.AdminEventRegistration>);
 
   @override
-  _i9.Future<_i4.Payable> markPaidAdminEventRegistration({
+  _i8.Future<_i4.Payable> markPaidAdminEventRegistration({
     required int? registrationPk,
     required _i4.PaymentType? paymentType,
   }) =>
@@ -548,7 +544,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #registrationPk: registrationPk,
               #paymentType: paymentType,
             }),
-            returnValue: _i9.Future<_i4.Payable>.value(
+            returnValue: _i8.Future<_i4.Payable>.value(
               _FakePayable_7(
                 this,
                 Invocation.method(#markPaidAdminEventRegistration, [], {
@@ -558,23 +554,23 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.Payable>);
+          as _i8.Future<_i4.Payable>);
 
   @override
-  _i9.Future<void> markNotPaidAdminEventRegistration({
+  _i8.Future<void> markNotPaidAdminEventRegistration({
     required int? registrationPk,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#markNotPaidAdminEventRegistration, [], {
               #registrationPk: registrationPk,
             }),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i8.Future<void>);
 
   @override
-  _i9.Future<_i4.ListResponse<_i4.AdminFoodOrder>> getAdminFoodOrders({
+  _i8.Future<_i4.ListResponse<_i4.AdminFoodOrder>> getAdminFoodOrders({
     required int? pk,
     int? limit,
     int? offset,
@@ -587,7 +583,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #offset: offset,
               #search: search,
             }),
-            returnValue: _i9.Future<_i4.ListResponse<_i4.AdminFoodOrder>>.value(
+            returnValue: _i8.Future<_i4.ListResponse<_i4.AdminFoodOrder>>.value(
               _FakeListResponse_3<_i4.AdminFoodOrder>(
                 this,
                 Invocation.method(#getAdminFoodOrders, [], {
@@ -599,10 +595,10 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.ListResponse<_i4.AdminFoodOrder>>);
+          as _i8.Future<_i4.ListResponse<_i4.AdminFoodOrder>>);
 
   @override
-  _i9.Future<_i4.Payable> markPaidAdminFoodOrder({
+  _i8.Future<_i4.Payable> markPaidAdminFoodOrder({
     required int? orderPk,
     required _i4.PaymentType? paymentType,
   }) =>
@@ -611,7 +607,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #orderPk: orderPk,
               #paymentType: paymentType,
             }),
-            returnValue: _i9.Future<_i4.Payable>.value(
+            returnValue: _i8.Future<_i4.Payable>.value(
               _FakePayable_7(
                 this,
                 Invocation.method(#markPaidAdminFoodOrder, [], {
@@ -621,31 +617,31 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.Payable>);
+          as _i8.Future<_i4.Payable>);
 
   @override
-  _i9.Future<void> markNotPaidAdminFoodOrder({required int? orderPk}) =>
+  _i8.Future<void> markNotPaidAdminFoodOrder({required int? orderPk}) =>
       (super.noSuchMethod(
             Invocation.method(#markNotPaidAdminFoodOrder, [], {
               #orderPk: orderPk,
             }),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i8.Future<void>);
 
   @override
-  _i9.Future<_i4.FoodEvent> getFoodEvent(int? pk) =>
+  _i8.Future<_i4.FoodEvent> getFoodEvent(int? pk) =>
       (super.noSuchMethod(
             Invocation.method(#getFoodEvent, [pk]),
-            returnValue: _i9.Future<_i4.FoodEvent>.value(
+            returnValue: _i8.Future<_i4.FoodEvent>.value(
               _FakeFoodEvent_8(this, Invocation.method(#getFoodEvent, [pk])),
             ),
           )
-          as _i9.Future<_i4.FoodEvent>);
+          as _i8.Future<_i4.FoodEvent>);
 
   @override
-  _i9.Future<_i4.ListResponse<_i4.FoodEvent>> getFoodEvents({
+  _i8.Future<_i4.ListResponse<_i4.FoodEvent>> getFoodEvents({
     int? limit,
     int? offset,
     String? ordering,
@@ -660,7 +656,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #start: start,
               #end: end,
             }),
-            returnValue: _i9.Future<_i4.ListResponse<_i4.FoodEvent>>.value(
+            returnValue: _i8.Future<_i4.ListResponse<_i4.FoodEvent>>.value(
               _FakeListResponse_3<_i4.FoodEvent>(
                 this,
                 Invocation.method(#getFoodEvents, [], {
@@ -673,42 +669,42 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.ListResponse<_i4.FoodEvent>>);
+          as _i8.Future<_i4.ListResponse<_i4.FoodEvent>>);
 
   @override
-  _i9.Future<_i4.FoodEvent> getCurrentFoodEvent() =>
+  _i8.Future<_i4.FoodEvent> getCurrentFoodEvent() =>
       (super.noSuchMethod(
             Invocation.method(#getCurrentFoodEvent, []),
-            returnValue: _i9.Future<_i4.FoodEvent>.value(
+            returnValue: _i8.Future<_i4.FoodEvent>.value(
               _FakeFoodEvent_8(
                 this,
                 Invocation.method(#getCurrentFoodEvent, []),
               ),
             ),
           )
-          as _i9.Future<_i4.FoodEvent>);
+          as _i8.Future<_i4.FoodEvent>);
 
   @override
-  _i9.Future<_i4.FoodOrder> getFoodOrder(int? pk) =>
+  _i8.Future<_i4.FoodOrder> getFoodOrder(int? pk) =>
       (super.noSuchMethod(
             Invocation.method(#getFoodOrder, [pk]),
-            returnValue: _i9.Future<_i4.FoodOrder>.value(
+            returnValue: _i8.Future<_i4.FoodOrder>.value(
               _FakeFoodOrder_9(this, Invocation.method(#getFoodOrder, [pk])),
             ),
           )
-          as _i9.Future<_i4.FoodOrder>);
+          as _i8.Future<_i4.FoodOrder>);
 
   @override
-  _i9.Future<void> cancelFoodOrder(int? pk) =>
+  _i8.Future<void> cancelFoodOrder(int? pk) =>
       (super.noSuchMethod(
             Invocation.method(#cancelFoodOrder, [pk]),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i8.Future<void>);
 
   @override
-  _i9.Future<_i4.FoodOrder> placeFoodOrder({
+  _i8.Future<_i4.FoodOrder> placeFoodOrder({
     required int? eventPk,
     required int? productPk,
   }) =>
@@ -717,7 +713,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #eventPk: eventPk,
               #productPk: productPk,
             }),
-            returnValue: _i9.Future<_i4.FoodOrder>.value(
+            returnValue: _i8.Future<_i4.FoodOrder>.value(
               _FakeFoodOrder_9(
                 this,
                 Invocation.method(#placeFoodOrder, [], {
@@ -727,10 +723,10 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.FoodOrder>);
+          as _i8.Future<_i4.FoodOrder>);
 
   @override
-  _i9.Future<_i4.FoodOrder> changeFoodOrder({
+  _i8.Future<_i4.FoodOrder> changeFoodOrder({
     required int? eventPk,
     required int? productPk,
   }) =>
@@ -739,7 +735,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #eventPk: eventPk,
               #productPk: productPk,
             }),
-            returnValue: _i9.Future<_i4.FoodOrder>.value(
+            returnValue: _i8.Future<_i4.FoodOrder>.value(
               _FakeFoodOrder_9(
                 this,
                 Invocation.method(#changeFoodOrder, [], {
@@ -749,10 +745,10 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.FoodOrder>);
+          as _i8.Future<_i4.FoodOrder>);
 
   @override
-  _i9.Future<_i4.ListResponse<_i4.Product>> getFoodEventProducts(
+  _i8.Future<_i4.ListResponse<_i4.Product>> getFoodEventProducts(
     int? pk, {
     int? limit,
     int? offset,
@@ -764,7 +760,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               [pk],
               {#limit: limit, #offset: offset, #search: search},
             ),
-            returnValue: _i9.Future<_i4.ListResponse<_i4.Product>>.value(
+            returnValue: _i8.Future<_i4.ListResponse<_i4.Product>>.value(
               _FakeListResponse_3<_i4.Product>(
                 this,
                 Invocation.method(
@@ -775,25 +771,25 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.ListResponse<_i4.Product>>);
+          as _i8.Future<_i4.ListResponse<_i4.Product>>);
 
   @override
-  _i9.Future<_i4.PaymentUser> getPaymentUser() =>
+  _i8.Future<_i4.PaymentUser> getPaymentUser() =>
       (super.noSuchMethod(
             Invocation.method(#getPaymentUser, []),
-            returnValue: _i9.Future<_i4.PaymentUser>.value(
+            returnValue: _i8.Future<_i4.PaymentUser>.value(
               _FakePaymentUser_10(this, Invocation.method(#getPaymentUser, [])),
             ),
           )
-          as _i9.Future<_i4.PaymentUser>);
+          as _i8.Future<_i4.PaymentUser>);
 
   @override
-  _i9.Future<_i4.Payable> getFoodOrderPayable({required int? foodOrderPk}) =>
+  _i8.Future<_i4.Payable> getFoodOrderPayable({required int? foodOrderPk}) =>
       (super.noSuchMethod(
             Invocation.method(#getFoodOrderPayable, [], {
               #foodOrderPk: foodOrderPk,
             }),
-            returnValue: _i9.Future<_i4.Payable>.value(
+            returnValue: _i8.Future<_i4.Payable>.value(
               _FakePayable_7(
                 this,
                 Invocation.method(#getFoodOrderPayable, [], {
@@ -802,15 +798,15 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.Payable>);
+          as _i8.Future<_i4.Payable>);
 
   @override
-  _i9.Future<_i4.Payable> thaliaPayFoodOrder({required int? foodOrderPk}) =>
+  _i8.Future<_i4.Payable> thaliaPayFoodOrder({required int? foodOrderPk}) =>
       (super.noSuchMethod(
             Invocation.method(#thaliaPayFoodOrder, [], {
               #foodOrderPk: foodOrderPk,
             }),
-            returnValue: _i9.Future<_i4.Payable>.value(
+            returnValue: _i8.Future<_i4.Payable>.value(
               _FakePayable_7(
                 this,
                 Invocation.method(#thaliaPayFoodOrder, [], {
@@ -819,17 +815,17 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.Payable>);
+          as _i8.Future<_i4.Payable>);
 
   @override
-  _i9.Future<_i4.Payable> getEventRegistrationPayable({
+  _i8.Future<_i4.Payable> getEventRegistrationPayable({
     required int? registrationPk,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#getEventRegistrationPayable, [], {
               #registrationPk: registrationPk,
             }),
-            returnValue: _i9.Future<_i4.Payable>.value(
+            returnValue: _i8.Future<_i4.Payable>.value(
               _FakePayable_7(
                 this,
                 Invocation.method(#getEventRegistrationPayable, [], {
@@ -838,17 +834,17 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.Payable>);
+          as _i8.Future<_i4.Payable>);
 
   @override
-  _i9.Future<_i4.Payable> thaliaPayRegistration({
+  _i8.Future<_i4.Payable> thaliaPayRegistration({
     required int? registrationPk,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#thaliaPayRegistration, [], {
               #registrationPk: registrationPk,
             }),
-            returnValue: _i9.Future<_i4.Payable>.value(
+            returnValue: _i8.Future<_i4.Payable>.value(
               _FakePayable_7(
                 this,
                 Invocation.method(#thaliaPayRegistration, [], {
@@ -857,17 +853,17 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.Payable>);
+          as _i8.Future<_i4.Payable>);
 
   @override
-  _i9.Future<_i4.Payable> getSalesOrderPayable({
+  _i8.Future<_i4.Payable> getSalesOrderPayable({
     required String? salesOrderPk,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#getSalesOrderPayable, [], {
               #salesOrderPk: salesOrderPk,
             }),
-            returnValue: _i9.Future<_i4.Payable>.value(
+            returnValue: _i8.Future<_i4.Payable>.value(
               _FakePayable_7(
                 this,
                 Invocation.method(#getSalesOrderPayable, [], {
@@ -876,17 +872,17 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.Payable>);
+          as _i8.Future<_i4.Payable>);
 
   @override
-  _i9.Future<_i4.Payable> thaliaPaySalesOrder({
+  _i8.Future<_i4.Payable> thaliaPaySalesOrder({
     required String? salesOrderPk,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#thaliaPaySalesOrder, [], {
               #salesOrderPk: salesOrderPk,
             }),
-            returnValue: _i9.Future<_i4.Payable>.value(
+            returnValue: _i8.Future<_i4.Payable>.value(
               _FakePayable_7(
                 this,
                 Invocation.method(#thaliaPaySalesOrder, [], {
@@ -895,23 +891,23 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.Payable>);
+          as _i8.Future<_i4.Payable>);
 
   @override
-  _i9.Future<_i4.Member> getMember({required int? pk}) =>
+  _i8.Future<_i4.Member> getMember({required int? pk}) =>
       (super.noSuchMethod(
             Invocation.method(#getMember, [], {#pk: pk}),
-            returnValue: _i9.Future<_i4.Member>.value(
+            returnValue: _i8.Future<_i4.Member>.value(
               _FakeMember_11(
                 this,
                 Invocation.method(#getMember, [], {#pk: pk}),
               ),
             ),
           )
-          as _i9.Future<_i4.Member>);
+          as _i8.Future<_i4.Member>);
 
   @override
-  _i9.Future<_i4.ListResponse<_i4.ListMember>> getMembers({
+  _i8.Future<_i4.ListResponse<_i4.ListMember>> getMembers({
     String? search,
     int? limit,
     int? offset,
@@ -926,7 +922,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #ordering: ordering,
               #year: year,
             }),
-            returnValue: _i9.Future<_i4.ListResponse<_i4.ListMember>>.value(
+            returnValue: _i8.Future<_i4.ListResponse<_i4.ListMember>>.value(
               _FakeListResponse_3<_i4.ListMember>(
                 this,
                 Invocation.method(#getMembers, [], {
@@ -939,60 +935,60 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.ListResponse<_i4.ListMember>>);
+          as _i8.Future<_i4.ListResponse<_i4.ListMember>>);
 
   @override
-  _i9.Future<_i4.FullMember> getMe() =>
+  _i8.Future<_i4.FullMember> getMe() =>
       (super.noSuchMethod(
             Invocation.method(#getMe, []),
-            returnValue: _i9.Future<_i4.FullMember>.value(
+            returnValue: _i8.Future<_i4.FullMember>.value(
               _FakeFullMember_12(this, Invocation.method(#getMe, [])),
             ),
           )
-          as _i9.Future<_i4.FullMember>);
+          as _i8.Future<_i4.FullMember>);
 
   @override
-  _i9.Future<void> updateAvatar(String? file) =>
+  _i8.Future<void> updateAvatar(String? file) =>
       (super.noSuchMethod(
             Invocation.method(#updateAvatar, [file]),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i8.Future<void>);
 
   @override
-  _i9.Future<void> updateDescription(String? description) =>
+  _i8.Future<void> updateDescription(String? description) =>
       (super.noSuchMethod(
             Invocation.method(#updateDescription, [description]),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i8.Future<void>);
 
   @override
-  _i9.Future<_i4.Album> getAlbum({required String? slug}) =>
+  _i8.Future<_i4.Album> getAlbum({required String? slug}) =>
       (super.noSuchMethod(
             Invocation.method(#getAlbum, [], {#slug: slug}),
-            returnValue: _i9.Future<_i4.Album>.value(
+            returnValue: _i8.Future<_i4.Album>.value(
               _FakeAlbum_13(
                 this,
                 Invocation.method(#getAlbum, [], {#slug: slug}),
               ),
             ),
           )
-          as _i9.Future<_i4.Album>);
+          as _i8.Future<_i4.Album>);
 
   @override
-  _i9.Future<void> updateLiked(int? id, bool? liked) =>
+  _i8.Future<void> updateLiked(int? id, bool? liked) =>
       (super.noSuchMethod(
             Invocation.method(#updateLiked, [id, liked]),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i8.Future<void>);
 
   @override
-  _i9.Future<_i4.ListResponse<_i4.ListAlbum>> getAlbums({
+  _i8.Future<_i4.ListResponse<_i4.ListAlbum>> getAlbums({
     String? search,
     int? limit,
     int? offset,
@@ -1003,7 +999,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #limit: limit,
               #offset: offset,
             }),
-            returnValue: _i9.Future<_i4.ListResponse<_i4.ListAlbum>>.value(
+            returnValue: _i8.Future<_i4.ListResponse<_i4.ListAlbum>>.value(
               _FakeListResponse_3<_i4.ListAlbum>(
                 this,
                 Invocation.method(#getAlbums, [], {
@@ -1014,10 +1010,10 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.ListResponse<_i4.ListAlbum>>);
+          as _i8.Future<_i4.ListResponse<_i4.ListAlbum>>);
 
   @override
-  _i9.Future<_i4.ListResponse<_i5.Thabloid>> getThabloids({
+  _i8.Future<_i4.ListResponse<_i5.Thabloid>> getThabloids({
     String? search,
     int? limit,
     int? offset,
@@ -1028,7 +1024,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #limit: limit,
               #offset: offset,
             }),
-            returnValue: _i9.Future<_i4.ListResponse<_i5.Thabloid>>.value(
+            returnValue: _i8.Future<_i4.ListResponse<_i5.Thabloid>>.value(
               _FakeListResponse_3<_i5.Thabloid>(
                 this,
                 Invocation.method(#getThabloids, [], {
@@ -1039,29 +1035,29 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.ListResponse<_i5.Thabloid>>);
+          as _i8.Future<_i4.ListResponse<_i5.Thabloid>>);
 
   @override
-  _i9.Future<_i5.Thabloid> getThabloid({required int? pk}) =>
+  _i8.Future<_i5.Thabloid> getThabloid({required int? pk}) =>
       (super.noSuchMethod(
             Invocation.method(#getThabloid, [], {#pk: pk}),
-            returnValue: _i9.Future<_i5.Thabloid>.value(
+            returnValue: _i8.Future<_i5.Thabloid>.value(
               _FakeThabloid_14(
                 this,
                 Invocation.method(#getThabloid, [], {#pk: pk}),
               ),
             ),
           )
-          as _i9.Future<_i5.Thabloid>);
+          as _i8.Future<_i5.Thabloid>);
 
   @override
-  _i9.Future<_i4.ListResponse<_i4.Slide>> getSlides({
+  _i8.Future<_i4.ListResponse<_i4.Slide>> getSlides({
     int? limit,
     int? offset,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#getSlides, [], {#limit: limit, #offset: offset}),
-            returnValue: _i9.Future<_i4.ListResponse<_i4.Slide>>.value(
+            returnValue: _i8.Future<_i4.ListResponse<_i4.Slide>>.value(
               _FakeListResponse_3<_i4.Slide>(
                 this,
                 Invocation.method(#getSlides, [], {
@@ -1071,20 +1067,20 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.ListResponse<_i4.Slide>>);
+          as _i8.Future<_i4.ListResponse<_i4.Slide>>);
 
   @override
-  _i9.Future<List<_i12.Announcement>> getAnnouncements() =>
+  _i8.Future<List<_i11.Announcement>> getAnnouncements() =>
       (super.noSuchMethod(
             Invocation.method(#getAnnouncements, []),
-            returnValue: _i9.Future<List<_i12.Announcement>>.value(
-              <_i12.Announcement>[],
+            returnValue: _i8.Future<List<_i11.Announcement>>.value(
+              <_i11.Announcement>[],
             ),
           )
-          as _i9.Future<List<_i12.Announcement>>);
+          as _i8.Future<List<_i11.Announcement>>);
 
   @override
-  _i9.Future<_i4.ListResponse<_i4.FrontpageArticle>> getFrontpageArticles({
+  _i8.Future<_i4.ListResponse<_i4.FrontpageArticle>> getFrontpageArticles({
     int? limit,
     int? offset,
   }) =>
@@ -1094,7 +1090,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #offset: offset,
             }),
             returnValue:
-                _i9.Future<_i4.ListResponse<_i4.FrontpageArticle>>.value(
+                _i8.Future<_i4.ListResponse<_i4.FrontpageArticle>>.value(
                   _FakeListResponse_3<_i4.FrontpageArticle>(
                     this,
                     Invocation.method(#getFrontpageArticles, [], {
@@ -1104,10 +1100,10 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
                   ),
                 ),
           )
-          as _i9.Future<_i4.ListResponse<_i4.FrontpageArticle>>);
+          as _i8.Future<_i4.ListResponse<_i4.FrontpageArticle>>);
 
   @override
-  _i9.Future<_i4.Device> registerDevice({
+  _i8.Future<_i4.Device> registerDevice({
     required String? token,
     required String? type,
     bool? active = true,
@@ -1118,7 +1114,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #type: type,
               #active: active,
             }),
-            returnValue: _i9.Future<_i4.Device>.value(
+            returnValue: _i8.Future<_i4.Device>.value(
               _FakeDevice_15(
                 this,
                 Invocation.method(#registerDevice, [], {
@@ -1129,42 +1125,42 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.Device>);
+          as _i8.Future<_i4.Device>);
 
   @override
-  _i9.Future<_i4.Device> getDevice({required int? pk}) =>
+  _i8.Future<_i4.Device> getDevice({required int? pk}) =>
       (super.noSuchMethod(
             Invocation.method(#getDevice, [], {#pk: pk}),
-            returnValue: _i9.Future<_i4.Device>.value(
+            returnValue: _i8.Future<_i4.Device>.value(
               _FakeDevice_15(
                 this,
                 Invocation.method(#getDevice, [], {#pk: pk}),
               ),
             ),
           )
-          as _i9.Future<_i4.Device>);
+          as _i8.Future<_i4.Device>);
 
   @override
-  _i9.Future<_i4.Device> disableDevice({required int? pk}) =>
+  _i8.Future<_i4.Device> disableDevice({required int? pk}) =>
       (super.noSuchMethod(
             Invocation.method(#disableDevice, [], {#pk: pk}),
-            returnValue: _i9.Future<_i4.Device>.value(
+            returnValue: _i8.Future<_i4.Device>.value(
               _FakeDevice_15(
                 this,
                 Invocation.method(#disableDevice, [], {#pk: pk}),
               ),
             ),
           )
-          as _i9.Future<_i4.Device>);
+          as _i8.Future<_i4.Device>);
 
   @override
-  _i9.Future<_i4.Device> updateDeviceToken({
+  _i8.Future<_i4.Device> updateDeviceToken({
     required int? pk,
     required String? token,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#updateDeviceToken, [], {#pk: pk, #token: token}),
-            returnValue: _i9.Future<_i4.Device>.value(
+            returnValue: _i8.Future<_i4.Device>.value(
               _FakeDevice_15(
                 this,
                 Invocation.method(#updateDeviceToken, [], {
@@ -1174,10 +1170,10 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.Device>);
+          as _i8.Future<_i4.Device>);
 
   @override
-  _i9.Future<_i4.Device> updateDeviceReceiveCategory({
+  _i8.Future<_i4.Device> updateDeviceReceiveCategory({
     required int? pk,
     required List<String>? receiveCategory,
   }) =>
@@ -1186,7 +1182,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #pk: pk,
               #receiveCategory: receiveCategory,
             }),
-            returnValue: _i9.Future<_i4.Device>.value(
+            returnValue: _i8.Future<_i4.Device>.value(
               _FakeDevice_15(
                 this,
                 Invocation.method(#updateDeviceReceiveCategory, [], {
@@ -1196,13 +1192,13 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.Device>);
+          as _i8.Future<_i4.Device>);
 
   @override
-  _i9.Future<_i4.ListResponse<_i4.PushNotificationCategory>> getCategories() =>
+  _i8.Future<_i4.ListResponse<_i4.PushNotificationCategory>> getCategories() =>
       (super.noSuchMethod(
             Invocation.method(#getCategories, []),
-            returnValue: _i9.Future<
+            returnValue: _i8.Future<
               _i4.ListResponse<_i4.PushNotificationCategory>
             >.value(
               _FakeListResponse_3<_i4.PushNotificationCategory>(
@@ -1211,23 +1207,23 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.ListResponse<_i4.PushNotificationCategory>>);
+          as _i8.Future<_i4.ListResponse<_i4.PushNotificationCategory>>);
 
   @override
-  _i9.Future<_i4.SalesOrder> claimSalesOrder({required String? pk}) =>
+  _i8.Future<_i4.SalesOrder> claimSalesOrder({required String? pk}) =>
       (super.noSuchMethod(
             Invocation.method(#claimSalesOrder, [], {#pk: pk}),
-            returnValue: _i9.Future<_i4.SalesOrder>.value(
+            returnValue: _i8.Future<_i4.SalesOrder>.value(
               _FakeSalesOrder_16(
                 this,
                 Invocation.method(#claimSalesOrder, [], {#pk: pk}),
               ),
             ),
           )
-          as _i9.Future<_i4.SalesOrder>);
+          as _i8.Future<_i4.SalesOrder>);
 
   @override
-  _i9.Future<_i4.ListResponse<_i4.ListGroup>> getGroups({
+  _i8.Future<_i4.ListResponse<_i4.ListGroup>> getGroups({
     int? limit,
     int? offset,
     _i4.MemberGroupType? type,
@@ -1244,7 +1240,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #end: end,
               #search: search,
             }),
-            returnValue: _i9.Future<_i4.ListResponse<_i4.ListGroup>>.value(
+            returnValue: _i8.Future<_i4.ListResponse<_i4.ListGroup>>.value(
               _FakeListResponse_3<_i4.ListGroup>(
                 this,
                 Invocation.method(#getGroups, [], {
@@ -1258,26 +1254,26 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.ListResponse<_i4.ListGroup>>);
+          as _i8.Future<_i4.ListResponse<_i4.ListGroup>>);
 
   @override
-  _i9.Future<_i4.Group> getGroup({required int? pk}) =>
+  _i8.Future<_i4.Group> getGroup({required int? pk}) =>
       (super.noSuchMethod(
             Invocation.method(#getGroup, [], {#pk: pk}),
-            returnValue: _i9.Future<_i4.Group>.value(
+            returnValue: _i8.Future<_i4.Group>.value(
               _FakeGroup_17(this, Invocation.method(#getGroup, [], {#pk: pk})),
             ),
           )
-          as _i9.Future<_i4.Group>);
+          as _i8.Future<_i4.Group>);
 
   @override
-  _i9.Future<_i4.Group> getGroupBySlug({
+  _i8.Future<_i4.Group> getGroupBySlug({
     required _i4.MemberGroupType? type,
     required String? slug,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#getGroupBySlug, [], {#type: type, #slug: slug}),
-            returnValue: _i9.Future<_i4.Group>.value(
+            returnValue: _i8.Future<_i4.Group>.value(
               _FakeGroup_17(
                 this,
                 Invocation.method(#getGroupBySlug, [], {
@@ -1287,10 +1283,10 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.Group>);
+          as _i8.Future<_i4.Group>);
 
   @override
-  _i9.Future<_i4.ListResponse<_i4.AlbumPhoto>> getLikedPhotos({
+  _i8.Future<_i4.ListResponse<_i4.AlbumPhoto>> getLikedPhotos({
     int? limit,
     int? offset,
   }) =>
@@ -1299,7 +1295,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #limit: limit,
               #offset: offset,
             }),
-            returnValue: _i9.Future<_i4.ListResponse<_i4.AlbumPhoto>>.value(
+            returnValue: _i8.Future<_i4.ListResponse<_i4.AlbumPhoto>>.value(
               _FakeListResponse_3<_i4.AlbumPhoto>(
                 this,
                 Invocation.method(#getLikedPhotos, [], {
@@ -1309,10 +1305,10 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.ListResponse<_i4.AlbumPhoto>>);
+          as _i8.Future<_i4.ListResponse<_i4.AlbumPhoto>>);
 
   @override
-  _i9.Future<_i4.ListResponse<_i4.Payment>> getPayments({
+  _i8.Future<_i4.ListResponse<_i4.Payment>> getPayments({
     int? limit,
     int? offset,
     String? ordering,
@@ -1331,7 +1327,7 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               #type: type,
               #settled: settled,
             }),
-            returnValue: _i9.Future<_i4.ListResponse<_i4.Payment>>.value(
+            returnValue: _i8.Future<_i4.ListResponse<_i4.Payment>>.value(
               _FakeListResponse_3<_i4.Payment>(
                 this,
                 Invocation.method(#getPayments, [], {
@@ -1346,13 +1342,41 @@ class MockApiRepository extends _i1.Mock implements _i6.ApiRepository {
               ),
             ),
           )
-          as _i9.Future<_i4.ListResponse<_i4.Payment>>);
+          as _i8.Future<_i4.ListResponse<_i4.Payment>>);
+
+  @override
+  _i8.Future<_i4.ListResponse<_i12.Vacancy>> getVacancies({
+    int? limit,
+    int? offset,
+    DateTime? start,
+    DateTime? end,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getVacancies, [], {
+              #limit: limit,
+              #offset: offset,
+              #start: start,
+              #end: end,
+            }),
+            returnValue: _i8.Future<_i4.ListResponse<_i12.Vacancy>>.value(
+              _FakeListResponse_3<_i12.Vacancy>(
+                this,
+                Invocation.method(#getVacancies, [], {
+                  #limit: limit,
+                  #offset: offset,
+                  #start: start,
+                  #end: end,
+                }),
+              ),
+            ),
+          )
+          as _i8.Future<_i4.ListResponse<_i12.Vacancy>>);
 }
 
 /// A class which mocks [PaymentUserCubit].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPaymentUserCubit extends _i1.Mock implements _i7.PaymentUserCubit {
+class MockPaymentUserCubit extends _i1.Mock implements _i13.PaymentUserCubit {
   MockPaymentUserCubit() {
     _i1.throwOnMissingStub(this);
   }
@@ -1366,23 +1390,24 @@ class MockPaymentUserCubit extends _i1.Mock implements _i7.PaymentUserCubit {
           as _i6.ApiRepository);
 
   @override
-  _i7.PaymentUserState get state =>
+  _i14.DetailState<_i13.UserPayments> get state =>
       (super.noSuchMethod(
             Invocation.getter(#state),
-            returnValue: _FakePaymentUserState_19(
+            returnValue: _i10.dummyValue<_i14.DetailState<_i13.UserPayments>>(
               this,
               Invocation.getter(#state),
             ),
           )
-          as _i7.PaymentUserState);
+          as _i14.DetailState<_i13.UserPayments>);
 
   @override
-  _i9.Stream<_i7.PaymentUserState> get stream =>
+  _i8.Stream<_i14.DetailState<_i13.UserPayments>> get stream =>
       (super.noSuchMethod(
             Invocation.getter(#stream),
-            returnValue: _i9.Stream<_i7.PaymentUserState>.empty(),
+            returnValue:
+                _i8.Stream<_i14.DetailState<_i13.UserPayments>>.empty(),
           )
-          as _i9.Stream<_i7.PaymentUserState>);
+          as _i8.Stream<_i14.DetailState<_i13.UserPayments>>);
 
   @override
   bool get isClosed =>
@@ -1390,22 +1415,22 @@ class MockPaymentUserCubit extends _i1.Mock implements _i7.PaymentUserCubit {
           as bool);
 
   @override
-  _i9.Future<void> load() =>
+  _i8.Future<void> load() =>
       (super.noSuchMethod(
             Invocation.method(#load, []),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i8.Future<void>);
 
   @override
-  void emit(_i7.PaymentUserState? state) => super.noSuchMethod(
+  void emit(_i14.DetailState<_i13.UserPayments>? state) => super.noSuchMethod(
     Invocation.method(#emit, [state]),
     returnValueForMissingStub: null,
   );
 
   @override
-  void onChange(_i10.Change<_i7.PaymentUserState>? change) =>
+  void onChange(_i9.Change<_i14.DetailState<_i13.UserPayments>>? change) =>
       super.noSuchMethod(
         Invocation.method(#onChange, [change]),
         returnValueForMissingStub: null,
@@ -1424,19 +1449,19 @@ class MockPaymentUserCubit extends _i1.Mock implements _i7.PaymentUserCubit {
   );
 
   @override
-  _i9.Future<void> close() =>
+  _i8.Future<void> close() =>
       (super.noSuchMethod(
             Invocation.method(#close, []),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i8.Future<void>);
 }
 
 /// A class which mocks [WelcomeCubit].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWelcomeCubit extends _i1.Mock implements _i8.WelcomeCubit {
+class MockWelcomeCubit extends _i1.Mock implements _i7.WelcomeCubit {
   MockWelcomeCubit() {
     _i1.throwOnMissingStub(this);
   }
@@ -1450,20 +1475,20 @@ class MockWelcomeCubit extends _i1.Mock implements _i8.WelcomeCubit {
           as _i6.ApiRepository);
 
   @override
-  _i8.WelcomeState get state =>
+  _i7.WelcomeState get state =>
       (super.noSuchMethod(
             Invocation.getter(#state),
-            returnValue: _FakeWelcomeState_20(this, Invocation.getter(#state)),
+            returnValue: _FakeWelcomeState_19(this, Invocation.getter(#state)),
           )
-          as _i8.WelcomeState);
+          as _i7.WelcomeState);
 
   @override
-  _i9.Stream<_i8.WelcomeState> get stream =>
+  _i8.Stream<_i7.WelcomeState> get stream =>
       (super.noSuchMethod(
             Invocation.getter(#stream),
-            returnValue: _i9.Stream<_i8.WelcomeState>.empty(),
+            returnValue: _i8.Stream<_i7.WelcomeState>.empty(),
           )
-          as _i9.Stream<_i8.WelcomeState>);
+          as _i8.Stream<_i7.WelcomeState>);
 
   @override
   bool get isClosed =>
@@ -1471,22 +1496,22 @@ class MockWelcomeCubit extends _i1.Mock implements _i8.WelcomeCubit {
           as bool);
 
   @override
-  _i9.Future<void> load() =>
+  _i8.Future<void> load() =>
       (super.noSuchMethod(
             Invocation.method(#load, []),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i8.Future<void>);
 
   @override
-  void emit(_i8.WelcomeState? state) => super.noSuchMethod(
+  void emit(_i7.WelcomeState? state) => super.noSuchMethod(
     Invocation.method(#emit, [state]),
     returnValueForMissingStub: null,
   );
 
   @override
-  void onChange(_i10.Change<_i8.WelcomeState>? change) => super.noSuchMethod(
+  void onChange(_i9.Change<_i7.WelcomeState>? change) => super.noSuchMethod(
     Invocation.method(#onChange, [change]),
     returnValueForMissingStub: null,
   );
@@ -1504,11 +1529,11 @@ class MockWelcomeCubit extends _i1.Mock implements _i8.WelcomeCubit {
   );
 
   @override
-  _i9.Future<void> close() =>
+  _i8.Future<void> close() =>
       (super.noSuchMethod(
             Invocation.method(#close, []),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i8.Future<void>);
 }
