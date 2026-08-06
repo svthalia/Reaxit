@@ -14,10 +14,14 @@ import '../mocks.mocks.dart';
 
 void main() {
   group('TPayButton', () {
+    PaymentUserState dummy = ErrorState<UserPayments>('Mock dummy');
+    provideDummy(dummy);
+
     testWidgets('can be used to pay', (WidgetTester tester) async {
       final payCompleter = Completer<void>();
 
       final paymentUserCubit = MockPaymentUserCubit();
+      //paymentUserCubit.provideDummy(UserPayments(PaymentUser('0.00', true, true))
       final streamController =
           StreamController<PaymentUserState>.broadcast()
             ..stream.listen((state) {
@@ -184,7 +188,7 @@ void main() {
             ..add(const LoadingState())
             ..add(
               const ResultState(
-                UserPayments(PaymentUser('0.00', true, true), []),
+                UserPayments(PaymentUser('0.00', false, false), []),
               ),
             );
 
@@ -222,7 +226,7 @@ void main() {
       );
 
       streamController.add(
-        const ResultState(UserPayments(PaymentUser('0.00', true, true), [])),
+        const ResultState(UserPayments(PaymentUser('0.00', true, false), [])),
       );
       await tester.pumpAndSettle();
 

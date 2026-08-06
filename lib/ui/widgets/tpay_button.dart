@@ -65,7 +65,7 @@ class _TPayButtonState extends State<TPayButton> {
     return showConfirmationDialog(
       context,
       'Confirm payment',
-      'confirmationMessage?',
+      confirmationMessage,
       falselabel: 'CANCEL',
       truelabel: 'YES',
     );
