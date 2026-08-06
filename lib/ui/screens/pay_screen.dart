@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/blocs/payment_user_cubit.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/widgets.dart';
@@ -17,12 +18,13 @@ class PayScreen extends StatelessWidget {
         onRefresh: () => BlocProvider.of<PaymentUserCubit>(context).load(),
         child: BlocBuilder<PaymentUserCubit, PaymentUserState>(
           builder: (context, state) {
-            if (state.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state.hasException) {
-              return ErrorScrollView(state.message!);
-            } else {
-              return _Body(payments: state.payments!);
+            switch (state) {
+              case LoadingState():
+                return const Center(child: CircularProgressIndicator());
+              case ErrorState(message: final message):
+                return ErrorScrollView(message);
+              case ResultState(result: final result):
+                return _Body(payments: result.payments);
             }
           },
         ),
@@ -59,12 +61,10 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<PaymentUserCubit, PaymentUserState>(
       builder: (context, state) {
-        final String balance;
-        if (state.isLoading) {
-          balance = '-';
-        } else {
-          balance = '€ ${state.user!.tpayBalance}';
-        }
+        String balance = switch (state) {
+          ResultState(result: final result) => '€ ${result.user.tpayBalance}',
+          _ => '-',
+        };
 
         return Material(
           type: MaterialType.card,

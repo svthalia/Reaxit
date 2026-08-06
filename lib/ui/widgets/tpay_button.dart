@@ -102,6 +102,7 @@ class _TPayButtonState extends State<TPayButton> {
               : 'THALIA PAY',
         );
 
+        // TODO: provide custom tooltip.
         if (widget.onPay == null || tmpDisabled) {
           // The button is disabled.
           return ElevatedButton.icon(
@@ -109,119 +110,118 @@ class _TPayButtonState extends State<TPayButton> {
             icon: icon,
             label: buttonLabel,
           );
-          // TODO: provide custom tooltip.
-        } else if (state.isLoading) {
-          // PaymentUser loading.
-          return ElevatedButton.icon(
-            onPressed: null,
-            icon: icon,
-            label: buttonLabel,
-          );
-        } else if (state.hasException) {
-          // PaymentUser couldn't load.
-          return ElevatedButton.icon(
-            onPressed: null,
-            icon: icon,
-            label: buttonLabel,
-          );
-        } else {
-          final paymentUser = state.user!;
-          if (!paymentUser.tpayAllowed) {
-            // TPay not allowed for the user.
-            return Tooltip(
-              message: 'You are not allowed to use Thalia Pay.',
-              child: ElevatedButton.icon(
-                onPressed: null,
-                icon: icon,
-                label: buttonLabel,
-              ),
-            );
-          } else if (!paymentUser.tpayEnabled) {
-            // TPay not yet enabled.
-            final url = Config.of(context).tpaySignDirectDebitMandateUrl;
-            final message = TextSpan(
-              children: [
-                const TextSpan(
-                  text:
-                      'To start using Thalia Pay, '
-                      'sign a direct debit mandate on ',
-                ),
-                TextSpan(
-                  text: 'the website',
-                  recognizer:
-                      TapGestureRecognizer()
-                        ..onTap = () async {
-                          final messenger = ScaffoldMessenger.of(context);
-                          try {
-                            await launchUrl(
-                              url,
-                              mode: LaunchMode.externalApplication,
-                            );
-                          } catch (_) {
-                            messenger.showSnackBar(
-                              SnackBar(
-                                behavior: SnackBarBehavior.floating,
-                                content: Text(
-                                  'Could not open "${url.toString()}".',
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-                const TextSpan(text: '.'),
-              ],
-            );
-
-            return Tooltip(
-              richMessage: message,
-              child: ElevatedButton.icon(
-                onPressed: null,
-                icon: icon,
-                label: buttonLabel,
-              ),
-            );
-          } else {
-            // TPay possible.
-            final onPay = widget.onPay!;
-            final successMessage = widget.successMessage!;
-            final failureMessage = widget.failureMessage!;
-            final confirmationMessage = widget.confirmationMessage!;
+        }
+        switch (state) {
+          case LoadingState():
             return ElevatedButton.icon(
-              onPressed: () async {
-                final messenger = ScaffoldMessenger.of(context);
-                if (await _showConfirmDialog(confirmationMessage)) {
-                  setState(() {
-                    tmpDisabled = true;
-                  });
-                  try {
-                    await onPay();
-                    messenger.showSnackBar(
-                      SnackBar(
-                        behavior: SnackBarBehavior.floating,
-                        content: Text(successMessage),
-                      ),
-                    );
-                  } on ApiException {
-                    messenger.showSnackBar(
-                      SnackBar(
-                        behavior: SnackBarBehavior.floating,
-                        content: Text(failureMessage),
-                      ),
-                    );
-                  }
-                  setState(() {
-                    tmpDisabled = false;
-                  });
-                }
-              },
+              onPressed: null,
               icon: icon,
               label: buttonLabel,
             );
-          }
+          case ErrorState():
+            return ElevatedButton.icon(
+              onPressed: null,
+              icon: icon,
+              label: buttonLabel,
+            );
+          case ResultState(result: final result):
+            final paymentUser = result.user;
+            if (!paymentUser.tpayAllowed) {
+              // TPay not allowed for the user.
+              return Tooltip(
+                message: 'You are not allowed to use Thalia Pay.',
+                child: ElevatedButton.icon(
+                  onPressed: null,
+                  icon: icon,
+                  label: buttonLabel,
+                ),
+              );
+            } else if (!paymentUser.tpayEnabled) {
+              // TPay not yet enabled.
+              final url = Config.of(context).tpaySignDirectDebitMandateUrl;
+              final message = TextSpan(
+                children: [
+                  const TextSpan(
+                    text:
+                        'To start using Thalia Pay, '
+                        'sign a direct debit mandate on ',
+                  ),
+                  TextSpan(
+                    text: 'the website',
+                    recognizer:
+                        TapGestureRecognizer()
+                          ..onTap = () async {
+                            final messenger = ScaffoldMessenger.of(context);
+                            try {
+                              await launchUrl(
+                                url,
+                                mode: LaunchMode.externalApplication,
+                              );
+                            } catch (_) {
+                              messenger.showSnackBar(
+                                SnackBar(
+                                  behavior: SnackBarBehavior.floating,
+                                  content: Text(
+                                    'Could not open "${url.toString()}".',
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  const TextSpan(text: '.'),
+                ],
+              );
+
+              return Tooltip(
+                richMessage: message,
+                child: ElevatedButton.icon(
+                  onPressed: null,
+                  icon: icon,
+                  label: buttonLabel,
+                ),
+              );
+            } else {
+              // TPay possible.
+              final onPay = widget.onPay!;
+              final successMessage = widget.successMessage!;
+              final failureMessage = widget.failureMessage!;
+              final confirmationMessage = widget.confirmationMessage!;
+              return ElevatedButton.icon(
+                onPressed: () async {
+                  final messenger = ScaffoldMessenger.of(context);
+                  if (await _showConfirmDialog(confirmationMessage)) {
+                    setState(() {
+                      tmpDisabled = true;
+                    });
+                    try {
+                      await onPay();
+                      messenger.showSnackBar(
+                        SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          content: Text(successMessage),
+                        ),
+                      );
+                    } on ApiException {
+                      messenger.showSnackBar(
+                        SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          content: Text(failureMessage),
+                        ),
+                      );
+                    }
+                    setState(() {
+                      tmpDisabled = false;
+                    });
+                  }
+                },
+                icon: icon,
+                label: buttonLabel,
+              );
+            }
         }
       },
     );
