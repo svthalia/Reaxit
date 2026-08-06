@@ -7,6 +7,7 @@ import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/widgets.dart';
+import 'package:reaxit/ui/widgets/payment_override.dart';
 
 class FoodAdminScreen extends StatefulWidget {
   final int pk;
@@ -162,49 +163,19 @@ class __OderTileState extends State<_OrderTile> {
 
     late Widget paymentDropdown;
     if (order.isPaid && order.payment!.type == PaymentType.tpayPayment) {
-      paymentDropdown = DropdownButton<PaymentType?>(
-        style: Theme.of(context).textTheme.bodyMedium,
-        items: const [
-          DropdownMenuItem(
-            value: PaymentType.tpayPayment,
-            child: Text('Thalia Pay'),
-          ),
-          DropdownMenuItem(
-            value: PaymentType.cardPayment,
-            child: Text('Card payment'),
-          ),
-          DropdownMenuItem(
-            value: PaymentType.cashPayment,
-            child: Text('Cash payment'),
-          ),
-          DropdownMenuItem(
-            value: PaymentType.wirePayment,
-            child: Text('Wire payment'),
-          ),
-          DropdownMenuItem(value: null, child: Text('Not paid')),
-        ],
-        value: order.payment!.type,
-        onChanged: null,
+      paymentDropdown = PaymentOverrideDropdown(
+        cardSupported: true,
+        tpSupported: true,
+        cashSupported: true,
+        wireSupported: true,
+        type: order.payment!.type,
       );
     } else {
-      paymentDropdown = DropdownButton<PaymentType?>(
-        style: Theme.of(context).textTheme.bodyMedium,
-        items: const [
-          DropdownMenuItem(
-            value: PaymentType.cardPayment,
-            child: Text('Card payment'),
-          ),
-          DropdownMenuItem(
-            value: PaymentType.cashPayment,
-            child: Text('Cash payment'),
-          ),
-          DropdownMenuItem(
-            value: PaymentType.wirePayment,
-            child: Text('Wire payment'),
-          ),
-          DropdownMenuItem(value: null, child: Text('Not paid')),
-        ],
-        value: order.payment?.type,
+      paymentDropdown = PaymentOverrideDropdown(
+        cardSupported: true,
+        cashSupported: true,
+        wireSupported: true,
+        type: order.payment?.type,
         onChanged: (value) async {
           final messenger = ScaffoldMessenger.of(context);
           try {
