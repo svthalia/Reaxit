@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
+import 'package:reaxit/ui/widgets/dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:reaxit/config.dart';
 
@@ -61,34 +62,13 @@ class _TPayButtonState extends State<TPayButton> {
   bool tmpDisabled = false;
 
   Future<bool> _showConfirmDialog(String confirmationMessage) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Confirm payment'),
-          content: Text(
-            confirmationMessage,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          actions: [
-            TextButton.icon(
-              onPressed:
-                  () => Navigator.of(context, rootNavigator: true).pop(false),
-              icon: const Icon(Icons.clear),
-              label: const Text('CANCEL'),
-            ),
-            ElevatedButton.icon(
-              onPressed:
-                  () => Navigator.of(context, rootNavigator: true).pop(true),
-              icon: const Icon(Icons.check),
-              label: const Text('YES'),
-            ),
-          ],
-        );
-      },
+    return showConfirmationDialog(
+      context,
+      'Confirm payment',
+      confirmationMessage,
+      falselabel: 'CANCEL',
+      truelabel: 'YES',
     );
-
-    return confirmed ?? false;
   }
 
   @override

@@ -7,6 +7,7 @@ import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/widgets.dart';
+import 'package:reaxit/ui/widgets/dialog.dart';
 
 class FoodScreen extends StatefulWidget {
   /// The pk that of the [FoodEvent] to show.
@@ -217,34 +218,13 @@ class __ProductTileState extends State<_ProductTile> {
   Future<void> _changeOrder(FoodEvent foodEvent) async {
     final messenger = ScaffoldMessenger.of(context);
     final foodCubit = BlocProvider.of<FoodCubit>(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Change order'),
-          content: Text(
-            'Are you sure you want to change your order?',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          actions: [
-            TextButton.icon(
-              onPressed:
-                  () => Navigator.of(context, rootNavigator: true).pop(false),
-              icon: const Icon(Icons.clear),
-              label: const Text('No'),
-            ),
-            ElevatedButton.icon(
-              onPressed:
-                  () => Navigator.of(context, rootNavigator: true).pop(true),
-              icon: const Icon(Icons.check),
-              label: const Text('YES'),
-            ),
-          ],
-        );
-      },
+    final confirmed = await showConfirmationDialog(
+      context,
+      'Change order',
+      'Are you sure you want to change your order?',
     );
 
-    if (confirmed ?? false) {
+    if (confirmed) {
       try {
         await foodCubit.changeOrder(productPk: widget.product.pk);
       } on ApiException {
@@ -268,34 +248,13 @@ class OrderInfo extends StatelessWidget {
 
   void cancelOrder(BuildContext context) async {
     final messenger = ScaffoldMessenger.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Cancel order'),
-          content: Text(
-            'Are you sure you want to cancel your order?',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          actions: [
-            TextButton.icon(
-              onPressed:
-                  () => Navigator.of(context, rootNavigator: true).pop(false),
-              icon: const Icon(Icons.clear),
-              label: const Text('No'),
-            ),
-            ElevatedButton.icon(
-              onPressed:
-                  () => Navigator.of(context, rootNavigator: true).pop(true),
-              icon: const Icon(Icons.check),
-              label: const Text('YES'),
-            ),
-          ],
-        );
-      },
+    final confirmed = await showConfirmationDialog(
+      context,
+      'Cancel order',
+      'Are you sure you want to cancel your order?',
     );
 
-    if (confirmed ?? false) {
+    if (confirmed) {
       try {
         await _foodCubit.cancelOrder();
       } on ApiException {
@@ -322,6 +281,7 @@ class OrderInfo extends StatelessWidget {
         ),
       ),
     };
+    // TODO: Make animated size consistent across the app and make a custom widget
     return AnimatedSize(
       curve: Curves.ease,
       duration: const Duration(milliseconds: 200),
