@@ -195,48 +195,17 @@ class SalesOrderCubit extends Cubit<SalesOrderState> {
   }
 }
 
-sealed class SalesShiftState extends Equatable {
-  const SalesShiftState();
-
-  @override
-  List<Object?> get props => [];
-}
-
-/// Shift is loading
-class LoadingShiftState extends SalesShiftState {
-  final LoadedShiftState? oldState;
-
-  @override
-  List<Object?> get props => [oldState];
-
-  LoadingShiftState({SalesShiftState? oldState})
-    : oldState = switch (oldState) {
-        LoadedShiftState state => state,
-        _ => null,
-      };
-}
-
-/// Shift was unable to load.
-class ErrorShiftState extends SalesShiftState {
-  final String message;
-
-  @override
-  List<Object?> get props => [message];
-
-  const ErrorShiftState(this.message);
-}
-
-/// Order has been loaded.
-class LoadedShiftState extends SalesShiftState {
+class ShiftOrder extends Equatable {
+  final Shift? shift;
   final SalesOrder? order;
 
-  final Shift? shift;
-
   @override
-  List<Object?> get props => [order, shift];
+  List<Object?> get props => [shift, order];
 
-  const LoadedShiftState(this.order, this.shift);
+  const ShiftOrder({this.shift, this.order});
 }
+
+typedef SalesShiftState = DetailState<ShiftOrder>;
 
 class SalesShiftCubit extends Cubit<SalesShiftState> {
   final ApiRepository api;
@@ -244,7 +213,7 @@ class SalesShiftCubit extends Cubit<SalesShiftState> {
   final int shiftpk;
   String? pk;
 
-  SalesShiftCubit(this.api, this.shiftpk) : super(LoadingShiftState()) {
+  SalesShiftCubit(this.api, this.shiftpk) : super(LoadingState()) {
     reload();
   }
 
@@ -253,58 +222,50 @@ class SalesShiftCubit extends Cubit<SalesShiftState> {
         .getSalesShift(shiftpk: shiftpk)
         .then((s) async {
           switch (state) {
-            case LoadingShiftState():
-            case ErrorShiftState(message: _):
+            case LoadingState():
+            case ErrorState(message: _):
               ListResponse<ListSalesOrder> orders = await api.getSalesOrders(
                 shiftpk: shiftpk,
               );
               if (orders.count == 0) {
-                emit(LoadedShiftState(null, s));
+                emit(ResultState(ShiftOrder(shift: s)));
               } else if (orders.count == 1) {
                 SalesOrder order = await api.getSalesOrder(
                   orderpk: orders.results[0].pk,
                 );
-                emit(LoadedShiftState(order, s));
+                emit(ResultState(ShiftOrder(shift: s, order: order)));
               } else {
                 emit(
-                  ErrorShiftState(
+                  ErrorState(
                     'You have multiple orders for this shift. This is currently unsupported in the Thaliapp.\n\n'
                     'Please continue to the website to manage your orders',
                   ),
                 );
               }
-            case LoadedShiftState(order: final order, shift: _):
-              emit(LoadedShiftState(order, s));
+            case ResultState(result: ShiftOrder(shift: _, order: final order)):
+              emit(ResultState(ShiftOrder(shift: s, order: order)));
           }
         })
         .onError<ApiException>((e, _) {
-          emit(ErrorShiftState(e.getMessage()));
+          emit(ErrorState(e.getMessage()));
         });
   }
 
   Future<void> setOrder() async {
     switch (state) {
-      case LoadingShiftState():
-      case ErrorShiftState(message: _):
-        return;
-      case LoadedShiftState(order: final order, shift: _):
-        if (order == null) {
-          return;
-        }
+      case ResultState(result: ShiftOrder(shift: _, order: final order!)):
         api.updateSalesOrder(orderpk: order.pk, items: order.orderItems);
+      case _:
+        return;
     }
   }
 
   Future<void> cancelOrder() async {
     switch (state) {
-      case LoadingShiftState():
-      case ErrorShiftState(message: _):
-        return;
-      case LoadedShiftState(order: final order, shift: _):
-        if (order == null) {
-          return;
-        }
+      case ResultState(result: ShiftOrder(shift: _, order: final order!)):
         api.updateSalesOrder(orderpk: order.pk, items: []);
+      case _:
+        return;
     }
   }
 

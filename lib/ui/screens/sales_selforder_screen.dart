@@ -64,7 +64,7 @@ class _SelforderScreenState extends State<SelforderScreen> {
         builder: (context, state) {
           const title = Text('ORDER FOOD');
           switch (state) {
-            case ErrorShiftState(message: var message):
+            case ErrorState(message: var message):
               return Scaffold(
                 appBar: ThaliaAppBar(title: title),
                 body: RefreshIndicator(
@@ -72,16 +72,14 @@ class _SelforderScreenState extends State<SelforderScreen> {
                   child: ErrorScrollView(message),
                 ),
               );
-            case LoadedShiftState(order: null) ||
-                LoadingShiftState(oldState: LoadedShiftState(order: null)):
+            case ResultState(result: ShiftOrder(order: null)) ||
+                LoadingResultState(result: ShiftOrder(order: null)):
               return Scaffold(
                 appBar: ThaliaAppBar(title: title),
                 body: const Center(child: CircularProgressIndicator()),
               );
-            case LoadedShiftState(order: final order!) ||
-                LoadingShiftState(
-                  oldState: LoadedShiftState(order: final order!),
-                ):
+            case ResultState(result: ShiftOrder(order: final order!)) ||
+                LoadingResultState(result: ShiftOrder(order: final order!)):
               if (_orderCubit == null || _orderCubit!.shiftpk != order.shift) {
                 if (_orderCubit != null) {
                   _orderCubit!.close();
@@ -109,22 +107,23 @@ class _SelforderScreenState extends State<SelforderScreen> {
                     ],
                   ),
                   body: switch (state) {
-                    ErrorShiftState(message: var message) => RefreshIndicator(
+                    ErrorState(message: final message) => RefreshIndicator(
                       onRefresh: _salesCubit.reload,
                       child: ErrorScrollView(message),
                     ),
-                    LoadingShiftState() || LoadingShiftState(oldState: null) =>
-                      const Center(child: CircularProgressIndicator()),
-                    LoadedShiftState(shift: null) ||
-                    LoadingShiftState(
-                      oldState: LoadedShiftState(shift: null),
+                    LoadingState() => const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    ResultState(result: ShiftOrder(shift: null)) ||
+                    LoadingResultState(
+                      result: ShiftOrder(shift: null),
                     ) => RefreshIndicator(
                       onRefresh: () => _salesCubit.reload(),
                       child: ErrorScrollView('Unable to change order.'),
                     ),
-                    LoadedShiftState(order: _, shift: var shift) ||
-                    LoadingShiftState(
-                      oldState: LoadedShiftState(order: _, shift: var shift),
+                    ResultState(result: ShiftOrder(shift: final shift)) ||
+                    LoadingResultState(
+                      result: ShiftOrder(shift: final shift),
                     ) => RefreshIndicator(
                       onRefresh: () => _salesCubit.reload(),
                       child: ListView(
@@ -151,12 +150,6 @@ class _SelforderScreenState extends State<SelforderScreen> {
                         ],
                       ),
                     ),
-                    // TODO: Handle this case.
-                    ResultState<SalesOrder?>() => throw UnimplementedError(),
-                    // TODO: Handle this case.
-                    ErrorState<SalesOrder?>() => throw UnimplementedError(),
-                    // TODO: Handle this case.
-                    LoadingState<SalesOrder?>() => throw UnimplementedError(),
                   },
                 ),
               );
