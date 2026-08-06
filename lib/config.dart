@@ -112,6 +112,7 @@ class Config {
     'partners:read',
     'sales:read',
     'sales:order',
+    'sales:admin',
     'thabloid:read',
   ];
 

@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:reaxit/models.dart';
+import 'package:reaxit/models/shift.dart';
 
 part 'event.g.dart';
 
@@ -63,6 +64,7 @@ class Event implements BaseEvent {
   final String cancelTooLateMessage;
   final String? noRegistrationMessage;
   final int? foodEvent;
+  final List<ShiftInfo>? shiftSet;
   final String mapsUrl;
   final EventPermissions userPermissions;
   @JsonKey(name: 'user_registration')
@@ -71,6 +73,7 @@ class Event implements BaseEvent {
   final List<Document> documents;
 
   bool get hasFoodEvent => foodEvent != null;
+  bool get hasFoodShift => shiftSet?.isNotEmpty ?? false;
 
   bool get isRegistered => registration?.isRegistered ?? false;
   bool get isInQueue => registration?.isInQueue ?? false;
@@ -127,6 +130,7 @@ class Event implements BaseEvent {
     this.noRegistrationMessage,
     this.hasFields,
     this.foodEvent,
+    this.shiftSet,
     this.mapsUrl,
     this.userPermissions,
     this.registration,

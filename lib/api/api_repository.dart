@@ -1,6 +1,7 @@
 import 'package:reaxit/config.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/models/announcement.dart';
+import 'package:reaxit/models/shift.dart';
 import 'package:reaxit/models/thabliod.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/models/vacancie.dart';
@@ -160,6 +161,53 @@ abstract class ApiRepository {
 
   /// Delete the payment for food order `orderPk`.
   Future<void> markNotPaidAdminFoodOrder({required int orderPk});
+
+  /// Get s sales shift
+  Future<Shift> getSalesShift({required int shiftpk});
+
+  /// Create a new salesOrder
+  Future<SalesOrder> createSalesOrder({
+    required int shiftpk,
+    required List<SalesOrderItem> items,
+  });
+
+  /// Update the SalesOrder
+  Future<void> updateSalesOrder({
+    required String orderpk,
+    required List<SalesOrderItem> items,
+  });
+
+  /// Get the SalesOrder
+  Future<SalesOrder> getSalesOrder({required String orderpk});
+
+  /// Update the SalesOrder
+  Future<void> deleteSalesOrder({required String orderpk});
+
+  // Get the current sales orders for the user.
+  Future<ListResponse<ListSalesOrder>> getSalesOrders({required int shiftpk});
+
+  /// Get the [ListSalesOrder]s of the [Shift] with the `pk`.
+  ///
+  /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
+  /// total number of orders that can be returned.
+  Future<ListResponse<ListSalesOrder>> getAdminShiftOrders({
+    required int pk,
+    int? limit,
+    int? offset,
+    String? search,
+  });
+
+  /// Get the [SalesOrder]s with the `pk`.
+  Future<SalesOrder> getAdminShiftOrder({required int pk});
+
+  /// Mark sales order `orderPk` as paid with `paymentType`.
+  Future<Payable> markPaidAdminSalesOrder({
+    required String orderPk,
+    required PaymentType paymentType,
+  });
+
+  /// Delete the payment for sales order `orderPk`.
+  Future<void> markNotPaidAdminSalesOrder({required String orderPk});
 
   /// Get the [FoodEvent] with the `pk`.
   Future<FoodEvent> getFoodEvent(int pk);

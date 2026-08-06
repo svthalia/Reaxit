@@ -9,6 +9,7 @@ import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
+import 'package:reaxit/models/shift.dart';
 import 'package:reaxit/routes.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:reaxit/ui/widgets/dialog.dart';
@@ -115,6 +116,9 @@ class _EventScreenState extends State<EventScreen> {
           else
             _makeNoRegistrationInfo(event),
           if (event.hasFoodEvent) _makeFoodButton(event),
+
+          if (event.shiftSet != null)
+            ...event.shiftSet!.map((shift) => _makeFoodShiftButton(shift)),
         ],
       ),
     );
@@ -764,6 +768,18 @@ class _EventScreenState extends State<EventScreen> {
         onPressed: () => context.pushNamed('food', extra: event),
         icon: const Icon(Icons.local_pizza),
         label: const Text('ORDER FOOD'),
+      ),
+    );
+  }
+
+  Widget _makeFoodShiftButton(ShiftInfo shift) {
+    // TODO: Do something with the start/end time. gray it out??
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: () => context.pushNamed('sales-shift', extra: shift.pk),
+        icon: const Icon(Icons.local_pizza),
+        label: Text('ORDER FOOD (${shift.title})'),
       ),
     );
   }
