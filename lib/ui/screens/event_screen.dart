@@ -11,6 +11,7 @@ import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/routes.dart';
 import 'package:reaxit/ui/widgets.dart';
+import 'package:reaxit/ui/widgets/dialog.dart';
 import 'package:reaxit/ui/widgets/file_button.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -634,41 +635,12 @@ class _EventScreenState extends State<EventScreen> {
                 final router = GoRouter.of(context);
                 var confirmed = !event.cancelDeadlinePassed();
                 if (!confirmed) {
-                  confirmed =
-                      await showDialog<bool>(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Register'),
-                            content: Text(
-                              'Are you sure you want to register? The '
-                              'cancellation deadline has already passed.',
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            actions: [
-                              TextButton.icon(
-                                onPressed:
-                                    () => Navigator.of(
-                                      context,
-                                      rootNavigator: true,
-                                    ).pop(false),
-                                icon: const Icon(Icons.clear),
-                                label: const Text('NO'),
-                              ),
-                              ElevatedButton.icon(
-                                onPressed:
-                                    () => Navigator.of(
-                                      context,
-                                      rootNavigator: true,
-                                    ).pop(true),
-                                icon: const Icon(Icons.check),
-                                label: const Text('YES'),
-                              ),
-                            ],
-                          );
-                        },
-                      ) ??
-                      false;
+                  confirmed = await showConfirmationDialog(
+                    context,
+                    'Register',
+                    'Are you sure you want to register? The '
+                        'cancellation deadline has already passed.',
+                  );
                 }
 
                 if (confirmed) {
@@ -746,36 +718,13 @@ class _EventScreenState extends State<EventScreen> {
         final messenger = ScaffoldMessenger.of(context);
         final calendarCubit = BlocProvider.of<CalendarCubit>(context);
         final welcomeCubit = BlocProvider.of<WelcomeCubit>(context);
-        final confirmed = await showDialog<bool>(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('Cancel registration'),
-              content: Text(
-                warningText,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              actions: [
-                TextButton.icon(
-                  onPressed:
-                      () =>
-                          Navigator.of(context, rootNavigator: true).pop(false),
-                  icon: const Icon(Icons.clear),
-                  label: const Text('NO'),
-                ),
-                ElevatedButton.icon(
-                  onPressed:
-                      () =>
-                          Navigator.of(context, rootNavigator: true).pop(true),
-                  icon: const Icon(Icons.check),
-                  label: const Text('YES'),
-                ),
-              ],
-            );
-          },
+        final confirmed = await showConfirmationDialog(
+          context,
+          'Cancel registration',
+          warningText,
         );
 
-        if (confirmed ?? false) {
+        if (confirmed) {
           try {
             await _eventCubit.cancelRegistration(
               registrationPk: event.registration!.pk,
