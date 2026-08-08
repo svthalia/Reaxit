@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Future<bool> showConfirmationDialog<bool>(
+Future<bool> showConfirmationDialog(
   BuildContext context,
   String title,
   String text, {
@@ -29,5 +29,5 @@ Future<bool> showConfirmationDialog<bool>(
         ],
       );
     },
-  ).then((b) => b ?? false as bool);
+  ).then((b) => b ?? false);
 }

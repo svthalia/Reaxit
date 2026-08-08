@@ -583,7 +583,7 @@ class _AvatarViewDialogState extends State<AvatarViewDialog> {
         minScale: PhotoViewComputedScale.contained * 0.8,
         maxScale: PhotoViewComputedScale.covered * 1.2,
         loadingBuilder:
-            (_, __) => const Center(child: CircularProgressIndicator()),
+            (_, _) => const Center(child: CircularProgressIndicator()),
         backgroundDecoration: const BoxDecoration(color: Colors.transparent),
       ),
     );

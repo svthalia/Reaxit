@@ -355,7 +355,7 @@ class SingleListCubitSource<T> extends ListCubitSource<T, T> {
   SingleListCubitSource(this.cubit);
 
   @override
-  Future<ListResponse<T>> getDown(int offset) => this.cubit.getDown(offset);
+  Future<ListResponse<T>> getDown(int offset) => cubit.getDown(offset);
 
   @override
   Future<ListResponse<T>> getUp(int offset) async => ListResponse<T>(0, []);
