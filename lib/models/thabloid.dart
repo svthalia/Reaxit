@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'thabliod.g.dart';
+part 'thabloid.g.dart';
 
 enum DocumentCategory { annual, association, event, minutes, misc }
 

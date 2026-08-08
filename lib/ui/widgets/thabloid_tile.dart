@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs/thabloid_cubit.dart';
-import 'package:reaxit/models/thabliod.dart';
+import 'package:reaxit/models/thabloid.dart';
 import 'package:reaxit/ui/widgets/cached_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 

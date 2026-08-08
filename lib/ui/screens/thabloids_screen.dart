@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:reaxit/api/api_repository.dart';
-import 'package:reaxit/blocs.dart';
 import 'package:reaxit/blocs/thabloid_list_cubit.dart';
-import 'package:reaxit/models/thabliod.dart';
+import 'package:reaxit/models/thabloid.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:reaxit/ui/widgets/thabloid_tile.dart';
 
@@ -17,11 +16,11 @@ class ThabloidScreen extends StatefulWidget {
 
 class _ThabloidScreenState extends State<ThabloidScreen> {
   late ScrollController _controller;
-  late CalendarCubit _cubit;
+  late ThabloidListCubit _cubit;
 
   @override
   void initState() {
-    _cubit = BlocProvider.of<CalendarCubit>(context);
+    _cubit = BlocProvider.of<ThabloidListCubit>(context);
     _controller = ScrollController()..addListener(_scrollListener);
     super.initState();
   }
@@ -64,9 +63,9 @@ class _ThabloidScreenState extends State<ThabloidScreen> {
   }
 }
 
-/// A ScrollView that shows a calendar with [Thabloid]s.
+/// A ScrollView that shows tabloids with [Thabloid]s.
 ///
-/// The events are grouped by month, and date.
+/// The tabloids are sorted by date
 ///
 /// This does not take care of communicating with a Bloc. The [controller]
 /// should do that. The [thabloidState] also must not have an exception.
