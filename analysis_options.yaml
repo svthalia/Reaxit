@@ -1,4 +1,6 @@
-include: package:flutter_lints/flutter.yaml
+#https://github.com/dart-lang/sdk/issues/62862
+#include: package:flutter_lints/flutter.yaml
+include: package:lints/recommended.yaml
 
 analyzer:
   exclude:
@@ -15,3 +17,15 @@ linter:
 
     avoid_catching_errors: true
     avoid_escaping_inner_quotes: true
+
+    #https://github.com/dart-lang/sdk/issues/62862
+    avoid_print: true
+    avoid_unnecessary_containers: true
+    avoid_web_libraries_in_flutter: true
+    no_logic_in_create_state: true
+    prefer_const_constructors_in_immutables: true
+    sized_box_for_whitespace: true
+    sort_child_properties_last: true
+    use_build_context_synchronously: true
+    use_full_hex_values_for_flutter_colors: true
+
