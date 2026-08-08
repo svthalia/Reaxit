@@ -18,9 +18,10 @@ class _SalesOrderDialogState extends State<SalesOrderDialog> {
 
   @override
   void initState() {
-    _salesOrderCubit = SalesOrderCubit(
+    _salesOrderCubit = SalesOrderCubit.fromPK(
       RepositoryProvider.of<ApiRepository>(context),
-    )..load(widget.pk);
+      widget.pk,
+    )..claim();
     super.initState();
   }
 
@@ -37,36 +38,38 @@ class _SalesOrderDialogState extends State<SalesOrderDialog> {
       bloc: _salesOrderCubit,
       builder: (context, orderState) {
         final Widget content = switch (orderState) {
+          LoadingState() => const Center(child: CircularProgressIndicator()),
           ErrorState(message: var messsage) => Text(
             messsage,
             style: textTheme.bodyMedium,
           ),
-          LoadingState _ => const Center(child: CircularProgressIndicator()),
-          ResultState(result: var order) when order.numItems == 0 => Text(
-            'The order is empty.',
+          ResultState(result: LocalOrderState()) => Text(
+            'Trying to pay for non-existing order.',
             style: textTheme.bodyMedium,
           ),
-          ResultState(result: var order) => Text(
+          ResultState(result: RemoteOrderState(order: var order))
+              when order.numItems == 0 =>
+            Text('The order is empty.', style: textTheme.bodyMedium),
+          ResultState(result: RemoteOrderState(order: var order)) => Text(
             order.orderDescription,
             style: textTheme.bodyMedium,
           ),
         };
         late final Widget payButton = switch (orderState) {
-          ErrorState _ => const SizedBox.shrink(),
-          LoadingState _ => const SizedBox.shrink(),
-          ResultState(result: var order)
-              when order.totalAmount == '0.00' || !order.tpayAllowed =>
-            const SizedBox.shrink(),
-          ResultState(result: var order) => TPayButton(
-            onPay: _paySalesOrder,
-            confirmationMessage:
-                'Are you sure you want '
-                'to pay €${order.totalAmount} for your '
-                'order of ${order.orderDescription}?',
-            failureMessage: 'Could not pay your order.',
-            successMessage: 'Paid your order with Thalia Pay.',
-            amount: order.totalAmount,
-          ),
+          LoadingState() ||
+          ErrorState() ||
+          ResultState(result: LocalOrderState()) => const SizedBox.shrink(),
+          ResultState(result: RemoteOrderState(order: final order)) =>
+            TPayButton(
+              onPay: _paySalesOrder,
+              confirmationMessage:
+                  'Are you sure you want '
+                  'to pay €${order.totalAmount} for your '
+                  'order of ${order.orderDescription}?',
+              failureMessage: 'Could not pay your order.',
+              successMessage: 'Paid your order with Thalia Pay.',
+              amount: order.totalAmount,
+            ),
         };
 
         return AlertDialog(
@@ -97,7 +100,7 @@ class _SalesOrderDialogState extends State<SalesOrderDialog> {
   }
 
   Future<void> _paySalesOrder() async {
-    await _salesOrderCubit.paySalesOrder(widget.pk);
+    await _salesOrderCubit.paySalesOrder();
     if (!mounted) return;
     Navigator.of(context, rootNavigator: true).pop();
   }

@@ -32,6 +32,9 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
   json['no_registration_message'] as String?,
   json['has_fields'] as bool,
   (json['food_event'] as num?)?.toInt(),
+  (json['shift_set'] as List<dynamic>?)
+      ?.map((e) => ShiftInfo.fromJson(e as Map<String, dynamic>))
+      .toList(),
   json['maps_url'] as String,
   EventPermissions.fromJson(json['user_permissions'] as Map<String, dynamic>),
   json['user_registration'] == null
@@ -74,6 +77,7 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
   'cancel_too_late_message': instance.cancelTooLateMessage,
   'no_registration_message': instance.noRegistrationMessage,
   'food_event': instance.foodEvent,
+  'shift_set': instance.shiftSet,
   'maps_url': instance.mapsUrl,
   'user_permissions': instance.userPermissions,
   'user_registration': instance.registration,

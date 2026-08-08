@@ -9,6 +9,7 @@ import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/config.dart';
 import 'package:reaxit/models.dart';
+import 'package:reaxit/models/shift.dart';
 import 'package:reaxit/models/thabliod.dart';
 import 'package:reaxit/models/vacancie.dart';
 import 'package:reaxit/models/announcement.dart';
@@ -49,11 +50,15 @@ class LoggingClient extends oauth2.Client {
       rethrow;
     }
     if (kDebugMode) {
-      print('url: ${request.url}, response code: ${response.statusCode}');
+      print(
+        'url: ${request.url}, response code: ${response.statusCode} (payload: ${response.reasonPhrase})',
+      );
     }
     return response;
   }
 }
+
+// TODO: Fix the order of this
 
 /// Provides an interface to the api.
 ///
@@ -557,6 +562,156 @@ class ConcrexitApiRepository implements ApiRepository {
     });
   }
 
+  /// Create a new salesOrder
+  @override
+  Future<Shift> getSalesShift({required int shiftpk}) {
+    return sandbox(() async {
+      final uri = _uri(path: '/sales/shifts/$shiftpk/');
+      final response = await _handleExceptions(() => _client.get(uri));
+      return Shift.fromJson(_jsonDecode(response));
+    });
+  }
+
+  @override
+  Future<SalesOrder> createSalesOrder({
+    required int shiftpk,
+    required List<SalesOrderItem> items,
+  }) async {
+    return sandbox(() async {
+      final uri = _uri(path: '/sales/shifts/$shiftpk/orders/');
+      final body = jsonEncode({
+        'order_items': items.map((e) => e.strip()).toList(),
+      });
+      final response = await _handleExceptions(
+        () => _client.post(uri, body: body, headers: _jsonHeader),
+      );
+      SalesOrder salsOrder = SalesOrder.fromJson(_jsonDecode(response));
+      salsOrder.tpayAllowed = true;
+      return salsOrder;
+    });
+  }
+
+  @override
+  Future<void> updateSalesOrder({
+    required String orderpk,
+    required List<SalesOrderItem> items,
+  }) {
+    return sandbox(() async {
+      final uri = _uri(path: '/sales/orders/$orderpk/');
+      final body = jsonEncode({
+        'order_items': items.map((e) => e.strip()).toList(),
+      });
+      await _handleExceptions(
+        () => _client.patch(uri, body: body, headers: _jsonHeader),
+      );
+    });
+  }
+
+  @override
+  Future<SalesOrder> getSalesOrder({required String orderpk}) async {
+    return sandbox(() async {
+      final uri = _uri(path: '/sales/orders/$orderpk/');
+      final response = await _handleExceptions(
+        () => _client.get(uri, headers: _jsonHeader),
+      );
+      SalesOrder salsOrder = SalesOrder.fromJson(_jsonDecode(response));
+      salsOrder.tpayAllowed = true;
+      return salsOrder;
+    });
+  }
+
+  @override
+  Future<void> deleteSalesOrder({required String orderpk}) async {
+    return sandbox(() async {
+      final uri = _uri(path: '/sales/orders/$orderpk/');
+      await _handleExceptions(() => _client.delete(uri, headers: _jsonHeader));
+      return;
+    });
+  }
+
+  @override
+  Future<ListResponse<ListSalesOrder>> getSalesOrders({
+    required int shiftpk,
+  }) async {
+    return sandbox(() async {
+      final uri = _uri(path: '/sales/shifts/$shiftpk/orders/');
+      final response = await _handleExceptions(
+        () => _client.get(uri, headers: _jsonHeader),
+      );
+      var ret = await compute(_parseShiftOrders, response);
+      ret = ListResponse(
+        ret.count,
+        ret.results.map((so) {
+          so.tpayAllowed = true;
+          return so;
+        }).toList(),
+      );
+      return ret;
+    });
+  }
+
+  static ListResponse<ListSalesOrder> _parseShiftOrders(Response response) {
+    return ListResponse<ListSalesOrder>.fromJson(
+      _jsonDecode(response),
+      (json) => ListSalesOrder.fromJson(json as Map<String, dynamic>),
+    );
+  }
+
+  @override
+  Future<ListResponse<ListSalesOrder>> getAdminShiftOrders({
+    required int pk,
+    int? limit,
+    int? offset,
+    String? search,
+  }) async {
+    return sandbox(() async {
+      final uri = _uri(
+        path: '/admin/sales/shifts/$pk/orders/',
+        query: {
+          if (limit != null) 'limit': limit.toString(),
+          if (offset != null) 'offset': offset.toString(),
+          if (search != null) 'search': search,
+        },
+      );
+      final response = await _handleExceptions(() => _client.get(uri));
+      return await compute(_parseAdminShiftOrders, response);
+    });
+  }
+
+  static ListResponse<ListSalesOrder> _parseAdminShiftOrders(
+    Response response,
+  ) {
+    return ListResponse<ListSalesOrder>.fromJson(
+      _jsonDecode(response),
+      (json) => ListSalesOrder.fromJson(json as Map<String, dynamic>),
+    );
+  }
+
+  /// Create a new salesOrder
+  @override
+  Future<SalesOrder> getAdminShiftOrder({required int pk}) {
+    return sandbox(() async {
+      final uri = _uri(path: '/admin/sales/orders/$pk/');
+      final response = await _handleExceptions(() => _client.get(uri));
+      return SalesOrder.fromJson(_jsonDecode(response));
+    });
+  }
+
+  @override
+  Future<Payable> markPaidAdminSalesOrder({
+    required String orderPk,
+    required PaymentType paymentType,
+  }) => _markPayablePaid(
+    appLabel: 'sales',
+    modelName: 'order',
+    pk: orderPk,
+    paymentType: paymentType,
+  );
+
+  @override
+  Future<void> markNotPaidAdminSalesOrder({required String orderPk}) =>
+      _markPayableNotPaid(appLabel: 'sales', modelName: 'order', pk: orderPk);
+
   @override
   Future<ListResponse<AdminFoodOrder>> getAdminFoodOrders({
     required int pk,
@@ -585,15 +740,16 @@ class ConcrexitApiRepository implements ApiRepository {
     );
   }
 
-  @override
-  Future<Payable> markPaidAdminFoodOrder({
-    required int orderPk,
+  Future<Payable> _markPayablePaid({
+    required String appLabel,
+    required String modelName,
+    required String pk,
     required PaymentType paymentType,
   }) async {
     assert(paymentType != PaymentType.tpayPayment);
     return sandbox(() async {
       final uri = _uri(
-        path: '/admin/payments/payables/pizzas/foodorder/$orderPk/',
+        path: '/admin/payments/payables/$appLabel/$modelName/$pk/',
       );
       late String typeString;
       switch (paymentType) {
@@ -620,14 +776,36 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
-  Future<void> markNotPaidAdminFoodOrder({required int orderPk}) async {
+  Future<Payable> markPaidAdminFoodOrder({
+    required int orderPk,
+    required PaymentType paymentType,
+  }) => _markPayablePaid(
+    appLabel: 'pizzas',
+    modelName: 'foodorder',
+    pk: '$orderPk',
+    paymentType: paymentType,
+  );
+
+  Future<void> _markPayableNotPaid({
+    required String appLabel,
+    required String modelName,
+    required String pk,
+  }) async {
     return sandbox(() async {
       final uri = _uri(
-        path: '/admin/payments/payables/pizzas/foodorder/$orderPk/',
+        path: '/admin/payments/payables/$appLabel/$modelName/$pk/',
       );
       await _handleExceptions(() => _client.delete(uri));
     });
   }
+
+  @override
+  Future<void> markNotPaidAdminFoodOrder({required int orderPk}) =>
+      _markPayableNotPaid(
+        appLabel: 'pizzas',
+        modelName: 'foodorder',
+        pk: '$orderPk',
+      );
 
   @override
   Future<FoodEvent> getFoodEvent(int pk) async {

@@ -7,6 +7,8 @@ import 'package:reaxit/tosti/tosti_api_repository.dart';
 import 'package:reaxit/tosti/tosti_screen.dart';
 import 'package:reaxit/tosti/tosti_shift_screen.dart';
 import 'package:reaxit/ui/screens.dart';
+import 'package:reaxit/ui/screens/sales_admin_screen.dart';
+import 'package:reaxit/ui/screens/sales_selforder_screen.dart';
 import 'package:reaxit/ui/screens/liked_photos_screen.dart';
 import 'package:reaxit/ui/screens/thabloids_screen.dart';
 import 'package:reaxit/ui/screens/vacancies_screen.dart';
@@ -38,6 +40,7 @@ final List<RegExp> _deepLinkRegExps = <RegExp>[
   RegExp('^/members/photos/liked/?\$'),
   RegExp('^/members/photos/([a-z0-9-_]+)/?\$'),
   RegExp('^/sales/order/$_uuid/pay/?\$'),
+  RegExp('^/sales/shift/[0-9]+/?\$'),
   RegExp('^/events/([0-9]+)/mark-present/$_uuid/?\$'),
   RegExp('^/association/societies(/[0-9]+)?/?\$'),
   RegExp('^/association/committees(/[0-9]+)?/?\$'),
@@ -512,6 +515,27 @@ final List<RouteBase> routes = [
             (context, state) => MaterialPage(
               key: state.pageKey,
               child: FoodAdminScreen(pk: state.extra as int),
+            ),
+      ),
+    ],
+  ),
+  GoRoute(
+    path: '/sales/shifts',
+    name: 'sales-shift',
+    pageBuilder: (context, state) {
+      return MaterialPage(
+        key: state.pageKey,
+        child: SelforderScreen(shiftpk: state.extra as int),
+      );
+    },
+    routes: [
+      GoRoute(
+        path: 'admin',
+        name: 'sales-shift-admin',
+        pageBuilder:
+            (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: SalesAdminScreen(pk: state.extra as int),
             ),
       ),
     ],

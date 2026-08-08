@@ -58,3 +58,40 @@ Map<String, dynamic> _$SalesOrderItemToJson(SalesOrderItem instance) =>
       'amount': instance.amount,
       'total': instance.total,
     };
+
+MinSalesOrderItem _$MinSalesOrderItemFromJson(Map<String, dynamic> json) =>
+    MinSalesOrderItem(
+      json['product'] as String,
+      (json['amount'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$MinSalesOrderItemToJson(MinSalesOrderItem instance) =>
+    <String, dynamic>{'product': instance.product, 'amount': instance.amount};
+
+ListSalesOrder _$ListSalesOrderFromJson(Map<String, dynamic> json) =>
+    ListSalesOrder(
+      json['pk'] as String,
+      DateTime.parse(json['created_at'] as String),
+      json['total_amount'] as String,
+      (json['num_items'] as num).toInt(),
+      (json['items'] as List<dynamic>)
+          .map((e) => MinSalesOrderItem.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      json['payer'] == null
+          ? null
+          : ListMember.fromJson(json['payer'] as Map<String, dynamic>),
+      json['payment'] == null
+          ? null
+          : Payment.fromJson(json['payment'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$ListSalesOrderToJson(ListSalesOrder instance) =>
+    <String, dynamic>{
+      'pk': instance.pk,
+      'created_at': instance.createdAt.toIso8601String(),
+      'total_amount': instance.totalAmount,
+      'num_items': instance.numItems,
+      'items': instance.items,
+      'payer': instance.payer,
+      'payment': instance.payment,
+    };

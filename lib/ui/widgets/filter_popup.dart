@@ -106,6 +106,7 @@ class MultipleFilter<E> implements Filter<E> {
 
   @override
   bool passes(E item) {
+    if (filters.isEmpty) return true;
     return filters.map((e) => e.passes(item)).reduce((a, b) => a && b);
   }
 

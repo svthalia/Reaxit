@@ -5,22 +5,23 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
+import 'package:reaxit/blocs/sales_admin_cubit.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:reaxit/ui/widgets/payment_override.dart';
 
-class FoodAdminScreen extends StatefulWidget {
+class SalesAdminScreen extends StatefulWidget {
   final int pk;
 
-  FoodAdminScreen({required this.pk}) : super(key: ValueKey(pk));
+  SalesAdminScreen({required this.pk}) : super(key: ValueKey(pk));
 
   @override
-  State<FoodAdminScreen> createState() => _FoodAdminScreenState();
+  State<SalesAdminScreen> createState() => _SalesAdminScreenState();
 }
 
-class _FoodAdminScreenState extends State<FoodAdminScreen> {
-  Filter<AdminFoodOrder> _filter = MultipleFilter([
-    MapFilter<PaymentType?, AdminFoodOrder>(
+class _SalesAdminScreenState extends State<SalesAdminScreen> {
+  Filter<ListSalesOrder> _filter = MultipleFilter([
+    MapFilter<PaymentType?, ListSalesOrder>(
       map: {
         for (PaymentType value in PaymentType.values) value: true,
         null: true,
@@ -31,16 +32,16 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
     ),
   ]);
 
-  _SortOrder _sortOrder = _SortOrder.none;
+  SortOrder _sortOrder = SortOrder.none;
 
-  void _updateSortOrder(_SortOrder? order) {
+  void _updateSortOrder(SortOrder? order) {
     setState(() {
-      _sortOrder = order ?? _SortOrder.none;
+      _sortOrder = order ?? SortOrder.none;
     });
   }
 
   void _showPaymentFilter() async {
-    final Filter<AdminFoodOrder>? results = await showDialog(
+    final Filter<ListSalesOrder>? results = await showDialog(
       context: context,
       builder: (BuildContext context) {
         return MultiSelectPopup(
@@ -56,16 +57,18 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
     }
   }
 
+  // TODO: fully implemented, blocked on https://github.com/svthalia/Reaxit/issues/551
+  // ignore: unused_element
   void _opensearch(BuildContext context) async {
-    final adminCubit = BlocProvider.of<FoodAdminCubit>(context);
-    final searchCubit = FoodAdminCubit(
+    final adminCubit = BlocProvider.of<SalesAdminCubit>(context);
+    final searchCubit = SalesAdminCubit(
       RepositoryProvider.of<ApiRepository>(context),
-      foodEventPk: widget.pk,
+      shiftPk: widget.pk,
     );
 
     await showSearch(
       context: context,
-      delegate: FoodAdminSearchDelegate(searchCubit),
+      delegate: SalesAdminSearchDelegate(searchCubit),
     );
 
     searchCubit.close();
@@ -81,9 +84,9 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create:
-          (context) => FoodAdminCubit(
+          (context) => SalesAdminCubit(
             RepositoryProvider.of<ApiRepository>(context),
-            foodEventPk: widget.pk,
+            shiftPk: widget.pk,
           )..load(),
       child: Builder(
         builder: (context) {
@@ -91,13 +94,14 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
             appBar: ThaliaAppBar(
               title: const Text('ORDERS'),
               collapsingActions: [
-                IconAppbarAction(
-                  'SEACH',
-                  Icons.search,
-                  () => _opensearch(context),
-                ),
-                SortButton<_SortOrder>(
-                  _SortOrder.values.map((e) => e.asSortItem()).toList(),
+                // TODO: fully implemented, blocked on https://github.com/svthalia/Reaxit/issues/551
+                // IconAppbarAction(
+                //   'SEACH',
+                //   Icons.search,
+                //   () => _opensearch(context),
+                // ),
+                SortButton<SortOrder>(
+                  SortOrder.values.map((e) => e.asSortItem()).toList(),
                   _updateSortOrder,
                 ),
                 IconAppbarAction(
@@ -109,17 +113,17 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
             ),
             body: RefreshIndicator(
               onRefresh: () async {
-                await BlocProvider.of<FoodAdminCubit>(context).load();
+                await BlocProvider.of<SalesAdminCubit>(context).load();
               },
-              child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
+              child: BlocBuilder<SalesAdminCubit, SalesAdminState>(
                 builder: (context, state) {
                   switch (state) {
                     case ErrorState(message: var message):
                       return ErrorScrollView(message);
                     case LoadingState _:
                       return const Center(child: CircularProgressIndicator());
-                    case ResultState<List<AdminFoodOrder>>(result: var result):
-                      List<AdminFoodOrder> filtered =
+                    case ResultState(result: var result):
+                      List<ListSalesOrder> filtered =
                           result
                               .where(_filter.passes)
                               .sorted(_sortOrder.compare)
@@ -147,7 +151,7 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
 }
 
 class _OrderTile extends StatefulWidget {
-  final AdminFoodOrder order;
+  final ListSalesOrder order;
 
   _OrderTile({required this.order}) : super(key: ValueKey(order.pk));
 
@@ -159,7 +163,7 @@ class __OderTileState extends State<_OrderTile> {
   @override
   Widget build(BuildContext context) {
     final order = widget.order;
-    final name = order.member?.fullName ?? order.name!;
+    final name = order.name ?? 'Not assigned to user';
 
     late Widget paymentDropdown;
     if (order.isPaid && order.payment!.type == PaymentType.tpayPayment) {
@@ -179,7 +183,7 @@ class __OderTileState extends State<_OrderTile> {
         onChanged: (value) async {
           final messenger = ScaffoldMessenger.of(context);
           try {
-            await BlocProvider.of<FoodAdminCubit>(
+            await BlocProvider.of<SalesAdminCubit>(
               context,
             ).setPayment(orderPk: order.pk, paymentType: value);
           } on ApiException {
@@ -201,16 +205,14 @@ class __OderTileState extends State<_OrderTile> {
     return ListTile(
       horizontalTitleGap: 8,
       title: Text(name, maxLines: 1, overflow: TextOverflow.ellipsis),
-      subtitle: Text(
-        order.product.name,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
+      subtitle: Column(
+        children: order.items.map((item) => OrderItemtRow(item)).toList(),
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            '€${order.product.price}',
+            '€${order.totalAmount}',
             style: Theme.of(context).textTheme.titleSmall,
           ),
           const SizedBox(width: 16),
@@ -221,10 +223,27 @@ class __OderTileState extends State<_OrderTile> {
   }
 }
 
-class FoodAdminSearchDelegate extends SearchDelegate {
-  final FoodAdminCubit _adminCubit;
+class OrderItemtRow extends StatelessWidget {
+  final MinSalesOrderItem item;
 
-  FoodAdminSearchDelegate(this._adminCubit);
+  const OrderItemtRow(this.item);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(item.product, maxLines: 1, overflow: TextOverflow.ellipsis),
+        Text('${item.amount}x', maxLines: 1, overflow: TextOverflow.ellipsis),
+      ],
+    );
+  }
+}
+
+class SalesAdminSearchDelegate extends SearchDelegate {
+  final SalesAdminCubit _adminCubit;
+
+  SalesAdminSearchDelegate(this._adminCubit);
 
   @override
   ThemeData appBarTheme(BuildContext context) {
@@ -265,14 +284,14 @@ class FoodAdminSearchDelegate extends SearchDelegate {
   Widget buildResults(BuildContext context) {
     return BlocProvider.value(
       value: _adminCubit..search(query),
-      child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
+      child: BlocBuilder<SalesAdminCubit, SalesAdminState>(
         builder: (context, state) {
           switch (state) {
             case (ErrorState state):
               return ErrorScrollView(state.message);
             case (LoadingState _):
               return const SizedBox.shrink();
-            case (ResultState<List<AdminFoodOrder>> rstate):
+            case (ResultState<List<ListSalesOrder>> rstate):
               return ListView.separated(
                 key: const PageStorageKey('food-admin-search'),
                 itemBuilder:
@@ -290,7 +309,7 @@ class FoodAdminSearchDelegate extends SearchDelegate {
   Widget buildSuggestions(BuildContext context) {
     return BlocProvider.value(
       value: _adminCubit..search(query),
-      child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
+      child: BlocBuilder<SalesAdminCubit, SalesAdminState>(
         builder:
             (context, state) => switch (state) {
               ErrorState(message: var message) => ErrorScrollView(message),
@@ -308,38 +327,28 @@ class FoodAdminSearchDelegate extends SearchDelegate {
   }
 }
 
-enum _SortOrder {
+enum SortOrder {
   none(text: 'None', icon: Icons.cancel, compare: equal),
   payedUp(text: 'Paid', icon: Icons.keyboard_arrow_up, compare: cmpPaid),
   payedDown(text: 'Paid', icon: Icons.keyboard_arrow_down, compare: cmpPaid_2),
   nameUp(text: 'Name', icon: Icons.keyboard_arrow_up, compare: cmpName),
-  nameDown(text: 'Name', icon: Icons.keyboard_arrow_down, compare: cmpName_2),
-  productUp(
-    text: 'Product',
-    icon: Icons.keyboard_arrow_up,
-    compare: cmpProduct,
-  ),
-  productDown(
-    text: 'Product',
-    icon: Icons.keyboard_arrow_down,
-    compare: cmpProduct_2,
-  );
+  nameDown(text: 'Name', icon: Icons.keyboard_arrow_down, compare: cmpName_2);
 
   final String text;
   final IconData? icon;
-  final int Function(AdminFoodOrder, AdminFoodOrder) compare;
+  final int Function(ListSalesOrder, ListSalesOrder) compare;
 
-  const _SortOrder({required this.text, this.icon, required this.compare});
+  const SortOrder({required this.text, this.icon, required this.compare});
 
-  SortItem<_SortOrder> asSortItem() {
+  SortItem<SortOrder> asSortItem() {
     return SortItem(this, text, icon);
   }
 
-  static int equal(AdminFoodOrder e1, AdminFoodOrder e2) {
+  static int equal(ListSalesOrder e1, ListSalesOrder e2) {
     return 0;
   }
 
-  static int cmpPaid(AdminFoodOrder e1, AdminFoodOrder e2) {
+  static int cmpPaid(ListSalesOrder e1, ListSalesOrder e2) {
     if (e1.isPaid) {
       return -1;
     }
@@ -349,10 +358,10 @@ enum _SortOrder {
     return 0;
   }
 
-  static int cmpPaid_2(AdminFoodOrder e1, AdminFoodOrder e2) =>
+  static int cmpPaid_2(ListSalesOrder e1, ListSalesOrder e2) =>
       -cmpPaid(e1, e2);
 
-  static int cmpName(AdminFoodOrder e1, AdminFoodOrder e2) {
+  static int cmpName(ListSalesOrder e1, ListSalesOrder e2) {
     if (e1.name == null) {
       return -1;
     }
@@ -362,13 +371,6 @@ enum _SortOrder {
     return e1.name!.compareTo(e2.name!);
   }
 
-  static int cmpName_2(AdminFoodOrder e1, AdminFoodOrder e2) =>
-      -cmpName(e1, e2);
-
-  static int cmpProduct(AdminFoodOrder e1, AdminFoodOrder e2) {
-    return e1.product.name.compareTo(e2.product.name);
-  }
-
-  static int cmpProduct_2(AdminFoodOrder e1, AdminFoodOrder e2) =>
+  static int cmpName_2(ListSalesOrder e1, ListSalesOrder e2) =>
       -cmpName(e1, e2);
 }
