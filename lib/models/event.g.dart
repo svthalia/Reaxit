@@ -40,8 +40,8 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
   json['user_registration'] == null
       ? null
       : UserEventRegistration.fromJson(
-        json['user_registration'] as Map<String, dynamic>,
-      ),
+          json['user_registration'] as Map<String, dynamic>,
+        ),
   (json['organisers'] as List<dynamic>)
       .map((e) => SmallGroup.fromJson(e as Map<String, dynamic>))
       .toList(),
