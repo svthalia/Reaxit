@@ -40,12 +40,11 @@ class AlbumTile extends StatelessWidget {
           child: Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap:
-                  () => context.pushNamed(
-                    'album',
-                    pathParameters: {'albumSlug': album.slug},
-                    extra: album,
-                  ),
+              onTap: () => context.pushNamed(
+                'album',
+                pathParameters: {'albumSlug': album.slug},
+                extra: album,
+              ),
             ),
           ),
         ),

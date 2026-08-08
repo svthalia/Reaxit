@@ -98,10 +98,9 @@ class VacancieCardState extends State<VacancieCard> {
             duration: const Duration(milliseconds: 100),
             firstChild: expandedChild,
             secondChild: unexpandedChild,
-            crossFadeState:
-                isExpanded
-                    ? CrossFadeState.showFirst
-                    : CrossFadeState.showSecond,
+            crossFadeState: isExpanded
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
           ),
         ),
       ),

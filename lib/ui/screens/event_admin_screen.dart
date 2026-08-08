@@ -156,10 +156,9 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
         textAlign: TextAlign.center,
       ),
       TextButton(
-        onPressed:
-            () => setState(() {
-              _resetfilter(paymentsHidden);
-            }),
+        onPressed: () => setState(() {
+          _resetfilter(paymentsHidden);
+        }),
         child: const Text('Reset filter'),
       ),
     ]);
@@ -191,21 +190,21 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                     paymentsHidden = !state.event!.paymentIsRequired;
                     _resetfilter(paymentsHidden);
                   }
-                  List<AdminEventRegistration> filteredRegistrations =
-                      state.registrations
-                          .where(_filter.passes)
-                          .sorted(_sortOrder.compare)
-                          .toList();
-                  List<AdminEventRegistration> filteredCancels =
-                      state.cancelledRegistrations
-                          .where(_filter.passes)
-                          .sorted(_sortOrder.compare)
-                          .toList();
-                  List<AdminEventRegistration> filteredQueue =
-                      state.queuedRegistrations
-                          .where(_filter.passes)
-                          .sorted(_sortOrder.compare)
-                          .toList();
+                  List<AdminEventRegistration> filteredRegistrations = state
+                      .registrations
+                      .where(_filter.passes)
+                      .sorted(_sortOrder.compare)
+                      .toList();
+                  List<AdminEventRegistration> filteredCancels = state
+                      .cancelledRegistrations
+                      .where(_filter.passes)
+                      .sorted(_sortOrder.compare)
+                      .toList();
+                  List<AdminEventRegistration> filteredQueue = state
+                      .queuedRegistrations
+                      .where(_filter.passes)
+                      .sorted(_sortOrder.compare)
+                      .toList();
 
                   body = TabBarView(
                     children: [
@@ -222,8 +221,8 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                         Scrollbar(
                           child: ListView.separated(
                             key: const PageStorageKey('event-admin'),
-                            itemBuilder:
-                                (context, index) => _QueuedRegistrationTile(
+                            itemBuilder: (context, index) =>
+                                _QueuedRegistrationTile(
                                   registration: filteredQueue[index],
                                 ),
                             separatorBuilder: (_, _) => const Divider(),
@@ -240,12 +239,10 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                         Scrollbar(
                           child: ListView.separated(
                             key: const PageStorageKey('event-admin'),
-                            itemBuilder:
-                                (context, index) => _RegistrationTile(
-                                  registration: filteredRegistrations[index],
-                                  requiresPayment:
-                                      state.event!.paymentIsRequired,
-                                ),
+                            itemBuilder: (context, index) => _RegistrationTile(
+                              registration: filteredRegistrations[index],
+                              requiresPayment: state.event!.paymentIsRequired,
+                            ),
                             separatorBuilder: (_, _) => const Divider(),
                             itemCount: filteredRegistrations.length,
                           ),
@@ -263,8 +260,8 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                         Scrollbar(
                           child: ListView.separated(
                             key: const PageStorageKey('event-admin'),
-                            itemBuilder:
-                                (context, index) => _CancelledRegistrationTile(
+                            itemBuilder: (context, index) =>
+                                _CancelledRegistrationTile(
                                   registration: filteredCancels[index],
                                 ),
                             separatorBuilder: (_, _) => const Divider(),
@@ -559,11 +556,10 @@ class EventAdminSearchDelegate extends SearchDelegate {
           } else {
             return ListView.separated(
               key: const PageStorageKey('event-admin-search'),
-              itemBuilder:
-                  (context, index) => _RegistrationTile(
-                    registration: state.registrations[index],
-                    requiresPayment: state.event!.paymentIsRequired,
-                  ),
+              itemBuilder: (context, index) => _RegistrationTile(
+                registration: state.registrations[index],
+                requiresPayment: state.event!.paymentIsRequired,
+              ),
               separatorBuilder: (_, _) => const Divider(),
               itemCount: state.registrations.length,
             );
@@ -587,11 +583,10 @@ class EventAdminSearchDelegate extends SearchDelegate {
           } else {
             return ListView.separated(
               key: const PageStorageKey('event-admin-search'),
-              itemBuilder:
-                  (context, index) => _RegistrationTile(
-                    registration: state.registrations[index],
-                    requiresPayment: state.event!.paymentIsRequired,
-                  ),
+              itemBuilder: (context, index) => _RegistrationTile(
+                registration: state.registrations[index],
+                requiresPayment: state.event!.paymentIsRequired,
+              ),
               separatorBuilder: (_, _) => const Divider(),
               itemCount: state.registrations.length,
             );

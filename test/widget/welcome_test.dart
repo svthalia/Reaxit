@@ -65,13 +65,12 @@ void main() {
       );
 
       final cubit = MockWelcomeCubit();
-      final streamController =
-          StreamController<WelcomeState>.broadcast()
-            ..stream.listen((state) {
-              when(cubit.state).thenReturn(state);
-            })
-            ..add(const WelcomeState.loading())
-            ..add(state);
+      final streamController = StreamController<WelcomeState>.broadcast()
+        ..stream.listen((state) {
+          when(cubit.state).thenReturn(state);
+        })
+        ..add(const WelcomeState.loading())
+        ..add(state);
 
       when(cubit.load()).thenAnswer((_) => Future.value(null));
       when(cubit.stream).thenAnswer((_) => streamController.stream);

@@ -19,7 +19,9 @@ class ErrorScrollView extends StatelessWidget {
         ),
         Text(message, textAlign: TextAlign.center),
         if (retry != null)
-          Center(child: TextButton(onPressed: retry, child: Text('Retry'))),
+          Center(
+            child: TextButton(onPressed: retry, child: Text('Retry')),
+          ),
       ],
     );
   }

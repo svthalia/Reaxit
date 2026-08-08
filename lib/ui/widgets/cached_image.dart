@@ -15,10 +15,9 @@ class CachedImage extends CachedNetworkImage {
          key: ValueKey(imageUrl),
          cacheManager: cache.ThaliaCacheManager(),
          cacheKey: _getCacheKey(imageUrl),
-         placeholder:
-             placeholder == null
-                 ? null
-                 : (_, _) => Image.asset(placeholder, fit: fit),
+         placeholder: placeholder == null
+             ? null
+             : (_, _) => Image.asset(placeholder, fit: fit),
        );
 }
 

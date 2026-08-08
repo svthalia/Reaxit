@@ -76,8 +76,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       children: [
         ListTile(
           title: Text(field.label),
-          subtitle:
-              field.description.isNotEmpty ? Text(field.description) : null,
+          subtitle: field.description.isNotEmpty
+              ? Text(field.description)
+              : null,
         ),
         Padding(
           padding: const EdgeInsets.only(left: 16, bottom: 16, right: 16),
@@ -105,8 +106,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ListTile(
           dense: field.description.isEmpty,
           title: Text(field.label),
-          subtitle:
-              field.description.isNotEmpty ? Text(field.description) : null,
+          subtitle: field.description.isNotEmpty
+              ? Text(field.description)
+              : null,
         ),
         Padding(
           padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),

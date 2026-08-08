@@ -82,11 +82,10 @@ class ThaliaAppBar extends AppBar {
       MenuAnchor(
         alignmentOffset: const Offset(0, -1),
         controller: controller,
-        menuChildren:
-            widgets
-                .skip(defaultIcons - 1)
-                .map((item) => _MenuAction(item, controller.close))
-                .toList(),
+        menuChildren: widgets
+            .skip(defaultIcons - 1)
+            .map((item) => _MenuAction(item, controller.close))
+            .toList(),
         child: IconButton(
           onPressed: controller.open,
           icon: const Icon(Icons.more_vert),

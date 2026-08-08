@@ -112,8 +112,8 @@ class TostiShiftScreen extends StatelessWidget {
                               Text(
                                 shift.assignees.isNotEmpty
                                     ? shift.assignees
-                                        .map((e) => e.displayName)
-                                        .join(', ')
+                                          .map((e) => e.displayName)
+                                          .join(', ')
                                     : '-',
                                 style: textTheme.titleSmall,
                               ),
@@ -208,60 +208,59 @@ class _OrderButtons extends StatelessWidget {
       (o) => !o.product.ignoreShiftRestrictions,
     );
 
-    final buttons =
-        products.map<Widget>((product) {
-          String? tooltip;
-          if (shift.maxOrdersTotal == shift.amountOfOrders) {
-            tooltip = 'This shift is full.';
-          } else if (restrictedUserOrders.length >= shift.maxOrdersPerUser) {
-            tooltip = 'Max. orders in this shift reached.';
-          } else {
-            final userProductOrders = userOrders.where(
-              (o) => o.product.id == product.id,
-            );
-            if (product.maxAllowedPerShift != null &&
-                userProductOrders.length >= product.maxAllowedPerShift!) {
-              tooltip = 'Max. orders for this product reached.';
-            }
-          }
+    final buttons = products.map<Widget>((product) {
+      String? tooltip;
+      if (shift.maxOrdersTotal == shift.amountOfOrders) {
+        tooltip = 'This shift is full.';
+      } else if (restrictedUserOrders.length >= shift.maxOrdersPerUser) {
+        tooltip = 'Max. orders in this shift reached.';
+      } else {
+        final userProductOrders = userOrders.where(
+          (o) => o.product.id == product.id,
+        );
+        if (product.maxAllowedPerShift != null &&
+            userProductOrders.length >= product.maxAllowedPerShift!) {
+          tooltip = 'Max. orders for this product reached.';
+        }
+      }
 
-          if (tooltip != null) {
-            return Padding(
-              key: ValueKey(product.id),
-              padding: const EdgeInsets.only(left: 16),
-              child: Tooltip(
-                message: tooltip,
-                child: ElevatedButton(
-                  onPressed: null,
-                  child: Text('${product.name} (€${product.currentPrice})'),
-                ),
-              ),
-            );
-          } else {
-            return Padding(
-              key: ValueKey(product.id),
-              padding: const EdgeInsets.only(left: 16),
-              child: ElevatedButton(
-                onPressed: () async {
-                  final messenger = ScaffoldMessenger.of(context);
-                  try {
-                    await BlocProvider.of<TostiShiftCubit>(
-                      context,
-                    ).order(shift.id, product);
-                  } on ApiException catch (_) {
-                    messenger.showSnackBar(
-                      const SnackBar(
-                        behavior: SnackBarBehavior.floating,
-                        content: Text('Could not place your order.'),
-                      ),
-                    );
-                  }
-                },
-                child: Text('${product.name} (€${product.currentPrice})'),
-              ),
-            );
-          }
-        }).toList();
+      if (tooltip != null) {
+        return Padding(
+          key: ValueKey(product.id),
+          padding: const EdgeInsets.only(left: 16),
+          child: Tooltip(
+            message: tooltip,
+            child: ElevatedButton(
+              onPressed: null,
+              child: Text('${product.name} (€${product.currentPrice})'),
+            ),
+          ),
+        );
+      } else {
+        return Padding(
+          key: ValueKey(product.id),
+          padding: const EdgeInsets.only(left: 16),
+          child: ElevatedButton(
+            onPressed: () async {
+              final messenger = ScaffoldMessenger.of(context);
+              try {
+                await BlocProvider.of<TostiShiftCubit>(
+                  context,
+                ).order(shift.id, product);
+              } on ApiException catch (_) {
+                messenger.showSnackBar(
+                  const SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    content: Text('Could not place your order.'),
+                  ),
+                );
+              }
+            },
+            child: Text('${product.name} (€${product.currentPrice})'),
+          ),
+        );
+      }
+    }).toList();
 
     return Row(children: buttons + [const SizedBox(width: 16)]);
   }
@@ -298,14 +297,13 @@ class _OrderTile extends StatelessWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
-      subtitle:
-          order.user != null
-              ? Text(
-                order.user!.displayName,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              )
-              : null,
+      subtitle: order.user != null
+          ? Text(
+              order.user!.displayName,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            )
+          : null,
       leading: Text('${index + 1}.'),
       minLeadingWidth: 24,
       trailing: Row(

@@ -51,12 +51,11 @@ class GroupScreen extends StatelessWidget {
     return BlocProvider<GroupCubit>(
       create: _selectCubit,
       child: BlocBuilder<GroupCubit, GroupState>(
-        builder:
-            (context, state) => _Page(
-              state: state,
-              cubit: BlocProvider.of<GroupCubit>(context),
-              listGroup: group,
-            ),
+        builder: (context, state) => _Page(
+          state: state,
+          cubit: BlocProvider.of<GroupCubit>(context),
+          listGroup: group,
+        ),
       ),
     );
   }
@@ -240,15 +239,12 @@ class _GroupInfo extends StatelessWidget {
                         SelectableText.rich(
                           TextSpan(
                             text: group.contactAddress,
-                            recognizer:
-                                TapGestureRecognizer()
-                                  ..onTap = () {
-                                    launchUrl(
-                                      Uri.parse(
-                                        'mailto:${group.contactAddress}',
-                                      ),
-                                    );
-                                  },
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                launchUrl(
+                                  Uri.parse('mailto:${group.contactAddress}'),
+                                );
+                              },
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                             ),

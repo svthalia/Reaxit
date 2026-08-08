@@ -29,8 +29,9 @@ enum Environment {
   production,
   local;
 
-  static const defaultEnvironment =
-      Config.production != null ? Environment.production : Environment.staging;
+  static const defaultEnvironment = Config.production != null
+      ? Environment.production
+      : Environment.staging;
 }
 
 class AuthState extends Equatable {
@@ -146,11 +147,10 @@ class AuthCubit extends Cubit<AuthState> {
                 );
               },
               httpClient: SentryHttpClient(
-                client:
-                    Platform.isIOS
-                        ? CupertinoClient.defaultSessionConfiguration()
-                            as http.Client
-                        : http.Client(),
+                client: Platform.isIOS
+                    ? CupertinoClient.defaultSessionConfiguration()
+                          as http.Client
+                    : http.Client(),
                 failedRequestStatusCodes: [
                   SentryStatusCode(400),
                   SentryStatusCode.range(405, 499),

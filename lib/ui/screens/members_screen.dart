@@ -169,11 +169,10 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   _SliverAppBarDelegate(this.currentYear, this.setYear);
 
   final double height = 50;
-  final List<int> list =
-      List.generate(
-        DateTime.now().year - 2014 + 1,
-        (i) => 2014 + i,
-      ).reversed.toList();
+  final List<int> list = List.generate(
+    DateTime.now().year - 2014 + 1,
+    (i) => 2014 + i,
+  ).reversed.toList();
 
   @override
   double get minExtent => height;

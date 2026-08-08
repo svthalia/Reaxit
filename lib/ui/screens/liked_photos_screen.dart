@@ -84,9 +84,8 @@ class _PhotoGridScrollView extends StatelessWidget {
         return BlocProvider.value(
           value: cubit,
           child: BlocBuilder<LikedPhotosCubit, LikedPhotosState>(
-            buildWhen:
-                (previous, current) =>
-                    !current.isLoading && !current.isLoadingMore,
+            buildWhen: (previous, current) =>
+                !current.isLoading && !current.isLoadingMore,
             builder: (context, state) {
               return Gallery<LikedPhotosCubit>(
                 photos: state.results,

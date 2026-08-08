@@ -96,14 +96,11 @@ class VacanciesScrollView extends StatelessWidget {
               physics: const RangeMaintainingScrollPhysics(
                 parent: AlwaysScrollableScrollPhysics(),
               ),
-              slivers:
-                  vacancies
-                      .map(
-                        (v) => SliverToBoxAdapter(
-                          child: VacancieCard(vacancie: v),
-                        ),
-                      )
-                      .toList(),
+              slivers: vacancies
+                  .map(
+                    (v) => SliverToBoxAdapter(child: VacancieCard(vacancie: v)),
+                  )
+                  .toList(),
             ),
           ),
         ],

@@ -60,8 +60,8 @@ class TostiScreen extends StatelessWidget {
             return RepositoryProvider.value(
               value: state.apiRepository,
               child: BlocProvider(
-                create:
-                    (context) => TostiHomeCubit(state.apiRepository)..load(),
+                create: (context) =>
+                    TostiHomeCubit(state.apiRepository)..load(),
                 child: const _SignedInTostiHomeView(),
               ),
             );
@@ -86,9 +86,8 @@ class TostiScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                   Center(
                     child: ElevatedButton(
-                      onPressed:
-                          () =>
-                              BlocProvider.of<TostiAuthCubit>(context).logIn(),
+                      onPressed: () =>
+                          BlocProvider.of<TostiAuthCubit>(context).logIn(),
                       child: const Text('LOGIN'),
                     ),
                   ),

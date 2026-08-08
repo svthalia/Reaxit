@@ -130,69 +130,74 @@ ThemeData lightTheme = lightBaseTheme.copyWith(
   dividerTheme: dividerTheme,
 );
 
-ThemeData darkTheme = ThemeData.from(
-  colorScheme: darkColorScheme,
-  textTheme: generatedTextTheme,
-).copyWith(
-  // applyElevationOverlayColor: false,
-  // TODO: Make text less white.
-  primaryTextTheme: ThemeData.dark().primaryTextTheme.merge(generatedTextTheme),
-  elevatedButtonTheme: ElevatedButtonThemeData(style: darkElevatedButtonStyle),
-  dividerColor: Colors.white60,
-  checkboxTheme: CheckboxThemeData(
-    fillColor: WidgetStateProperty.resolveWith<Color?>((
-      Set<WidgetState> states,
-    ) {
-      if (states.contains(WidgetState.disabled)) {
-        return null;
-      }
-      if (states.contains(WidgetState.selected)) {
-        return darkColorScheme.primary;
-      }
-      return null;
-    }),
-  ),
-  floatingActionButtonTheme: FloatingActionButtonThemeData(
-    extendedTextStyle: generatedTextTheme.labelLarge,
-  ),
-  radioTheme: RadioThemeData(
-    fillColor: WidgetStateProperty.resolveWith<Color?>((
-      Set<WidgetState> states,
-    ) {
-      if (states.contains(WidgetState.disabled)) {
-        return null;
-      }
-      if (states.contains(WidgetState.selected)) {
-        return darkColorScheme.primary;
-      }
-      return null;
-    }),
-  ),
-  switchTheme: SwitchThemeData(
-    thumbColor: WidgetStateProperty.resolveWith<Color?>((
-      Set<WidgetState> states,
-    ) {
-      if (states.contains(WidgetState.disabled)) {
-        return null;
-      }
-      if (states.contains(WidgetState.selected)) {
-        return darkColorScheme.primary;
-      }
-      return null;
-    }),
-    trackColor: WidgetStateProperty.resolveWith<Color?>((
-      Set<WidgetState> states,
-    ) {
-      if (states.contains(WidgetState.disabled)) {
-        return null;
-      }
-      if (states.contains(WidgetState.selected)) {
-        return darkColorScheme.primary.withValues(alpha: 0.2);
-      }
-      return null;
-    }),
-    trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
-  ),
-  dividerTheme: dividerTheme,
-  dialogTheme: DialogThemeData(backgroundColor: darkColorScheme.surface),
-);
+ThemeData darkTheme =
+    ThemeData.from(
+      colorScheme: darkColorScheme,
+      textTheme: generatedTextTheme,
+    ).copyWith(
+      // applyElevationOverlayColor: false,
+      // TODO: Make text less white.
+      primaryTextTheme: ThemeData.dark().primaryTextTheme.merge(
+        generatedTextTheme,
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: darkElevatedButtonStyle,
+      ),
+      dividerColor: Colors.white60,
+      checkboxTheme: CheckboxThemeData(
+        fillColor: WidgetStateProperty.resolveWith<Color?>((
+          Set<WidgetState> states,
+        ) {
+          if (states.contains(WidgetState.disabled)) {
+            return null;
+          }
+          if (states.contains(WidgetState.selected)) {
+            return darkColorScheme.primary;
+          }
+          return null;
+        }),
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        extendedTextStyle: generatedTextTheme.labelLarge,
+      ),
+      radioTheme: RadioThemeData(
+        fillColor: WidgetStateProperty.resolveWith<Color?>((
+          Set<WidgetState> states,
+        ) {
+          if (states.contains(WidgetState.disabled)) {
+            return null;
+          }
+          if (states.contains(WidgetState.selected)) {
+            return darkColorScheme.primary;
+          }
+          return null;
+        }),
+      ),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith<Color?>((
+          Set<WidgetState> states,
+        ) {
+          if (states.contains(WidgetState.disabled)) {
+            return null;
+          }
+          if (states.contains(WidgetState.selected)) {
+            return darkColorScheme.primary;
+          }
+          return null;
+        }),
+        trackColor: WidgetStateProperty.resolveWith<Color?>((
+          Set<WidgetState> states,
+        ) {
+          if (states.contains(WidgetState.disabled)) {
+            return null;
+          }
+          if (states.contains(WidgetState.selected)) {
+            return darkColorScheme.primary.withValues(alpha: 0.2);
+          }
+          return null;
+        }),
+        trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
+      ),
+      dividerTheme: dividerTheme,
+      dialogTheme: DialogThemeData(backgroundColor: darkColorScheme.surface),
+    );

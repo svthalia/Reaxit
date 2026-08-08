@@ -23,10 +23,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     return AnimatedSize(
       curve: Curves.ease,
       duration: const Duration(milliseconds: 300),
-      child:
-          announcements.isNotEmpty
-              ? Announcements(announcements)
-              : const SizedBox.shrink(),
+      child: announcements.isNotEmpty
+          ? Announcements(announcements)
+          : const SizedBox.shrink(),
     );
   }
 
@@ -34,8 +33,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     return AnimatedSize(
       curve: Curves.ease,
       duration: const Duration(milliseconds: 300),
-      child:
-          slides.isNotEmpty ? SlidesCarousel(slides) : const SizedBox.shrink(),
+      child: slides.isNotEmpty
+          ? SlidesCarousel(slides)
+          : const SizedBox.shrink(),
     );
   }
 
@@ -81,22 +81,21 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     return AnimatedSize(
       curve: Curves.ease,
       duration: const Duration(milliseconds: 300),
-      child:
-          articles.isNotEmpty
-              ? Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _makeArticle(articles.first),
-                    for (final article in articles.skip(1)) ...[
-                      const Divider(height: 8),
-                      _makeArticle(article),
-                    ],
+      child: articles.isNotEmpty
+          ? Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _makeArticle(articles.first),
+                  for (final article in articles.skip(1)) ...[
+                    const Divider(height: 8),
+                    _makeArticle(article),
                   ],
-                ),
-              )
-              : const SizedBox.shrink(),
+                ],
+              ),
+            )
+          : const SizedBox.shrink(),
     );
   }
 
@@ -170,24 +169,22 @@ class _SlidesCarouselState extends State<SlidesCarousel> {
             viewportFraction: 1,
             autoPlay: true,
             autoPlayInterval: const Duration(seconds: 6),
-            onPageChanged:
-                (index, _) => setState(() {
-                  _current = index;
-                }),
+            onPageChanged: (index, _) => setState(() {
+              _current = index;
+            }),
           ),
           itemCount: widget.slides.length,
           itemBuilder: (context, index, _) {
             final slide = widget.slides[index];
             return InkWell(
-              onTap:
-                  slide.url != null
-                      ? () async {
-                        await launchUrl(
-                          slide.url!,
-                          mode: LaunchMode.externalApplication,
-                        );
-                      }
-                      : null,
+              onTap: slide.url != null
+                  ? () async {
+                      await launchUrl(
+                        slide.url!,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    }
+                  : null,
               child: CachedImage(
                 imageUrl: slide.content.full,
                 placeholder: 'assets/img/slide_placeholder.png',
@@ -377,9 +374,8 @@ class _AnnouncementState extends State<Announcements> {
           ),
           if (announcement.closeable)
             CloseButton(
-              onPressed:
-                  () =>
-                      setState(() => widget.announcements.remove(announcement)),
+              onPressed: () =>
+                  setState(() => widget.announcements.remove(announcement)),
             ),
         ],
       ),

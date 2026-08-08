@@ -86,16 +86,15 @@ Future<void> testingMain(AuthCubit? authCubit, String? initialroute) async {
     BlocProvider(
       create: (_) => ThemeCubit()..load(),
       lazy: false,
-      child:
-          authCubit == null
-              ? BlocProvider(
-                create: (context) => AuthCubit()..load(),
-                child: ThaliApp(initialRoute: initialroute),
-              )
-              : BlocProvider.value(
-                value: authCubit..load(),
-                child: ThaliApp(initialRoute: initialroute),
-              ),
+      child: authCubit == null
+          ? BlocProvider(
+              create: (context) => AuthCubit()..load(),
+              child: ThaliApp(initialRoute: initialroute),
+            )
+          : BlocProvider.value(
+              value: authCubit..load(),
+              child: ThaliApp(initialRoute: initialroute),
+            ),
     ),
   );
 }
@@ -313,50 +312,46 @@ class _ThaliAppState extends State<ThaliApp> {
                         child: MultiBlocProvider(
                           providers: [
                             BlocProvider(
-                              create:
-                                  (_) =>
-                                      PaymentUserCubit(apiRepository)..load(),
+                              create: (_) =>
+                                  PaymentUserCubit(apiRepository)..load(),
                               lazy: false,
                             ),
                             BlocProvider(
-                              create:
-                                  (_) => FullMemberCubit(apiRepository)..load(),
+                              create: (_) =>
+                                  FullMemberCubit(apiRepository)..load(),
                               lazy: false,
                             ),
                             BlocProvider(
-                              create:
-                                  (_) => WelcomeCubit(apiRepository)..load(),
+                              create: (_) =>
+                                  WelcomeCubit(apiRepository)..load(),
                               lazy: false,
                             ),
                             BlocProvider(
-                              create:
-                                  (_) =>
-                                      CalendarCubit(apiRepository)
-                                        ..cachedLoad(),
+                              create: (_) =>
+                                  CalendarCubit(apiRepository)..cachedLoad(),
                               lazy: false,
                             ),
                             BlocProvider(
-                              create:
-                                  (_) =>
-                                      ThabloidListCubit(apiRepository)
-                                        ..cachedLoad(),
+                              create: (_) =>
+                                  ThabloidListCubit(apiRepository)
+                                    ..cachedLoad(),
                               lazy: false,
                             ),
                             BlocProvider(
-                              create:
-                                  (_) => MemberListCubit(apiRepository)..load(),
+                              create: (_) =>
+                                  MemberListCubit(apiRepository)..load(),
                               lazy: false,
                             ),
                             BlocProvider(
-                              create:
-                                  (_) => AlbumListCubit(apiRepository)..load(),
+                              create: (_) =>
+                                  AlbumListCubit(apiRepository)..load(),
                               lazy: false,
                             ),
                             BlocProvider(
                               // The SettingsCubit must not be lazy, since
                               // it handles setting up push notifications.
-                              create:
-                                  (_) => SettingsCubit(apiRepository)..load(),
+                              create: (_) =>
+                                  SettingsCubit(apiRepository)..load(),
                               lazy: false,
                             ),
                             BlocProvider(
@@ -368,19 +363,18 @@ class _ThaliAppState extends State<ThaliApp> {
                               lazy: true,
                             ),
                             BlocProvider(
-                              create:
-                                  (_) => CommitteesCubit(apiRepository)..load(),
+                              create: (_) =>
+                                  CommitteesCubit(apiRepository)..load(),
                               lazy: true,
                             ),
                             BlocProvider(
-                              create:
-                                  (_) => SocietiesCubit(apiRepository)..load(),
+                              create: (_) =>
+                                  SocietiesCubit(apiRepository)..load(),
                               lazy: true,
                             ),
                             BlocProvider(
-                              create:
-                                  (_) =>
-                                      VacanciesListCubit(apiRepository)..load(),
+                              create: (_) =>
+                                  VacanciesListCubit(apiRepository)..load(),
                               lazy: true,
                             ),
                           ],

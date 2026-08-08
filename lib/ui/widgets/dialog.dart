@@ -15,14 +15,14 @@ Future<bool> showConfirmationDialog(
         content: Text(text, style: Theme.of(context).textTheme.bodyMedium),
         actions: [
           TextButton.icon(
-            onPressed:
-                () => Navigator.of(context, rootNavigator: true).pop(false),
+            onPressed: () =>
+                Navigator.of(context, rootNavigator: true).pop(false),
             icon: const Icon(Icons.clear),
             label: Text(falselabel),
           ),
           ElevatedButton.icon(
-            onPressed:
-                () => Navigator.of(context, rootNavigator: true).pop(true),
+            onPressed: () =>
+                Navigator.of(context, rootNavigator: true).pop(true),
             icon: const Icon(Icons.check),
             label: Text(truelabel),
           ),

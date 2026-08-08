@@ -15,10 +15,9 @@ class FileButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
       onPressed: () async {
-        var file =
-            (await ThaliaCacheManager().getFileFromCache(
-              '${url.origin}${url.path}',
-            ))?.file;
+        var file = (await ThaliaCacheManager().getFileFromCache(
+          '${url.origin}${url.path}',
+        ))?.file;
 
         if (file == null) {
           var newFile = await ThaliaCacheManager().downloadFile(

@@ -131,11 +131,10 @@ class _PhotoGrid extends StatelessWidget {
         itemCount: photos.length,
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(8),
-        itemBuilder:
-            (context, index) => PhotoTile(
-              photo: photos[index],
-              openGallery: () => _openGallery(context, index),
-            ),
+        itemBuilder: (context, index) => PhotoTile(
+          photo: photos[index],
+          openGallery: () => _openGallery(context, index),
+        ),
       ),
     );
   }

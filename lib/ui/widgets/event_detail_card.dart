@@ -28,8 +28,9 @@ class EventDetailCard extends StatelessWidget {
 
   EventDetailCard({required this.event})
     : _textColor = event is PartnerEvent ? Colors.white : null,
-      _indicatorColor =
-          event is Event ? _getIndicatorColor(event) : Colors.transparent,
+      _indicatorColor = event is Event
+          ? _getIndicatorColor(event)
+          : Colors.transparent,
       _hasFoodEvent = event is Event ? event.hasFoodEvent : false;
 
   void _onTap(BuildContext context) {
