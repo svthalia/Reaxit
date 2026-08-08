@@ -27,6 +27,8 @@ jobs:
       - name: Flutter version
         run: flutter --version
 
+      - name: Dart 1
+        run: dart format --version
       - name: Dart format
         run: dart format --set-exit-if-changed -o show .
 
