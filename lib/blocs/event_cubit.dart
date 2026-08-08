@@ -117,10 +117,9 @@ class EventCubit extends Cubit<EventState> {
     emit(state.copyWith(isLoading: true));
 
     try {
-      Event event =
-          _eventPk == null
-              ? await api.getEventBySlug(slug: _eventSlug!)
-              : await api.getEventByPk(pk: _eventPk!);
+      Event event = _eventPk == null
+          ? await api.getEventBySlug(slug: _eventSlug!)
+          : await api.getEventByPk(pk: _eventPk!);
 
       _eventPk = event.pk;
 

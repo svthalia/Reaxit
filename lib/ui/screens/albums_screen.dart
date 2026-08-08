@@ -71,7 +71,7 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
         child: BlocBuilder<AlbumListCubit, AlbumListState>(
           builder: (context, listState) {
             if (listState.hasException) {
-              return ErrorScrollView(listState.message!);
+              return ErrorScrollView(listState.message!, retry: _cubit.load);
             } else {
               return AlbumListScrollView(
                 key: const PageStorageKey('albums'),
@@ -148,7 +148,10 @@ class AlbumsSearchDelegate extends SearchDelegate {
       bloc: _cubit..search(query),
       builder: (context, listState) {
         if (listState.hasException) {
-          return ErrorScrollView(listState.message!);
+          return ErrorScrollView(
+            listState.message!,
+            retry: () => _cubit.search(query),
+          );
         } else {
           return AlbumListScrollView(
             key: const PageStorageKey('albums-search'),
@@ -166,7 +169,10 @@ class AlbumsSearchDelegate extends SearchDelegate {
       bloc: _cubit..search(query),
       builder: (context, listState) {
         if (listState.hasException) {
-          return ErrorScrollView(listState.message!);
+          return ErrorScrollView(
+            listState.message!,
+            retry: () => _cubit.search(query),
+          );
         } else {
           return AlbumListScrollView(
             key: const PageStorageKey('albums-search'),

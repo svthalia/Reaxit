@@ -23,9 +23,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthCubit, AuthState>(
-      buildWhen:
-          (previous, current) =>
-              current is LoggedOutAuthState || current is LoadingAuthState,
+      buildWhen: (previous, current) =>
+          current is LoggedOutAuthState || current is LoadingAuthState,
       builder: (context, authState) {
         if (authState is LoggedOutAuthState) {
           return Scaffold(
@@ -115,10 +114,9 @@ class SelectEnvironmentDialog extends StatelessWidget {
       content: BlocBuilder<AuthCubit, AuthState>(
         buildWhen: (previous, current) => current is LoggedOutAuthState,
         builder: (context, state) {
-          final selectedEnvironment =
-              state is LoggedOutAuthState
-                  ? state.selectedEnvironment
-                  : Environment.defaultEnvironment;
+          final selectedEnvironment = state is LoggedOutAuthState
+              ? state.selectedEnvironment
+              : Environment.defaultEnvironment;
           return RadioGroup(
             groupValue: selectedEnvironment,
             onChanged: (environment) {

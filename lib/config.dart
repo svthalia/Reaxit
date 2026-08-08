@@ -142,36 +142,36 @@ class Config {
 
   static const Config? production =
       (bool.hasEnvironment('THALIA_OAUTH_APP_SECRET') &&
-              bool.hasEnvironment('THALIA_OAUTH_APP_ID'))
-          ? Config(
-            host: 'thalia.nu',
-            secret: String.fromEnvironment('THALIA_OAUTH_APP_SECRET'),
-            identifier: String.fromEnvironment('THALIA_OAUTH_APP_ID'),
-            scheme: 'https',
-            port: 443,
-          )
-          : null;
+          bool.hasEnvironment('THALIA_OAUTH_APP_ID'))
+      ? Config(
+          host: 'thalia.nu',
+          secret: String.fromEnvironment('THALIA_OAUTH_APP_SECRET'),
+          identifier: String.fromEnvironment('THALIA_OAUTH_APP_ID'),
+          scheme: 'https',
+          port: 443,
+        )
+      : null;
 
   static const Config? local =
       (bool.hasEnvironment('LOCAL_THALIA_OAUTH_APP_SECRET') &&
-              bool.hasEnvironment('LOCAL_THALIA_OAUTH_APP_ID'))
-          ? Config(
-            host: String.fromEnvironment(
-              'LOCAL_THALIA_API_HOST',
-              defaultValue: '127.0.0.1',
-            ),
-            secret: String.fromEnvironment('LOCAL_THALIA_OAUTH_APP_SECRET'),
-            identifier: String.fromEnvironment('LOCAL_THALIA_OAUTH_APP_ID'),
-            scheme: String.fromEnvironment(
-              'LOCAL_THALIA_API_SCHEME',
-              defaultValue: 'http',
-            ),
-            port: int.fromEnvironment(
-              'LOCAL_THALIA_API_PORT',
-              defaultValue: 8000,
-            ),
-          )
-          : null;
+          bool.hasEnvironment('LOCAL_THALIA_OAUTH_APP_ID'))
+      ? Config(
+          host: String.fromEnvironment(
+            'LOCAL_THALIA_API_HOST',
+            defaultValue: '127.0.0.1',
+          ),
+          secret: String.fromEnvironment('LOCAL_THALIA_OAUTH_APP_SECRET'),
+          identifier: String.fromEnvironment('LOCAL_THALIA_OAUTH_APP_ID'),
+          scheme: String.fromEnvironment(
+            'LOCAL_THALIA_API_SCHEME',
+            defaultValue: 'http',
+          ),
+          port: int.fromEnvironment(
+            'LOCAL_THALIA_API_PORT',
+            defaultValue: 8000,
+          ),
+        )
+      : null;
 
   static Config of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<InheritedConfig>()!.config;

@@ -136,14 +136,13 @@ class _SelforderScreenState extends State<SelforderScreen> {
                           const Divider(),
                           Card(
                             child: Column(
-                              children:
-                                  ListTile.divideTiles(
-                                    context: context,
-                                    tiles: [
-                                      for (final product in shift.products)
-                                        _ProductTile(product),
-                                    ],
-                                  ).toList(),
+                              children: ListTile.divideTiles(
+                                context: context,
+                                tiles: [
+                                  for (final product in shift.products)
+                                    _ProductTile(product),
+                                ],
+                              ).toList(),
                             ),
                           ),
                         ],
@@ -389,15 +388,14 @@ class CurrentOrderInfo extends StatelessWidget {
           return ScaleTransition(scale: animation, child: child);
         },
         child: BlocBuilder<SalesOrderCubit, SalesOrderState>(
-          builder:
-              (context, state) => Card(
-                child: Column(
-                  children: [
-                    PayedCheckmark(state),
-                    PayedInfo(foodEvent, cancelOrder, _updateOrder, state),
-                  ],
-                ),
-              ),
+          builder: (context, state) => Card(
+            child: Column(
+              children: [
+                PayedCheckmark(state),
+                PayedInfo(foodEvent, cancelOrder, _updateOrder, state),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -417,10 +415,9 @@ class PayedCheckmark extends StatelessWidget {
       return Container();
     }
 
-    Widget icon =
-        isPaid
-            ? Icon(Icons.check_circle_outline, color: Colors.green.shade400)
-            : Icon(Icons.highlight_off, color: Colors.red.shade900);
+    Widget icon = isPaid
+        ? Icon(Icons.check_circle_outline, color: Colors.green.shade400)
+        : Icon(Icons.highlight_off, color: Colors.red.shade900);
     return AspectRatio(
       aspectRatio: 1,
       child: AnimatedContainer(
@@ -521,10 +518,9 @@ class PayedInfo extends StatelessWidget {
               transitionBuilder: (child, animation) {
                 return ScaleTransition(scale: animation, child: child);
               },
-              child:
-                  (canOrder && isPaid)
-                      ? const Divider()
-                      : const SizedBox.shrink(),
+              child: (canOrder && isPaid)
+                  ? const Divider()
+                  : const SizedBox.shrink(),
             ),
           ),
           AnimatedSize(

@@ -79,12 +79,12 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
 
   @override
   Widget build(BuildContext context) {
+    FoodAdminCubit cubit = FoodAdminCubit(
+      RepositoryProvider.of<ApiRepository>(context),
+      foodEventPk: widget.pk,
+    );
     return BlocProvider(
-      create:
-          (context) => FoodAdminCubit(
-            RepositoryProvider.of<ApiRepository>(context),
-            foodEventPk: widget.pk,
-          )..load(),
+      create: (context) => cubit..load(),
       child: Builder(
         builder: (context) {
           return Scaffold(
@@ -108,29 +108,25 @@ class _FoodAdminScreenState extends State<FoodAdminScreen> {
               ],
             ),
             body: RefreshIndicator(
-              onRefresh: () async {
-                await BlocProvider.of<FoodAdminCubit>(context).load();
-              },
+              onRefresh: cubit.load,
               child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
                 builder: (context, state) {
                   switch (state) {
                     case ErrorState(message: var message):
-                      return ErrorScrollView(message);
+                      return ErrorScrollView(message, retry: cubit.load);
                     case LoadingState _:
                       return const Center(child: CircularProgressIndicator());
                     case ResultState<List<AdminFoodOrder>>(result: var result):
-                      List<AdminFoodOrder> filtered =
-                          result
-                              .where(_filter.passes)
-                              .sorted(_sortOrder.compare)
-                              .toList();
+                      List<AdminFoodOrder> filtered = result
+                          .where(_filter.passes)
+                          .sorted(_sortOrder.compare)
+                          .toList();
 
                       return Scrollbar(
                         child: ListView.separated(
                           key: const PageStorageKey('food-admin'),
-                          itemBuilder:
-                              (context, index) =>
-                                  _OrderTile(order: filtered[index]),
+                          itemBuilder: (context, index) =>
+                              _OrderTile(order: filtered[index]),
                           separatorBuilder: (_, _) => const Divider(),
                           itemCount: filtered.length,
                         ),
@@ -275,8 +271,8 @@ class FoodAdminSearchDelegate extends SearchDelegate {
             case (ResultState<List<AdminFoodOrder>> rstate):
               return ListView.separated(
                 key: const PageStorageKey('food-admin-search'),
-                itemBuilder:
-                    (context, index) => _OrderTile(order: rstate.result[index]),
+                itemBuilder: (context, index) =>
+                    _OrderTile(order: rstate.result[index]),
                 separatorBuilder: (_, _) => const Divider(),
                 itemCount: rstate.result.length,
               );
@@ -291,18 +287,19 @@ class FoodAdminSearchDelegate extends SearchDelegate {
     return BlocProvider.value(
       value: _adminCubit..search(query),
       child: BlocBuilder<FoodAdminCubit, FoodAdminState>(
-        builder:
-            (context, state) => switch (state) {
-              ErrorState(message: var message) => ErrorScrollView(message),
-              LoadingState _ => const SizedBox.shrink(),
-              ResultState(result: var result) => ListView.separated(
-                key: const PageStorageKey('food-admin-search'),
-                itemBuilder:
-                    (context, index) => _OrderTile(order: result[index]),
-                separatorBuilder: (_, _) => const Divider(),
-                itemCount: result.length,
-              ),
-            },
+        builder: (context, state) => switch (state) {
+          ErrorState(message: var message) => ErrorScrollView(
+            message,
+            retry: () => _adminCubit.search(query),
+          ),
+          LoadingState _ => const SizedBox.shrink(),
+          ResultState(result: var result) => ListView.separated(
+            key: const PageStorageKey('food-admin-search'),
+            itemBuilder: (context, index) => _OrderTile(order: result[index]),
+            separatorBuilder: (_, _) => const Divider(),
+            itemCount: result.length,
+          ),
+        },
       ),
     );
   }

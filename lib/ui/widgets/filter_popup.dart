@@ -64,25 +64,23 @@ class _FilterWidgetState extends State<FilterWidget> {
     List<FilterType> types = filter.getFilters();
     return SingleChildScrollView(
       child: ListBody(
-        children:
-            types
-                .whereNot((element) => element.hidden)
-                .map(
-                  (type) => [Text(type.title), const Divider()].followedBy(
-                    type.items.map(
-                      // ignore: unnecessary_cast
-                      (item) => CheckboxListTile(
-                        value: item.value,
-                        title: Text(item.title),
-                        controlAffinity: ListTileControlAffinity.leading,
-                        onChanged:
-                            (isSet) => setState(() => item.onChanged(isSet)),
-                      ),
-                    ),
+        children: types
+            .whereNot((element) => element.hidden)
+            .map(
+              (type) => [Text(type.title), const Divider()].followedBy(
+                type.items.map(
+                  // ignore: unnecessary_cast
+                  (item) => CheckboxListTile(
+                    value: item.value,
+                    title: Text(item.title),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    onChanged: (isSet) => setState(() => item.onChanged(isSet)),
                   ),
-                )
-                .flattened
-                .toList(),
+                ),
+              ),
+            )
+            .flattened
+            .toList(),
       ),
     );
   }
@@ -136,16 +134,15 @@ class MapFilter<K, E> implements Filter<E> {
     return [
       FilterType(
         title: title,
-        items:
-            map.keys
-                .map(
-                  (item) => FilterItem(
-                    title: asString(item),
-                    value: map[item]!,
-                    onChanged: (isChecked) => map[item] = isChecked!,
-                  ),
-                )
-                .toList(),
+        items: map.keys
+            .map(
+              (item) => FilterItem(
+                title: asString(item),
+                value: map[item]!,
+                onChanged: (isChecked) => map[item] = isChecked!,
+              ),
+            )
+            .toList(),
         hidden: disabled,
       ),
     ];

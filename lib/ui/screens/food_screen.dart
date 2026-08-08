@@ -58,69 +58,62 @@ class _FoodScreenState extends State<FoodScreen> {
             curve: Curves.ease,
           );
         },
-        builder:
-            (context, state) => switch (state) {
-              ErrorFoodState(message: var message) => Scaffold(
-                appBar: ThaliaAppBar(title: const Text('ORDER FOOD')),
-                body: RefreshIndicator(
-                  onRefresh: () => _foodCubit.load(),
-                  child: ErrorScrollView(message),
+        builder: (context, state) => switch (state) {
+          ErrorFoodState(message: var message) => Scaffold(
+            appBar: ThaliaAppBar(title: const Text('ORDER FOOD')),
+            body: RefreshIndicator(
+              onRefresh: () => _foodCubit.load(),
+              child: ErrorScrollView(message),
+            ),
+          ),
+          LoadingFoodState(oldState: null) => Scaffold(
+            appBar: ThaliaAppBar(title: const Text('ORDER FOOD')),
+            body: const Center(child: CircularProgressIndicator()),
+          ),
+          LoadedFoodState(foodEvent: var foodEvent, products: var products) ||
+          LoadingFoodState(
+            oldState: LoadedFoodState(
+              foodEvent: var foodEvent,
+              products: var products,
+            ),
+          ) => Scaffold(
+            appBar: ThaliaAppBar(
+              title: const Text('ORDER FOOD'),
+              collapsingActions: [
+                IconAppbarAction(
+                  'ADMIN',
+                  Icons.settings,
+                  () => context.pushNamed('food-admin', extra: foodEvent.pk),
+                  tooltip: 'food admin',
                 ),
-              ),
-              LoadingFoodState(oldState: null) => Scaffold(
-                appBar: ThaliaAppBar(title: const Text('ORDER FOOD')),
-                body: const Center(child: CircularProgressIndicator()),
-              ),
-              LoadedFoodState(
-                foodEvent: var foodEvent,
-                products: var products,
-              ) ||
-              LoadingFoodState(
-                oldState: LoadedFoodState(
-                  foodEvent: var foodEvent,
-                  products: var products,
-                ),
-              ) => Scaffold(
-                appBar: ThaliaAppBar(
-                  title: const Text('ORDER FOOD'),
-                  collapsingActions: [
-                    IconAppbarAction(
-                      'ADMIN',
-                      Icons.settings,
-                      () =>
-                          context.pushNamed('food-admin', extra: foodEvent.pk),
-                      tooltip: 'food admin',
+              ],
+            ),
+            body: RefreshIndicator(
+              onRefresh: () => _foodCubit.load(),
+              child: ListView(
+                key: const PageStorageKey('food'),
+                controller: _controller,
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(16),
+                children: [
+                  EventInfo(foodEvent),
+                  OrderInfo(foodEvent, _foodCubit),
+                  const Divider(),
+                  Card(
+                    child: Column(
+                      children: ListTile.divideTiles(
+                        context: context,
+                        tiles: [
+                          for (final product in products) _ProductTile(product),
+                        ],
+                      ).toList(),
                     ),
-                  ],
-                ),
-                body: RefreshIndicator(
-                  onRefresh: () => _foodCubit.load(),
-                  child: ListView(
-                    key: const PageStorageKey('food'),
-                    controller: _controller,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(16),
-                    children: [
-                      EventInfo(foodEvent),
-                      OrderInfo(foodEvent, _foodCubit),
-                      const Divider(),
-                      Card(
-                        child: Column(
-                          children:
-                              ListTile.divideTiles(
-                                context: context,
-                                tiles: [
-                                  for (final product in products)
-                                    _ProductTile(product),
-                                ],
-                              ).toList(),
-                        ),
-                      ),
-                    ],
                   ),
-                ),
+                ],
               ),
-            },
+            ),
+          ),
+        },
       ),
     );
   }
@@ -169,32 +162,29 @@ class __ProductTileState extends State<_ProductTile> {
           ),
         ],
       ),
-      subtitle:
-          widget.product.description.isNotEmpty
-              ? Text(widget.product.description)
-              : null,
+      subtitle: widget.product.description.isNotEmpty
+          ? Text(widget.product.description)
+          : null,
       trailing: BlocBuilder<FoodCubit, FoodState>(
-        builder:
-            (context, state) => switch (state) {
-              LoadedFoodState(foodEvent: var foodEvent, products: _) =>
-                ElevatedButton(
-                  onPressed:
-                      foodEvent.canOrder()
-                          ? () {
-                            if (foodEvent.hasOrder) {
-                              _changeOrder(foodEvent);
-                            } else {
-                              _placeOrder(foodEvent);
-                            }
-                          }
-                          : null,
-                  child: const Icon(Icons.shopping_bag),
-                ),
-              _ => const ElevatedButton(
-                onPressed: null,
-                child: Icon(Icons.shopping_bag),
-              ),
-            },
+        builder: (context, state) => switch (state) {
+          LoadedFoodState(foodEvent: var foodEvent, products: _) =>
+            ElevatedButton(
+              onPressed: foodEvent.canOrder()
+                  ? () {
+                      if (foodEvent.hasOrder) {
+                        _changeOrder(foodEvent);
+                      } else {
+                        _placeOrder(foodEvent);
+                      }
+                    }
+                  : null,
+              child: const Icon(Icons.shopping_bag),
+            ),
+          _ => const ElevatedButton(
+            onPressed: null,
+            child: Icon(Icons.shopping_bag),
+          ),
+        },
       ),
     );
   }
@@ -306,10 +296,9 @@ class PayedCheckmark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget icon =
-        order.isPaid
-            ? Icon(Icons.check_circle_outline, color: Colors.green.shade400)
-            : Icon(Icons.highlight_off, color: Colors.red.shade900);
+    Widget icon = order.isPaid
+        ? Icon(Icons.check_circle_outline, color: Colors.green.shade400)
+        : Icon(Icons.highlight_off, color: Colors.red.shade900);
     return AspectRatio(
       aspectRatio: 1,
       child: AnimatedContainer(

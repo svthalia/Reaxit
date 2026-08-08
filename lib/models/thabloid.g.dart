@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'thabliod.dart';
+part of 'thabloid.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

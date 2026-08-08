@@ -61,13 +61,12 @@ WidgetTesterCallback getTestMethod(
       },
     );
 
-    final streamController =
-        StreamController<AuthState>.broadcast()
-          ..stream.listen((state) {
-            when(authCubit.state).thenReturn(state);
-          })
-          ..add(LoadingAuthState())
-          ..add(LoggedInAuthState(apiRepository: api));
+    final streamController = StreamController<AuthState>.broadcast()
+      ..stream.listen((state) {
+        when(authCubit.state).thenReturn(state);
+      })
+      ..add(LoadingAuthState())
+      ..add(LoggedInAuthState(apiRepository: api));
 
     when(authCubit.load()).thenAnswer((_) => Future.value(null));
     when(authCubit.stream).thenAnswer((_) => streamController.stream);
@@ -140,13 +139,12 @@ void testAlbum(IntegrationTestWidgetsFlutterBinding binding) {
           },
         );
 
-        final streamController =
-            StreamController<AuthState>.broadcast()
-              ..stream.listen((state) {
-                when(authCubit.state).thenReturn(state);
-              })
-              ..add(LoadingAuthState())
-              ..add(LoggedInAuthState(apiRepository: api));
+        final streamController = StreamController<AuthState>.broadcast()
+          ..stream.listen((state) {
+            when(authCubit.state).thenReturn(state);
+          })
+          ..add(LoadingAuthState())
+          ..add(LoggedInAuthState(apiRepository: api));
 
         when(authCubit.load()).thenAnswer((_) => Future.value(null));
         when(authCubit.stream).thenAnswer((_) => streamController.stream);

@@ -128,26 +128,25 @@ class _TPayButtonState extends State<TPayButton> {
                   ),
                   TextSpan(
                     text: 'the website',
-                    recognizer:
-                        TapGestureRecognizer()
-                          ..onTap = () async {
-                            final messenger = ScaffoldMessenger.of(context);
-                            try {
-                              await launchUrl(
-                                url,
-                                mode: LaunchMode.externalApplication,
-                              );
-                            } catch (_) {
-                              messenger.showSnackBar(
-                                SnackBar(
-                                  behavior: SnackBarBehavior.floating,
-                                  content: Text(
-                                    'Could not open "${url.toString()}".',
-                                  ),
-                                ),
-                              );
-                            }
-                          },
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () async {
+                        final messenger = ScaffoldMessenger.of(context);
+                        try {
+                          await launchUrl(
+                            url,
+                            mode: LaunchMode.externalApplication,
+                          );
+                        } catch (_) {
+                          messenger.showSnackBar(
+                            SnackBar(
+                              behavior: SnackBarBehavior.floating,
+                              content: Text(
+                                'Could not open "${url.toString()}".',
+                              ),
+                            ),
+                          );
+                        }
+                      },
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                     ),

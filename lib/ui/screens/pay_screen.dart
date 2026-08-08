@@ -11,18 +11,19 @@ import '../../models/payment.dart';
 class PayScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    PaymentUserCubit cubit = BlocProvider.of<PaymentUserCubit>(context);
     return Scaffold(
       appBar: ThaliaAppBar(title: const Text('THALIA PAY')),
       drawer: MenuDrawer(),
       body: RefreshIndicator(
-        onRefresh: () => BlocProvider.of<PaymentUserCubit>(context).load(),
+        onRefresh: cubit.load,
         child: BlocBuilder<PaymentUserCubit, PaymentUserState>(
           builder: (context, state) {
             switch (state) {
               case LoadingState():
                 return const Center(child: CircularProgressIndicator());
               case ErrorState(message: final message):
-                return ErrorScrollView(message);
+                return ErrorScrollView(message, retry: cubit.load);
               case ResultState(result: final result):
                 return _Body(payments: result.payments);
             }

@@ -52,18 +52,17 @@ final List<RouteBase> routes = [
   GoRoute(
     path: '/',
     name: 'welcome',
-    pageBuilder:
-        (context, state) => CustomTransitionPage(
-          key: state.pageKey,
-          child: WelcomeScreen(),
-          transitionDuration: const Duration(milliseconds: 200),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
-              child: child,
-            );
-          },
-        ),
+    pageBuilder: (context, state) => CustomTransitionPage(
+      key: state.pageKey,
+      child: WelcomeScreen(),
+      transitionDuration: const Duration(milliseconds: 200),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
+          child: child,
+        );
+      },
+    ),
     routes: [
       GoRoute(
         path: 'sales/order/:pk/pay',
@@ -73,20 +72,16 @@ final List<RouteBase> routes = [
             barrierColor: Colors.black54,
             opaque: false,
             transitionDuration: const Duration(milliseconds: 150),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(
-                opacity: CurvedAnimation(
-                  parent: animation,
-                  curve: Curves.easeOut,
-                ),
-                child: child,
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(
+                    opacity: CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOut,
+                    ),
+                    child: child,
+                  );
+                },
             child: SalesOrderDialog(pk: state.pathParameters['pk']!),
           );
         },
@@ -96,18 +91,17 @@ final List<RouteBase> routes = [
   GoRoute(
     path: '/events',
     name: 'calendar',
-    pageBuilder:
-        (context, state) => CustomTransitionPage(
-          key: state.pageKey,
-          child: CalendarScreen(),
-          transitionDuration: const Duration(milliseconds: 200),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
-              child: child,
-            );
-          },
-        ),
+    pageBuilder: (context, state) => CustomTransitionPage(
+      key: state.pageKey,
+      child: CalendarScreen(),
+      transitionDuration: const Duration(milliseconds: 200),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
+          child: child,
+        );
+      },
+    ),
     routes: [
       GoRoute(
         path: ':eventPk',
@@ -140,20 +134,16 @@ final List<RouteBase> routes = [
                 barrierColor: Colors.black54,
                 opaque: false,
                 transitionDuration: const Duration(milliseconds: 150),
-                transitionsBuilder: (
-                  context,
-                  animation,
-                  secondaryAnimation,
-                  child,
-                ) {
-                  return FadeTransition(
-                    opacity: CurvedAnimation(
-                      parent: animation,
-                      curve: Curves.easeOut,
-                    ),
-                    child: child,
-                  );
-                },
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) {
+                      return FadeTransition(
+                        opacity: CurvedAnimation(
+                          parent: animation,
+                          curve: Curves.easeOut,
+                        ),
+                        child: child,
+                      );
+                    },
                 child: MarkPresentDialog(
                   pk: int.parse(state.pathParameters['eventPk']!),
                   token: state.pathParameters['token']!,
@@ -164,27 +154,25 @@ final List<RouteBase> routes = [
           GoRoute(
             path: 'admin',
             name: 'event-admin',
-            pageBuilder:
-                (context, state) => MaterialPage(
-                  key: state.pageKey,
-                  child: EventAdminScreen(
-                    pk: int.parse(state.pathParameters['eventPk']!),
-                  ),
-                ),
+            pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: EventAdminScreen(
+                pk: int.parse(state.pathParameters['eventPk']!),
+              ),
+            ),
           ),
           GoRoute(
             path: 'registration/:registrationPk',
             name: 'event-registration',
-            pageBuilder:
-                (context, state) => MaterialPage(
-                  key: state.pageKey,
-                  child: RegistrationScreen(
-                    eventPk: int.parse(state.pathParameters['eventPk']!),
-                    registrationPk: int.parse(
-                      state.pathParameters['registrationPk']!,
-                    ),
-                  ),
+            pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: RegistrationScreen(
+                eventPk: int.parse(state.pathParameters['eventPk']!),
+                registrationPk: int.parse(
+                  state.pathParameters['registrationPk']!,
                 ),
+              ),
+            ),
           ),
         ],
       ),
@@ -193,18 +181,17 @@ final List<RouteBase> routes = [
   GoRoute(
     path: '/thabloid/thabloids',
     name: 'thabloids',
-    pageBuilder:
-        (context, state) => CustomTransitionPage(
-          key: state.pageKey,
-          child: ThabloidScreen(),
-          transitionDuration: const Duration(milliseconds: 200),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
-              child: child,
-            );
-          },
-        ),
+    pageBuilder: (context, state) => CustomTransitionPage(
+      key: state.pageKey,
+      child: ThabloidScreen(),
+      transitionDuration: const Duration(milliseconds: 200),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
+          child: child,
+        );
+      },
+    ),
   ),
   GoRoute(
     path: '/members/photos/liked',
@@ -214,8 +201,8 @@ final List<RouteBase> routes = [
     // This redirect is above the members route because
     // the members path is a prefix of this albums path.
     path: '/members/photos/:albumSlug',
-    redirect:
-        (context, state) => '/albums/${state.pathParameters['albumSlug']}',
+    redirect: (context, state) =>
+        '/albums/${state.pathParameters['albumSlug']}',
   ),
   GoRoute(
     // This redirect is above the members route because
@@ -226,105 +213,94 @@ final List<RouteBase> routes = [
   GoRoute(
     path: '/members',
     name: 'members',
-    pageBuilder:
-        (context, state) => CustomTransitionPage(
-          key: state.pageKey,
-          child: MembersScreen(),
-          transitionDuration: const Duration(milliseconds: 200),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
-              child: child,
-            );
-          },
-        ),
+    pageBuilder: (context, state) => CustomTransitionPage(
+      key: state.pageKey,
+      child: MembersScreen(),
+      transitionDuration: const Duration(milliseconds: 200),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
+          child: child,
+        );
+      },
+    ),
     routes: [
       GoRoute(
         path: 'profile/:memberPk',
         name: 'member',
-        pageBuilder:
-            (context, state) => MaterialPage(
-              key: state.pageKey,
-              child: ProfileScreen(
-                pk: int.parse(state.pathParameters['memberPk']!),
-                member: state.extra as ListMember?,
-              ),
-            ),
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: ProfileScreen(
+            pk: int.parse(state.pathParameters['memberPk']!),
+            member: state.extra as ListMember?,
+          ),
+        ),
       ),
     ],
   ),
   GoRoute(
     path: '/albums',
     name: 'albums',
-    pageBuilder:
-        (context, state) => CustomTransitionPage(
-          key: state.pageKey,
-          child: AlbumsScreen(),
-          transitionDuration: const Duration(milliseconds: 200),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
-              child: child,
-            );
-          },
-        ),
+    pageBuilder: (context, state) => CustomTransitionPage(
+      key: state.pageKey,
+      child: AlbumsScreen(),
+      transitionDuration: const Duration(milliseconds: 200),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
+          child: child,
+        );
+      },
+    ),
     routes: [
       GoRoute(
         path: 'liked-photos',
         name: 'liked-photos',
-        pageBuilder:
-            (context, state) => MaterialPage(
-              key: state.pageKey,
-              child: const LikedPhotosScreen(),
-            ),
+        pageBuilder: (context, state) =>
+            MaterialPage(key: state.pageKey, child: const LikedPhotosScreen()),
       ),
       GoRoute(
         path: ':albumSlug',
         name: 'album',
-        pageBuilder:
-            (context, state) => MaterialPage(
-              key: state.pageKey,
-              child: AlbumScreen(
-                slug: state.pathParameters['albumSlug']!,
-                album: state.extra as ListAlbum?,
-              ),
-            ),
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: AlbumScreen(
+            slug: state.pathParameters['albumSlug']!,
+            album: state.extra as ListAlbum?,
+          ),
+        ),
       ),
     ],
   ),
   GoRoute(
     path: '/vacancies',
     name: 'vacancies',
-    pageBuilder:
-        (context, state) => CustomTransitionPage(
-          key: state.pageKey,
-          child: VacanciesScreen(),
-          transitionDuration: const Duration(milliseconds: 200),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
-              child: child,
-            );
-          },
-        ),
+    pageBuilder: (context, state) => CustomTransitionPage(
+      key: state.pageKey,
+      child: VacanciesScreen(),
+      transitionDuration: const Duration(milliseconds: 200),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
+          child: child,
+        );
+      },
+    ),
   ),
   GoRoute(
     path: '/association/committees/:groupSlug',
-    redirect:
-        (context, state) =>
-            '/groups/committees/${state.pathParameters['groupSlug']}',
+    redirect: (context, state) =>
+        '/groups/committees/${state.pathParameters['groupSlug']}',
   ),
   GoRoute(
     path: '/association/societies/:groupSlug',
-    redirect:
-        (context, state) =>
-            '/groups/societies/${state.pathParameters['groupSlug']}',
+    redirect: (context, state) =>
+        '/groups/societies/${state.pathParameters['groupSlug']}',
   ),
   GoRoute(
     path: '/association/boards/:groupSlug',
-    redirect:
-        (context, state) =>
-            '/groups/boards/${state.pathParameters['groupSlug']}',
+    redirect: (context, state) =>
+        '/groups/boards/${state.pathParameters['groupSlug']}',
   ),
   GoRoute(
     path: '/association/committees',
@@ -341,10 +317,24 @@ final List<RouteBase> routes = [
   GoRoute(
     path: '/groups',
     name: 'groups',
-    pageBuilder:
-        (context, state) => CustomTransitionPage(
+    pageBuilder: (context, state) => CustomTransitionPage(
+      key: state.pageKey,
+      child: const GroupsScreen(),
+      transitionDuration: const Duration(milliseconds: 200),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
+          child: child,
+        );
+      },
+    ),
+    routes: [
+      GoRoute(
+        path: 'committees',
+        name: 'committees',
+        pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: const GroupsScreen(),
+          child: const GroupsScreen(currentScreen: MemberGroupType.committee),
           transitionDuration: const Duration(milliseconds: 200),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(
@@ -353,139 +343,29 @@ final List<RouteBase> routes = [
             );
           },
         ),
-    routes: [
-      GoRoute(
-        path: 'committees',
-        name: 'committees',
-        pageBuilder:
-            (context, state) => CustomTransitionPage(
-              key: state.pageKey,
-              child: const GroupsScreen(
-                currentScreen: MemberGroupType.committee,
-              ),
-              transitionDuration: const Duration(milliseconds: 200),
-              transitionsBuilder: (
-                context,
-                animation,
-                secondaryAnimation,
-                child,
-              ) {
-                return FadeTransition(
-                  opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
-                  child: child,
-                );
-              },
-            ),
         routes: [
           GoRoute(
             path: ':groupPk',
             name: 'committee',
-            pageBuilder:
-                (context, state) => MaterialPage(
-                  key: state.pageKey,
-                  child: GroupScreen(
-                    pk: int.parse(state.pathParameters['groupPk']!),
-                    group: state.extra as ListGroup?,
-                  ),
-                ),
-          ),
-        ],
-      ),
-      GoRoute(
-        path: 'societies',
-        name: 'societies',
-        pageBuilder:
-            (context, state) => CustomTransitionPage(
-              key: state.pageKey,
-              child: GroupsScreen(
-                key: state.pageKey,
-                currentScreen: MemberGroupType.society,
-              ),
-              transitionDuration: const Duration(milliseconds: 200),
-              transitionsBuilder: (
-                context,
-                animation,
-                secondaryAnimation,
-                child,
-              ) {
-                return FadeTransition(
-                  opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
-                  child: child,
-                );
-              },
-            ),
-        routes: [
-          GoRoute(
-            path: ':groupPk',
-            name: 'society',
-            pageBuilder:
-                (context, state) => MaterialPage(
-                  key: state.pageKey,
-                  child: GroupScreen(
-                    pk: int.parse(state.pathParameters['groupPk']!),
-                    group: state.extra as ListGroup?,
-                  ),
-                ),
-          ),
-        ],
-      ),
-      GoRoute(
-        path: 'boards',
-        name: 'boards',
-        pageBuilder:
-            (context, state) => CustomTransitionPage(
-              key: state.pageKey,
-              child: const GroupsScreen(currentScreen: MemberGroupType.board),
-              transitionDuration: const Duration(milliseconds: 200),
-              transitionsBuilder: (
-                context,
-                animation,
-                secondaryAnimation,
-                child,
-              ) {
-                return FadeTransition(
-                  opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
-                  child: child,
-                );
-              },
-            ),
-        routes: [
-          GoRoute(
-            path: ':boardSlug',
-            name: 'boardBySlug',
-            pageBuilder:
-                (context, state) => MaterialPage(
-                  key: state.pageKey,
-                  child: GroupScreen.bySlug(
-                    groupType: MemberGroupType.board,
-                    slug: state.pathParameters['boardSlug']!,
-                    group: state.extra as ListGroup?,
-                  ),
-                ),
-          ),
-        ],
-      ),
-      GoRoute(
-        path: ':groupPk',
-        name: 'group',
-        pageBuilder:
-            (context, state) => MaterialPage(
+            pageBuilder: (context, state) => MaterialPage(
               key: state.pageKey,
               child: GroupScreen(
                 pk: int.parse(state.pathParameters['groupPk']!),
                 group: state.extra as ListGroup?,
               ),
             ),
+          ),
+        ],
       ),
-    ],
-  ),
-  GoRoute(
-    path: '/settings',
-    name: 'settings',
-    pageBuilder:
-        (context, state) => CustomTransitionPage(
+      GoRoute(
+        path: 'societies',
+        name: 'societies',
+        pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: SettingsScreen(),
+          child: GroupsScreen(
+            key: state.pageKey,
+            currentScreen: MemberGroupType.society,
+          ),
           transitionDuration: const Duration(milliseconds: 200),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(
@@ -494,6 +374,76 @@ final List<RouteBase> routes = [
             );
           },
         ),
+        routes: [
+          GoRoute(
+            path: ':groupPk',
+            name: 'society',
+            pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: GroupScreen(
+                pk: int.parse(state.pathParameters['groupPk']!),
+                group: state.extra as ListGroup?,
+              ),
+            ),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: 'boards',
+        name: 'boards',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const GroupsScreen(currentScreen: MemberGroupType.board),
+          transitionDuration: const Duration(milliseconds: 200),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
+              child: child,
+            );
+          },
+        ),
+        routes: [
+          GoRoute(
+            path: ':boardSlug',
+            name: 'boardBySlug',
+            pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: GroupScreen.bySlug(
+                groupType: MemberGroupType.board,
+                slug: state.pathParameters['boardSlug']!,
+                group: state.extra as ListGroup?,
+              ),
+            ),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: ':groupPk',
+        name: 'group',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: GroupScreen(
+            pk: int.parse(state.pathParameters['groupPk']!),
+            group: state.extra as ListGroup?,
+          ),
+        ),
+      ),
+    ],
+  ),
+  GoRoute(
+    path: '/settings',
+    name: 'settings',
+    pageBuilder: (context, state) => CustomTransitionPage(
+      key: state.pageKey,
+      child: SettingsScreen(),
+      transitionDuration: const Duration(milliseconds: 200),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation.drive(CurveTween(curve: Curves.easeIn)),
+          child: child,
+        );
+      },
+    ),
   ),
   GoRoute(
     path: '/pizzas',
@@ -511,11 +461,10 @@ final List<RouteBase> routes = [
       GoRoute(
         path: 'admin',
         name: 'food-admin',
-        pageBuilder:
-            (context, state) => MaterialPage(
-              key: state.pageKey,
-              child: FoodAdminScreen(pk: state.extra as int),
-            ),
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: FoodAdminScreen(pk: state.extra as int),
+        ),
       ),
     ],
   ),
@@ -532,28 +481,25 @@ final List<RouteBase> routes = [
       GoRoute(
         path: 'admin',
         name: 'sales-shift-admin',
-        pageBuilder:
-            (context, state) => MaterialPage(
-              key: state.pageKey,
-              child: SalesAdminScreen(pk: state.extra as int),
-            ),
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: SalesAdminScreen(pk: state.extra as int),
+        ),
       ),
     ],
   ),
   GoRoute(
     path: '/login',
     name: 'login',
-    pageBuilder:
-        (context, state) =>
-            MaterialPage(key: state.pageKey, child: const LoginScreen()),
+    pageBuilder: (context, state) =>
+        MaterialPage(key: state.pageKey, child: const LoginScreen()),
   ),
   if (config.tostiEnabled) // Otherwise, all T.O.S.T.I. stuff is removed.
     GoRoute(
       path: '/tosti',
       name: 'tosti',
-      pageBuilder:
-          (context, state) =>
-              MaterialPage(key: state.pageKey, child: const TostiScreen()),
+      pageBuilder: (context, state) =>
+          MaterialPage(key: state.pageKey, child: const TostiScreen()),
       routes: [
         GoRoute(
           path: 'shift/:shiftId',
@@ -564,34 +510,31 @@ final List<RouteBase> routes = [
             if (state.extra is! TostiApiRepository) return '/tosti';
             return null;
           },
-          pageBuilder:
-              (context, state) => MaterialPage(
-                key: state.pageKey,
-                child: TostiShiftScreen(
-                  id: int.parse(state.pathParameters['shiftId']!),
-                  api: state.extra as TostiApiRepository,
-                ),
-              ),
+          pageBuilder: (context, state) => MaterialPage(
+            key: state.pageKey,
+            child: TostiShiftScreen(
+              id: int.parse(state.pathParameters['shiftId']!),
+              api: state.extra as TostiApiRepository,
+            ),
+          ),
         ),
       ],
     ),
   GoRoute(
     path: '/pay',
     name: 'pay',
-    pageBuilder:
-        (context, state) =>
-            MaterialPage(key: state.pageKey, child: PayScreen()),
+    pageBuilder: (context, state) =>
+        MaterialPage(key: state.pageKey, child: PayScreen()),
   ),
   GoRoute(
     path: '/user/edit-profile',
     name: 'profile',
-    pageBuilder:
-        (context, state) => MaterialPage(
-          key: state.pageKey,
-          child: ProfileScreen(
-            pk: BlocProvider.of<FullMemberCubit>(context).state.result!.pk,
-            member: state.extra as ListMember?,
-          ),
-        ),
+    pageBuilder: (context, state) => MaterialPage(
+      key: state.pageKey,
+      child: ProfileScreen(
+        pk: BlocProvider.of<FullMemberCubit>(context).state.result!.pk,
+        member: state.extra as ListMember?,
+      ),
+    ),
   ),
 ];

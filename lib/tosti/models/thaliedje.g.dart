@@ -15,8 +15,8 @@ ThaliedjePlayer _$ThaliedjePlayerFromJson(Map<String, dynamic> json) =>
       json['track'] == null
           ? null
           : ThaliedjeCurrentTrack.fromJson(
-            json['track'] as Map<String, dynamic>,
-          ),
+              json['track'] as Map<String, dynamic>,
+            ),
       json['is_playing'] as bool,
       (json['current_volume'] as num?)?.toDouble(),
       json['shuffle'] as bool?,

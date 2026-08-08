@@ -28,8 +28,10 @@ class _AlbumScreenState extends State<AlbumScreen> {
   @override
   void initState() {
     super.initState();
-    _cubit = AlbumCubit(RepositoryProvider.of<ApiRepository>(context))
-      ..load(widget.slug);
+    _cubit = AlbumCubit(
+      RepositoryProvider.of<ApiRepository>(context),
+      widget.slug,
+    )..load();
   }
 
   Future<void> _shareAlbum(BuildContext context) async {
@@ -58,7 +60,10 @@ class _AlbumScreenState extends State<AlbumScreen> {
       child: BlocBuilder<AlbumCubit, AlbumState>(
         builder: (context, state) {
           final Widget body = switch (state) {
-            ErrorState(message: var message) => ErrorScrollView(message),
+            ErrorState(message: var message) => ErrorScrollView(
+              message,
+              retry: _cubit.load,
+            ),
             LoadingState _ => const Center(child: CircularProgressIndicator()),
             ResultState(result: var result) => _PhotoGrid(result.photos),
           };
@@ -126,11 +131,10 @@ class _PhotoGrid extends StatelessWidget {
         itemCount: photos.length,
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(8),
-        itemBuilder:
-            (context, index) => PhotoTile(
-              photo: photos[index],
-              openGallery: () => _openGallery(context, index),
-            ),
+        itemBuilder: (context, index) => PhotoTile(
+          photo: photos[index],
+          openGallery: () => _openGallery(context, index),
+        ),
       ),
     );
   }

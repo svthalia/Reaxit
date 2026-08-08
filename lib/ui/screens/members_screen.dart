@@ -59,13 +59,11 @@ class _MembersScreenState extends State<MembersScreen> {
       ),
       drawer: MenuDrawer(),
       body: RefreshIndicator(
-        onRefresh: () async {
-          await _cubit.load();
-        },
+        onRefresh: _cubit.load,
         child: BlocBuilder<MemberListCubit, MemberListState>(
           builder: (context, listState) {
             if (listState.hasException) {
-              return ErrorScrollView(listState.message!);
+              return ErrorScrollView(listState.message!, retry: _cubit.load);
             } else {
               return MemberListScrollView(
                 key: const PageStorageKey('members'),
@@ -141,7 +139,10 @@ class MembersSearchDelegate extends SearchDelegate {
       bloc: _cubit..search(query),
       builder: (context, listState) {
         if (listState.hasException) {
-          return ErrorScrollView(listState.message!);
+          return ErrorScrollView(
+            listState.message!,
+            retry: () => _cubit..search(query),
+          );
         } else {
           return MemberListScrollView(
             key: const PageStorageKey('members-search'),
@@ -168,11 +169,10 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   _SliverAppBarDelegate(this.currentYear, this.setYear);
 
   final double height = 50;
-  final List<int> list =
-      List.generate(
-        DateTime.now().year - 2014 + 1,
-        (i) => 2014 + i,
-      ).reversed.toList();
+  final List<int> list = List.generate(
+    DateTime.now().year - 2014 + 1,
+    (i) => 2014 + i,
+  ).reversed.toList();
 
   @override
   double get minExtent => height;

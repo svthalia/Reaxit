@@ -80,18 +80,17 @@ class _EventScreenState extends State<EventScreen> {
             color: Colors.transparent,
             child: InkWell(
               onTap: () {
-                Uri url =
-                    Theme.of(context).platform == TargetPlatform.iOS
-                        ? Uri(
-                          scheme: 'maps',
-                          queryParameters: {'daddr': event.location},
-                        )
-                        : Uri(
-                          scheme: 'https',
-                          host: 'maps.google.com',
-                          path: 'maps',
-                          queryParameters: {'daddr': event.location},
-                        );
+                Uri url = Theme.of(context).platform == TargetPlatform.iOS
+                    ? Uri(
+                        scheme: 'maps',
+                        queryParameters: {'daddr': event.location},
+                      )
+                    : Uri(
+                        scheme: 'https',
+                        host: 'maps.google.com',
+                        path: 'maps',
+                        queryParameters: {'daddr': event.location},
+                      );
                 launchUrl(url, mode: LaunchMode.externalNonBrowserApplication);
               },
             ),
@@ -137,14 +136,13 @@ class _EventScreenState extends State<EventScreen> {
                 if (org != event.organisers[0]) const TextSpan(text: ', '),
                 TextSpan(
                   text: org.name,
-                  recognizer:
-                      TapGestureRecognizer()
-                        ..onTap = () {
-                          context.pushNamed(
-                            'group',
-                            pathParameters: {'groupPk': org.pk.toString()},
-                          );
-                        },
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      context.pushNamed(
+                        'group',
+                        pathParameters: {'groupPk': org.pk.toString()},
+                      );
+                    },
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                   ),
@@ -380,10 +378,9 @@ class _EventScreenState extends State<EventScreen> {
         !event.registration!.isPaid &&
         event.registration!.tpayAllowed) {
       paymentButton = TPayButton(
-        onPay:
-            () async => await _eventCubit.thaliaPayRegistration(
-              registrationPk: event.registration!.pk,
-            ),
+        onPay: () async => await _eventCubit.thaliaPayRegistration(
+          registrationPk: event.registration!.pk,
+        ),
         confirmationMessage:
             'Are you sure you want to pay €${event.price} for '
             'your registration to "${event.title}"?',
@@ -468,7 +465,7 @@ class _EventScreenState extends State<EventScreen> {
                 event.maxParticipants == null
                     ? '${event.numParticipants} registrations'
                     : '${event.numParticipants} registrations '
-                        '(${event.maxParticipants} max)',
+                          '(${event.maxParticipants} max)',
                 style: dataStyle,
               ),
             ),
@@ -626,61 +623,22 @@ class _EventScreenState extends State<EventScreen> {
   Widget _makeCreateRegistrationButton(Event event) {
     return ElevatedButton.icon(
       statesController: _buttonControler,
-      onPressed:
-          !_buttonControler.value.contains(WidgetState.disabled)
-              ? () async {
-                final messenger = ScaffoldMessenger.of(context);
-                final calendarCubit = BlocProvider.of<CalendarCubit>(context);
-                final router = GoRouter.of(context);
-                var confirmed = !event.cancelDeadlinePassed();
-                if (!confirmed) {
-                  confirmed = await showConfirmationDialog(
-                    context,
-                    'Register',
-                    'Are you sure you want to register? The '
-                        'cancellation deadline has already passed.',
-                  );
-                }
-
-                if (confirmed) {
-                  try {
-                    final registration = await _eventCubit.register();
-                    if (event.hasFields) {
-                      router.pushNamed(
-                        'event-registration',
-                        pathParameters: {
-                          'eventPk': event.pk.toString(),
-                          'registrationPk': registration.pk.toString(),
-                        },
-                      );
-                    }
-                    calendarCubit.load();
-                  } on ApiException {
-                    messenger.showSnackBar(
-                      const SnackBar(
-                        behavior: SnackBarBehavior.floating,
-                        content: Text('Could not register for the event.'),
-                      ),
-                    );
-                  }
-                  await _eventCubit.load();
-                }
+      onPressed: !_buttonControler.value.contains(WidgetState.disabled)
+          ? () async {
+              final messenger = ScaffoldMessenger.of(context);
+              final calendarCubit = BlocProvider.of<CalendarCubit>(context);
+              final router = GoRouter.of(context);
+              var confirmed = !event.cancelDeadlinePassed();
+              if (!confirmed) {
+                confirmed = await showConfirmationDialog(
+                  context,
+                  'Register',
+                  'Are you sure you want to register? The '
+                      'cancellation deadline has already passed.',
+                );
               }
-              : null,
-      icon: const Icon(Icons.create_outlined),
-      label: const Text('REGISTER'),
-    );
-  }
 
-  Widget _makeJoinQueueButton(Event event) {
-    return ElevatedButton.icon(
-      statesController: _buttonControler,
-      onPressed:
-          !_buttonControler.value.contains(WidgetState.disabled)
-              ? () async {
-                final messenger = ScaffoldMessenger.of(context);
-                final calendarCubit = BlocProvider.of<CalendarCubit>(context);
-                final router = GoRouter.of(context);
+              if (confirmed) {
                 try {
                   final registration = await _eventCubit.register();
                   if (event.hasFields) {
@@ -697,15 +655,52 @@ class _EventScreenState extends State<EventScreen> {
                   messenger.showSnackBar(
                     const SnackBar(
                       behavior: SnackBarBehavior.floating,
-                      content: Text(
-                        'Could not join the waiting list for the event.',
-                      ),
+                      content: Text('Could not register for the event.'),
                     ),
                   );
                 }
                 await _eventCubit.load();
               }
-              : null,
+            }
+          : null,
+      icon: const Icon(Icons.create_outlined),
+      label: const Text('REGISTER'),
+    );
+  }
+
+  Widget _makeJoinQueueButton(Event event) {
+    return ElevatedButton.icon(
+      statesController: _buttonControler,
+      onPressed: !_buttonControler.value.contains(WidgetState.disabled)
+          ? () async {
+              final messenger = ScaffoldMessenger.of(context);
+              final calendarCubit = BlocProvider.of<CalendarCubit>(context);
+              final router = GoRouter.of(context);
+              try {
+                final registration = await _eventCubit.register();
+                if (event.hasFields) {
+                  router.pushNamed(
+                    'event-registration',
+                    pathParameters: {
+                      'eventPk': event.pk.toString(),
+                      'registrationPk': registration.pk.toString(),
+                    },
+                  );
+                }
+                calendarCubit.load();
+              } on ApiException {
+                messenger.showSnackBar(
+                  const SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    content: Text(
+                      'Could not join the waiting list for the event.',
+                    ),
+                  ),
+                );
+              }
+              await _eventCubit.load();
+            }
+          : null,
       icon: const Icon(Icons.create_outlined),
       label: const Text('JOIN QUEUE'),
     );
@@ -748,14 +743,13 @@ class _EventScreenState extends State<EventScreen> {
 
   Widget _makeUpdateButton(Event event) {
     return ElevatedButton.icon(
-      onPressed:
-          () => context.pushNamed(
-            'event-registration',
-            pathParameters: {
-              'eventPk': event.pk.toString(),
-              'registrationPk': event.registration!.pk.toString(),
-            },
-          ),
+      onPressed: () => context.pushNamed(
+        'event-registration',
+        pathParameters: {
+          'eventPk': event.pk.toString(),
+          'registrationPk': event.registration!.pk.toString(),
+        },
+      ),
       icon: const Icon(Icons.build),
       label: const Text('UPDATE REGISTRATION'),
     );
@@ -793,21 +787,20 @@ class _EventScreenState extends State<EventScreen> {
         ),
         TextSpan(
           text: 'terms and conditions',
-          recognizer:
-              TapGestureRecognizer()
-                ..onTap = () async {
-                  final messenger = ScaffoldMessenger.of(context);
-                  try {
-                    await launchUrl(url, mode: LaunchMode.externalApplication);
-                  } catch (_) {
-                    messenger.showSnackBar(
-                      SnackBar(
-                        behavior: SnackBarBehavior.floating,
-                        content: Text('Could not open "${url.toString()}".'),
-                      ),
-                    );
-                  }
-                },
+          recognizer: TapGestureRecognizer()
+            ..onTap = () async {
+              final messenger = ScaffoldMessenger.of(context);
+              try {
+                await launchUrl(url, mode: LaunchMode.externalApplication);
+              } catch (_) {
+                messenger.showSnackBar(
+                  SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    content: Text('Could not open "${url.toString()}".'),
+                  ),
+                );
+              }
+            },
           style: TextStyle(color: Theme.of(context).colorScheme.primary),
         ),
         const TextSpan(
@@ -895,7 +888,7 @@ class _EventScreenState extends State<EventScreen> {
               onRefresh: () async {
                 await _eventCubit.load();
               },
-              child: ErrorScrollView(state.message!),
+              child: ErrorScrollView(state.message!, retry: _eventCubit.load),
             ),
           );
         } else if (state.isLoading && widget.event == null) {

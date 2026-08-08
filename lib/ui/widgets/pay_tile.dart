@@ -58,19 +58,18 @@ class _PayTileState extends State<PayTile> {
         ),
         AnimatedSize(
           duration: const Duration(milliseconds: 200),
-          child:
-              _isExpanded && (widget.payment.notes?.isNotEmpty ?? false)
-                  ? Card(
-                    child: ListTile(
-                      title: Text(
-                        widget.payment.notes!,
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+          child: _isExpanded && (widget.payment.notes?.isNotEmpty ?? false)
+              ? Card(
+                  child: ListTile(
+                    title: Text(
+                      widget.payment.notes!,
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  )
-                  : const SizedBox(width: double.infinity),
+                  ),
+                )
+              : const SizedBox(width: double.infinity),
         ),
       ],
     );

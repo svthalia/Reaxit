@@ -54,9 +54,7 @@ class FoodCubit extends Cubit<FoodState> {
 
   int? _foodEventPk;
 
-  FoodCubit(this.api, {int? foodEventPk})
-    : _foodEventPk = foodEventPk,
-      super(LoadingFoodState());
+  FoodCubit(this.api, {this._foodEventPk}) : super(LoadingFoodState());
 
   Future<void> load() async {
     emit(LoadingFoodState(oldState: state));

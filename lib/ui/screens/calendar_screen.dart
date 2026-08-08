@@ -96,7 +96,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       body: BlocBuilder<CalendarCubit, CalendarState>(
         builder: (context, calendarState) {
           if (calendarState.hasException) {
-            return ErrorScrollView(calendarState.message!);
+            return ErrorScrollView(calendarState.message!, retry: _cubit.load);
           } else if (calendarState.isLoading) {
             return const Center(child: CircularProgressIndicator());
           } else {
@@ -182,7 +182,10 @@ class CalendarSearchDelegate extends SearchDelegate {
       bloc: _cubit..search(query),
       builder: (context, calendarState) {
         if (calendarState.hasException) {
-          return ErrorScrollView(calendarState.message!);
+          return ErrorScrollView(
+            calendarState.message!,
+            retry: () => _cubit.search(query),
+          );
         } else if (calendarState.isLoading) {
           return const Center(child: CircularProgressIndicator());
         } else {
@@ -238,23 +241,21 @@ class CalendarScrollView extends StatelessWidget {
     this.todayKey,
     this.thisMonthKey,
     required this.now,
-  }) : _monthGroupedEventsUp =
-           groupByMonth(
-             calendarState.resultsUp,
-           ).sortedBy((element) => element.month).reversed.toList(),
+  }) : _monthGroupedEventsUp = groupByMonth(
+         calendarState.resultsUp,
+       ).sortedBy((element) => element.month).reversed.toList(),
        _enableLoadMore =
            !calendarState.isDoneUp &&
            calendarState.resultsUp.isNotEmpty &&
            calendarState.resultsDown.isNotEmpty,
-       _monthGroupedEventsDown =
-           calendarState.resultsDown.isEmpty
-               ? List.empty()
-               : ensureMonthsContainsToday(
-                 groupByMonth(
-                   calendarState.resultsDown,
-                 ).sortedBy((element) => element.month),
-                 now,
-               );
+       _monthGroupedEventsDown = calendarState.resultsDown.isEmpty
+           ? List.empty()
+           : ensureMonthsContainsToday(
+               groupByMonth(
+                 calendarState.resultsDown,
+               ).sortedBy((element) => element.month),
+               now,
+             );
 
   @override
   Widget build(BuildContext context) {
@@ -263,12 +264,12 @@ class CalendarScrollView extends StatelessWidget {
         _monthGroupedEventsDown.isEmpty &&
         calendarState.isDoneDown;
     // If there are no future events we should still display some events
-    final upEvents =
-        moveMonth
-            ? _monthGroupedEventsUp.skip(1).toList()
-            : _monthGroupedEventsUp;
-    final downEvents =
-        moveMonth ? [_monthGroupedEventsUp.first] : _monthGroupedEventsDown;
+    final upEvents = moveMonth
+        ? _monthGroupedEventsUp.skip(1).toList()
+        : _monthGroupedEventsUp;
+    final downEvents = moveMonth
+        ? [_monthGroupedEventsUp.first]
+        : _monthGroupedEventsDown;
 
     final ThemeData theme = Theme.of(context);
 
@@ -278,16 +279,15 @@ class CalendarScrollView extends StatelessWidget {
         Expanded(
           child: CustomScrollView(
             controller: controller,
-            physics:
-                _enableLoadMore
-                    ? OnTopCallbackScrollPhysics(
-                      parent: BouncingScrollPhysics(
-                        decelerationRate: ScrollDecelerationRate.fast,
-                        parent: scrollPhysics,
-                      ),
-                      onhittop: loadMoreUp,
-                    )
-                    : scrollPhysics,
+            physics: _enableLoadMore
+                ? OnTopCallbackScrollPhysics(
+                    parent: BouncingScrollPhysics(
+                      decelerationRate: ScrollDecelerationRate.fast,
+                      parent: scrollPhysics,
+                    ),
+                    onhittop: loadMoreUp,
+                  )
+                : scrollPhysics,
             center: centerkey,
             anchor: 0.0,
             slivers: [
@@ -296,21 +296,20 @@ class CalendarScrollView extends StatelessWidget {
                   child: Center(
                     child: Padding(
                       padding: const EdgeInsets.only(top: 10),
-                      child:
-                          calendarState.isLoadingMoreUp
-                              ? Icon(
-                                Icons.more_horiz,
-                                size: 50,
+                      child: calendarState.isLoadingMoreUp
+                          ? Icon(
+                              Icons.more_horiz,
+                              size: 50,
+                              color: theme.colorScheme.primary,
+                            )
+                          : Text(
+                              'SCROLL TO LOAD MORE',
+                              style: theme.textTheme.bodyLarge!.copyWith(
                                 color: theme.colorScheme.primary,
-                              )
-                              : Text(
-                                'SCROLL TO LOAD MORE',
-                                style: theme.textTheme.bodyLarge!.copyWith(
-                                  color: theme.colorScheme.primary,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
                               ),
+                            ),
                     ),
                   ),
                 ),
@@ -329,10 +328,9 @@ class CalendarScrollView extends StatelessWidget {
                 ),
               ),
               SliverPadding(
-                padding:
-                    downEvents.isEmpty
-                        ? EdgeInsets.zero
-                        : const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                padding: downEvents.isEmpty
+                    ? EdgeInsets.zero
+                    : const EdgeInsets.fromLTRB(12, 0, 12, 12),
                 key: centerkey,
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(

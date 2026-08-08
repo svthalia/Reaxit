@@ -93,19 +93,18 @@ class SettingsScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children:
-                        ListTile.divideTiles(
-                          context: context,
-                          tiles: [
-                            for (final category in state.categories!)
-                              _NotificationSettingTile(
-                                category: category,
-                                enabled: state.device!.receiveCategory.contains(
-                                  category.key,
-                                ),
-                              ),
-                          ],
-                        ).toList(),
+                    children: ListTile.divideTiles(
+                      context: context,
+                      tiles: [
+                        for (final category in state.categories!)
+                          _NotificationSettingTile(
+                            category: category,
+                            enabled: state.device!.receiveCategory.contains(
+                              category.key,
+                            ),
+                          ),
+                      ],
+                    ).toList(),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -321,21 +320,20 @@ class _AboutCard extends StatelessWidget {
               label: const Text('FEEDBACK'),
             ),
             OutlinedButton.icon(
-              onPressed:
-                  () => showLicensePage(
-                    context: context,
-                    applicationVersion: Config.versionNumber,
-                    applicationIcon: Builder(
-                      builder: (context) {
-                        return Image.asset(
-                          Theme.of(context).brightness == Brightness.light
-                              ? 'assets/img/logo-black.png'
-                              : 'assets/img/logo-white.png',
-                          width: 80,
-                        );
-                      },
-                    ),
-                  ),
+              onPressed: () => showLicensePage(
+                context: context,
+                applicationVersion: Config.versionNumber,
+                applicationIcon: Builder(
+                  builder: (context) {
+                    return Image.asset(
+                      Theme.of(context).brightness == Brightness.light
+                          ? 'assets/img/logo-black.png'
+                          : 'assets/img/logo-white.png',
+                      width: 80,
+                    );
+                  },
+                ),
+              ),
               label: const Text('VIEW LICENSES'),
               icon: const Icon(Icons.info_outline),
             ),

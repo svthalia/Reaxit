@@ -115,23 +115,17 @@ class WelcomeCubit extends Cubit<WelcomeState> {
       );
       final announcementsResponse = await api.getAnnouncements();
 
-      List<BaseEvent> events =
-          eventsResponse.results
-              .map<BaseEvent>((e) => e)
-              .followedBy(
-                partnerEventsResponse.results.map<BaseEvent>((e) => e),
-              )
-              .sortedBy((element) => element.start)
-              .take(3)
-              .toList();
+      List<BaseEvent> events = eventsResponse.results
+          .map<BaseEvent>((e) => e)
+          .followedBy(partnerEventsResponse.results.map<BaseEvent>((e) => e))
+          .sortedBy((element) => element.start)
+          .take(3)
+          .toList();
 
       // Filter out SVG slides, as long as concrexit does not offer an alternative.
-      final slides =
-          slidesResponse.results
-              .where(
-                (slide) => !Uri.parse(slide.content.full).path.endsWith('svg'),
-              )
-              .toList();
+      final slides = slidesResponse.results
+          .where((slide) => !Uri.parse(slide.content.full).path.endsWith('svg'))
+          .toList();
 
       emit(
         WelcomeState.result(

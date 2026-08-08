@@ -86,13 +86,19 @@ class CalendarViewMonth {
   final List<CalendarViewDay> days;
 
   CalendarViewMonth({required this.month, required List<CalendarEvent> events})
-    : days = groupBy<CalendarEvent, DateTime>(
-            events.sortedBy((element) => element.start),
-            (event) =>
-                DateTime(event.start.year, event.start.month, event.start.day),
-          ).entries
-          .map((entry) => CalendarViewDay(day: entry.key, events: entry.value))
-          .sortedBy((element) => element.day);
+    : days =
+          groupBy<CalendarEvent, DateTime>(
+                events.sortedBy((element) => element.start),
+                (event) => DateTime(
+                  event.start.year,
+                  event.start.month,
+                  event.start.day,
+                ),
+              ).entries
+              .map(
+                (entry) => CalendarViewDay(day: entry.key, events: entry.value),
+              )
+              .sortedBy((element) => element.day);
 
   List<CalendarViewDay> byDay() => days;
 }
@@ -129,11 +135,11 @@ class CalendarMonth extends StatelessWidget {
                 child: Text(
                   events.month.year == now.year
                       ? monthFormatter
-                          .format(events.month.toLocal())
-                          .toUpperCase()
+                            .format(events.month.toLocal())
+                            .toUpperCase()
                       : monthYearFormatter
-                          .format(events.month.toLocal())
-                          .toUpperCase(),
+                            .format(events.month.toLocal())
+                            .toUpperCase(),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
@@ -194,23 +200,17 @@ class EventsDayCard extends StatelessWidget {
                 Text(
                   dayFormatter.format(day).toUpperCase(),
                   style: textTheme.bodySmall!.apply(
-                    color:
-                        day == today
-                            ? magenta
-                            : textTheme.bodySmall!.color!.withValues(
-                              alpha: 0.5,
-                            ),
+                    color: day == today
+                        ? magenta
+                        : textTheme.bodySmall!.color!.withValues(alpha: 0.5),
                   ),
                 ),
                 Text(
                   day.day.toString(),
                   style: textTheme.displaySmall!.apply(
-                    color:
-                        day == today
-                            ? magenta
-                            : textTheme.displaySmall!.color!.withValues(
-                              alpha: 0.5,
-                            ),
+                    color: day == today
+                        ? magenta
+                        : textTheme.displaySmall!.color!.withValues(alpha: 0.5),
                   ),
                   strutStyle: const StrutStyle(
                     forceStrutHeight: true,
@@ -226,27 +226,26 @@ class EventsDayCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children:
-                eventWidgets.isNotEmpty
-                    ? eventWidgets
-                    : [
-                      Center(
-                        child: Text(
-                          'There are no events this day',
-                          style: TextStyle(
-                            color: textTheme.displaySmall!.color!.withValues(
-                              alpha: 0.5,
-                            ),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
+            children: eventWidgets.isNotEmpty
+                ? eventWidgets
+                : [
+                    Center(
+                      child: Text(
+                        'There are no events this day',
+                        style: TextStyle(
+                          color: textTheme.displaySmall!.color!.withValues(
+                            alpha: 0.5,
                           ),
-                          strutStyle: const StrutStyle(
-                            forceStrutHeight: true,
-                            leading: 4,
-                          ),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                        strutStyle: const StrutStyle(
+                          forceStrutHeight: true,
+                          leading: 4,
                         ),
                       ),
-                    ],
+                    ),
+                  ],
           ),
         ),
       ],
@@ -279,8 +278,9 @@ class EventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color color = switch (event.parentEvent) {
-      Event(isRegistered: var isRegistered) when isRegistered =>
-        Theme.of(context).colorScheme.primary,
+      Event(isRegistered: var isRegistered) when isRegistered => Theme.of(
+        context,
+      ).colorScheme.primary,
       PartnerEvent _ => Colors.black,
       _ => Colors.grey[800]!,
     };

@@ -83,11 +83,10 @@ class _SalesAdminScreenState extends State<SalesAdminScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create:
-          (context) => SalesAdminCubit(
-            RepositoryProvider.of<ApiRepository>(context),
-            shiftPk: widget.pk,
-          )..load(),
+      create: (context) => SalesAdminCubit(
+        RepositoryProvider.of<ApiRepository>(context),
+        shiftPk: widget.pk,
+      )..load(),
       child: Builder(
         builder: (context) {
           return Scaffold(
@@ -123,18 +122,16 @@ class _SalesAdminScreenState extends State<SalesAdminScreen> {
                     case LoadingState _:
                       return const Center(child: CircularProgressIndicator());
                     case ResultState(result: var result):
-                      List<ListSalesOrder> filtered =
-                          result
-                              .where(_filter.passes)
-                              .sorted(_sortOrder.compare)
-                              .toList();
+                      List<ListSalesOrder> filtered = result
+                          .where(_filter.passes)
+                          .sorted(_sortOrder.compare)
+                          .toList();
 
                       return Scrollbar(
                         child: ListView.separated(
                           key: const PageStorageKey('food-admin'),
-                          itemBuilder:
-                              (context, index) =>
-                                  _OrderTile(order: filtered[index]),
+                          itemBuilder: (context, index) =>
+                              _OrderTile(order: filtered[index]),
                           separatorBuilder: (_, _) => const Divider(),
                           itemCount: filtered.length,
                         ),
@@ -294,8 +291,8 @@ class SalesAdminSearchDelegate extends SearchDelegate {
             case (ResultState<List<ListSalesOrder>> rstate):
               return ListView.separated(
                 key: const PageStorageKey('food-admin-search'),
-                itemBuilder:
-                    (context, index) => _OrderTile(order: rstate.result[index]),
+                itemBuilder: (context, index) =>
+                    _OrderTile(order: rstate.result[index]),
                 separatorBuilder: (_, _) => const Divider(),
                 itemCount: rstate.result.length,
               );
@@ -310,18 +307,16 @@ class SalesAdminSearchDelegate extends SearchDelegate {
     return BlocProvider.value(
       value: _adminCubit..search(query),
       child: BlocBuilder<SalesAdminCubit, SalesAdminState>(
-        builder:
-            (context, state) => switch (state) {
-              ErrorState(message: var message) => ErrorScrollView(message),
-              LoadingState _ => const SizedBox.shrink(),
-              ResultState(result: var result) => ListView.separated(
-                key: const PageStorageKey('food-admin-search'),
-                itemBuilder:
-                    (context, index) => _OrderTile(order: result[index]),
-                separatorBuilder: (_, _) => const Divider(),
-                itemCount: result.length,
-              ),
-            },
+        builder: (context, state) => switch (state) {
+          ErrorState(message: var message) => ErrorScrollView(message),
+          LoadingState _ => const SizedBox.shrink(),
+          ResultState(result: var result) => ListView.separated(
+            key: const PageStorageKey('food-admin-search'),
+            itemBuilder: (context, index) => _OrderTile(order: result[index]),
+            separatorBuilder: (_, _) => const Divider(),
+            itemCount: result.length,
+          ),
+        },
       ),
     );
   }

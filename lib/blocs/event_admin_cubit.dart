@@ -163,24 +163,21 @@ class EventAdminCubit extends Cubit<EventAdminState> {
 
       String? message;
       if (registrations.results.isEmpty) {
-        message =
-            (query?.isEmpty ?? true)
-                ? 'There are no registrations.'
-                : 'There are no registrations matching "$query".';
+        message = (query?.isEmpty ?? true)
+            ? 'There are no registrations.'
+            : 'There are no registrations matching "$query".';
       }
       String? cancelledMessage;
       if (cancelledRegistrations.results.isEmpty) {
-        cancelledMessage =
-            (query?.isEmpty ?? true)
-                ? 'There are no cancelled registrations.'
-                : 'There are no cancelled registrations matching "$query".';
+        cancelledMessage = (query?.isEmpty ?? true)
+            ? 'There are no cancelled registrations.'
+            : 'There are no cancelled registrations matching "$query".';
       }
       String? queuedMessage;
       if (queuedRegistrations.results.isEmpty) {
-        queuedMessage =
-            (query?.isEmpty ?? true)
-                ? 'There are no queued registrations.'
-                : 'There are no queued registrations matching "$query".';
+        queuedMessage = (query?.isEmpty ?? true)
+            ? 'There are no queued registrations.'
+            : 'There are no queued registrations matching "$query".';
       }
 
       emit(
@@ -239,24 +236,21 @@ class EventAdminCubit extends Cubit<EventAdminState> {
 
         String? message;
         if (registrations.results.isEmpty) {
-          message =
-              (query?.isEmpty ?? true)
-                  ? 'There are no registrations.'
-                  : 'There are no registrations matching "$query".';
+          message = (query?.isEmpty ?? true)
+              ? 'There are no registrations.'
+              : 'There are no registrations matching "$query".';
         }
         String? cancelledMessage;
         if (cancelledRegistrations.results.isEmpty) {
-          cancelledMessage =
-              (query?.isEmpty ?? true)
-                  ? 'There are no cancelled registrations.'
-                  : 'There are no cancelled registrations matching "$query".';
+          cancelledMessage = (query?.isEmpty ?? true)
+              ? 'There are no cancelled registrations.'
+              : 'There are no cancelled registrations matching "$query".';
         }
         String? queuedMessage;
         if (queuedRegistrations.results.isEmpty) {
-          queuedMessage =
-              (query?.isEmpty ?? true)
-                  ? 'There are no queued registrations.'
-                  : 'There are no queued registrations matching "$query".';
+          queuedMessage = (query?.isEmpty ?? true)
+              ? 'There are no queued registrations.'
+              : 'There are no queued registrations matching "$query".';
         }
 
         emit(
@@ -322,14 +316,13 @@ class EventAdminCubit extends Cubit<EventAdminState> {
     if (state.registrations.isNotEmpty) {
       emit(
         state.copyWith(
-          registrations:
-              state.registrations.map((registration) {
-                if (registration.pk == registrationPk) {
-                  return registration.copyWithPresent(present);
-                } else {
-                  return registration;
-                }
-              }).toList(),
+          registrations: state.registrations.map((registration) {
+            if (registration.pk == registrationPk) {
+              return registration.copyWithPresent(present);
+            } else {
+              return registration;
+            }
+          }).toList(),
         ),
       );
     } else {
@@ -349,14 +342,13 @@ class EventAdminCubit extends Cubit<EventAdminState> {
       if (state.registrations.isNotEmpty) {
         emit(
           state.copyWith(
-            registrations:
-                state.registrations.map((registration) {
-                  if (registration.pk == registrationPk) {
-                    return registration.copyWithPayment(payable.payment);
-                  } else {
-                    return registration;
-                  }
-                }).toList(),
+            registrations: state.registrations.map((registration) {
+              if (registration.pk == registrationPk) {
+                return registration.copyWithPayment(payable.payment);
+              } else {
+                return registration;
+              }
+            }).toList(),
           ),
         );
       } else {
@@ -369,14 +361,13 @@ class EventAdminCubit extends Cubit<EventAdminState> {
       if (state.registrations.isNotEmpty) {
         emit(
           state.copyWith(
-            registrations:
-                state.registrations.map((registration) {
-                  if (registration.pk == registrationPk) {
-                    return registration.copyWithPayment(null);
-                  } else {
-                    return registration;
-                  }
-                }).toList(),
+            registrations: state.registrations.map((registration) {
+              if (registration.pk == registrationPk) {
+                return registration.copyWithPayment(null);
+              } else {
+                return registration;
+              }
+            }).toList(),
           ),
         );
       } else {

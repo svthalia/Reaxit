@@ -20,10 +20,9 @@ class CalendarEvent {
   final int part;
   final int totalParts;
 
-  String get title =>
-      totalParts == 1
-          ? parentEvent.title
-          : '${parentEvent.title} day $part/$totalParts';
+  String get title => totalParts == 1
+      ? parentEvent.title
+      : '${parentEvent.title} day $part/$totalParts';
 
   int get pk => parentEvent.pk;
   String get location => parentEvent.location;
@@ -179,18 +178,16 @@ class EventsSource extends ListCubitSource<Event, CalendarEvent> {
   );
 
   @override
-  List<CalendarEvent> processUp(List<Event> results) =>
-      results
-          .expand(CalendarEvent.splitEventIntoCalendarEvents)
-          .where((element) => element.start.isBefore(cubit._splitTime))
-          .toList();
+  List<CalendarEvent> processUp(List<Event> results) => results
+      .expand(CalendarEvent.splitEventIntoCalendarEvents)
+      .where((element) => element.start.isBefore(cubit._splitTime))
+      .toList();
 
   @override
-  List<CalendarEvent> processDown(List<Event> results) =>
-      results
-          .expand(CalendarEvent.splitEventIntoCalendarEvents)
-          .whereNot((element) => element.start.isBefore(cubit._splitTime))
-          .toList();
+  List<CalendarEvent> processDown(List<Event> results) => results
+      .expand(CalendarEvent.splitEventIntoCalendarEvents)
+      .whereNot((element) => element.start.isBefore(cubit._splitTime))
+      .toList();
 }
 
 class PartnerEventSource extends ListCubitSource<PartnerEvent, CalendarEvent> {
@@ -203,42 +200,40 @@ class PartnerEventSource extends ListCubitSource<PartnerEvent, CalendarEvent> {
   @override
   Future<ListResponse<PartnerEvent>> getDown(int offset) =>
       cubit._remainingFutureEvents.none(
-            (element) => element.parentEvent is PartnerEvent,
-          )
-          ? cubit.api.getPartnerEvents(
-            start: cubit._splitTime,
-            search: cubit.searchQuery,
-            ordering: 'start',
-            offset: offset,
-          )
-          : Future.value(const ListResponse(0, []));
+        (element) => element.parentEvent is PartnerEvent,
+      )
+      ? cubit.api.getPartnerEvents(
+          start: cubit._splitTime,
+          search: cubit.searchQuery,
+          ordering: 'start',
+          offset: offset,
+        )
+      : Future.value(const ListResponse(0, []));
 
   @override
   Future<ListResponse<PartnerEvent>> getUp(int offset) =>
       cubit._remainingPastEvents.none(
-            (element) => element.parentEvent is PartnerEvent,
-          )
-          ? cubit.api.getPartnerEvents(
-            start: cubit._splitTime,
-            search: cubit.searchQuery,
-            ordering: '-end',
-            offset: offset,
-          )
-          : Future.value(const ListResponse(0, []));
+        (element) => element.parentEvent is PartnerEvent,
+      )
+      ? cubit.api.getPartnerEvents(
+          start: cubit._splitTime,
+          search: cubit.searchQuery,
+          ordering: '-end',
+          offset: offset,
+        )
+      : Future.value(const ListResponse(0, []));
 
   @override
-  List<CalendarEvent> processUp(List<PartnerEvent> results) =>
-      results
-          .expand(CalendarEvent.splitEventIntoCalendarEvents)
-          .where((element) => element.start.isBefore(cubit._splitTime))
-          .toList();
+  List<CalendarEvent> processUp(List<PartnerEvent> results) => results
+      .expand(CalendarEvent.splitEventIntoCalendarEvents)
+      .where((element) => element.start.isBefore(cubit._splitTime))
+      .toList();
 
   @override
-  List<CalendarEvent> processDown(List<PartnerEvent> results) =>
-      results
-          .expand(CalendarEvent.splitEventIntoCalendarEvents)
-          .whereNot((element) => element.start.isBefore(cubit._splitTime))
-          .toList();
+  List<CalendarEvent> processDown(List<PartnerEvent> results) => results
+      .expand(CalendarEvent.splitEventIntoCalendarEvents)
+      .whereNot((element) => element.start.isBefore(cubit._splitTime))
+      .toList();
 }
 
 class CalendarCubit extends ListCubit<Event, CalendarEvent, CalendarState> {
@@ -313,10 +308,9 @@ class CalendarCubit extends ListCubit<Event, CalendarEvent, CalendarState> {
       orElse: () => upResults.first,
     );
     // Remove anything before
-    _remainingPastEvents =
-        upResults
-            .where((element) => element.start.isBefore(lastIncludedEvent.start))
-            .toList();
+    _remainingPastEvents = upResults
+        .where((element) => element.start.isBefore(lastIncludedEvent.start))
+        .toList();
     return upResults
         .whereNot((element) => element.start.isBefore(lastIncludedEvent.start))
         .toList();
@@ -330,10 +324,9 @@ class CalendarCubit extends ListCubit<Event, CalendarEvent, CalendarState> {
       orElse: () => downResults.last,
     );
     // Remove anything before
-    _remainingFutureEvents =
-        downResults
-            .where((element) => lastIncludedEvent.start.isBefore(element.start))
-            .toList();
+    _remainingFutureEvents = downResults
+        .where((element) => lastIncludedEvent.start.isBefore(element.start))
+        .toList();
     return downResults
         .whereNot((element) => lastIncludedEvent.start.isBefore(element.start))
         .toList();
@@ -409,18 +402,16 @@ class CalendarCubit extends ListCubit<Event, CalendarEvent, CalendarState> {
   );
 
   @override
-  List<CalendarEvent> processDown(List<Event> downResults) =>
-      downResults
-          .expand(CalendarEvent.splitEventIntoCalendarEvents)
-          .whereNot((element) => element.start.isBefore(_splitTime))
-          .toList();
+  List<CalendarEvent> processDown(List<Event> downResults) => downResults
+      .expand(CalendarEvent.splitEventIntoCalendarEvents)
+      .whereNot((element) => element.start.isBefore(_splitTime))
+      .toList();
 
   @override
-  List<CalendarEvent> processUp(List<Event> upResults) =>
-      upResults
-          .expand(CalendarEvent.splitEventIntoCalendarEvents)
-          .where((element) => element.start.isBefore(_splitTime))
-          .toList();
+  List<CalendarEvent> processUp(List<Event> upResults) => upResults
+      .expand(CalendarEvent.splitEventIntoCalendarEvents)
+      .where((element) => element.start.isBefore(_splitTime))
+      .toList();
 
   @override
   CalendarState updateDown(

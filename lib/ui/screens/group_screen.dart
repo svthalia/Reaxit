@@ -51,12 +51,11 @@ class GroupScreen extends StatelessWidget {
     return BlocProvider<GroupCubit>(
       create: _selectCubit,
       child: BlocBuilder<GroupCubit, GroupState>(
-        builder:
-            (context, state) => _Page(
-              state: state,
-              cubit: BlocProvider.of<GroupCubit>(context),
-              listGroup: group,
-            ),
+        builder: (context, state) => _Page(
+          state: state,
+          cubit: BlocProvider.of<GroupCubit>(context),
+          listGroup: group,
+        ),
       ),
     );
   }
@@ -73,8 +72,8 @@ class _Page extends StatelessWidget {
   Widget build(BuildContext context) {
     final body = switch (state) {
       ErrorState(message: var message) => RefreshIndicator(
-        onRefresh: () => cubit.load(),
-        child: ErrorScrollView(message),
+        onRefresh: cubit.load,
+        child: ErrorScrollView(message, retry: cubit.load),
       ),
       LoadingState _ when listGroup == null => const Center(
         child: CircularProgressIndicator(),
@@ -240,15 +239,12 @@ class _GroupInfo extends StatelessWidget {
                         SelectableText.rich(
                           TextSpan(
                             text: group.contactAddress,
-                            recognizer:
-                                TapGestureRecognizer()
-                                  ..onTap = () {
-                                    launchUrl(
-                                      Uri.parse(
-                                        'mailto:${group.contactAddress}',
-                                      ),
-                                    );
-                                  },
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                launchUrl(
+                                  Uri.parse('mailto:${group.contactAddress}'),
+                                );
+                              },
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                             ),

@@ -9,7 +9,7 @@ import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/config.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/models/shift.dart';
-import 'package:reaxit/models/thabliod.dart';
+import 'package:reaxit/models/thabloid.dart';
 import 'package:reaxit/models/vacancie.dart';
 import 'package:reaxit/models/announcement.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -81,9 +81,8 @@ class ConcrexitApiRepository implements ApiRepository {
     required this.config,
 
     /// Called when the client can no longer authenticate.
-    required Function() onLogOut,
+    required this._onLogOut,
   }) : _innerClient = client,
-       _onLogOut = onLogOut,
        _baseUri = Uri(
          scheme: config.scheme,
          host: config.host,
@@ -274,10 +273,10 @@ class ConcrexitApiRepository implements ApiRepository {
       final uri = _uri(
         path: '/events/',
         query: {
-          if (search != null) 'search': search,
+          'search': ?search,
           if (limit != null) 'limit': limit.toString(),
           if (offset != null) 'offset': offset.toString(),
-          if (ordering != null) 'ordering': ordering,
+          'ordering': ?ordering,
           if (start != null) 'start': start.toLocal().toIso8601String(),
           if (end != null) 'end': end.toLocal().toIso8601String(),
         },
@@ -312,10 +311,10 @@ class ConcrexitApiRepository implements ApiRepository {
       final uri = _uri(
         path: '/events/external/',
         query: {
-          if (search != null) 'search': search,
+          'search': ?search,
           if (limit != null) 'limit': limit.toString(),
           if (offset != null) 'offset': offset.toString(),
-          if (ordering != null) 'ordering': ordering,
+          'ordering': ?ordering,
           if (start != null) 'start': start.toLocal().toIso8601String(),
           if (end != null) 'end': end.toLocal().toIso8601String(),
         },
@@ -458,8 +457,8 @@ class ConcrexitApiRepository implements ApiRepository {
         query: {
           if (limit != null) 'limit': limit.toString(),
           if (offset != null) 'offset': offset.toString(),
-          if (ordering != null) 'ordering': ordering,
-          if (search != null) 'search': search,
+          'ordering': ?ordering,
+          'search': ?search,
           if (cancelled != null) 'cancelled': cancelled.toString(),
           if (queued != null) 'queued': queued.toString(),
         },
@@ -669,7 +668,7 @@ class ConcrexitApiRepository implements ApiRepository {
         query: {
           if (limit != null) 'limit': limit.toString(),
           if (offset != null) 'offset': offset.toString(),
-          if (search != null) 'search': search,
+          'search': ?search,
         },
       );
       final response = await _handleExceptions(() => _client.get(uri));
@@ -724,7 +723,7 @@ class ConcrexitApiRepository implements ApiRepository {
         query: {
           if (limit != null) 'limit': limit.toString(),
           if (offset != null) 'offset': offset.toString(),
-          if (search != null) 'search': search,
+          'search': ?search,
         },
       );
       final response = await _handleExceptions(() => _client.get(uri));
@@ -842,7 +841,7 @@ class ConcrexitApiRepository implements ApiRepository {
         query: {
           if (limit != null) 'limit': limit.toString(),
           if (offset != null) 'offset': offset.toString(),
-          if (ordering != null) 'ordering': ordering,
+          'ordering': ?ordering,
           if (start != null) 'start': start.toLocal().toIso8601String(),
           if (end != null) 'end': end.toLocal().toIso8601String(),
         },
@@ -873,11 +872,10 @@ class ConcrexitApiRepository implements ApiRepository {
         },
       );
       final response = await _handleExceptions(() => _client.get(uri));
-      final events =
-          ListResponse<FoodEvent>.fromJson(
-            _jsonDecode(response),
-            (json) => FoodEvent.fromJson(json as Map<String, dynamic>),
-          ).results;
+      final events = ListResponse<FoodEvent>.fromJson(
+        _jsonDecode(response),
+        (json) => FoodEvent.fromJson(json as Map<String, dynamic>),
+      ).results;
 
       if (events.isEmpty) {
         throw ApiException.notFound;
@@ -1128,10 +1126,10 @@ class ConcrexitApiRepository implements ApiRepository {
       final uri = _uri(
         path: '/members/',
         query: {
-          if (search != null) 'search': search,
+          'search': ?search,
           if (limit != null) 'limit': limit.toString(),
           if (offset != null) 'offset': offset.toString(),
-          if (ordering != null) 'ordering': ordering,
+          'ordering': ?ordering,
           if (year != null) 'starting_year': year.toString(),
         },
       );
@@ -1204,10 +1202,9 @@ class ConcrexitApiRepository implements ApiRepository {
     return sandbox(() async {
       final uri = _uri(path: '/photos/photos/$pk/like/');
       await _handleExceptions(
-        () =>
-            liked
-                ? _client.post(uri, headers: _jsonHeader)
-                : _client.delete(uri, headers: _jsonHeader),
+        () => liked
+            ? _client.post(uri, headers: _jsonHeader)
+            : _client.delete(uri, headers: _jsonHeader),
       );
     });
   }
@@ -1222,7 +1219,7 @@ class ConcrexitApiRepository implements ApiRepository {
       final uri = _uri(
         path: '/photos/albums/',
         query: {
-          if (search != null) 'search': search,
+          'search': ?search,
           if (limit != null) 'limit': limit.toString(),
           if (offset != null) 'offset': offset.toString(),
         },
@@ -1250,7 +1247,7 @@ class ConcrexitApiRepository implements ApiRepository {
       final uri = _uri(
         path: '/thabloid/thabloids/',
         query: {
-          if (search != null) 'search': search,
+          'search': ?search,
           if (limit != null) 'limit': limit.toString(),
           if (offset != null) 'offset': offset.toString(),
         },
@@ -1481,7 +1478,7 @@ class ConcrexitApiRepository implements ApiRepository {
         if (type != null) 'type': memberGroupTypeMap[type],
         if (start != null) 'start': start.toIso8601String(),
         if (end != null) 'end': end.toIso8601String(),
-        if (search != null) 'search': search,
+        'search': ?search,
       },
     );
 
@@ -1562,7 +1559,7 @@ class ConcrexitApiRepository implements ApiRepository {
             'type': type.map((t) => paymentTypeMap[t]).join(','),
           if (start != null) 'start': start.toIso8601String(),
           if (end != null) 'end': end.toIso8601String(),
-          if (ordering != null) 'ordering': ordering,
+          'ordering': ?ordering,
           if (settled != null) 'settled': settled.toString(),
         },
       );

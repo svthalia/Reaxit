@@ -17,13 +17,12 @@ void testLogin() {
     ) async {
       // Setup mock.
       final authCubit = MockAuthCubit();
-      final streamController =
-          StreamController<AuthState>.broadcast()
-            ..stream.listen((state) {
-              when(authCubit.state).thenReturn(state);
-            })
-            ..add(LoadingAuthState())
-            ..add(const LoggedOutAuthState());
+      final streamController = StreamController<AuthState>.broadcast()
+        ..stream.listen((state) {
+          when(authCubit.state).thenReturn(state);
+        })
+        ..add(LoadingAuthState())
+        ..add(const LoggedOutAuthState());
 
       when(authCubit.load()).thenAnswer((_) => Future.value(null));
       when(authCubit.stream).thenAnswer((_) => streamController.stream);
@@ -71,13 +70,12 @@ void testLogin() {
         },
       );
 
-      final streamController =
-          StreamController<AuthState>.broadcast()
-            ..stream.listen((state) {
-              when(authCubit.state).thenReturn(state);
-            })
-            ..add(LoadingAuthState())
-            ..add(LoggedInAuthState(apiRepository: api));
+      final streamController = StreamController<AuthState>.broadcast()
+        ..stream.listen((state) {
+          when(authCubit.state).thenReturn(state);
+        })
+        ..add(LoadingAuthState())
+        ..add(LoggedInAuthState(apiRepository: api));
 
       when(authCubit.load()).thenAnswer((_) => Future.value(null));
       when(authCubit.stream).thenAnswer((_) => streamController.stream);
@@ -103,13 +101,12 @@ void testLogin() {
         },
       );
 
-      final streamController =
-          StreamController<AuthState>.broadcast()
-            ..stream.listen((state) {
-              when(authCubit.state).thenReturn(state);
-            })
-            ..add(LoadingAuthState())
-            ..add(LoggedInAuthState(apiRepository: api));
+      final streamController = StreamController<AuthState>.broadcast()
+        ..stream.listen((state) {
+          when(authCubit.state).thenReturn(state);
+        })
+        ..add(LoadingAuthState())
+        ..add(LoggedInAuthState(apiRepository: api));
 
       when(authCubit.load()).thenAnswer((_) => Future.value(null));
       when(authCubit.stream).thenAnswer((_) => streamController.stream);

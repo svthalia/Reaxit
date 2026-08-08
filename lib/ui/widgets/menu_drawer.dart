@@ -77,16 +77,15 @@ class MenuDrawer extends StatelessWidget {
                       child: Material(
                         color: Colors.transparent,
                         child: InkWell(
-                          onTap:
-                              () => context.pushNamed(
-                                'member',
-                                pathParameters: {'memberPk': me.pk.toString()},
-                                extra: ListMember(
-                                  me.pk,
-                                  me.membershipType,
-                                  me.profile,
-                                ),
-                              ),
+                          onTap: () => context.pushNamed(
+                            'member',
+                            pathParameters: {'memberPk': me.pk.toString()},
+                            extra: ListMember(
+                              me.pk,
+                              me.membershipType,
+                              me.profile,
+                            ),
+                          ),
                         ),
                       ),
                     ),
