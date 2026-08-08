@@ -18,7 +18,7 @@ class CachedImage extends CachedNetworkImage {
          placeholder:
              placeholder == null
                  ? null
-                 : (_, __) => Image.asset(placeholder, fit: fit),
+                 : (_, _) => Image.asset(placeholder, fit: fit),
        );
 }
 

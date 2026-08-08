@@ -135,7 +135,7 @@ class _SalesAdminScreenState extends State<SalesAdminScreen> {
                           itemBuilder:
                               (context, index) =>
                                   _OrderTile(order: filtered[index]),
-                          separatorBuilder: (_, __) => const Divider(),
+                          separatorBuilder: (_, _) => const Divider(),
                           itemCount: filtered.length,
                         ),
                       );
@@ -296,7 +296,7 @@ class SalesAdminSearchDelegate extends SearchDelegate {
                 key: const PageStorageKey('food-admin-search'),
                 itemBuilder:
                     (context, index) => _OrderTile(order: rstate.result[index]),
-                separatorBuilder: (_, __) => const Divider(),
+                separatorBuilder: (_, _) => const Divider(),
                 itemCount: rstate.result.length,
               );
           }
@@ -318,7 +318,7 @@ class SalesAdminSearchDelegate extends SearchDelegate {
                 key: const PageStorageKey('food-admin-search'),
                 itemBuilder:
                     (context, index) => _OrderTile(order: result[index]),
-                separatorBuilder: (_, __) => const Divider(),
+                separatorBuilder: (_, _) => const Divider(),
                 itemCount: result.length,
               ),
             },

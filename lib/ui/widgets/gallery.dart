@@ -113,7 +113,7 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
         mimeType: lookupMimeType(url.path, headerBytes: response.bodyBytes),
         name: url.pathSegments.last,
       );
-      await Share.shareXFiles([file]);
+      SharePlus.instance.share(ShareParams(files: [file]));
     } catch (_) {
       messenger.showSnackBar(
         const SnackBar(
@@ -177,7 +177,7 @@ class _GalleryState<C extends GalleryCubit> extends State<Gallery>
       pageController: controller,
       itemCount: widget.photoAmount,
       loadingBuilder:
-          (_, __) => const Center(child: CircularProgressIndicator()),
+          (_, _) => const Center(child: CircularProgressIndicator()),
       builder: (context, i) {
         final Widget child;
 

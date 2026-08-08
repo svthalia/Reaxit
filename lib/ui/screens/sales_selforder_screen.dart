@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
-import 'package:reaxit/models.dart';
 import 'package:reaxit/models/shift.dart';
 import 'package:reaxit/models/shift_product.dart';
 import 'package:reaxit/ui/widgets.dart';

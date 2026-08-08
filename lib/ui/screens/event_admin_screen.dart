@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
@@ -226,7 +226,7 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                                 (context, index) => _QueuedRegistrationTile(
                                   registration: filteredQueue[index],
                                 ),
-                            separatorBuilder: (_, __) => const Divider(),
+                            separatorBuilder: (_, _) => const Divider(),
                             itemCount: filteredQueue.length,
                           ),
                         ),
@@ -246,7 +246,7 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                                   requiresPayment:
                                       state.event!.paymentIsRequired,
                                 ),
-                            separatorBuilder: (_, __) => const Divider(),
+                            separatorBuilder: (_, _) => const Divider(),
                             itemCount: filteredRegistrations.length,
                           ),
                         ),
@@ -267,7 +267,7 @@ class _EventAdminScreenState extends State<EventAdminScreen> {
                                 (context, index) => _CancelledRegistrationTile(
                                   registration: filteredCancels[index],
                                 ),
-                            separatorBuilder: (_, __) => const Divider(),
+                            separatorBuilder: (_, _) => const Divider(),
                             itemCount: filteredCancels.length,
                           ),
                         ),
@@ -561,7 +561,7 @@ class EventAdminSearchDelegate extends SearchDelegate {
                     registration: state.registrations[index],
                     requiresPayment: state.event!.paymentIsRequired,
                   ),
-              separatorBuilder: (_, __) => const Divider(),
+              separatorBuilder: (_, _) => const Divider(),
               itemCount: state.registrations.length,
             );
           }
@@ -586,7 +586,7 @@ class EventAdminSearchDelegate extends SearchDelegate {
                     registration: state.registrations[index],
                     requiresPayment: state.event!.paymentIsRequired,
                   ),
-              separatorBuilder: (_, __) => const Divider(),
+              separatorBuilder: (_, _) => const Divider(),
               itemCount: state.registrations.length,
             );
           }

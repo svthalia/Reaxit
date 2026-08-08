@@ -36,7 +36,11 @@ class _AlbumScreenState extends State<AlbumScreen> {
     final messenger = ScaffoldMessenger.of(context);
     try {
       final host = Config.of(context).host;
-      await Share.share('https://$host/members/photos/${widget.slug}/');
+      await SharePlus.instance.share(
+        ShareParams(
+          uri: Uri.tryParse('https://$host/members/photos/${widget.slug}/'),
+        ),
+      );
     } catch (_) {
       messenger.showSnackBar(
         const SnackBar(
