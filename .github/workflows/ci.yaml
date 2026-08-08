@@ -8,7 +8,7 @@ on:
       - master
 
 env:
-  FLUTTER_VERSION: 3.29.2
+  FLUTTER_VERSION: 3.44.8
 
 jobs:
   linting:
@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     steps: 
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -68,7 +68,7 @@ jobs:
           xcrun simctl boot "${UDID:?No Simulator with this name found}"
 
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -113,7 +113,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@v7
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
@@ -169,10 +169,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Checkout passwords repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           repository: svthalia/ThaliApp-passwords
           path: thaliapp-passwords
@@ -192,7 +192,7 @@ jobs:
           echo "keyAlias=$RELEASE_CONFIG_KEY_ALIAS" >> $GITHUB_WORKSPACE/android/key.properties
 
       - name: Setup JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v5
         with:
           java-version: 17
           distribution: zulu
@@ -213,7 +213,7 @@ jobs:
           ruby-version: 3.3.4
 
       - name: Gradle cache
-        uses: actions/cache@v3
+        uses: actions/cache@v6
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}

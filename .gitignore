@@ -34,6 +34,7 @@ Podfile.lock
 
 ios/Podfile.lock
 ios/build/
+ios/Flutter/ephemeral
 
 # Web related
 lib/generated_plugin_registrant.dart

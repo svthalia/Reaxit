@@ -933,7 +933,9 @@ class _EventScreenState extends State<EventScreen> {
                   () async {
                     final messenger = ScaffoldMessenger.of(context);
                     try {
-                      await Share.share(event.url);
+                      await SharePlus.instance.share(
+                        ShareParams(uri: Uri.tryParse(event.url)),
+                      );
                     } catch (_) {
                       messenger.showSnackBar(
                         const SnackBar(
