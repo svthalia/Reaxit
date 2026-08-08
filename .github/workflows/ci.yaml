@@ -30,10 +30,8 @@ jobs:
       - name: get
         run: dart pub get
 
-      - name: Dart 1
-        run: dart format --version
       - name: Dart format
-        run: dart format --set-exit-if-changed -o show .
+        run: dart format --set-exit-if-changed .
 
       - name: Flutter analyze
         run: flutter analyze
