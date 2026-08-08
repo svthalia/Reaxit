@@ -1,6 +1,5 @@
 #https://github.com/dart-lang/sdk/issues/62862
 #include: package:flutter_lints/flutter.yaml
-include: package:lints/recommended.yaml
 
 analyzer:
   exclude:
