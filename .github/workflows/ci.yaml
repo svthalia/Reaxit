@@ -194,10 +194,10 @@ jobs:
           echo "keyPassword=$RELEASE_CONFIG_KEY_PASS" >> $GITHUB_WORKSPACE/android/key.properties
           echo "keyAlias=$RELEASE_CONFIG_KEY_ALIAS" >> $GITHUB_WORKSPACE/android/key.properties
 
-      - name: Setup JDK 17
+      - name: Setup JDK 25
         uses: actions/setup-java@v5
         with:
-          java-version: 17
+          java-version: 25
           distribution: zulu
 
       - name: Setup Flutter
