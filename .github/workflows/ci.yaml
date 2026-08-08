@@ -28,7 +28,7 @@ jobs:
         run: flutter --version
 
       - name: Dart format
-        run: dart format --set-exit-if-changed .
+        run: dart format --set-exit-if-changed -o show .
 
       - name: Flutter analyze
         run: flutter analyze
