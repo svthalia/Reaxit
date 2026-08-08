@@ -18,12 +18,11 @@ class TostiApiRepository {
 
   TostiApiRepository({
     /// The [oauth2.Client] used to access the API.
-    required oauth2.Client client,
+    required this._client,
 
     /// Called when the client can no longer authenticate.
-    required Function() onLogOut,
-  }) : _client = client,
-       _onLogOut = onLogOut;
+    required this._onLogOut,
+  });
 
   void close() {
     _client.close();
@@ -216,7 +215,7 @@ class TostiApiRepository {
           if (orderable != null) 'orderable': orderable.toString(),
           if (ignoreShiftRestrictions != null)
             'ignore_shift_restrictions': ignoreShiftRestrictions.toString(),
-          if (search != null) 'search': search,
+          'search': ?search,
         },
       );
       final response = await _handleExceptions(() => _client.get(uri));
@@ -301,7 +300,7 @@ class TostiApiRepository {
           if (canBeReserved != null)
             'can_be_reserved': canBeReserved.toString(),
           if (isOrderVenue != null) 'is_ordervenue': isOrderVenue.toString(),
-          if (search != null) 'search': search,
+          'search': ?search,
         },
       );
       final response = await _handleExceptions(() => _client.get(uri));
@@ -338,7 +337,7 @@ class TostiApiRepository {
           if (limit != null) 'limit': limit.toString(),
           if (offset != null) 'offset': offset.toString(),
           if (venue != null) 'venue': venue.toString(),
-          if (search != null) 'search': search,
+          'search': ?search,
         },
       );
       final response = await _handleExceptions(() => _client.get(uri));
