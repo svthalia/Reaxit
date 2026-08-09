@@ -16,13 +16,13 @@ enum PaymentType {
   String toString() {
     switch (this) {
       case PaymentType.cashPayment:
-        return 'Cash payment';
+        return 'Cash';
       case PaymentType.cardPayment:
-        return 'Card payment';
+        return 'Card';
       case PaymentType.tpayPayment:
         return 'Thalia Pay';
       case PaymentType.wirePayment:
-        return 'Wire payment';
+        return 'Wire tranasfer';
     }
   }
 }
