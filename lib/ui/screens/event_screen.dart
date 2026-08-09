@@ -14,6 +14,7 @@ import 'package:reaxit/routes.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:reaxit/ui/widgets/dialog.dart';
 import 'package:reaxit/ui/widgets/file_button.dart';
+import 'package:reaxit/ui/widgets/timed_state_enable.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:reaxit/config.dart';
@@ -36,8 +37,6 @@ class _EventScreenState extends State<EventScreen> {
   late final ScrollController _controller;
 
   late final EventCubit _eventCubit;
-
-  final WidgetStatesController _buttonControler = WidgetStatesController();
 
   @override
   void initState() {
@@ -102,6 +101,19 @@ class _EventScreenState extends State<EventScreen> {
 
   /// Create all info of an event until the description, including buttons.
   Widget _makeEventInfo(Event event) {
+    List<ShiftInfo>? shifts = event.shiftSet;
+    Iterable<Widget>? selforderShifts;
+    if (shifts != null) {
+      selforderShifts = shifts.map(
+        (shift) => TimedEnableButton(
+          open: shift.start,
+          close: shift.end,
+          builder: (context, controler, nextChange) =>
+              _makeFoodShiftButton(shift, controler, nextChange),
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Column(
@@ -109,15 +121,21 @@ class _EventScreenState extends State<EventScreen> {
         children: [
           _makeBasicEventInfo(event),
           if (event.registrationIsRequired)
-            _makeRequiredRegistrationInfo(event)
+            TimedEnableButton(
+              open: event.registrationStart,
+              close: event.registrationEnd,
+              onClose:
+                  _eventCubit.load, // To be sure, testing without wasn't done
+              builder: (context, controler, nextChange) =>
+                  _makeRequiredRegistrationInfo(event, controler, nextChange),
+            )
           else if (event.registrationIsOptional)
             _makeOptionalRegistrationInfo(event)
           else
             _makeNoRegistrationInfo(event),
           if (event.hasFoodEvent) _makeFoodButton(event),
 
-          if (event.shiftSet != null)
-            ...event.shiftSet!.map((shift) => _makeFoodShiftButton(shift)),
+          ...?selforderShifts,
         ],
       ),
     );
@@ -276,7 +294,11 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   // Create the info for events with required registration.
-  Widget _makeRequiredRegistrationInfo(Event event) {
+  Widget _makeRequiredRegistrationInfo(
+    Event event,
+    WidgetStatesController controler,
+    DateTime? nextChange,
+  ) {
     assert(event.registrationIsRequired);
     final textTheme = Theme.of(context).textTheme;
     final dataStyle = textTheme.bodyMedium!.apply(fontSizeDelta: -1);
@@ -288,24 +310,21 @@ class _EventScreenState extends State<EventScreen> {
     final textSpans = <TextSpan>[];
     final registrationStatusText = <TextSpan>[];
     Widget registrationButton = const SizedBox.shrink();
-    Widget updateButton = const SizedBox.shrink();
 
-    if (event.canCreateRegistration || event.createRegistrationWhenOpen) {
-      if (event.registrationStart!.isAfter(DateTime.now())) {
-        _buttonControler.update(WidgetState.disabled, true);
-        Future.delayed(event.registrationStart!.difference(DateTime.now()), () {
-          if (mounted) {
-            _buttonControler.update(WidgetState.disabled, false);
-            setState(() {});
-          }
-        });
-      }
-      if (event.reachedMaxParticipants) {
-        registrationButton = _makeJoinQueueButton(event);
-      } else {
-        registrationButton = _makeCreateRegistrationButton(event);
-      }
+    if ((event.canCreateRegistration || event.createRegistrationWhenOpen) &&
+        !event.registrationClosed()) {
+      // You can register, or will be as soon as it opens
+      registrationButton = TimedIconButton(
+        controller: controler,
+        onPressed: () =>
+            event.reachedMaxParticipants ? joinQueue(event) : register(event),
+        opens: event.registrationStarted() ? null : nextChange,
+        icon: const Icon(Icons.create_outlined),
+        labelText: event.reachedMaxParticipants ? 'JOIN QUEUE' : 'REGISTER',
+        countdownPrefix: 'OPENS IN',
+      );
     } else if (event.canCancelRegistration) {
+      // You can cancel (on time or to late)
       if (event.cancelDeadlinePassed() && event.registration!.isInvited) {
         // Cancel too late message, cancel button with fine warning.
         final text =
@@ -320,56 +339,66 @@ class _EventScreenState extends State<EventScreen> {
       }
     }
 
-    if (event.canUpdateRegistration) {
-      updateButton = _makeUpdateButton(event);
-    }
+    // Cancelled _> should get not able to register message:
+    //Your registration for this event is cancelled. Note that you cannot re-register.
 
-    //Registration Status from API
-    registrationStatusText.add(TextSpan(text: event.registrationStatus));
-
-    if (event.canCreateRegistration && !event.isRegistered) {
+    if (event.registrationClosed() && !event.canCancelRegistration) {
+      registrationStatusText.add(
+        TextSpan(text: 'Registration is not possible anymore.'),
+      );
+    } else if ((event.canCreateRegistration ||
+            event.createRegistrationWhenOpen) &&
+        !event.isRegistered) {
       if (!event.registrationStarted()) {
         // Registration will open ....
         final registrationStart = dateTimeFormatter.format(
           event.registrationStart!.toLocal(),
         );
-        // API
-        textSpans.add(
-          TextSpan(text: 'Registration will open $registrationStart. '),
+        registrationStatusText.add(
+          TextSpan(text: 'Registration will open $registrationStart.'),
         );
       } else if (event.registrationIsOpen()) {
-        // Terms and conditions, register button.
         textSpans.add(_makeTermsAndConditions(event));
+        if (event.registration != null) {
+          registrationStatusText.add(
+            TextSpan(
+              text:
+                  'Your registration for this event is cancelled. You may still re-register.',
+            ),
+          );
+        } else {
+          registrationStatusText.add(TextSpan(text: 'You can register now.'));
+        }
       }
-      final registration = event.registration;
+    } else if (event.isRegistered) {
+      final registration = event.registration!;
+      registrationStatusText.add(
+        TextSpan(text: 'You are registered for thie event.'),
+      );
 
-      if (registration != null) {
-        if (event.paymentIsRequired) {
-          if (registration.isPaid) {
-            if (registration.payment!.type == PaymentType.tpayPayment) {
-              // You are paying with Thalia Pay.
-              textSpans.add(
-                const TextSpan(text: 'You are paying with Thalia Pay. '),
-              );
-            } else {
-              // You have paid.
-              textSpans.add(const TextSpan(text: 'You have paid. '));
-            }
-          } else {
-            // You have not paid yet.
-            textSpans.add(const TextSpan(text: 'You have not paid yet. '));
-          }
-        }
-        if (event.hasEnded()) {
-          if (registration.present ?? true) {
-            // You were present.
-            textSpans.add(const TextSpan(text: 'You were present. '));
-          } else {
-            // You were not present.
-            textSpans.add(const TextSpan(text: 'You were not present. '));
-          }
+      if (event.paymentIsRequired) {
+        Payment? payment = registration.payment;
+        if (payment != null) {
+          textSpans.add(
+            TextSpan(text: 'You are paying with ${payment.type.toString()}. '),
+          );
+        } else {
+          // You have not paid yet.
+          textSpans.add(const TextSpan(text: 'You have not paid yet. '));
         }
       }
+      if (event.hasEnded()) {
+        if (registration.present ?? true) {
+          textSpans.add(const TextSpan(text: 'You were present. '));
+        } else {
+          textSpans.add(const TextSpan(text: 'You were not present. '));
+        }
+      }
+    } else {
+      // We should avoid using the registration status as much as possible.
+      // The status is from when we fetched the event, and may not be up-to-date
+      // when we build. For example, the event may have opened.
+      registrationStatusText.add(TextSpan(text: event.registrationStatus));
     }
 
     late Widget paymentButton;
@@ -482,7 +511,7 @@ class _EventScreenState extends State<EventScreen> {
         ),
         const SizedBox(height: 4),
         registrationButton,
-        updateButton,
+        if (event.canUpdateRegistration) _makeUpdateButton(event),
         paymentButton,
       ],
     );
@@ -490,6 +519,8 @@ class _EventScreenState extends State<EventScreen> {
 
   // Create the info for events with optional registration.
   Widget _makeOptionalRegistrationInfo(Event event) {
+    // TODO: Add timers and countdowns for this too
+
     assert(event.registrationIsOptional);
     final textTheme = Theme.of(context).textTheme;
     final dataStyle = textTheme.bodyMedium!.apply(fontSizeDelta: -1);
@@ -620,90 +651,70 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  Widget _makeCreateRegistrationButton(Event event) {
-    return ElevatedButton.icon(
-      statesController: _buttonControler,
-      onPressed: !_buttonControler.value.contains(WidgetState.disabled)
-          ? () async {
-              final messenger = ScaffoldMessenger.of(context);
-              final calendarCubit = BlocProvider.of<CalendarCubit>(context);
-              final router = GoRouter.of(context);
-              var confirmed = !event.cancelDeadlinePassed();
-              if (!confirmed) {
-                confirmed = await showConfirmationDialog(
-                  context,
-                  'Register',
-                  'Are you sure you want to register? The '
-                      'cancellation deadline has already passed.',
-                );
-              }
+  void register(Event event) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final calendarCubit = BlocProvider.of<CalendarCubit>(context);
+    final router = GoRouter.of(context);
+    var confirmed = !event.cancelDeadlinePassed();
+    if (!confirmed) {
+      confirmed = await showConfirmationDialog(
+        context,
+        'Register',
+        'Are you sure you want to register? The '
+            'cancellation deadline has already passed.',
+      );
+    }
 
-              if (confirmed) {
-                try {
-                  final registration = await _eventCubit.register();
-                  if (event.hasFields) {
-                    router.pushNamed(
-                      'event-registration',
-                      pathParameters: {
-                        'eventPk': event.pk.toString(),
-                        'registrationPk': registration.pk.toString(),
-                      },
-                    );
-                  }
-                  calendarCubit.load();
-                } on ApiException {
-                  messenger.showSnackBar(
-                    const SnackBar(
-                      behavior: SnackBarBehavior.floating,
-                      content: Text('Could not register for the event.'),
-                    ),
-                  );
-                }
-                await _eventCubit.load();
-              }
-            }
-          : null,
-      icon: const Icon(Icons.create_outlined),
-      label: const Text('REGISTER'),
-    );
+    if (confirmed) {
+      try {
+        final registration = await _eventCubit.register();
+        if (event.hasFields) {
+          router.pushNamed(
+            'event-registration',
+            pathParameters: {
+              'eventPk': event.pk.toString(),
+              'registrationPk': registration.pk.toString(),
+            },
+          );
+        }
+        calendarCubit.load();
+      } on ApiException {
+        messenger.showSnackBar(
+          const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Could not register for the event.'),
+          ),
+        );
+      }
+      await _eventCubit.load();
+    }
   }
 
-  Widget _makeJoinQueueButton(Event event) {
-    return ElevatedButton.icon(
-      statesController: _buttonControler,
-      onPressed: !_buttonControler.value.contains(WidgetState.disabled)
-          ? () async {
-              final messenger = ScaffoldMessenger.of(context);
-              final calendarCubit = BlocProvider.of<CalendarCubit>(context);
-              final router = GoRouter.of(context);
-              try {
-                final registration = await _eventCubit.register();
-                if (event.hasFields) {
-                  router.pushNamed(
-                    'event-registration',
-                    pathParameters: {
-                      'eventPk': event.pk.toString(),
-                      'registrationPk': registration.pk.toString(),
-                    },
-                  );
-                }
-                calendarCubit.load();
-              } on ApiException {
-                messenger.showSnackBar(
-                  const SnackBar(
-                    behavior: SnackBarBehavior.floating,
-                    content: Text(
-                      'Could not join the waiting list for the event.',
-                    ),
-                  ),
-                );
-              }
-              await _eventCubit.load();
-            }
-          : null,
-      icon: const Icon(Icons.create_outlined),
-      label: const Text('JOIN QUEUE'),
-    );
+  void joinQueue(Event event) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final calendarCubit = BlocProvider.of<CalendarCubit>(context);
+    final router = GoRouter.of(context);
+    try {
+      final registration = await _eventCubit.register();
+      if (event.hasFields) {
+        router.pushNamed(
+          'event-registration',
+          pathParameters: {
+            'eventPk': event.pk.toString(),
+            'registrationPk': registration.pk.toString(),
+          },
+        );
+      }
+      calendarCubit.load();
+    } on ApiException {
+      messenger.showSnackBar(
+        const SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('Could not join the waiting list for the event.'),
+        ),
+      );
+    }
+    await _eventCubit.load();
   }
 
   Widget _makeCancelRegistrationButton(Event event, String warningText) {
@@ -766,14 +777,20 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  Widget _makeFoodShiftButton(ShiftInfo shift) {
-    // TODO: Do something with the start/end time. gray it out??
+  Widget _makeFoodShiftButton(
+    ShiftInfo shift,
+    WidgetStatesController controler,
+    DateTime? nextChange,
+  ) {
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton.icon(
+      child: TimedIconButton(
+        controller: controler,
         onPressed: () => context.pushNamed('sales-shift', extra: shift.pk),
         icon: const Icon(Icons.local_pizza),
-        label: Text('ORDER FOOD (${shift.title})'),
+        labelText: 'ORDER FOOD (${shift.title})',
+        countdownPrefix: 'ORDER ${shift.title} IN',
+        opens: nextChange,
       ),
     );
   }
