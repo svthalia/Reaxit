@@ -19,15 +19,14 @@ class AlbumListCubit extends SingleListCubit<ListAlbum> {
   List<ListAlbum> combineDown(
     List<ListAlbum> downResults,
     ListState<ListAlbum> oldstate,
-  ) => oldstate.results + downResults;
+  ) => getResults(oldstate) + downResults;
 
   @override
   ListState<ListAlbum> empty(String? query) => switch (query) {
-    null => const ListState.failure(message: 'No albums found.'),
-    '' => const ListState.failure(
-      message: 'Start searching for albums',
-      retry: false,
+    null => const ErrorState('No albums found.'),
+    '' => const ResultState(
+      InnerListState.failure(message: 'Start searching for albums'),
     ),
-    var q => ListState.failure(message: 'No albums found found for query "$q"'),
+    var q => ErrorState('No albums found found for query "$q"'),
   };
 }

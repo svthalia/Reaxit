@@ -5,7 +5,7 @@ import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/models/thabloid.dart';
 
-typedef ThabloidListState = ListState<Thabloid>;
+typedef ThabloidListState = InnerListState<Thabloid>;
 
 class ThabloidListCubit extends SingleListCubit<Thabloid> {
   ThabloidListCubit(super.api);
@@ -23,10 +23,10 @@ class ThabloidListCubit extends SingleListCubit<Thabloid> {
   List<Thabloid> combineDown(
     List<Thabloid> downResults,
     ListState<Thabloid> oldstate,
-  ) => oldstate.results + downResults;
+  ) => getResults(oldstate) + downResults;
 
   @override
   ListState<Thabloid> empty(String? query) {
-    return const ListState.failure(message: 'No thabloids found.');
+    return const ErrorState('No thabloids found.');
   }
 }

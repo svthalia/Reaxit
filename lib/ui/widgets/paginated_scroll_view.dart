@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reaxit/blocs.dart';
 import 'package:reaxit/blocs/list_cubit.dart';
-import 'package:reaxit/blocs/list_state.dart';
 import 'package:reaxit/ui/widgets/error_scroll_view.dart';
 
 class PaginatedScrollView<C extends SingleListCubit<S>, S>
@@ -24,7 +24,8 @@ class PaginatedScrollView<C extends SingleListCubit<S>, S>
   /// An optional builder for a list of slivers to be shown when an error occured.
   ///
   /// If this is not provided, the default error page will be shown.
-  final List<Widget> Function(BuildContext context)? errorBuilder;
+  final List<Widget> Function(BuildContext context, String message)?
+  errorBuilder;
 
   const PaginatedScrollView({
     super.key,
@@ -71,40 +72,55 @@ class _PaginatedScrollViewState<C extends SingleListCubit<S>, S>
       bloc: widget.cubit,
       builder: (context, state) {
         late final List<Widget> slivers;
-
-        if (state.hasException) {
-          if (widget.errorBuilder == null) {
-            final cubit = widget.cubit ?? BlocProvider.of<C>(context);
-            return ErrorScrollView(
-              state.message!,
-              retry: state.retry ?? false ? cubit.load : null,
-            );
-          }
-
-          slivers = widget.errorBuilder!(context);
-        } else if (state.isLoading) {
-          if (widget.loadingBuilder != null) {
-            slivers = widget.loadingBuilder!(context);
-          } else {
-            slivers = [];
-          }
-        } else {
-          final resultSlivers = widget.resultsBuilder(context, state.results);
-
-          slivers = [
-            ...resultSlivers,
-            if (state.isLoadingMore)
-              const SliverPadding(
-                padding: EdgeInsets.only(top: 16),
-                sliver: SliverToBoxAdapter(
-                  child: Center(child: CircularProgressIndicator()),
+        switch (state) {
+          case ResultState(
+                result: InnerListState(
+                  results: final results,
+                  message: final message,
+                  isLoadingMore: final isLoadingMore,
                 ),
+              ) ||
+              LoadingResultState(
+                result: InnerListState(
+                  results: final results,
+                  message: final message,
+                  isLoadingMore: final isLoadingMore,
+                ),
+              ):
+            final resultSlivers = widget.resultsBuilder(context, results);
+
+            slivers = [
+              ...resultSlivers,
+              if (results.isEmpty && message != null)
+                // Just show the message, no retry or anything
+                // Not an error, just a sad message
+                SliverToBoxAdapter(child: ErrorScrollView(message)),
+
+              if (isLoadingMore)
+                const SliverPadding(
+                  padding: EdgeInsets.only(top: 16),
+                  sliver: SliverToBoxAdapter(
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                ),
+              const SliverSafeArea(
+                minimum: EdgeInsets.only(bottom: 8),
+                sliver: SliverPadding(padding: EdgeInsets.zero),
               ),
-            const SliverSafeArea(
-              minimum: EdgeInsets.only(bottom: 8),
-              sliver: SliverPadding(padding: EdgeInsets.zero),
-            ),
-          ];
+            ];
+          case LoadingState():
+            if (widget.loadingBuilder != null) {
+              slivers = widget.loadingBuilder!(context);
+            } else {
+              slivers = [];
+            }
+          case ErrorState(message: final message):
+            if (widget.errorBuilder == null) {
+              final cubit = widget.cubit ?? BlocProvider.of<C>(context);
+              return ErrorScrollView(message, retry: cubit.load);
+            }
+
+            slivers = widget.errorBuilder!(context, message);
         }
 
         return Scrollbar(

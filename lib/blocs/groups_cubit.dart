@@ -16,16 +16,15 @@ class GroupsCubit extends SingleListCubit<ListGroup> {
   List<ListGroup> combineDown(
     List<ListGroup> downResults,
     ListState<ListGroup> oldstate,
-  ) => oldstate.results + downResults;
+  ) => getResults(oldstate) + downResults;
 
   @override
   ListState<ListGroup> empty(String? query) => switch (query) {
-    null => const ListState.failure(message: 'No groups found.'),
-    '' => const ListState.failure(
-      message: 'Start searching for groups',
-      retry: false,
+    null => const ErrorState('No groups found.'),
+    '' => const ResultState(
+      InnerListState.failure(message: 'Start searching for groups'),
     ),
-    var q => ListState.failure(message: 'No groups found found for query "$q"'),
+    var q => ErrorState('No groups found found for query "$q"'),
   };
 
   @override

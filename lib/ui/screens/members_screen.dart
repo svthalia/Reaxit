@@ -165,7 +165,23 @@ class MemberListScrollView
     : super(
         resultsBuilder: (context, members) =>
             buildResults(cubit, context, members),
+        loadingBuilder: (context) => buildResults(cubit, context, []),
+        errorBuilder: (context, message) => buildError(cubit, context, message),
       );
+
+  static List<Widget> buildError(
+    MemberListCubit? cubit,
+    BuildContext context,
+    String message,
+  ) {
+    final cubit0 = cubit ?? BlocProvider.of<MemberListCubit>(context);
+    return [
+      SliverPersistentHeader(
+        delegate: _SliverAppBarDelegate(cubit0.year, cubit0.filterYear),
+      ),
+      SliverToBoxAdapter(child: ErrorScrollView(message)),
+    ];
+  }
 
   static List<Widget> buildResults(
     MemberListCubit? cubit,

@@ -977,7 +977,7 @@ class _EventScreenState extends State<EventScreen> {
                 lazy: false,
                 child: PaginatedScrollView<EventListCubit, EventRegistration>(
                   loadingBuilder: (context) => slivers,
-                  errorBuilder: (context) => slivers,
+                  errorBuilder: (context, _) => slivers,
                   resultsBuilder: (context, registrations) => [
                     ...slivers,
                     _makeRegistrations(registrations),

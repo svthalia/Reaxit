@@ -28,43 +28,50 @@ class LikedPhotosCubit extends SingleListCubit<AlbumPhoto>
   List<AlbumPhoto> combineDown(
     List<AlbumPhoto> downResults,
     ListState<AlbumPhoto> oldstate,
-  ) => oldstate.results + downResults;
+  ) => getResults(oldstate) + downResults;
 
   @override
   ListState<AlbumPhoto> empty(String? query) =>
-      const ListState.failure(message: 'No liked photos found.');
+      const ErrorState('No liked photos found.');
 
   @override
   Future<void> updateLike({required bool liked, required int index}) async {
-    assert(index < state.results.length);
-    if (state.isLoading) return;
+    switch (super.state) {
+      case LoadingState():
+      case ErrorState():
+        return;
+      case ResultState<InnerListState<AlbumPhoto>>(result: final state):
+        assert(index < state.results.length);
 
-    final oldState = state;
-    final oldPhoto = oldState.results[index];
+        final oldState = super.state;
+        final oldPhoto = state.results[index];
 
-    if (oldPhoto.liked == liked) return;
+        if (oldPhoto.liked == liked) return;
 
-    // Emit expected state after (un)liking.
-    AlbumPhoto newphoto = oldPhoto.copyWith(
-      liked: liked,
-      numLikes: oldPhoto.numLikes + (liked ? 1 : -1),
-    );
+        // Emit expected state after (un)liking.
+        AlbumPhoto newphoto = oldPhoto.copyWith(
+          liked: liked,
+          numLikes: oldPhoto.numLikes + (liked ? 1 : -1),
+        );
 
-    List<AlbumPhoto> newphotos = state.results;
-    newphotos[index] = newphoto;
+        List<AlbumPhoto> newphotos = state.results;
+        newphotos[index] = newphoto;
 
-    emit(ListState.success(results: newphotos, isDone: state.isDone));
+        emit(
+          ResultState(state.copyWith(results: newphotos, isDone: state.isDone)),
+        );
 
-    try {
-      await api.updateLiked(newphoto.pk, liked);
+        try {
+          await api.updateLiked(newphoto.pk, liked);
 
-      // If a photo is succesfully unliked, the offset should decrease by 1
-      // so the next page is loaded correctly.
-      extraOffset += liked ? 1 : -1;
-    } on ApiException {
-      // Revert to state before (un)liking.
-      emit(oldState);
-      rethrow;
+          // If a photo is succesfully unliked, the offset should decrease by 1
+          // so the next page is loaded correctly.
+          extraOffset += liked ? 1 : -1;
+        } on ApiException {
+          // Revert to state before (un)liking.
+          emit(oldState);
+          rethrow;
+        }
     }
   }
 }

@@ -149,7 +149,7 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
     }
 
     if (upResults.isEmpty && downResults.isEmpty) {
-      safeEmit(empty(query ?? ''));
+      safeEmit(empty(query));
     } else {
       safeEmit(
         newState(
@@ -354,8 +354,14 @@ class SingleListCubitSource<T> extends ListCubitSource<T, T> {
   SingleListCubit<T> cubit;
   SingleListCubitSource(this.cubit);
 
+  int count = 0;
+
   @override
-  Future<ListResponse<T>> getDown(int offset) => cubit.getDown(offset);
+  Future<ListResponse<T>> getDown(int offset) =>
+      cubit.getDown(offset).then((value) {
+        count = value.count;
+        return value;
+      });
 
   @override
   Future<ListResponse<T>> getUp(int offset) async => ListResponse<T>(0, []);
@@ -379,8 +385,7 @@ abstract class SingleListCubit<T> extends ListCubit<T, T, ListState<T>> {
   @override
   List<ListCubitSource<dynamic, T>> get sources => _sources;
 
-  SingleListCubit(ApiRepository api)
-    : super(api, const ListState.loading(results: []));
+  SingleListCubit(ApiRepository api) : super(api, LoadingState());
 
   Future<ListResponse<T>> getDown(int offset);
 
@@ -395,23 +400,26 @@ abstract class SingleListCubit<T> extends ListCubit<T, T, ListState<T>> {
 
   @override
   bool canLoadMoreDown(ListState oldstate) =>
-      !oldstate.isDone && !oldstate.isLoading && !oldstate.isLoadingMore;
+      !isDone(oldstate) && !isLoading(oldstate) && !isLoadingMore(oldstate);
 
   @override
   bool canLoadMoreUp(ListState oldstate) => false;
 
   @override
-  ListState<T> loading() => const ListState.loading(results: []);
+  ListState<T> loading() => const LoadingState();
 
   @override
   ListState<T> loadingUp(ListState<T> oldstate) => oldstate;
 
   @override
-  ListState<T> loadingDown(ListState<T> oldstate) =>
-      oldstate.copyWith(isLoadingMore: true);
+  ListState<T> loadingDown(ListState<T> oldstate) => switch (oldstate) {
+    ResultState<InnerListState<T>>(result: final state) =>
+      ResultState<InnerListState<T>>(state.copyWith(isLoadingMore: true)),
+    _ => oldstate,
+  };
 
   @override
-  ListState<T> failure(String message) => ListState.failure(message: message);
+  ListState<T> failure(String message) => ErrorState(message);
 
   @override
   ListState<T> newState({
@@ -419,7 +427,13 @@ abstract class SingleListCubit<T> extends ListCubit<T, T, ListState<T>> {
     List<T> resultsDown = const [],
     required bool isDoneUp,
     required bool isDoneDown,
-  }) => ListState.success(results: resultsDown, isDone: isDoneDown);
+  }) => ResultState(
+    InnerListState.success(
+      results: resultsDown,
+      isDone: isDoneDown,
+      count: (_sources[0] as SingleListCubitSource).count,
+    ),
+  );
 
   @override
   ListState<T> updateUp(
@@ -433,7 +447,13 @@ abstract class SingleListCubit<T> extends ListCubit<T, T, ListState<T>> {
     ListState<T> oldstate,
     List<T> downResults,
     bool isDoneDown,
-  ) => oldstate.copyWith(results: downResults, isDone: isDoneDown);
+  ) => switch (oldstate) {
+    ResultState<InnerListState<T>>(result: final state) =>
+      ResultState<InnerListState<T>>(
+        state.copyWith(results: downResults, isDone: isDoneDown),
+      ),
+    _ => oldstate,
+  };
 
   Future<void> more() => moreDown();
 
@@ -442,4 +462,25 @@ abstract class SingleListCubit<T> extends ListCubit<T, T, ListState<T>> {
 
   @override
   List<T> mergeDown(List<List<T>> results) => results[0];
+
+  static bool isDone(ListState state) => switch (state) {
+    ResultState<InnerListState>(result: final state) => state.isDone,
+    ErrorState _ => true,
+    LoadingState _ => false,
+  };
+
+  static bool isLoading(ListState state) => switch (state) {
+    LoadingState _ => true,
+    _ => false,
+  };
+
+  static bool isLoadingMore(ListState state) => switch (state) {
+    ResultState<InnerListState>(result: final state) => state.isLoadingMore,
+    _ => false,
+  };
+
+  List<T> getResults(ListState<T> state) => switch (state) {
+    ResultState<InnerListState<T>>(result: final state) => state.results,
+    _ => [],
+  };
 }

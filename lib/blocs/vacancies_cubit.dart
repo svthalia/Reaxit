@@ -5,7 +5,7 @@ import 'package:reaxit/blocs/list_cubit.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/models/vacancie.dart';
 
-typedef VacanciesState = ListState<Vacancy>;
+typedef VacanciesState = InnerListState<Vacancy>;
 
 class VacanciesListCubit extends SingleListCubit<Vacancy> {
   VacanciesListCubit(super.api);
@@ -14,18 +14,15 @@ class VacanciesListCubit extends SingleListCubit<Vacancy> {
   List<Vacancy> combineDown(
     List<Vacancy> downResults,
     ListState<Vacancy> oldstate,
-  ) => oldstate.results + downResults;
+  ) => getResults(oldstate) + downResults;
 
   @override
   ListState<Vacancy> empty(String? query) => switch (query) {
-    null => const ListState.failure(message: 'No vacancies found.'),
-    '' => const ListState.failure(
-      message: 'Start searching for vacancies',
-      retry: false,
+    null => const ErrorState('No vacancies found.'),
+    '' => const ResultState(
+      InnerListState.failure(message: 'Start searching for vacancies'),
     ),
-    var q => ListState.failure(
-      message: 'No vacancies found found for query "$q"',
-    ),
+    var q => ErrorState('No vacancies found found for query "$q"'),
   };
 
   @override

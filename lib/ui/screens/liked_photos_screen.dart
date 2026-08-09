@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/blocs.dart';
 import 'package:reaxit/blocs/liked_photos_cubit.dart';
 import 'package:reaxit/models/photo.dart';
 import 'package:reaxit/ui/widgets/gallery.dart';
@@ -18,13 +19,28 @@ class LikedPhotosScreen extends StatelessWidget {
         return BlocProvider.value(
           value: cubit,
           child: BlocBuilder<LikedPhotosCubit, LikedPhotosState>(
-            buildWhen: (previous, current) =>
-                !current.isLoading && !current.isLoadingMore,
+            buildWhen: (previous, current) => switch (current) {
+              LoadingState _ || LoadingResultState _ => false,
+              _ => true,
+            },
             builder: (context, state) {
+              late final List<AlbumPhoto> results;
+              late final int count;
+              switch (state) {
+                case ResultState(
+                  result: InnerListState(results: final res, count: final cnt),
+                ):
+                  results = res;
+                  count = cnt;
+                case _:
+                  results = [];
+                  count = 0;
+              }
+
               return Gallery<LikedPhotosCubit>(
-                photos: state.results,
+                photos: results,
                 initialPage: index,
-                photoAmount: state.count!,
+                photoAmount: count,
               );
             },
           ),

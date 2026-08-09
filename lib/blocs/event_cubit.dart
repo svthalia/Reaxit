@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
+import 'package:reaxit/blocs/detail_state.dart';
 import 'package:reaxit/blocs/list_cubit.dart';
 import 'package:reaxit/blocs/list_state.dart';
 import 'package:reaxit/models.dart';
@@ -152,9 +153,9 @@ class EventListCubit extends SingleListCubit<EventRegistration> {
   List<EventRegistration> combineDown(
     List<EventRegistration> downResults,
     ListState<EventRegistration> oldstate,
-  ) => oldstate.results + downResults;
+  ) => getResults(oldstate) + downResults;
 
   @override
   ListState<EventRegistration> empty(String? query) =>
-      const ListState.failure(message: 'No registrations found.');
+      const ErrorState('No registrations found.');
 }
