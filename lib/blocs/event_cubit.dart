@@ -4,14 +4,13 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
+import 'package:reaxit/blocs/list_cubit.dart';
+import 'package:reaxit/blocs/list_state.dart';
 import 'package:reaxit/models.dart';
 
 class EventState extends Equatable {
   /// The event, will only be null if event has not yet been loaded.
   final Event? event;
-
-  /// List of all the registrations.
-  final List<EventRegistration> registrations;
 
   /// A message describing why there are no results.
   final String? message;
@@ -19,81 +18,44 @@ class EventState extends Equatable {
   /// Different results are being loaded. The results are outdated.
   final bool isLoading;
 
-  /// More of the same results are being loaded. The results are not outdated.
-  final bool isLoadingMore;
-
-  /// The last results have been loaded. There are no more pages left.
-  final bool isDone;
-
   const EventState({
     required this.event,
-    required this.registrations,
     required this.isLoading,
     required this.message,
-    required this.isLoadingMore,
-    required this.isDone,
   });
 
   bool get hasException => message != null;
 
   EventState copyWith({
     Event? event,
-    List<EventRegistration>? registrations,
     String? message,
     bool? isLoading,
-    bool? isLoadingMore,
     bool? isDone,
   }) => EventState(
     event: event ?? this.event,
-    registrations: registrations ?? this.registrations,
     message: message ?? this.message,
     isLoading: isLoading ?? this.isLoading,
-    isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-    isDone: isDone ?? this.isDone,
   );
 
   @override
-  List<Object?> get props => [
-    event,
-    registrations,
-    message,
-    isLoading,
-    isLoadingMore,
-    isDone,
-  ];
+  List<Object?> get props => [event, message, isLoading];
 
   @override
   String toString() {
-    return 'EventState(isLoading: $isLoading, isLoadingMore: $isLoadingMore,'
-        ' isDone: $isDone, message: $message, event: $event, registrations: $registrations)';
+    return 'EventState(isLoading: $isLoading, message: $message, event: $event)';
   }
 
-  const EventState.loading({this.event, required this.registrations})
-    : message = null,
-      isLoading = true,
-      isLoadingMore = false,
-      isDone = true;
+  const EventState.loading({this.event}) : message = null, isLoading = true;
 
-  const EventState.loadingMore({this.event, required this.registrations})
+  const EventState.loadingMore({this.event})
     : message = null,
-      isLoading = false,
-      isLoadingMore = true,
-      isDone = true;
+      isLoading = false;
 
-  const EventState.success({
-    this.event,
-    required this.registrations,
-    required this.isDone,
-  }) : message = null,
-       isLoading = false,
-       isLoadingMore = false;
+  const EventState.success({this.event}) : message = null, isLoading = false;
 
   const EventState.failure({required String this.message})
     : event = null,
-      registrations = const [],
-      isLoading = false,
-      isLoadingMore = false,
-      isDone = true;
+      isLoading = false;
 }
 
 class EventCubit extends Cubit<EventState> {
@@ -101,17 +63,11 @@ class EventCubit extends Cubit<EventState> {
   final String? _eventSlug;
   int? _eventPk;
 
-  static const int firstPageSize = 60;
-  static const int pageSize = 30;
-
-  /// The offset to be used for the next paginated request.
-  int _nextOffset = 0;
-
   EventCubit(this.api, {int? eventPk, String? eventSlug})
     : assert(!(eventPk == null && eventSlug == null)),
       _eventSlug = eventSlug,
       _eventPk = eventPk,
-      super(const EventState.loading(registrations: []));
+      super(const EventState.loading());
 
   Future<void> load() async {
     emit(state.copyWith(isLoading: true));
@@ -123,27 +79,11 @@ class EventCubit extends Cubit<EventState> {
 
       _eventPk = event.pk;
 
-      final listResponse = await api.getEventRegistrations(
-        pk: _eventPk!,
-        limit: firstPageSize,
-        offset: 0,
-      );
-
       if (isClosed) {
         return;
       }
 
-      final isDone = listResponse.results.length == listResponse.count;
-
-      _nextOffset = firstPageSize;
-
-      emit(
-        EventState.success(
-          event: event,
-          registrations: listResponse.results,
-          isDone: isDone,
-        ),
-      );
+      emit(EventState.success(event: event));
     } on ApiException catch (exception) {
       if (isClosed) {
         // If the cubit is closed, the error does not matter at all
@@ -186,39 +126,35 @@ class EventCubit extends Cubit<EventState> {
     await api.thaliaPayRegistration(registrationPk: registrationPk);
     await load();
   }
+}
 
-  Future<void> more() async {
-    final oldState = state;
+typedef EventListState = ListState<EventRegistration>;
 
-    if (oldState.isDone || oldState.isLoading || oldState.isLoadingMore) return;
+class EventListCubit extends SingleListCubit<EventRegistration> {
+  final int _eventPk;
 
-    emit(oldState.copyWith(isLoadingMore: true));
+  EventListCubit(super.api, this._eventPk);
 
-    try {
-      var listResponse = await api.getEventRegistrations(
-        pk: _eventPk!,
-        limit: pageSize,
-        offset: _nextOffset,
-      );
+  static const int firstPageSize = 30;
 
-      final registrations = state.registrations + listResponse.results;
-      final isDone = registrations.length == listResponse.count;
+  @override
+  Future<ListResponse<EventRegistration>> getDown(int offset) {
+    assert(searchQuery == null); // We cannot search registrations
 
-      _nextOffset += pageSize;
-
-      emit(
-        EventState.success(
-          event: oldState.event,
-          registrations: registrations,
-          isDone: isDone,
-        ),
-      );
-    } on ApiException catch (exception) {
-      emit(
-        EventState.failure(
-          message: exception.getMessage(notFound: 'The event does not exist.'),
-        ),
-      );
-    }
+    return api.getEventRegistrations(
+      pk: _eventPk,
+      limit: firstPageSize,
+      offset: offset,
+    );
   }
+
+  @override
+  List<EventRegistration> combineDown(
+    List<EventRegistration> downResults,
+    ListState<EventRegistration> oldstate,
+  ) => oldstate.results + downResults;
+
+  @override
+  ListState<EventRegistration> empty(String? query) =>
+      const ListState.failure(message: 'No registrations found.');
 }

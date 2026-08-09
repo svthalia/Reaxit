@@ -14,6 +14,7 @@ import 'package:reaxit/routes.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:reaxit/ui/widgets/dialog.dart';
 import 'package:reaxit/ui/widgets/file_button.dart';
+import 'package:reaxit/ui/widgets/paginated_scroll_view.dart';
 import 'package:reaxit/ui/widgets/timed_state_enable.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -34,8 +35,6 @@ class EventScreen extends StatefulWidget {
 class _EventScreenState extends State<EventScreen> {
   static final dateTimeFormatter = DateFormat('E d MMM y, HH:mm');
 
-  late final ScrollController _controller;
-
   late final EventCubit _eventCubit;
 
   @override
@@ -43,25 +42,12 @@ class _EventScreenState extends State<EventScreen> {
     final api = RepositoryProvider.of<ApiRepository>(context);
     _eventCubit = EventCubit(api, eventPk: widget.pk, eventSlug: widget.slug)
       ..load();
-
-    _controller = ScrollController()..addListener(_scrollListener);
     super.initState();
-  }
-
-  void _scrollListener() {
-    if (_controller.position.pixels >=
-        _controller.position.maxScrollExtent - 300) {
-      // Only request loading more if that's not already happening.
-      if (!_eventCubit.state.isLoadingMore) {
-        _eventCubit.more();
-      }
-    }
   }
 
   @override
   void dispose() {
     _eventCubit.close();
-    _controller.dispose();
     super.dispose();
   }
 
@@ -871,7 +857,7 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  SliverPadding _makeRegistrations(EventState state) {
+  SliverPadding _makeRegistrations(List<EventRegistration> registrations) {
     return SliverPadding(
       padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
       sliver: SliverGrid(
@@ -881,12 +867,12 @@ class _EventScreenState extends State<EventScreen> {
           crossAxisSpacing: 8,
         ),
         delegate: SliverChildBuilderDelegate((context, index) {
-          if (state.registrations[index].member != null) {
-            return MemberTile(member: state.registrations[index].member!);
+          if (registrations[index].member != null) {
+            return MemberTile(member: registrations[index].member!);
           } else {
-            return DefaultMemberTile(name: state.registrations[index].name!);
+            return DefaultMemberTile(name: registrations[index].name!);
           }
-        }, childCount: state.registrations.length),
+        }, childCount: registrations.length),
       ),
     );
   }
@@ -901,12 +887,7 @@ class _EventScreenState extends State<EventScreen> {
             appBar: ThaliaAppBar(
               title: Text(widget.event?.title.toUpperCase() ?? 'EVENT'),
             ),
-            body: RefreshIndicator(
-              onRefresh: () async {
-                await _eventCubit.load();
-              },
-              child: ErrorScrollView(state.message!, retry: _eventCubit.load),
-            ),
+            body: ErrorScrollView(state.message!, retry: _eventCubit.load),
           );
         } else if (state.isLoading && widget.event == null) {
           return Scaffold(
@@ -915,93 +896,91 @@ class _EventScreenState extends State<EventScreen> {
           );
         } else {
           final event = (state.event ?? widget.event)!;
+
+          final api = RepositoryProvider.of<ApiRepository>(context);
+
+          final List<AppbarAction> actions = [
+            IconAppbarAction(
+              'EXPORT',
+              Icons.edit_calendar_outlined,
+              () async {
+                final exportableEvent = add2calendar.Event(
+                  title: event.title,
+                  location: event.location,
+                  startDate: event.start,
+                  endDate: event.end,
+                );
+                await add2calendar.Add2Calendar.addEvent2Cal(exportableEvent);
+              },
+              tooltip: 'add event to calendar',
+            ),
+            IconAppbarAction(
+              'SHARE',
+              Theme.of(context).platform == TargetPlatform.iOS
+                  ? Icons.ios_share
+                  : Icons.share,
+              () async {
+                final messenger = ScaffoldMessenger.of(context);
+                try {
+                  await SharePlus.instance.share(
+                    ShareParams(uri: Uri.tryParse(event.url)),
+                  );
+                } catch (_) {
+                  messenger.showSnackBar(
+                    const SnackBar(
+                      behavior: SnackBarBehavior.floating,
+                      content: Text('Could not share the event.'),
+                    ),
+                  );
+                }
+              },
+            ),
+            if (event.userPermissions.manageEvent)
+              IconAppbarAction(
+                'EDIT',
+                Icons.settings,
+                () => context.pushNamed(
+                  'event-admin',
+                  pathParameters: {'eventPk': event.pk.toString()},
+                ),
+              ),
+          ];
+
+          final slivers = [
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _makeMap(event),
+                  const Divider(height: 0),
+                  _makeEventInfo(event),
+                  const Divider(),
+                  _makeDescription(event),
+                ],
+              ),
+            ),
+            const SliverToBoxAdapter(child: Divider()),
+            _makeRegistrationsHeader(),
+          ];
+
           return Scaffold(
             appBar: ThaliaAppBar(
               title: Text(event.title.toUpperCase()),
-              collapsingActions: [
-                IconAppbarAction(
-                  'EXPORT',
-                  Icons.edit_calendar_outlined,
-                  () async {
-                    final exportableEvent = add2calendar.Event(
-                      title: event.title,
-                      location: event.location,
-                      startDate: event.start,
-                      endDate: event.end,
-                    );
-                    await add2calendar.Add2Calendar.addEvent2Cal(
-                      exportableEvent,
-                    );
-                  },
-                  tooltip: 'add event to calendar',
-                ),
-                IconAppbarAction(
-                  'SHARE',
-                  Theme.of(context).platform == TargetPlatform.iOS
-                      ? Icons.ios_share
-                      : Icons.share,
-                  () async {
-                    final messenger = ScaffoldMessenger.of(context);
-                    try {
-                      await SharePlus.instance.share(
-                        ShareParams(uri: Uri.tryParse(event.url)),
-                      );
-                    } catch (_) {
-                      messenger.showSnackBar(
-                        const SnackBar(
-                          behavior: SnackBarBehavior.floating,
-                          content: Text('Could not share the event.'),
-                        ),
-                      );
-                    }
-                  },
-                ),
-                if (event.userPermissions.manageEvent)
-                  IconAppbarAction(
-                    'EDIT',
-                    Icons.settings,
-                    () => context.pushNamed(
-                      'event-admin',
-                      pathParameters: {'eventPk': event.pk.toString()},
-                    ),
-                  ),
-              ],
+              collapsingActions: actions,
             ),
             body: RefreshIndicator(
               onRefresh: () async {
                 await _eventCubit.load();
               },
-              child: Scrollbar(
-                controller: _controller,
-                child: CustomScrollView(
-                  controller: _controller,
-                  key: const PageStorageKey('event'),
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          _makeMap(event),
-                          const Divider(height: 0),
-                          _makeEventInfo(event),
-                          const Divider(),
-                          _makeDescription(event),
-                        ],
-                      ),
-                    ),
-                    const SliverToBoxAdapter(child: Divider()),
-                    _makeRegistrationsHeader(),
-                    _makeRegistrations(state),
-                    if (state.isLoading || state.isLoadingMore) ...[
-                      const SliverPadding(
-                        padding: EdgeInsets.all(8),
-                        sliver: SliverList(
-                          delegate: SliverChildListDelegate.fixed([
-                            Center(child: CircularProgressIndicator()),
-                          ]),
-                        ),
-                      ),
-                    ],
+              child: BlocProvider(
+                create: (_) => EventListCubit(api, event.pk)..load(),
+                lazy: false,
+                child: PaginatedScrollView<EventListCubit, EventRegistration>(
+                  loadingBuilder: (context) => slivers,
+                  errorBuilder: (context) => slivers,
+                  resultsBuilder: (context, registrations) => [
+                    ...slivers,
+                    _makeRegistrations(registrations),
                   ],
                 ),
               ),
