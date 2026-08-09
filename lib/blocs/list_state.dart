@@ -8,6 +8,10 @@ class ListState<T> extends Equatable {
   /// A message describing why there are no results.
   final String? message;
 
+  /// In case of a message, indicate wether or not to show the
+  /// retry button
+  final bool? retry;
+
   /// Different results are being loaded. The results are outdated.
   final bool isLoading;
 
@@ -24,6 +28,7 @@ class ListState<T> extends Equatable {
   const ListState({
     required this.results,
     required this.message,
+    this.retry,
     required this.isLoading,
     required this.isLoadingMore,
     required this.isDone,
@@ -33,6 +38,7 @@ class ListState<T> extends Equatable {
   ListState<T> copyWith({
     List<T>? results,
     String? message,
+    bool? retry,
     bool? isLoading,
     bool? isLoadingMore,
     bool? isDone,
@@ -40,6 +46,7 @@ class ListState<T> extends Equatable {
   }) => ListState<T>(
     results: results ?? this.results,
     message: message ?? this.message,
+    retry: retry ?? this.retry,
     isLoading: isLoading ?? this.isLoading,
     isLoadingMore: isLoadingMore ?? this.isLoadingMore,
     isDone: isDone ?? this.isDone,
@@ -63,6 +70,7 @@ class ListState<T> extends Equatable {
 
   const ListState.loading({required this.results})
     : message = null,
+      retry = null,
       isLoading = true,
       isLoadingMore = false,
       isDone = true,
@@ -70,6 +78,7 @@ class ListState<T> extends Equatable {
 
   const ListState.loadingMore({this.count, required this.results})
     : message = null,
+      retry = null,
       isLoading = false,
       isLoadingMore = true,
       isDone = true;
@@ -79,10 +88,11 @@ class ListState<T> extends Equatable {
     required this.isDone,
     this.count,
   }) : message = null,
+       retry = null,
        isLoading = false,
        isLoadingMore = false;
 
-  const ListState.failure({required String this.message})
+  const ListState.failure({required String this.message, this.retry})
     : results = const [],
       isLoading = false,
       isLoadingMore = false,
@@ -101,6 +111,10 @@ class DoubleListState<T> extends Equatable {
 
   /// A message describing why there are no results.
   final String? message;
+
+  /// In case of a message, indicate wether or not to show the
+  /// retry button
+  final bool? retry;
 
   /// Different results are being loaded. The results are outdated.
   final bool isLoading;
@@ -127,6 +141,7 @@ class DoubleListState<T> extends Equatable {
     required this.resultsUp,
     required this.resultsDown,
     required this.message,
+    required this.retry,
     required this.isLoading,
     required this.isLoadingMoreUp,
     required this.isLoadingMoreDown,
@@ -138,6 +153,7 @@ class DoubleListState<T> extends Equatable {
     List<T>? resultsUp,
     List<T>? resultsDown,
     String? message,
+    bool? retry,
     bool? isLoading,
     bool? isLoadingMoreUp,
     bool? isLoadingMoreDown,
@@ -147,6 +163,7 @@ class DoubleListState<T> extends Equatable {
     resultsUp: resultsUp ?? this.resultsUp,
     resultsDown: resultsDown ?? this.resultsDown,
     message: message ?? this.message,
+    retry: retry ?? this.retry,
     isLoading: isLoading ?? this.isLoading,
     isLoadingMoreUp: isLoadingMoreUp ?? this.isLoadingMoreUp,
     isLoadingMoreDown: isLoadingMoreDown ?? this.isLoadingMoreDown,
@@ -177,6 +194,7 @@ class DoubleListState<T> extends Equatable {
     : resultsUp = const [],
       resultsDown = const [],
       message = null,
+      retry = null,
       isLoading = true,
       isLoadingMoreUp = false,
       isLoadingMoreDown = false,
@@ -189,11 +207,12 @@ class DoubleListState<T> extends Equatable {
     required this.isDoneUp,
     required this.isDoneDown,
   }) : message = null,
+       retry = null,
        isLoading = false,
        isLoadingMoreUp = false,
        isLoadingMoreDown = false;
 
-  const DoubleListState.failure({required String this.message})
+  const DoubleListState.failure({required String this.message, this.retry})
     : resultsUp = const [],
       resultsDown = const [],
       isLoading = false,

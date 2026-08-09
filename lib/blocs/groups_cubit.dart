@@ -21,7 +21,10 @@ class GroupsCubit extends SingleListCubit<ListGroup> {
   @override
   ListState<ListGroup> empty(String? query) => switch (query) {
     null => const ListState.failure(message: 'No groups found.'),
-    '' => const ListState.failure(message: 'Start searching for groups'),
+    '' => const ListState.failure(
+      message: 'Start searching for groups',
+      retry: false,
+    ),
     var q => ListState.failure(message: 'No groups found found for query "$q"'),
   };
 

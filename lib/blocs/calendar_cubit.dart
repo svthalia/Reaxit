@@ -357,7 +357,10 @@ class CalendarCubit extends ListCubit<Event, CalendarEvent, CalendarState> {
     ),
     '' => CalendarState(
       _truthTime,
-      const DoubleListState.failure(message: 'Start searching for events'),
+      const DoubleListState.failure(
+        message: 'Start searching for events',
+        retry: false,
+      ),
     ),
     var q => CalendarState(
       _truthTime,
