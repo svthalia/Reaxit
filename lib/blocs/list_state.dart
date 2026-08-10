@@ -20,7 +20,7 @@ class InnerListState<T> extends Equatable {
 
   final int count;
 
-  bool get hasException => message != null;
+  bool get hasMessage => message != null;
 
   const InnerListState({
     required this.results,
@@ -78,7 +78,7 @@ class InnerListState<T> extends Equatable {
        isLoading = false,
        isLoadingMore = false;
 
-  const InnerListState.failure({required String this.message})
+  const InnerListState.withMessage({required String this.message})
     : results = const [],
       isLoading = false,
       isLoadingMore = false,
