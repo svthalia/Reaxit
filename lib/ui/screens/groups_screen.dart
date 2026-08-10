@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reaxit/blocs.dart';
 import 'package:reaxit/blocs/groups_cubit.dart';
 import 'package:reaxit/models/group.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:collection/collection.dart';
 import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/ui/widgets/paginated_scroll_view.dart';
 
 class GroupsScreen extends StatefulWidget {
   final MemberGroupType? currentScreen;
@@ -87,102 +89,56 @@ class _GroupsScreenState extends State<GroupsScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          BlocBuilder<CommitteesCubit, GroupsState>(
-            builder: (context, state) {
-              final cubit = context.read<CommitteesCubit>();
-              if (state.message != null) {
-                return ErrorScrollView(state.message!, retry: cubit.load);
-              } else if (state.isLoading) {
-                return const Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Center(child: CircularProgressIndicator()),
-                );
-              } else {
-                return GroupListScrollView(groups: state.results);
-              }
-            },
-          ),
-          BlocBuilder<SocietiesCubit, GroupsState>(
-            builder: (context, state) {
-              final cubit = context.read<SocietiesCubit>();
-              if (state.message != null) {
-                return ErrorScrollView(state.message!, retry: cubit.load);
-              } else if (state.isLoading) {
-                return const Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Center(child: CircularProgressIndicator()),
-                );
-              } else {
-                return GroupListScrollView(groups: state.results);
-              }
-            },
-          ),
-          BlocBuilder<BoardsCubit, GroupsState>(
-            builder: (context, state) {
-              final cubit = context.read<BoardsCubit>();
-              if (state.message != null) {
-                return ErrorScrollView(state.message!, retry: cubit.load);
-              } else if (state.isLoading) {
-                return const Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Center(child: CircularProgressIndicator()),
-                );
-              } else {
-                return GroupListScrollView(groups: state.results);
-              }
-            },
-          ),
+          GroupListScrollView<CommitteesCubit>(),
+          GroupListScrollView<SocietiesCubit>(),
+          GroupListScrollView<BoardsCubit>(),
         ],
       ),
     );
   }
 }
 
-class GroupListScrollView extends StatelessWidget {
-  final List<ListGroup> groups;
-  final ListGroup? activeBoard;
+/// A ScrollView that shows a grid of [GroupTile]s.
 
-  GroupListScrollView({super.key, required List<ListGroup> groups})
-    : activeBoard = groups.firstWhereOrNull(
-        (element) => element.isActiveBoard(),
-      ),
-      groups = groups.where((element) => !element.isActiveBoard()).toList();
+class GroupListScrollView<C extends GroupsCubit>
+    extends PaginatedScrollView<C, ListGroup> {
+  const GroupListScrollView({super.key, super.cubit})
+    : super(resultsBuilder: buildResults);
 
-  @override
-  Widget build(BuildContext context) {
-    return Scrollbar(
-      child: CustomScrollView(
-        physics: const RangeMaintainingScrollPhysics(
-          parent: AlwaysScrollableScrollPhysics(),
-        ),
-        slivers: [
-          if (activeBoard != null)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: AspectRatio(
-                  aspectRatio: 3 / 2,
-                  child: GroupTile(group: activeBoard!),
-                ),
-              ),
-            ),
-          SliverPadding(
+  static List<Widget> buildResults(
+    BuildContext context,
+    List<ListGroup> groups,
+  ) {
+    final ListGroup? activeBoard = groups.firstWhereOrNull(
+      (element) => element.isActiveBoard(),
+    );
+    groups = groups.where((element) => !element.isActiveBoard()).toList();
+    return [
+      if (activeBoard != null)
+        SliverToBoxAdapter(
+          child: Padding(
             padding: const EdgeInsets.all(8),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 8,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => GroupTile(group: groups[index]),
-                childCount: groups.length,
-              ),
+            child: AspectRatio(
+              aspectRatio: 3 / 2,
+              child: GroupTile(group: activeBoard),
             ),
           ),
-        ],
+        ),
+      SliverPadding(
+        padding: const EdgeInsets.all(8),
+        sliver: SliverGrid(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+          ),
+          delegate: SliverChildBuilderDelegate(
+            (context, index) => GroupTile(group: groups[index]),
+            childCount: groups.length,
+          ),
+        ),
       ),
-    );
+    ];
   }
 }
 
@@ -228,26 +184,10 @@ class GroupSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    return BlocBuilder<AllGroupsCubit, GroupsState>(
-      bloc: _cubit..search(query),
-      builder: (context, state) {
-        if (state.message != null) {
-          return ErrorScrollView(
-            state.message!,
-            retry: () => _cubit.search(query),
-          );
-        } else if (state.isLoading) {
-          return GroupListScrollView(
-            key: const PageStorageKey('groups-search'),
-            groups: const [],
-          );
-        } else {
-          return GroupListScrollView(
-            key: const PageStorageKey('groups-search'),
-            groups: state.results,
-          );
-        }
-      },
+    _cubit.search(query);
+    return GroupListScrollView<AllGroupsCubit>(
+      cubit: _cubit,
+      key: const PageStorageKey('groups-search'),
     );
   }
 

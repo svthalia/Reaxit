@@ -26,15 +26,15 @@ class MemberListCubit extends SingleListCubit<ListMember> {
   List<ListMember> combineDown(
     List<ListMember> downResults,
     ListState<ListMember> oldstate,
-  ) => oldstate.results + downResults;
+  ) => getResults(oldstate) + downResults;
 
   @override
   ListState<ListMember> empty(String? query) => switch (query) {
-    null => const ListState.failure(message: 'No members found.'),
-    '' => const ListState.failure(message: 'Start searching for members'),
-    var q => ListState.failure(
-      message: 'No members found found for query "$q"',
+    null => const ErrorState('No members found.'),
+    '' => const ResultState(
+      InnerListState.failure(message: 'Start searching for members'),
     ),
+    var q => ErrorState('No members found found for query "$q"'),
   };
 
   /// Set this cubit's `searchQuery` and load the albums for that query.
@@ -42,7 +42,11 @@ class MemberListCubit extends SingleListCubit<ListMember> {
   /// Use `null` as argument to remove the search query.
   void filterYear(int? year) {
     if (year != this.year) {
-      safeEmit(ListState.loading(results: state.results));
+      if (state is ErrorState) {
+        safeEmit(LoadingErrorState(state.message!));
+      } else {
+        safeEmit(LoadingState.from(state));
+      }
       this.year = year;
       load();
     }

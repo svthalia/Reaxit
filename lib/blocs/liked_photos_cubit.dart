@@ -1,106 +1,77 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
+import 'package:reaxit/blocs/list_cubit.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/widgets/gallery.dart';
 
 typedef LikedPhotosState = ListState<AlbumPhoto>;
 
-class LikedPhotosCubit extends Cubit<LikedPhotosState>
+class LikedPhotosCubit extends SingleListCubit<AlbumPhoto>
     implements GalleryCubit<LikedPhotosState> {
   static const int firstPageSize = 60;
   static const int pageSize = 30;
 
-  final ApiRepository api;
+  LikedPhotosCubit(super.api);
 
-  int _nextOffset = 0;
+  int extraOffset = 0;
 
-  LikedPhotosCubit(this.api)
-    : super(const LikedPhotosState.loading(results: []));
-
-  Future<void> load() async {
-    emit(state.copyWith(isLoading: true));
-    try {
-      final photos = await api.getLikedPhotos(limit: firstPageSize, offset: 0);
-
-      final isDone = photos.results.length == photos.count;
-
-      _nextOffset = firstPageSize;
-
-      emit(
-        LikedPhotosState.success(
-          results: photos.results,
-          isDone: isDone,
-          count: photos.count,
-        ),
-      );
-    } on ApiException catch (exception) {
-      emit(LikedPhotosState.failure(message: exception.message));
-    }
+  @override
+  Future<ListResponse<AlbumPhoto>> getDown(int offset) {
+    assert(searchQuery == null); // We cannot search photos
+    return api.getLikedPhotos(
+      limit: firstPageSize,
+      offset: offset + extraOffset,
+    );
   }
 
   @override
-  Future<void> more() async {
-    final oldState = state;
+  List<AlbumPhoto> combineDown(
+    List<AlbumPhoto> downResults,
+    ListState<AlbumPhoto> oldstate,
+  ) => getResults(oldstate) + downResults;
 
-    // Ignore calls to `more()` if there is no data, or already more coming.
-    if (oldState.isDone || oldState.isLoading || oldState.isLoadingMore) return;
-
-    emit(oldState.copyWith(isLoadingMore: true));
-    try {
-      final photosResponse = await api.getLikedPhotos(
-        limit: pageSize,
-        offset: _nextOffset,
-      );
-
-      final photos = state.results + photosResponse.results;
-      final isDone = photos.length >= photosResponse.count;
-
-      _nextOffset += pageSize;
-
-      emit(
-        LikedPhotosState.success(
-          results: photos,
-          isDone: isDone,
-          count: photosResponse.count,
-        ),
-      );
-    } on ApiException catch (exception) {
-      emit(LikedPhotosState.failure(message: exception.message));
-    }
-  }
+  @override
+  ListState<AlbumPhoto> empty(String? query) =>
+      const ErrorState('No liked photos found.');
 
   @override
   Future<void> updateLike({required bool liked, required int index}) async {
-    assert(index < state.results.length);
-    if (state.isLoading) return;
+    switch (super.state) {
+      case LoadingState():
+      case ErrorState():
+        return;
+      case ResultState<InnerListState<AlbumPhoto>>(result: final state):
+        assert(index < state.results.length);
 
-    final oldState = state;
-    final oldPhoto = oldState.results[index];
+        final oldState = super.state;
+        final oldPhoto = state.results[index];
 
-    if (oldPhoto.liked == liked) return;
+        if (oldPhoto.liked == liked) return;
 
-    // Emit expected state after (un)liking.
-    AlbumPhoto newphoto = oldPhoto.copyWith(
-      liked: liked,
-      numLikes: oldPhoto.numLikes + (liked ? 1 : -1),
-    );
+        // Emit expected state after (un)liking.
+        AlbumPhoto newphoto = oldPhoto.copyWith(
+          liked: liked,
+          numLikes: oldPhoto.numLikes + (liked ? 1 : -1),
+        );
 
-    List<AlbumPhoto> newphotos = state.results;
-    newphotos[index] = newphoto;
+        List<AlbumPhoto> newphotos = state.results;
+        newphotos[index] = newphoto;
 
-    emit(state.copyWith(results: newphotos));
+        emit(
+          ResultState(state.copyWith(results: newphotos, isDone: state.isDone)),
+        );
 
-    try {
-      await api.updateLiked(newphoto.pk, liked);
-      // If a photo is succesfully unliked, the offset should decrease by 1
-      // so the next page is loaded correctly, and vice-versa.
-      _nextOffset += liked ? 1 : -1;
-    } on ApiException {
-      // Revert to state before (un)liking.
-      emit(oldState);
-      rethrow;
+        try {
+          await api.updateLiked(newphoto.pk, liked);
+
+          // If a photo is succesfully unliked, the offset should decrease by 1
+          // so the next page is loaded correctly.
+          extraOffset += liked ? 1 : -1;
+        } on ApiException {
+          // Revert to state before (un)liking.
+          emit(oldState);
+          rethrow;
+        }
     }
   }
 }

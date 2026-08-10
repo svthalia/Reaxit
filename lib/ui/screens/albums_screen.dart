@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/api/api_repository.dart';
+import 'package:reaxit/models/album.dart';
 import 'package:reaxit/ui/widgets.dart';
+import 'package:reaxit/ui/widgets/paginated_scroll_view.dart';
 
 class AlbumsScreen extends StatefulWidget {
   @override
@@ -12,30 +14,12 @@ class AlbumsScreen extends StatefulWidget {
 }
 
 class _AlbumsScreenState extends State<AlbumsScreen> {
-  late ScrollController _controller;
   late AlbumListCubit _cubit;
 
   @override
   void initState() {
     _cubit = BlocProvider.of<AlbumListCubit>(context);
-    _controller = ScrollController()..addListener(_scrollListener);
     super.initState();
-  }
-
-  void _scrollListener() {
-    if (_controller.position.pixels >=
-        _controller.position.maxScrollExtent - 300) {
-      // Only request loading more if that's not already happening.
-      if (!_cubit.state.isLoadingMore) {
-        _cubit.more();
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   @override
@@ -68,18 +52,9 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
         onRefresh: () async {
           await _cubit.load();
         },
-        child: BlocBuilder<AlbumListCubit, AlbumListState>(
-          builder: (context, listState) {
-            if (listState.hasException) {
-              return ErrorScrollView(listState.message!, retry: _cubit.load);
-            } else {
-              return AlbumListScrollView(
-                key: const PageStorageKey('albums'),
-                controller: _controller,
-                listState: listState,
-              );
-            }
-          },
+        child: AlbumListScrollView(
+          key: const PageStorageKey('albums'),
+          cubit: _cubit,
         ),
       ),
     );
@@ -87,25 +62,9 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
 }
 
 class AlbumsSearchDelegate extends SearchDelegate {
-  late final ScrollController _controller;
   final AlbumListCubit _cubit;
 
-  AlbumsSearchDelegate(this._cubit) {
-    _controller = ScrollController()..addListener(_scrollListener);
-  }
-
-  void _scrollListener() {
-    if (!_controller.hasClients) {
-      return;
-    }
-    if (_controller.position.pixels >=
-        _controller.position.maxScrollExtent - 300) {
-      // Only request loading more if that's not already happening.
-      if (!_cubit.state.isLoadingMore) {
-        _cubit.more();
-      }
-    }
-  }
+  AlbumsSearchDelegate(this._cubit);
 
   @override
   ThemeData appBarTheme(BuildContext context) {
@@ -144,96 +103,44 @@ class AlbumsSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    return BlocBuilder<AlbumListCubit, AlbumListState>(
-      bloc: _cubit..search(query),
-      builder: (context, listState) {
-        if (listState.hasException) {
-          return ErrorScrollView(
-            listState.message!,
-            retry: () => _cubit.search(query),
-          );
-        } else {
-          return AlbumListScrollView(
-            key: const PageStorageKey('albums-search'),
-            controller: _controller,
-            listState: listState,
-          );
-        }
-      },
+    _cubit.search(query);
+    return AlbumListScrollView(
+      key: const PageStorageKey('albums-search'),
+      cubit: _cubit,
     );
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return BlocBuilder<AlbumListCubit, AlbumListState>(
-      bloc: _cubit..search(query),
-      builder: (context, listState) {
-        if (listState.hasException) {
-          return ErrorScrollView(
-            listState.message!,
-            retry: () => _cubit.search(query),
-          );
-        } else {
-          return AlbumListScrollView(
-            key: const PageStorageKey('albums-search'),
-            controller: _controller,
-            listState: listState,
-          );
-        }
-      },
-    );
+    return buildResults(context);
   }
 }
 
 /// A ScrollView that shows a grid of [AlbumTile]s.
-///
-/// This does not take care of communicating with a Bloc. The [controller]
-/// should do that. The [listState] also must not have an exception.
-class AlbumListScrollView extends StatelessWidget {
-  final ScrollController controller;
-  final AlbumListState listState;
+class AlbumListScrollView
+    extends PaginatedScrollView<AlbumListCubit, ListAlbum> {
+  const AlbumListScrollView({super.key, super.cubit})
+    : super(resultsBuilder: buildResults);
 
-  const AlbumListScrollView({
-    super.key,
-    required this.controller,
-    required this.listState,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scrollbar(
-      controller: controller,
-      child: CustomScrollView(
-        controller: controller,
-        physics: const RangeMaintainingScrollPhysics(
-          parent: AlwaysScrollableScrollPhysics(),
-        ),
-        slivers: [
-          SliverPadding(
-            padding: const EdgeInsets.all(8),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 8,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => AlbumTile(album: listState.results[index]),
-                childCount: listState.results.length,
-              ),
-            ),
+  static List<Widget> buildResults(
+    BuildContext context,
+    List<ListAlbum> albums,
+  ) {
+    return [
+      SliverPadding(
+        padding: const EdgeInsets.all(8),
+        sliver: SliverGrid(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
           ),
-          if (listState.isLoadingMore)
-            const SliverPadding(
-              padding: EdgeInsets.all(8),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate.fixed([
-                  Center(child: CircularProgressIndicator()),
-                ]),
-              ),
-            ),
-        ],
+          delegate: SliverChildBuilderDelegate(
+            (context, index) => AlbumTile(album: albums[index]),
+            childCount: albums.length,
+          ),
+        ),
       ),
-    );
+    ];
   }
 }

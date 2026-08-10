@@ -257,7 +257,7 @@ final List<RouteBase> routes = [
         path: 'liked-photos',
         name: 'liked-photos',
         pageBuilder: (context, state) =>
-            MaterialPage(key: state.pageKey, child: const LikedPhotosScreen()),
+            MaterialPage(key: state.pageKey, child: LikedPhotosScreen()),
       ),
       GoRoute(
         path: ':albumSlug',

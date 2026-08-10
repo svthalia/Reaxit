@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 class ErrorScrollView extends StatelessWidget {
   final String message;
   final void Function()? retry;
+  final bool? shrinkWrap;
 
-  const ErrorScrollView(this.message, {super.key, this.retry});
+  const ErrorScrollView(this.message, {super.key, this.retry, this.shrinkWrap});
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(16),
+    return Column(
       children: [
         Container(
           height: 100,

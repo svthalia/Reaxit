@@ -3,42 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs.dart';
+import 'package:reaxit/models/member.dart';
 import 'package:reaxit/ui/widgets.dart';
+import 'package:reaxit/ui/widgets/paginated_scroll_view.dart';
 
-class MembersScreen extends StatefulWidget {
-  @override
-  State<MembersScreen> createState() => _MembersScreenState();
-}
-
-class _MembersScreenState extends State<MembersScreen> {
-  late ScrollController _controller;
-  late MemberListCubit _cubit;
-
-  @override
-  void initState() {
-    _cubit = BlocProvider.of<MemberListCubit>(context);
-    _controller = ScrollController()..addListener(_scrollListener);
-    super.initState();
-  }
-
-  void _scrollListener() {
-    if (_controller.position.pixels >=
-        _controller.position.maxScrollExtent - 300) {
-      // Only request loading more if that's not already happening.
-      if (!_cubit.state.isLoadingMore) {
-        _cubit.more();
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
+class MembersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final cubit = BlocProvider.of<MemberListCubit>(context);
     return Scaffold(
       appBar: ThaliaAppBar(
         title: const Text('MEMBERS'),
@@ -59,21 +31,10 @@ class _MembersScreenState extends State<MembersScreen> {
       ),
       drawer: MenuDrawer(),
       body: RefreshIndicator(
-        onRefresh: _cubit.load,
-        child: BlocBuilder<MemberListCubit, MemberListState>(
-          builder: (context, listState) {
-            if (listState.hasException) {
-              return ErrorScrollView(listState.message!, retry: _cubit.load);
-            } else {
-              return MemberListScrollView(
-                key: const PageStorageKey('members'),
-                controller: _controller,
-                listState: listState,
-                currentYear: _cubit.year,
-                setYear: _cubit.filterYear,
-              );
-            }
-          },
+        onRefresh: cubit.load,
+        child: MemberListScrollView(
+          cubit: cubit,
+          key: const PageStorageKey('members'),
         ),
       ),
     );
@@ -82,21 +43,8 @@ class _MembersScreenState extends State<MembersScreen> {
 
 class MembersSearchDelegate extends SearchDelegate {
   final MemberListCubit _cubit;
-  late final ScrollController _controller;
 
-  MembersSearchDelegate(this._cubit) {
-    _controller = ScrollController()..addListener(_scrollListener);
-  }
-
-  void _scrollListener() {
-    if (_controller.position.pixels >=
-        _controller.position.maxScrollExtent - 300) {
-      // Only request loading more if that's not already happening.
-      if (!_cubit.state.isLoadingMore) {
-        _cubit.more();
-      }
-    }
-  }
+  MembersSearchDelegate(this._cubit);
 
   @override
   ThemeData appBarTheme(BuildContext context) {
@@ -135,24 +83,10 @@ class MembersSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    return BlocBuilder<MemberListCubit, MemberListState>(
-      bloc: _cubit..search(query),
-      builder: (context, listState) {
-        if (listState.hasException) {
-          return ErrorScrollView(
-            listState.message!,
-            retry: () => _cubit..search(query),
-          );
-        } else {
-          return MemberListScrollView(
-            key: const PageStorageKey('members-search'),
-            controller: _controller,
-            listState: listState,
-            currentYear: _cubit.year,
-            setYear: _cubit.filterYear,
-          );
-        }
-      },
+    _cubit.search(query);
+    return MemberListScrollView(
+      cubit: _cubit,
+      key: const PageStorageKey('albums-search'),
     );
   }
 
@@ -225,62 +159,54 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 }
 
 /// A ScrollView that shows a grid of [MemberTile]s.
-///
-/// This does not take care of communicating with a Cubit. The [controller]
-/// should do that. The [listState] also must not have an exception.
-class MemberListScrollView extends StatelessWidget {
-  final ScrollController controller;
-  final MemberListState listState;
-  final int? currentYear;
-  final void Function(int?) setYear;
+class MemberListScrollView
+    extends PaginatedScrollView<MemberListCubit, ListMember> {
+  MemberListScrollView({super.key, super.cubit})
+    : super(
+        resultsBuilder: (context, members) =>
+            buildResults(cubit, context, members),
+        loadingBuilder: (context) => buildResults(cubit, context, []),
+        errorBuilder: (context, message) => buildError(cubit, context, message),
+      );
 
-  const MemberListScrollView({
-    super.key,
-    required this.controller,
-    required this.listState,
-    required this.currentYear,
-    required this.setYear,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scrollbar(
-      controller: controller,
-      child: CustomScrollView(
-        controller: controller,
-        physics: const RangeMaintainingScrollPhysics(
-          parent: AlwaysScrollableScrollPhysics(),
-        ),
-        slivers: [
-          SliverPersistentHeader(
-            delegate: _SliverAppBarDelegate(currentYear, setYear),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.all(8),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 8,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) =>
-                    MemberTile(member: listState.results[index]),
-                childCount: listState.results.length,
-              ),
-            ),
-          ),
-          if (listState.isLoadingMore)
-            const SliverPadding(
-              padding: EdgeInsets.all(8),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate.fixed([
-                  Center(child: CircularProgressIndicator()),
-                ]),
-              ),
-            ),
-        ],
+  static List<Widget> buildError(
+    MemberListCubit? cubit,
+    BuildContext context,
+    String message,
+  ) {
+    final cubit0 = cubit ?? BlocProvider.of<MemberListCubit>(context);
+    return [
+      SliverPersistentHeader(
+        delegate: _SliverAppBarDelegate(cubit0.year, cubit0.filterYear),
       ),
-    );
+      SliverToBoxAdapter(child: ErrorScrollView(message)),
+    ];
+  }
+
+  static List<Widget> buildResults(
+    MemberListCubit? cubit,
+    BuildContext context,
+    List<ListMember> members,
+  ) {
+    final cubit0 = cubit ?? BlocProvider.of<MemberListCubit>(context);
+    return [
+      SliverPersistentHeader(
+        delegate: _SliverAppBarDelegate(cubit0.year, cubit0.filterYear),
+      ),
+      SliverPadding(
+        padding: const EdgeInsets.all(8),
+        sliver: SliverGrid(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+          ),
+          delegate: SliverChildBuilderDelegate(
+            (context, index) => MemberTile(member: members[index]),
+            childCount: members.length,
+          ),
+        ),
+      ),
+    ];
   }
 }

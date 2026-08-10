@@ -7,11 +7,12 @@ import 'package:reaxit/ui/widgets/cached_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ThabloidDetailCard extends StatelessWidget {
-  final ThabloidCubit cubit;
-  ThabloidDetailCard(Thabloid thabloid, ApiRepository api)
-    : cubit = ThabloidCubit(api, thabloid);
+  final Thabloid thabloid;
+  const ThabloidDetailCard(this.thabloid);
 
-  void _openThabloid() async {
+  void _openThabloid(BuildContext context) async {
+    final cubit = BlocProvider.of<ThabloidCubit>(context);
+
     launchUrl(
       Uri.parse(await cubit.getFile()),
       mode: LaunchMode.externalApplication,
@@ -20,9 +21,11 @@ class ThabloidDetailCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ApiRepository api = context.read();
+
     final textTheme = Theme.of(context).textTheme;
     return BlocProvider(
-      create: (context) => cubit..load(),
+      create: (context) => ThabloidCubit(api, thabloid)..load(),
       child: BlocBuilder<ThabloidCubit, Thabloid>(
         builder: (context, thabloidsState) {
           Thabloid thabloid = thabloidsState;
@@ -55,7 +58,7 @@ class ThabloidDetailCard extends StatelessWidget {
               Positioned.fill(
                 child: Material(
                   color: Colors.transparent,
-                  child: InkWell(onTap: _openThabloid),
+                  child: InkWell(onTap: () => _openThabloid(context)),
                 ),
               ),
             ],
