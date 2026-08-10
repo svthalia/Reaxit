@@ -32,7 +32,7 @@ class MemberListCubit extends SingleListCubit<ListMember> {
   ListState<ListMember> empty(String? query) => switch (query) {
     null => const ErrorState('No members found.'),
     '' => const ResultState(
-      InnerListState.failure(message: 'Start searching for members'),
+      InnerListState.withMessage(message: 'Start searching for members'),
     ),
     var q => ErrorState('No members found found for query "$q"'),
   };

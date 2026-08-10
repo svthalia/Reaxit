@@ -25,7 +25,7 @@ class AlbumListCubit extends SingleListCubit<ListAlbum> {
   ListState<ListAlbum> empty(String? query) => switch (query) {
     null => const ErrorState('No albums found.'),
     '' => const ResultState(
-      InnerListState.failure(message: 'Start searching for albums'),
+      InnerListState.withMessage(message: 'Start searching for albums'),
     ),
     var q => ErrorState('No albums found found for query "$q"'),
   };

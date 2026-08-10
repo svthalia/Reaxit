@@ -86,7 +86,7 @@ class MembersSearchDelegate extends SearchDelegate {
     _cubit.search(query);
     return MemberListScrollView(
       cubit: _cubit,
-      key: const PageStorageKey('albums-search'),
+      key: const PageStorageKey('members-search'),
     );
   }
 

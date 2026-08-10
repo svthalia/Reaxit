@@ -20,7 +20,7 @@ class VacanciesListCubit extends SingleListCubit<Vacancy> {
   ListState<Vacancy> empty(String? query) => switch (query) {
     null => const ErrorState('No vacancies found.'),
     '' => const ResultState(
-      InnerListState.failure(message: 'Start searching for vacancies'),
+      InnerListState.withMessage(message: 'Start searching for vacancies'),
     ),
     var q => ErrorState('No vacancies found found for query "$q"'),
   };
