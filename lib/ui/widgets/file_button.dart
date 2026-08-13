@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reaxit/utilities/cache_manager.dart';
-import 'package:open_file_plus/open_file_plus.dart';
+import 'package:open_file/open_file.dart';
 
 class FileButton extends StatelessWidget {
   final Uri url;
