@@ -1,0 +1,11 @@
+{
+  "name": "Flutter Dev Container",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "runArgs": [
+    "--privileged",
+    "-v", "/dev/bus/usb:/dev/bus/usb"
+  ],
+  "remoteUser": "vscode"
+}
