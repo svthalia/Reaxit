@@ -29,7 +29,7 @@ abstract class ListCubitSource<T, D> {
     });
   }
 
-  /// getDown wraps getDown
+  /// moreDown wraps getDown
   Future<List<D>> moreDown() {
     if (isDoneDown) {
       return Future.value([]);
@@ -97,29 +97,32 @@ abstract class ListCubit<F, T, S> extends Cubit<S> {
     _debounceTimer = Timer(const Duration(minutes: 10), () => {});
 
     // Get the data in both directions
-    List<Future<List<T>>> futuresUp = [];
-    List<Future<List<T>>> futuresDown = [];
-    for (final source in sources) {
-      source._nextOffsetUp = 0;
-      source._nextOffsetDown = 0;
-      source.isDoneUp = false;
-      source.isDoneDown = false;
-      try {
-        futuresUp.add(source.moreUp());
-        futuresDown.add(source.moreDown());
-      } on ApiException catch (exception) {
-        safeEmit(failure(exception.message));
-        return;
-      }
-    }
-    cleanupOldState();
     List<List<T>> resultsUp = [];
     List<List<T>> resultsDown = [];
+    List<Future<List<T>>> futuresUp = [];
+    List<Future<List<T>>> futuresDown = [];
+
     try {
+      for (final source in sources) {
+        source._nextOffsetUp = 0;
+        source._nextOffsetDown = 0;
+        source.isDoneUp = false;
+        source.isDoneDown = false;
+        futuresUp.add(source.moreUp());
+        futuresDown.add(source.moreDown());
+      }
+
+      cleanupOldState();
       resultsUp = await Future.wait(futuresUp);
       resultsDown = await Future.wait(futuresDown);
-    } on ApiException catch (exception) {
-      safeEmit(failure(exception.message));
+    } on ApiException catch (e) {
+      // If we catch a single exception, another one could still be comming as well
+      // Not catching it causes sentry logs
+      safeEmit(failure(e.message));
+      (
+        Future.wait(futuresUp),
+        Future.wait(futuresDown),
+      ).wait.catchError((_) => (List<List<T>>.empty(), List<List<T>>.empty()));
       return;
     }
 
