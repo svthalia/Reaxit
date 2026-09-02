@@ -183,11 +183,14 @@ class ConcrexitApiRepository implements ApiRepository {
       throw ApiException.noInternet;
     } on FormatException {
       throw ApiException.unknownError;
-    } on ClientException {
+    } on ClientException catch (e) {
+      Sentry.logger.error('Client exception occured ${e.message}');
       throw ApiException.unknownError;
-    } on HandshakeException {
+    } on TlsException catch (e) {
+      Sentry.logger.error('TLS exception occured ${e.message}');
       throw ApiException.unknownError;
-    } on OSError {
+    } on OSError catch (e) {
+      Sentry.logger.error('OS error occured ${e.message}');
       throw ApiException.unknownError;
     } on ApiException {
       rethrow;
