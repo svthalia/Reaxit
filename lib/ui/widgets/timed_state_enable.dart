@@ -40,18 +40,12 @@ class _TimedEnableButton extends State<TimedEnableButton> {
   Widget build(BuildContext context) {
     DateTime? open = widget.open;
     DateTime? close = widget.close;
+
     // Assume its opened until proven otherwise
     controler.update(WidgetState.disabled, false);
 
     DateTime? nextChange;
     // We know close is after before, so this is valid
-    if (open != null) {
-      if (open.isAfter(DateTime.now())) {
-        controler.update(WidgetState.disabled, true);
-        delayedSet(open, false);
-        nextChange = open;
-      }
-    }
     if (close != null) {
       if (close.isAfter(DateTime.now())) {
         delayedSet(close, true);
@@ -61,6 +55,13 @@ class _TimedEnableButton extends State<TimedEnableButton> {
       }
     }
 
+    if (open != null) {
+      if (open.isAfter(DateTime.now())) {
+        controler.update(WidgetState.disabled, true);
+        delayedSet(open, false);
+        nextChange = open;
+      }
+    }
     return widget.builder(context, controler, nextChange);
   }
 }
@@ -76,8 +77,9 @@ class TimedIconButton extends StatelessWidget {
   final Function onPressed;
   final Widget icon;
   final String labelText;
-  final String countdownPrefix;
-  final DateTime? opens;
+  final String opensPrefix;
+  final String closesPrefix;
+  final DateTime? nextChange;
 
   const TimedIconButton({
     super.key,
@@ -85,18 +87,23 @@ class TimedIconButton extends StatelessWidget {
     required this.onPressed,
     required this.icon,
     required this.labelText,
-    required this.countdownPrefix,
-    this.opens,
+    required this.opensPrefix,
+    required this.closesPrefix,
+    this.nextChange,
   });
 
   @override
   Widget build(BuildContext context) {
     late final Widget label;
     // There is also a countdown for the close of registration
-    if (opens?.isBefore(DateTime.now()) ?? true) {
-      label = Text(labelText);
+    if (controller.value.contains(WidgetState.disabled) &&
+        (nextChange?.isAfter(DateTime.now()) ?? false)) {
+      label = CountdownText(deadline: nextChange!, prefix: opensPrefix);
+    } else if (!controller.value.contains(WidgetState.disabled) &&
+        (nextChange?.isAfter(DateTime.now()) ?? false)) {
+      label = CountdownText(deadline: nextChange!, prefix: closesPrefix);
     } else {
-      label = CountdownText(deadline: opens!, prefix: countdownPrefix);
+      label = Text(labelText);
     }
 
     return ElevatedButton.icon(
