@@ -112,7 +112,9 @@ class GroupListScrollView<C extends GroupsCubit>
     final ListGroup? activeBoard = groups.firstWhereOrNull(
       (element) => element.isActiveBoard(),
     );
-    groups = groups.where((element) => !element.isActiveBoard()).toList();
+    groups = groups.reversed
+        .where((element) => !element.isActiveBoard())
+        .toList();
     return [
       if (activeBoard != null)
         SliverToBoxAdapter(
