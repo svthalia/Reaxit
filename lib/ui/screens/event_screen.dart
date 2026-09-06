@@ -9,7 +9,6 @@ import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/api/exceptions.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/models.dart';
-import 'package:reaxit/models/shift.dart';
 import 'package:reaxit/routes.dart';
 import 'package:reaxit/ui/widgets.dart';
 import 'package:reaxit/ui/widgets/dialog.dart';
@@ -87,18 +86,18 @@ class _EventScreenState extends State<EventScreen> {
 
   /// Create all info of an event until the description, including buttons.
   Widget _makeEventInfo(Event event) {
-    List<ShiftInfo>? shifts = event.shiftSet;
+    // List<ShiftInfo>? shifts = event.shiftSet;
     Iterable<Widget>? selforderShifts;
-    if (shifts != null) {
-      selforderShifts = shifts.map(
-        (shift) => TimedEnableButton(
-          open: shift.start,
-          close: shift.end,
-          builder: (context, controler, nextChange) =>
-              _makeFoodShiftButton(shift, controler, nextChange),
-        ),
-      );
-    }
+    // if (shifts != null) {
+    //   selforderShifts = shifts.where((shift) => shift).map(
+    //     (shift) => TimedEnableButton(
+    //       open: shift.start,
+    //       close: shift.end,
+    //       builder: (context, controler, nextChange) =>
+    //           _makeFoodShiftButton(shift, controler, nextChange),
+    //     ),
+    //   );
+    // }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -304,10 +303,11 @@ class _EventScreenState extends State<EventScreen> {
         controller: controler,
         onPressed: () =>
             event.reachedMaxParticipants ? joinQueue(event) : register(event),
-        opens: event.registrationStarted() ? null : nextChange,
+        nextChange: event.registrationStarted() ? null : nextChange,
         icon: const Icon(Icons.create_outlined),
         labelText: event.reachedMaxParticipants ? 'JOIN QUEUE' : 'REGISTER',
-        countdownPrefix: 'OPENS IN',
+        opensPrefix: 'OPENS IN',
+        closesPrefix: 'CLOSES IN',
       );
     } else if (event.canCancelRegistration) {
       // You can cancel (on time or to late)
@@ -763,23 +763,24 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  Widget _makeFoodShiftButton(
-    ShiftInfo shift,
-    WidgetStatesController controler,
-    DateTime? nextChange,
-  ) {
-    return SizedBox(
-      width: double.infinity,
-      child: TimedIconButton(
-        controller: controler,
-        onPressed: () => context.pushNamed('sales-shift', extra: shift.pk),
-        icon: const Icon(Icons.local_pizza),
-        labelText: 'ORDER FOOD (${shift.title})',
-        countdownPrefix: 'ORDER ${shift.title} IN',
-        opens: nextChange,
-      ),
-    );
-  }
+  // Widget _makeFoodShiftButton(
+  //   ShiftInfo shift,
+  //   WidgetStatesController controler,
+  //   DateTime? nextChange,
+  // ) {
+  //   return SizedBox(
+  //     width: double.infinity,
+  //     child: TimedIconButton(
+  //       controller: controler,
+  //       onPressed: () => context.pushNamed('sales-shift', extra: shift.pk),
+  //       icon: const Icon(Icons.local_pizza),
+  //       labelText: 'ORDER FOOD (${shift.title})',
+  //       opensPrefix: 'ORDER (${shift.title}) IN',
+  //       closesPrefix: 'ORDER (${shift.title})',
+  //       nextChange: nextChange,
+  //     ),
+  //   );
+  // }
 
   TextSpan _makeTermsAndConditions(Event event) {
     final url = Config.of(context).termsAndConditionsUrl;

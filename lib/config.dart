@@ -118,7 +118,7 @@ class Config {
 
   static const Duration searchDebounceTime = Duration(milliseconds: 200);
 
-  static const String versionNumber = 'v3.9.1';
+  static const String versionNumber = 'v3.9.2';
 
   static const Config defaultConfig = Config.production ?? Config.staging;
 
