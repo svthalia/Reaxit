@@ -109,7 +109,7 @@ class TimedIconButton extends StatelessWidget {
     return ElevatedButton.icon(
       statesController: controller,
       onPressed: !controller.value.contains(WidgetState.disabled)
-          ? () => onPressed
+          ? () => onPressed()
           : null,
       icon: icon,
       label: label,
