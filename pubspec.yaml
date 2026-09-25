@@ -23,7 +23,7 @@ dependencies:
     sdk: flutter
 
   # Annotations.
-  meta: ^1.18.0
+  meta: ^1.19.0
 
   # Nice functions for collections.
   collection: ^1.19.1
@@ -37,10 +37,10 @@ dependencies:
   # Networking basics.
   http: ^1.6.0
   http_parser: ^4.1.2
-  cupertino_http: ^3.0.2
+  cupertino_http: ^3.1.0
 
   # OAuth2 authorized http Client.
-  oauth2: ^2.0.4
+  oauth2: ^2.0.5
 
   # Secure storage for OAuth2 credentials.
   flutter_secure_storage: ^11.0.0
@@ -65,23 +65,23 @@ dependencies:
   photo_view: ^0.15.0
 
   # HTML widget.
-  flutter_widget_from_html_core: ^0.17.2
+  flutter_widget_from_html_core: ^0.17.3
 
   # Sentry error reporting.
-  sentry_flutter: ^9.26.0
+  sentry_flutter: ^9.29.0
 
   # Share menu.
   share_plus: ^13.3.0
 
   # Get mime type from file extension.
-  mime: ^2.0.0
+  mime: ^2.1.0
 
   # Path for temporary files.
   path_provider: ^2.1.6
   
   # Access camera and gallery.
   image_picker: ^1.2.3
-  gal: ^2.3.2
+  gal: ^2.3.3
 
   # Resize images.
   image_cropper: ^12.2.1
@@ -90,8 +90,8 @@ dependencies:
   carousel_slider: ^5.1.2
 
   # Firebase for push notifications.
-  firebase_core: ^4.13.0
-  firebase_messaging: ^16.5.0
+  firebase_core: ^4.14.0
+  firebase_messaging: ^16.6.0
 
   # Push notifications in app. 
   overlay_support: ^2.1.0
@@ -107,23 +107,25 @@ dependencies:
 
 
   # Predefined animations.
-  animations: ^2.2.0
+  animations: ^3.0.0
 
   # Export event to calendar.
   add_2_calendar: ^3.1.1
 
   # Cached images.
-  cached_network_image: ^3.4.1
+  cached_network_image: ^4.0.0
   flutter_cache_manager: ^3.4.2
 
   # Navigation.
-  go_router: ^17.4.0
+  go_router: ^18.0.1
 
   # Displaying QR codes.
   qr_flutter: ^4.1.0
 
   # Open files.
   open_file: ^4.0.0
+
+  material_ui: ^1.1.1
 
 dev_dependencies:
   flutter_test:
@@ -136,7 +138,7 @@ dev_dependencies:
     sdk: flutter
 
   # JSON parsing.
-  build_runner: ^2.15.0
+  build_runner: ^2.16.1
 
   # JSON parsing.
   json_serializable: ^6.14.1
@@ -147,7 +149,7 @@ dev_dependencies:
   # Generating splash screens.
   flutter_native_splash: ^2.4.8
 
-  mockito: ^5.7.0
+  mockito: ^5.8.1
 
 # The following section is specific to Flutter.
 flutter:

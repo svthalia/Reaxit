@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:reaxit/blocs/vacancies_cubit.dart';
 import 'package:reaxit/models/vacancie.dart';
 import 'package:reaxit/ui/widgets.dart';
