@@ -74,7 +74,7 @@ class _TimedEnableButton extends State<TimedEnableButton> {
 // the next change. This `DateTime` can be passed to `opens`
 class TimedIconButton extends StatelessWidget {
   final WidgetStatesController controller;
-  final Function onPressed;
+  final void Function() onPressed;
   final Widget icon;
   final String labelText;
   final String opensPrefix;
@@ -109,7 +109,7 @@ class TimedIconButton extends StatelessWidget {
     return ElevatedButton.icon(
       statesController: controller,
       onPressed: !controller.value.contains(WidgetState.disabled)
-          ? () => onPressed
+          ? onPressed
           : null,
       icon: icon,
       label: label,
