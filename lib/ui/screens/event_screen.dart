@@ -901,20 +901,15 @@ class _EventScreenState extends State<EventScreen> {
           final api = RepositoryProvider.of<ApiRepository>(context);
 
           final List<AppbarAction> actions = [
-            IconAppbarAction(
-              'EXPORT',
-              Icons.edit_calendar_outlined,
-              () async {
-                final exportableEvent = add2calendar.Event(
-                  title: event.title,
-                  location: event.location,
-                  startDate: event.start,
-                  endDate: event.end,
-                );
-                await add2calendar.Add2Calendar.addEvent2Cal(exportableEvent);
-              },
-              tooltip: 'add event to calendar',
-            ),
+            IconAppbarAction('EXPORT', Icons.edit_calendar_outlined, () async {
+              final exportableEvent = add2calendar.Event(
+                title: event.title,
+                location: event.location,
+                startDate: event.start,
+                endDate: event.end,
+              );
+              await add2calendar.Add2Calendar.addEvent2Cal(exportableEvent);
+            }, tooltip: 'add event to calendar'),
             IconAppbarAction(
               'SHARE',
               Theme.of(context).platform == TargetPlatform.iOS
