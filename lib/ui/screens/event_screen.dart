@@ -1,6 +1,6 @@
 import 'package:add_2_calendar/add_2_calendar.dart' as add2calendar;
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:go_router/go_router.dart';
@@ -901,20 +901,15 @@ class _EventScreenState extends State<EventScreen> {
           final api = RepositoryProvider.of<ApiRepository>(context);
 
           final List<AppbarAction> actions = [
-            IconAppbarAction(
-              'EXPORT',
-              Icons.edit_calendar_outlined,
-              () async {
-                final exportableEvent = add2calendar.Event(
-                  title: event.title,
-                  location: event.location,
-                  startDate: event.start,
-                  endDate: event.end,
-                );
-                await add2calendar.Add2Calendar.addEvent2Cal(exportableEvent);
-              },
-              tooltip: 'add event to calendar',
-            ),
+            IconAppbarAction('EXPORT', Icons.edit_calendar_outlined, () async {
+              final exportableEvent = add2calendar.Event(
+                title: event.title,
+                location: event.location,
+                startDate: event.start,
+                endDate: event.end,
+              );
+              await add2calendar.Add2Calendar.addEvent2Cal(exportableEvent);
+            }, tooltip: 'add event to calendar'),
             IconAppbarAction(
               'SHARE',
               Theme.of(context).platform == TargetPlatform.iOS

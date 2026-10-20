@@ -5,6 +5,9 @@ analyzer:
     # Do not analyze generated files.
     - lib/models/*.g.dart
     - lib/tosti/models/*.g.dart
+    - build/**
+    - android/**
+    - ios/**
 
 linter:
   rules:
