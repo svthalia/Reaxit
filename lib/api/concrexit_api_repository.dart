@@ -1192,6 +1192,34 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
+  Future<void> updateReferencePhoto(String filePath) async {
+    return sandbox(() async {
+      final uri = _uri(path: '/photos/facedetection/reference-faces/');
+      // final body = jsonEncode({'photo': filePath.split('/').last});
+      final request = MultipartRequest('POST', uri);
+      request.files.add(
+        await MultipartFile.fromPath(
+          'file',
+          filePath,
+          contentType: MediaType('image', 'jpeg'),
+        ),
+      );
+      await _handleExceptions(() async {
+        final streamedResponse = await _client.send(request);
+        return Response.fromStream(streamedResponse);
+      });
+    });
+  }
+
+  @override
+  Future<void> deleteReferencePhoto({required int photoPk}) async {
+    return sandbox(() async {
+      final uri = _uri(path: '/photos/facedetection/reference-faces/$photoPk/');
+      await _handleExceptions(() => _client.delete(uri));
+    });
+  }
+
+  @override
   Future<Album> getAlbum({required String slug}) async {
     return sandbox(() async {
       final uri = _uri(path: '/photos/albums/$slug/');
@@ -1541,6 +1569,26 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
+  Future<ListResponse<AlbumPhoto>> getFaceDetectionMatches({
+    int? limit,
+    int? offset,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/photos/facedetection/matches/',
+      queryParameters: {
+        if (limit != null) 'limit': limit.toString(),
+        if (offset != null) 'offset': offset.toString(),
+      },
+    );
+
+    final response = await _handleExceptions(() => _client.get(uri));
+    return ListResponse<AlbumPhoto>.fromJson(
+      _jsonDecode(response),
+      (json) => AlbumPhoto.fromJson(json as Map<String, dynamic>),
+    );
+  }
+
+  @override
   Future<ListResponse<Payment>> getPayments({
     int? limit,
     int? offset,
@@ -1572,6 +1620,36 @@ class ConcrexitApiRepository implements ApiRepository {
         _jsonDecode(response),
         (json) => Payment.fromJson(json as Map<String, dynamic>),
       );
+    });
+  }
+
+  @override
+  Future<ListResponse<AlbumPhoto>> getReferencePhotos({
+    int? limit,
+    int? offset,
+  }) async {
+    final uri = _baseUri.replace(
+      path: '$_basePath/photos/facedetection/reference-faces/',
+      queryParameters: {
+        if (limit != null) 'limit': limit.toString(),
+        if (offset != null) 'offset': offset.toString(),
+      },
+    );
+
+    final response = await _handleExceptions(() => _client.get(uri));
+
+    return ListResponse<AlbumPhoto>.fromJson(_jsonDecode(response), (json) {
+      // Inject liked = false into the JSON map
+      final jsonWithLiked = {
+        ...json as Map<String, dynamic>,
+        'liked': false, // force liked = false
+        'num_likes': 0,
+      };
+
+      // Now deserialize
+      final photo = AlbumPhoto.fromJson(jsonWithLiked);
+
+      return photo;
     });
   }
 

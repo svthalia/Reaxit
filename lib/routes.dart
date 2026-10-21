@@ -10,6 +10,7 @@ import 'package:reaxit/ui/screens.dart';
 import 'package:reaxit/ui/screens/sales_admin_screen.dart';
 import 'package:reaxit/ui/screens/sales_selforder_screen.dart';
 import 'package:reaxit/ui/screens/liked_photos_screen.dart';
+import 'package:reaxit/ui/screens/face_detection_screen.dart';
 import 'package:reaxit/ui/screens/thabloids_screen.dart';
 import 'package:reaxit/ui/screens/vacancies_screen.dart';
 import 'package:reaxit/ui/widgets.dart';
@@ -258,6 +259,15 @@ final List<RouteBase> routes = [
         name: 'liked-photos',
         pageBuilder: (context, state) =>
             MaterialPage(key: state.pageKey, child: LikedPhotosScreen()),
+      ),
+      GoRoute(
+        path: 'face-detection',
+        name: 'face-detection',
+        pageBuilder:
+            (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: FaceDetectionScreen(),
+            ),
       ),
       GoRoute(
         path: ':albumSlug',

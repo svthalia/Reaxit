@@ -316,6 +316,13 @@ abstract class ApiRepository {
   /// Create or delete a like on the photo with the `id`.
   Future<void> updateLiked(int id, bool liked);
 
+  /// Update the reference photo for face detection.
+  ///
+  /// `filePath` should be the path of a jpg image.
+  Future<void> updateReferencePhoto(String file);
+
+  Future<void> deleteReferencePhoto({required int photoPk});
+
   /// Get a list of [ListAlbum]s.
   ///
   /// Use `limit` and `offset` for pagination. [ListResponse.count] is the
@@ -391,6 +398,11 @@ abstract class ApiRepository {
   /// Claim and get the [SalesOrder] with the `pk`.
   Future<SalesOrder> claimSalesOrder({required String pk});
 
+  Future<ListResponse<AlbumPhoto>> getFaceDetectionMatches({
+    int? limit,
+    int? offset,
+  });
+
   /// Get a list of [ListGroup]s.
   ///
   /// Use `limit` and `offset` for pagination, and `type`, `start`, `end` and
@@ -425,6 +437,12 @@ abstract class ApiRepository {
     DateTime? end,
     List<PaymentType>? type,
     bool? settled,
+  });
+
+  /// Get a list of reference faces for face detection.
+  Future<ListResponse<AlbumPhoto>> getReferencePhotos({
+    int? limit,
+    int? offset,
   });
 
   /// Get a list of [Vacancy]s.

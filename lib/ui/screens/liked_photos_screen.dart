@@ -2,7 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs.dart';
-import 'package:reaxit/blocs/liked_photos_cubit.dart';
+import 'package:reaxit/blocs/photos_cubit.dart';
 import 'package:reaxit/models/photo.dart';
 import 'package:reaxit/ui/widgets/gallery.dart';
 import 'package:reaxit/ui/widgets/paginated_scroll_view.dart';
