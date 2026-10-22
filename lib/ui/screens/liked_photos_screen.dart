@@ -4,6 +4,7 @@ import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs.dart';
 import 'package:reaxit/blocs/photos_cubit.dart';
 import 'package:reaxit/models/photo.dart';
+import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/gallery.dart';
 import 'package:reaxit/ui/widgets/paginated_scroll_view.dart';
 import 'package:reaxit/ui/widgets/photo_tile.dart';
@@ -55,23 +56,29 @@ class LikedPhotosScreen extends StatelessWidget {
       create: (context) =>
           LikedPhotosCubit(RepositoryProvider.of<ApiRepository>(context))
             ..load(),
-      child: PaginatedScrollView<LikedPhotosCubit, AlbumPhoto>(
-        resultsBuilder: (context, photos) => [
-          SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8,
-            ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => PhotoTile(
-                photo: photos[index],
-                openGallery: () => _openGallery(context, index),
+      child: Scaffold (
+        appBar: ThaliaAppBar(title: const Text('LIKED PHOTOS')),
+        body : PaginatedScrollView<LikedPhotosCubit, AlbumPhoto>(
+          resultsBuilder: (context, photos) => [
+            SliverPadding(
+              padding: EdgeInsetsGeometry.all(8),
+              sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) => PhotoTile(
+                    photo: photos[index],
+                    openGallery: () => _openGallery(context, index),
+                  ),
+                  childCount: photos.length,
+                ),
               ),
-              childCount: photos.length,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
