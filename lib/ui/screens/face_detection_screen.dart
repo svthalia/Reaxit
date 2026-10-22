@@ -12,7 +12,7 @@ import 'package:reaxit/ui/widgets/photo_tile.dart';
 
 class FaceDetectionScreen extends StatelessWidget {
   void _openGallery(BuildContext context, int index) {
-    final cubit = BlocProvider.of<ReferencePhotosCubit>(context);
+    final cubit = BlocProvider.of<FaceDetectionPhotosCubit>(context);
     showDialog(
       context: context,
       useSafeArea: false,
@@ -20,7 +20,7 @@ class FaceDetectionScreen extends StatelessWidget {
       builder: (context) {
         return BlocProvider.value(
           value: cubit,
-          child: BlocBuilder<LikedPhotosCubit, LikedPhotosState>(
+          child: BlocBuilder<FaceDetectionPhotosCubit, FaceDetectionPhotosState>(
             buildWhen: (previous, current) => switch (current) {
               LoadingState _ || LoadingResultState _ => false,
               _ => true,
@@ -39,7 +39,7 @@ class FaceDetectionScreen extends StatelessWidget {
                   count = 0;
               }
 
-              return Gallery<LikedPhotosCubit>(
+              return Gallery<FaceDetectionPhotosCubit>(
                 photos: results,
                 initialPage: index,
                 photoAmount: count,
@@ -55,14 +55,14 @@ class FaceDetectionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          LikedPhotosCubit(RepositoryProvider.of<ApiRepository>(context))
+          FaceDetectionPhotosCubit(RepositoryProvider.of<ApiRepository>(context))
             ..load(),
       child: Scaffold (
-        appBar: ThaliaAppBar(title: const Text('LIKED PHOTOS')),
-        body : PaginatedScrollView<LikedPhotosCubit, AlbumPhoto>(
+        appBar: ThaliaAppBar(title: const Text('FACE DETECTION')),
+        body : PaginatedScrollView<FaceDetectionPhotosCubit, AlbumPhoto>(
           resultsBuilder: (context, photos) => [
             SliverPadding(
-              padding: EdgeInsetsGeometry.all(8),
+              padding: EdgeInsets.all(8),
               sliver: SliverGrid(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,

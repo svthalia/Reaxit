@@ -61,7 +61,7 @@ class LikedPhotosScreen extends StatelessWidget {
         body : PaginatedScrollView<LikedPhotosCubit, AlbumPhoto>(
           resultsBuilder: (context, photos) => [
             SliverPadding(
-              padding: EdgeInsetsGeometry.all(8),
+              padding: EdgeInsets.all(8),
               sliver: SliverGrid(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
