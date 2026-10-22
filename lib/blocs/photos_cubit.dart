@@ -22,7 +22,7 @@ abstract class PhotosCubit extends SingleListCubit<AlbumPhoto>
   @override
   Future<ListResponse<AlbumPhoto>> getDown(int offset) {
     assert(searchQuery == null); // We cannot search photos
-    return api.getLikedPhotos(
+    return fetchPhotos(
       limit: firstPageSize,
       offset: offset + extraOffset,
     );
