@@ -5,6 +5,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install all system dependencies in a single layer
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    adb \
     clang \
     cmake \
     curl \
