@@ -964,20 +964,25 @@ class _EventScreenState extends State<EventScreen> {
               title: Text(event.title.toUpperCase()),
               collapsingActions: actions,
             ),
-            body: RefreshIndicator(
-              onRefresh: () async {
-                await _eventCubit.load();
-              },
-              child: BlocProvider(
-                create: (_) => EventListCubit(api, event.pk)..load(),
-                lazy: false,
-                child: PaginatedScrollView<EventListCubit, EventRegistration>(
-                  loadingBuilder: (context) => slivers,
-                  errorBuilder: (context, _) => slivers,
-                  resultsBuilder: (context, registrations) => [
-                    ...slivers,
-                    _makeRegistrations(registrations),
-                  ],
+            body: BlocProvider(
+              create: (_) => EventListCubit(api, event.pk)..load(),
+              lazy: false,
+              child: Builder(
+                builder: (context) => RefreshIndicator(
+                  onRefresh: () async {
+                    await Future.wait([
+                      _eventCubit.load(),
+                      context.read<EventListCubit>().load(),
+                    ]);
+                  },
+                  child: PaginatedScrollView<EventListCubit, EventRegistration>(
+                    loadingBuilder: (context) => slivers,
+                    errorBuilder: (context, _) => slivers,
+                    resultsBuilder: (context, registrations) => [
+                      ...slivers,
+                      _makeRegistrations(registrations),
+                    ],
+                  ),
                 ),
               ),
             ),
