@@ -16,7 +16,7 @@ Map<String, dynamic> _$CoverPhotoToJson(CoverPhoto instance) =>
     <String, dynamic>{
       'pk': instance.pk,
       'rotation': instance.rotation,
-      'file': instance.file,
+      'file': instance.file.toJson(),
     };
 
 AlbumPhoto _$AlbumPhotoFromJson(Map<String, dynamic> json) => AlbumPhoto(

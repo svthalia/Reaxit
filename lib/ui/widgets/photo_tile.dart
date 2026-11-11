@@ -2,7 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:reaxit/models/photo.dart';
 
 class PhotoTile extends StatelessWidget {
-  final AlbumPhoto photo;
+  final CoverPhoto photo;
   final void Function() openGallery;
 
   PhotoTile({required this.photo, required this.openGallery})

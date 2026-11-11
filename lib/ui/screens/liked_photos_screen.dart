@@ -2,8 +2,9 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reaxit/api/api_repository.dart';
 import 'package:reaxit/blocs.dart';
-import 'package:reaxit/blocs/liked_photos_cubit.dart';
+import 'package:reaxit/blocs/photos_cubit.dart';
 import 'package:reaxit/models/photo.dart';
+import 'package:reaxit/ui/widgets/app_bar.dart';
 import 'package:reaxit/ui/widgets/gallery.dart';
 import 'package:reaxit/ui/widgets/paginated_scroll_view.dart';
 import 'package:reaxit/ui/widgets/photo_tile.dart';
@@ -51,27 +52,33 @@ class LikedPhotosScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          LikedPhotosCubit(RepositoryProvider.of<ApiRepository>(context))
-            ..load(),
-      child: PaginatedScrollView<LikedPhotosCubit, AlbumPhoto>(
-        resultsBuilder: (context, photos) => [
-          SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8,
-            ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => PhotoTile(
-                photo: photos[index],
-                openGallery: () => _openGallery(context, index),
+    return Scaffold(
+      appBar: ThaliaAppBar(title: const Text('LIKED PHOTOS')),
+      body: BlocProvider(
+        create: (context) =>
+            LikedPhotosCubit(RepositoryProvider.of<ApiRepository>(context))
+              ..load(),
+        child: PaginatedScrollView<LikedPhotosCubit, AlbumPhoto>(
+          resultsBuilder: (context, photos) => [
+            SliverPadding(
+              padding: EdgeInsets.all(8),
+              sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) => PhotoTile(
+                    photo: photos[index],
+                    openGallery: () => _openGallery(context, index),
+                  ),
+                  childCount: photos.length,
+                ),
               ),
-              childCount: photos.length,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

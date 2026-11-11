@@ -97,6 +97,8 @@ class Config {
     'events:read',
     'events:register',
     'events:admin',
+    'facedetection:read',
+    'facedetection:write',
     'food:read',
     'food:order',
     'food:admin',
