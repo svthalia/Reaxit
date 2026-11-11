@@ -35,6 +35,7 @@ class _EventScreenState extends State<EventScreen> {
   static final dateTimeFormatter = DateFormat('E d MMM y, HH:mm');
 
   late final EventCubit _eventCubit;
+  EventListCubit? _registrationsCubit;
 
   @override
   void initState() {
@@ -47,7 +48,18 @@ class _EventScreenState extends State<EventScreen> {
   @override
   void dispose() {
     _eventCubit.close();
+    _registrationsCubit?.close();
     super.dispose();
+  }
+
+  //Reloads the event and the registrations list.
+  Future<void> _refreshPage() async {
+    final calendarCubit = BlocProvider.of<CalendarCubit>(context);
+    await Future.wait([
+      _eventCubit.load(),
+      _registrationsCubit?.load() ?? Future.value(),
+    ]);
+    calendarCubit.load();
   }
 
   Widget _makeMap(Event event) {
@@ -359,7 +371,7 @@ class _EventScreenState extends State<EventScreen> {
     } else if (event.isRegistered) {
       final registration = event.registration!;
       registrationStatusText.add(
-        TextSpan(text: 'You are registered for thie event.'),
+        TextSpan(text: 'You are registered for the event.'),
       );
 
       if (event.paymentIsRequired) {
@@ -594,10 +606,8 @@ class _EventScreenState extends State<EventScreen> {
       onPressed: () async {
         final messenger = ScaffoldMessenger.of(context);
         try {
-          final calendarCubit = BlocProvider.of<CalendarCubit>(context);
           await _eventCubit.register();
-          await _eventCubit.load();
-          calendarCubit.load();
+          await _refreshPage();
         } on ApiException {
           messenger.showSnackBar(
             const SnackBar(
@@ -617,12 +627,10 @@ class _EventScreenState extends State<EventScreen> {
       onPressed: () async {
         final messenger = ScaffoldMessenger.of(context);
         try {
-          final calendarCubit = BlocProvider.of<CalendarCubit>(context);
           await _eventCubit.cancelRegistration(
             registrationPk: event.registration!.pk,
           );
-          await _eventCubit.load();
-          calendarCubit.load();
+          await _refreshPage();
         } on ApiException {
           messenger.showSnackBar(
             const SnackBar(
@@ -639,7 +647,6 @@ class _EventScreenState extends State<EventScreen> {
 
   void register(Event event) async {
     final messenger = ScaffoldMessenger.of(context);
-    final calendarCubit = BlocProvider.of<CalendarCubit>(context);
     final router = GoRouter.of(context);
     var confirmed = !event.cancelDeadlinePassed();
     if (!confirmed) {
@@ -663,7 +670,6 @@ class _EventScreenState extends State<EventScreen> {
             },
           );
         }
-        calendarCubit.load();
       } on ApiException {
         messenger.showSnackBar(
           const SnackBar(
@@ -672,7 +678,7 @@ class _EventScreenState extends State<EventScreen> {
           ),
         );
       }
-      await _eventCubit.load();
+      await _refreshPage();
     }
   }
 
@@ -707,7 +713,6 @@ class _EventScreenState extends State<EventScreen> {
     return ElevatedButton.icon(
       onPressed: () async {
         final messenger = ScaffoldMessenger.of(context);
-        final calendarCubit = BlocProvider.of<CalendarCubit>(context);
         final welcomeCubit = BlocProvider.of<WelcomeCubit>(context);
         final confirmed = await showConfirmationDialog(
           context,
@@ -729,8 +734,7 @@ class _EventScreenState extends State<EventScreen> {
             );
           }
         }
-        await _eventCubit.load();
-        calendarCubit.load();
+        await _refreshPage();
         await welcomeCubit.load();
       },
       icon: const Icon(Icons.delete_forever_outlined),
@@ -964,25 +968,18 @@ class _EventScreenState extends State<EventScreen> {
               title: Text(event.title.toUpperCase()),
               collapsingActions: actions,
             ),
-            body: BlocProvider(
-              create: (_) => EventListCubit(api, event.pk)..load(),
-              lazy: false,
-              child: Builder(
-                builder: (context) => RefreshIndicator(
-                  onRefresh: () async {
-                    await Future.wait([
-                      _eventCubit.load(),
-                      context.read<EventListCubit>().load(),
-                    ]);
-                  },
-                  child: PaginatedScrollView<EventListCubit, EventRegistration>(
-                    loadingBuilder: (context) => slivers,
-                    errorBuilder: (context, _) => slivers,
-                    resultsBuilder: (context, registrations) => [
-                      ...slivers,
-                      _makeRegistrations(registrations),
-                    ],
-                  ),
+            body: BlocProvider.value(
+              value: _registrationsCubit ??= EventListCubit(api, event.pk)
+                ..load(),
+              child: RefreshIndicator(
+                onRefresh: _refreshPage,
+                child: PaginatedScrollView<EventListCubit, EventRegistration>(
+                  loadingBuilder: (context) => slivers,
+                  errorBuilder: (context, _) => slivers,
+                  resultsBuilder: (context, registrations) => [
+                    ...slivers,
+                    _makeRegistrations(registrations),
+                  ],
                 ),
               ),
             ),
