@@ -263,11 +263,8 @@ final List<RouteBase> routes = [
       GoRoute(
         path: 'face-detection',
         name: 'face-detection',
-        pageBuilder:
-            (context, state) => MaterialPage(
-              key: state.pageKey,
-              child: FaceDetectionScreen(),
-            ),
+        pageBuilder: (context, state) =>
+            MaterialPage(key: state.pageKey, child: FaceDetectionScreen()),
       ),
       GoRoute(
         path: ':albumSlug',

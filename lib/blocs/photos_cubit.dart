@@ -21,17 +21,12 @@ abstract class PhotosCubit<T> extends SingleListCubit<T> {
   @override
   Future<ListResponse<T>> getDown(int offset) {
     assert(searchQuery == null); // We cannot search photos
-    return fetchPhotos(
-      limit: firstPageSize,
-      offset: offset + extraOffset,
-    );
+    return fetchPhotos(limit: firstPageSize, offset: offset + extraOffset);
   }
 
   @override
-  List<T> combineDown(
-    List<T> downResults,
-    ListState<T> oldstate,
-  ) => getResults(oldstate) + downResults;
+  List<T> combineDown(List<T> downResults, ListState<T> oldstate) =>
+      getResults(oldstate) + downResults;
 
   @override
   ListState<T> empty(String? query) =>
@@ -40,8 +35,8 @@ abstract class PhotosCubit<T> extends SingleListCubit<T> {
 
 typedef LikedPhotosState = ListState<AlbumPhoto>;
 
-class LikedPhotosCubit extends PhotosCubit<AlbumPhoto> 
-  implements GalleryCubit<ListState<AlbumPhoto>> {
+class LikedPhotosCubit extends PhotosCubit<AlbumPhoto>
+    implements GalleryCubit<ListState<AlbumPhoto>> {
   LikedPhotosCubit(super.api);
 
   @override
@@ -96,8 +91,8 @@ class LikedPhotosCubit extends PhotosCubit<AlbumPhoto>
 
 typedef FaceDetectionPhotosState = ListState<AlbumPhoto>;
 
-class FaceDetectionPhotosCubit extends PhotosCubit<AlbumPhoto> 
-  implements GalleryCubit<ListState<AlbumPhoto>> {
+class FaceDetectionPhotosCubit extends PhotosCubit<AlbumPhoto>
+    implements GalleryCubit<ListState<AlbumPhoto>> {
   FaceDetectionPhotosCubit(super.api);
 
   @override
@@ -169,7 +164,7 @@ class ReferencePhotosCubit extends PhotosCubit<CoverPhoto> {
   }
 
   Future<void> deleteReferencePhoto(int photoPk) async {
-    await api.deleteReferencePhoto(photoPk:photoPk);
+    await api.deleteReferencePhoto(photoPk: photoPk);
     await load();
   }
 }

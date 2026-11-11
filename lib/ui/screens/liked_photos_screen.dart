@@ -53,9 +53,7 @@ class LikedPhotosScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ThaliaAppBar(
-        title: const Text('LIKED PHOTOS'),
-      ),
+      appBar: ThaliaAppBar(title: const Text('LIKED PHOTOS')),
       body: BlocProvider(
         create: (context) =>
             LikedPhotosCubit(RepositoryProvider.of<ApiRepository>(context))
@@ -64,7 +62,7 @@ class LikedPhotosScreen extends StatelessWidget {
           resultsBuilder: (context, photos) => [
             SliverPadding(
               padding: EdgeInsets.all(8),
-              sliver:SliverGrid(
+              sliver: SliverGrid(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
                   mainAxisSpacing: 8,
