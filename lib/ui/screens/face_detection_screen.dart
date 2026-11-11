@@ -92,18 +92,18 @@ class FaceDetectionScreen extends StatelessWidget {
 
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                  padding: const EdgeInsets.symmetric(horizontal:8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
                         child: Text(
                           'REFERENCE PHOTOS',
                           style: textTheme.titleLarge,
                         ),
                       ),
-                      Divider(height: 0),
+                      Divider(height: 8),
                     ],
                   ),
                 ),
@@ -133,7 +133,7 @@ class FaceDetectionScreen extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              "Upload a reference photo of yourself and we\'ll look for other photos you appear on. Note that for the best result, this photo should contain only your face. A reference photo with multiple faces on it will be rejected. It may take some time until we have processed your reference photos. \n"
+                              "Upload a reference photo of yourself and we'll look for other photos you appear on. Note that for the best result, this photo should contain only your face. A reference photo with multiple faces on it will be rejected. It may take some time until we have processed your reference photos. \n"
                             ),
                           ]
                         ),
@@ -172,6 +172,11 @@ class FaceDetectionScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Text(
+                        'Tap on a reference photo to remove it.',
+                        style: textTheme.bodyMedium),), 
                     ElevatedButton(
                       onPressed: () {
                         final referenceCubit = context.read<ReferencePhotosCubit>();
@@ -218,8 +223,9 @@ class FaceDetectionScreen extends StatelessWidget {
                         );
                       },
                       child: const Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Expanded(child: Text('Upload New Reference Photo')),
+                          Text('Upload New Reference Photo '),
                           Icon(Icons.file_upload_rounded),
                         ],
                       ),
@@ -407,13 +413,13 @@ void showFaceDectionInfoDialog(context) {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
-              "Upload a reference photo of yourself and we'll look for other photos you appear on. Note that for the best result, this photo should contain only your face. A reference photo with multiple faces on it will be rejected. It may take some time until we have processed your reference photos. \n",
+              "Upload a reference photo of yourself and we'll look for other photos you appear on. Note that for the best result, this photo should contain only your face. A reference photo with multiple faces on it will be rejected. It may take some time until we have processed your reference photos.",
             ),
             const Text(
               '\u2022 Face recognition is intended to be used for your own faces only.',
             ),
             const Text(
-              '\u2022 You can have a maximum of 5 reference faces uploaded.',
+              '\u2022 You can have a maximum of 5 reference faces uploaded.        ',
             ),
             const Text(
               "\u2022 You can only search for faces for the period that you've been a member.",
