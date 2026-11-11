@@ -404,7 +404,7 @@ class FaceDetectionScreen extends StatelessWidget {
     await uploadPhoto(pickedFile, cubit, messenger);
   }
 
-  void showFaceDectionInfoDialog(context) {
+  void showFaceDectionInfoDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
