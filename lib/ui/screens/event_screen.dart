@@ -606,7 +606,6 @@ class _EventScreenState extends State<EventScreen> {
       onPressed: () async {
         final messenger = ScaffoldMessenger.of(context);
         try {
-          final calendarCubit = BlocProvider.of<CalendarCubit>(context);
           await _eventCubit.register();
           await _refreshPage();
         } on ApiException {
@@ -628,12 +627,10 @@ class _EventScreenState extends State<EventScreen> {
       onPressed: () async {
         final messenger = ScaffoldMessenger.of(context);
         try {
-          final calendarCubit = BlocProvider.of<CalendarCubit>(context);
           await _eventCubit.cancelRegistration(
             registrationPk: event.registration!.pk,
           );
           await _refreshPage();
-          calendarCubit.load();
         } on ApiException {
           messenger.showSnackBar(
             const SnackBar(
