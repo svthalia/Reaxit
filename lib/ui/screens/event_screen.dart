@@ -50,8 +50,8 @@ class _EventScreenState extends State<EventScreen> {
     _eventCubit.close();
     _registrationsCubit?.close();
     super.dispose();
-    
   }
+
   //Reloads the event and the registrations list.
   Future<void> _refreshPage() async {
     final calendarCubit = BlocProvider.of<CalendarCubit>(context);
@@ -61,7 +61,6 @@ class _EventScreenState extends State<EventScreen> {
     ]);
     calendarCubit.load();
   }
- 
 
   Widget _makeMap(Event event) {
     return Stack(
@@ -307,7 +306,7 @@ class _EventScreenState extends State<EventScreen> {
 
     final textSpans = <TextSpan>[];
     final registrationStatusText = <TextSpan>[];
-    Widget registrationButton = const SizedBox.shrink();  
+    Widget registrationButton = const SizedBox.shrink();
 
     if ((event.canCreateRegistration || event.createRegistrationWhenOpen) &&
         !event.registrationClosed()) {
@@ -315,7 +314,7 @@ class _EventScreenState extends State<EventScreen> {
       registrationButton = TimedIconButton(
         controller: controler,
         onPressed: () =>
-          event.reachedMaxParticipants ? joinQueue(event) : register(event),
+            event.reachedMaxParticipants ? joinQueue(event) : register(event),
         nextChange: event.registrationStarted() ? null : nextChange,
         icon: const Icon(Icons.create_outlined),
         labelText: event.reachedMaxParticipants ? 'JOIN QUEUE' : 'REGISTER',
@@ -648,43 +647,43 @@ class _EventScreenState extends State<EventScreen> {
       label: const Text("I WON'T BE THERE"),
     );
   }
-  
-void register(Event event) async {
-  final messenger = ScaffoldMessenger.of(context);
-  final router = GoRouter.of(context);
-  var confirmed = !event.cancelDeadlinePassed();
-  if (!confirmed) {
-    confirmed = await showConfirmationDialog(
-      context,
-      'Register',
-      'Are you sure you want to register? The '
-          'cancellation deadline has already passed.',
-    );
-  }
 
-  if (confirmed) {
-    try {
-      final registration = await _eventCubit.register();
-      if (event.hasFields) {
-        router.pushNamed(
-          'event-registration',
-          pathParameters: {
-            'eventPk': event.pk.toString(),
-            'registrationPk': registration.pk.toString(),
-          },
-        );
-      }
-    } on ApiException {
-      messenger.showSnackBar(
-        const SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Text('Could not register for the event.'),
-        ),
+  void register(Event event) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final router = GoRouter.of(context);
+    var confirmed = !event.cancelDeadlinePassed();
+    if (!confirmed) {
+      confirmed = await showConfirmationDialog(
+        context,
+        'Register',
+        'Are you sure you want to register? The '
+            'cancellation deadline has already passed.',
       );
     }
-    await _refreshPage();
+
+    if (confirmed) {
+      try {
+        final registration = await _eventCubit.register();
+        if (event.hasFields) {
+          router.pushNamed(
+            'event-registration',
+            pathParameters: {
+              'eventPk': event.pk.toString(),
+              'registrationPk': registration.pk.toString(),
+            },
+          );
+        }
+      } on ApiException {
+        messenger.showSnackBar(
+          const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Could not register for the event.'),
+          ),
+        );
+      }
+      await _refreshPage();
+    }
   }
-}
 
   void joinQueue(Event event) async {
     final messenger = ScaffoldMessenger.of(context);
@@ -714,37 +713,37 @@ void register(Event event) async {
   }
 
   Widget _makeCancelRegistrationButton(Event event, String warningText) {
-  return ElevatedButton.icon(
-    onPressed: () async {
-      final messenger = ScaffoldMessenger.of(context);
-      final welcomeCubit = BlocProvider.of<WelcomeCubit>(context);
-      final confirmed = await showConfirmationDialog(
-        context,
-        'Cancel registration',
-        warningText,
-      );
+    return ElevatedButton.icon(
+      onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        final welcomeCubit = BlocProvider.of<WelcomeCubit>(context);
+        final confirmed = await showConfirmationDialog(
+          context,
+          'Cancel registration',
+          warningText,
+        );
 
-      if (confirmed) {
-        try {
-          await _eventCubit.cancelRegistration(
-            registrationPk: event.registration!.pk,
-          );
-        } on ApiException {
-          messenger.showSnackBar(
-            const SnackBar(
-              behavior: SnackBarBehavior.floating,
-              content: Text('Could not cancel your registration.'),
-            ),
-          );
+        if (confirmed) {
+          try {
+            await _eventCubit.cancelRegistration(
+              registrationPk: event.registration!.pk,
+            );
+          } on ApiException {
+            messenger.showSnackBar(
+              const SnackBar(
+                behavior: SnackBarBehavior.floating,
+                content: Text('Could not cancel your registration.'),
+              ),
+            );
+          }
         }
-      }
-      await _refreshPage();
-      await welcomeCubit.load();
-    },
-    icon: const Icon(Icons.delete_forever_outlined),
-    label: const Text('CANCEL REGISTRATION'),
-  );
-}
+        await _refreshPage();
+        await welcomeCubit.load();
+      },
+      icon: const Icon(Icons.delete_forever_outlined),
+      label: const Text('CANCEL REGISTRATION'),
+    );
+  }
 
   Widget _makeUpdateButton(Event event) {
     return ElevatedButton.icon(
@@ -973,7 +972,8 @@ void register(Event event) async {
               collapsingActions: actions,
             ),
             body: BlocProvider.value(
-              value: _registrationsCubit ??= EventListCubit(api, event.pk)..load(),
+              value: _registrationsCubit ??= EventListCubit(api, event.pk)
+                ..load(),
               child: RefreshIndicator(
                 onRefresh: _refreshPage,
                 child: PaginatedScrollView<EventListCubit, EventRegistration>(
