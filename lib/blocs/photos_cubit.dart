@@ -5,8 +5,7 @@ import 'package:reaxit/blocs/list_cubit.dart';
 import 'package:reaxit/models.dart';
 import 'package:reaxit/ui/widgets/gallery.dart';
 
-abstract class PhotosCubit extends SingleListCubit<AlbumPhoto>
-    implements GalleryCubit<ListState<AlbumPhoto>> {
+abstract class PhotosCubit<T> extends SingleListCubit<T> {
   static const int firstPageSize = 60;
   static const int pageSize = 30;
 
@@ -14,13 +13,13 @@ abstract class PhotosCubit extends SingleListCubit<AlbumPhoto>
 
   int extraOffset = 0;
 
-  Future<ListResponse<AlbumPhoto>> fetchPhotos({
+  Future<ListResponse<T>> fetchPhotos({
     required int limit,
     required int offset,
   });
 
   @override
-  Future<ListResponse<AlbumPhoto>> getDown(int offset) {
+  Future<ListResponse<T>> getDown(int offset) {
     assert(searchQuery == null); // We cannot search photos
     return fetchPhotos(
       limit: firstPageSize,
@@ -29,14 +28,29 @@ abstract class PhotosCubit extends SingleListCubit<AlbumPhoto>
   }
 
   @override
-  List<AlbumPhoto> combineDown(
-    List<AlbumPhoto> downResults,
-    ListState<AlbumPhoto> oldstate,
+  List<T> combineDown(
+    List<T> downResults,
+    ListState<T> oldstate,
   ) => getResults(oldstate) + downResults;
 
   @override
-  ListState<AlbumPhoto> empty(String? query) =>
+  ListState<T> empty(String? query) =>
       const ErrorState('No liked photos found.');
+}
+
+typedef LikedPhotosState = ListState<AlbumPhoto>;
+
+class LikedPhotosCubit extends PhotosCubit<AlbumPhoto> 
+  implements GalleryCubit<ListState<AlbumPhoto>> {
+  LikedPhotosCubit(super.api);
+
+  @override
+  Future<ListResponse<AlbumPhoto>> fetchPhotos({
+    required int limit,
+    required int offset,
+  }) {
+    return api.getLikedPhotos(limit: limit, offset: offset);
+  }
 
   @override
   Future<void> updateLike({required bool liked, required int index}) async {
@@ -80,23 +94,10 @@ abstract class PhotosCubit extends SingleListCubit<AlbumPhoto>
   }
 }
 
-typedef LikedPhotosState = ListState<AlbumPhoto>;
-
-class LikedPhotosCubit extends PhotosCubit {
-  LikedPhotosCubit(super.api);
-
-  @override
-  Future<ListResponse<AlbumPhoto>> fetchPhotos({
-    required int limit,
-    required int offset,
-  }) {
-    return api.getLikedPhotos(limit: limit, offset: offset);
-  }
-}
-
 typedef FaceDetectionPhotosState = ListState<AlbumPhoto>;
 
-class FaceDetectionPhotosCubit extends PhotosCubit {
+class FaceDetectionPhotosCubit extends PhotosCubit<AlbumPhoto> 
+  implements GalleryCubit<ListState<AlbumPhoto>> {
   FaceDetectionPhotosCubit(super.api);
 
   @override
@@ -106,15 +107,56 @@ class FaceDetectionPhotosCubit extends PhotosCubit {
   }) {
     return api.getFaceDetectionMatches(limit: limit, offset: offset);
   }
+
+  @override
+  Future<void> updateLike({required bool liked, required int index}) async {
+    switch (super.state) {
+      case LoadingState():
+      case ErrorState():
+        return;
+      case ResultState<InnerListState<AlbumPhoto>>(result: final state):
+        assert(index < state.results.length);
+
+        final oldState = super.state;
+        final oldPhoto = state.results[index];
+
+        if (oldPhoto.liked == liked) return;
+
+        // Emit expected state after (un)liking.
+        AlbumPhoto newphoto = oldPhoto.copyWith(
+          liked: liked,
+          numLikes: oldPhoto.numLikes + (liked ? 1 : -1),
+        );
+
+        List<AlbumPhoto> newphotos = state.results;
+        newphotos[index] = newphoto;
+
+        emit(
+          ResultState(state.copyWith(results: newphotos, isDone: state.isDone)),
+        );
+
+        try {
+          await api.updateLiked(newphoto.pk, liked);
+
+          // If a photo is succesfully unliked, the offset should decrease by 1
+          // so the next page is loaded correctly.
+          extraOffset += liked ? 1 : -1;
+        } on ApiException {
+          // Revert to state before (un)liking.
+          emit(oldState);
+          rethrow;
+        }
+    }
+  }
 }
 
-typedef ReferencePhotosState = ListState<AlbumPhoto>;
+typedef ReferencePhotosState = ListState<CoverPhoto>;
 
-class ReferencePhotosCubit extends PhotosCubit {
+class ReferencePhotosCubit extends PhotosCubit<CoverPhoto> {
   ReferencePhotosCubit(super.api);
 
   @override
-  Future<ListResponse<AlbumPhoto>> fetchPhotos({
+  Future<ListResponse<CoverPhoto>> fetchPhotos({
     required int limit,
     required int offset,
   }) {

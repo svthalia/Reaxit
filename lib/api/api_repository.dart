@@ -440,7 +440,7 @@ abstract class ApiRepository {
   });
 
   /// Get a list of reference faces for face detection.
-  Future<ListResponse<AlbumPhoto>> getReferencePhotos({
+  Future<ListResponse<CoverPhoto>> getReferencePhotos({
     int? limit,
     int? offset,
   });

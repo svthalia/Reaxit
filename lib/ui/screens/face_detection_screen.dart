@@ -15,8 +15,8 @@ typedef PhotosState = DetailState<InnerListState<AlbumPhoto>>;
 
 class FaceDetectionScreen extends StatelessWidget {
 
-  void _openGallery<C extends PhotosCubit>(BuildContext context, int index) {
-    final cubit = context.read<C>(); // BlocProvider.of<PhotosCubit>(context);
+  void _openGallery(BuildContext context, int index) {
+    final cubit = context.read<FaceDetectionPhotosCubit>(); // BlocProvider.of<PhotosCubit>(context);
     showDialog(
       context: context,
       useSafeArea: false,
@@ -24,7 +24,7 @@ class FaceDetectionScreen extends StatelessWidget {
       builder: (context) {
         return BlocProvider.value(
           value: cubit,
-          child: BlocBuilder<C, PhotosState>(
+          child: BlocBuilder<FaceDetectionPhotosCubit, PhotosState>(
             buildWhen: (previous, current) => switch (current) {
               LoadingState _ || LoadingResultState _ => false,
               _ => true,
@@ -43,7 +43,7 @@ class FaceDetectionScreen extends StatelessWidget {
                   count = 0;
               }
 
-              return Gallery<C>(
+              return Gallery<FaceDetectionPhotosCubit>(
                 photos: results,
                 initialPage: index,
                 photoAmount: count,
@@ -109,15 +109,15 @@ class FaceDetectionScreen extends StatelessWidget {
                 ),
               ),
 
-              BlocBuilder<ReferencePhotosCubit, PhotosState>(
+              BlocBuilder<ReferencePhotosCubit, ListState<CoverPhoto>>(
                 builder: (context, state) {
                   final photos = switch (state) {
                     ResultState(
                       result: InnerListState(
-                        results: final List<AlbumPhoto> results,
+                        results: final List<CoverPhoto> results,
                       ),
                     ) => results,
-                    _ => <AlbumPhoto>[],
+                    _ => <CoverPhoto>[],
                   };
 
                   if (photos.isEmpty) {
@@ -280,7 +280,7 @@ class FaceDetectionScreen extends StatelessWidget {
                           (context, index) => PhotoTile(
                             photo: photos[index],
                             openGallery: () =>
-                                _openGallery<FaceDetectionPhotosCubit>(
+                                _openGallery(
                               context,
                               index,
                             ),
@@ -307,10 +307,10 @@ void _openGalleryReferencePhoto(BuildContext context, int index) {
   final photos = switch (state) {
     ResultState(
       result: InnerListState(
-        results: final List<AlbumPhoto> results,
+        results: final List<CoverPhoto> results,
       ),
     ) => results,
-    _ => <AlbumPhoto>[],
+    _ => <CoverPhoto>[],
   };
 
   if (index >= photos.length) return;

@@ -1624,7 +1624,7 @@ class ConcrexitApiRepository implements ApiRepository {
   }
 
   @override
-  Future<ListResponse<AlbumPhoto>> getReferencePhotos({
+  Future<ListResponse<CoverPhoto>> getReferencePhotos({
     int? limit,
     int? offset,
   }) async {
@@ -1637,20 +1637,10 @@ class ConcrexitApiRepository implements ApiRepository {
     );
 
     final response = await _handleExceptions(() => _client.get(uri));
-
-    return ListResponse<AlbumPhoto>.fromJson(_jsonDecode(response), (json) {
-      // Inject liked = false into the JSON map
-      final jsonWithLiked = {
-        ...json as Map<String, dynamic>,
-        'liked': false, // force liked = false
-        'num_likes': 0,
-      };
-
-      // Now deserialize
-      final photo = AlbumPhoto.fromJson(jsonWithLiked);
-
-      return photo;
-    });
+    return ListResponse<CoverPhoto>.fromJson(
+      _jsonDecode(response),
+      (json) => CoverPhoto.fromJson(json as Map<String, dynamic>),
+    );
   }
 
   @override

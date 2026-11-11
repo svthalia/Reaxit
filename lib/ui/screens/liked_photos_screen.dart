@@ -11,7 +11,7 @@ import 'package:reaxit/ui/widgets/photo_tile.dart';
 
 class LikedPhotosScreen extends StatelessWidget {
   void _openGallery(BuildContext context, int index) {
-    final cubit = BlocProvider.of<PhotosCubit>(context);
+    final cubit = BlocProvider.of<LikedPhotosCubit>(context);
     showDialog(
       context: context,
       useSafeArea: false,
